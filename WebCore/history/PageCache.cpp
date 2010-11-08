@@ -28,7 +28,7 @@
 
 #include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedPage.h"
 #include "DOMWindow.h"
 #include "DeviceMotionController.h"

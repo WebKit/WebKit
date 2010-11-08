@@ -23,7 +23,7 @@
 #include "XMLHttpRequest.h"
 
 #include "Blob.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
 #include "DOMImplementation.h"
@@ -600,7 +600,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
             setPendingActivity(this);
 
             // For now we should only balance the nonCached request count for main-thread XHRs and not
-            // Worker XHRs, as the Cache is not thread-safe.
+            // Worker XHRs, as the MemoryCache is not thread-safe.
             // This will become irrelevant after https://bugs.webkit.org/show_bug.cgi?id=27165 is resolved.
             if (!scriptExecutionContext()->isWorkerContext()) {
                 ASSERT(isMainThread());

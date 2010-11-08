@@ -32,7 +32,7 @@
 #include "InspectorResourceAgent.h"
 
 #include "Base64.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"

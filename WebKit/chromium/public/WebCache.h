@@ -48,7 +48,7 @@ public:
         size_t deadSize;
     };
 
-    // A struct mirroring WebCore::Cache::TypeStatistic.
+    // A struct mirroring WebCore::MemoryCache::TypeStatistic.
     struct ResourceTypeStat {
         size_t count;
         size_t size;
@@ -56,7 +56,7 @@ public:
         size_t decodedSize;
     };
 
-    // A struct mirroring WebCore::Cache::Statistics.
+    // A struct mirroring WebCore::MemoryCache::Statistics.
     struct ResourceTypeStats {
         ResourceTypeStat images;
         ResourceTypeStat cssStyleSheets;

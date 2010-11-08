@@ -29,7 +29,7 @@
 #include "config.h"
 #include "LegacyWebArchive.h"
 
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"

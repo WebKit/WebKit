@@ -71,9 +71,9 @@ class KURL;
 // its member variables) are allocated in non-purgeable TC-malloc'd memory so we would see slightly
 // more memory use due to this.
 
-class Cache : public Noncopyable {
+class MemoryCache : public Noncopyable {
 public:
-    friend Cache* cache();
+    friend MemoryCache* cache();
 
     typedef HashMap<String, CachedResource*> CachedResourceMap;
 
@@ -170,8 +170,8 @@ public:
     Statistics getStatistics();
 
 private:
-    Cache();
-    ~Cache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
+    MemoryCache();
+    ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
        
     LRUList* lruListFor(CachedResource*);
     void resourceAccessed(CachedResource*);
@@ -218,7 +218,7 @@ private:
     HashMap<String, CachedResource*> m_resources;
 };
 
-inline bool Cache::shouldMakeResourcePurgeableOnEviction()
+inline bool MemoryCache::shouldMakeResourcePurgeableOnEviction()
 {
 #if PLATFORM(IOS)
     return true;
@@ -228,7 +228,7 @@ inline bool Cache::shouldMakeResourcePurgeableOnEviction()
 }
 
 // Function to obtain the global cache.
-Cache* cache();
+MemoryCache* cache();
 
 }
 

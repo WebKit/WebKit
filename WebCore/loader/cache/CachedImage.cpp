@@ -25,7 +25,7 @@
 #include "CachedImage.h"
 
 #include "BitmapImage.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
@@ -331,7 +331,7 @@ void CachedImage::destroyDecodedData()
         // Invoking addClient() will reconstruct the image object.
         m_image = 0;
         setDecodedSize(0);
-        if (!Cache::shouldMakeResourcePurgeableOnEviction())
+        if (!MemoryCache::shouldMakeResourcePurgeableOnEviction())
             makePurgeable(true);
     } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();

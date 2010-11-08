@@ -1,3 +1,13 @@
+2010-11-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Cache to MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=49159
+
+        * Api/qwebpage.cpp:
+        * Api/qwebsettings.cpp:
+
 2010-11-07  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Antonio Gomes.

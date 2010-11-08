@@ -30,7 +30,7 @@
 #define InspectorCSSStore_h
 
 #include "CSSPropertySourceData.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

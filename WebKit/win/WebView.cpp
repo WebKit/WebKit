@@ -69,7 +69,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/BackForwardListImpl.h>
 #include <WebCore/BitmapInfo.h>
-#include <WebCore/Cache.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>

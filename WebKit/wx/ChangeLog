@@ -1,3 +1,14 @@
+2010-11-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Cache to MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=49159
+
+        * WebView.cpp:
+        (wxWebView::SetCachePolicy):
+        * WebView.h:
+
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

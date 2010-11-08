@@ -38,7 +38,7 @@
 #include "ArchiveFactory.h"
 #include "BackForwardController.h"
 #include "BeforeUnloadEvent.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"

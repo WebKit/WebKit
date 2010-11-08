@@ -143,7 +143,7 @@ namespace WebCore {
         //  - HTML5/DOM Storage
         //  - Icon Database
         //  - Console Messages
-        //  - Cache
+        //  - MemoryCache
         //  - Application Cache
         //  - Back/Forward Page History
         //  - Page Search Results

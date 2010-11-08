@@ -25,7 +25,7 @@
 
 #include "WebProcess.h"
 
-#include <WebCore/Cache.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/PageCache.h>
 #include <wtf/text/WTFString.h>

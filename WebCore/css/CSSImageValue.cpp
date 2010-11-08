@@ -22,7 +22,7 @@
 #include "CSSImageValue.h"
 
 #include "CSSValueKeywords.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "StyleCachedImage.h"

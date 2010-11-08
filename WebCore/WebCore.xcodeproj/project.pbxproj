@@ -5034,8 +5034,8 @@
 		BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */; };
 		BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */; };
-		BCB16C170979C3BD00467741 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* Cache.cpp */; };
-		BCB16C180979C3BD00467741 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16BFF0979C3BD00467741 /* Cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */; };
+		BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16BFF0979C3BD00467741 /* MemoryCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */; };
 		BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */; };
 		BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C020979C3BD00467741 /* CachedImage.cpp */; };
@@ -11069,8 +11069,8 @@
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
 		BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRGBColor.mm; sourceTree = "<group>"; };
-		BCB16BFE0979C3BD00467741 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Cache.cpp; sourceTree = "<group>"; };
-		BCB16BFF0979C3BD00467741 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Cache.h; sourceTree = "<group>"; };
+		BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCache.cpp; sourceTree = "<group>"; };
+		BCB16BFF0979C3BD00467741 /* MemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MemoryCache.h; sourceTree = "<group>"; };
 		BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedCSSStyleSheet.cpp; sourceTree = "<group>"; };
 		BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedCSSStyleSheet.h; sourceTree = "<group>"; };
 		BCB16C020979C3BD00467741 /* CachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedImage.cpp; sourceTree = "<group>"; };
@@ -16043,8 +16043,8 @@
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
 				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
-				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
-				BCB16BFF0979C3BD00467741 /* Cache.h */,
+				BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */,
+				BCB16BFF0979C3BD00467741 /* MemoryCache.h */,
 			);
 			path = cache;
 			sourceTree = "<group>";
@@ -18564,7 +18564,7 @@
 				1A569CFA0D7E2B82007C3983 /* c_instance.h in Headers */,
 				1A569CFC0D7E2B82007C3983 /* c_runtime.h in Headers */,
 				1A569CFE0D7E2B82007C3983 /* c_utility.h in Headers */,
-				BCB16C180979C3BD00467741 /* Cache.h in Headers */,
+				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
 				51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */,
@@ -21714,7 +21714,7 @@
 				1A569CF90D7E2B82007C3983 /* c_instance.cpp in Sources */,
 				1A569CFB0D7E2B82007C3983 /* c_runtime.cpp in Sources */,
 				1A569CFD0D7E2B82007C3983 /* c_utility.cpp in Sources */,
-				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
+				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
 				BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */,
 				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,

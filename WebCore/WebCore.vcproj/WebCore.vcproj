@@ -24163,11 +24163,11 @@
 				Name="cache"
 				>
 				<File
-					RelativePath="..\loader\cache\Cache.cpp"
+					RelativePath="..\loader\cache\MemoryCache.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\loader\cache\Cache.h"
+					RelativePath="..\loader\cache\MemoryCache.h"
 					>
 				</File>
 				<File

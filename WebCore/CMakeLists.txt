@@ -1191,7 +1191,7 @@ SET(WebCore_SOURCES
     loader/archive/ArchiveResource.cpp
     loader/archive/ArchiveResourceCollection.cpp
 
-    loader/cache/Cache.cpp
+    loader/cache/MemoryCache.cpp
 
     loader/icon/IconDatabase.cpp
     loader/icon/IconLoader.cpp

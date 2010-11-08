@@ -27,23 +27,23 @@
 #include "config.h"
 #include "CachedResourceLoader.h"
 
-#include "loader.h"
-#include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
 #include "Console.h"
-#include "Document.h"
 #include "DOMWindow.h"
-#include "HTMLElement.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLElement.h"
+#include "MemoryCache.h"
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "loader.h"
 #include <wtf/text/StringConcatenate.h>
 
 #define PRELOAD_DEBUG 0

@@ -49,7 +49,7 @@
 #include <wtf/RandomNumber.h>
 
 #ifndef NDEBUG
-#include <WebCore/Cache.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/GCController.h>
 #endif
 

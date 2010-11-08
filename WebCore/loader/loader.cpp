@@ -24,7 +24,7 @@
 #include "config.h"
 #include "loader.h"
 
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedImage.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"

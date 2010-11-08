@@ -24,13 +24,14 @@
  */
 
 #include "config.h"
-#include "Cache.h"
+#include "WebView.h"
+
 #include "ContextMenu.h"
-#include "ContextMenuItem.h"
 #include "ContextMenuController.h"
+#include "ContextMenuItem.h"
 #include "Document.h"
-#include "Element.h"
 #include "Editor.h"
+#include "Element.h"
 #include "EmptyClients.h"
 #include "EventHandler.h"
 #include "FileChooser.h"
@@ -41,7 +42,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
 #include "Logging.h"
-#include "markup.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -56,6 +57,7 @@
 #include "Settings.h"
 #include "SubstituteData.h"
 #include "Threading.h"
+#include "markup.h"
 #if __WXMSW__
 #include "WebCoreInstanceHandle.h"
 #endif
@@ -87,7 +89,6 @@
 #include "WebDOMNode.h"
 
 #include "WebFrame.h"
-#include "WebView.h"
 #include "WebViewPrivate.h"
 
 #include <wx/defs.h>
@@ -269,12 +270,12 @@ static wxWebViewCachePolicy gs_cachePolicy;
 /* static */
 void wxWebView::SetCachePolicy(const wxWebViewCachePolicy& cachePolicy)
 {
-    WebCore::Cache* globalCache = WebCore::cache();
+    WebCore::MemoryCache* globalCache = WebCore::cache();
     globalCache->setCapacities(cachePolicy.GetMinDeadCapacity(),
                                cachePolicy.GetMaxDeadCapacity(),
                                cachePolicy.GetCapacity());
 
-    // store a copy since there is no getter for Cache values
+    // store a copy since there is no getter for MemoryCache values
     gs_cachePolicy = cachePolicy;
 }
 

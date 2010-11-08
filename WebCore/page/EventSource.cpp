@@ -36,7 +36,7 @@
 
 #include "EventSource.h"
 
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"

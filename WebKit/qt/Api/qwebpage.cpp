@@ -38,7 +38,7 @@
 #include "CSSParser.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardListImpl.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "Chrome.h"
 #include "ChromeClientQt.h"
 #include "ClientRect.h"

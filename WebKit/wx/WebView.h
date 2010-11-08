@@ -54,7 +54,7 @@ namespace WebCore {
 extern WXDLLIMPEXP_WEBKIT const wxChar* wxWebViewNameStr;
 #endif
 
-static const int defaultCacheCapacity = 8192 * 1024; // mirrors Cache.cpp
+static const int defaultCacheCapacity = 8192 * 1024; // mirrors MemoryCache.cpp
 
 class WXDLLIMPEXP_WEBKIT wxWebViewCachePolicy
 {

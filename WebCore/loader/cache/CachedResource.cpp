@@ -24,7 +24,7 @@
 #include "config.h"
 #include "CachedResource.h"
 
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CachedMetadata.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"

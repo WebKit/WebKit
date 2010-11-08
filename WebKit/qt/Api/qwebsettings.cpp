@@ -25,7 +25,7 @@
 #include "qwebplugindatabase_p.h"
 
 #include "AbstractDatabase.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "FontCache.h"
 #include "Page.h"

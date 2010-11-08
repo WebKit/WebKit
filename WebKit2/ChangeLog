@@ -1,3 +1,14 @@
+2010-11-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Cache to MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=49159
+
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/mac/WebProcessMac.mm:
+        * WebProcess/win/WebProcessWin.cpp:
+
 2010-11-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

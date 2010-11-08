@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#include "Cache.h"
+#include "MemoryCache.h"
 
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
@@ -49,13 +49,13 @@ static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const double cDefaultDecodedDataDeletionInterval = 0;
 
-Cache* cache()
+MemoryCache* cache()
 {
-    static Cache* staticCache = new Cache;
+    static MemoryCache* staticCache = new MemoryCache;
     return staticCache;
 }
 
-Cache::Cache()
+MemoryCache::MemoryCache()
     : m_disabled(false)
     , m_pruneEnabled(true)
     , m_inPruneDeadResources(false)
@@ -94,9 +94,9 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     return 0;
 }
 
-CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload)
+CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload)
 {
-    LOG(ResourceLoading, "Cache::requestResource '%s', charset '%s', preload=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload);
+    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', preload=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload);
 
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
@@ -107,7 +107,7 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
     CachedResource* resource = resourceForURL(url.string());
 
     if (resource && requestIsPreload && !resource->isPreloaded()) {
-        LOG(ResourceLoading, "Cache::requestResource already has a preload request for this request, and it hasn't been preloaded yet");
+        LOG(ResourceLoading, "MemoryCache::requestResource already has a preload request for this request, and it hasn't been preloaded yet");
         return 0;
     }
 
@@ -149,7 +149,7 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
     }
 
     if (resource->type() != type) {
-        LOG(ResourceLoading, "Cache::requestResource cannot use cached resource for '%s' due to type mismatch", url.string().latin1().data());
+        LOG(ResourceLoading, "MemoryCache::requestResource cannot use cached resource for '%s' due to type mismatch", url.string().latin1().data());
         return 0;
     }
 
@@ -158,12 +158,12 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
         resourceAccessed(resource);
     }
 
-    LOG(ResourceLoading, "Cache::requestResource for '%s' returning resource %p\n", url.string().latin1().data(), resource);
+    LOG(ResourceLoading, "MemoryCache::requestResource for '%s' returning resource %p\n", url.string().latin1().data(), resource);
 
     return resource;
 }
     
-CachedCSSStyleSheet* Cache::requestUserCSSStyleSheet(CachedResourceLoader* cachedResourceLoader, const String& url, const String& charset)
+CachedCSSStyleSheet* MemoryCache::requestUserCSSStyleSheet(CachedResourceLoader* cachedResourceLoader, const String& url, const String& charset)
 {
     CachedCSSStyleSheet* userSheet;
     if (CachedResource* existing = resourceForURL(url)) {
@@ -192,7 +192,7 @@ CachedCSSStyleSheet* Cache::requestUserCSSStyleSheet(CachedResourceLoader* cache
     return userSheet;
 }
     
-void Cache::revalidateResource(CachedResource* resource, CachedResourceLoader* cachedResourceLoader)
+void MemoryCache::revalidateResource(CachedResource* resource, CachedResourceLoader* cachedResourceLoader)
 {
     ASSERT(resource);
     ASSERT(resource->inCache());
@@ -215,7 +215,7 @@ void Cache::revalidateResource(CachedResource* resource, CachedResourceLoader* c
     newResource->load(cachedResourceLoader);
 }
     
-void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse& response)
+void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse& response)
 {
     CachedResource* resource = revalidatingResource->resourceToRevalidate();
     ASSERT(resource);
@@ -241,17 +241,17 @@ void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const Re
     revalidatingResource->clearResourceToRevalidate();
 }
 
-void Cache::revalidationFailed(CachedResource* revalidatingResource)
+void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
 {
     LOG(ResourceLoading, "Revalidation failed for %p", revalidatingResource);
     ASSERT(revalidatingResource->resourceToRevalidate());
     revalidatingResource->clearResourceToRevalidate();
 }
 
-CachedResource* Cache::resourceForURL(const String& url)
+CachedResource* MemoryCache::resourceForURL(const String& url)
 {
     CachedResource* resource = m_resources.get(url);
-    bool wasPurgeable = Cache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
+    bool wasPurgeable = MemoryCache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
     if (resource && !resource->makePurgeable(false)) {
         ASSERT(!resource->hasClients());
         evict(resource);
@@ -263,7 +263,7 @@ CachedResource* Cache::resourceForURL(const String& url)
     return resource;
 }
 
-unsigned Cache::deadCapacity() const 
+unsigned MemoryCache::deadCapacity() const 
 {
     // Dead resource capacity is whatever space is not occupied by live resources, bounded by an independent minimum and maximum.
     unsigned capacity = m_capacity - min(m_liveSize, m_capacity); // Start with available capacity.
@@ -272,13 +272,13 @@ unsigned Cache::deadCapacity() const
     return capacity;
 }
 
-unsigned Cache::liveCapacity() const 
+unsigned MemoryCache::liveCapacity() const 
 { 
     // Live resource capacity is whatever is left over after calculating dead resource capacity.
     return m_capacity - deadCapacity();
 }
 
-void Cache::pruneLiveResources()
+void MemoryCache::pruneLiveResources()
 {
     if (!m_pruneEnabled)
         return;
@@ -322,7 +322,7 @@ void Cache::pruneLiveResources()
     }
 }
 
-void Cache::pruneDeadResources()
+void MemoryCache::pruneDeadResources()
 {
     if (!m_pruneEnabled)
         return;
@@ -406,7 +406,7 @@ void Cache::pruneDeadResources()
     m_inPruneDeadResources = false;
 }
 
-void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
+void MemoryCache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
 {
     ASSERT(minDeadBytes <= maxDeadBytes);
     ASSERT(maxDeadBytes <= totalBytes);
@@ -416,9 +416,9 @@ void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned
     prune();
 }
 
-bool Cache::makeResourcePurgeable(CachedResource* resource)
+bool MemoryCache::makeResourcePurgeable(CachedResource* resource)
 {
-    if (!Cache::shouldMakeResourcePurgeableOnEviction())
+    if (!MemoryCache::shouldMakeResourcePurgeableOnEviction())
         return false;
 
     if (!resource->inCache())
@@ -438,7 +438,7 @@ bool Cache::makeResourcePurgeable(CachedResource* resource)
     return true;
 }
 
-void Cache::evict(CachedResource* resource)
+void MemoryCache::evict(CachedResource* resource)
 {
     LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().latin1().data());
     // The resource may have already been removed by someone other than our caller,
@@ -455,7 +455,7 @@ void Cache::evict(CachedResource* resource)
         // If the resource was purged, it means we had already decremented the size when we made the
         // resource purgeable in makeResourcePurgeable(). So adjust the size if we are evicting a
         // resource that was not marked as purgeable.
-        if (!Cache::shouldMakeResourcePurgeableOnEviction() || !resource->isPurgeable())
+        if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() || !resource->isPurgeable())
             adjustSize(resource->hasClients(), -static_cast<int>(resource->size()));
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
@@ -464,12 +464,12 @@ void Cache::evict(CachedResource* resource)
         delete resource;
 }
 
-void Cache::addCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
+void MemoryCache::addCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
 {
     m_cachedResourceLoaders.add(cachedResourceLoader);
 }
 
-void Cache::removeCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
+void MemoryCache::removeCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
 {
     m_cachedResourceLoaders.remove(cachedResourceLoader);
 }
@@ -492,7 +492,7 @@ static inline unsigned fastLog2(unsigned i)
     return log2;
 }
 
-Cache::LRUList* Cache::lruListFor(CachedResource* resource)
+MemoryCache::LRUList* MemoryCache::lruListFor(CachedResource* resource)
 {
     unsigned accessCount = max(resource->accessCount(), 1U);
     unsigned queueIndex = fastLog2(resource->size() / accessCount);
@@ -504,7 +504,7 @@ Cache::LRUList* Cache::lruListFor(CachedResource* resource)
     return &m_allResources[queueIndex];
 }
 
-void Cache::removeFromLRUList(CachedResource* resource)
+void MemoryCache::removeFromLRUList(CachedResource* resource)
 {
     // If we've never been accessed, then we're brand new and not in any list.
     if (resource->accessCount() == 0)
@@ -551,7 +551,7 @@ void Cache::removeFromLRUList(CachedResource* resource)
         list->m_head = next;
 }
 
-void Cache::insertInLRUList(CachedResource* resource)
+void MemoryCache::insertInLRUList(CachedResource* resource)
 {
     // Make sure we aren't in some list already.
     ASSERT(!resource->m_nextInAllResourcesList && !resource->m_prevInAllResourcesList);
@@ -583,7 +583,7 @@ void Cache::insertInLRUList(CachedResource* resource)
 
 }
 
-void Cache::resourceAccessed(CachedResource* resource)
+void MemoryCache::resourceAccessed(CachedResource* resource)
 {
     ASSERT(resource->inCache());
     
@@ -602,7 +602,7 @@ void Cache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
-void Cache::removeFromLiveDecodedResourcesList(CachedResource* resource)
+void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)
 {
     // If we've never been accessed, then we're brand new and not in any list.
     if (!resource->m_inLiveDecodedResourcesList)
@@ -641,7 +641,7 @@ void Cache::removeFromLiveDecodedResourcesList(CachedResource* resource)
         m_liveDecodedResources.m_head = next;
 }
 
-void Cache::insertInLiveDecodedResourcesList(CachedResource* resource)
+void MemoryCache::insertInLiveDecodedResourcesList(CachedResource* resource)
 {
     // Make sure we aren't in the list already.
     ASSERT(!resource->m_nextInLiveResourcesList && !resource->m_prevInLiveResourcesList && !resource->m_inLiveDecodedResourcesList);
@@ -669,19 +669,19 @@ void Cache::insertInLiveDecodedResourcesList(CachedResource* resource)
 
 }
 
-void Cache::addToLiveResourcesSize(CachedResource* resource)
+void MemoryCache::addToLiveResourcesSize(CachedResource* resource)
 {
     m_liveSize += resource->size();
     m_deadSize -= resource->size();
 }
 
-void Cache::removeFromLiveResourcesSize(CachedResource* resource)
+void MemoryCache::removeFromLiveResourcesSize(CachedResource* resource)
 {
     m_liveSize -= resource->size();
     m_deadSize += resource->size();
 }
 
-void Cache::adjustSize(bool live, int delta)
+void MemoryCache::adjustSize(bool live, int delta)
 {
     if (live) {
         ASSERT(delta >= 0 || ((int)m_liveSize + delta >= 0));
@@ -692,7 +692,7 @@ void Cache::adjustSize(bool live, int delta)
     }
 }
 
-void Cache::TypeStatistic::addResource(CachedResource* o)
+void MemoryCache::TypeStatistic::addResource(CachedResource* o)
 {
     bool purged = o->wasPurged();
     bool purgeable = o->isPurgeable() && !purged; 
@@ -705,7 +705,7 @@ void Cache::TypeStatistic::addResource(CachedResource* o)
     purgedSize += purged ? pageSize : 0;
 }
 
-Cache::Statistics Cache::getStatistics()
+MemoryCache::Statistics MemoryCache::getStatistics()
 {
     Statistics stats;
     CachedResourceMap::iterator e = m_resources.end();
@@ -736,7 +736,7 @@ Cache::Statistics Cache::getStatistics()
     return stats;
 }
 
-void Cache::setDisabled(bool disabled)
+void MemoryCache::setDisabled(bool disabled)
 {
     m_disabled = disabled;
     if (!m_disabled)
@@ -751,7 +751,7 @@ void Cache::setDisabled(bool disabled)
 }
 
 #ifndef NDEBUG
-void Cache::dumpStats()
+void MemoryCache::dumpStats()
 {
     Statistics s = getStatistics();
     printf("%-13s %-13s %-13s %-13s %-13s %-13s %-13s\n", "", "Count", "Size", "LiveSize", "DecodedSize", "PurgeableSize", "PurgedSize");
@@ -766,7 +766,7 @@ void Cache::dumpStats()
     printf("%-13s %-13s %-13s %-13s %-13s %-13s %-13s\n\n", "-------------", "-------------", "-------------", "-------------", "-------------", "-------------", "-------------");
 }
 
-void Cache::dumpLRULists(bool includeLive) const
+void MemoryCache::dumpLRULists(bool includeLive) const
 {
     printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced, isPurgeable, wasPurged):\n");
 

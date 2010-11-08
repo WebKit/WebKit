@@ -32,10 +32,10 @@
 namespace WebCore {
 
 class CachedResourceLoader;
-class Cache;
+class MemoryCache;
 
 class CachedImage : public CachedResource, public ImageObserver {
-    friend class Cache;
+    friend class MemoryCache;
 
 public:
     CachedImage(const String& url);

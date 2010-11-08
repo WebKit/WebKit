@@ -1906,7 +1906,7 @@ webcore_sources += \
 	WebCore/loader/archive/ArchiveResourceCollection.h \
 	WebCore/loader/archive/ArchiveResource.cpp \
 	WebCore/loader/archive/ArchiveResource.h \
-	WebCore/loader/cache/Cache.cpp \
+	WebCore/loader/cache/MemoryCache.cpp \
 	WebCore/loader/cache/CachedCSSStyleSheet.cpp \
 	WebCore/loader/cache/CachedCSSStyleSheet.h \
 	WebCore/loader/cache/CachedFont.cpp \
@@ -1926,7 +1926,7 @@ webcore_sources += \
 	WebCore/loader/cache/CachedScript.h \
 	WebCore/loader/cache/CachedXSLStyleSheet.cpp \
 	WebCore/loader/cache/CachedXSLStyleSheet.h \
-	WebCore/loader/cache/Cache.h \
+	WebCore/loader/cache/MemoryCache.h \
 	WebCore/loader/cache/CachePolicy.h \
 	WebCore/loader/CachedMetadata.h \
 	WebCore/loader/CrossOriginAccessControl.cpp \

@@ -1032,7 +1032,7 @@ SOURCES += \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
-    loader/cache/Cache.cpp \
+    loader/cache/MemoryCache.cpp \
     loader/cache/CachedCSSStyleSheet.cpp \
     loader/cache/CachedFont.cpp \
     loader/cache/CachedImage.cpp \
@@ -1931,7 +1931,7 @@ HEADERS += \
     loader/cache/CachedResourceHandle.h \
     loader/cache/CachedScript.h \
     loader/cache/CachedXSLStyleSheet.h \
-    loader/cache/Cache.h \
+    loader/cache/MemoryCache.h \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
     loader/cache/CachedResourceLoader.h \

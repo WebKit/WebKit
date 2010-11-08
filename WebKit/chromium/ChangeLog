@@ -1,3 +1,18 @@
+2010-11-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Cache to MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=49159
+
+        * public/WebCache.h:
+        * src/WebCache.cpp:
+        (WebKit::ToResourceTypeStat):
+        (WebKit::WebCache::setCapacities):
+        (WebKit::WebCache::clear):
+        (WebKit::WebCache::getUsageStats):
+        (WebKit::WebCache::getResourceTypeStats):
+
 2010-11-07  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Kent Tamura.

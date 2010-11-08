@@ -41,7 +41,7 @@ WebDeviceOrientationClient::WebDeviceOrientationClient(WebView* webView)
 void WebDeviceOrientationClient::setController(DeviceOrientationController* controller)
 {
     // This is called by the Page constructor before our WebView has the provider set up.
-    // Cache the controller for later use.
+    // MemoryCache the controller for later use.
     m_controller = controller;
 }
 

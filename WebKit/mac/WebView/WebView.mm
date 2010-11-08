@@ -111,7 +111,7 @@
 #import <WebCore/AbstractDatabase.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardListImpl.h>
-#import <WebCore/Cache.h>
+#import <WebCore/MemoryCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CSSComputedStyleDeclaration.h>
 #import <WebCore/Cursor.h>

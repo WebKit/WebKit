@@ -31,7 +31,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/Cache.h>
+#import <WebCore/MemoryCache.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
 
 @implementation WebCache
@@ -43,7 +43,7 @@
 
 + (NSArray *)statistics
 {
-    WebCore::Cache::Statistics s = WebCore::cache()->getStatistics();
+    WebCore::MemoryCache::Statistics s = WebCore::cache()->getStatistics();
 
     return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:

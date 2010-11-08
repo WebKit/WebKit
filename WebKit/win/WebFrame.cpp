@@ -55,7 +55,7 @@
 #include "WebView.h"
 #pragma warning( push, 0 )
 #include <WebCore/BString.h>
-#include <WebCore/Cache.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DOMImplementation.h>

@@ -31,7 +31,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/ApplicationCacheStorage.h>
-#include <WebCore/Cache.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #pragma warning(pop)
 
@@ -100,7 +100,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     if (!s)
         return S_OK;
 
-    WebCore::Cache::Statistics stat = WebCore::cache()->getStatistics();
+    WebCore::MemoryCache::Statistics stat = WebCore::cache()->getStatistics();
 
     static CFStringRef imagesKey = CFSTR("images");
     static CFStringRef stylesheetsKey = CFSTR("style sheets");
