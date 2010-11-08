@@ -14,6 +14,7 @@ SET(WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/icon"
+    "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/platform"

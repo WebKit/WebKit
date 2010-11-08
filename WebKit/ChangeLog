@@ -1,3 +1,10 @@
+2010-11-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix after r71496.
+
+        * CMakeLists.txt: Add WebCore/loader/cache directory to WebKit's
+        include directories list.
+
 2010-11-04  Mike Thole  <mthole@apple.com>
 
         Reviewed by Dan Bernstein.
