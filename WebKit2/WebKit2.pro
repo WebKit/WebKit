@@ -64,6 +64,7 @@ INCLUDEPATH = \
     $$PWD/../WebCore/loader \
     $$PWD/../WebCore/loader/appcache \
     $$PWD/../WebCore/loader/archive \
+    $$PWD/../WebCore/loader/cache \
     $$PWD/../WebCore/loader/icon \
     $$PWD/../WebCore/mathml \
     $$PWD/../WebCore/notifications \

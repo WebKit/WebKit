@@ -1139,17 +1139,17 @@ SET(WebCore_SOURCES
     inspector/ScriptBreakpoint.cpp
     inspector/TimelineRecordFactory.cpp
 
-    loader/CachedCSSStyleSheet.cpp
-    loader/CachedFont.cpp
-    loader/CachedImage.cpp
-    loader/CachedResource.cpp
-    loader/CachedResourceClientWalker.cpp
-    loader/CachedResourceHandle.cpp
-    loader/CachedScript.cpp
-    loader/CachedXSLStyleSheet.cpp
+    loader/cache/CachedCSSStyleSheet.cpp
+    loader/cache/CachedFont.cpp
+    loader/cache/CachedImage.cpp
+    loader/cache/CachedResource.cpp
+    loader/cache/CachedResourceClientWalker.cpp
+    loader/cache/CachedResourceHandle.cpp
+    loader/cache/CachedScript.cpp
+    loader/cache/CachedXSLStyleSheet.cpp
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
-    loader/CachedResourceLoader.cpp
+    loader/cache/CachedResourceLoader.cpp
     loader/DocumentLoader.cpp
     loader/DocumentThreadableLoader.cpp
     loader/DocumentWriter.cpp

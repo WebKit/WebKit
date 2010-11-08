@@ -1033,17 +1033,17 @@ SOURCES += \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/Cache.cpp \
-    loader/CachedCSSStyleSheet.cpp \
-    loader/CachedFont.cpp \
-    loader/CachedImage.cpp \
-    loader/CachedResourceClientWalker.cpp \
-    loader/CachedResourceHandle.cpp \
-    loader/CachedResource.cpp \
-    loader/CachedScript.cpp \
-    loader/CachedXSLStyleSheet.cpp \
+    loader/cache/CachedCSSStyleSheet.cpp \
+    loader/cache/CachedFont.cpp \
+    loader/cache/CachedImage.cpp \
+    loader/cache/CachedResourceClientWalker.cpp \
+    loader/cache/CachedResourceHandle.cpp \
+    loader/cache/CachedResource.cpp \
+    loader/cache/CachedScript.cpp \
+    loader/cache/CachedXSLStyleSheet.cpp \
     loader/CrossOriginAccessControl.cpp \
     loader/CrossOriginPreflightResultCache.cpp \
-    loader/CachedResourceLoader.cpp \
+    loader/cache/CachedResourceLoader.cpp \
     loader/DocumentLoader.cpp \
     loader/DocumentThreadableLoader.cpp \
     loader/DocumentWriter.cpp \
@@ -1923,18 +1923,18 @@ HEADERS += \
     loader/archive/ArchiveFactory.h \
     loader/archive/ArchiveResourceCollection.h \
     loader/archive/ArchiveResource.h \
-    loader/CachedCSSStyleSheet.h \
-    loader/CachedFont.h \
-    loader/CachedImage.h \
-    loader/CachedResourceClientWalker.h \
-    loader/CachedResource.h \
-    loader/CachedResourceHandle.h \
-    loader/CachedScript.h \
-    loader/CachedXSLStyleSheet.h \
+    loader/cache/CachedCSSStyleSheet.h \
+    loader/cache/CachedFont.h \
+    loader/cache/CachedImage.h \
+    loader/cache/CachedResourceClientWalker.h \
+    loader/cache/CachedResource.h \
+    loader/cache/CachedResourceHandle.h \
+    loader/cache/CachedScript.h \
+    loader/cache/CachedXSLStyleSheet.h \
     loader/cache/Cache.h \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
-    loader/CachedResourceLoader.h \
+    loader/cache/CachedResourceLoader.h \
     loader/DocumentLoader.h \
     loader/DocumentThreadableLoader.h \
     loader/FormState.h \

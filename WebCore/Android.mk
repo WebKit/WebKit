@@ -343,16 +343,16 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/TextDocumentParser.cpp \
 	html/parser/TextViewSourceParser.cpp \
 	\
-	loader/CachedCSSStyleSheet.cpp \
-	loader/CachedFont.cpp \
-	loader/CachedImage.cpp \
-	loader/CachedResource.cpp \
-	loader/CachedResourceClientWalker.cpp \
-	loader/CachedResourceHandle.cpp \
-	loader/CachedScript.cpp \
+	loader/cache/CachedCSSStyleSheet.cpp \
+	loader/cache/CachedFont.cpp \
+	loader/cache/CachedImage.cpp \
+	loader/cache/CachedResource.cpp \
+	loader/cache/CachedResourceClientWalker.cpp \
+	loader/cache/CachedResourceHandle.cpp \
+	loader/cache/CachedScript.cpp \
 	loader/CrossOriginAccessControl.cpp \
 	loader/CrossOriginPreflightResultCache.cpp \
-	loader/CachedResourceLoader.cpp \
+	loader/cache/CachedResourceLoader.cpp \
 	loader/DocumentLoader.cpp \
 	loader/DocumentThreadableLoader.cpp \
 	loader/DocumentWriter.cpp \

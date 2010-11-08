@@ -11531,7 +11531,6 @@
 		E44614120CD6826900FADA75 /* JSTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimeRanges.cpp; sourceTree = "<group>"; };
 		E44614130CD6826900FADA75 /* JSTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTimeRanges.h; sourceTree = "<group>"; };
 		E462A4A0113E71BE004A4220 /* IntPointHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntPointHash.h; sourceTree = "<group>"; };
-		E472053A0E5A053A0006BB4D /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
 		E4778B7D115A581A00B5D372 /* JSCustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomEvent.cpp; sourceTree = "<group>"; };
 		E4778B7E115A581A00B5D372 /* JSCustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomEvent.h; sourceTree = "<group>"; };
 		E47B4BE60E71241600038854 /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
@@ -16024,6 +16023,26 @@
 		A8D2B2521287A56000AF4DDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
+				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
+				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
+				BC64B4CA0CB4295D005F2B62 /* CachedFont.h */,
+				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
+				BCB16C030979C3BD00467741 /* CachedImage.h */,
+				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
+				BCB16C070979C3BD00467741 /* CachedResource.h */,
+				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
+				BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */,
+				BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */,
+				E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */,
+				E47B4BE60E71241600038854 /* CachedResourceHandle.h */,
+				BCB16C100979C3BD00467741 /* CachedResourceLoader.cpp */,
+				BCB16C110979C3BD00467741 /* CachedResourceLoader.h */,
+				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
+				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
+				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
+				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
+				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 			);
@@ -17258,27 +17277,6 @@
 				512DD8E80D91E691000F89EE /* archive */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
-				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
-				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
-				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
-				BC64B4CA0CB4295D005F2B62 /* CachedFont.h */,
-				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
-				BCB16C030979C3BD00467741 /* CachedImage.h */,
-				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
-				BCB16C070979C3BD00467741 /* CachedResource.h */,
-				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
-				BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */,
-				BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */,
-				E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */,
-				E47B4BE60E71241600038854 /* CachedResourceHandle.h */,
-				E472053A0E5A053A0006BB4D /* CachedResourceHandle.h */,
-				BCB16C100979C3BD00467741 /* CachedResourceLoader.cpp */,
-				BCB16C110979C3BD00467741 /* CachedResourceLoader.h */,
-				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
-				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
-				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
-				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
-				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
 				E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */,
 				E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */,
 				E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */,

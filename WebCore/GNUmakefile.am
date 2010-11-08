@@ -1907,28 +1907,28 @@ webcore_sources += \
 	WebCore/loader/archive/ArchiveResource.cpp \
 	WebCore/loader/archive/ArchiveResource.h \
 	WebCore/loader/cache/Cache.cpp \
-	WebCore/loader/CachedCSSStyleSheet.cpp \
-	WebCore/loader/CachedCSSStyleSheet.h \
-	WebCore/loader/CachedFont.cpp \
-	WebCore/loader/CachedFont.h \
-	WebCore/loader/CachedImage.cpp \
-	WebCore/loader/CachedImage.h \
+	WebCore/loader/cache/CachedCSSStyleSheet.cpp \
+	WebCore/loader/cache/CachedCSSStyleSheet.h \
+	WebCore/loader/cache/CachedFont.cpp \
+	WebCore/loader/cache/CachedFont.h \
+	WebCore/loader/cache/CachedImage.cpp \
+	WebCore/loader/cache/CachedImage.h \
+	WebCore/loader/cache/CachedResourceClient.h \
+	WebCore/loader/cache/CachedResourceClientWalker.cpp \
+	WebCore/loader/cache/CachedResourceClientWalker.h \
+	WebCore/loader/cache/CachedResource.cpp \
+	WebCore/loader/cache/CachedResource.h \
+	WebCore/loader/cache/CachedResourceHandle.cpp \
+	WebCore/loader/cache/CachedResourceHandle.h \
+	WebCore/loader/cache/CachedResourceLoader.cpp \
+	WebCore/loader/cache/CachedResourceLoader.h \
+	WebCore/loader/cache/CachedScript.cpp \
+	WebCore/loader/cache/CachedScript.h \
+	WebCore/loader/cache/CachedXSLStyleSheet.cpp \
+	WebCore/loader/cache/CachedXSLStyleSheet.h \
+	WebCore/loader/cache/Cache.h \
+	WebCore/loader/cache/CachePolicy.h \
 	WebCore/loader/CachedMetadata.h \
-	WebCore/loader/CachedResourceClient.h \
-	WebCore/loader/CachedResourceClientWalker.cpp \
-	WebCore/loader/CachedResourceClientWalker.h \
-	WebCore/loader/CachedResource.cpp \
-	WebCore/loader/CachedResource.h \
-	WebCore/loader/CachedResourceHandle.cpp \
-	WebCore/loader/CachedResourceHandle.h \
-	WebCore/loader/CachedResourceLoader.cpp \
-	WebCore/loader/CachedResourceLoader.h \
-	WebCore/loader/CachedScript.cpp \
-	WebCore/loader/CachedScript.h \
-	WebCore/loader/CachedXSLStyleSheet.cpp \
-	WebCore/loader/CachedXSLStyleSheet.h \
-	WebCore/loader/Cache.h \
-	WebCore/loader/CachePolicy.h \
 	WebCore/loader/CrossOriginAccessControl.cpp \
 	WebCore/loader/CrossOriginAccessControl.h \
 	WebCore/loader/CrossOriginPreflightResultCache.cpp \
