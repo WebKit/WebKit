@@ -1,6 +1,6 @@
 all:
-    -xcopy /y/d/e/i "..\..\..\WebKitLibraries\win\tools" "$(WEBKITLIBRARIESDIR)\tools"
-    touch "$(WEBKITOUTPUTDIR)\buildfailed"
+    echo XXJavaScriptCoreGeneratedXX > "$(WEBKITOUTPUTDIR)\buildfailed"
+    copy-tools.cmd
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
     -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\APICast.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"

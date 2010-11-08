@@ -1210,6 +1210,8 @@ sub buildVisualStudioProject
 
     my @command = ($vcBuildPath, $project, $action, $config);
 
+    $ENV{WEBKIT_NONINTERACTIVE_BUILD} = "1";
+
     print join(" ", @command), "\n";
     return system @command;
 }

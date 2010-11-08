@@ -1,3 +1,18 @@
+2010-11-08  Adam Roben  <aroben@apple.com>
+
+        Mark Windows builds triggered from Perl as being non-interactive
+
+        This affects whether some of our scripts will show alerts vs. printing
+        to the build log.
+
+        Fixes <http://webkit.org/b/49181> Windows build fail mysteriously when
+        .vsprops files are updated
+
+        Reviewed by Steve Falkenburg.
+
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject): Set WEBKIT_NONINTERACTIVE_BUILD to 1.
+
 2010-11-08  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.

@@ -1,3 +1,43 @@
+2010-11-08  Adam Roben  <aroben@apple.com>
+
+        Show a message and cause the build to immediately fail when any
+        .vsprops files are copied
+
+        When $WebKitLibrariesDir is set to a non-standard location, the
+        .vsprops files have to be copied from WebKitLibraries/win to
+        $WebKitLibrariesDir. When this happens, Visual Studio doesn't pick up
+        changes to the .vsprops files until the next time it opens the solution
+        file. Before this patch, the build would soldier on with the old
+        .vsprops files, leading to strange build failures. Now we detect that
+        the .vsprops files have been updated, display a message to the user
+        telling them what to do, and make the build fail immediately.
+
+        Fixes <http://webkit.org/b/49181> Windows build fail mysteriously when
+        .vsprops files are updated
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        Moved code to copy the tools directory to the new copy-tools.cmd
+        script. Moved that after the command that writes the buildfailed file
+        so the build will be considered a failure if copy-tools.cmd fails.
+        Changed to write the project name into buildfailed like all our other
+        projects do, so those other projects will know that the failure was due
+        to this project.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        Added new scripts.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-tools.cmd: Added. Copies
+        the tools directory to $WebKitLibrariesDir. If any files were copied,
+        we display a message to the user and exit with error code 1 to cause
+        the build to fail. In non-interactive builds, we just print the message
+        to the build log. In interactive builds, we show the message in an
+        alert.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/show-alert.js: Added. Uses
+        Windows Scripting Host to display a message in an alert.
+
 2010-11-07  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Andreas Kling.
