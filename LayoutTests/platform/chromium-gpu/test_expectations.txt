@@ -195,8 +195,6 @@ BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
-// Passes on the GPU, but leaving this here for reference.
-// BUGWEBGL : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT PASS
 BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
@@ -204,13 +202,34 @@ BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS T
 BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
-BUGWK48634 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT
 BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
-// BUGWEBGL WIN : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
+// Update canvas/philip in WK r71481
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.null.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.line.cap.closed.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.line.join.parallel.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.null.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.drawImage.canvas.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.drawImage.image.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.fillStyle.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
+BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
 // END OF DUPLICATED SECTION
 
@@ -256,7 +275,7 @@ BUGWK47925 : compositing/plugins/composited-plugin.html = FAIL
 BUGWK47926 : compositing/geometry/composited-html-size.html = FAIL
 
 // These tests are missing an entire layer in the layer tree output.
-BUGWK47927 : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = FAIL
+BUGWK47927 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
 
 BUG60962 WIN : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT PASS
 BUG60962 MAC : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE
@@ -265,7 +284,7 @@ BUG60962 LINUX : compositing/geometry/limit-layer-bounds-overflow-repaint.html =
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
 // Safari's.
-BUGWK47944 : compositing/geometry/limit-layer-bounds-overflow-root.html = FAIL
+BUGWK47944 WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
 
 // The following failure is missing a tiled layer where Safari has
 // one, in addition to having a layer positioned differently than in
@@ -322,8 +341,7 @@ BUGWK47953 : compositing/webgl/webgl-reflection.html = FAIL
 // needs to be investigated.
 // Became flaky on all platforms after the switch to DRT.
 BUGWK48016 : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT PASS
-// Started failing on all platforms after the switch to DRT.
-BUGWK48016 : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
+BUGWK48016 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
 BUGWK48016 LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
 
 // This test causes an assertion failure in DRT, but apparently not
