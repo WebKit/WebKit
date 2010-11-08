@@ -42,6 +42,7 @@
 #include "HitTestResult.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "RenderApplet.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderIFrame.h"
 #include "RenderLayerBacking.h"
@@ -1227,21 +1228,20 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer)
 
 bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer) const
 {
-    if (!renderer->isEmbeddedObject())
-        return false;
-    
-    RenderEmbeddedObject* embedRenderer = toRenderEmbeddedObject(renderer);
-    if (!embedRenderer->allowsAcceleratedCompositing())
+    bool composite = (renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing())
+                  || (renderer->isApplet() && toRenderApplet(renderer)->allowsAcceleratedCompositing());
+    if (!composite)
         return false;
 
     m_compositingDependsOnGeometry = true;
-
+    
+    RenderWidget* pluginRenderer = toRenderWidget(renderer);
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
-    if (renderer->needsLayout())
-        return embedRenderer->hasLayer() && embedRenderer->layer()->isComposited();
+    if (pluginRenderer->needsLayout())
+        return pluginRenderer->hasLayer() && pluginRenderer->layer()->isComposited();
 
     // Don't go into compositing mode if height or width are zero, or size is 1x1.
-    IntRect contentBox = embedRenderer->contentBoxRect();
+    IntRect contentBox = pluginRenderer->contentBoxRect();
     return contentBox.height() * contentBox.width() > 1;
 }
 

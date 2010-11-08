@@ -1,3 +1,18 @@
+2010-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Allow applets to participate in accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=49117
+        <rdar://problem/8625819>
+        
+        If Java is being loaded via the Netscape Plugin API, create a
+        NetscapePluginWidget so that it has an implementation of platformLayer().
+        
+        Also clean up by using early returns.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2010-11-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

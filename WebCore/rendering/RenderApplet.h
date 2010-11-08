@@ -27,34 +27,42 @@
 
 namespace WebCore {
 
-    class HTMLAppletElement;
+class HTMLAppletElement;
 
-    class RenderApplet : public RenderWidget {
-    public:
-        RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
-        virtual ~RenderApplet();
+class RenderApplet : public RenderWidget {
+public:
+    RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
+    virtual ~RenderApplet();
 
-        void createWidgetIfNecessary();
+    void createWidgetIfNecessary();
 
-    private:
-        virtual const char* renderName() const { return "RenderApplet"; }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool allowsAcceleratedCompositing() const;
+#endif
 
-        virtual bool isApplet() const { return true; }
+private:
+    virtual const char* renderName() const { return "RenderApplet"; }
 
-        virtual void layout();
-        virtual IntSize intrinsicSize() const;
+    virtual bool isApplet() const { return true; }
 
-        HashMap<String, String> m_args;
-    };
+    virtual void layout();
+    virtual IntSize intrinsicSize() const;
 
-    inline RenderApplet* toRenderApplet(RenderObject* object)
-    {
-        ASSERT(!object || object->isApplet());
-        return static_cast<RenderApplet*>(object);
-    }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool requiresLayer() const;
+#endif
 
-    // This will catch anyone doing an unnecessary cast.
-    void toRenderApplet(const RenderApplet*);
+    HashMap<String, String> m_args;
+};
+
+inline RenderApplet* toRenderApplet(RenderObject* object)
+{
+    ASSERT(!object || object->isApplet());
+    return static_cast<RenderApplet*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderApplet(const RenderApplet*);
 
 } // namespace WebCore
 

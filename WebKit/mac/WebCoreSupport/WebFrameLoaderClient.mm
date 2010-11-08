@@ -1752,6 +1752,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                 [values addObject:[NSString stringWithFormat:@"%d", size.height()]];
             }
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
+            if (view)
+                return adoptRef(new PluginWidget(view));
         } 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
@@ -1764,6 +1766,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                 attributeValues:kit(paramValues)
                 loadManually:NO
                 element:element] autorelease];
+            if (view)
+                return adoptRef(new NetscapePluginWidget(view));
         } else {
             ASSERT_NOT_REACHED();
         }
@@ -1781,15 +1785,9 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
         }
     }
 
-    ASSERT(view);
-    return adoptRef(new PluginWidget(view));
-
     END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return adoptRef(new PluginWidget);
-#else
-    return 0;
 #endif // ENABLE(JAVA_BRIDGE)
+    return 0;
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

@@ -46,6 +46,7 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
+#include "RenderApplet.h"
 #include "RenderBox.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
@@ -224,6 +225,7 @@ void RenderLayerBacking::updateAfterLayout(UpdateDepth updateDepth, bool isUpdat
 bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 {
     RenderLayerCompositor* compositor = this->compositor();
+    RenderObject* renderer = this->renderer();
 
     bool layerConfigChanged = false;
     if (updateForegroundLayer(compositor->needsContentsCompositingLayer(m_owningLayer)))
@@ -232,7 +234,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (updateClippingLayers(compositor->clippedByAncestor(m_owningLayer), compositor->clipsCompositingDescendants(m_owningLayer)))
         layerConfigChanged = true;
 
-    if (updateMaskLayer(m_owningLayer->renderer()->hasMask()))
+    if (updateMaskLayer(renderer->hasMask()))
         m_graphicsLayer->setMaskLayer(m_maskLayer.get());
 
     if (m_owningLayer->hasReflection()) {
@@ -246,27 +248,28 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (isDirectlyCompositedImage())
         updateImageContents();
 
-    if (renderer()->isEmbeddedObject() && toRenderEmbeddedObject(renderer())->allowsAcceleratedCompositing()) {
-        PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>(toRenderEmbeddedObject(renderer())->widget());
+    if ((renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing())
+        || (renderer->isApplet() && toRenderApplet(renderer)->allowsAcceleratedCompositing())) {
+        PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>(toRenderWidget(renderer)->widget());
         m_graphicsLayer->setContentsToMedia(pluginViewBase->platformLayer());
     }
 #if ENABLE(VIDEO)
-    else if (renderer()->isVideo()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(renderer()->node());
+    else if (renderer->isVideo()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(renderer->node());
         m_graphicsLayer->setContentsToMedia(mediaElement->platformLayer());
     }
 #endif
 #if ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
-    else if (isAcceleratedCanvas(renderer())) {
-        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
+    else if (isAcceleratedCanvas(renderer)) {
+        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer->node());
         if (CanvasRenderingContext* context = canvas->renderingContext())
             m_graphicsLayer->setContentsToCanvas(context->platformLayer());
         layerConfigChanged = true;
     }
 #endif
 
-    if (renderer()->isRenderIFrame())
-        layerConfigChanged = RenderLayerCompositor::parentIFrameContentLayers(toRenderIFrame(renderer()));
+    if (renderer->isRenderIFrame())
+        layerConfigChanged = RenderLayerCompositor::parentIFrameContentLayers(toRenderIFrame(renderer));
 
     return layerConfigChanged;
 }
