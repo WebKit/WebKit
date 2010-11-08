@@ -54,9 +54,9 @@ function setResult(result)
 
 function runTest()
 {
-    map1 = document.getElementsByTagName("map")[0];
-    map2 = document.getElementsByTagName("map")[1];
-    map3 = document.getElementsByTagName("map")[2];
+    map1 = document.getElementsByTagName("map")[1];
+    map2 = document.getElementsByTagName("map")[2];
+    map3 = document.getElementsByTagName("map")[3];
 
     var numClicks = 7;
     if (!window.eventSender) {
@@ -74,6 +74,7 @@ function runTest()
 </script>
 </head>
 <body onload="runTest()">
+<map name="mapName"><area shape="rect" coords="0,0,100,100" onclick="setResult('0')" /></map>
 <map name="mapname"><area shape="rect" coords="0,0,100,100" onclick="setResult('1')" /></map>
 <map name="mapname"><area shape="rect" coords="0,0,100,100" onclick="setResult('2')" /></map>
 <map name="mapname"><area shape="rect" coords="0,0,100,100" onclick="setResult('3')" /></map>
