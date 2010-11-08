@@ -1,5 +1,11 @@
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * MigrateHeaders.make:
+
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Remove use of HIGetScaleFactor
