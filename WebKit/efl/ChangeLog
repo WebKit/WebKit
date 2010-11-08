@@ -1,3 +1,18 @@
+2010-11-08  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Change the usage of eina_iterator_next due to latest EFL changes.
+        https://bugs.webkit.org/show_bug.cgi?id=49082
+
+        A change on how the iterator for a tiler is used in EFL needs to be
+        reflected in WebKit-EFL. The iterator now receives a pointer to an
+        Eina_Rectangle and makes it point to its internal structure. The old
+        usage was to receive a reference to a pre-allocated Eina_Rectangle.
+
+        * ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_repaints_process):
+
 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

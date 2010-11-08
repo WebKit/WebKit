@@ -358,7 +358,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
     Ewk_View_Paint_Context *ctxt;
     Evas_Coord ow, oh;
     void *pixels;
-    Eina_Rectangle r = {0, 0, 0, 0};
+    Eina_Rectangle *r;
     const Eina_Rectangle *pr;
     const Eina_Rectangle *pr_end;
     Eina_Tiler *tiler;
@@ -446,8 +446,8 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
 
     EINA_ITERATOR_FOREACH(itr, r) {
         Eina_Rectangle scrolled_rect = {
-            r.x + sx, r.y + sy,
-            r.w, r.h
+            r->x + sx, r->y + sy,
+            r->w, r->h
         };
 
         ewk_view_paint_context_save(ctxt);
@@ -460,7 +460,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
 
         ewk_view_paint_context_restore(ctxt);
         evas_object_image_data_update_add
-            (sd->backing_store, r.x, r.y, r.w, r.h);
+            (sd->backing_store, r->x, r->y, r->w, r->h);
     }
     eina_iterator_free(itr);
 
