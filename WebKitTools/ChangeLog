@@ -1,3 +1,12 @@
+2010-11-08  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Enable running of Qt API tests on BuildBot
+        https://bugs.webkit.org/show_bug.cgi?id=49004
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-11-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
