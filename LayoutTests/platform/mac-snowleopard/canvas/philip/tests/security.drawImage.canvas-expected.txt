@@ -1,0 +1,4 @@
+Blocked access to external URL http://test2.w3.org/html/tests/approved/images/yellow.png
+Failed assertion: should throw exception: canvas.toDataURL()
+Failed assertion: should throw exception: ctx.getImageData(0, 0, 1, 1)
+
