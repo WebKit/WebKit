@@ -5407,6 +5407,11 @@ canvas/philip/tests/security.drawImage.image.html
 canvas/philip/tests/security.pattern.canvas.fillStyle.html
 canvas/philip/tests/security.pattern.canvas.strokeStyle.html
 canvas/philip/tests/security.reset.html
+canvas/philip/tests/security.pattern.canvas.timing.html
+canvas/philip/tests/security.pattern.create.html
+canvas/philip/tests/security.pattern.cross.html
+canvas/philip/tests/security.pattern.image.fillStyle.html
+canvas/philip/tests/security.pattern.image.strokeStyle.html
 
 # Setting CSS properties such as padding and margin does not work properly
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855
