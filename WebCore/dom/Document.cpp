@@ -212,8 +212,10 @@ using namespace HTMLNames;
 // for dual G5s. :)
 static const int cLayoutScheduleThreshold = 250;
 
-// Use 1 to represent the document's default form.
-static HTMLFormElement* const defaultForm = reinterpret_cast<HTMLFormElement*>(1);
+// These functions can't have internal linkage because they are used as template arguments.
+bool keyMatchesId(AtomicStringImpl*, Element*);
+bool keyMatchesMapName(AtomicStringImpl*, Element*);
+bool keyMatchesLowercasedMapName(AtomicStringImpl*, Element*);
 
 // DOM Level 2 says (letters added):
 //
@@ -479,6 +481,12 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
 #if ENABLE(XHTMLMP)
     m_shouldProcessNoScriptElement = !(m_frame && m_frame->script()->canExecuteScripts(NotAboutToExecuteScript));
 #endif
+}
+
+inline void Document::DocumentOrderedMap::clear()
+{
+    m_map.clear();
+    m_duplicateCounts.clear();
 }
 
 void Document::removedLastRef()
@@ -938,32 +946,87 @@ PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const 
     return createElement(qName, false);
 }
 
+inline void Document::DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
+{
+    ASSERT(key);
+    ASSERT(element);
+
+    if (!m_duplicateCounts.contains(key)) {
+        // Fast path. The key is not already in m_duplicateCounts, so we assume that it's
+        // also not already in m_map and try to add it. If that add succeeds, we're done.
+        pair<Map::iterator, bool> addResult = m_map.add(key, element);
+        if (addResult.second)
+            return;
+
+        // The add failed, so this key was already cached in m_map.
+        // There are multiple elements with this key. Remove the m_map
+        // cache for this key so get searches for it next time it is called.
+        m_map.remove(addResult.first);
+        m_duplicateCounts.add(key);
+    } else {
+        // There are multiple elements with this key. Remove the m_map
+        // cache for this key so get will search for it next time it is called.
+        Map::iterator cachedItem = m_map.find(key);
+        if (cachedItem != m_map.end()) {
+            m_map.remove(cachedItem);
+            m_duplicateCounts.add(key);
+        }
+    }
+
+    m_duplicateCounts.add(key);
+}
+
+inline void Document::DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
+{
+    ASSERT(key);
+    ASSERT(element);
+
+    m_map.checkConsistency();
+    Map::iterator cachedItem = m_map.find(key);
+    if (cachedItem != m_map.end() && cachedItem->second == element)
+        m_map.remove(cachedItem);
+    else
+        m_duplicateCounts.remove(key);
+}
+
+template<bool keyMatches(AtomicStringImpl*, Element*)> inline Element* Document::DocumentOrderedMap::get(AtomicStringImpl* key, const Document* document) const
+{
+    ASSERT(key);
+
+    m_map.checkConsistency();
+
+    Element* element = m_map.get(key);
+    if (element)
+        return element;
+
+    if (m_duplicateCounts.contains(key)) {
+        // We know there's at least one node that matches; iterate to find the first one.
+        for (Node* node = document->firstChild(); node; node = node->traverseNextNode()) {
+            if (!node->isElementNode())
+                continue;
+            element = static_cast<Element*>(node);
+            if (!keyMatches(key, element))
+                continue;
+            m_duplicateCounts.remove(key);
+            m_map.set(key, element);
+            return element;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
+    return 0;
+}
+
+inline bool keyMatchesId(AtomicStringImpl* key, Element* element)
+{
+    return element->hasID() && element->getIdAttribute().impl() == key;
+}
+
 Element* Document::getElementById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())
         return 0;
-
-    m_elementsById.checkConsistency();
-
-    Element* element = m_elementsById.get(elementId.impl());
-    if (element)
-        return element;
-
-    if (m_duplicateIds.contains(elementId.impl())) {
-        // We know there's at least one node with this id, but we don't know what the first one is.
-        for (Node* n = traverseNextNode(); n; n = n->traverseNextNode()) {
-            if (n->isElementNode()) {
-                element = static_cast<Element*>(n);
-                if (element->hasID() && element->getIdAttribute() == elementId) {
-                    m_duplicateIds.remove(elementId.impl());
-                    m_elementsById.set(elementId.impl(), element);
-                    return element;
-                }
-            }
-        }
-        ASSERT_NOT_REACHED();
-    }
-    return 0;
+    return m_elementsById.get<keyMatchesId>(elementId.impl(), this);
 }
 
 String Document::readyState() const
@@ -1198,40 +1261,12 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 
 void Document::addElementById(const AtomicString& elementId, Element* element)
 {
-    typedef HashMap<AtomicStringImpl*, Element*>::iterator iterator;
-    if (!m_duplicateIds.contains(elementId.impl())) {
-        // Fast path. The ID is not already in m_duplicateIds, so we assume that it's
-        // also not already in m_elementsById and do an add. If that add succeeds, we're done.
-        pair<iterator, bool> addResult = m_elementsById.add(elementId.impl(), element);
-        if (addResult.second)
-            return;
-        // The add failed, so this ID was already cached in m_elementsById.
-        // There are multiple elements with this ID. Remove the m_elementsById
-        // cache for this ID so getElementById searches for it next time it is called.
-        m_elementsById.remove(addResult.first);
-        m_duplicateIds.add(elementId.impl());
-    } else {
-        // There are multiple elements with this ID. If it exists, remove the m_elementsById
-        // cache for this ID so getElementById searches for it next time it is called.
-        iterator cachedItem = m_elementsById.find(elementId.impl());
-        if (cachedItem != m_elementsById.end()) {
-            m_elementsById.remove(cachedItem);
-            m_duplicateIds.add(elementId.impl());
-        }
-    }
-    m_duplicateIds.add(elementId.impl());
+    m_elementsById.add(elementId.impl(), element);
 }
 
 void Document::removeElementById(const AtomicString& elementId, Element* element)
 {
-    m_elementsById.checkConsistency();
-
-    if (m_elementsById.get(elementId.impl()) == element)
-        m_elementsById.remove(elementId.impl());
-    else {
-        ASSERT(m_inRemovedLastRefFunction || m_duplicateIds.contains(elementId.impl()));
-        m_duplicateIds.remove(elementId.impl());
-    }
+    m_elementsById.remove(elementId.impl(), element);
 }
 
 Element* Document::getElementByAccessKey(const String& key) const
@@ -3779,30 +3814,28 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
 
 void Document::addImageMap(HTMLMapElement* imageMap)
 {
-    const AtomicString& name = imageMap->getName();
-    if (!name.impl())
+    AtomicStringImpl* name = imageMap->getName().impl();
+    if (!name)
         return;
-
-    // Add the image map, unless there's already another with that name.
-    // "First map wins" is the rule other browsers seem to implement.
-    m_imageMapsByName.add(name.impl(), imageMap);
+    m_imageMapsByName.add(name, imageMap);
 }
 
 void Document::removeImageMap(HTMLMapElement* imageMap)
 {
-    // Remove the image map by name.
-    // But don't remove some other image map that just happens to have the same name.
-    // FIXME: Use a HashCountedSet as we do for IDs to find the first remaining map
-    // once a map has been removed.
-    const AtomicString& name = imageMap->getName();
-    if (!name.impl())
+    AtomicStringImpl* name = imageMap->getName().impl();
+    if (!name)
         return;
+    m_imageMapsByName.remove(name, imageMap);
+}
 
-    m_imageMapsByName.checkConsistency();
+inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)
+{
+    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().impl() == key;
+}
 
-    ImageMapsByName::iterator it = m_imageMapsByName.find(name.impl());
-    if (it != m_imageMapsByName.end() && it->second == imageMap)
-        m_imageMapsByName.remove(it);
+inline bool keyMatchesLowercasedMapName(AtomicStringImpl* key, Element* element)
+{
+    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().lower().impl() == key;
 }
 
 HTMLMapElement* Document::getImageMap(const String& url) const
@@ -3811,9 +3844,9 @@ HTMLMapElement* Document::getImageMap(const String& url) const
         return 0;
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
-    AtomicString mapName = isHTMLDocument() ? name.lower() : name;
-    m_imageMapsByName.checkConsistency();
-    return m_imageMapsByName.get(mapName.impl());
+    if (isHTMLDocument())
+        return static_cast<HTMLMapElement*>(m_imageMapsByName.get<keyMatchesLowercasedMapName>(AtomicString(name.lower()).impl(), this));
+    return static_cast<HTMLMapElement*>(m_imageMapsByName.get<keyMatchesMapName>(AtomicString(name).impl(), this));
 }
 
 void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)

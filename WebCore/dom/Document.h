@@ -311,7 +311,7 @@ public:
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
     Element* getElementById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
-    bool containsMultipleElementsWithId(const AtomicString& elementId) { return m_duplicateIds.contains(elementId.impl()); }
+    bool containsMultipleElementsWithId(const AtomicString& id) const;
 
     /**
      * Retrieve all nodes that intersect a rect in the window's document, until it is fully enclosed by
@@ -1054,6 +1054,28 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+    class DocumentOrderedMap {
+    public:
+        void add(AtomicStringImpl*, Element*);
+        void remove(AtomicStringImpl*, Element*);
+        void clear();
+
+        bool contains(AtomicStringImpl*) const;
+        bool containsMultiple(AtomicStringImpl*) const;
+        template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const Document*) const;
+
+        void checkConsistency() const;
+
+    private:
+        typedef HashMap<AtomicStringImpl*, Element*> Map;
+
+        // We maintain the invariant that m_duplicateCounts is the count of all elements with a given key
+        // excluding the one referenced in m_map, if any. This means it one less than the total count
+        // when the first node with a given key is cached, otherwise the same as the total count.
+        mutable Map m_map;
+        mutable HashCountedSet<AtomicStringImpl*> m_duplicateCounts;
+    };
+
     friend class IgnoreDestructiveWriteCountIncrementer;
 
     void detachParser();
@@ -1243,8 +1265,7 @@ private:
     RefPtr<Document> m_transformSourceDocument;
 #endif
 
-    typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;
-    ImageMapsByName m_imageMapsByName;
+    DocumentOrderedMap m_imageMapsByName;
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
@@ -1262,11 +1283,7 @@ private:
     
     RefPtr<TextResourceDecoder> m_decoder;
 
-    // We maintain the invariant that m_duplicateIds is the count of all elements with a given ID
-    // excluding the one referenced in m_elementsById, if any. This means it one less than the total count
-    // when the first node with a given ID is cached, otherwise the same as the total count.
-    mutable HashMap<AtomicStringImpl*, Element*> m_elementsById;
-    mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
+    DocumentOrderedMap m_elementsById;
     
     mutable HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;
     
@@ -1348,10 +1365,25 @@ private:
     DocumentTiming m_documentTiming;
 };
 
+inline bool Document::DocumentOrderedMap::contains(AtomicStringImpl* id) const
+{
+    return m_map.contains(id) || m_duplicateCounts.contains(id);
+}
+
+inline bool Document::DocumentOrderedMap::containsMultiple(AtomicStringImpl* id) const
+{
+    return m_duplicateCounts.contains(id);
+}
+
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const
 {
     ASSERT(id);
-    return m_elementsById.contains(id) || m_duplicateIds.contains(id);
+    return m_elementsById.contains(id);
+}
+
+inline bool Document::containsMultipleElementsWithId(const AtomicString& id) const
+{
+    return m_elementsById.containsMultiple(id.impl());
 }
     
 inline bool Node::isDocumentNode() const
