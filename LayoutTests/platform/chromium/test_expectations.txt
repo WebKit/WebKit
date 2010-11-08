@@ -3391,9 +3391,6 @@ BUG62025 MAC LINUX WIN: fast/table/border-collapsing/equal-precedence-resolution
 BUG62025 MAC LINUX WIN: fast/table/height-percent-test-vertical.html = IMAGE
 BUG62025 MAC : fast/table/table-display-types-vertical.html = IMAGE
 
-// Test rebaselined in WK r71377
-BUG62026 LINUX WIN : fast/dom/HTMLMeterElement/meter-element.html = TEXT
-
 // Added in WK r71416, doesn't look like it's applicable to Chromium
 WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT
 
