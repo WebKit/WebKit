@@ -1,3 +1,15 @@
+2010-11-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        >=webkitgtk-1.2.5: parallel build fails with libtool: link: cannot find the library `libwebkit-1.0.la' or unhandled argument `libwebkit-1.0.la'
+        https://bugs.webkit.org/show_bug.cgi?id=49128
+
+        r59042 introduced a C++-style comment in Platform.h, which is often
+        included in C source files. Change it to a C-style comment.
+
+        * wtf/Platform.h: Fix the C++-style comment.
+
 2010-11-08  Adam Roben  <aroben@apple.com>
 
         Show a message and cause the build to immediately fail when any
