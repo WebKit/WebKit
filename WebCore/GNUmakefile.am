@@ -1476,6 +1476,7 @@ webcore_sources += \
 	WebCore/html/BaseTextInputType.h \
 	WebCore/html/ButtonInputType.cpp \
 	WebCore/html/ButtonInputType.h \
+	WebCore/html/canvas/ArrayBuffer.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \
@@ -2291,6 +2292,7 @@ webcore_sources += \
 	WebCore/platform/graphics/FontFamily.h \
 	WebCore/platform/graphics/FontFastPath.cpp \
 	WebCore/platform/graphics/Font.h \
+	WebCore/platform/graphics/FontOrientation.h \
 	WebCore/platform/graphics/FontRenderingMode.h \
 	WebCore/platform/graphics/FontSelector.h \
 	WebCore/platform/graphics/FontSmoothingMode.h \
@@ -2453,6 +2455,7 @@ webcore_sources += \
 	WebCore/platform/PopupMenu.h \
 	WebCore/platform/PopupMenuStyle.h \
 	WebCore/platform/PurgeableBuffer.h \
+	WebCore/platform/PurgePriority.h \
 	WebCore/platform/SchemeRegistry.cpp \
 	WebCore/platform/SchemeRegistry.h \
 	WebCore/platform/ScrollAnimator.cpp \
@@ -2964,6 +2967,8 @@ webcore_sources += \
 	WebCore/storage/IDBObjectStore.h \
 	WebCore/storage/IDBRequest.cpp \
 	WebCore/storage/IDBRequest.h \
+	WebCore/storage/IDBSQLiteDatabase.cpp \
+	WebCore/storage/IDBSQLiteDatabase.h \
 	WebCore/storage/IDBSuccessEvent.cpp \
 	WebCore/storage/IDBSuccessEvent.h \
 	WebCore/storage/IDBTransactionBackendInterface.h \
