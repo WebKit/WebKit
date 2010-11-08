@@ -151,7 +151,7 @@ void Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* re
         host->servePendingRequests(priority);
     } else {
         // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones
-        InspectorInstrumentation::didScheduleResourceRequest(cachedResourceLoader->doc(), resource->url());
+        InspectorInstrumentation::didScheduleResourceRequest(cachedResourceLoader->document(), resource->url());
         scheduleServePendingRequests();
     }
 }
@@ -334,7 +334,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         // For named hosts - which are only http(s) hosts - we should always enforce the connection limit.
         // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
         // and we don't know all stylesheets yet.
-        bool shouldLimitRequests = !m_name.isNull() || cachedResourceLoader->doc()->parsing() || !cachedResourceLoader->doc()->haveStylesheetsLoaded();
+        bool shouldLimitRequests = !m_name.isNull() || cachedResourceLoader->document()->parsing() || !cachedResourceLoader->document()->haveStylesheetsLoaded();
         if (shouldLimitRequests && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
             return;
@@ -371,7 +371,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
             resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
 
-        RefPtr<SubresourceLoader> loader = SubresourceLoader::create(cachedResourceLoader->doc()->frame(),
+        RefPtr<SubresourceLoader> loader = SubresourceLoader::create(cachedResourceLoader->document()->frame(),
             this, resourceRequest, request->shouldDoSecurityCheck(), request->sendResourceLoadCallbacks());
         if (loader) {
             m_requestsLoading.add(loader.release(), request);
@@ -405,7 +405,7 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     CachedResourceLoader* cachedResourceLoader = request->cachedResourceLoader();
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
-    RefPtr<Document> protector(cachedResourceLoader->doc());
+    RefPtr<Document> protector(cachedResourceLoader->document());
     if (!request->isMultipart())
         cachedResourceLoader->decrementRequestCount(request->cachedResource());
 
@@ -451,7 +451,7 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     CachedResourceLoader* cachedResourceLoader = request->cachedResourceLoader();
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
-    RefPtr<Document> protector(cachedResourceLoader->doc());
+    RefPtr<Document> protector(cachedResourceLoader->document());
     if (!request->isMultipart())
         cachedResourceLoader->decrementRequestCount(request->cachedResource());
 

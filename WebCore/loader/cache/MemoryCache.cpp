@@ -111,10 +111,10 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
         return 0;
     }
 
-    if (!cachedResourceLoader->doc()->securityOrigin()->canDisplay(url)) {
+    if (!cachedResourceLoader->document()->securityOrigin()->canDisplay(url)) {
         LOG(ResourceLoading, "...URL was not allowed by SecurityOrigin");
         if (!requestIsPreload)
-            FrameLoader::reportLocalLoadFailed(cachedResourceLoader->doc()->frame(), url.string());
+            FrameLoader::reportLocalLoadFailed(cachedResourceLoader->document()->frame(), url.string());
         return 0;
     }
     

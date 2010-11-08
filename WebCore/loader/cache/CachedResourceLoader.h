@@ -82,7 +82,7 @@ public:
     CachePolicy cachePolicy() const;
     
     Frame* frame() const; // Can be NULL
-    Document* doc() const { return m_doc; }
+    Document* document() const { return m_document; }
 
     void removeCachedResource(CachedResource*) const;
 
@@ -112,7 +112,7 @@ private:
     MemoryCache* m_cache;
     HashSet<String> m_reloadedURLs;
     mutable DocumentResourceMap m_documentResources;
-    Document* m_doc;
+    Document* m_document;
     
     int m_requestCount;
     
