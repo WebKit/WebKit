@@ -1,3 +1,16 @@
+2010-11-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add clean-review-queue command to remove closed bugs from the webkit.org/pending-review
+        https://bugs.webkit.org/show_bug.cgi?id=49160
+
+        Bugzilla doesn't automatically remove r? when a bug gets closed.
+        This script takes care of that for webkit.org.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+
 2010-11-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, rolling out r71474.
