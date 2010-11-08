@@ -44,6 +44,8 @@ messages -> PluginProxy {
     # Gets a reference to the plug-in element NPObject.
     GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID)
 
+    # Evaluates the given JavaScript string.
+    Evaluate(WebKit::NPVariantData npObjectAsVariantData, WTF::String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData)
 }
 
 #endif

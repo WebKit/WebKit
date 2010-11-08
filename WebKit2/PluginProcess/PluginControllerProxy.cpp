@@ -29,8 +29,10 @@
 
 #include "BackingStore.h"
 #include "DataReference.h"
+#include "NPObjectProxy.h"
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include "NPVariantData.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
@@ -191,10 +193,25 @@ NPObject* PluginControllerProxy::pluginElementNPObject()
     return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginElementNPObjectID);
 }
 
-bool PluginControllerProxy::evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups)
+bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
-    notImplemented();
-    return false;
+    NPVariant npObjectAsNPVariant;
+    OBJECT_TO_NPVARIANT(npObject, npObjectAsNPVariant);
+
+    // Send the NPObject over as an NPVariantData.
+    NPVariantData npObjectAsNPVariantData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(npObjectAsNPVariant);
+
+    bool returnValue = false;
+    NPVariantData resultData;
+
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::Evaluate(npObjectAsNPVariantData, scriptString, allowPopups), Messages::PluginProxy::Evaluate::Reply(returnValue, resultData), m_pluginInstanceID))
+        return false;
+
+    if (!returnValue)
+        return false;
+
+    *result = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(resultData);
+    return true;
 }
 
 void PluginControllerProxy::setStatusbarText(const WTF::String&)

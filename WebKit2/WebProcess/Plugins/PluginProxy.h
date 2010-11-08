@@ -47,6 +47,7 @@ namespace WebCore {
 namespace WebKit {
 
 class BackingStore;
+class NPVariantData;
 class PluginProcessConnection;
 
 class PluginProxy : public Plugin {
@@ -110,6 +111,7 @@ private:
     void setCookiesForURL(const String& urlString, const String& cookieString);
     void getWindowScriptNPObject(uint64_t& windowScriptNPObjectID);
     void getPluginElementNPObject(uint64_t& pluginElementNPObjectID);
+    void evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData);
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;

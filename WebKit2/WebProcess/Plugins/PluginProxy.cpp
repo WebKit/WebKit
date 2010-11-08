@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include "NPVariantData.h"
 #include "NotImplemented.h"
 #include "PluginController.h"
 #include "PluginControllerProxyMessages.h"
@@ -377,6 +378,25 @@ void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
 
     pluginElementNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginElementNPObject);
     releaseNPObject(pluginElementNPObject);
+}
+
+void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData)
+{
+    NPVariant npObjectAsVariant = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(npObjectAsVariantData);
+    ASSERT(NPVARIANT_IS_OBJECT(npObjectAsVariant));
+
+    NPVariant result;
+    returnValue = m_pluginController->evaluate(NPVARIANT_TO_OBJECT(npObjectAsVariant), scriptString, &result, allowPopups);
+    if (!returnValue)
+        return;
+
+    // Convert the NPVariant to an NPVariantData.
+    resultData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(result);
+    
+    // And release the result.
+    releaseNPVariantValue(&result);
+
+    releaseNPVariantValue(&npObjectAsVariant);
 }
 
 void PluginProxy::update(const IntRect& paintedRect)

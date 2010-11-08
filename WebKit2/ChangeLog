@@ -1,5 +1,24 @@
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        NPN_Evaluate doesn't work with out-of-process plugins in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=49193
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::evaluate):
+        Send an Evaluate message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::evaluate):
+        Call Evaluate on the plug-in proxy.
+
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add Evaluate message.
+
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Correctly convert NPObjectProxy to NPVariantData
