@@ -58,6 +58,18 @@ const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
+const AtomicString& SVGFEConvolveMatrixElement::orderXIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrderX"));
+    return s_identifier;
+}
+
+const AtomicString& SVGFEConvolveMatrixElement::orderYIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrderY"));
+    return s_identifier;
+}
+
 void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();

@@ -40,13 +40,15 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
+    static const AtomicString& orderXIdentifier();
+    static const AtomicString& orderYIdentifier();
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();
 
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::orderXAttr, long, OrderX, orderX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::orderYAttr, long, OrderY, orderY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::orderAttr, orderXIdentifier(), long, OrderX, orderX)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::orderAttr, orderYIdentifier(), long, OrderY, orderY)
     DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::kernelMatrixAttr, SVGNumberList, KernelMatrix, kernelMatrix)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::divisorAttr, float, Divisor, divisor)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::biasAttr, float, Bias, bias)

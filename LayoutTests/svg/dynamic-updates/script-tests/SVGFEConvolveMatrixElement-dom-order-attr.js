@@ -7,7 +7,7 @@ createSVGTestCase();
 var convolveMatrixElement = createSVGElement("feConvolveMatrix");
 convolveMatrixElement.setAttribute("in", "SourceGraphic");
 convolveMatrixElement.setAttribute("order", "2 2");
-convolveMatrixElement.setAttribute("kernelMatrix", "3 0 3 0 0 0 3 0 3");
+convolveMatrixElement.setAttribute("kernelMatrix", "3 0 3 0");
 
 var filterElement = createSVGElement("filter");
 filterElement.setAttribute("id", "myFilter");
@@ -37,6 +37,7 @@ rootSVGElement.appendChild(imageElement);
 shouldBeEqualToString("convolveMatrixElement.getAttribute('order')", "2 2");
 
 function executeTest() {
+    convolveMatrixElement.setAttribute("kernelMatrix", "3 0 3 0 0 0 3 0 3");
     convolveMatrixElement.setAttribute("order", "3 3");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('order')", "3 3");
 
