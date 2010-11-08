@@ -221,6 +221,15 @@ RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(parentRuby->style());
     newStyle->setDisplay(INLINE_BLOCK);
+    if (parentRuby->style()->isFlippedLinesWritingMode()) {
+        // Ruby text is always in the line direction, so invert our block flow relative to the parent to
+        // ensure that the Ruby ends up on the correct side.
+        if (parentRuby->style()->isHorizontalWritingMode())
+            newStyle->setWritingMode(TopToBottomWritingMode);
+        else
+            newStyle->setWritingMode(RightToLeftWritingMode);
+    }
+
     rr->setStyle(newStyle.release());
     return rr;
 }

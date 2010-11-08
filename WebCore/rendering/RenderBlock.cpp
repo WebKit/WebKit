@@ -5275,7 +5275,8 @@ int RenderBlock::baselinePosition(bool firstLine, LineDirectionMode direction, L
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved) or if the baseline is outside
         // of our content box.
         bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)
-            : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || isWritingModeRoot();
+            : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || (isWritingModeRoot() && !isRubyRun());
+        
         int baselinePos = ignoreBaseline ? -1 : lastLineBoxBaseline();
         
         int bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
@@ -5291,7 +5292,7 @@ int RenderBlock::baselinePosition(bool firstLine, LineDirectionMode direction, L
 
 int RenderBlock::firstLineBoxBaseline() const
 {
-    if (!isBlockFlow() || isWritingModeRoot())
+    if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
 
     if (childrenInline()) {
@@ -5315,7 +5316,7 @@ int RenderBlock::firstLineBoxBaseline() const
 
 int RenderBlock::lastLineBoxBaseline() const
 {
-    if (!isBlockFlow() || isWritingModeRoot())
+    if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
 
     LineDirectionMode lineDirection = style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
