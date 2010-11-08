@@ -5679,3 +5679,12 @@ mathml/presentation
 # it is an issue with the version of Cairo on the bots.
 # https://bugs.webkit.org/show_bug.cgi?id=49052
 fast/canvas/pointInPath.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49176
+fast/events/spatial-navigation/snav-single-select.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49177
+fast/events/scroll-after-click-on-tab-index.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49179
+animations/stop-animation-on-suspend.html
