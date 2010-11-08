@@ -1,3 +1,23 @@
+2010-11-08  Adam Roben  <aroben@apple.com>
+
+        Switch back to using kCGImageAlphaPremultipliedFirst when generating
+        pixel dumps on Windows
+
+        I changed this behavior in r71418 thinking that it was required for
+        getting plugins to show up in pixel dumps. But it doesn't seem to be
+        necessary, and was making it impossible to compare new Windows pixel
+        dumps with existing Windows or Mac pixel dumps (because ImageDiff won't
+        compare an image with alpha to an image without alpha).
+
+        Fixes <http://webkit.org/b/49172> REGRESION (r71418): Can't compare
+        new Windows pixel results to existing Windows or Mac results
+
+        Reviewed by Antti Koivisto.
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Replaced kCGImageAlphaNoneSkipFirst
+        with kCGImageAlphaPremultipliedFirst.
+
 2010-11-08  Csaba Osztrogonac  <ossy@webkit.org>
 
         Unreviewed, rolling out r71466.
