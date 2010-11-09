@@ -134,6 +134,7 @@ public:
     bool isLoading() const;
     bool frameHasLoaded() const;
     void transferLoadingResourcesFromPage(Page*);
+    void dispatchTransferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
 
     int numPendingOrLoadingRequests(bool recurse) const;
     String referrer() const;

@@ -160,6 +160,14 @@ void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsi
 #endif
 }
 
+void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
+{
+    ASSERT(oldPage != m_frame->page());
+    m_frame->loader()->client()->transferLoadingResourceFromPage(identifier, loader, request, oldPage);
+
+    oldPage->progress()->completeProgress(identifier);
+}
+
 void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, int length, const ResourceError& error)
 {
     if (!response.isNull())

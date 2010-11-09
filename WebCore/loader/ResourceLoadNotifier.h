@@ -37,6 +37,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class DocumentLoader;
 class Frame;
+class Page;
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
@@ -60,6 +61,7 @@ public:
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
+    void dispatchTransferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
 
     void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
 

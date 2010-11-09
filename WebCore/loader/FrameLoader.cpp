@@ -1747,8 +1747,17 @@ bool FrameLoader::frameHasLoaded() const
 void FrameLoader::transferLoadingResourcesFromPage(Page* oldPage)
 {
     ASSERT(oldPage != m_frame->page());
-    if (isLoading())
+    if (isLoading()) {
         activeDocumentLoader()->transferLoadingResourcesFromPage(oldPage);
+        oldPage->progress()->progressCompleted(m_frame);
+        if (m_frame->page())
+            m_frame->page()->progress()->progressStarted(m_frame);
+    }
+}
+
+void FrameLoader::dispatchTransferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* docLoader, const ResourceRequest& request, Page* oldPage)
+{
+    notifier()->dispatchTransferLoadingResourceFromPage(identifier, docLoader, request, oldPage);
 }
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)

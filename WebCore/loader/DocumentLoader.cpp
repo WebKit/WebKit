@@ -791,10 +791,12 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
 {
     ASSERT(oldPage != m_frame->page());
 
-    FrameLoaderClient* frameLoaderClient = frameLoader()->client();
+    FrameLoader* loader = frameLoader();
+    ASSERT(loader);
+
     const ResourceRequest& request = originalRequest();
     if (isLoadingMainResource()) {
-        frameLoaderClient->transferLoadingResourceFromPage(
+        loader->dispatchTransferLoadingResourceFromPage(
             m_mainResourceLoader->identifier(), this, request, oldPage);
     }
 
@@ -802,7 +804,7 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
         ResourceLoaderSet::const_iterator it = m_subresourceLoaders.begin();
         ResourceLoaderSet::const_iterator end = m_subresourceLoaders.end();
         for (; it != end; ++it) {
-            frameLoaderClient->transferLoadingResourceFromPage(
+            loader->dispatchTransferLoadingResourceFromPage(
                 (*it)->identifier(), this, request, oldPage);
         }
     }
