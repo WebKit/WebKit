@@ -1311,6 +1311,7 @@ void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
 
 bool QWebPagePrivate::touchEvent(QTouchEvent* event)
 {
+#if ENABLE(TOUCH_EVENTS)
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
         return false;
@@ -1320,6 +1321,10 @@ bool QWebPagePrivate::touchEvent(QTouchEvent* event)
 
     // Return whether the default action was cancelled in the JS event handler
     return frame->eventHandler()->handleTouchEvent(PlatformTouchEvent(event));
+#else
+    event->ignore();
+    return false;
+#endif
 }
 
 /*!
