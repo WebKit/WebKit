@@ -145,12 +145,12 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
 
 SharedMemory::~SharedMemory()
 {
-    // m_impl must be non-null and it must point to a valid QSharedMemory object.
-    ASSERT(qobject_cast<QSharedMemory*>(m_impl));
-
     // Avoid double deletion when deleteLater has already been called through the signal-slot connection.
-    if (QCoreApplication::instance()->disconnect(m_impl))
+    if (QCoreApplication::instance()->disconnect(m_impl)) {
+        // m_impl must be non-null and it must point to a valid QSharedMemory object.
+        ASSERT(qobject_cast<QSharedMemory*>(m_impl));
         delete m_impl;
+    }
 
     CrashHandler::instance()->didDelete(m_impl);
 }

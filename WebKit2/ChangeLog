@@ -1,3 +1,15 @@
+2010-11-09  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] WebKitTestRunner is dead
+        https://bugs.webkit.org/show_bug.cgi?id=49129
+
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::~SharedMemory):
+        Follow up fix: do not access the QSharedMemory object
+        in an assert if it has been deleted.
+
 2010-11-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
