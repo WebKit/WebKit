@@ -41,6 +41,7 @@ namespace WebCore {
             , m_requestorID(0)
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
+            , m_hasUserGesture(false)
         {
         }
 
@@ -49,6 +50,7 @@ namespace WebCore {
             , m_requestorID(0)
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
+            , m_hasUserGesture(false)
         {
         }
 
@@ -57,6 +59,7 @@ namespace WebCore {
             , m_requestorID(0)
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
+            , m_hasUserGesture(false)
         {
             setHTTPReferrer(referrer);
         }
@@ -66,6 +69,7 @@ namespace WebCore {
             , m_requestorID(0)
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
+            , m_hasUserGesture(false)
         {
         }
 
@@ -84,6 +88,10 @@ namespace WebCore {
         int appCacheHostID() const { return m_appCacheHostID; }
         void setAppCacheHostID(int id) { m_appCacheHostID = id; }
 
+        // True if request was user initiated.
+        bool hasUserGesture() const { return m_hasUserGesture; }
+        void setHasUserGesture(bool hasUserGesture) { m_hasUserGesture = hasUserGesture; }
+
     private:
         friend class ResourceRequestBase;
 
@@ -96,12 +104,14 @@ namespace WebCore {
         int m_requestorID;
         int m_requestorProcessID;
         int m_appCacheHostID;
+        bool m_hasUserGesture;
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
         int m_requestorID;
         int m_requestorProcessID;
         int m_appCacheHostID;
+        bool m_hasUserGesture;
     };
 
 } // namespace WebCore

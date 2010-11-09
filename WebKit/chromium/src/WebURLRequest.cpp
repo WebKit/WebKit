@@ -221,6 +221,16 @@ WebURLRequest::TargetType WebURLRequest::targetType() const
     return static_cast<TargetType>(m_private->m_resourceRequest->targetType());
 }
 
+bool WebURLRequest::hasUserGesture() const
+{
+    return m_private->m_resourceRequest->hasUserGesture();
+}
+
+void WebURLRequest::setHasUserGesture(bool hasUserGesture)
+{
+    m_private->m_resourceRequest->setHasUserGesture(hasUserGesture);
+}
+
 void WebURLRequest::setTargetType(TargetType targetType)
 {
     m_private->m_resourceRequest->setTargetType(

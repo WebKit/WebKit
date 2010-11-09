@@ -140,6 +140,10 @@ public:
     WEBKIT_API TargetType targetType() const;
     WEBKIT_API void setTargetType(TargetType);
 
+    // True if the request was user initiated.
+    WEBKIT_API bool hasUserGesture() const;
+    WEBKIT_API void setHasUserGesture(bool);
+
     // A consumer controlled value intended to be used to identify the
     // requestor.
     WEBKIT_API int requestorID() const;

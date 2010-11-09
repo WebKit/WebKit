@@ -1,3 +1,18 @@
+2010-11-08  Pierre-Antoine LaFayette  <pierre.lafayette@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Adding hasUserGesture flag to the ResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=37057
+
+        This flag is to be used on the browser side to indicate when a
+        download has been user initiated.
+
+        * public/WebURLRequest.h:
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::hasUserGesture):
+        (WebKit::WebURLRequest::setHasUserGesture):
+
 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
