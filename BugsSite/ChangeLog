@@ -1,5 +1,11 @@
 2010-11-08  Adam Barth  <abarth@webkit.org>
 
+        Update help text to match behavior change.
+
+        * code-review.js:
+
+2010-11-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Restore normal meaning of double-click on patch review page?
