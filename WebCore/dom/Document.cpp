@@ -2948,7 +2948,8 @@ void Document::recalcStyleSelector()
         StyleSheet* sheet = 0;
 
         if (n->nodeType() == PROCESSING_INSTRUCTION_NODE) {
-            // Processing instruction (XML documents only)
+            // Processing instruction (XML documents only).
+            // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
             ProcessingInstruction* pi = static_cast<ProcessingInstruction*>(n);
             sheet = pi->sheet();
 #if ENABLE(XSLT)
@@ -2960,25 +2961,6 @@ void Document::recalcStyleSelector()
                 return;
             }
 #endif
-            if (!sheet && !pi->localHref().isEmpty()) {
-                // Processing instruction with reference to an element in this document - e.g.
-                // <?xml-stylesheet href="#mystyle">, with the element
-                // <foo id="mystyle">heading { color: red; }</foo> at some location in
-                // the document
-                Element* elem = getElementById(pi->localHref().impl());
-                if (elem) {
-                    String sheetText("");
-                    for (Node* c = elem->firstChild(); c; c = c->nextSibling()) {
-                        if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
-                            sheetText += c->nodeValue();
-                    }
-
-                    RefPtr<CSSStyleSheet> cssSheet = CSSStyleSheet::create(this);
-                    cssSheet->parseString(sheetText);
-                    pi->setCSSStyleSheet(cssSheet);
-                    sheet = cssSheet.get();
-                }
-            }
         } else if ((n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag)))
 #if ENABLE(SVG)
             ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
