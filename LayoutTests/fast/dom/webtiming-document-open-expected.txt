@@ -18,7 +18,6 @@ PASS timing.loadEventStart is originalTiming.loadEventStart
 PASS timing.navigationStart is originalTiming.navigationStart
 PASS timing.redirectEnd is originalTiming.redirectEnd
 PASS timing.redirectStart is originalTiming.redirectStart
-PASS timing.requestEnd is originalTiming.requestEnd
 PASS timing.requestStart is originalTiming.requestStart
 PASS timing.responseEnd is originalTiming.responseEnd
 PASS timing.responseStart is originalTiming.responseStart

@@ -1,3 +1,13 @@
+2010-11-09  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Web Timing] Remove requestEnd
+        https://bugs.webkit.org/show_bug.cgi?id=48924
+
+        * public/WebPerformance.h:
+        * src/WebPerformance.cpp:
+
 2010-11-08  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.

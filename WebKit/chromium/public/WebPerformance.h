@@ -71,7 +71,6 @@ public:
     WEBKIT_API double connectStart() const;
     WEBKIT_API double connectEnd() const;
     WEBKIT_API double requestStart() const;
-    WEBKIT_API double requestEnd() const;
     WEBKIT_API double responseStart() const;
     WEBKIT_API double responseEnd() const;
     WEBKIT_API double loadEventStart() const;

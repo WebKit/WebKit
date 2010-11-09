@@ -61,7 +61,6 @@ public:
     unsigned long long connectStart() const;
     unsigned long long connectEnd() const;
     unsigned long long requestStart() const;
-    unsigned long long requestEnd() const;
     unsigned long long responseStart() const;
     unsigned long long responseEnd() const;
     unsigned long long domLoading() const;

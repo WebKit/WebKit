@@ -116,11 +116,6 @@ double WebPerformance::requestStart() const
     return static_cast<double>(m_private->timing()->requestStart());
 }
 
-double WebPerformance::requestEnd() const
-{
-    return static_cast<double>(m_private->timing()->requestEnd());
-}
-
 double WebPerformance::responseStart() const
 {
     return static_cast<double>(m_private->timing()->responseStart());

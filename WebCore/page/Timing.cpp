@@ -217,11 +217,6 @@ unsigned long long Timing::requestStart() const
     return resourceLoadTimeRelativeToAbsolute(timing->sendStart);
 }
 
-unsigned long long Timing::requestEnd() const
-{
-    return responseStart();
-}
-
 unsigned long long Timing::responseStart() const
 {
     ResourceLoadTiming* timing = resourceLoadTiming();

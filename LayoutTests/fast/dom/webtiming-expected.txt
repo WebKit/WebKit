@@ -14,8 +14,7 @@ PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
-PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is timing.requestEnd
+PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is 0
 PASS timing.domContentLoadedStart is 0
@@ -34,8 +33,7 @@ PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
-PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is timing.requestEnd
+PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.domLoading
 PASS timing.domContentLoadedStart is 0
@@ -74,8 +72,7 @@ PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
-PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is timing.requestEnd
+PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
 PASS timing.domContentLoadedStart is >= timing.domInteractive
@@ -94,8 +91,7 @@ PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
-PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is timing.requestEnd
+PASS timing.responseStart is >= timing.requestStart
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
@@ -115,8 +111,7 @@ PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
-PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is timing.requestEnd
+PASS timing.responseStart is >= timing.requestStart
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
