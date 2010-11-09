@@ -316,6 +316,7 @@ HEADERS += \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
     WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
@@ -485,6 +486,7 @@ SOURCES += \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \

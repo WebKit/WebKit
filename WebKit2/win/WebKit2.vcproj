@@ -1486,6 +1486,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageOverlay.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageOverlay.h"
+							>
+						</File>
+						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h"
 							>
 						</File>

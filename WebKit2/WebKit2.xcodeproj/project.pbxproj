@@ -77,6 +77,7 @@
 		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
 		1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */; };
+		1A22F1011289FCD90085E74F /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24B5F011F531E800C38269 /* MachUtilities.cpp */; };
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
@@ -620,6 +621,8 @@
 		1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectMap.cpp; sourceTree = "<group>"; };
 		1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeUtilities.cpp; sourceTree = "<group>"; };
 		1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeUtilities.h; sourceTree = "<group>"; };
+		1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageOverlay.h; sourceTree = "<group>"; };
+		1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageOverlay.cpp; sourceTree = "<group>"; };
 		1A24B5F011F531E800C38269 /* MachUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachUtilities.cpp; sourceTree = "<group>"; };
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
@@ -1876,6 +1879,8 @@
 				BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */,
 				BC20528011C94284008F3375 /* WKBundlePage.cpp */,
 				BC20527F11C94284008F3375 /* WKBundlePage.h */,
+				1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */,
+				1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */,
 				BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */,
 				BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */,
 				BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */,
@@ -2491,6 +2496,7 @@
 				1A6FA31111E3921E00DB1371 /* MainMac.cpp in Sources */,
 				1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */,
 				1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */,
+				1A22F1011289FCD90085E74F /* WKBundlePageOverlay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

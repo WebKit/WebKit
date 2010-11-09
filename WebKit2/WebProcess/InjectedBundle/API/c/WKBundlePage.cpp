@@ -132,3 +132,13 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
 {
     return toAPI(toImpl(pageRef)->backForwardList());
 }
+
+void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+{
+    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef));
+}
+
+void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef)
+{
+    toImpl(pageRef)->uninstallPageOverlay();
+}

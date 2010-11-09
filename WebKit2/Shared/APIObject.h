@@ -75,6 +75,7 @@ public:
         TypeBundleHitTestResult,
         TypeBundleNodeHandle,
         TypeBundlePage,
+        TypeBundlePageOverlay,
         TypeBundleRangeHandle,
         TypeBundleScriptWorld,
 

@@ -26,8 +26,8 @@
 #ifndef PageOverlay_h
 #define PageOverlay_h
 
+#include "APIObject.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -39,18 +39,21 @@ namespace WebKit {
 class WebMouseEvent;
 class WebPage;
 
-class PageOverlay : public RefCounted<PageOverlay> {
+class PageOverlay : public APIObject {
 public:
     class Client {
     protected:
         virtual ~Client() { }
     
     public:
+        virtual void pageOverlayDestroyed(PageOverlay*) = 0;
         virtual void willMoveToWebPage(PageOverlay*, WebPage*) = 0;
         virtual void didMoveToWebPage(PageOverlay*, WebPage*) = 0;
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
     };
+
+    static const Type APIType = TypeBundlePageOverlay;
 
     static PassRefPtr<PageOverlay> create(Client*);
     virtual ~PageOverlay();
@@ -67,6 +70,9 @@ protected:
     WebPage* webPage() const { return m_webPage; }
 
 private:
+    // APIObject
+    virtual Type type() const { return APIType; }
+
     WebCore::IntRect bounds() const;
 
     Client* m_client;

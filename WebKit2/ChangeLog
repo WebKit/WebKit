@@ -135,6 +135,61 @@
 
         Reviewed by Sam Weinig.
 
+        Add injected bundle API for creating page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=49282
+
+        * Shared/API/c/WKBase.h:
+        Add WKBundlePageOverlayRef.
+
+        * Shared/APIObject.h:
+        Add TypeBundlePageOverlay.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        Add WKBundlePageOverlayRef mapping.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageInstallPageOverlay):
+        Install the passed in page overlay.
+
+        (WKBundlePageUninstallPageOverlay):
+        Uninstall the passed in page overlay.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp: Added.
+        (PageOverlayClientImpl::create):
+        (PageOverlayClientImpl::PageOverlayClientImpl):
+        (PageOverlayClientImpl::pageOverlayDestroyed):
+        (PageOverlayClientImpl::willMoveToWebPage):
+        (PageOverlayClientImpl::didMoveToWebPage):
+        (PageOverlayClientImpl::drawRect):
+        (PageOverlayClientImpl::mouseEvent):
+        Add a PageOverlay::Client subclass that forwards everything to its client.
+
+        (WKBundlePageOverlayGetTypeID):
+        (WKBundlePageOverlayCreate):
+        Create a page overlay.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::pageOverlayDestroyed):
+        * WebProcess/WebPage/FindController.h:
+        Add stub.
+
+        * WebProcess/WebPage/PageOverlay.h:
+        Inherit from APIObject.
+
+        (WebKit::PageOverlay::type):
+        return TypeBundlePageOverlay.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
+2010-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Get rid of FindPageOverlay
         https://bugs.webkit.org/show_bug.cgi?id=49268
 
