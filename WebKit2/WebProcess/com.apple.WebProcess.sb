@@ -1,5 +1,5 @@
 (version 1)
-(deny default)
+(deny default (with partial-symbolication))
 (allow ipc-posix-shm system-audit system-socket file-read-metadata)
 
 (import "system.sb")

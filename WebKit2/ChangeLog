@@ -1,3 +1,11 @@
+2010-11-08  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8531943> Enable partial symbolication for sandbox violations in WebProcess.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2010-11-08  Juha Savolainen  <juha.savolainen@weego.fi>
 
         Reviewed by Andreas Kling.
