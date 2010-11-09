@@ -67,10 +67,11 @@ BUG_DRT MAC : plugins/document-open.html = PASS
 BUG_DRT MAC : plugins/update-widgets-crash.html = PASS
 BUG_DRT MAC : plugins/npruntime/round-trip-npobject.html = PASS TEXT
 BUG_DRT MAC : plugins/override-node-method.html = PASS TEXT
-BUG_DRT MAC : plugins/reloadplugins-no-pages.html = PASS TEXT
 BUG_DRT MAC : platform/chromium/plugins/refcount-leaks.html = TEXT
-BUG_DRT MAC : platform/chromium/plugins/return-npobject.html = TEXT
 BUG_DRT MAC : platform/chromium/plugins/script-object-invoke.html = TEXT
+BUG_DRT MAC : plugins/reloadplugins-no-pages.html = PASS
+BUG_DRT MAC : plugins/reloadplugins-and-pages.html = PASS
+BUG_DRT MAC : plugins/return-npobject.html = TEXT
 
 // This test is failing because the plugin is currently named
 // WebKitTestNetscapePlugin because the fork in the Chromium repo is named
