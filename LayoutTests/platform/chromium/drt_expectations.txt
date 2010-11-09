@@ -55,6 +55,9 @@ BUG59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 
+// Occasionally times out with, only under the DRT for Linux
+BUG58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
+
 // Tests differences from switching to webkit.org's test netscape plugin rather
 // than chromium's old forked copy.
 BUG_DRT MAC : plugins/geturlnotify-during-document-teardown.html = CRASH TEXT
