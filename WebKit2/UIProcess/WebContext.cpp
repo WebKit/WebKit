@@ -129,6 +129,11 @@ void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
     m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
 }
 
+void WebContext::initializeDownloadClient(const WKContextDownloadClient* client)
+{
+    m_downloadClient.initialize(client);
+}
+    
 void WebContext::languageChanged(void* context)
 {
     static_cast<WebContext*>(context)->languageChanged();

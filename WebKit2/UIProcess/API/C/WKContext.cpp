@@ -86,6 +86,13 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     toImpl(contextRef)->initializeHistoryClient(wkClient);
 }
 
+void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(contextRef)->initializeDownloadClient(wkClient);
+}
+
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)
 {
     toImpl(contextRef)->setInjectedBundleInitializationUserData(toImpl(userDataRef));

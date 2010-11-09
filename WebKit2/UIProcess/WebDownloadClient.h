@@ -23,50 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadProxy_h
-#define DownloadProxy_h
+#ifndef WebDownloadClient_h
+#define WebDownloadClient_h
 
-#include "APIObject.h"
+#include "APIClient.h"
+#include "WKContext.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
-}
 
 namespace WebKit {
 
+class DownloadProxy;
 class WebContext;
 
-class DownloadProxy : public APIObject {
+class WebDownloadClient : public APIClient<WKContextDownloadClient> {
 public:
-    static const Type APIType = TypeDownload;
-
-    static PassRefPtr<DownloadProxy> create(WebContext*);
-    ~DownloadProxy();
-
-    uint64_t downloadID() const { return m_downloadID; }
-
-    void invalidate();
-
-    void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-private:
-    explicit DownloadProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
-
-    // Message handlers.
-    void didStart();
-    void didCreateDestination(const String& path);
-    void didFinish();
-
-    WebContext* m_webContext;
-    uint64_t m_downloadID;
+    void didStart(WebContext*, DownloadProxy*);
+    void didCreateDestination(WebContext*, DownloadProxy*, const String& path);
+    void didFinish(WebContext*, DownloadProxy*);
 };
 
 } // namespace WebKit
 
-#endif // DownloadProxy_h
+#endif // WebDownloadClient_h

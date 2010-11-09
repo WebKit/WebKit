@@ -246,6 +246,7 @@ HEADERS += \
     UIProcess/API/C/WKBackForwardListItem.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
+    UIProcess/API/C/WKDownload.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
     UIProcess/API/C/WKInspector.h \
@@ -282,6 +283,7 @@ HEADERS += \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
     UIProcess/WebContextUserMessageCoders.h \
+    UIProcess/WebDownloadClient.h \
     UIProcess/WebEditCommandProxy.h \
     UIProcess/WebFindClient.h \
     UIProcess/WebFormClient.h \
@@ -415,6 +417,7 @@ SOURCES += \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKContext.cpp \
+    UIProcess/API/C/WKDownload.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
     UIProcess/API/C/WKInspector.cpp \
@@ -447,6 +450,7 @@ SOURCES += \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
+    UIProcess/WebDownloadClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFindClient.cpp \
     UIProcess/WebFormClient.cpp \

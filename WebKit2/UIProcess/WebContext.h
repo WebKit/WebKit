@@ -31,6 +31,7 @@
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebDownloadClient.h"
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
@@ -63,6 +64,7 @@ public:
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
+    void initializeDownloadClient(const WKContextDownloadClient*);
 
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }
@@ -124,6 +126,7 @@ public:
 
     // Downloads.
     uint64_t createDownloadProxy();
+    WebDownloadClient& downloadClient() { return m_downloadClient; }
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
@@ -162,6 +165,7 @@ private:
 
     CacheModel m_cacheModel;
 
+    WebDownloadClient m_downloadClient;
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 
 #if PLATFORM(WIN)

@@ -61,6 +61,7 @@ typedef const struct OpaqueWKUserContentURLPattern* WKUserContentURLPatternRef;
 typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
 typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKDownload* WKDownloadRef;
 typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef const struct OpaqueWKFrame* WKFrameRef;
 typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;

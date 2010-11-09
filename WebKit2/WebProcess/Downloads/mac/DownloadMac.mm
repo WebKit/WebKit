@@ -80,7 +80,7 @@ void Download::platformInvalidate()
 - (void)downloadDidBegin:(NSURLDownload *)download
 {
     if (_download)
-        _download->didBegin();
+        _download->didStart();
 }
 
 - (NSURLRequest *)download:(NSURLDownload *)download willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse

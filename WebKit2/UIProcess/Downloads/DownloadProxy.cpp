@@ -26,8 +26,9 @@
 #include "DownloadProxy.h"
 
 #include "NotImplemented.h"
-#include <wtf/text/WTFString.h>
+#include "WebContext.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -58,12 +59,12 @@ void DownloadProxy::invalidate()
     m_webContext = 0;
 }
 
-void DownloadProxy::didBegin()
+void DownloadProxy::didStart()
 {
     if (!m_webContext)
         return;
 
-    notImplemented();
+    m_webContext->downloadClient().didStart(m_webContext, this);
 }
 
 void DownloadProxy::didCreateDestination(const String& path)
@@ -71,8 +72,7 @@ void DownloadProxy::didCreateDestination(const String& path)
     if (!m_webContext)
         return;
 
-    printf("path: %s\n", path.ascii().data());
-    notImplemented();
+    m_webContext->downloadClient().didCreateDestination(m_webContext, this, path);
 }
 
 void DownloadProxy::didFinish()
@@ -80,7 +80,7 @@ void DownloadProxy::didFinish()
     if (!m_webContext)
         return;
 
-    notImplemented();
+    m_webContext->downloadClient().didFinish(m_webContext, this);
 }
 
 } // namespace WebKit

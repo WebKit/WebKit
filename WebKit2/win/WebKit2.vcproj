@@ -1725,6 +1725,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebDownloadClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebDownloadClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebEditCommandProxy.cpp"
 				>
 			</File>
@@ -1924,6 +1932,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\win\WKContextWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKDownload.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKDownload.h"
 						>
 					</File>
 					<File

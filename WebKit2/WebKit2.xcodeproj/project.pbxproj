@@ -161,6 +161,10 @@
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
 		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
 		1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */; };
+		1AB7D72C1288CAAD00CFD08C /* WebDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D72A1288CAAD00CFD08C /* WebDownloadClient.h */; };
+		1AB7D72D1288CAAD00CFD08C /* WebDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */; };
+		1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D78B1288CD9A00CFD08C /* WKDownload.h */; };
+		1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */; };
 		1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC41AC51263C88300054E94 /* BinarySemaphore.h */; };
 		1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
@@ -697,6 +701,10 @@
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
 		1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMessages.h; sourceTree = "<group>"; };
+		1AB7D72A1288CAAD00CFD08C /* WebDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadClient.h; sourceTree = "<group>"; };
+		1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDownloadClient.cpp; sourceTree = "<group>"; };
+		1AB7D78B1288CD9A00CFD08C /* WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownload.h; sourceTree = "<group>"; };
+		1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKDownload.cpp; sourceTree = "<group>"; };
 		1AC41AC51263C88300054E94 /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
@@ -1608,6 +1616,8 @@
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
 				BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */,
 				BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */,
+				1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */,
+				1AB7D72A1288CAAD00CFD08C /* WebDownloadClient.h */,
 				BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */,
 				BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */,
 				1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */,
@@ -1675,6 +1685,8 @@
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
+				1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */,
+				1AB7D78B1288CD9A00CFD08C /* WKDownload.h */,
 				BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */,
 				BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
@@ -2336,6 +2348,8 @@
 				510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
+				1AB7D72C1288CAAD00CFD08C /* WebDownloadClient.h in Headers */,
+				1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2682,6 +2696,8 @@
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
+				1AB7D72D1288CAAD00CFD08C /* WebDownloadClient.cpp in Sources */,
+				1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

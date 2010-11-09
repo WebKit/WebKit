@@ -23,50 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadProxy_h
-#define DownloadProxy_h
+#include "WebDownloadClient.h"
 
-#include "APIObject.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
-}
+#include "WKAPICast.h"
 
 namespace WebKit {
 
-class WebContext;
+void WebDownloadClient::didStart(WebContext* webContext, DownloadProxy* downloadProxy)
+{
+    if (!m_client.didStart)
+        return;
 
-class DownloadProxy : public APIObject {
-public:
-    static const Type APIType = TypeDownload;
+    m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+}
 
-    static PassRefPtr<DownloadProxy> create(WebContext*);
-    ~DownloadProxy();
+void WebDownloadClient::didCreateDestination(WebContext* webContext, DownloadProxy* downloadProxy, const String& path)
+{
+    if (!m_client.didCreateDestination)
+        return;
 
-    uint64_t downloadID() const { return m_downloadID; }
+    m_client.didCreateDestination(toAPI(webContext), toAPI(downloadProxy), toAPI(path.impl()), m_client.clientInfo);
+}
 
-    void invalidate();
-
-    void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-private:
-    explicit DownloadProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
-
-    // Message handlers.
-    void didStart();
-    void didCreateDestination(const String& path);
-    void didFinish();
-
-    WebContext* m_webContext;
-    uint64_t m_downloadID;
-};
+void WebDownloadClient::didFinish(WebContext* webContext, DownloadProxy* downloadProxy)
+{
+    if (!m_client.didFinish)
+        return;
+    
+    m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+}    
 
 } // namespace WebKit
-
-#endif // DownloadProxy_h

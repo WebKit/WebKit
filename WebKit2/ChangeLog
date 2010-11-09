@@ -1,3 +1,64 @@
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add WKDownloadClient API
+        https://bugs.webkit.org/show_bug.cgi?id=49227
+
+        * Shared/API/c/WKBase.h:
+        Add WKDownloadRef.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Add WKDownloadRef <-> DownloadProxy mapping.
+        
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        Initialize the download client.
+
+        * UIProcess/API/C/WKContext.h:
+        Add new WKContextDownloadClient API.
+        
+        * UIProcess/API/C/WKDownload.cpp: Added.
+        * UIProcess/API/C/WKDownload.h:
+        Add WKDownload files.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didStart):
+        (WebKit::DownloadProxy::didCreateDestination):
+        (WebKit::DownloadProxy::didFinish):
+        Call down to the the WebDownloadClient.
+        
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Rename DidBegin to DidStart.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeDownloadClient):
+        Initialize the download client.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::downloadClient):
+        Add getter.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didStart):
+        (WebKit::WebDownloadClient::didCreateDestination):
+        (WebKit::WebDownloadClient::didFinish):
+        Call the relevant WKContextDownloadClient functions.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didStart):
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate downloadDidBegin:]):
+        Rename Download::didBegin to Download::didStart.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-11-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

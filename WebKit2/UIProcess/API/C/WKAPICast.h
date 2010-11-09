@@ -35,6 +35,7 @@
 
 namespace WebKit {
 
+class DownloadProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
@@ -50,6 +51,7 @@ class WebPreferences;
 WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)
 WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
+WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)
 WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
