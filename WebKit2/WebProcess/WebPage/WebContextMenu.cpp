@@ -53,7 +53,7 @@ void WebContextMenu::show()
     WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowContextMenu(menu->hitTestResult().point(), kitItems(coreItems, menu)), m_page->pageID());
 }
 
-void WebContextMenu::itemSelected(const WebContextMenuItem& item)
+void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
 {
     WebCore::ContextMenuItem coreItem(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>(item.action()), item.title());
     m_page->corePage()->contextMenuController()->contextMenuItemSelected(&coreItem);

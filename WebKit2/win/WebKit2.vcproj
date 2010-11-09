@@ -497,11 +497,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebContextMenuItem.cpp"
+				RelativePath="..\Shared\WebContextMenuItemData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebContextMenuItem.h"
+				RelativePath="..\Shared\WebContextMenuItemData.h"
 				>
 			</File>
 			<File

@@ -40,7 +40,7 @@ PassRefPtr<WebContextMenuProxyWin> WebContextMenuProxyWin::create()
     return adoptRef(new WebContextMenuProxyWin);
 }
 
-void WebContextMenuProxyWin::showContextMenu(const IntPoint&, const Vector<WebContextMenuItem>&)
+void WebContextMenuProxyWin::showContextMenu(const IntPoint&, const Vector<WebContextMenuItemData>&)
 {
     notImplemented();
 }

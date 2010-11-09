@@ -26,7 +26,7 @@
 #include "WebContextMenuProxyMac.h"
 
 #include "PageClientImpl.h"
-#include "WebContextMenuItem.h"
+#include "WebContextMenuItemData.h"
 #include "WKView.h"
 
 #include <WebCore/IntRect.h>
@@ -63,7 +63,7 @@ using namespace WebCore;
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    WebKit::WebContextMenuItem item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSOnState);
+    WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSOnState);
     _menuProxy->contextMenuItemSelected(item);
 }
 
@@ -83,7 +83,7 @@ WebContextMenuProxyMac::~WebContextMenuProxyMac()
         [m_popup.get() setControlView:nil];
 }
 
-void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItem& item)
+void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
 {
     m_page->contextMenuItemSelected(item);
 }
@@ -97,7 +97,7 @@ static void populateNSMenu(NSMenu* menu, const Vector<RetainPtr<NSMenuItem> >& m
     }
 }
 
-static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMenuItem>& items)
+static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMenuItemData>& items)
 {
     Vector<RetainPtr<NSMenuItem> > result;
 
@@ -144,7 +144,7 @@ static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMe
     return result;
 }
 
-void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItem>& items)
+void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& items)
 {
     if (m_popup)
         [m_popup.get() removeAllItems];
@@ -158,7 +158,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItem>& items)
     populateNSMenu(menu, nsMenuItemVector(items));
 }
 
-void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItem>& items)
+void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItemData>& items)
 {
     populate(items);
     [[WebMenuTarget sharedMenuTarget] setMenuProxy:this];

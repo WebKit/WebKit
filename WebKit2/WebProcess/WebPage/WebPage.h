@@ -69,7 +69,7 @@ class InjectedBundleBackForwardList;
 class PageOverlay;
 class PluginView;
 class WebContextMenu;
-class WebContextMenuItem;
+class WebContextMenuItemData;
 class WebEvent;
 class WebFrame;
 class WebInspector;
@@ -257,7 +257,7 @@ private:
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
 
 #if ENABLE(CONTEXT_MENUS)
-    void didSelectItemFromActiveContextMenu(const WebContextMenuItem&);
+    void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
     OwnPtr<WebCore::Page> m_page;

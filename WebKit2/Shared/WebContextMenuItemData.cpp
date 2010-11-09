@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextMenuItem.h"
+#include "WebContextMenuItemData.h"
 
 #include "ArgumentCoders.h"
 #include "Arguments.h"
@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-WebContextMenuItem::WebContextMenuItem()
+WebContextMenuItemData::WebContextMenuItemData()
     : m_type(WebCore::ActionType)
     , m_action(WebCore::ContextMenuItemTagNoAction)
     , m_enabled(true)
@@ -40,7 +40,7 @@ WebContextMenuItem::WebContextMenuItem()
 {
 }
 
-WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuItemType type, WebCore::ContextMenuAction action, const String& title, bool enabled, bool checked)
+WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItemType type, WebCore::ContextMenuAction action, const String& title, bool enabled, bool checked)
     : m_type(type)
     , m_action(action)
     , m_title(title)
@@ -50,7 +50,7 @@ WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuItemType type, WebCor
     ASSERT(type == WebCore::ActionType || type == WebCore::CheckableActionType || type == WebCore::SeparatorType);
 }
 
-WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuAction action, const String& title, bool enabled, const Vector<WebContextMenuItem>& submenu)
+WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuAction action, const String& title, bool enabled, const Vector<WebContextMenuItemData>& submenu)
     : m_type(WebCore::SubmenuType)
     , m_action(action)
     , m_title(title)
@@ -60,7 +60,7 @@ WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuAction action, const 
 {
 }
 
-WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuItem& item, WebCore::ContextMenu* menu)
+WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItem& item, WebCore::ContextMenu* menu)
     : m_type(item.type())
     , m_action(item.action())
     , m_title(item.title())
@@ -76,19 +76,19 @@ WebContextMenuItem::WebContextMenuItem(WebCore::ContextMenuItem& item, WebCore::
     m_checked = item.checked();
 }
 
-void WebContextMenuItem::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), static_cast<uint32_t>(m_action), m_title, m_checked, m_enabled, m_submenu));
 }
 
-bool WebContextMenuItem::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMenuItem& item)
+bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMenuItemData& item)
 {
     uint32_t type;
     uint32_t action;
     String title;
     bool checked;
     bool enabled;
-    Vector<WebContextMenuItem> submenu;
+    Vector<WebContextMenuItemData> submenu;
 
     if (!decoder->decode(CoreIPC::Out(type, action, title, checked, enabled, submenu)))
         return false;
@@ -97,10 +97,10 @@ bool WebContextMenuItem::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMen
     case WebCore::ActionType:
     case WebCore::SeparatorType:
     case WebCore::CheckableActionType:
-        item = WebContextMenuItem(static_cast<WebCore::ContextMenuItemType>(type), static_cast<WebCore::ContextMenuAction>(action), title, enabled, checked);
+        item = WebContextMenuItemData(static_cast<WebCore::ContextMenuItemType>(type), static_cast<WebCore::ContextMenuAction>(action), title, enabled, checked);
         break;
     case WebCore::SubmenuType:
-        item = WebContextMenuItem(static_cast<WebCore::ContextMenuAction>(action), title, enabled, submenu);
+        item = WebContextMenuItemData(static_cast<WebCore::ContextMenuAction>(action), title, enabled, submenu);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -110,12 +110,12 @@ bool WebContextMenuItem::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMen
     return true;
 }
 
-Vector<WebContextMenuItem> kitItems(Vector<WebCore::ContextMenuItem>& coreItems, WebCore::ContextMenu* menu)
+Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>& coreItems, WebCore::ContextMenu* menu)
 {
-    Vector<WebContextMenuItem> result;
+    Vector<WebContextMenuItemData> result;
     result.reserveCapacity(coreItems.size());
     for (unsigned i = 0; i < coreItems.size(); ++i)
-        result.append(WebContextMenuItem(coreItems[i], menu));
+        result.append(WebContextMenuItemData(coreItems[i], menu));
     
     return result;
 }

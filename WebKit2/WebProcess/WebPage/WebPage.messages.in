@@ -80,7 +80,7 @@ messages -> WebPage {
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     
     # Context menu.
-    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItem menuItem);
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem);
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 

@@ -1,3 +1,57 @@
+2010-11-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=49222
+        Rename "WebContextMenuItem" to "WebContextMenuItemData"
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Shared/WebContextMenuItem.cpp: Removed.
+        * Shared/WebContextMenuItem.h: Removed.
+        * Shared/WebContextMenuItemData.cpp: Copied from Shared/WebContextMenuItem.cpp.
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData):
+        (WebKit::WebContextMenuItemData::encode):
+        (WebKit::WebContextMenuItemData::decode):
+        (WebKit::kitItems):
+        * Shared/WebContextMenuItemData.h: Copied from Shared/WebContextMenuItem.h.
+        (WebKit::WebContextMenuItemData::submenu):
+
+        * UIProcess/WebContextMenuProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WebMenuTarget forwardContextMenuAction:]):
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::WebContextMenuProxyWin::showContextMenu):
+        * UIProcess/win/WebContextMenuProxyWin.h:
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::itemSelected):
+        * WebProcess/WebPage/WebContextMenu.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didSelectItemFromActiveContextMenu):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan and Dan Bernstein.

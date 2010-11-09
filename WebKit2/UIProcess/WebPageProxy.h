@@ -32,7 +32,7 @@
 #include "GenericCallback.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
-#include "WebContextMenuItem.h"
+#include "WebContextMenuItemData.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
 #include "WebFormClient.h"
@@ -235,7 +235,7 @@ public:
 
     void getStatistics(WKContextStatistics*);
 
-    void contextMenuItemSelected(const WebContextMenuItem&);
+    void contextMenuItemSelected(const WebContextMenuItemData&);
 
 private:
     WebPageProxy(WebPageNamespace*, uint64_t pageID);
@@ -328,7 +328,7 @@ private:
     void hidePopupMenu();
 
     // Context Menu.
-    void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItem>& items);
+    void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>& items);
 
     void takeFocus(bool direction);
     void setToolTip(const String&);

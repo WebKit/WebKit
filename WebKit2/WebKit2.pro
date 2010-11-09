@@ -227,7 +227,7 @@ HEADERS += \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
-    Shared/WebContextMenuItem.h \
+    Shared/WebContextMenuItemData.h \
     Shared/WebEvent.h \
     Shared/WebError.h \
     Shared/WebEventConversion.h \
@@ -397,7 +397,7 @@ SOURCES += \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
     Shared/VisitedLinkTable.cpp \
-    Shared/WebContextMenuItem.cpp \
+    Shared/WebContextMenuItemData.cpp \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \

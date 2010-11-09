@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuItem_h
-#define WebContextMenuItem_h
+#ifndef WebContextMenuItemData_h
+#define WebContextMenuItemData_h
 
 #include <WebCore/ContextMenuItem.h>
 #include <wtf/text/WTFString.h>
@@ -40,22 +40,22 @@ namespace WebCore {
 
 namespace WebKit {
 
-class WebContextMenuItem {
+class WebContextMenuItemData {
 public:
-    WebContextMenuItem();
-    WebContextMenuItem(WebCore::ContextMenuItem&, WebCore::ContextMenu* menu);
-    WebContextMenuItem(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled, bool checked);
-    WebContextMenuItem(WebCore::ContextMenuAction, const String& title, bool enabled, const Vector<WebContextMenuItem>& submenu);
+    WebContextMenuItemData();
+    WebContextMenuItemData(WebCore::ContextMenuItem&, WebCore::ContextMenu* menu);
+    WebContextMenuItemData(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled, bool checked);
+    WebContextMenuItemData(WebCore::ContextMenuAction, const String& title, bool enabled, const Vector<WebContextMenuItemData>& submenu);
 
     WebCore::ContextMenuItemType type() const { return m_type; }
     WebCore::ContextMenuAction action() const { return m_action; }
     const String& title() const { return m_title; }
     bool enabled() const { return m_enabled; }
     bool checked() const { return m_checked; }
-    const Vector<WebContextMenuItem>& submenu() const { return m_submenu; }
+    const Vector<WebContextMenuItemData>& submenu() const { return m_submenu; }
     
     void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebContextMenuItem&);
+    static bool decode(CoreIPC::ArgumentDecoder*, WebContextMenuItemData&);
 
 private:
     WebCore::ContextMenuItemType m_type;
@@ -63,11 +63,11 @@ private:
     String m_title;
     bool m_enabled;
     bool m_checked;
-    Vector<WebContextMenuItem> m_submenu;
+    Vector<WebContextMenuItemData> m_submenu;
 };
 
-Vector<WebContextMenuItem> kitItems(Vector<WebCore::ContextMenuItem>&, WebCore::ContextMenu*);
+Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>&, WebCore::ContextMenu*);
 
 } // namespace WebKit
 
-#endif // WebContextMenuItem_h
+#endif // WebContextMenuItemData_h

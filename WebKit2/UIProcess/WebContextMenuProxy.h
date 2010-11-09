@@ -36,13 +36,13 @@ namespace WebCore {
 
 namespace WebKit {
 
-class WebContextMenuItem;
+class WebContextMenuItemData;
 
 class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
 public:
     virtual ~WebContextMenuProxy();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItem>& items) = 0;
+    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>& items) = 0;
     virtual void hideContextMenu() = 0;
 
 protected:
