@@ -647,7 +647,7 @@ BUG3273 : editing/selection/move-left-right.html = FAIL
 BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
 BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
 BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
-BUGWK38100 : editing/inserting/caret-position.html = TEXT PASS
+
 // These tests also use firstRectForCharacterRange, but they generate slightly
 // different values.
 BUG3273 : editing/selection/5825350-1.html = TEXT
@@ -665,9 +665,6 @@ BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
 // selection
 BUG10369 MAC : editing/selection/5109817.html = FAIL
 BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
-
-// Missing "misspelled-word" dotted underline
-BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
 
 // We don't draw the spelling markers at all in test shell.
 BUG11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
