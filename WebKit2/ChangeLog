@@ -1,5 +1,11 @@
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
+        Fix Windows build.
+
+        * win/WebKit2.vcproj:
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
         Fix Qt build.
 
         * WebKit2.pro:

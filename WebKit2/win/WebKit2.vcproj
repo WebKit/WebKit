@@ -1159,7 +1159,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\WebProcess\WebCoreSupport\win\WebPopupMenuWin.cpp"
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebPopupMenuWin.cpp"
 						>
 					</File>
 				</Filter>
