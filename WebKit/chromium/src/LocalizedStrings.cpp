@@ -296,44 +296,37 @@ String localizedMediaTimeDescription(float /*time*/)
 
 String validationMessageValueMissingText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationValueMissing);
 }
 
 String validationMessageTypeMismatchText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationTypeMismatch);
 }
 
 String validationMessagePatternMismatchText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationPatternMismatch);
 }
 
 String validationMessageTooLongText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationTooLong);
 }
 
 String validationMessageRangeUnderflowText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationRangeUnderflow);
 }
 
 String validationMessageRangeOverflowText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationRangeOverflow);
 }
 
 String validationMessageStepMismatchText()
 {
-    notImplemented();
-    return String();
+    return query(WebLocalizedString::ValidationStepMismatch);
 }
 
 } // namespace WebCore

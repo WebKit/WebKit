@@ -58,6 +58,13 @@ struct WebLocalizedString {
         AXLinkActionVerb,
         KeygenMenuHighGradeKeySize,
         KeygenMenuMediumGradeKeySize,
+        ValidationValueMissing,
+        ValidationTypeMismatch,
+        ValidationPatternMismatch,
+        ValidationTooLong,
+        ValidationRangeUnderflow,
+        ValidationRangeOverflow,
+        ValidationStepMismatch,
     };
 };
 
