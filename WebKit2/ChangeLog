@@ -1,3 +1,35 @@
+2010-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Add a PageOverlay::Client object in preparation of not allowing subclassing of PageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=49263
+
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::FindPageOverlay):
+        Call the PageOverlay constructor.
+
+        (WebKit::FindPageOverlay::drawRect):
+        (WebKit::FindPageOverlay::mouseEvent):
+        These now take a PageOverlay callback.
+
+        * WebProcess/WebPage/FindPageOverlay.h:
+        FindPageOverlay now inherits from PageOverlay::Client.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::create):
+        Add create function.
+
+        (WebKit::PageOverlay::PageOverlay):
+        The constructor now takes a client.
+
+        (WebKit::PageOverlay::drawRect):
+        (WebKit::PageOverlay::mouseEvent):
+        Call the client methods.
+
+        * WebProcess/WebPage/PageOverlay.h:
+        Add Client class.
+
 2010-11-09  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Darin Adler.

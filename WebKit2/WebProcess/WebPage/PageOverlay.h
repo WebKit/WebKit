@@ -26,7 +26,8 @@
 #ifndef PageOverlay_h
 #define PageOverlay_h
 
-#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -38,23 +39,34 @@ namespace WebKit {
 class WebMouseEvent;
 class WebPage;
 
-class PageOverlay {
-    WTF_MAKE_NONCOPYABLE(PageOverlay);
-
+class PageOverlay : public RefCounted<PageOverlay> {
 public:
-    virtual ~PageOverlay();
-    virtual void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
-    virtual bool mouseEvent(const WebMouseEvent&) = 0;
+    class Client {
+    protected:
+        virtual ~Client() { }
+    
+    public:
+        virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
+        virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
+    };
 
+    static PassRefPtr<PageOverlay> create(Client*);
+    virtual ~PageOverlay();
+    
     void setPage(WebPage*);
     void setNeedsDisplay();
 
+    void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    bool mouseEvent(const WebMouseEvent&);
+
 protected:
-    PageOverlay();
+    explicit PageOverlay(Client*);
 
     WebPage* webPage() const { return m_webPage; }
 
 private:
+    Client* m_client;
+
     WebPage* m_webPage;
 };
 

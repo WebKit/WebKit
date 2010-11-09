@@ -31,8 +31,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PageOverlay::PageOverlay()
-    : m_webPage(0)
+PassRefPtr<PageOverlay> PageOverlay::create(Client* client)
+{
+    return adoptRef(new PageOverlay(client));
+}
+
+PageOverlay::PageOverlay(Client* client)
+    : m_client(client)
+    , m_webPage(0)
 {
 }
 
@@ -51,6 +57,16 @@ void PageOverlay::setPage(WebPage* webPage)
 void PageOverlay::setNeedsDisplay()
 {
     m_webPage->drawingArea()->setNeedsDisplay(IntRect(IntPoint(), m_webPage->size()));
+}
+
+void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+{
+    m_client->drawRect(this, graphicsContext, dirtyRect);
+}
+    
+bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
+{
+    return m_client->mouseEvent(this, mouseEvent);
 }
 
 } // namespace WebKit
