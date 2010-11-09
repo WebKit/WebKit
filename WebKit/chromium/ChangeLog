@@ -24,7 +24,19 @@
         (WebKit::WebURLRequest::hasUserGesture):
         (WebKit::WebURLRequest::setHasUserGesture):
 
-2010-11-08  Alexey Proskuryakov  <ap@apple.com>
+2010-11-08  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add an API to WebViewClient that report the load progress for a frame.
+        https://bugs.webkit.org/show_bug.cgi?id=49137
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didChangeLoadProgress):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::postProgressEstimateChangedNotification):
+
+ 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
 

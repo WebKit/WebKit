@@ -117,6 +117,10 @@ public:
     virtual void didStartLoading() { }
     virtual void didStopLoading() { }
 
+    // Notification that some progress was made loading the current page.
+    // loadProgress is a value between 0 (nothing loaded) and 1.0 (frame fully
+    // loaded).
+    virtual void didChangeLoadProgress(WebFrame*, double loadProgress) { }
 
     // Editing -------------------------------------------------------------
 
