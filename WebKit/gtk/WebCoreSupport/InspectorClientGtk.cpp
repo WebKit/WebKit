@@ -78,7 +78,7 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
     }
 
     webkit_web_inspector_set_web_view(webInspector, inspectorWebView);
-
+ 
     GOwnPtr<gchar> inspectorPath(g_build_filename(inspectorFilesPath(), "inspector.html", NULL));
     GOwnPtr<gchar> inspectorURI(g_filename_to_uri(inspectorPath.get(), 0, 0));
     webkit_web_view_load_uri(inspectorWebView, inspectorURI.get());
@@ -88,6 +88,9 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
     m_frontendPage = core(inspectorWebView);
     m_frontendClient = new InspectorFrontendClient(m_inspectedWebView, inspectorWebView, webInspector, m_frontendPage, this);
     m_frontendPage->inspectorController()->setInspectorFrontendClient(m_frontendClient);
+
+    // The inspector must be in it's own PageGroup to avoid deadlock while debugging.
+    m_frontendPage->setGroupName("");
 }
 
 void InspectorClient::releaseFrontendPage()

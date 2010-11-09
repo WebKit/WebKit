@@ -1,3 +1,21 @@
+2010-11-08  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Link with target name set does not work
+        https://bugs.webkit.org/show_bug.cgi?id=48865
+
+        When a new page is created with a name (target=myFrame), the new
+        mainFrame could not be found because they where not stored in the
+        same PageGroup. As PageGroup are not exposed externally so the
+        simpliest solution is to use a global page group name. This also fixes
+        issue with visited link coloration across pages. After this change the
+        private function webkit_web_view_set_group_name() was no longer used
+        so it was removed completly.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (createWebView):
+
 2010-11-08  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Kent Tamura.
