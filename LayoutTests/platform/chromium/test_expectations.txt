@@ -3444,5 +3444,7 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyl
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
+BUGWK49265 LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop.html = IMAGE PASS
+
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUG62515 : printing/page-format-data-display-none.html = TEXT
