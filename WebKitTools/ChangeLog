@@ -1,3 +1,17 @@
+2010-11-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        run platform/chromium/plugins/return-npobject.html on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=49103
+
+        This tests that we can get an NPObject returned through a method on
+        an NPAPI Object.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (testCallbackReturn):
+        (pluginInvoke):
+
 2010-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r71672.

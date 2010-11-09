@@ -3,7 +3,7 @@
   var test_object = new Object();
   test_object.value = 1;
 
-  function callbk(arg) {
+  function callback(arg) {
     return test_object;
   }
 
@@ -11,7 +11,7 @@
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var obj = plug.testCallbackRet("callbk");
+    var obj = plug.testCallbackReturn("callback");
     if (obj == test_object) {
       var output = document.getElementById("output");
       output.innerHTML = "SUCCESS";
