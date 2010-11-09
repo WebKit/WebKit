@@ -1,3 +1,9 @@
+2010-11-09  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling chromium DEPS.
+
+        * DEPS: Roll to r65462.
+
 2010-11-09  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Windows build fix.
