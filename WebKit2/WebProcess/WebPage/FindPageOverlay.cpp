@@ -85,6 +85,20 @@ Vector<IntRect> FindPageOverlay::rectsForTextMatches()
     return rects;
 }
 
+IntRect FindPageOverlay::bounds() const
+{
+    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
+
+    int width = frameView->width();
+    if (frameView->verticalScrollbar())
+        width -= frameView->verticalScrollbar()->width();
+    int height = frameView->height();
+    if (frameView->horizontalScrollbar())
+        height -= frameView->horizontalScrollbar()->height();
+    
+    return IntRect(0, 0, width, height);
+}
+
 static Color overlayBackgroundColor()
 {
     return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
@@ -95,16 +109,7 @@ void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& 
     Vector<IntRect> rects = rectsForTextMatches();
     ASSERT(!rects.isEmpty());
 
-    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
-
-    int width = frameView->width();
-    if (frameView->verticalScrollbar())
-        width -= frameView->verticalScrollbar()->width();
-    int height = frameView->height();
-    if (frameView->horizontalScrollbar())
-        height -= frameView->horizontalScrollbar()->height();
-    
-    IntRect paintRect = intersection(dirtyRect, IntRect(0, 0, width, height));
+    IntRect paintRect = intersection(dirtyRect, bounds());
     if (paintRect.isEmpty())
         return;
 
@@ -142,7 +147,8 @@ void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& 
 
 bool FindPageOverlay::mouseEvent(const WebMouseEvent& event)
 {
-    if (event.type() == WebEvent::MouseDown) {
+    // If we get a mouse down event inside the page overlay we should hide the find UI.
+    if (event.type() == WebEvent::MouseDown && bounds().contains(event.position())) {
         // Dismiss the overlay.
         m_findController->hideFindUI();
         return false;

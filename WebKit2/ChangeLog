@@ -1,5 +1,23 @@
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan and Dan Bernstein.
+
+        Find in Page: scrolling the page with the scrollbar while overlay is up dismisses the overlay
+        https://bugs.webkit.org/show_bug.cgi?id=49219
+        <rdar://problem/8569550>
+
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::bounds):
+        Return the bounds of the find page overlay, excluding any scrollbars.
+
+        (WebKit::FindPageOverlay::drawRect):
+        Call bounds.
+
+        (WebKit::FindPageOverlay::mouseEvent):
+        Only dismiss the find UI if the mouse down event happens inside the overlay bounds.
+
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Add the ability to send messages to DownloadProxy objects
