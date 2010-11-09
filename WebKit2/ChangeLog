@@ -1,3 +1,49 @@
+2010-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of FindPageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=49268
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove files.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        Create a PageOverlay with the FindController as its client.
+
+        (WebKit::FindController::willMoveToWebPage):
+        Null out the find page overlay if the web page is null.
+
+        (WebKit::FindController::didMoveToWebPage):
+        Add stub.
+
+        * WebProcess/WebPage/FindController.h:
+        FindController is now a PageOverlay::Client.
+
+        * WebProcess/WebPage/FindPageOverlay.cpp: Removed.
+        * WebProcess/WebPage/FindPageOverlay.h: Removed.
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setPage):
+        Call the willMoveToWebPage and didMoveToWebPage client functions.
+
+        (WebKit::PageOverlay::setNeedsDisplay):
+        Pass the page overlay bounds instead of the web page size.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay):
+        Clear the page of the previous page overlay.
+
+        (WebKit::WebPage::uninstallPageOverlay):
+        Clear the page of the previous page overlay.
+
+        * WebProcess/WebPage/WebPage.h:
+        The page overlay is now refcounted.
+
+        * win/WebKit2.vcproj:
+        Remove files.
+
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

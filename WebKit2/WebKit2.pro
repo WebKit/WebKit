@@ -350,7 +350,6 @@ HEADERS += \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/FindController.h \
-    WebProcess/WebPage/FindPageOverlay.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
     WebProcess/WebPage/WebEditCommand.h \
@@ -524,7 +523,6 @@ SOURCES += \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/FindController.cpp \
-    WebProcess/WebPage/FindPageOverlay.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \

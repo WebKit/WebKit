@@ -65,15 +65,14 @@ IntRect PageOverlay::bounds() const
 
 void PageOverlay::setPage(WebPage* webPage)
 {
-    ASSERT(!m_webPage);
-
+    m_client->willMoveToWebPage(this, webPage);
     m_webPage = webPage;
-    setNeedsDisplay();
+    m_client->didMoveToWebPage(this, webPage);
 }
 
 void PageOverlay::setNeedsDisplay()
 {
-    m_webPage->drawingArea()->setNeedsDisplay(IntRect(IntPoint(), m_webPage->size()));
+    m_webPage->drawingArea()->setNeedsDisplay(bounds());
 }
 
 void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)

@@ -46,6 +46,8 @@ public:
         virtual ~Client() { }
     
     public:
+        virtual void willMoveToWebPage(PageOverlay*, WebPage*) = 0;
+        virtual void didMoveToWebPage(PageOverlay*, WebPage*) = 0;
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
     };

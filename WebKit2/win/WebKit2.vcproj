@@ -1192,14 +1192,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\WebPage\FindPageOverlay.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\WebPage\FindPageOverlay.h"
-					>
-				</File>
-				<File
 					RelativePath="..\WebProcess\WebPage\PageOverlay.cpp"
 					>
 				</File>

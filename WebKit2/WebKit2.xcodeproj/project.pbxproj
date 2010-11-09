@@ -145,8 +145,6 @@
 		1A90C1F51264FD71003E44D4 /* FindController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C1F31264FD71003E44D4 /* FindController.cpp */; };
 		1A90C23712650717003E44D4 /* PageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C23512650717003E44D4 /* PageOverlay.h */; };
 		1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C23612650717003E44D4 /* PageOverlay.cpp */; };
-		1A90C2A312650C60003E44D4 /* FindPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C2A112650C60003E44D4 /* FindPageOverlay.h */; };
-		1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */; };
 		1A910071126675C4001842F5 /* FindIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A91006F126675C3001842F5 /* FindIndicator.h */; };
 		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
 		1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */; };
@@ -687,8 +685,6 @@
 		1A90C1F31264FD71003E44D4 /* FindController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindController.cpp; sourceTree = "<group>"; };
 		1A90C23512650717003E44D4 /* PageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlay.h; sourceTree = "<group>"; };
 		1A90C23612650717003E44D4 /* PageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlay.cpp; sourceTree = "<group>"; };
-		1A90C2A112650C60003E44D4 /* FindPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindPageOverlay.h; sourceTree = "<group>"; };
-		1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindPageOverlay.cpp; sourceTree = "<group>"; };
 		1A91006F126675C3001842F5 /* FindIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicator.h; sourceTree = "<group>"; };
 		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
 		1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicatorWindow.h; sourceTree = "<group>"; };
@@ -1572,8 +1568,6 @@
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
 				1A90C1F31264FD71003E44D4 /* FindController.cpp */,
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
-				1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */,
-				1A90C2A112650C60003E44D4 /* FindPageOverlay.h */,
 				0F5265B111DD37680006D33C /* LayerBackedDrawingArea.cpp */,
 				0F5265B211DD37680006D33C /* LayerBackedDrawingArea.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
@@ -2331,7 +2325,6 @@
 				1A90C1EE1264FD50003E44D4 /* FindOptions.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
-				1A90C2A312650C60003E44D4 /* FindPageOverlay.h in Headers */,
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,
 				BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */,
 				1A910071126675C4001842F5 /* FindIndicator.h in Headers */,
@@ -2672,7 +2665,6 @@
 				1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */,
 				1A90C1F51264FD71003E44D4 /* FindController.cpp in Sources */,
 				1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */,
-				1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* BackingStoreCG.cpp in Sources */,
 				BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */,
 				1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */,

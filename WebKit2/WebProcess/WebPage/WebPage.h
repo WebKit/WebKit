@@ -180,7 +180,7 @@ public:
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif
 
-    void installPageOverlay(PassOwnPtr<PageOverlay>);
+    void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay();
 
     static const WebEvent* currentEvent();
@@ -299,7 +299,7 @@ private:
     InjectedBundlePageUIClient m_uiClient;
 
     FindController m_findController;
-    OwnPtr<PageOverlay> m_pageOverlay;
+    RefPtr<PageOverlay> m_pageOverlay;
 
     OwnPtr<WebInspector> m_inspector;
 

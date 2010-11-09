@@ -467,15 +467,20 @@ double WebPage::viewScaleFactor() const
     return frame->pageScaleFactor();
 }
 
-void WebPage::installPageOverlay(PassOwnPtr<PageOverlay> pageOverlay)
+void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
 {
+    if (m_pageOverlay)
+        pageOverlay->setPage(0);
+
     m_pageOverlay = pageOverlay;
     m_pageOverlay->setPage(this);
+    m_pageOverlay->setNeedsDisplay();
 }
 
 void WebPage::uninstallPageOverlay()
 {
-    m_pageOverlay = 0;
+    m_pageOverlay->setPage(0);
+    m_pageOverlay = nullptr;
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
