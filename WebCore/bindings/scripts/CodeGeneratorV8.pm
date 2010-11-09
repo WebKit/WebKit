@@ -524,7 +524,7 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
         $hasCustomDeleterr = 0;
         $hasEnumerator = 0;
     }
-    if ($interfaceName eq "HTMLSelectElement" || $interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
+    if ($interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
         $hasCustomNamedGetter = 1;
     }
     if ($interfaceName eq "HTMLDocument") {
@@ -1742,7 +1742,7 @@ sub GenerateImplementationNamedPropertyGetter
         $hasCustomGetter = 0;
     }
 
-    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $hasCustomGetter || $namedPropertyGetter;
+    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $hasCustomGetter;
     if (!$hasGetter) {
         return;
     }

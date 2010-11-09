@@ -46,33 +46,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8HTMLSelectElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.HTMLSelectElement.NamedPropertyGetter");
-    HTMLSelectElement* select = V8HTMLSelectElement::toNative(info.Holder());
-    v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
-
-    if (!value.IsEmpty())
-        return value;
-
-    // Search local callback properties next to find IDL defined properties.
-    if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return notHandledByInterceptor();
-
-    PassRefPtr<HTMLOptionsCollection> collection = select->options();
-
-    Vector<RefPtr<Node> > items;
-    collection->namedItems(v8StringToAtomicWebCoreString(name), items);
-
-    if (!items.size())
-        return notHandledByInterceptor();
-
-    if (items.size() == 1)
-        return toV8(items.at(0).release());
-
-    return toV8(V8NamedNodesCollection::create(items));
-}
-
 v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
