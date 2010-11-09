@@ -1218,36 +1218,44 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // at the moment (a demoted inline <form> for example). If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
-            if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
-                updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
-                return true;
+            if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
+                IntPoint childPoint = flipForWritingMode(toRenderBox(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+                if (child->nodeAtPoint(request, result, xPos, yPos, childPoint.x(), childPoint.y(), action)) {
+                    updateHitTestResult(result, IntPoint(xPos - childPoint.x(), yPos - childPoint.y()));
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    int relativeY = yPos - ty;
-    // leftrow corresponds to the first row that starts after the y mouse position
-    unsigned leftrow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), relativeY) - m_rowPos.begin();
-    if (leftrow == m_rowPos.size())
+    IntPoint location = IntPoint(xPos - tx, yPos - ty);
+    if (style()->isFlippedBlocksWritingMode()) {
+        if (style()->isHorizontalWritingMode())
+            location.setY(height() - location.y());
+        else
+            location.setX(width() - location.x());
+    }
+
+    int offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
+    // Find the first row that starts after offsetInColumnDirection.
+    unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), offsetInColumnDirection) - m_rowPos.begin();
+    if (nextRow == m_rowPos.size())
         return false;
-    // Grab the last row that starts before the y mouse position.
-    if (leftrow > 0)
-        --leftrow;
+    // Now set hitRow to the index of the hit row, or 0.
+    unsigned hitRow = nextRow > 0 ? nextRow - 1 : 0;
 
     Vector<int>& columnPos = table()->columnPositions();
-    bool rtl = !style()->isLeftToRightDirection();
-    int relativeX = xPos - tx;
-    if (rtl)
-        relativeX = columnPos[columnPos.size() - 1] - relativeX;
+    int offsetInRowDirection = style()->isHorizontalWritingMode() ? location.x() : location.y();
+    if (!style()->isLeftToRightDirection())
+        offsetInRowDirection = columnPos[columnPos.size() - 1] - offsetInRowDirection;
 
-    unsigned leftcol = std::lower_bound(columnPos.begin(), columnPos.end(), relativeX) - columnPos.begin();
-    if (leftcol == columnPos.size())
+    unsigned nextColumn = std::lower_bound(columnPos.begin(), columnPos.end(), offsetInRowDirection) - columnPos.begin();
+    if (nextColumn == columnPos.size())
         return false;
-    if (leftcol > 0)
-        --leftcol;
+    unsigned hitColumn = nextColumn > 0 ? nextColumn - 1 : 0;
 
-    CellStruct& current = cellAt(leftrow, leftcol);
+    CellStruct& current = cellAt(hitRow, hitColumn);
 
     // If the cell is empty, there's nothing to do
     if (!current.hasCells())
@@ -1255,8 +1263,9 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     for (int i = current.cells.size() - 1; i >= 0; --i) {
         RenderTableCell* cell = current.cells[i];
-        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
-            updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
+        IntPoint cellPoint = flipForWritingMode(cell, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, xPos, yPos, cellPoint.x(), cellPoint.y(), action)) {
+            updateHitTestResult(result, IntPoint(xPos - cellPoint.x(), yPos - cellPoint.y()));
             return true;
         }
     }
