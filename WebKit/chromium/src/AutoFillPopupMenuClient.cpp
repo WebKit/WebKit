@@ -293,7 +293,7 @@ void AutoFillPopupMenuClient::initialize(
     // The direction of text in popup menu is set the same as the direction of
     // the input element: textField.
     m_style.set(new PopupMenuStyle(Color::black, Color::white, font, true,
-                                   Length(WebCore::Fixed),
+                                   false, Length(WebCore::Fixed),
                                    textField->renderer()->style()->direction()));
 }
 

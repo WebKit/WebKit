@@ -1089,6 +1089,9 @@ int PopupListBox::getRowHeight(int index)
     if (index < 0)
         return 0;
 
+    if (m_popupClient->itemStyle(index).isDisplayNone())
+        return 0;
+
     String icon = m_popupClient->itemIcon(index);
     RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
 
@@ -1254,10 +1257,11 @@ void PopupListBox::layout()
     int paddingWidth = 0;
     int y = 0;
     for (int i = 0; i < numItems(); ++i) {
-        Font itemFont = getRowFont(i);
-
         // Place the item vertically.
         m_items[i]->yOffset = y;
+        if (m_popupClient->itemStyle(i).isDisplayNone())
+            continue;
+        Font itemFont = getRowFont(i);
         y += itemFont.height();
 
         // Ensure the popup is wide enough to fit this item.

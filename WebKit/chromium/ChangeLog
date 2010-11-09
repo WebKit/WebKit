@@ -1,3 +1,13 @@
+2010-11-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] display:none has no effect on <option> element
+        https://bugs.webkit.org/show_bug.cgi?id=49169
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::initialize):
+
 2010-11-09  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Dimitri Glazkov.
