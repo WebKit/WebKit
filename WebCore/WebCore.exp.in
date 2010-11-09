@@ -1158,6 +1158,7 @@ _wkCGContextGetShouldSmoothFonts
 _wkCopyCFLocalizationPreferredName
 _wkCopyCONNECTProxyResponse
 _wkCopyNSURLResponseStatusLine
+_wkCreateCTLineWithUniCharProvider
 _wkCreateCustomCFReadStream
 _wkCreateNSURLConnectionDelegateProxy
 _wkCreateURLNPasteboardFlavorTypeName
@@ -1212,6 +1213,10 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+_wkCreateCTTypesetterWithUniCharProviderAndOptions
+#endif
 
 #if ENABLE(3D_RENDERING)
 _WebCoreHas3DRendering

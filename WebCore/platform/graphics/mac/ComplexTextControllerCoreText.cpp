@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "ComplexTextController.h"
+#include "WebCoreSystemInterface.h"
 
 #if USE(CORE_TEXT)
 
@@ -101,6 +102,23 @@ void ComplexTextController::ComplexTextRun::createTextRunFromFontDataCoreText(bo
     m_advances = m_advancesVector.data();
 }
 
+struct ProviderInfo {
+    const UChar* cp;
+    unsigned length;
+    CFDictionaryRef attributes;
+};
+
+static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
+{
+    ProviderInfo* info = static_cast<struct ProviderInfo*>(refCon);
+    if (stringIndex >= info->length)
+        return 0;
+
+    *charCount = info->length - stringIndex;
+    *attributes = info->attributes;
+    return info->cp + stringIndex;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
     if (!fontData) {
@@ -112,10 +130,6 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
     if (m_fallbackFonts && fontData != m_font.primaryFont())
         m_fallbackFonts->add(fontData);
 
-    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(NULL, cp, length, kCFAllocatorNull));
-
-    RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(NULL, string.get(), fontData->getCFStringAttributes(m_font.typesettingFeatures())));
-
     RetainPtr<CTLineRef> line;
 
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
@@ -126,11 +140,22 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue) };
         static CFDictionaryRef ltrTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures()) };
+        RetainPtr<CTTypesetterRef> typesetter(AdoptCF, wkCreateCTTypesetterWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
+#else
+        RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, cp, length, kCFAllocatorNull));
+        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(m_font.typesettingFeatures())));
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
+#endif
 
         line.adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
-    } else
-        line.adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+    } else {
+        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures()) };
+
+        line.adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
+    }
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
 
