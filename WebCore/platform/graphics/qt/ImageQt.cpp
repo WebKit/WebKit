@@ -102,20 +102,31 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!framePixmap) // If it's too early we won't have an image yet.
         return;
 
+    QRectF dr = QRectF(destRect).normalized();
+    if (!dr.width() || !dr.height()) // Qt interprets 0 width/height as full width/height so just short circuit.
+        return;
+
     QPixmap pixmap = *framePixmap;
-    QRect tr = QRectF(tileRect).toRect();
+    QRect tr = QRectF(tileRect).toRect().normalized();
     if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
         pixmap = pixmap.copy(tr);
 
-    QBrush b(pixmap);
-    b.setTransform(patternTransform);
     ctxt->save();
+
     ctxt->setCompositeOperation(op);
     QPainter* p = ctxt->platformContext();
     if (!pixmap.hasAlpha() && p->compositionMode() == QPainter::CompositionMode_SourceOver)
         p->setCompositionMode(QPainter::CompositionMode_Source);
-    p->setBrushOrigin(phase);
-    p->fillRect(destRect, b);
+
+    /* Translate the coordinates as phase is not in world matrix coordinate space but the tile rect origin is. */
+    QTransform transform(patternTransform);
+    transform *= QTransform().translate(phase.x(), phase.y());
+    transform.translate(tr.x(), tr.y());
+
+    QBrush b(pixmap);
+    b.setTransform(transform);
+    p->fillRect(dr, b);
+
     ctxt->restore();
 
     if (imageObserver())
