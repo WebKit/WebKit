@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "DrawingArea.h"
 #include "FindController.h"
+#include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
@@ -132,11 +133,13 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // -- InjectedBundle methods
+    void initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClient*);
     void initializeInjectedBundleEditorClient(WKBundlePageEditorClient*);
     void initializeInjectedBundleFormClient(WKBundlePageFormClient*);
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient*);
     void initializeInjectedBundleUIClient(WKBundlePageUIClient*);
 
+    InjectedBundlePageContextMenuClient& injectedBundleContextMenuClient() { return m_contextMenuClient; }
     InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
     InjectedBundlePageFormClient& injectedBundleFormClient() { return m_formClient; }
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
@@ -295,6 +298,7 @@ private:
 
     WebCore::IntSize m_windowResizerSize;
 
+    InjectedBundlePageContextMenuClient m_contextMenuClient;
     InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageFormClient m_formClient;
     InjectedBundlePageLoaderClient m_loaderClient;

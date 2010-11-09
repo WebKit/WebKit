@@ -30,6 +30,8 @@
 #include <wtf/text/CString.h>
 #include <WebCore/ContextMenu.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 WebContextMenuItemData::WebContextMenuItemData()
@@ -76,6 +78,17 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItem& item, W
     m_checked = item.checked();
 }
 
+ContextMenuItem WebContextMenuItemData::core() const
+{
+    if (m_type != SubmenuType) {
+        ContextMenuItem result(m_type, m_action, m_title, m_enabled, m_checked);
+        return result;
+    }
+    
+    Vector<ContextMenuItem> subMenuItems = coreItems(m_submenu);
+    return ContextMenuItem(m_action, m_title, m_enabled, m_checked, subMenuItems);
+}
+
 void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), static_cast<uint32_t>(m_action), m_title, m_checked, m_enabled, m_submenu));
@@ -110,12 +123,22 @@ bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContex
     return true;
 }
 
-Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>& coreItems, WebCore::ContextMenu* menu)
+Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>& coreItemVector, WebCore::ContextMenu* menu)
 {
     Vector<WebContextMenuItemData> result;
-    result.reserveCapacity(coreItems.size());
-    for (unsigned i = 0; i < coreItems.size(); ++i)
-        result.append(WebContextMenuItemData(coreItems[i], menu));
+    result.reserveCapacity(coreItemVector.size());
+    for (unsigned i = 0; i < coreItemVector.size(); ++i)
+        result.append(WebContextMenuItemData(coreItemVector[i], menu));
+    
+    return result;
+}
+
+Vector<ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>& kitItemVector)
+{
+    Vector<ContextMenuItem> result;
+    result.reserveCapacity(kitItemVector.size());
+    for (unsigned i = 0; i < kitItemVector.size(); ++i)
+        result.append(kitItemVector[i].core());
     
     return result;
 }

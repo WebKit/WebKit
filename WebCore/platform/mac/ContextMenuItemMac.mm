@@ -58,20 +58,37 @@ ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
         setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
+static PlatformMenuItemDescription createPlatformMenuItemDescription(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
 {
-    if (type == SeparatorType) {
-        m_platformDescription = [NSMenuItem separatorItem];
-        return;
-    }
+    if (type == SeparatorType)
+        return [[NSMenuItem separatorItem] retain];
 
     NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
-    m_platformDescription = item;
-    [item release];
+    [item setEnabled:enabled];
+    [item setState:checked ? NSOnState : NSOffState];
+    [item setTag:action];
 
-    [m_platformDescription.get() setTag:action];
+    return item;
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
+{
+    m_platformDescription.adoptNS(createPlatformMenuItemDescription(type, action, title, true, false));
+
     if (subMenu)
         setSubMenu(subMenu);
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
+{
+    m_platformDescription.adoptNS(createPlatformMenuItemDescription(type, action, title, enabled, checked));
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, Vector<ContextMenuItem>& subMenuItems)
+{
+    m_platformDescription.adoptNS(createPlatformMenuItemDescription(SubmenuType, action, title, enabled, checked));
+    
+    setSubMenu(subMenuItems);
 }
 
 ContextMenuItem::~ContextMenuItem()
@@ -132,6 +149,17 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
     [subMenu setAutoenablesItems:NO];
     for (unsigned i = 0; i < [subMenuArray count]; i++)
         [subMenu insertItem:[subMenuArray objectAtIndex:i] atIndex:i];
+    [m_platformDescription.get() setSubmenu:subMenu];
+    [subMenu release];
+}
+
+void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>& subMenuItems)
+{
+    NSMenu* subMenu = [[NSMenu alloc] init];
+    [subMenu setAutoenablesItems:NO];
+    for (unsigned i = 0; i < subMenuItems.size(); ++i)
+        [subMenu addItem:subMenuItems[i].releasePlatformDescription()];
+        
     [m_platformDescription.get() setSubmenu:subMenu];
     [subMenu release];
 }

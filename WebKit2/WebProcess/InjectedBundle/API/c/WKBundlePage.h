@@ -181,8 +181,19 @@ struct WKBundlePageFormClient {
 };
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;
 
-WK_EXPORT WKTypeID WKBundlePageGetTypeID();
+// ContextMenu client
+typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, const void* clientInfo);
 
+struct WKBundlePageContextMenuClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
+};
+typedef struct WKBundlePageContextMenuClient WKBundlePageContextMenuClient;
+
+WK_EXPORT WKTypeID WKBundlePageGetTypeID();
+ 
+WK_EXPORT void WKBundlePageSetContextMenuClient(WKBundlePageRef page, WKBundlePageContextMenuClient* client);
 WK_EXPORT void WKBundlePageSetEditorClient(WKBundlePageRef page, WKBundlePageEditorClient* client);
 WK_EXPORT void WKBundlePageSetFormClient(WKBundlePageRef page, WKBundlePageFormClient* client);
 WK_EXPORT void WKBundlePageSetLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient* client);

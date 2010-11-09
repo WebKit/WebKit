@@ -505,6 +505,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebContextMenuItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebContextMenuItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebContextMenuItemData.cpp"
 				>
 			</File>
@@ -1341,6 +1349,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleHitTestResult.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageContextMenuClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageContextMenuClient.h"
 					>
 				</File>
 				<File

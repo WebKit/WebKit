@@ -28,6 +28,7 @@
 #if !LOG_DISABLED
 
 WTFLogChannel LogSessionState = { 0x00000001, "WebKit2LogLevel", WTFLogChannelOn };
+WTFLogChannel LogContextMenu  = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOn };
 
 static inline void initializeLogChannel(WTFLogChannel* channel)
 {
@@ -41,6 +42,7 @@ void initializeLogChannelsIfNecessary()
         return;
     haveInitializedLogChannels = true;
 
+    initializeLogChannel(&LogContextMenu);
     initializeLogChannel(&LogSessionState);
 }
 

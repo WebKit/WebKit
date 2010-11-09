@@ -92,6 +92,7 @@ namespace WebCore {
     };
 
 Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription);
+PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>&);
 
 }
 

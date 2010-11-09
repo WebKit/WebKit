@@ -257,6 +257,9 @@ namespace WebCore {
         ContextMenuItem(PlatformMenuItemDescription);
         ContextMenuItem(ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu = 0);
+
+        ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);
+        ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
 #if PLATFORM(GTK)
         ContextMenuItem(GtkMenuItem*);
 #endif
@@ -275,6 +278,7 @@ namespace WebCore {
 
         PlatformMenuDescription platformSubMenu() const;
         void setSubMenu(ContextMenu*);
+        void setSubMenu(Vector<ContextMenuItem>&);
 
         void setChecked(bool = true);
         bool checked() const;

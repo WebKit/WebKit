@@ -37,6 +37,7 @@ public:
         TypeNull = 0,
         TypeArray,
         TypeCertificateInfo,
+        TypeContextMenuItem,
         TypeData,
         TypeDictionary,
         TypeError,

@@ -38,6 +38,13 @@ WKTypeID WKBundlePageGetTypeID()
     return toAPI(WebPage::APIType);
 }
 
+void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageContextMenuClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeInjectedBundleContextMenuClient(wkClient);
+}
+
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient* wkClient)
 {
     if (wkClient && wkClient->version)

@@ -166,6 +166,18 @@ Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription menu)
     return items;
 }
 
+PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)
+{
+    PlatformMenuDescription platformMenu = [[NSMutableArray alloc] initWithCapacity:menuItemVector.size()];
+    for (unsigned i = 0; i < menuItemVector.size(); ++i) {
+        PlatformMenuItemDescription platformItem = menuItemVector[i].releasePlatformDescription();
+        [platformMenu addObject:platformItem];
+        [platformItem release];
+    }
+    
+    return [platformMenu autorelease];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CONTEXT_MENUS)

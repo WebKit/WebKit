@@ -1,3 +1,61 @@
+2010-11-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Part of <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=48720
+        Customizable context menu support in WebKit2.
+
+        This adds a BundlePageContextMenu client and lets WebKit2 consult it with the proposed
+        list of WebContextMenuItems.
+        There is no realistic API for the embedding app to actually inspect or create new
+        WebContextMenuItems (will be "WKContextMenuItem") and that ability will come later.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Platform/Logging.cpp:
+        (initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+
+        * Shared/APIObject.h:
+
+        * Shared/MutableArray.cpp:
+        (WebKit::MutableArray::reserveCapacity):
+        * Shared/MutableArray.h:
+
+        * Shared/WebContextMenuItem.cpp: Added.
+        (WebKit::WebContextMenuItem::WebContextMenuItem):
+        (WebKit::WebContextMenuItem::data):
+        * Shared/WebContextMenuItem.h: Added.
+        (WebKit::WebContextMenuItem::create):
+        (WebKit::WebContextMenuItem::type):
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::core):
+        (WebKit::kitItems):
+        (WebKit::coreItems):
+        * Shared/WebContextMenuItemData.h:
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp: Added.
+        (WebKit::InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient):
+        (WebKit::InjectedBundlePageContextMenuClient::initialize):
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h: Added.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::getCustomMenuFromDefaultItems): Call through to the injected bundle client
+          with the default items and convert the returned items back for WebCore to use.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleContextMenuClient):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleContextMenuClient):
+
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
         Add some stylistic flourish to the last patch as suggested by Lord Darin Adler.

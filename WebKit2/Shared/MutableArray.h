@@ -42,6 +42,7 @@ public:
     ~MutableArray();
 
     void append(APIObject*);
+    void reserveCapacity(unsigned);
 
     virtual bool isMutable() { return true; }
 

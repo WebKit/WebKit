@@ -25,6 +25,8 @@
 
 #include "WebContextMenuClient.h"
 
+#include "WebContextMenuItemData.h"
+#include "WebPage.h"
 #include <WebCore/ContextMenu.h>
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
@@ -41,11 +43,12 @@ void WebContextMenuClient::contextMenuDestroyed()
 
 PlatformMenuDescription WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
-    // FIXME:  The embedded app needs a chance to customize the context menu, and that will probably happen
-    // via an injected bundle. <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=48720 cover this task.
-
-    ASSERT(menu);
-    return menu->platformDescription();
+    Vector<WebContextMenuItemData> newMenu;
+    if (!m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, menu, newMenu))
+        return menu->platformDescription();
+    
+    Vector<ContextMenuItem> coreItemVector = coreItems(newMenu);
+    return platformMenuDescription(coreItemVector);
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)

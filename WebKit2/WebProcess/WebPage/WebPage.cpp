@@ -162,6 +162,11 @@ CoreIPC::Connection* WebPage::connection() const
     return WebProcess::shared().connection();
 }
 
+void WebPage::initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClient* client)
+{
+    m_contextMenuClient.initialize(client);
+}
+
 void WebPage::initializeInjectedBundleEditorClient(WKBundlePageEditorClient* client)
 {
     m_editorClient.initialize(client);

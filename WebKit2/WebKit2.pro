@@ -230,6 +230,7 @@ HEADERS += \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
+    Shared/WebContextMenuItem.h \
     Shared/WebContextMenuItemData.h \
     Shared/WebEvent.h \
     Shared/WebError.h \
@@ -319,6 +320,7 @@ HEADERS += \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
+    WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
@@ -402,6 +404,7 @@ SOURCES += \
     Shared/qt/WebURLResponseQt.cpp \
     Shared/PlatformPopupMenuData.cpp \
     Shared/VisitedLinkTable.cpp \
+    Shared/WebContextMenuItem.cpp \
     Shared/WebContextMenuItemData.cpp \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
@@ -488,7 +491,8 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp \
     WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp \
-    WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
+    WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \    
+    WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
