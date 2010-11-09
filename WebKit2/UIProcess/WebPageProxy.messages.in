@@ -92,6 +92,7 @@ messages -> WebPageProxy {
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
 
     # Callback messages.
+    DidGetContentsAsString(WTF::String resultString, uint64_t callbackID)
     DidGetRenderTreeExternalRepresentation(WTF::String resultString, uint64_t callbackID)
     DidGetSourceForFrame(WTF::String resultString, uint64_t callbackID)
     DidRunJavaScriptInMainFrame(WTF::String resultString, uint64_t callbackID)

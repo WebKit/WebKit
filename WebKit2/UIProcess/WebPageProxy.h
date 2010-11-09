@@ -96,6 +96,7 @@ struct WebPopupItem;
 typedef GenericCallback<WKStringRef, StringImpl*> FrameSourceCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> RenderTreeExternalRepresentationCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> ScriptReturnValueCallback;
+typedef GenericCallback<WKStringRef, StringImpl*> ContentsAsStringCallback;
 
 class WebPageProxy : public APIObject {
 public:
@@ -201,6 +202,7 @@ public:
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<FrameSourceCallback>);
+    void getContentsAsString(PassRefPtr<ContentsAsStringCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
@@ -341,6 +343,7 @@ private:
     
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
+    void didGetContentsAsString(const String&, uint64_t);
     void didRunJavaScriptInMainFrame(const String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
     void didGetSourceForFrame(const String&, uint64_t);
@@ -370,9 +373,10 @@ private:
 
     RefPtr<WebInspectorProxy> m_inspector;
 
-    HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
-    HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
+    HashMap<uint64_t, RefPtr<ContentsAsStringCallback> > m_contentsAsStringCallbacks;
     HashMap<uint64_t, RefPtr<FrameSourceCallback> > m_frameSourceCallbacks;
+    HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
+    HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

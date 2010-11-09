@@ -45,13 +45,14 @@ messages -> WebPage {
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 
+    # Callbacks.
     GetRenderTreeExternalRepresentation(uint64_t callbackID)
-
+    GetContentsAsString(uint64_t callbackID)
     GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
+    RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)
+
 
     PreferencesDidChange(WebKit::WebPreferencesStore store)
-
-    RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)
 
     SetCustomUserAgent(WTF::String customUserAgent)
 

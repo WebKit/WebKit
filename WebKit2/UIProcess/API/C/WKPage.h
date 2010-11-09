@@ -282,17 +282,24 @@ WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* clien
 WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, WKErrorRef, void*);
-WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void *context, WKPageRunJavaScriptFunction function);
+WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);
 #ifdef __BLOCKS__
 typedef void (^WKPageRunJavaScriptBlock)(WKStringRef, WKErrorRef);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
 #endif
 
 typedef void (*WKPageGetSourceForFrameFunction)(WKStringRef, WKErrorRef, void*);
-WK_EXPORT void WKPageGetSourceForFrame(WKPageRef page, WKFrameRef frame, void *context, WKPageGetSourceForFrameFunction function);
+WK_EXPORT void WKPageGetSourceForFrame(WKPageRef page, WKFrameRef frame, void* context, WKPageGetSourceForFrameFunction function);
 #ifdef __BLOCKS__
 typedef void (^WKPageGetSourceForFrameBlock)(WKStringRef, WKErrorRef);
 WK_EXPORT void WKPageGetSourceForFrame_b(WKPageRef page, WKFrameRef frame, WKPageGetSourceForFrameBlock block);
+#endif
+
+typedef void (*WKPageGetContentsAsStringFunction)(WKStringRef, WKErrorRef, void*);
+WK_EXPORT void WKPageGetContentsAsString(WKPageRef page, void* context, WKPageGetContentsAsStringFunction function);
+#ifdef __BLOCKS__
+typedef void (^WKPageGetContentsAsStringBlock)(WKStringRef, WKErrorRef);
+WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsStringBlock block);
 #endif
 
 #ifdef __cplusplus

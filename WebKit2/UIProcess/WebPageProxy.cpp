@@ -70,6 +70,16 @@ namespace WebKit {
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
+template<typename T>
+void invalidateCallbackMap(HashMap<uint64_t, RefPtr<T> >& map)
+{
+    Vector<RefPtr<T> > callbacksVector;
+    copyValuesToVector(map, callbacksVector);
+    for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
+        callbacksVector[i]->invalidate();
+    map.clear();
+}
+
 PassRefPtr<WebPageProxy> WebPageProxy::create(WebPageNamespace* pageNamespace, uint64_t pageID)
 {
     return adoptRef(new WebPageProxy(pageNamespace, pageID));
@@ -202,23 +212,10 @@ void WebPageProxy::close()
     m_pageTitle = String();
     m_toolTip = String();
 
-    Vector<RefPtr<ScriptReturnValueCallback> > scriptReturnValueCallbacks;
-    copyValuesToVector(m_scriptReturnValueCallbacks, scriptReturnValueCallbacks);
-    for (size_t i = 0, size = scriptReturnValueCallbacks.size(); i < size; ++i)
-        scriptReturnValueCallbacks[i]->invalidate();
-    m_scriptReturnValueCallbacks.clear();
-
-    Vector<RefPtr<RenderTreeExternalRepresentationCallback> > renderTreeExternalRepresentationCallbacks;
-    copyValuesToVector(m_renderTreeExternalRepresentationCallbacks, renderTreeExternalRepresentationCallbacks);
-    for (size_t i = 0, size = renderTreeExternalRepresentationCallbacks.size(); i < size; ++i)
-        renderTreeExternalRepresentationCallbacks[i]->invalidate();
-    m_renderTreeExternalRepresentationCallbacks.clear();
-
-    Vector<RefPtr<FrameSourceCallback> > frameSourceCallbacks;
-    copyValuesToVector(m_frameSourceCallbacks, frameSourceCallbacks);
-    m_frameSourceCallbacks.clear();
-    for (size_t i = 0, size = frameSourceCallbacks.size(); i < size; ++i)
-        frameSourceCallbacks[i]->invalidate();
+    invalidateCallbackMap(m_contentsAsStringCallbacks);
+    invalidateCallbackMap(m_frameSourceCallbacks);
+    invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
+    invalidateCallbackMap(m_scriptReturnValueCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -586,6 +583,14 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<FrameSourc
     uint64_t callbackID = callback->callbackID();
     m_frameSourceCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
+}
+
+void WebPageProxy::getContentsAsString(PassRefPtr<ContentsAsStringCallback> prpCallback)
+{
+    RefPtr<ContentsAsStringCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_contentsAsStringCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
 void WebPageProxy::preferencesDidChange()
@@ -1235,6 +1240,17 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     m_uiClient.didNotHandleKeyEvent(this, event);
 }
 
+void WebPageProxy::didGetContentsAsString(const String& resultString, uint64_t callbackID)
+{
+    RefPtr<ContentsAsStringCallback> callback = m_contentsAsStringCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(resultString.impl());
+}
+
 void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint64_t callbackID)
 {
     RefPtr<ScriptReturnValueCallback> callback = m_scriptReturnValueCallbacks.take(callbackID);
@@ -1315,23 +1331,10 @@ void WebPageProxy::processDidCrash()
     m_pageTitle = String();
     m_toolTip = String();
 
-    Vector<RefPtr<ScriptReturnValueCallback> > scriptReturnValueCallbacks;
-    copyValuesToVector(m_scriptReturnValueCallbacks, scriptReturnValueCallbacks);
-    for (size_t i = 0, size = scriptReturnValueCallbacks.size(); i < size; ++i)
-        scriptReturnValueCallbacks[i]->invalidate();
-    m_scriptReturnValueCallbacks.clear();
-
-    Vector<RefPtr<RenderTreeExternalRepresentationCallback> > renderTreeExternalRepresentationCallbacks;
-    copyValuesToVector(m_renderTreeExternalRepresentationCallbacks, renderTreeExternalRepresentationCallbacks);
-    for (size_t i = 0, size = renderTreeExternalRepresentationCallbacks.size(); i < size; ++i)
-        renderTreeExternalRepresentationCallbacks[i]->invalidate();
-    m_renderTreeExternalRepresentationCallbacks.clear();
-
-    Vector<RefPtr<FrameSourceCallback> > frameSourceCallbacks;
-    copyValuesToVector(m_frameSourceCallbacks, frameSourceCallbacks);
-    m_frameSourceCallbacks.clear();
-    for (size_t i = 0, size = frameSourceCallbacks.size(); i < size; ++i)
-        frameSourceCallbacks[i]->invalidate();
+    invalidateCallbackMap(m_contentsAsStringCallbacks);
+    invalidateCallbackMap(m_frameSourceCallbacks);
+    invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
+    invalidateCallbackMap(m_scriptReturnValueCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);

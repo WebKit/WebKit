@@ -233,9 +233,11 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
 #endif
-    void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
+
+    void getContentsAsString(uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
+    void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
 
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);

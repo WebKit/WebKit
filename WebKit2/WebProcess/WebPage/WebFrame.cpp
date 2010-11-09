@@ -47,7 +47,9 @@
 #include <WebCore/JSRange.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -232,6 +234,53 @@ String WebFrame::source() const
     if (!mainResourceData)
         return String();
     return decoder->encoding().decode(mainResourceData->data(), mainResourceData->size());
+}
+
+String WebFrame::contentsAsString() const 
+{
+    if (!m_coreFrame)
+        return String();
+
+    if (isFrameSet()) {
+        StringBuilder builder;
+        for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+            WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame();
+            builder.append(webFrame->contentsAsString());
+            if (child->tree()->nextSibling())
+                builder.append(' ');
+        }
+        
+        // FIXME: It may make sense to use toStringPreserveCapacity() here.
+        return builder.toString();
+    }
+
+    Document* document = m_coreFrame->document();
+    if (!document)
+        return String();
+
+    RefPtr<Element> documentElement = document->documentElement();
+    if (!documentElement)
+        return String();
+
+    RefPtr<Range> range = document->createRange();
+
+    ExceptionCode ec = 0;
+    range->selectNode(documentElement.get(), ec);
+    if (ec)
+        return String();
+
+    return plainText(range.get());
+}
+
+bool WebFrame::isFrameSet() const
+{
+    if (!m_coreFrame)
+        return false;
+
+    Document* document = m_coreFrame->document();
+    if (!document)
+        return false;
+    return document->isFrameSet();
 }
 
 bool WebFrame::isMainFrame() const
