@@ -221,6 +221,13 @@ shouldBe('stepUp("1", "0.1", "", 10)', '"2"');
 shouldBe('input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.value', '"3"');
 shouldBe('input.min = "0"; stepUp("0", "0.003921568627450980", "1", 255)', '"1"');
 shouldBe('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '"0"');
+debug('Rounding');
+shouldBe('stepUp("5.005", "0.005", "", 2)', '"5.015"');
+shouldBe('stepUp("5.005", "0.005", "", 11)', '"5.06"');
+shouldBe('stepUp("5.005", "0.005", "", 12)', '"5.065"');
+shouldBe('stepUpExplicitBounds("4", "9", "0.005", "5.005", 2)', '"5.015"');
+shouldBe('stepUpExplicitBounds("4", "9", "0.005", "5.005", 11)', '"5.06"');
+shouldBe('stepUpExplicitBounds("4", "9", "0.005", "5.005", 12)', '"5.065"');
 
 debug('');
 debug('Range type');

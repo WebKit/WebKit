@@ -165,6 +165,13 @@ PASS stepUp("1", "0.1", "", 10) is "2"
 PASS input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.value is "3"
 PASS input.min = "0"; stepUp("0", "0.003921568627450980", "1", 255) is "1"
 PASS for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value is "0"
+Rounding
+PASS stepUp("5.005", "0.005", "", 2) is "5.015"
+PASS stepUp("5.005", "0.005", "", 11) is "5.06"
+PASS stepUp("5.005", "0.005", "", 12) is "5.065"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 2) is "5.015"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 11) is "5.06"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 12) is "5.065"
 
 Range type
 function arguments are (min, max, step, value, [stepCount])

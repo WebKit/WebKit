@@ -90,10 +90,12 @@ public:
     virtual double maximum() const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
+    virtual double stepBaseWithDecimalPlaces(unsigned*) const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
     virtual bool parsedStepValueShouldBeInteger() const;
     virtual bool scaledStepValeuShouldBeInteger() const;
+    virtual double acceptableError(double) const;
 
     // Miscellaneous functions
 
@@ -104,6 +106,10 @@ public:
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     virtual double parseToDouble(const String&, double defaultValue) const;
+    // Parses the specified string for the type as parseToDouble() does.
+    // In addition, it stores the number of digits after the decimal point
+    // into *decimalPlaces.
+    virtual double parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const;
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
     // parameter will have parsed values and be modified even if the parsing

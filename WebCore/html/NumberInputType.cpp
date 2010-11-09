@@ -131,13 +131,18 @@ bool NumberInputType::stepMismatch(const String& value, double step) const
     double remainder = fabs(doubleValue - step * round(doubleValue / step));
     // Accepts erros in lower fractional part which IEEE 754 single-precision
     // can't represent.
-    double acceptableError = step / pow(2.0, FLT_MANT_DIG);
-    return acceptableError < remainder && remainder < (step - acceptableError);
+    double computedAcceptableError = acceptableError(step);
+    return computedAcceptableError < remainder && remainder < (step - computedAcceptableError);
 }
 
 double NumberInputType::stepBase() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
+}
+
+double NumberInputType::stepBaseWithDecimalPlaces(unsigned* decimalPlaces) const
+{
+    return parseToDoubleWithDecimalPlaces(element()->fastGetAttribute(minAttr), defaultStepBase(), decimalPlaces);
 }
 
 double NumberInputType::defaultStep() const
@@ -159,11 +164,26 @@ double NumberInputType::parseToDouble(const String& src, double defaultValue) co
     return numberValue;
 }
 
+double NumberInputType::parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
+{
+    double numberValue;
+    if (!parseToDoubleForNumberTypeWithDecimalPlaces(src, &numberValue, decimalPlaces))
+        return defaultValue;
+    ASSERT(isfinite(numberValue));
+    return numberValue;
+}
+
 String NumberInputType::serialize(double value) const
 {
     if (!isfinite(value))
         return String();
     return serializeForNumberType(value);
 }
+
+double NumberInputType::acceptableError(double step) const
+{
+    return step / pow(2.0, FLT_MANT_DIG);
+}
+
 
 } // namespace WebCore

@@ -65,6 +65,7 @@ public:
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
+    bool getAllowedValueStepWithDecimalPlaces(double*, unsigned*) const;
     // For ValidityState.
     bool stepMismatch(const String&) const;
 

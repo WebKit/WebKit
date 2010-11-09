@@ -253,6 +253,11 @@ bool HTMLInputElement::stepMismatch(const String& value) const
 
 bool HTMLInputElement::getAllowedValueStep(double* step) const
 {
+    return getAllowedValueStepWithDecimalPlaces(step, 0);
+}
+
+bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(double* step, unsigned* decimalPlaces) const
+{
     ASSERT(step);
     double defaultStep = m_inputType->defaultStep();
     double stepScaleFactor = m_inputType->stepScaleFactor();
@@ -261,14 +266,24 @@ bool HTMLInputElement::getAllowedValueStep(double* step) const
     const AtomicString& stepString = getAttribute(stepAttr);
     if (stepString.isEmpty()) {
         *step = defaultStep * stepScaleFactor;
+        if (decimalPlaces)
+            *decimalPlaces = 0;
         return true;
     }
     if (equalIgnoringCase(stepString, "any"))
         return false;
     double parsed;
-    if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
-        *step = defaultStep * stepScaleFactor;
-        return true;
+    if (!decimalPlaces) {
+        if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
+            *step = defaultStep * stepScaleFactor;
+            return true;
+        }
+    } else {
+        if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &parsed, decimalPlaces) || parsed <= 0.0) {
+            *step = defaultStep * stepScaleFactor;
+            *decimalPlaces = 0;
+            return true;
+        }
     }
     // For date, month, week, the parsed value should be an integer for some types.
     if (m_inputType->parsedStepValueShouldBeInteger())
@@ -285,7 +300,8 @@ bool HTMLInputElement::getAllowedValueStep(double* step) const
 void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
 {
     double step;
-    if (!getAllowedValueStep(&step)) {
+    unsigned stepDecimalPlaces;
+    if (!getAllowedValueStepWithDecimalPlaces(&step, &stepDecimalPlaces)) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -300,16 +316,26 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue < m_inputType->minimum()) {
+    double acceptableError = m_inputType->acceptableError(step);
+    if (newValue - m_inputType->minimum() < -acceptableError) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    double base = m_inputType->stepBase();
-    newValue = base + round((newValue - base) / step) * step;
-    if (newValue > m_inputType->maximum()) {
+    if (newValue < m_inputType->minimum())
+        newValue = m_inputType->minimum();
+    unsigned baseDecimalPlaces;
+    double base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
+    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+    if (newValue < pow(10.0, 21.0)) {
+        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+        newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
+    }
+    if (newValue - m_inputType->maximum() > acceptableError) {
         ec = INVALID_STATE_ERR;
         return;
     }
+    if (newValue > m_inputType->maximum())
+        newValue = m_inputType->maximum();
     setValueAsNumber(newValue, ec);
 }
 

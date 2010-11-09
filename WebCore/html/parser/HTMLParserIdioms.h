@@ -44,6 +44,7 @@ String serializeForNumberType(double);
 // Leading or trailing illegal characters cause failure, as does passing an empty string.
 // The double* parameter may be 0 to check if the string can be parsed without getting the result.
 bool parseToDoubleForNumberType(const String&, double*);
+bool parseToDoubleForNumberTypeWithDecimalPlaces(const String&, double*, unsigned*);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
 bool parseHTMLInteger(const String&, int&);
