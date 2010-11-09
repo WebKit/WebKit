@@ -3448,7 +3448,3 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.fillStyle.
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
-
-// WebKit r71566
-BUG62424 : editing/selection/extend-selection.html = TEXT CRASH
-BUG62424 : fast/forms/focus-selection-textarea.html = TEXT CRASH
