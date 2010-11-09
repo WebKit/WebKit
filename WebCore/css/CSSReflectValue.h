@@ -59,6 +59,8 @@ private:
         , m_mask(mask)
     {
     }
+
+    virtual bool isReflectValue() const { return true; }
     
     CSSReflectionDirection m_direction;
     RefPtr<CSSPrimitiveValue> m_offset;

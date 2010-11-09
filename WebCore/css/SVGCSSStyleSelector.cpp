@@ -161,7 +161,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyKerning:
         {
             HANDLE_INHERIT_AND_INITIAL(kerning, Kerning);
-            svgstyle->setKerning(SVGLength::fromCSSPrimitiveValue(primitiveValue));
+            if (primitiveValue)
+                svgstyle->setKerning(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             break;
         }
         case CSSPropertyDominantBaseline:
@@ -261,10 +262,11 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             Vector<SVGLength> array;
             size_t length = dashes->length();
             for (size_t i = 0; i < length; ++i) {
-                CSSPrimitiveValue* dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
-                if (!dash)
+                CSSValue* currValue = dashes->itemWithoutBoundsCheck(i);
+                if (!currValue->isPrimitiveValue())
                     continue;
 
+                CSSPrimitiveValue* dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
                 array.append(SVGLength::fromCSSPrimitiveValue(dash));
             }
 
@@ -549,8 +551,13 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 return;
 
             CSSValueList *list = static_cast<CSSValueList*>(value);
-            ASSERT(list->length() == 1);
-            ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(0));
+            if (!list->length())
+                return;
+
+            CSSValue* firstValue = list->itemWithoutBoundsCheck(0);
+            if (!firstValue->isShadowValue())
+                return;
+            ShadowValue* item = static_cast<ShadowValue*>(firstValue);
             int x = item->x->computeLengthInt(style(), m_rootElementStyle);
             int y = item->y->computeLengthInt(style(), m_rootElementStyle);
             int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle) : 0;

@@ -41,8 +41,6 @@ public:
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImage();
     
-    virtual bool isImageValue() const { return true; }
-
 protected:
     CSSImageValue(const String& url);
 
@@ -52,6 +50,7 @@ protected:
 
 private:
     CSSImageValue();
+    virtual bool isImageValue() const { return true; }
 
     RefPtr<StyleImage> m_image;
     bool m_accessedImage;
