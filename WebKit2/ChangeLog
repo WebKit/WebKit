@@ -1,5 +1,16 @@
 2010-11-09  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] ASSERT fail in fast/frames/lots-of-objects.html
+        https://bugs.webkit.org/show_bug.cgi?id=49253
+
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::create): Do not assert
+        when the attach was unsuccessful but return with 0.
+
+2010-11-09  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Andreas Kling.
 
         [Qt][WK2] WebKitTestRunner is dead

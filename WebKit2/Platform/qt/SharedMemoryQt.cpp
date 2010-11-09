@@ -125,11 +125,14 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
     if (handle.isNull())
         return 0;
 
-    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     QSharedMemory* impl = new QSharedMemory(QString(handle.m_key));
     bool attached = impl->attach(accessMode(protection));
-    ASSERT_UNUSED(attached, attached);
+    if (!attached) {
+        delete impl;
+        return 0;
+    }
 
+    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_impl = impl;
     ASSERT(handle.m_size == impl->size());
     sharedMemory->m_size = handle.m_size;
