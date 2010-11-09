@@ -1,5 +1,23 @@
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Factor calculation of cache sizes based on cache model into shared function
+        https://bugs.webkit.org/show_bug.cgi?id=48706
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::calculateCacheSizes):
+        * WebProcess/WebProcess.h:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::volumeFreeSize):
+        (WebKit::WebProcess::platformSetCacheModel):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::memorySize):
+        (WebKit::volumeFreeSize):
+        (WebKit::WebProcess::platformSetCacheModel):
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Context menus show up in the wrong place when the page is scrolled
