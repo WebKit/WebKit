@@ -404,7 +404,7 @@ WebInspector.ResourceManager.prototype = {
         else if (resourceForURL instanceof Array)
             resourceForURL.push(resource);
         else
-            this._resourcesByURL[resource.url] = [resourceForURL];
+            this._resourcesByURL[resource.url] = [resourceForURL, resource];
     },
 
     _unbindResourceURL: function(resource)
