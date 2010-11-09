@@ -917,8 +917,7 @@ for my $test (@tests) {
         testCrashedOrTimedOut($test, $base, 1, $actual, $error);
     } elsif (!defined $expected) {
         if ($verbose) {
-            print "new " . ($resetResults ? "result" : "test") ."\n";
-            $atLineStart = 1;
+            print "new " . ($resetResults ? "result" : "test");
         }
         $result = "new";
 
@@ -936,11 +935,13 @@ for my $test (@tests) {
                 print "$test -> ";
             }
             my $resultsDir = catdir($expectedDir, dirname($base));
-            if ($generateNewResults) {
-                print "new (results generated in $resultsDir)\n";
-            } else {
-                print "new\n";
+            if (!$verbose) {
+                print "new";
             }
+            if ($generateNewResults) {
+                print " (results generated in $resultsDir)";
+            }
+            print "\n" unless $atLineStart;
             $atLineStart = 1;
         }
     } elsif ($actual eq $expected && $diffResult eq "passed") {

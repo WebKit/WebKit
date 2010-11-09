@@ -1,3 +1,12 @@
+2010-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Output of old-run-webkit-tests is buggy in verbose mode
+        https://bugs.webkit.org/show_bug.cgi?id=49249
+
+        * Scripts/old-run-webkit-tests: Redundant outputs removed.
+
 2010-11-08  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
 
         Reviewed by Martin Robinson.
