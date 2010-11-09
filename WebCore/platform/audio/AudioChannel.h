@@ -29,7 +29,7 @@
 #ifndef AudioChannel_h
 #define AudioChannel_h
 
-#include "AudioFloatArray.h"
+#include "AudioArray.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
