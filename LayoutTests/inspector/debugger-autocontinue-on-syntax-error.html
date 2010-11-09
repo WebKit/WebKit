@@ -19,8 +19,7 @@ function test()
     function reloadInspectedPage()
     {
         InspectorTest.reloadPage(function() {
-            InspectorTest.addResult("DONE.");
-            InspectorTest.completeTest();
+            InspectorTest.completeDebuggerTest();
         });
     }
 
