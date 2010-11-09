@@ -48,6 +48,10 @@ FindController::FindController(WebPage* webPage)
 {
 }
 
+FindController::~FindController()
+{
+}
+
 void FindController::countStringMatches(const String& string, bool caseInsensitive, unsigned maxMatchCount)
 {
     unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxMatchCount);
@@ -195,5 +199,91 @@ void FindController::hideFindIndicator()
     m_isShowingFindIndicator = false;
 }
 
+Vector<IntRect> FindController::rectsForTextMatches()
+{
+    Vector<IntRect> rects;
+
+    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        Document* document = frame->document();
+        if (!document)
+            continue;
+
+        IntRect visibleRect = frame->view()->visibleContentRect();
+        Vector<IntRect> frameRects = document->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
+        IntPoint frameOffset(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
+        frameOffset = frame->view()->convertToContainingWindow(frameOffset);
+
+        for (Vector<IntRect>::iterator it = frameRects.begin(), end = frameRects.end(); it != end; ++it) {
+            it->intersect(visibleRect);
+            it->move(frameOffset.x(), frameOffset.y());
+            rects.append(*it);
+        }
+    }
+
+    return rects;
+}
+
+static const float shadowOffsetX = 0.0;
+static const float shadowOffsetY = 1.0;
+static const float shadowBlurRadius = 2.0;
+static const float whiteFrameThickness = 1.0;
+
+static const int overlayBackgroundRed = 25;
+static const int overlayBackgroundGreen = 25;
+static const int overlayBackgroundBlue = 25;
+static const int overlayBackgroundAlpha = 63;
+
+static Color overlayBackgroundColor()
+{
+    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
+}
+
+void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+{
+    Vector<IntRect> rects = rectsForTextMatches();
+    ASSERT(!rects.isEmpty());
+
+    graphicsContext.beginTransparencyLayer(1);
+    graphicsContext.setCompositeOperation(CompositeCopy);
+
+    // Draw the background.
+    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(), ColorSpaceSRGB);
+
+    graphicsContext.save();
+    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
+
+    graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
+
+    // Draw white frames around the holes.
+    for (size_t i = 0; i < rects.size(); ++i) {
+        IntRect whiteFrameRect = rects[i];
+        whiteFrameRect.inflate(1);
+
+        graphicsContext.fillRect(whiteFrameRect);
+    }
+
+    graphicsContext.restore();
+
+    graphicsContext.save();
+    graphicsContext.setFillColor(Color::transparent, ColorSpaceSRGB);
+
+    // Clear out the holes.
+    for (size_t i = 0; i < rects.size(); ++i)
+        graphicsContext.fillRect(rects[i]);
+
+    graphicsContext.restore();
+    graphicsContext.endTransparencyLayer();
+}
+
+bool FindController::mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& mouseEvent)
+{
+    // If we get a mouse down event inside the page overlay we should hide the find UI.
+    if (mouseEvent.type() == WebEvent::MouseDown) {
+        // Dismiss the overlay.
+        hideFindUI();
+    }
+
+    return false;
+}
 
 } // namespace WebKit

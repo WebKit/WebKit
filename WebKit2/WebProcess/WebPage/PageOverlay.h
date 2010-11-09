@@ -52,7 +52,7 @@ public:
 
     static PassRefPtr<PageOverlay> create(Client*);
     virtual ~PageOverlay();
-    
+
     void setPage(WebPage*);
     void setNeedsDisplay();
 
@@ -65,6 +65,8 @@ protected:
     WebPage* webPage() const { return m_webPage; }
 
 private:
+    WebCore::IntRect bounds() const;
+
     Client* m_client;
 
     WebPage* m_webPage;

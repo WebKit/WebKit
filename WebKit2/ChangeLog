@@ -99,6 +99,30 @@
 
         Reviewed by John Sullivan.
 
+        Move the find page overlay code to FindController
+        https://bugs.webkit.org/show_bug.cgi?id=49266
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::~FindController):
+        (WebKit::FindController::rectsForTextMatches):
+        (WebKit::overlayBackgroundColor):
+        (WebKit::FindController::drawRect):
+        (WebKit::FindController::mouseEvent):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::drawRect):
+        (WebKit::FindPageOverlay::mouseEvent):
+        * WebProcess/WebPage/FindPageOverlay.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::bounds):
+        (WebKit::PageOverlay::drawRect):
+        (WebKit::PageOverlay::mouseEvent):
+        * WebProcess/WebPage/PageOverlay.h:
+
+2010-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
         Add a PageOverlay::Client object in preparation of not allowing subclassing of PageOverlay
         https://bugs.webkit.org/show_bug.cgi?id=49263
 

@@ -26,6 +26,9 @@
 #include "PageOverlay.h"
 
 #include "WebPage.h"
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/Page.h>
 
 using namespace WebCore;
 
@@ -46,6 +49,20 @@ PageOverlay::~PageOverlay()
 {
 }
 
+IntRect PageOverlay::bounds() const
+{
+    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
+
+    int width = frameView->width();
+    if (frameView->verticalScrollbar())
+        width -= frameView->verticalScrollbar()->width();
+    int height = frameView->height();
+    if (frameView->horizontalScrollbar())
+        height -= frameView->horizontalScrollbar()->height();
+    
+    return IntRect(0, 0, width, height);
+}
+
 void PageOverlay::setPage(WebPage* webPage)
 {
     ASSERT(!m_webPage);
@@ -61,11 +78,20 @@ void PageOverlay::setNeedsDisplay()
 
 void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
-    m_client->drawRect(this, graphicsContext, dirtyRect);
+    // If the dirty rect is outside the bounds, ignore it.
+    IntRect paintRect = intersection(dirtyRect, bounds());
+    if (paintRect.isEmpty())
+        return;
+    
+    m_client->drawRect(this, graphicsContext, paintRect);
 }
     
 bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    // Ignore events outside the bounds.
+    if (!bounds().contains(mouseEvent.position()))
+        return false;
+
     return m_client->mouseEvent(this, mouseEvent);
 }
 

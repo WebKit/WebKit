@@ -27,11 +27,14 @@
 #define FindController_h
 
 #include "FindOptions.h"
+#include "PageOverlay.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
     class Frame;
+    class IntRect;
 }
 
 namespace WebKit {
@@ -44,6 +47,7 @@ class FindController {
 
 public:
     explicit FindController(WebPage*);
+    virtual ~FindController();
 
     void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
@@ -55,7 +59,15 @@ public:
 
 private:
     bool updateFindIndicator(WebCore::Frame* selectedFrame, bool isShowingOverlay);
-    
+
+    // FIXME: These three member functions should be private once FindPageOverlay has been removed.
+public:
+    Vector<WebCore::IntRect> rectsForTextMatches();
+    // PageOverlay::Client.
+    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&);
+    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+
+private:
     WebPage* m_webPage;
     FindPageOverlay* m_findPageOverlay;
 

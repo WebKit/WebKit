@@ -36,16 +36,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const float shadowOffsetX = 0.0;
-static const float shadowOffsetY = 1.0;
-static const float shadowBlurRadius = 2.0;
-static const float whiteFrameThickness = 1.0;
-
-static const int overlayBackgroundRed = 25;
-static const int overlayBackgroundGreen = 25;
-static const int overlayBackgroundBlue = 25;
-static const int overlayBackgroundAlpha = 63;
-
 PassOwnPtr<FindPageOverlay> FindPageOverlay::create(FindController* findController)
 {
     return adoptPtr(new FindPageOverlay(findController));
@@ -62,100 +52,14 @@ FindPageOverlay::~FindPageOverlay()
     m_findController->findPageOverlayDestroyed();
 }
 
-Vector<IntRect> FindPageOverlay::rectsForTextMatches()
+void FindPageOverlay::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
-    Vector<IntRect> rects;
-
-    for (Frame* frame = webPage()->corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        Document* document = frame->document();
-        if (!document)
-            continue;
-
-        IntRect visibleRect = frame->view()->visibleContentRect();
-        Vector<IntRect> frameRects = document->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
-        IntPoint frameOffset(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
-        frameOffset = frame->view()->convertToContainingWindow(frameOffset);
-
-        for (Vector<IntRect>::iterator it = frameRects.begin(), end = frameRects.end(); it != end; ++it) {
-            it->intersect(visibleRect);
-            it->move(frameOffset.x(), frameOffset.y());
-            rects.append(*it);
-        }
-    }
-
-    return rects;
+    m_findController->drawRect(pageOverlay, graphicsContext, dirtyRect);
 }
 
-IntRect FindPageOverlay::bounds() const
+bool FindPageOverlay::mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& event)
 {
-    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
-
-    int width = frameView->width();
-    if (frameView->verticalScrollbar())
-        width -= frameView->verticalScrollbar()->width();
-    int height = frameView->height();
-    if (frameView->horizontalScrollbar())
-        height -= frameView->horizontalScrollbar()->height();
-    
-    return IntRect(0, 0, width, height);
-}
-
-static Color overlayBackgroundColor()
-{
-    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
-}
-
-void FindPageOverlay::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
-{
-    Vector<IntRect> rects = rectsForTextMatches();
-    ASSERT(!rects.isEmpty());
-
-    IntRect paintRect = intersection(dirtyRect, bounds());
-    if (paintRect.isEmpty())
-        return;
-
-    graphicsContext.beginTransparencyLayer(1);
-    graphicsContext.setCompositeOperation(CompositeCopy);
-
-    // Draw the background.
-    graphicsContext.fillRect(paintRect, overlayBackgroundColor(), ColorSpaceSRGB);
-
-    graphicsContext.save();
-    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
-
-    graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
-
-    // Draw white frames around the holes.
-    for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect whiteFrameRect = rects[i];
-        whiteFrameRect.inflate(1);
-
-        graphicsContext.fillRect(whiteFrameRect);
-    }
-
-    graphicsContext.restore();
-
-    graphicsContext.save();
-    graphicsContext.setFillColor(Color::transparent, ColorSpaceSRGB);
-
-    // Clear out the holes.
-    for (size_t i = 0; i < rects.size(); ++i)
-        graphicsContext.fillRect(rects[i]);
-
-    graphicsContext.restore();
-    graphicsContext.endTransparencyLayer();
-}
-
-bool FindPageOverlay::mouseEvent(PageOverlay*, const WebMouseEvent& event)
-{
-    // If we get a mouse down event inside the page overlay we should hide the find UI.
-    if (event.type() == WebEvent::MouseDown && bounds().contains(event.position())) {
-        // Dismiss the overlay.
-        m_findController->hideFindUI();
-        return false;
-    }
-
-    return false;
+    return m_findController->mouseEvent(pageOverlay, event);
 }
 
 } // namespace WebKit
