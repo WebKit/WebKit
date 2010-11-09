@@ -20,9 +20,9 @@ amet
 Just testing רק בודק
 Just testing what ever
 car means אבג.
-car דהו אבג.
-he said " car דהו אבג ."
-זחט יךכ לםמ ' he said " car דהו אבג " '?
+‫car דהו אבג.‬
+he said "‫car דהו אבג‬."
+זחט יךכ לםמ '‪he said "‫car דהו אבג‬"‬'?
 אבג abc דהו
 edf זחט abrebg
 abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg
@@ -490,11 +490,11 @@ Test 16, RTL:
   Extending forward: "car means ABC."[(0,0), (0,14)]
   Extending backward:  "car means ABC."[(0,14), (0,0)]
 Test 17, LTR:
-  Extending forward: "᪜car DEF ABC.᪝"[(1,1), (1,13)]
-  Extending backward:  "᪜car DEF ABC.᪝"[(1,13), (1,1)]
+  Extending forward: "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending backward:  "᪜car DEF ABC.᪝"[(0,14), (0,0)]
 Test 17, RTL:
-  Extending forward: "᪜car DEF ABC.᪝"[(1,1), (1,13)]
-  Extending backward:  "᪜car DEF ABC.᪝"[(1,13), (1,1)]
+  Extending forward: "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending backward:  "᪜car DEF ABC.᪝"[(0,14), (0,0)]
 Test 18, LTR:
   Extending forward: "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
   Extending backward:  "he said "᪜car DEF ABC᪝.""[(0,24), (0,0)]
