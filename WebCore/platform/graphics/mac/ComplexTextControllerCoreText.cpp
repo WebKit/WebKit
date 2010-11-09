@@ -111,7 +111,7 @@ struct ProviderInfo {
 static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
 {
     ProviderInfo* info = static_cast<struct ProviderInfo*>(refCon);
-    if (stringIndex >= info->length)
+    if (stringIndex < 0 || static_cast<unsigned>(stringIndex) >= info->length)
         return 0;
 
     *charCount = info->length - stringIndex;
