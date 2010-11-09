@@ -23,30 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#include "WebPopupMenu.h"
 
-#include "NotImplemented.h"
-#include <WebCore/GraphicsContext.h>
-
-using namespace WebCore;
+#include "PlatformPopupMenuData.h"
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
+void WebPopupMenu::setUpPlatformData(PlatformPopupMenuData&)
 {
-    notImplemented();
-    return 0;
 }
 
-PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
-{
-    notImplemented();
-    return 0;
-}
-
-void BackingStore::paint(GraphicsContext&, const IntPoint&, const IntRect&)
-{
-    notImplemented();
-}
-        
 } // namespace WebKit

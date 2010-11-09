@@ -224,6 +224,7 @@ HEADERS += \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
+    Shared/PlatformPopupMenuData.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
@@ -398,6 +399,7 @@ SOURCES += \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
+    Shared/PlatformPopupMenuData.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebContextMenuItemData.cpp \
     Shared/WebError.cpp \

@@ -45,18 +45,28 @@ PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
     return adoptPtr(new GraphicsContext(bitmapContext.get()));
 }
 
-void BackingStore::paint(WebCore::GraphicsContext* context, const WebCore::IntRect& clipRect)
+PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
 {
-    // FIXME: Honor the clip rect!
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(data(), m_size.width(), m_size.height(), 8,  m_size.width() * 4, colorSpace.get(), 
+                                                                         kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+
+    return adoptPtr(new GraphicsContext(bitmapContext.get()));
+}
+
+void BackingStore::paint(WebCore::GraphicsContext& context, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
+{
     OwnPtr<GraphicsContext> sourceContext(createGraphicsContext());
 
     // FIXME: This creates an extra copy.
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(sourceContext->platformContext()));
 
-    CGContextRef cgContext = context->platformContext();
+    CGContextRef cgContext = context.platformContext();
     
     CGContextSaveGState(cgContext);
-    CGContextDrawImage(context->platformContext(), CGRectMake(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
+    CGContextClipToRect(cgContext, CGRectMake(dstPoint.x(), dstPoint.y(), srcRect.width(), srcRect.height()));
+    CGContextTranslateCTM(cgContext, -srcRect.x(), -srcRect.y());
+    CGContextDrawImage(cgContext, CGRectMake(dstPoint.x(), dstPoint.y(), CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
     CGContextRestoreGState(cgContext);
 }
         

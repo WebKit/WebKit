@@ -26,6 +26,7 @@
 #include "WebPopupMenuProxyMac.h"
 
 #include "PageClientImpl.h"
+#include "PlatformPopupMenuData.h"
 #include "WKView.h"
 #include "WebPopupItem.h"
 #include <WebKitSystemInterface.h>
@@ -69,7 +70,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items)
     }
 }
 
-void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex, int32_t& newSelectedIndex)
+void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex)
 {
     populate(items);
 

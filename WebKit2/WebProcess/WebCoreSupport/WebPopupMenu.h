@@ -35,6 +35,7 @@ class PopupMenuClient;
 namespace WebKit {
 
 class WebPage;
+struct PlatformPopupMenuData;
 struct WebPopupItem;
 
 class WebPopupMenu : public WebCore::PopupMenu {
@@ -54,6 +55,7 @@ private:
     WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);
 
     Vector<WebPopupItem> populateItems();
+    void setUpPlatformData(PlatformPopupMenuData&);
 
     WebCore::PopupMenuClient* m_popupClient;
     WebPage* m_page;

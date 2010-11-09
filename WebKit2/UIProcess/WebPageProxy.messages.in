@@ -123,7 +123,7 @@ messages -> WebPageProxy {
     DidFailToFindString(WTF::String string)
 
     # PopupMenu.
-    ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex)
+    ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
     
     # ContextMenu

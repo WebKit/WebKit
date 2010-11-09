@@ -477,6 +477,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\PlatformPopupMenuData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\PlatformPopupMenuData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\StringPairVector.h"
 				>
 			</File>
@@ -1148,6 +1156,10 @@
 					</File>
 					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebFrameNetworkingContext.h"
+						>
+					</File>
+					<File
+						RelativePath=".\WebProcess\WebCoreSupport\win\WebPopupMenuWin.cpp"
 						>
 					</File>
 				</Filter>

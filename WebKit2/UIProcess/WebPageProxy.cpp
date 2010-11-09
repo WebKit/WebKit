@@ -1121,7 +1121,7 @@ void WebPageProxy::didFailToFindString(const String& string)
     m_findClient.didFailToFindString(this, string);
 }
 
-void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
     if (m_activePopupMenu)
         m_activePopupMenu->hidePopupMenu();
@@ -1129,7 +1129,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>
         m_activePopupMenu = m_pageClient->createPopupMenuProxy();
 
     int32_t newSelectedIndex = 0;
-    m_activePopupMenu->showPopupMenu(rect, items, selectedIndex, newSelectedIndex);
+    m_activePopupMenu->showPopupMenu(rect, items, data, selectedIndex, newSelectedIndex);
 
     process()->send(Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex), m_pageID);
     m_activePopupMenu = 0;

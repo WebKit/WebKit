@@ -21,6 +21,7 @@
 
 #include "WebPopupMenu.h"
 
+#include "PlatformPopupMenuData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -76,7 +77,7 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
             // FIXME: Add support for styling the font.
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.
-            items.append(WebPopupItem(WebPopupItem::Item, m_popupClient->itemText(i), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i)));
+            items.append(WebPopupItem(WebPopupItem::Item, m_popupClient->itemText(i), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i), m_popupClient->itemIsLabel(i)));
         }
     }
 
@@ -97,7 +98,11 @@ void WebPopupMenu::show(const IntRect& rect, FrameView* view, int index)
 
     // Move to page coordinates
     IntRect pageCoordinates(view->contentsToWindow(rect.location()), rect.size());
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, items, index), m_page->pageID());
+
+    PlatformPopupMenuData platformData;
+    setUpPlatformData(platformData);
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, items, index, platformData), m_page->pageID());
 }
 
 void WebPopupMenu::hide()

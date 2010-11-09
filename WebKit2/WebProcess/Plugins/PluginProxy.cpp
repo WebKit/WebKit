@@ -124,20 +124,15 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
         
-        m_pluginBackingStore->paint(graphicsContext.get(), IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
-        
+        m_pluginBackingStore->paint(*graphicsContext, IntPoint(), IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
+
         m_pluginBackingStoreContainsValidData = true;
     }
 
     IntRect dirtyRectInPluginCoordinates = dirtyRect;
     dirtyRectInPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
-    graphicsContext->save();
-
-    graphicsContext->translate(m_frameRect.x(), m_frameRect.y());
-    m_backingStore->paint(graphicsContext, dirtyRectInPluginCoordinates);
-
-    graphicsContext->restore();
+    m_backingStore->paint(*graphicsContext, m_frameRect.location(), dirtyRectInPluginCoordinates);
 
     if (m_waitingForPaintInResponseToUpdate) {
         m_waitingForPaintInResponseToUpdate = false;
@@ -409,9 +404,9 @@ void PluginProxy::update(const IntRect& paintedRect)
 
     if (m_backingStore) {
         // Blit the plug-in backing store into our own backing store.
-        OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+        OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
 
-        m_pluginBackingStore->paint(graphicsContext.get(), paintedRectPluginCoordinates);
+        m_pluginBackingStore->paint(*graphicsContext, IntPoint(), paintedRectPluginCoordinates);
     }
 
     // Ask the controller to invalidate the rect for us.

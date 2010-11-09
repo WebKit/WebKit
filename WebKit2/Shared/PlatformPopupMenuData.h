@@ -23,30 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef PlatformPopupMenuData_h
+#define PlatformPopupMenuData_h
+
 #include "BackingStore.h"
+#include <wtf/text/WTFString.h>
 
-#include "NotImplemented.h"
-#include <WebCore/GraphicsContext.h>
-
-using namespace WebCore;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
-{
-    notImplemented();
-    return 0;
-}
+struct PlatformPopupMenuData {
+    PlatformPopupMenuData();
+    
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, PlatformPopupMenuData&);
 
-PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
-{
-    notImplemented();
-    return 0;
-}
+#if PLATFORM(WIN)
+    int m_clientPaddingLeft;
+    int m_clientPaddingRight;
+    int m_clientInsetLeft;
+    int m_clientInsetRight;
+    int m_popupWidth;
+    int m_itemHeight;
+    WebCore::IntSize m_backingStoreSize;
+    RefPtr<BackingStore> m_notSelectedBackingStore;
+    RefPtr<BackingStore> m_selectedBackingStore;
+#endif
+};
 
-void BackingStore::paint(GraphicsContext&, const IntPoint&, const IntRect&)
-{
-    notImplemented();
-}
-        
 } // namespace WebKit
+
+#endif // PlatformPopupMenuData_h

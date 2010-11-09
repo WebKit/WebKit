@@ -36,6 +36,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+struct PlatformPopupMenuData;
 struct WebPopupItem;
 
 class WebPopupMenuProxy : public RefCounted<WebPopupMenuProxy> {
@@ -44,7 +45,7 @@ public:
     {
     }
 
-    virtual void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex, int32_t& newSelectedIndex) = 0;
+    virtual void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex) = 0;
     virtual void hidePopupMenu() = 0;
 
 protected:

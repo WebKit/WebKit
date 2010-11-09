@@ -1,3 +1,88 @@
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Windows Popup widget support (<select>)
+        <rdar://problem/8559439>
+        https://bugs.webkit.org/show_bug.cgi?id=48701
+
+        Port WebCore's PopupMenuWin's implementation to work within the confines of WebKit2.
+        Since we currently can't draw text using WebCore in the UIProcess, this approach uses
+        the WebProcess to create two bitmaps representing the full popup menu (both unselected and 
+        selected) and sends them to the UIProcess to be drawn in an HWND.
+
+        * Shared/BackingStore.h:
+        * Shared/cg/BackingStoreCG.cpp:
+        * Shared/qt/BackingStoreQt.cpp:
+
+        Add new function to create a flipped graphics context from the backing store, 
+        and add additional parameters to paint, to allow more control of how the backing
+        store is painted into the destination context.
+
+        * Shared/PlatformPopupMenuData.cpp: Added.
+        (WebKit::PlatformPopupMenuData::PlatformPopupMenuData):
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h: Added.
+        Add struct so platforms can send platform specific data to their popup menu implementations.
+
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::WebPopupItem):
+        (WebKit::WebPopupItem::encode):
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPopupItem.h:
+        Add isLabel for each menu item.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+        Update for new BackingStore::paint signature.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        Pass through the new PlatformPopupMenuData.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        Port implementation from WebCore.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy):
+        Pass the WebView to the WebPopupMenuProxyWin.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::update):
+        Update for new BackingStore::paint signature.
+
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::populateItems): Add isLabel for each item.
+        (WebKit::WebPopupMenu::show): Give each platform a chance to add platform specific data.
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        Add stubbed out setUpPlatformData.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        Compute data needed in the UIProcess including generating the bitmaps.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-11-09  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

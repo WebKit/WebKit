@@ -26,23 +26,109 @@
 #ifndef WebPopupMenuProxyWin_h
 #define WebPopupMenuProxyWin_h
 
+#include "PlatformPopupMenuData.h"
+#include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
+#include <WebCore/Scrollbar.h>
+#include <WebCore/ScrollbarClient.h>
+
+typedef struct HWND__* HWND;
+typedef struct HDC__* HDC;
+typedef struct HBITMAP__* HBITMAP;
 
 namespace WebKit {
 
-class WebPopupMenuProxyWin : public WebPopupMenuProxy {
+class WebView;
+
+class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollbarClient  {
 public:
-    static PassRefPtr<WebPopupMenuProxyWin> create()
+    static PassRefPtr<WebPopupMenuProxyWin> create(WebView* webView)
     {
-        return adoptRef(new WebPopupMenuProxyWin());
+        return adoptRef(new WebPopupMenuProxyWin(webView));
     }
     ~WebPopupMenuProxyWin();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, int32_t selectedIndex, int32_t& newSelectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex);
     virtual void hidePopupMenu();
 
+    void hide() { hidePopupMenu(); }
+
 private:
-    WebPopupMenuProxyWin();
+    WebPopupMenuProxyWin(WebView*);
+
+    WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
+
+    // ScrollBarClient
+    virtual int scrollSize(WebCore::ScrollbarOrientation orientation) const;
+    virtual void setScrollOffsetFromAnimation(const WebCore::IntPoint&);
+    virtual void valueChanged(WebCore::Scrollbar*);
+    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
+    virtual bool isActive() const { return true; }
+    virtual bool scrollbarCornerPresent() const { return false; }
+
+    static bool registerWindowClass();
+    static LRESULT CALLBACK WebPopupMenuProxyWndProc(HWND, UINT, WPARAM, LPARAM);
+    LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+    // Message pump messages.
+    LRESULT onMouseActivate(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onSize(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onKeyDown(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onChar(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onMouseMove(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onLButtonDown(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onLButtonUp(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onMouseWheel(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onPaint(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onPrintClient(HWND, UINT message, WPARAM, LPARAM, bool& handled);
+
+    void calculatePositionAndSize(const WebCore::IntRect&);
+    WebCore::IntRect clientRect() const;
+    void invalidateItem(int index);
+
+    int itemHeight() const { return m_itemHeight; }
+    const WebCore::IntRect& windowRect() const { return m_windowRect; }
+    int wheelDelta() const { return m_wheelDelta; }
+    void setWasClicked(bool b = true) { m_wasClicked = b; }
+    bool wasClicked() const { return m_wasClicked; }
+    void setScrollOffset(int offset) { m_scrollOffset = offset; }
+    int scrollOffset() const { return m_scrollOffset; }
+    bool scrollbarCapturingMouse() const { return m_scrollbarCapturingMouse; }
+    void setScrollbarCapturingMouse(bool b) { m_scrollbarCapturingMouse = b; }
+
+
+    bool up(unsigned lines = 1);
+    bool down(unsigned lines = 1);
+
+    void paint(const WebCore::IntRect& damageRect, HDC = 0);
+    int visibleItems() const;
+    int listIndexAtPoint(const WebCore::IntPoint&) const;
+    bool setFocusedIndex(int index, bool hotTracking = false);
+    int focusedIndex() const;
+    void focusFirst();
+    void focusLast();
+    bool scrollToRevealSelection();
+    void incrementWheelDelta(int delta);
+    void reduceWheelDelta(int delta);
+
+    WebView* m_webView;
+    Vector<WebPopupItem> m_items;
+    PlatformPopupMenuData m_data;
+    int m_newSelectedIndex;
+
+    RefPtr<WebCore::Scrollbar> m_scrollbar;
+    HWND m_popup;
+    HDC m_DC;
+    HBITMAP m_bmp;
+    WebCore::IntRect m_windowRect;
+
+    int m_itemHeight;
+    int m_scrollOffset;
+    int m_wheelDelta;
+    int m_focusedIndex;
+    bool m_wasClicked;
+    bool m_scrollbarCapturingMouse;
+    bool m_showPopup;
 };
 
 } // namespace WebKit

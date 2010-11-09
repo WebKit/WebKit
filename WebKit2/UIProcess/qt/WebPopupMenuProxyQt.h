@@ -38,7 +38,7 @@ public:
     }
     ~WebPopupMenuProxyQt();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, int32_t selectedIndex, int32_t& newSelectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex);
     virtual void hidePopupMenu();
 
 private:
