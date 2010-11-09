@@ -99,9 +99,8 @@ function checkWebTimingOnDOMContentLoaded() {
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
-    shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
-
-    shouldBe("timing.responseStart", "timing.requestEnd");
+    
+    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestStart");
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.domLoading");
