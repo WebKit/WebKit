@@ -605,6 +605,13 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         int keyCode = static_cast<KeyboardEvent*>(event)->keyCode();
         bool handled = false;
 
+        if (keyCode == ' ' && isSpatialNavigationEnabled(element->document()->frame())) {
+            // Use space to toggle arrow key handling for selection change or spatial navigation.
+            data.setActiveSelectionState(!data.activeSelectionState());
+            event->setDefaultHandled();
+            return;
+        }
+
 #if SPACE_OR_RETURN_POP_MENU
         if (keyCode == ' ' || keyCode == '\r') {
             element->focus();
@@ -643,10 +650,6 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         if (keyCode == '\r') {
             // listIndex should already be selected, but this will fire the onchange handler.
             setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex), true, true);
-            handled = true;
-        } else if (keyCode == ' ' && isSpatialNavigationEnabled(element->document()->frame())) {
-            // Use space to trigger arrow key handling for selection change or spatial navigation.
-            data.setActiveSelectionState(!data.activeSelectionState());
             handled = true;
         }
 #endif

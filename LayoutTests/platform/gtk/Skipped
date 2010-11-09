@@ -5678,9 +5678,6 @@ mathml/presentation
 # https://bugs.webkit.org/show_bug.cgi?id=49052
 fast/canvas/pointInPath.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=49176
-fast/events/spatial-navigation/snav-single-select.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=49177
 fast/events/scroll-after-click-on-tab-index.html
 
