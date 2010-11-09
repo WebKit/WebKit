@@ -6,7 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS timing.connectEnd is originalTiming.connectEnd
 PASS timing.connectStart is originalTiming.connectStart
 PASS timing.domComplete is originalTiming.domComplete
-PASS timing.domContentLoaded is originalTiming.domContentLoaded
+PASS timing.domContentLoadedEnd is originalTiming.domContentLoadedEnd
+PASS timing.domContentLoadedStart is originalTiming.domContentLoadedStart
 PASS timing.domInteractive is originalTiming.domInteractive
 PASS timing.domLoading is originalTiming.domLoading
 PASS timing.domainLookupEnd is originalTiming.domainLookupEnd

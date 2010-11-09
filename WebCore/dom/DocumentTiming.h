@@ -32,14 +32,16 @@ struct DocumentTiming {
     DocumentTiming()
         : domLoading(0.0)
         , domInteractive(0.0)
-        , domContentLoaded(0.0)
+        , domContentLoadedStart(0.0)
+        , domContentLoadedEnd(0.0)
         , domComplete(0.0)
     {
     }
 
     double domLoading;
     double domInteractive;
-    double domContentLoaded;
+    double domContentLoadedStart;
+    double domContentLoadedEnd;
     double domComplete;
 };
 

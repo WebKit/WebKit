@@ -18,7 +18,8 @@ PASS timing.requestEnd is >= timing.requestStart
 PASS timing.responseStart is timing.requestEnd
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is 0
-PASS timing.domContentLoaded is 0
+PASS timing.domContentLoadedStart is 0
+PASS timing.domContentLoadedEnd is 0
 PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
@@ -37,7 +38,28 @@ PASS timing.requestEnd is >= timing.requestStart
 PASS timing.responseStart is timing.requestEnd
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.domLoading
-PASS timing.domContentLoaded is 0
+PASS timing.domContentLoadedStart is 0
+PASS timing.domContentLoadedEnd is 0
+PASS timing.domComplete is 0
+PASS timing.loadEventStart is 0
+PASS timing.loadEventEnd is 0
+PASS timing.navigationStart is >= oneHourAgoUTC
+PASS timing.unloadEventEnd is >= timing.navigationStart
+PASS timing.redirectStart is 0
+PASS timing.redirectEnd is 0
+PASS navigation.redirectCount is 0
+PASS timing.fetchStart is >= timing.navigationStart
+PASS timing.domainLookupStart is >= timing.fetchStart
+PASS timing.domainLookupEnd is >= timing.domainLookupStart
+PASS timing.connectStart is >= timing.domainLookupEnd
+PASS timing.connectEnd is >= timing.connectStart
+PASS timing.requestStart is >= timing.connectEnd
+PASS timing.requestEnd is >= timing.requestStart
+PASS timing.responseStart is timing.requestEnd
+PASS timing.domLoading is >= timing.fetchStart
+PASS timing.domInteractive is >= timing.domLoading
+PASS timing.domContentLoadedStart is >= timing.domInteractive
+PASS timing.domContentLoadedEnd is 0
 PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
@@ -56,7 +78,8 @@ PASS timing.requestEnd is >= timing.requestStart
 PASS timing.responseStart is timing.requestEnd
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
-PASS timing.domContentLoaded is >= timing.domInteractive
+PASS timing.domContentLoadedStart is >= timing.domInteractive
+PASS timing.domContentLoadedEnd is >= timing.domContentLoadedStart
 PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
@@ -76,8 +99,9 @@ PASS timing.responseStart is timing.requestEnd
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
-PASS timing.domContentLoaded is >= timing.domInteractive
-PASS timing.domComplete is >= timing.domContentLoaded
+PASS timing.domContentLoadedStart is >= timing.domInteractive
+PASS timing.domContentLoadedEnd is >= timing.domContentLoadedStart
+PASS timing.domComplete is >= timing.domContentLoadedEnd
 PASS timing.loadEventStart is >= timing.responseEnd
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
@@ -96,8 +120,9 @@ PASS timing.responseStart is timing.requestEnd
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.domLoading is >= timing.fetchStart
 PASS timing.domInteractive is >= timing.responseEnd
-PASS timing.domContentLoaded is >= timing.domInteractive
-PASS timing.domComplete is >= timing.domContentLoaded
+PASS timing.domContentLoadedStart is >= timing.domInteractive
+PASS timing.domContentLoadedEnd is >= timing.domContentLoadedStart
+PASS timing.domComplete is >= timing.domContentLoadedEnd
 PASS timing.loadEventStart is >= timing.responseEnd
 PASS timing.loadEventEnd is >= timing.loadEventStart + 50
 PASS successfullyParsed is true

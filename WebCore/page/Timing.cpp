@@ -265,13 +265,22 @@ unsigned long long Timing::domInteractive() const
     return toIntegerMilliseconds(timing->domInteractive);
 }
 
-unsigned long long Timing::domContentLoaded() const
+unsigned long long Timing::domContentLoadedStart() const
 {
     const DocumentTiming* timing = documentTiming();
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->domContentLoaded);
+    return toIntegerMilliseconds(timing->domContentLoadedStart);
+}
+
+unsigned long long Timing::domContentLoadedEnd() const
+{
+    const DocumentTiming* timing = documentTiming();
+    if (!timing)
+        return 0;
+
+    return toIntegerMilliseconds(timing->domContentLoadedEnd);
 }
 
 unsigned long long Timing::domComplete() const
