@@ -218,8 +218,22 @@ editing/spelling/context-menu-suggestions.html
 editing/undo/undo-deleteWord.html
 editing/undo/undo-smart-delete-reversed-selection.html
 editing/undo/undo-smart-delete-word.html
+fast/blockflow/horizontal-bt-replaced-selection.html
+fast/blockflow/japanese-lr-selection.html
+fast/blockflow/japanese-rl-selection.html
+fast/blockflow/vertical-lr-replaced-selection.html
+fast/blockflow/vertical-rl-replaced-selection.html
+fast/forms/input-file-not-open-without-gesture.html
+fast/forms/render-text-crash.html
+fast/forms/select-listbox-focus-displaynone.html
+fast/history/form-submit-in-frame.html
+fast/history/form-submit-in-frame-via-onclick.html
+fast/images/image-map-multiple.html
+fast/images/image-map-multiple-xhtml.xhtml
+fast/repaint/selection-rl.html
 fast/block/float/float-in-float-hit-testing.html
 fast/block/float/relative-painted-twice.html
+fast/css-generated-content/drag-state.html
 fast/css-generated-content/hover-style-change.html
 fast/css-generated-content/positioned-background-hit-test-crash.html
 fast/css-generated-content/spellingToolTip-assert.html
@@ -238,6 +252,7 @@ fast/css/universal-hover-quirk.html
 fast/css/user-drag-none.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
+fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/Node/mutation-blur.html
 fast/dom/replaced-image-map.html
 fast/dom/Window/window-postmessage-clone-frames.html
@@ -261,6 +276,7 @@ fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/capture-on-target.html
 fast/events/click-count.html
 fast/events/click-focus-anchor.html
+fast/events/click-focus-control.html
 fast/events/clientXY-in-zoom-and-scroll.html
 fast/events/content-changed-during-drop.html
 fast/events/context-no-deselect.html
@@ -304,6 +320,7 @@ fast/events/keypress-removed-node.html
 fast/events/mouse-click-events.html
 fast/events/mouse-drag-from-frame-to-other-frame.html
 fast/events/mouse-drag-from-frame.html
+fast/events/mouse-focus-imagemap.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mousedown-in-subframe-scrollbar.html
 fast/events/mousedown_in_scrollbar.html
@@ -339,6 +356,7 @@ fast/events/recorded-keydown-event.html
 fast/events/related-target.html
 fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html
+fast/events/scroll-after-click-on-tab-index.html
 fast/events/scroll-to-anchor-in-overflow-hidden.html
 fast/events/scrollbar-double-click.html
 fast/events/select-onchange-crash.html
@@ -510,12 +528,15 @@ media/controls-right-click-on-timebar.html
 media/media-fullscreen-inline.html
 media/video-controls-visible-audio-only.html
 plugins/resize-from-plugin.html
+platform/qt/fast/events/event-sender-keydown-frame.html
+
 scrollbars/overflow-custom-scrollbar-crash.html
 scrollbars/scrollbar-click-does-not-blur-content.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollbar-miss-mousemove.html
+svg/animations/animate-color-transparent.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-points.html
@@ -571,6 +592,7 @@ svg/custom/pointer-events-text.svg
 svg/custom/polyline-hittest.svg
 svg/custom/prevent-default.svg
 svg/custom/relative-sized-content-with-resources.xhtml
+svg/custom/repaint-on-constant-size-change.svg
 svg/custom/repaint-stroke-width-changes.svg
 svg/custom/resource-invalidate-on-target-update.svg
 svg/custom/scroll-hit-test.xhtml
@@ -813,6 +835,7 @@ fast/events/tabindex-focus-blur-all.html
 fast/loader/loadInProgress.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
+http/tests/plugins
 plugins
 java
 
@@ -897,6 +920,7 @@ fast/harness/override-preferences-2.html
 fast/harness/override-preferences.html
 fast/harness/page-cache-crash-on-data-urls.html
 fast/harness/use-page-cache.html
+fast/history/back-forward-reset-after-error-handling.html
 fast/history/timed-refresh-in-cached-frame.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
@@ -905,6 +929,8 @@ fast/parser/noscript-with-javascript-disabled.html
 fast/parser/noscript-with-javascript-enabled.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 http/tests/appcache/disabled.html
+http/tests/navigation/ping-cross-origin.html
+http/tests/navigation/ping-same-origin.html
 loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
 
@@ -1047,6 +1073,253 @@ fast/forms/plaintext-mode-1.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 http/tests/misc/copy-resolves-urls.html
+editing/deleting/4845371.html
+editing/deleting/delete-3608445-fix.html
+editing/deleting/delete-3775172-fix.html
+editing/deleting/delete-3857753-fix.html
+editing/deleting/delete-3865854-fix.html
+editing/deleting/delete-3928305-fix.html
+editing/deleting/delete-3959464-fix.html
+editing/deleting/delete-4038408-fix.html
+editing/deleting/delete-after-span-ws-001.html
+editing/deleting/delete-after-span-ws-002.html
+editing/deleting/delete-after-span-ws-003.html
+editing/deleting/delete-at-paragraph-boundaries-001.html
+editing/deleting/delete-at-paragraph-boundaries-002.html
+editing/deleting/delete-at-paragraph-boundaries-003.html
+editing/deleting/delete-at-paragraph-boundaries-004.html
+editing/deleting/delete-at-paragraph-boundaries-005.html
+editing/deleting/delete-at-paragraph-boundaries-006.html
+editing/deleting/delete-at-paragraph-boundaries-007.html
+editing/deleting/delete-at-paragraph-boundaries-009.html
+editing/deleting/delete-at-paragraph-boundaries-010.html
+editing/deleting/delete-at-paragraph-boundaries-011.html
+editing/deleting/delete-at-start-or-end.html
+editing/deleting/delete-block-contents-001.html
+editing/deleting/delete-block-contents-002.html
+editing/deleting/delete-block-contents-003.html
+editing/deleting/delete-block-merge-contents-001.html
+editing/deleting/delete-block-merge-contents-002.html
+editing/deleting/delete-block-merge-contents-003.html
+editing/deleting/delete-block-merge-contents-004.html
+editing/deleting/delete-block-merge-contents-005.html
+editing/deleting/delete-block-merge-contents-006.html
+editing/deleting/delete-block-merge-contents-007.html
+editing/deleting/delete-block-merge-contents-008.html
+editing/deleting/delete-block-merge-contents-009.html
+editing/deleting/delete-block-merge-contents-010.html
+editing/deleting/delete-block-merge-contents-011.html
+editing/deleting/delete-block-merge-contents-012.html
+editing/deleting/delete-block-merge-contents-013.html
+editing/deleting/delete-block-merge-contents-014.html
+editing/deleting/delete-block-merge-contents-015.html
+editing/deleting/delete-block-merge-contents-016.html
+editing/deleting/delete-block-merge-contents-017.html
+editing/deleting/delete-block-merge-contents-019.html
+editing/deleting/delete-block-merge-contents-020.html
+editing/deleting/delete-block-merge-contents-023.html
+editing/deleting/delete-block-merge-contents-024.html
+editing/deleting/delete-br-001.html
+editing/deleting/delete-br-002.html
+editing/deleting/delete-br-003.html
+editing/deleting/delete-br-004.html
+editing/deleting/delete-br-005.html
+editing/deleting/delete-br-006.html
+editing/deleting/delete-br-008.html
+editing/deleting/delete-br-009.html
+editing/deleting/delete-br-010.html
+editing/deleting/delete-br-011.html
+editing/deleting/delete-character-001.html
+editing/deleting/delete-first-list-item.html
+editing/deleting/delete-hr.html
+editing/deleting/delete-image-001.html
+editing/deleting/delete-image-002.html
+editing/deleting/delete-image-003.html
+editing/deleting/delete-image-004.html
+editing/deleting/delete-line-001.html
+editing/deleting/delete-line-002.html
+editing/deleting/delete-line-003.html
+editing/deleting/delete-line-004.html
+editing/deleting/delete-line-005.html
+editing/deleting/delete-line-006.html
+editing/deleting/delete-line-007.html
+editing/deleting/delete-line-008.html
+editing/deleting/delete-line-009.html
+editing/deleting/delete-line-010.html
+editing/deleting/delete-line-012.html
+editing/deleting/delete-line-013.html
+editing/deleting/delete-line-014.html
+editing/deleting/delete-line-015.html
+editing/deleting/delete-line-016.html
+editing/deleting/delete-line-017.html
+editing/deleting/delete-line-end-ws-001.html
+editing/deleting/delete-select-all-002.html
+editing/deleting/delete-select-all-003.html
+editing/deleting/delete-selection-001.html
+editing/deleting/delete-to-end-of-paragraph.html
+editing/deleting/delete-to-select-table.html
+editing/deleting/delete-trailing-ws-001.html
+editing/deleting/delete-trailing-ws-002.html
+editing/deleting/list-item-1.html
+editing/deleting/merge-different-styles.html
+editing/deleting/merge-endOfParagraph.html
+editing/deleting/merge-into-empty-block-1.html
+editing/deleting/merge-into-empty-block-2.html
+editing/deleting/merge-no-br.html
+editing/deleting/merge-unrendered-space.html
+editing/deleting/non-smart-delete.html
+editing/deleting/paragraph-in-preserveNewline.html
+editing/deleting/pruning-after-merge-1.html
+editing/deleting/pruning-after-merge-2.html
+editing/deleting/table-cells.html
+editing/deleting/transpose-empty.html
+editing/deleting/whitespace-pre-1.html
+editing/execCommand/createLink.html
+editing/execCommand/indent-nested-lists-1.html
+editing/execCommand/indent-nested-lists-2.html
+editing/execCommand/indent-nested-lists-3.html
+editing/execCommand/indent-nested-lists-4.html
+editing/execCommand/indent-nested-lists-5.html
+editing/execCommand/indent-nested-lists-6.html
+editing/execCommand/indent-nested-lists-7.html
+editing/execCommand/indent-with-style.html
+editing/execCommand/insertHTML.html
+editing/execCommand/outdent-nested-lists-1.html
+editing/execCommand/outdent-nested-lists-2.html
+editing/execCommand/outdent-nested-lists-3.html
+editing/execCommand/outdent-nested-lists-4.html
+editing/execCommand/query-command-state.html
+editing/execCommand/query-text-alignment.html
+editing/execCommand/queryCommandState-01.html
+editing/execCommand/remove-formatting-2.html
+editing/execCommand/remove-formatting.html
+editing/execCommand/remove-list-items.html
+editing/execCommand/switch-list-type.html
+editing/execCommand/toggle-compound-styles.html
+editing/execCommand/unlink.html
+editing/inserting/insert-3654864-fix.html
+editing/inserting/insert-3775316-fix.html
+editing/inserting/insert-3778059-fix.html
+editing/inserting/insert-3800346-fix.html
+editing/inserting/insert-3851164-fix.html
+editing/inserting/insert-after-delete-001.html
+editing/inserting/insert-at-end-01.html
+editing/inserting/insert-at-end-02.html
+editing/inserting/insert-br-001.html
+editing/inserting/insert-br-002.html
+editing/inserting/insert-br-003.html
+editing/inserting/insert-br-004.html
+editing/inserting/insert-br-005.html
+editing/inserting/insert-br-006.html
+editing/inserting/insert-br-007.html
+editing/inserting/insert-br-008.html
+editing/inserting/insert-br-009.html
+editing/inserting/insert-br-at-tabspan-001.html
+editing/inserting/insert-br-at-tabspan-002.html
+editing/inserting/insert-br-at-tabspan-003.html
+editing/inserting/insert-br-quoted-001.html
+editing/inserting/insert-br-quoted-002.html
+editing/inserting/insert-br-quoted-003.html
+editing/inserting/insert-br-quoted-004.html
+editing/inserting/insert-br-quoted-005.html
+editing/inserting/insert-br-quoted-006.html
+editing/inserting/insert-div-001.html
+editing/inserting/insert-div-002.html
+editing/inserting/insert-div-003.html
+editing/inserting/insert-div-004.html
+editing/inserting/insert-div-005.html
+editing/inserting/insert-div-006.html
+editing/inserting/insert-div-007.html
+editing/inserting/insert-div-008.html
+editing/inserting/insert-div-009.html
+editing/inserting/insert-div-010.html
+editing/inserting/insert-div-011.html
+editing/inserting/insert-div-012.html
+editing/inserting/insert-div-013.html
+editing/inserting/insert-div-014.html
+editing/inserting/insert-div-015.html
+editing/inserting/insert-div-016.html
+editing/inserting/insert-div-017.html
+editing/inserting/insert-div-018.html
+editing/inserting/insert-div-019.html
+editing/inserting/insert-div-020.html
+editing/inserting/insert-div-021.html
+editing/inserting/insert-div-022.html
+editing/inserting/insert-div-024.html
+editing/inserting/insert-div-025.html
+editing/inserting/insert-div-026.html
+editing/inserting/insert-div-027.html
+editing/inserting/insert-paragraph-01.html
+editing/inserting/insert-paragraph-02.html
+editing/inserting/insert-paragraph-03.html
+editing/inserting/insert-paragraph-04.html
+editing/inserting/insert-paragraph-05.html
+editing/inserting/insert-paste-bidi-control.html
+editing/inserting/insert-space-in-empty-doc.html
+editing/inserting/insert-tab-001.html
+editing/inserting/insert-tab-002.html
+editing/inserting/insert-tab-004.html
+editing/inserting/insert-text-at-tabspan-001.html
+editing/inserting/insert-text-at-tabspan-002.html
+editing/inserting/insert-text-at-tabspan-003.html
+editing/inserting/insert-thai-characters-001.html
+editing/inserting/line-break.html
+editing/inserting/paragraph-separator-01.html
+editing/inserting/paragraph-separator-02.html
+editing/inserting/paragraph-separator-in-table-1.html
+editing/inserting/paragraph-separator-in-table-2.html
+editing/inserting/return-key-with-selection-001.html
+editing/inserting/return-key-with-selection-002.html
+editing/inserting/return-key-with-selection-003.html
+editing/inserting/typing-001.html
+editing/inserting/typing-002.html
+editing/inserting/typing-003.html
+editing/inserting/typing-around-br-001.html
+editing/inserting/typing-around-image-001.html
+editing/pasteboard/4631972.html
+editing/pasteboard/4700297.html
+editing/pasteboard/4744008.html
+editing/pasteboard/8145-1.html
+editing/pasteboard/8145-2.html
+editing/pasteboard/8145-3.html
+editing/pasteboard/displaced-generic-placeholder.html
+editing/pasteboard/displaced-placeholder.html
+editing/pasteboard/interchange-newline-1.html
+editing/pasteboard/interchange-newline-3.html
+editing/pasteboard/interchange-newline-4.html
+editing/pasteboard/merge-after-delete-1.html
+editing/pasteboard/merge-after-delete-2.html
+editing/pasteboard/merge-after-delete.html
+editing/pasteboard/merge-end-3.html
+editing/pasteboard/merge-end-4.html
+editing/pasteboard/merge-end-5.html
+editing/pasteboard/merge-end-blockquote.html
+editing/pasteboard/merge-end-borders.html
+editing/pasteboard/merge-end-list.html
+editing/pasteboard/merge-end-table.html
+editing/pasteboard/merge-start-blockquote.html
+editing/pasteboard/merge-start-list.html
+editing/pasteboard/onpaste-text-html.html
+editing/pasteboard/paste-into-anchor-text.html
+editing/pasteboard/pasting-object.html
+editing/pasteboard/prevent-block-nesting-01.html
+editing/pasteboard/quirks-mode-br-1.html
+editing/pasteboard/unrendered-br.html
+editing/selection/5195166-2.html
+editing/selection/find-in-text-control.html
+editing/selection/focus-crash.html
+editing/selection/selection-applet.html
+editing/selection/skip-non-editable-1.html
+editing/selection/skip-non-editable-2.html
+editing/selection/toString-1.html
+editing/spelling/design-mode-spellcheck-off.html
+editing/style/remove-underline-from-stylesheet.html
+editing/style/typing-style-003.html
+editing/text-iterator/thai-cursor-movement.html
+editing/undo/replace-by-span-then-remove.html
+editing/deleting/5168598.html
+editing/deleting/delete-line-011.html
+editing/pasteboard/createMarkup-assert.xml
 
 # WebKitTestRunner needs to support evaluateInWebInspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
@@ -1344,8 +1617,6 @@ fast/history/gesture-before-onload-location-href.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
-editing/spelling/spelling-contenteditable.html
-editing/spelling/spelling-textarea.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
@@ -1511,9 +1782,11 @@ fast/frames/frame-display-none-focus.html
 fast/frames/frame-navigation.html
 fast/history/go-back-to-changed-name.html
 http/tests/navigation/redirect-cycle.html
+http/tests/navigation/redirect302-metaredirect.html
 http/tests/navigation/reload-subframe-frame.html
 http/tests/navigation/reload-subframe-iframe.html
 http/tests/navigation/reload-subframe-object.html
+
 
 # WebKitTestRunner needs layoutTestController.queueLoadingScript
 # <https://bugs.webkit.org/show_bug.cgi?id=42675>
@@ -1578,6 +1851,7 @@ fast/frames/location-change-no-file-access.html
 
 # WebKitTestRunner needs layoutTestController.setPrinting
 # <https://bugs.webkit.org/show_bug.cgi?id=42693>
+printing/simultaneous-position-float-change.html
 printing/compositing-layer-printing.html
 printing/media-queries-print.html
 printing/page-rule-in-media-query.html
@@ -1701,13 +1975,16 @@ fast/loader/crash-copying-backforwardlist.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
 # WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
-fast/events/popup-allowed-from-gesture-initiated-event.html
-fast/events/popup-allowed-from-gesture-initiated-form-submit.html
 fast/events/popup-blocked-from-fake-button-click.html
 fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
-fast/events/popup-blocked-to-post-blank.html
+fast/events/popup-allowed-from-gesture-initiated-event.html
+fast/events/popup-allowed-from-gesture-initiated-form-submit.html
+fast/events/popup-blocked-from-history-reload.html
 fast/events/popup-blocked-from-iframe-script.html
+fast/events/popup-blocked-from-window-open.html
+fast/events/popup-blocked-to-post-blank.html
+
 
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
@@ -2097,11 +2374,7 @@ css2.1/t1503-c522-font-family-00-b.html
 css2.1/t1508-c527-font-03-b.html
 css2.1/t1508-c527-font-06-b.html
 editing/inserting/paragraph-separator-03.html
-editing/pasteboard/5027857.html
 editing/pasteboard/innerText-inline-table.html
-editing/pasteboard/paste-pre-001.html
-editing/pasteboard/paste-pre-002.html
-editing/pasteboard/paste-text-019.html
 fast/backgrounds/background-inherit-color-bug.html
 fast/css/text-input-with-webkit-border-radius.html
 fast/forms/isindex-placeholder.html
@@ -2115,12 +2388,9 @@ fast/text/backslash-to-yen-sign-euc.html
 fast/text/format-control.html
 fast/text/zero-width-characters.html
 fast/text/international/hindi-whitespace.html
-fast/text/international/khmer-selection.html
 fast/url/anchor.html
 fast/url/path.html
 svg/custom/bug45331.svg
-svg/zoom/page/zoom-coords-viewattr-01-b.svg
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
 http/tests/websocket/tests/bad-sub-protocol-non-ascii.html
 
 # EventSender.mouseMoveTo is not yet supported
@@ -2135,14 +2405,56 @@ fast/events/spatial-navigation
 # eventSender.clearTouchPoints is unimplemented
 fast/events/touch
 
-# layoutTestController.ignoreDesktopNotificationPermissionRequests  is unimplemented
+# layoutTestController.ignoreDesktopNotificationPermissionRequests is unimplemented
 fast/notifications
 
-# layoutTestController.grantDesktopNotificationPermission  is unimplemented
+# layoutTestController.grantDesktopNotificationPermission is unimplemented
 http/tests/notifications
+
+# layoutTestController.setScrollbarPolicy is unimplemented
+fast/overflow/scrollbar-restored-and-then-locked.html
 
 # Worker caught exception: Error: INVALID_STATE_ERR: DOM Exception 11
 fast/workers/storage
 
+# SECURITY_ERR: DOM Exception 18
+fast/js/exceptions-thrown-in-callbacks.html
+storage/change-version-handle-reuse.html
+storage/test-authorizer.html
+storage/transaction-callback-exception-crash.html
+storage/multiple-transactions.html
+storage/read-and-write-transactions-dont-run-together.html
+storage/sql-data-types.html
+storage/change-version-no-crash-on-preflight-failure.html
+storage/close-during-stress-test.html
+storage/multiple-transactions-on-different-handles.html
+storage/open-database-empty-version.html
+storage/read-transactions-running-concurrently.html
+
 # FAIL: Timed out waiting for notifyDone to be called
 http/tests/appcache
+fast/dom/nodesFromRect-basic.html
+fast/dom/beforeload/video-before-load.html
+fast/frames/iframe-reparenting-adopt-node.html
+scrollbars/scrollevent-iframe-no-scrolling-wheel.html
+media/video-source-inserted.html
+media/media-can-play-octet-stream.html
+media/video-source-removed.html
+media/video-source-moved.html
+http/tests/websocket/tests/frame-lengths.html
+http/tests/navigation/ping-cross-origin-from-https.html
+http/tests/misc/object-image-error.html
+http/tests/history/back-during-onload-triggered-by-back.html
+
+# Cookie handling problems
+http/tests/security/cookies/document-open.html
+http/tests/security/cookies/base-about-blank.html
+http/tests/security/aboutBlank/security-context-grandchildren-lexical.html
+http/tests/security/aboutBlank/security-context-writeln.html
+http/tests/security/aboutBlank/security-context.html
+http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html
+http/tests/security/aboutBlank/security-context-grandchildren.html
+http/tests/security/aboutBlank/security-context-with-base-tag.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/aboutBlank/security-context-write.html
+http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html
