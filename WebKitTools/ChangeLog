@@ -1,3 +1,12 @@
+2010-11-09  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Improve old-run-webkit-tests --verbose to show DumpTool opening/closing
+        https://bugs.webkit.org/show_bug.cgi?id=49252
+
+        * Scripts/old-run-webkit-tests:
+
 2010-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
