@@ -1,3 +1,13 @@
+2010-11-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Windows build fix.
+
+        Add isDisplayNone to the PopupMenuStyle constructor call in
+        PopupMenuTest (necessary after r71618).
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::itemStyle):
+
 2010-11-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dimitri Glazkov.
