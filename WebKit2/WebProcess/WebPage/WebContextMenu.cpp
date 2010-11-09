@@ -27,6 +27,7 @@
 #include "WebProcess.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;
@@ -44,18 +45,28 @@ WebContextMenu::~WebContextMenu()
 
 void WebContextMenu::show()
 {
-    WebCore::ContextMenu* menu = m_page->corePage()->contextMenuController()->contextMenu();
+    ContextMenu* menu = m_page->corePage()->contextMenuController()->contextMenu();
     if (!menu)
         return;
-    
-    Vector<WebCore::ContextMenuItem> coreItems = WebCore::contextMenuItemVector(menu->platformDescription());
-        
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowContextMenu(menu->hitTestResult().point(), kitItems(coreItems, menu)), m_page->pageID());
+    Node* node = menu->hitTestResult().innerNonSharedNode();
+    if (!node)
+        return;
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return;
+    FrameView* view = frame->view();
+    if (!view)
+        return;
+
+    IntPoint point = view->contentsToWindow(menu->hitTestResult().point());
+    Vector<ContextMenuItem> items = contextMenuItemVector(menu->platformDescription());
+
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(point, kitItems(items, menu)));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
 {
-    WebCore::ContextMenuItem coreItem(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>(item.action()), item.title());
+    ContextMenuItem coreItem(ActionType, static_cast<ContextMenuAction>(item.action()), item.title());
     m_page->corePage()->contextMenuController()->contextMenuItemSelected(&coreItem);
 }
 

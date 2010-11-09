@@ -2,6 +2,23 @@
 
         Reviewed by Anders Carlsson.
 
+        Context menus show up in the wrong place when the page is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=49264
+
+        Convert the hitTestResult point into 'window' coordinates before sending over
+        to the UIProcess to show the menu.
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        Convert to use message sender interface.
+
+        (WebKit::WebContextMenu::itemSelected):
+        Remove unnecessary WebCore::'s.
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Send messages directly to the WebContext
         https://bugs.webkit.org/show_bug.cgi?id=49262
 
