@@ -40,6 +40,7 @@ void InitWebCoreSystemInterface(void)
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);
+        INIT(CreateCTLineWithUniCharProvider);
         INIT(CreateCustomCFReadStream);
         INIT(CreateNSURLConnectionDelegateProxy);
         INIT(DrawBezeledTextArea);
@@ -90,8 +91,10 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamError);
         INIT(SignalCFReadStreamHasBytes);
 
-    #if defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+        INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
+#else
         INIT(GetHyphenationLocationBeforeIndex);
-    #endif
+#endif
     });
 }

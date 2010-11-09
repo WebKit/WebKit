@@ -1,3 +1,13 @@
+2010-11-09  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        <rdar://problem/8646456> WebProcess crashes reproducibly on complex text
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize wkCreateCTTypesetterWithUniCharProviderAndOptions
+        and wkCreateCTLineWithUniCharProvider.
+
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
         Fix Windows build.
