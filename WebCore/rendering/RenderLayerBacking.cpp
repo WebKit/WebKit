@@ -1101,7 +1101,7 @@ bool RenderLayerBacking::showRepaintCounter() const
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes)
 {
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
-    bool hasTransform = keyframes.containsProperty(CSSPropertyWebkitTransform);
+    bool hasTransform = renderer()->isBox() && keyframes.containsProperty(CSSPropertyWebkitTransform);
     
     if (!hasOpacity && !hasTransform)
         return false;
