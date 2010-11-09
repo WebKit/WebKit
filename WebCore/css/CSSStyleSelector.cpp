@@ -1609,7 +1609,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
 
 PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
 {
-    initForStyleResolve(m_checker.m_document->body());
+    initForStyleResolve(m_checker.m_document->documentElement()); // m_rootElementStyle will be set to the document style.
 
     m_style = RenderStyle::create();
     m_style->inheritFrom(m_rootElementStyle);
