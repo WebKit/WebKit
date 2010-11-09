@@ -3448,3 +3448,6 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.fillStyle.
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+
+// test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
+BUG62515 : printing/page-format-data-display-none.html = TEXT
