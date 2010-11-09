@@ -101,7 +101,7 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     int positiveElevation = elevation < 0 ? elevation + 360 : elevation;
     String resourceName = String::format("IRC_%s_C_R0195_T%03d_P%03d", subjectName.utf8().data(), azimuth, positiveElevation);
 
-    OwnPtr<AudioBus> impulseResponse(createBusFromAudioFileResource(resourceName, sampleRate));
+    OwnPtr<AudioBus> impulseResponse(AudioBus::loadPlatformResource(resourceName.utf8().data(), sampleRate));
 
     ASSERT(impulseResponse.get());
     if (!impulseResponse.get())
@@ -224,7 +224,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevati
     // Interpolate elevation angle.
     double angle = (1.0 - x) * hrtfElevation1->elevationAngle() + x * hrtfElevation2->elevationAngle();
     
-    OwnPtr<HRTFElevation> hrtfElevation = adoptPtr(new HRTFElevation(kernelListL.release(), kernelListR.release(), angle, sampleRate));
+    OwnPtr<HRTFElevation> hrtfElevation = adoptPtr(new HRTFElevation(kernelListL.release(), kernelListR.release(), static_cast<int>(angle), sampleRate));
     return hrtfElevation.release();  
 }
 

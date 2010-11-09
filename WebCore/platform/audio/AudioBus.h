@@ -117,6 +117,8 @@ public:
     // Makes maximum absolute value == 1.0 (if possible).
     void normalize();
 
+    static PassOwnPtr<AudioBus> loadPlatformResource(const char* name, double sampleRate);
+
 protected:
     AudioBus() { };
 
