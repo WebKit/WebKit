@@ -1,3 +1,10 @@
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
+        Fix mac build.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2010-11-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler, Dan Bernstein.
