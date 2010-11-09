@@ -735,6 +735,17 @@ if test "$enable_opcode_stats" = "yes"; then
   AC_DEFINE([ENABLE_OPCODE_STATS], [1], [Define to enable Opcode statistics])
 fi
 
+# Link prefetch
+AC_MSG_CHECKING([whether to enable link prefetch support])
+AC_ARG_ENABLE([link-prefetch],
+  [AS_HELP_STRING([--enable-link-prefetch], [Enable Link prefetch support (default: disabled)])],
+  [],[enable_link_prefetch=no])
+AC_MSG_RESULT([$enable_link_prefetch])
+
+if test "$enable_link_prefetch" = "yes"; then 
+  AC_DEFINE([ENABLE_LINK_PREFETCH], [1], [Define to enable link prefetch support])
+fi
+
 # GObject Introspection
 AC_MSG_CHECKING([whether to enable GObject introspection support])
 AC_ARG_ENABLE([introspection],
@@ -1011,6 +1022,7 @@ Features:
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer
+ Link prefetch support                                    : $enable_link_prefetch
  Opcode stats                                             : $enable_opcode_stats
  SharedWorkers support                                    : $enable_shared_workers
  Speech input support                                     : $enable_input_speech
@@ -1027,6 +1039,7 @@ Features:
  XHTML-MP support                                         : $enable_xhtmlmp
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
+
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
