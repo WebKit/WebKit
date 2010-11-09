@@ -518,6 +518,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
+    WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/FindController.cpp \

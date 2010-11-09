@@ -1,5 +1,11 @@
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * WebKit2.pro:
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Windows Popup widget support (<select>)
