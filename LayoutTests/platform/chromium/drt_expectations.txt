@@ -114,4 +114,3 @@ BUG_AWESOME MAC : fast/css/resize-corner-tracking.html = PASS
 BUG_AWESOME MAC : fast/forms/basic-buttons.html = PASS
 BUG_AWESOME MAC : fast/forms/select-baseline.html = PASS
 BUG_AWESOME MAC : fast/overflow/hit-test-overflow-controls.html = PASS
-BUG_AWESOME : editing/selection/extend-selection.html = PASS

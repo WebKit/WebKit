@@ -3389,8 +3389,8 @@ BUG62138 : animations/stop-animation-on-suspend.html = TEXT
 // Added in WK r71461
 BUG62298 :  fast/images/gray-scale-png-with-color-profile.html = MISSING
 
-// Times out frequently with test_shell (but not DRT)
-BUG62596 : editing/selection/extend-selection.html = PASS TIMEOUT
+// Takes >12 seconds to run in debug
+BUGWK48374 SLOW : editing/selection/extend-selection.html = PASS
 
 // Started failing at WK r71465
 BUG62299 MAC :  fast/blockflow/background-horizontal-bt.html = IMAGE
