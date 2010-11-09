@@ -27,6 +27,8 @@
 
 #include "qwebkitglobal.h"
 #include <QObject>
+#include <QSharedData>
+#include "WKBackForwardListItem.h"
 
 class QWKHistoryPrivate;
 class QWKHistoryItemPrivate;
@@ -39,15 +41,18 @@ class WebBackForwardList;
 
 class QWEBKIT_EXPORT QWKHistoryItem {
 public:
+    QWKHistoryItem(const QWKHistoryItem& other);
+    QWKHistoryItem &operator=(const QWKHistoryItem& other);
+
     ~QWKHistoryItem();
     QString title() const;
     QUrl url() const;
     QUrl originalUrl() const;
 
 private:
-    QWKHistoryItem();
+    QWKHistoryItem(WKBackForwardListItemRef item);
 
-    QWKHistoryItemPrivate* d;
+    QExplicitlySharedDataPointer<QWKHistoryItemPrivate> d;
 
     friend class QWKHistory;
     friend class QWKHistoryItemPrivate;
@@ -59,6 +64,12 @@ public:
     int backListCount() const;
     int forwardListCount() const;
     int count() const;
+    QWKHistoryItem currentItem() const;
+    QWKHistoryItem backItem() const;
+    QWKHistoryItem forwardItem() const;
+    QWKHistoryItem itemAt(int index) const;
+    QList<QWKHistoryItem> backItems(int maxItems) const;
+    QList<QWKHistoryItem> forwardItems(int maxItems) const;
 
 private:
     QWKHistory();
@@ -68,5 +79,4 @@ private:
     friend class QWKHistoryPrivate;
     friend class QWKPagePrivate;
 };
-
 #endif /* qwkhistory_h */

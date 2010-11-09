@@ -1,3 +1,27 @@
+2010-11-08  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Added new methods to QWKHistory and made QWKHistoryItemPrivate to shared object.
+        https://bugs.webkit.org/show_bug.cgi?id=49063
+
+        Added more functionality to the QWKHistory and changed QWKHistoryItemPrivate to shared object.
+        This is needed because we cannot delete the QWKHistoryItemPrivate pointer in destructor of QWKHistoryItem,
+        there may have other history instances which share same private implementation.
+
+        * UIProcess/API/qt/qwkhistory.cpp:
+        (QWKHistoryItemPrivate::~QWKHistoryItemPrivate):
+        (QWKHistoryItem::QWKHistoryItem):
+        (QWKHistoryItem::QWKHistoryItem::operator=):
+        (QWKHistory::currentItem): Added
+        (QWKHistory::backItem): Added
+        (QWKHistory::forwardItem): Added
+        (QWKHistory::itemAt): Added
+        (QWKHistory::backItems): Added
+        (QWKHistory::forwardItems): Added
+        * UIProcess/API/qt/qwkhistory.h:
+        * UIProcess/API/qt/qwkhistory_p.h:
+
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
