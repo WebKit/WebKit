@@ -289,8 +289,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 # =========================================================================== #
 # ---- rendertree results OK but suspicious diffs.
 editing/inserting/4960120-1.html
-editing/inserting/5607069-2.html
-editing/inserting/5607069-3.html
 editing/inserting/before-after-input-element.html
 
 # ---- rendertree results OK but diff in editing delegate msgs.

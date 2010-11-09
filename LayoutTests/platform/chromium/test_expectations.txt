@@ -685,7 +685,6 @@ BUG11577 WIN LINUX : editing/spelling/spelling-attribute-at-child.html = FAIL
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
 // tree red. May be more involved then just rebaselining.
 BUG11613 LINUX : editing/deleting/5168598.html = FAIL
-BUG11613 LINUX : editing/inserting/5607069-2.html = FAIL
 
 BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 
@@ -3423,8 +3422,6 @@ BUG62299 LINUX WIN :  editing/deleting/delete-after-span-ws-002.html = IMAGE
 BUG62299 LINUX WIN :  editing/deleting/delete-after-span-ws-003.html = IMAGE
 BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-001.html = IMAGE
 BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-002.html = IMAGE
-BUG62299 MAC WIN :  editing/inserting/5607069-2.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/inserting/5607069-3.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/inserting/before-after-input-element.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/4806874.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/4944770-1.html = IMAGE
