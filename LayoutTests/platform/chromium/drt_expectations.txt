@@ -8,8 +8,8 @@
 // BUG_DRT: We don't have a dedicated bug yet.
 //
 
-// Painting timing issue?
-BUG_DRT MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
+// DRT needs to schedule paints on invalidations like Chrome does.
+BUG62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 
 // input-speech related failures
 BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE

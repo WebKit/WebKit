@@ -873,6 +873,8 @@ BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
+// test_shell, DRT do not correctly schedule paints when invalidating.
+BUG62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
 // -----------------------------------------------------------------
 // SVG TESTS
