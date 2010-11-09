@@ -28,7 +28,7 @@
 
 #if ENABLE(YARR)
 
-#include <UString.h>
+#include "UString.h"
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/unicode/Unicode.h>

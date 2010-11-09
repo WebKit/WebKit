@@ -30,9 +30,9 @@
 
 #include "MacroAssembler.h"
 #include "RegexPattern.h"
-#include <UString.h>
+#include "UString.h"
 
-#include <pcre.h>
+#include "pcre.h"
 struct JSRegExp; // temporary, remove when fallback is removed.
 
 #if CPU(X86) && !COMPILER(MSVC)
