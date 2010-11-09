@@ -3413,9 +3413,6 @@ BUG62299 MAC :  fast/blockflow/box-shadow-vertical-lr.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-lr-selection.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-lr-text.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-rl-selection.html = IMAGE
-BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-001.html = IMAGE
-BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-002.html = IMAGE
-BUG62299 LINUX WIN :  editing/selection/5232159.html = IMAGE+TEXT
 
 // Update canvas/philip in WK r71481
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT

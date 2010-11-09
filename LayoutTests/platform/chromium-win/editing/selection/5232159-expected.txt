@@ -24,4 +24,4 @@ layer at (0,60) size 800x100
         text run at (0,60) width 767: "parturient montes, nascetur ridiculus mus. Quisque dapibus ante et nulla. Cras nec velit. Vestibulum ante ipsum primis in faucibus"
         text run at (0,80) width 364: "orci luctus et ultrices posuere cubilia Curae; Integer ut tortor."
 selection start: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
-selection end:   position 125 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
+selection end:   position 260 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
