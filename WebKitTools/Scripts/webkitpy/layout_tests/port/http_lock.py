@@ -36,7 +36,6 @@ import tempfile
 import time
 
 from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.file_lock import FileLock
 
 
 _log = logging.getLogger("webkitpy.layout_tests.port.http_lock")
@@ -53,7 +52,6 @@ class HttpLock(object):
         self._lock_file_path_prefix = os.path.join(self._lock_path,
                                                    self._lock_file_prefix)
         self._guard_lock_file = os.path.join(self._lock_path, guard_lock)
-        self._guard_lock = FileLock(self._guard_lock_file)
         self._process_lock_file_name = ""
         self._executive = Executive()
         # maximum wait time for the lock creation
@@ -97,7 +95,7 @@ class HttpLock(object):
                 _log.debug("Removing stuck lock file: %s" % lock_list[0])
                 os.unlink(lock_list[0])
                 return
-        except (IOError, OSError):
+        except IOError, OSError:
             return
         return int(current_pid)
 
@@ -112,16 +110,17 @@ class HttpLock(object):
         start_time = time.time()
         while(True):
             try:
-                self._guard_lock.acquire_lock()
+                sequential_guard_lock = os.open(self._guard_lock_file, os.O_CREAT | os.O_EXCL)
                 self._process_lock_file_name = (self._lock_file_path_prefix +
                                                 str(self._next_lock_number()))
                 lock_file = open(self._process_lock_file_name, 'w')
                 _log.debug("Creating lock file: %s" % self._process_lock_file_name)
                 lock_file.write(str(os.getpid()))
                 lock_file.close()
-                self._guard_lock.release_lock()
+                os.close(sequential_guard_lock)
+                os.unlink(self._guard_lock_file)
                 return True
-            except (IOError, OSError):
+            except OSError:
                 if time.time() - start_time > self._guard_lock_max_wait:
                     _log.debug("Lock does not created: %s" % str(sys.exc_info()))
                     return False
