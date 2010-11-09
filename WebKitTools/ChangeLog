@@ -1,3 +1,19 @@
+2010-11-08  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebViewHost::reset() uses placement new.
+        https://bugs.webkit.org/show_bug.cgi?id=49069
+
+        WebViewHost is using placement destruction / new to simulate a fresh
+        WebViewHost object at the same address. This is because the WebView remains
+        open across tests and maintains a pointer to the WebViewHost.
+        This change resets member variables explictly instead of the placement new dance.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost):
+        (WebViewHost::reset):
+
 2010-11-08  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
