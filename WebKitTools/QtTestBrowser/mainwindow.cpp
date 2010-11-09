@@ -116,12 +116,13 @@ WebPage* MainWindow::page() const
 
 void MainWindow::setAddressUrl(const QUrl& url)
 {
-    urlEdit->setText(url.toString(QUrl::RemoveUserInfo));
+    setAddressUrl(url.toString(QUrl::RemoveUserInfo));
 }
 
 void MainWindow::setAddressUrl(const QString& url)
 {
-    urlEdit->setText(url);
+    if (!url.contains("about:"))
+        urlEdit->setText(url);
 }
 
 void MainWindow::addCompleterEntry(const QUrl& url)

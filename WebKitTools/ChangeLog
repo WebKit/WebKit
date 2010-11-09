@@ -1,3 +1,13 @@
+2010-11-09  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][QtTestBrowser] Don't erase incorrect url in the Url Bar
+        https://bugs.webkit.org/show_bug.cgi?id=49047
+
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::setAddressUrl):
+
 2010-11-09  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
