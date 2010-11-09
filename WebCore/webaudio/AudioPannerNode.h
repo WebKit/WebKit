@@ -46,12 +46,11 @@ namespace WebCore {
 
 class AudioPannerNode : public AudioNode {
 public:
+    // These must be defined as in the .idl file and must match those in the Panner class.
     enum {
-        PASSTHROUGH = 0,
-        EQUALPOWER = 1,
-        HRTF = 2,
-        SOUNDFIELD = 3,
-        MATRIXMIX = 4
+        EQUALPOWER = 0,
+        HRTF = 1,
+        SOUNDFIELD = 2,
     };
 
     static PassRefPtr<AudioPannerNode> create(AudioContext* context, double sampleRate)

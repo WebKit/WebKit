@@ -29,10 +29,9 @@ module audio {
         GenerateToJS
     ] AudioPannerNode : AudioNode {
         // Panning model
-        const unsigned short PASSTHROUGH = 0;
-        const unsigned short EQUALPOWER = 1;
-        const unsigned short HRTF = 2;
-        const unsigned short SOUNDFIELD = 3;
+        const unsigned short EQUALPOWER = 0;
+        const unsigned short HRTF = 1;
+        const unsigned short SOUNDFIELD = 2;
 
         // Default model for stereo is HRTF 
         attribute unsigned long panningModel; // FIXME: use unsigned short when glue generation supports it

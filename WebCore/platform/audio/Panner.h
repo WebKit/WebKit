@@ -40,10 +40,9 @@ class AudioBus;
 class Panner {
 public:
     enum {
-        PanningModelPassthrough = 0,
-        PanningModelEqualPower = 1,
-        PanningModelHRTF = 2,
-        PanningModelSoundField = 3
+        PanningModelEqualPower = 0,
+        PanningModelHRTF = 1,
+        PanningModelSoundField = 2
     };
     
     typedef unsigned PanningModel;
