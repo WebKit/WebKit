@@ -133,11 +133,6 @@ bool ResourceLoader::load(const ResourceRequest& r)
         didFail(frameLoader()->cancelledError(r));
         return false;
     }
-    
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, clientRequest, r.url()))
-        return true;
-#endif
 
     if (m_defersLoading)
         m_deferredRequest = clientRequest;
@@ -154,6 +149,11 @@ bool ResourceLoader::start()
     
     if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
         return true;
+    
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, m_request, m_request.url()))
+        return true;
+#endif
 
     if (m_defersLoading)
         return false;
