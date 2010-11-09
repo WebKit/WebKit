@@ -244,12 +244,10 @@ String WebFrame::contentsAsString() const
     if (isFrameSet()) {
         StringBuilder builder;
         for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
-            WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame();
-            builder.append(webFrame->contentsAsString());
-            if (child->tree()->nextSibling())
+            if (!builder.isEmpty())
                 builder.append(' ');
+            builder.append(static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame()->contentsAsString());
         }
-        
         // FIXME: It may make sense to use toStringPreserveCapacity() here.
         return builder.toString();
     }

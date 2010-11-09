@@ -1,5 +1,17 @@
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
+        Add some stylistic flourish to the last patch as suggested by Lord Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::invalidateCallbackMap):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentsAsString):
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Need WebKit2 mechanism for getting the visible page text

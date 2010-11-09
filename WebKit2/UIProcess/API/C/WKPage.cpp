@@ -311,7 +311,7 @@ void WKPageRenderTreeExternalRepresentation_b(WKPageRef pageRef, WKPageRenderTre
 }
 #endif
 
-void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void *context, WKPageGetSourceForFrameFunction callback)
+void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* context, WKPageGetSourceForFrameFunction callback)
 {
     toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), FrameSourceCallback::create(context, callback));
 }
@@ -330,7 +330,7 @@ void WKPageGetSourceForFrame_b(WKPageRef pageRef, WKFrameRef frameRef, WKPageGet
 }
 #endif
 
-void WKPageGetContentsAsString(WKPageRef pageRef, void *context, WKPageGetContentsAsStringFunction callback)
+void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
     toImpl(pageRef)->getContentsAsString(ContentsAsStringCallback::create(context, callback));
 }

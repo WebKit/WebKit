@@ -71,9 +71,9 @@ static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
 template<typename T>
-void invalidateCallbackMap(HashMap<uint64_t, RefPtr<T> >& map)
+void invalidateCallbackMap(HashMap<uint64_t, T>& map)
 {
-    Vector<RefPtr<T> > callbacksVector;
+    Vector<T> callbacksVector;
     copyValuesToVector(map, callbacksVector);
     for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
         callbacksVector[i]->invalidate();
