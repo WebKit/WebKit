@@ -1,5 +1,12 @@
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Factor calculation of cache sizes based on cache model into shared function

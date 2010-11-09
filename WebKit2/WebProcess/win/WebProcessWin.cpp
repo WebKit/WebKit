@@ -91,7 +91,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
     RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
     CFURLCacheSetMemoryCapacity(cfurlCache.get(), urlCacheMemoryCapacity);
-    CFURLCacheSetDiskCapacity(cfurlCache.get(), max(urlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()))); // Don't shrink a big disk cache, since that would cause churn.
+    CFURLCacheSetDiskCapacity(cfurlCache.get(), max<unsigned long>(urlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()))); // Don't shrink a big disk cache, since that would cause churn.
 #endif
 }
 
