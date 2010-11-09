@@ -413,6 +413,41 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             }
         }
     }
+    
+    if (behavior & RenderAsTextShowLayoutState) {
+        bool needsLayout = o.selfNeedsLayout() || o.needsPositionedMovementLayout() || o.posChildNeedsLayout() || o.normalChildNeedsLayout();
+        if (needsLayout)
+            ts << " (needs layout:";
+        
+        bool havePrevious = false;
+        if (o.selfNeedsLayout()) {
+            ts << " self";
+            havePrevious = true;
+        }
+
+        if (o.needsPositionedMovementLayout()) {
+            if (havePrevious)
+                ts << ",";
+            havePrevious = true;
+            ts << " positioned movement";
+        }
+
+        if (o.normalChildNeedsLayout()) {
+            if (havePrevious)
+                ts << ",";
+            havePrevious = true;
+            ts << " child";
+        }
+
+        if (o.posChildNeedsLayout()) {
+            if (havePrevious)
+                ts << ",";
+            ts << " positioned child";
+        }
+
+        if (needsLayout)
+            ts << ")";
+    }
 
 #if PLATFORM(QT)
     // Print attributes of embedded QWidgets. E.g. when the WebCore::Widget
@@ -691,7 +726,8 @@ String externalRepresentation(Frame* frame, RenderAsTextBehavior behavior)
         printContext.begin(frame->contentRenderer()->width());
     }
 
-    frame->document()->updateLayout();
+    if (!(behavior & RenderAsTextDontUpdateLayout))
+        frame->document()->updateLayout();
 
     RenderObject* o = frame->contentRenderer();
     if (!o)

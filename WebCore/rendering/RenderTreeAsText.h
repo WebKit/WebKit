@@ -48,7 +48,9 @@ enum RenderAsTextBehaviorFlags {
     RenderAsTextShowCompositedLayers = 1 << 2, // Show which layers are composited.
     RenderAsTextShowAddresses = 1 << 3, // Show layer and renderer addresses.
     RenderAsTextShowIDAndClass = 1 << 4, // Show id and class attributes
-    RenderAsTextPrintingMode = 1 << 5 // Dump the tree in printing mode.
+    RenderAsTextPrintingMode = 1 << 5, // Dump the tree in printing mode.
+    RenderAsTextDontUpdateLayout = 1 << 6, // Don't update layout, to make it safe to call showLayerTree() from the debugger inside layout or painting code.
+    RenderAsTextShowLayoutState = 1 << 7 // Print the various 'needs layout' bits on renderers.
 };
 typedef unsigned RenderAsTextBehavior;
 
