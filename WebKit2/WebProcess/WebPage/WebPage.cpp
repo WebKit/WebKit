@@ -809,7 +809,12 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setSerifFontFamily(store.serifFontFamily);
     settings->setJavaScriptCanOpenWindowsAutomatically(true);
 
+#if PLATFORM(WIN)
+    // Temporarily turn off accelerated compositing until we have a good solution for rendering it.
+    settings->setAcceleratedCompositingEnabled(false);
+#else
     settings->setAcceleratedCompositingEnabled(store.acceleratedCompositingEnabled);
+#endif
     settings->setShowDebugBorders(store.compositingBordersVisible);
     settings->setShowRepaintCounter(store.compositingRepaintCountersVisible);
     

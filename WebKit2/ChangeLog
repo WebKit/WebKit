@@ -1,3 +1,15 @@
+2010-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler, Dan Bernstein.
+
+        <rdar://problem/8360145> Pages using accelerated compositing missing content on Windows
+
+        Disable accelerated compositing on Windows until we have cross-process
+        rendering implemented.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2010-11-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
