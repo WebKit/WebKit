@@ -297,32 +297,36 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 
 // HistoryClient
 
-void WebContext::didNavigateWithNavigationData(WebFrameProxy* frame, const WebNavigationDataStore& store) 
+void WebContext::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 
 {
+    WebFrameProxy* frame = m_process->webFrame(frameID);
     if (!frame->page())
         return;
     
     m_historyClient.didNavigateWithNavigationData(this, frame->page(), store, frame);
 }
 
-void WebContext::didPerformClientRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
+    WebFrameProxy* frame = m_process->webFrame(frameID);
     if (!frame->page())
         return;
     
     m_historyClient.didPerformClientRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
 }
 
-void WebContext::didPerformServerRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
+    WebFrameProxy* frame = m_process->webFrame(frameID);
     if (!frame->page())
         return;
     
     m_historyClient.didPerformServerRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
 }
 
-void WebContext::didUpdateHistoryTitle(WebFrameProxy* frame, const String& title, const String& url)
+void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
 {
+    WebFrameProxy* frame = m_process->webFrame(frameID);
     if (!frame->page())
         return;
 
@@ -382,20 +386,6 @@ void WebContext::setDomainRelaxationForbiddenForURLScheme(const String& urlSchem
     m_process->send(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme), 0);
 }
 
-void WebContext::addVisitedLink(const String& visitedURL)
-{
-    if (visitedURL.isEmpty())
-        return;
-
-    LinkHash linkHash = visitedLinkHash(visitedURL.characters(), visitedURL.length());
-    addVisitedLink(linkHash);
-}
-
-void WebContext::addVisitedLink(LinkHash linkHash)
-{
-    m_visitedLinkProvider.addVisitedLink(linkHash);
-}
-
 void WebContext::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
@@ -403,6 +393,38 @@ void WebContext::setCacheModel(CacheModel cacheModel)
     if (!hasValidProcess())
         return;
     m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
+}
+
+void WebContext::addVisitedLink(const String& visitedURL)
+{
+    if (visitedURL.isEmpty())
+        return;
+
+    LinkHash linkHash = visitedLinkHash(visitedURL.characters(), visitedURL.length());
+    addVisitedLinkHash(linkHash);
+}
+
+void WebContext::addVisitedLinkHash(LinkHash linkHash)
+{
+    m_visitedLinkProvider.addVisitedLink(linkHash);
+}
+
+void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
+{
+    if (refresh)
+        pluginInfoStore()->refresh();
+    pluginInfoStore()->getPlugins(plugins);
+}
+
+void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)
+{
+    String newMimeType = mimeType.lower();
+
+    PluginInfoStore::Plugin plugin = pluginInfoStore()->findPlugin(newMimeType, KURL(ParsedURLString, urlString));
+    if (!plugin.path)
+        return;
+
+    pluginPath = plugin.path;
 }
 
 uint64_t WebContext::createDownloadProxy()
@@ -417,6 +439,11 @@ uint64_t WebContext::createDownloadProxy()
 
 void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+        didReceiveWebContextMessage(connection, messageID, arguments);
+        return;
+    }
+
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
             downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, arguments);
@@ -424,8 +451,8 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    switch (messageID.get<WebContextMessage::Kind>()) {
-        case WebContextMessage::PostMessage: {
+    switch (messageID.get<WebContextLegacyMessage::Kind>()) {
+        case WebContextLegacyMessage::PostMessage: {
             String messageName;
             RefPtr<APIObject> messageBody;
             WebContextUserMessageDecoder messageDecoder(messageBody, this);
@@ -435,33 +462,38 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
             didReceiveMessageFromInjectedBundle(messageName, messageBody.get());
             return;
         }
-        case WebContextMessage::PostSynchronousMessage:
+        case WebContextLegacyMessage::PostSynchronousMessage:
             ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
 }
 
-void WebContext::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
-    switch (messageID.get<WebContextMessage::Kind>()) {
-        case WebContextMessage::PostSynchronousMessage: {
+    if (messageID.is<CoreIPC::MessageClassWebContext>())
+        return didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
+
+    switch (messageID.get<WebContextLegacyMessage::Kind>()) {
+        case WebContextLegacyMessage::PostSynchronousMessage: {
             // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
 
             String messageName;
             RefPtr<APIObject> messageBody;
             WebContextUserMessageDecoder messageDecoder(messageBody, this);
             if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
-                return;
+                return CoreIPC::AutomaticReply;
 
             RefPtr<APIObject> returnData;
             didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
             reply->encode(CoreIPC::In(WebContextUserMessageEncoder(returnData.get())));
-            return;
+            return CoreIPC::AutomaticReply;
         }
-        case WebContextMessage::PostMessage:
+        case WebContextLegacyMessage::PostMessage:
             ASSERT_NOT_REACHED();
     }
+
+    return CoreIPC::AutomaticReply;
 }
 
 } // namespace WebKit

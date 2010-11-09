@@ -17,6 +17,7 @@ MESSAGE_RECEIVERS = \
     PluginProcessProxy \
     PluginProxy \
     WebInspector \
+    WebContext \
     WebPage \
     WebPageProxy \
     WebProcess \

@@ -29,9 +29,9 @@
 
 #include "NotImplemented.h"
 #include "PluginInfoStore.h"
+#include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <wtf/MathExtras.h>
@@ -86,8 +86,8 @@ void WebPlatformStrategies::populatePluginCache()
     Vector<PluginInfo> plugins;
     
     // FIXME: Should we do something in case of error here?
-    WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
-                                                Messages::WebProcessProxy::GetPlugins::Reply(plugins), 0);
+    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPlugins(m_shouldRefreshPlugins),
+                                                Messages::WebContext::GetPlugins::Reply(plugins), 0);
 
     m_cachedPlugins.swap(plugins);
     

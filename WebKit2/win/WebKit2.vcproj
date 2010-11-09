@@ -1717,6 +1717,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebContext.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebContextInjectedBundleClient.cpp"
 				>
 			</File>
@@ -2466,6 +2470,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessages.h"
 				>
 			</File>
 			<File

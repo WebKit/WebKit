@@ -474,6 +474,8 @@
 		BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */; };
 		BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */; };
 		BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE7ACD12817988009827DA /* WebProcessProxyMessages.h */; };
+		BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */; };
+		BCEE7D0E12846F69009827DA /* WebContextMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE7D0C12846F69009827DA /* WebContextMessages.h */; };
 		BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE966A112FAF57006BCC24 /* Attachment.cpp */; };
 		BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE966B112FAF57006BCC24 /* Attachment.h */; };
 		BCEE98C6113314D7006BCC24 /* WebPageNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */; };
@@ -1027,6 +1029,9 @@
 		BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebProcessProxy.messages.in; sourceTree = "<group>"; };
 		BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		BCEE7ACD12817988009827DA /* WebProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxyMessages.h; sourceTree = "<group>"; };
+		BCEE7D0912846AED009827DA /* WebContext.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebContext.messages.in; sourceTree = "<group>"; };
+		BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMessageReceiver.cpp; sourceTree = "<group>"; };
+		BCEE7D0C12846F69009827DA /* WebContextMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMessages.h; sourceTree = "<group>"; };
 		BCEE966A112FAF57006BCC24 /* Attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Attachment.cpp; sourceTree = "<group>"; };
 		BCEE966B112FAF57006BCC24 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageNamespace.cpp; sourceTree = "<group>"; };
@@ -1619,6 +1624,7 @@
 				BC646BF611DD377B006455B0 /* WebBackForwardListItem.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
+				BCEE7D0912846AED009827DA /* WebContext.messages.in */,
 				51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */,
 				51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
@@ -2065,6 +2071,8 @@
 				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
 				1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */,
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
+				BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */,
+				BCEE7D0C12846F69009827DA /* WebContextMessages.h */,
 				1C8E2A311277852400BC7BD0 /* WebInspectorMessageReceiver.cpp */,
 				1C8E2A321277852400BC7BD0 /* WebInspectorMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
@@ -2355,6 +2363,7 @@
 				1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */,
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
+				BCEE7D0E12846F69009827DA /* WebContextMessages.h in Headers */,
 				510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
@@ -2705,6 +2714,7 @@
 				1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */,
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */,
+				BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */,
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,

@@ -29,6 +29,7 @@
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
+#include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -220,8 +221,7 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
 {
     if (isLinkVisited(linkHash))
         return;
-
-    m_connection->send(Messages::WebProcessProxy::AddVisitedLink(linkHash), 0);
+    m_connection->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
 }
 
 void WebProcess::setCacheModel(uint32_t cm)

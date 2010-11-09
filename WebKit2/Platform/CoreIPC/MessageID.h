@@ -45,6 +45,7 @@ enum MessageClass {
     MessageClassDrawingAreaProxy,
     MessageClassDownloadProxy,
     MessageClassWebContext,
+    MessageClassWebContextLegacy,
     MessageClassWebInspectorProxy,
     MessageClassWebPageProxy,
     MessageClassWebProcessProxy,

@@ -32,6 +32,7 @@
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
 #include "StringPairVector.h"
+#include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebEvent.h"
@@ -723,7 +724,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     data.url = loader->urlForHistory().string();
     data.title = loader->title();
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::DidNavigateWithNavigationData(webPage->pageID(), data, m_frame->frameID()), 0);
+    WebProcess::shared().connection()->send(Messages::WebContext::DidNavigateWithNavigationData(webPage->pageID(), data, m_frame->frameID()), 0);
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -737,13 +738,13 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
     // Client redirect
     if (!loader->clientRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().connection()->send(Messages::WebProcessProxy::DidPerformClientRedirect(webPage->pageID(),
+        WebProcess::shared().connection()->send(Messages::WebContext::DidPerformClientRedirect(webPage->pageID(),
             loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_frame->frameID()), 0);
     }
 
     // Server redirect
     if (!loader->serverRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().connection()->send(Messages::WebProcessProxy::DidPerformServerRedirect(webPage->pageID(),
+        WebProcess::shared().connection()->send(Messages::WebContext::DidPerformServerRedirect(webPage->pageID(),
             loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_frame->frameID()), 0);
     }
 }
@@ -916,7 +917,7 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
     if (!webPage)
         return;
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::DidUpdateHistoryTitle(webPage->pageID(),
+    WebProcess::shared().connection()->send(Messages::WebContext::DidUpdateHistoryTitle(webPage->pageID(),
         title, url.string(), m_frame->frameID()), 0);
 }
 

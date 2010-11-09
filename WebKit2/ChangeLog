@@ -1,3 +1,58 @@
+2010-11-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Send messages directly to the WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=49262
+
+        * Platform/CoreIPC/MessageID.h:
+        Temporarily add MessageClassWebContextLegacy.
+
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        Rename adding Legacy prefix.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didNavigateWithNavigationData):
+        (WebKit::WebContext::didPerformClientRedirect):
+        (WebKit::WebContext::didPerformServerRedirect):
+        (WebKit::WebContext::didUpdateHistoryTitle):
+        (WebKit::WebContext::setCacheModel):
+        (WebKit::WebContext::addVisitedLink):
+        (WebKit::WebContext::addVisitedLinkHash):
+        (WebKit::WebContext::getPlugins):
+        (WebKit::WebContext::getPluginPath):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addVisitedLink):
+        Move context related messages to be sent directly to the context.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-11-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
