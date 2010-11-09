@@ -110,20 +110,20 @@ layer at (0,0) size 800x356
             RenderTableCell {TD} at (93,87) size 206x29 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (5,5) size 197x19
                 text run at (5,5) width 22: "abc"
-                text run at (27,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (83,5) width 19: "jkl "
-                text run at (102,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
-                text run at (120,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (27,5) width 56 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (83,5) width 19: "\x{202C}jkl "
+                text run at (102,5) width 18 RTL: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (120,5) width 62 LTR override: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (182,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
             RenderTableCell {TD} at (299,87) size 206x29 [border: (1px solid #008000)] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (5,5) size 197x19
-                text run at (5,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
-                text run at (23,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (5,5) width 18 RTL: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (23,5) width 62 LTR override: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (85,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
                 text run at (105,5) width 4 RTL: " "
                 text run at (109,5) width 22: "abc"
-                text run at (131,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (187,5) width 15: "jkl"
+                text run at (131,5) width 56 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (187,5) width 15: "\x{202C}jkl"
       RenderBlock {P} at (0,169) size 784x20
         RenderText {#text} at (0,0) size 367x19
           text run at (0,0) width 367: "The CSS column should be identical to the reference column."

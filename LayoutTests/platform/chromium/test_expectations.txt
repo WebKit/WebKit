@@ -705,9 +705,6 @@ BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
 BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 
-BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
-BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
-
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
@@ -1395,7 +1392,6 @@ BUG23498 MAC : fast/table/prepend-in-anonymous-table.html = IMAGE
 BUG23498 MAC : fast/table/wide-colspan.html = IMAGE
 BUG23498 MAC : fast/table/wide-column.html = IMAGE
 BUG23498 MAC : fast/text/capitalize-boundaries.html = IMAGE
-BUG23498 MAC : fast/text/international/bidi-neutral-run.html = IMAGE
 BUG23498 MAC : fast/text/international/thai-line-breaks.html = IMAGE
 BUG23498 MAC : fast/text/large-text-composed-char.html = IMAGE
 BUG23498 MAC : fast/text/softHyphen.html = IMAGE
@@ -3476,3 +3472,7 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.fillStyle.
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+
+// WebKit r71566
+BUG62424 : editing/selection/extend-selection.html = TEXT CRASH
+BUG62424 : fast/forms/focus-selection-textarea.html = TEXT CRASH
