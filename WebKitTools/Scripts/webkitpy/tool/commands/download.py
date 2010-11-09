@@ -29,8 +29,6 @@
 
 import os
 
-from optparse import make_option
-
 import webkitpy.tool.steps as steps
 
 from webkitpy.common.checkout.changelog import ChangeLog, view_source_url

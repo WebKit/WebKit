@@ -41,12 +41,12 @@ from StringIO import StringIO
 from webkitpy.common.net.bugzilla import CommitterValidator, Attachment
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
-from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
+from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.multicommandtool import Command, TryAgain
 

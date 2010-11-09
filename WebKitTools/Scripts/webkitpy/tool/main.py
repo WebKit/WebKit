@@ -29,6 +29,7 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
+from optparse import make_option
 import os
 import threading
 
@@ -38,20 +39,12 @@ from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
+from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests import port
-import webkitpy.tool.commands as commands
-# FIXME: Remove these imports once all the commands are in the root of the
-# command package.
-from webkitpy.tool.commands.download import *
-from webkitpy.tool.commands.earlywarningsystem import *
-from webkitpy.tool.commands.openbugs import OpenBugs
-from webkitpy.tool.commands.queries import *
-from webkitpy.tool.commands.queues import *
-from webkitpy.tool.commands.sheriffbot import *
-from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
+import webkitpy.tool.commands as commands
 
 
 class WebKitPatch(MultiCommandTool):

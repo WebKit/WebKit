@@ -1,3 +1,18 @@
+2010-11-09  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up imports for webkit-patch.
+        https://bugs.webkit.org/show_bug.cgi?id=49083
+
+        Move some imports from commands into main.py where they are used.
+        Move command imports into the __init__ of the commands module.
+
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/main.py:
+
 2010-11-09  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
