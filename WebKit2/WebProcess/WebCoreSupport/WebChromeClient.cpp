@@ -343,7 +343,7 @@ void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& rectToSc
 #if ENABLE(TILED_BACKING_STORE)
 void WebChromeClient::delegatedScrollRequested(const IntSize& scrollDelta)
 {
-    notImplemented();
+    m_page->pageDidRequestScroll(scrollDelta);
 }
 #endif
 

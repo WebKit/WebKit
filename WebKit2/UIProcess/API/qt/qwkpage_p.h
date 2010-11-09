@@ -48,6 +48,7 @@ public:
     void pageDidEnterAcceleratedCompositing() { }
     void pageDidLeaveAcceleratedCompositing() { }
 #endif // USE(ACCELERATED_COMPOSITING)
+    virtual void pageDidRequestScroll(const WebCore::IntSize&);
     virtual void processDidCrash() { }
     virtual void didRelaunchProcess() { }
     virtual void didChangeContentsSize(const WebCore::IntSize&);

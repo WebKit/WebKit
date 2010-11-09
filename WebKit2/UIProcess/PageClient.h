@@ -54,6 +54,9 @@ public:
     virtual void takeFocus(bool direction) = 0;
     virtual void toolTipChanged(const String&, const String&) = 0;
 
+#if ENABLE(TILED_BACKING_STORE)
+    virtual void pageDidRequestScroll(const WebCore::IntSize&) = 0;
+#endif
 #if PLATFORM(QT)
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
 #endif

@@ -98,6 +98,11 @@ void QWKPagePrivate::setViewportArguments(const ViewportArguments& args)
     emit q->viewportChangeRequested();
 }
 
+void QWKPagePrivate::pageDidRequestScroll(const IntSize& delta)
+{
+    emit q->scrollRequested(delta.width(), delta.height());
+}
+
 void QWKPagePrivate::didChangeContentsSize(const IntSize& newSize)
 {
     emit q->contentsSizeChanged(QSize(newSize));

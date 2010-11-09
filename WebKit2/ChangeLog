@@ -1,3 +1,28 @@
+2010-11-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Send page scroll requests to the PageClient when scroll delegation is turned on
+        https://bugs.webkit.org/show_bug.cgi?id=49171
+
+        Implement the IPC and API required for making scroll delegation work
+        with WebKit2. This is only used when you have tiling enabled.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::pageDidRequestScroll):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidRequestScroll):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::delegatedScrollRequested):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageDidRequestScroll):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-11-08  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.

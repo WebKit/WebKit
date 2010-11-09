@@ -296,6 +296,9 @@ private:
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportData(const WebCore::ViewportArguments&);
     void pageDidScroll();
+#if ENABLE(TILED_BACKING_STORE)
+    void pageDidRequestScroll(const WebCore::IntSize&);
+#endif
 #if PLATFORM(QT)
     void didChangeContentsSize(const WebCore::IntSize&);
 #endif

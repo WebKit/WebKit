@@ -1014,6 +1014,13 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, process()->webFrame(frameID));
 }
 
+#if ENABLE(TILED_BACKING_STORE)
+void WebPageProxy::pageDidRequestScroll(const IntSize& delta)
+{
+    m_pageClient->pageDidRequestScroll(delta);
+}
+#endif
+
 void WebPageProxy::didChangeViewportData(const ViewportArguments& args)
 {
     m_pageClient->setViewportArguments(args);

@@ -50,6 +50,9 @@ messages -> WebPageProxy {
     CanRunBeforeUnloadConfirmPanel() -> (bool canRun)
     RunBeforeUnloadConfirmPanel(WTF::String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
+#if ENABLE(TILED_BACKING_STORE)
+    PageDidRequestScroll(WebCore::IntSize delta)
+#endif
 #if PLATFORM(QT)
     DidChangeContentsSize(WebCore::IntSize newSize)
 #endif
