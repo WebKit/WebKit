@@ -3192,6 +3192,8 @@ BUGWK46868 WONTFIX : platform/chromium/fast/text/chromium-mac-duplicate-ime-comp
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGWK48459 WIN LINUX : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
+BUGWK48459 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
+BUGWK48459 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
@@ -3401,7 +3403,6 @@ BUG62138 : animations/stop-animation-on-suspend.html = TEXT
 BUG62298 :  fast/images/gray-scale-png-with-color-profile.html = MISSING
 
 // Started failing at WK r71465
-BUG62299 LINUX WIN :  editing/selection/after-line-break.html = TEXT
 BUG62299 MAC :  fast/blockflow/background-horizontal-bt.html = IMAGE
 BUG62299 MAC :  fast/blockflow/background-vertical-lr.html = IMAGE
 BUG62299 MAC :  fast/blockflow/border-radius-clipping-vertical-lr.html = IMAGE
@@ -3410,34 +3411,12 @@ BUG62299 MAC :  fast/blockflow/box-shadow-vertical-lr.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-lr-selection.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-lr-text.html = IMAGE
 BUG62299 MAC :  fast/blockflow/japanese-rl-selection.html = IMAGE
-BUG62299 LINUX WIN :  fast/blockflow/border-radius-clipping-vertical-lr.html = IMAGE+TEXT
-BUG62299 LINUX WIN :  fast/blockflow/box-shadow-horizontal-bt.html = IMAGE+TEXT
-BUG62299 LINUX WIN :  fast/blockflow/box-shadow-vertical-lr.html = IMAGE+TEXT
-BUG62299 LINUX WIN :  fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
-BUG62299 LINUX WIN :  fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
 BUG62299 LINUX WIN :  fast/transforms/transformed-caret.html = IMAGE
 BUG62299 MAC :  fast/text/international/rtl-caret.html = IMAGE
-BUG62299 LINUX WIN :  editing/deleting/delete-after-span-ws-001.html = IMAGE
-BUG62299 LINUX WIN :  editing/deleting/delete-after-span-ws-002.html = IMAGE
-BUG62299 LINUX WIN :  editing/deleting/delete-after-span-ws-003.html = IMAGE
 BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-001.html = IMAGE
 BUG62299 LINUX WIN :  editing/deleting/delete-line-end-ws-002.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/inserting/before-after-input-element.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/4806874.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/4944770-1.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/4944770-2.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/input-field-1.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/nested-blocks-with-text-area.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/pasteboard/nested-blocks-with-text-field.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/selection/4397952.html = IMAGE
 BUG62299 LINUX WIN :  editing/selection/5232159.html = IMAGE+TEXT
-BUG62299 MAC LINUX WIN :  editing/selection/caret-before-select.html = IMAGE
-BUG62299 MAC :  editing/selection/caret-rtl-2.html = IMAGE
-BUG62299 MAC :  editing/selection/caret-rtl.html = IMAGE
-BUG62299 LINUX WIN :  editing/selection/click-start-of-line.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/selection/extend-by-word-002.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/selection/select-box.html = IMAGE
-BUG62299 MAC LINUX WIN :  editing/selection/select-element-paragraph-boundary.html = IMAGE
 BUG62299 LINUX WIN :  editing/selection/unrendered-001.html = IMAGE
 BUG62299 LINUX WIN :  editing/selection/unrendered-002.html = IMAGE
 BUG62299 LINUX WIN :  editing/selection/unrendered-004.html = IMAGE
