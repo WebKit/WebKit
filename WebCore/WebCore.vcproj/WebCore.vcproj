@@ -41932,6 +41932,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DOMTimeStamp.h"
+				>
+			</File>
+				<File
 				RelativePath="..\dom\DynamicNodeList.cpp"
 				>
 				<FileConfiguration

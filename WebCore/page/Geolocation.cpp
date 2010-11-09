@@ -390,7 +390,7 @@ bool Geolocation::haveSuitableCachedPosition(PositionOptions* options)
         return true;
     if (!options->maximumAge())
         return false;
-    DOMTimeStamp currentTimeMillis = currentTime() * 1000.0;
+    DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(currentTime());
     return m_positionCache->cachedPosition()->timestamp() > currentTimeMillis - options->maximumAge();
 }
 

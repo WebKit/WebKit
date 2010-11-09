@@ -1,3 +1,14 @@
+2010-11-08  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Convert to and from DOMTimeStamp with converter functions
+        https://bugs.webkit.org/show_bug.cgi?id=49066
+
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::triggeringEventTime):
+
+
 2010-11-08  Pierre-Antoine LaFayette  <pierre.lafayette@gmail.com>
 
         Reviewed by Darin Fisher.

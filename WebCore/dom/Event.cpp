@@ -39,7 +39,7 @@ Event::Event()
     , m_cancelBubble(false)
     , m_eventPhase(0)
     , m_currentTarget(0)
-    , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
+    , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
 
@@ -54,7 +54,7 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_cancelBubble(false)
     , m_eventPhase(0)
     , m_currentTarget(0)
-    , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
+    , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
 

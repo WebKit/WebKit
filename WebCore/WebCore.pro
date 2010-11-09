@@ -1622,6 +1622,7 @@ HEADERS += \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \
     dom/DOMStringMap.h \
+    dom/DOMTimeStamp.h \
     dom/DatasetDOMStringMap.h \
     dom/DynamicNodeList.h \
     dom/EditingText.h \

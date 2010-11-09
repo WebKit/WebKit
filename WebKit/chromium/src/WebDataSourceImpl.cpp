@@ -96,7 +96,7 @@ double WebDataSourceImpl::triggeringEventTime() const
         return 0.0;
 
     // DOMTimeStamp uses units of milliseconds.
-    return triggeringAction().event()->timeStamp() / 1000.0;
+    return convertDOMTimeStampToSeconds(triggeringAction().event()->timeStamp());
 }
 
 WebDataSource::ExtraData* WebDataSourceImpl::extraData() const

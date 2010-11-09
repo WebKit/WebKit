@@ -1157,6 +1157,7 @@
             'dom/DOMStringList.h',
             'dom/DOMStringMap.cpp',
             'dom/DOMStringMap.h',
+            'dom/DOMTimeStamp.h',
             'dom/DatasetDOMStringMap.cpp',
             'dom/DatasetDOMStringMap.h',
             'dom/DecodedDataDocumentParser.cpp',
