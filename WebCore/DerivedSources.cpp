@@ -123,6 +123,7 @@
 #include "JSFileSystemCallback.cpp"
 #include "JSFileWriter.cpp"
 #include "JSFileWriterCallback.cpp"
+#include "JSFileWriterSync.cpp"
 #include "JSFlags.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"

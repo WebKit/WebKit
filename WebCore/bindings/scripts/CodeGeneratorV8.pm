@@ -2687,6 +2687,7 @@ sub IsActiveDomType
     return 1 if $type eq "IDBRequest";
     return 1 if $type eq "FileReader";
     return 1 if $type eq "FileWriter";
+    return 1 if $type eq "FileWriterSync";
     return 0;
 }
 

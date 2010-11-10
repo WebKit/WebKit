@@ -1680,6 +1680,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileEntrySync.cpp
         fileapi/FileSystemCallbacks.cpp
         fileapi/FileWriter.cpp
+        fileapi/FileWriterSync.cpp
         fileapi/LocalFileSystem.cpp
         platform/AsyncFileSystem.cpp
     )
@@ -1703,6 +1704,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileSystemCallback.idl
         fileapi/FileWriterCallback.idl
         fileapi/FileWriter.idl
+        fileapi/FileWriterSync.idl
         fileapi/Flags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl

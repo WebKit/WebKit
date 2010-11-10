@@ -168,6 +168,7 @@ DOM_CLASSES = \
     FileReaderSync \
     FileWriter \
     FileWriterCallback \
+    FileWriterSync \
     FileSystemCallback \
     Flags \
     Geolocation \

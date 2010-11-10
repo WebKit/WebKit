@@ -3054,6 +3054,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileWriter.h \
         fileapi/FileWriterCallback.h \
         fileapi/FileWriterClient.h \
+        fileapi/FileWriterSync.h \
         fileapi/Flags.h \
         fileapi/LocalFileSystem.h \
         fileapi/Metadata.h \
@@ -3083,6 +3084,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileEntrySync.cpp \
         fileapi/FileSystemCallbacks.cpp \
         fileapi/FileWriter.cpp \
+        fileapi/FileWriterSync.cpp \
         fileapi/LocalFileSystem.cpp \
         platform/AsyncFileSystem.cpp
 }
