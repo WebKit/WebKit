@@ -80,10 +80,8 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItem& item, W
 
 ContextMenuItem WebContextMenuItemData::core() const
 {
-    if (m_type != SubmenuType) {
-        ContextMenuItem result(m_type, m_action, m_title, m_enabled, m_checked);
-        return result;
-    }
+    if (m_type != SubmenuType)
+        return ContextMenuItem(m_type, m_action, m_title, m_enabled, m_checked);
     
     Vector<ContextMenuItem> subMenuItems = coreItems(m_submenu);
     return ContextMenuItem(m_action, m_title, m_enabled, m_checked, subMenuItems);
