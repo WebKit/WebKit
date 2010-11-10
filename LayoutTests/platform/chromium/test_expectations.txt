@@ -862,7 +862,7 @@ BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
 // test_shell, DRT do not correctly schedule paints when invalidating.
-BUG62433 : fast/images/gif-loop-count.html = IMAGE
+BUG62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
 // -----------------------------------------------------------------
 // SVG TESTS
@@ -1153,10 +1153,7 @@ BUG10357 : fast/dom/cssTarget-crash.html = TIMEOUT PASS
 BUG10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 
 // Windows is missing the green box. Started to pass in roll to WebKit r50313
-BUG8729 WIN DEBUG : http/tests/multipart/invalid-image-data.html = FAIL
-BUG8729 WIN RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
-// Flaky on Linux dbg.
-BUG8729 LINUX DEBUG : http/tests/multipart/invalid-image-data.html = IMAGE PASS
+BUG8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 
 // -----------------------------------------------------------------
 // MAC PORT TESTS
@@ -1533,7 +1530,7 @@ BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 BUGWK48651 LINUX MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE IMAGE+TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE IMAGE+TEXT
-BUGWK48651 LINUX MAC : http/tests/navigation/error404-subframeload.html = IMAGE IMAGE+TEXT
+BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 
 BUG26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
 BUG9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
@@ -1942,7 +1939,7 @@ BUG18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUG18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
 // Test failures caused by re-enabling skia asserts.
-BUG18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
+BUG18896 WIN DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
 
 // Test failures from WebKit merge 46894 to 46977
 BUG26737 : fast/js/prototypes.html = FAIL
@@ -2058,13 +2055,13 @@ BUG27418 MAC RELEASE SLOW : http/tests/plugins/interrupted-get-url.html = PASS
 // The ColorSpace was only implemented for CG, more port implementation
 // required in order for Chromium to support color correction.
 BUG28005 : fast/css/color-correction-backgrounds-and-text.html = FAIL
-BUG28005 : fast/css/color-correction-on-backgrounds.html = FAIL
-BUG28005 : fast/css/color-correction-on-text.html = FAIL
-BUG28005 : fast/css/color-correction.html = FAIL
-BUG28005 : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
-BUG28005 : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
+BUG28005 WIN LINUX : fast/css/color-correction-on-backgrounds.html = IMAGE+TEXT
+BUG28005 WIN LINUX : fast/css/color-correction-on-text.html = IMAGE+TEXT
+BUG28005 WIN LINUX : fast/css/color-correction.html = IMAGE+TEXT
+BUG28005 WIN LINUX : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
+BUG28005 WIN LINUX : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
 BUG28005 : fast/css/color-correction-on-background-image.html = FAIL
-BUG28005 : fast/css/color-correction-untagged-images.html = FAIL
+BUG28005 WIN LINUX : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
 // May also be related to r50760, but not as confident.
 BUG27551 WIN : fast/css/shadow-multiple.html = IMAGE
@@ -2436,7 +2433,6 @@ BUGWK45991 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.pattern.image.incomplete.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK45991 : canvas/philip/tests/type.prototype.html = TEXT
@@ -2837,9 +2833,6 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
-BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
-BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
-
 // Fixed only on Mac
 // This test has not landed yet, though the fix has.
 //BUGWK41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
@@ -2960,7 +2953,6 @@ BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
-BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
 
 BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 
@@ -2973,9 +2965,10 @@ BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
-BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT FAIL
-BUG60651 : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
-BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
+BUG60651 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
+BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
+BUG60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
+BUG60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TIMEOUT
 
 // Regressions after r67771
 BUG56246 : printing/css2.1/page-break-after-000.html = TEXT
@@ -3037,7 +3030,7 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
 // Started to fail at WebKit r68975 Chromium r61295-61296.
-BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT
+BUG9798 WIN LINUX DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT PASS
 
 BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 
@@ -3053,7 +3046,7 @@ BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PAS
 BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 // Added by r69084
-BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
+BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT PASS
 
 // Flaky since 2010-09-17?
 BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
@@ -3098,7 +3091,7 @@ BUG15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 BUG58735 SLOW WIN : http/tests/misc/prefetch-purpose.html = TEXT
 BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
 // Failing from r71493:r71496
-BUG58735 MAC : http/tests/misc/prefetch-purpose.html = TEXT
+BUG58735 MAC : http/tests/misc/prefetch-purpose.html = PASS TEXT
 
 // New test added in r69516.
 BUG58936 : fast/js/basic-strict-mode.html = TEXT
@@ -3307,9 +3300,9 @@ BUGWK61260 : media/media-can-play-wav-audio.html = TEXT
 BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
 BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUG61406 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUG61406 WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
-BUG32153and61406 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
+BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
 // This started to crash on Debug Mac 10.5 bots after recent rolls.
 BUG61478 DEBUG MAC : fast/images/svg-as-background.html = CRASH
@@ -3350,7 +3343,7 @@ WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html =
 WONTFIX SKIP : platform/win/plugins/draws-gradient.html = IMAGE+TEXT
 
 // Added in WK r71424
-BUG62138 : animations/stop-animation-on-suspend.html = TEXT
+BUG62138 : animations/stop-animation-on-suspend.html = TEXT PASS
 
 // Added in WK r71461
 BUG62298 :  fast/images/gray-scale-png-with-color-profile.html = MISSING
