@@ -575,6 +575,17 @@ Document::~Document()
     if (m_styleSheets)
         m_styleSheets->documentDestroyed();
 
+    if (m_elemSheet)
+        m_elemSheet->clearOwnerNode();
+    if (m_mappedElementSheet)
+        m_mappedElementSheet->clearOwnerNode();
+    if (m_pageUserSheet)
+        m_pageUserSheet->clearOwnerNode();
+    if (m_pageGroupUserSheets) {
+        for (size_t i = 0; i < m_pageGroupUserSheets->size(); ++i)
+            (*m_pageGroupUserSheets)[i]->clearOwnerNode();
+    }
+
     m_weakReference->clear();
 }
 

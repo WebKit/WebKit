@@ -332,6 +332,9 @@ void CSSParser::parseSelector(const String& string, Document* doc, CSSSelectorLi
     cssyyparse(this);
 
     m_selectorListForParseSelector = 0;
+
+    // The style sheet will be deleted right away, so it won't outlive the document.
+    ASSERT(dummyStyleSheet->hasOneRef());
 }
 
 bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const String& string, RefPtr<CSSStyleSourceData>* styleSourceData)

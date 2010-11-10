@@ -62,6 +62,9 @@ PassRefPtr<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName
 
 HTMLLinkElement::~HTMLLinkElement()
 {
+    if (m_sheet)
+        m_sheet->clearOwnerNode();
+
     if (m_cachedSheet) {
         m_cachedSheet->removeClient(this);
         if (m_loading && !isDisabled() && !isAlternate())
@@ -179,8 +182,10 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
 
 void HTMLLinkElement::process()
 {
-    if (!inDocument())
+    if (!inDocument()) {
+        ASSERT(!m_sheet);
         return;
+    }
 
     String type = m_type.lower();
 
@@ -261,6 +266,12 @@ void HTMLLinkElement::removedFromDocument()
 
     document()->removeStyleSheetCandidateNode(this);
 
+    if (m_sheet) {
+        ASSERT(m_sheet->ownerNode() == this);
+        m_sheet->clearOwnerNode();
+        m_sheet = 0;
+    }
+
     if (document()->renderer())
         document()->styleSelectorChanged(DeferRecalcStyle);
 }
@@ -273,6 +284,11 @@ void HTMLLinkElement::finishParsingChildren()
 
 void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
+    if (!inDocument()) {
+        ASSERT(!m_sheet);
+        return;
+    }
+
     m_sheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
     bool strictParsing = !document()->inQuirksMode();

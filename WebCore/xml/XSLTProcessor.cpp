@@ -60,6 +60,12 @@ static inline void transformTextStringToXHTMLDocumentString(String& text)
         "</html>\n";
 }
 
+XSLTProcessor::~XSLTProcessor()
+{
+    // Stylesheet shouldn't outlive its root node.
+    ASSERT(!m_stylesheetRootNode || !m_stylesheet || m_stylesheet->hasOneRef());
+}
+
 PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
     const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
 {

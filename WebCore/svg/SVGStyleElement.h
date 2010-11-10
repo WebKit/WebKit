@@ -33,8 +33,9 @@ class SVGStyleElement : public SVGElement
                       , public StyleElement {
 public:
     static PassRefPtr<SVGStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
+    virtual ~SVGStyleElement();
 
-    StyleSheet* sheet();
+    using StyleElement::sheet;
 
     virtual const AtomicString& type() const;
     void setType(const AtomicString&, ExceptionCode&);
