@@ -91,7 +91,6 @@ BUGWK45991 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.pattern.image.incomplete.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK45991 : canvas/philip/tests/type.prototype.html = TEXT
