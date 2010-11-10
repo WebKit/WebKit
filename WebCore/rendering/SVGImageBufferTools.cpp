@@ -81,10 +81,8 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
 
     PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0);
 
-    // FIXME: isSVGContainer returns true for RenderSVGViewportContainer, so if this is ever
-    // called with one of those, we will read from the wrong offset in an object due to a bad cast.
     RenderSVGContainer* svgContainer = 0;
-    if (item && item->isSVGContainer())
+    if (item && item->isSVGContainer() && !item->isSVGViewportContainer())
         svgContainer = toRenderSVGContainer(item);
 
     bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;
