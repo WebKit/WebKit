@@ -1,3 +1,16 @@
+2010-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r71733.
+        http://trac.webkit.org/changeset/71733
+        https://bugs.webkit.org/show_bug.cgi?id=49319
+
+        made qt bot crashy and sad (Requested by kling on #webkit).
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2010-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.

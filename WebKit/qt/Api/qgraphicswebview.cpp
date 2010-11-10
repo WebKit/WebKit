@@ -141,7 +141,6 @@ void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
                          q, SLOT(_q_contentsSizeChanged(const QSize&)));
     }
     page->d->page->settings()->setShouldDelegateScrolling(resizesToContents);
-    page->d->page->mainFrame()->view()->setPaintsEntireContents(resizesToContents);
 }
 
 void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
