@@ -33,18 +33,50 @@
 #include "config.h"
 #include "Font.h"
 
+#include "CairoUtilities.h"
+#include "ContextShadow.h"
 #include "GraphicsContext.h"
 #include "SimpleFontData.h"
-
 #include <cairo.h>
 #include <gdk/gdk.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
+
 #if defined(USE_FREETYPE)
 #include <pango/pangofc-fontmap.h>
 #endif
 
 namespace WebCore {
+
+#ifdef GTK_API_VERSION_2
+typedef GdkRegion* PangoRegionType;
+
+void destroyPangoRegion(PangoRegionType region)
+{
+    gdk_region_destroy(region);
+}
+
+IntRect getPangoRegionExtents(PangoRegionType region)
+{
+    GdkRectangle rectangle;
+    gdk_region_get_clipbox(region, &rectangle);
+    return IntRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+}
+#else
+typedef cairo_region_t* PangoRegionType;
+
+void destroyPangoRegion(PangoRegionType region)
+{
+    cairo_region_destroy(region);
+}
+
+IntRect getPangoRegionExtents(PangoRegionType region)
+{
+    cairo_rectangle_int_t rectangle;
+    cairo_region_get_extents(region, &rectangle);
+    return IntRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+}
+#endif
 
 #define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
 #define IS_LOW_SURROGATE(u)  ((UChar)(u) >= (UChar)0xdc00 && (UChar)(u) <= (UChar)0xdfff)
@@ -181,6 +213,52 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
+{
+    ContextShadow* shadow = graphicsContext->contextShadow();
+    ASSERT(shadow);
+
+    if (!(graphicsContext->textDrawingMode() & cTextFill) || shadow->m_type == ContextShadow::NoShadow)
+        return;
+
+    FloatPoint totalOffset(point + shadow->m_offset);
+
+    // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
+    if (shadow->m_type == ContextShadow::SolidShadow) {
+        cairo_save(context);
+        cairo_translate(context, totalOffset.x(), totalOffset.y());
+
+        setSourceRGBAFromColor(context, shadow->m_color);
+        gdk_cairo_region(context, renderRegion);
+        cairo_clip(context);
+        pango_cairo_show_layout_line(context, layoutLine);
+
+        cairo_restore(context);
+        return;
+    }
+
+    FloatRect extents(getPangoRegionExtents(renderRegion));
+    extents.setLocation(FloatPoint(point.x(), point.y() - extents.height()));
+    cairo_t* shadowContext = shadow->beginShadowLayer(context, extents);
+    if (shadowContext) {
+        cairo_translate(shadowContext, point.x(), point.y());
+        pango_cairo_show_layout_line(shadowContext, layoutLine);
+
+        // We need the clipping region to be active when we blit the blurred shadow back,
+        // because we don't want any bits and pieces of characters out of range to be
+        // drawn. Since ContextShadow expects a consistent transform, we have to undo the
+        // translation before calling endShadowLayer as well.
+        cairo_save(context);
+        cairo_translate(context, totalOffset.x(), totalOffset.y());
+        gdk_cairo_region(context, renderRegion);
+        cairo_clip(context);
+        cairo_translate(context, -totalOffset.x(), -totalOffset.y());
+
+        shadow->endShadowLayer(context);
+        cairo_restore(context);
+    }
+}
+
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
 #if defined(USE_FREETYPE)
@@ -191,9 +269,6 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 #endif
 
     cairo_t* cr = context->platformContext();
-    cairo_save(cr);
-    cairo_translate(cr, point.x(), point.y());
-
     PangoLayout* layout = pango_cairo_create_layout(cr);
     setPangoAttributes(this, run, layout);
 
@@ -203,59 +278,25 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     // Our layouts are single line
     PangoLayoutLine* layoutLine = pango_layout_get_line_readonly(layout, 0);
 
-#ifdef GTK_API_VERSION_2
-    GdkRegion* partialRegion = 0;
-#else
-    cairo_region_t* partialRegion = 0;
-#endif
+    // Get the region where this text will be laid out. We will use it to clip
+    // the Cairo context, for when we are only painting part of the text run and
+    // to calculate the size of the shadow buffer.
+    PangoRegionType partialRegion = 0;
+    char* start = g_utf8_offset_to_pointer(utf8, from);
+    char* end = g_utf8_offset_to_pointer(start, to - from);
+    int ranges[] = {start - utf8, end - utf8};
+    partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
 
-    if (to - from != run.length()) {
-        // Clip the region of the run to be rendered
-        char* start = g_utf8_offset_to_pointer(utf8, from);
-        char* end = g_utf8_offset_to_pointer(start, to - from);
-        int ranges[] = {start - utf8, end - utf8};
-        partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
-    }
+    drawGlyphsShadow(context, cr, point, layoutLine, partialRegion);
 
-    Color fillColor = context->fillColor();
+    cairo_save(cr);
+    cairo_translate(cr, point.x(), point.y());
+
     float red, green, blue, alpha;
-
-    // Text shadow, inspired by FontMac
-    FloatSize shadowOffset;
-    float shadowBlur = 0;
-    Color shadowColor;
-    bool hasShadow = context->textDrawingMode() == cTextFill &&
-        context->getShadow(shadowOffset, shadowBlur, shadowColor);
-
-    // TODO: Blur support
-    if (hasShadow) {
-        // Disable graphics context shadows (not yet implemented) and paint them manually
-        context->clearShadow();
-        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        cairo_save(cr);
-
-        shadowFillColor.getRGBA(red, green, blue, alpha);
-        cairo_set_source_rgba(cr, red, green, blue, alpha);
-
-        cairo_translate(cr, shadowOffset.width(), shadowOffset.height());
-
-        if (partialRegion) {
-            gdk_cairo_region(cr, partialRegion);
-            cairo_clip(cr);
-        }
-
-        pango_cairo_show_layout_line(cr, layoutLine);
-
-        cairo_restore(cr);
-    }
-
-    fillColor.getRGBA(red, green, blue, alpha);
+    context->fillColor().getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(cr, red, green, blue, alpha);
-
-    if (partialRegion) {
-        gdk_cairo_region(cr, partialRegion);
-        cairo_clip(cr);
-    }
+    gdk_cairo_region(cr, partialRegion);
+    cairo_clip(cr);
 
     pango_cairo_show_layout_line(cr, layoutLine);
 
@@ -268,20 +309,10 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
         cairo_stroke(cr);
     }
 
-    // Re-enable the platform shadow we disabled earlier
-    if (hasShadow)
-        context->setShadow(shadowOffset, shadowBlur, shadowColor, ColorSpaceDeviceRGB);
-
     // Pango sometimes leaves behind paths we don't want
     cairo_new_path(cr);
 
-    if (partialRegion)
-#ifdef GTK_API_VERSION_2
-        gdk_region_destroy(partialRegion);
-#else
-        cairo_region_destroy(partialRegion);
-#endif
-
+    destroyPangoRegion(partialRegion);
     g_free(utf8);
     g_object_unref(layout);
 
