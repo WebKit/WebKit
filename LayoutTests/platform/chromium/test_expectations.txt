@@ -3346,3 +3346,5 @@ BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
+
+BUG_SENORBLANCO LINUX : svg/filters/feLighting-crash.svg = IMAGE
