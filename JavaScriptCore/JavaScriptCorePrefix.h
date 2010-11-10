@@ -33,3 +33,4 @@
 /* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch
+

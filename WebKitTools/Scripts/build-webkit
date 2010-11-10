@@ -87,7 +87,6 @@ my (
     $notificationsSupport,
     $offlineWebApplicationSupport,
     $progressTagSupport,
-    $rubySupport,
     $sharedWorkersSupport,
     $svgSupport,
     $svgAnimationSupport,
@@ -197,9 +196,6 @@ my @features = (
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
-
-    { option => "ruby", desc => "Toggle HTML5 Ruby support",
-      define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },

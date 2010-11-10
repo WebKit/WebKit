@@ -31,8 +31,6 @@
 #ifndef RenderRubyText_h
 #define RenderRubyText_h
 
-#if ENABLE(RUBY)
-
 #include "RenderBlock.h"
 
 namespace WebCore {
@@ -50,7 +48,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif // RenderRubyText_h

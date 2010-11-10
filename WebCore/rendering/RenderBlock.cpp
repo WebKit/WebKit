@@ -927,11 +927,9 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
     if (prev && prev->firstChild() && prev->firstChild()->isInline() && prev->firstChild()->isRunIn())
         return false;
 
-#if ENABLE(RUBY)
     if ((prev && (prev->isRubyRun() || prev->isRubyBase()))
         || (next && (next->isRubyRun() || next->isRubyBase())))
         return false;
-#endif
 
     if (!prev || !next)
         return true;

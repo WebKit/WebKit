@@ -23,7 +23,7 @@
  *    2) in one case at least: OS-X-specific performance bug workarounds
  *    3) the special trick to catch us using new or delete without including "config.h"
  * The project should be able to build without this header, although we rarely test that.
- */ 
+ */
 
 /* Things that need to be defined globally should go into "config.h". */
 

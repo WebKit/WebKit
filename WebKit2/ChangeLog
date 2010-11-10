@@ -1,3 +1,15 @@
+2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        HTML5 Ruby support should be mandatory feature
+        https://bugs.webkit.org/show_bug.cgi?id=49272
+
+        Remove Ruby as optional feature.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebKit2Prefix.h: Touch it to avoid incremental build failure on Windows.
+
 2010-11-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -453,14 +453,6 @@ AC_ARG_ENABLE(datalist,
               [],[enable_datalist="yes"])
 AC_MSG_RESULT([$enable_datalist])
 
-# check whether to enable HTML5 ruby support
-AC_MSG_CHECKING([whether to enable HTML5 ruby support])
-AC_ARG_ENABLE(ruby,
-              AC_HELP_STRING([--enable-ruby],
-                             [enable HTML5 ruby support [default=yes]]),
-              [],[enable_ruby="yes"])
-AC_MSG_RESULT([$enable_ruby])
-
 # check whether to enable HTML5 sandbox iframe support
 AC_MSG_CHECKING([whether to enable HTML5 sandboxed iframe support])
 AC_ARG_ENABLE(sandbox,
@@ -948,7 +940,6 @@ AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
-AM_CONDITIONAL([ENABLE_RUBY],[test "$enable_ruby" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
@@ -1016,7 +1007,6 @@ Features:
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
  HTML5 FileSystem API support                             : $enable_file_system
- HTML5 ruby support                                       : $enable_ruby
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video

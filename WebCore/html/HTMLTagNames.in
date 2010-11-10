@@ -100,9 +100,9 @@ plaintext interfaceName=HTMLElement
 pre
 progress interfaceName=HTMLProgressElement, conditional=PROGRESS_TAG
 q interfaceName=HTMLQuoteElement
-rp interfaceName=HTMLElement, conditional=RUBY
-rt interfaceName=HTMLElement, conditional=RUBY
-ruby interfaceName=HTMLElement, conditional=RUBY
+rp interfaceName=HTMLElement
+rt interfaceName=HTMLElement
+ruby interfaceName=HTMLElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
