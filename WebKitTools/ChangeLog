@@ -1,5 +1,27 @@
 2010-11-10  Adam Roben  <aroben@apple.com>
 
+        Print VC++ Express build logs in the same order that the projects are
+        built
+
+        Fixes <http://webkit.org/b/49326> print-vse-failure-logs prints logs
+        in an unhelpful order
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/print-vse-failure-logs:
+        (PrintVisualStudioExpressLogs._build_order): Added. Uses
+        print-msvc-project-dependencies to figure out the order in which
+        projects are built.
+        (PrintVisualStudioExpressLogs._sort_buildlogs): Added. Sorts the logs
+        based on their build order and project name.
+        (PrintVisualStudioExpressLogs._obj_directory): Moved code to find the
+        scripts directory from here...
+        (PrintVisualStudioExpressLogs._scripts_directory): ...to here.
+        (PrintVisualStudioExpressLogs.main): Sort the logs before printing
+        them.
+
+2010-11-10  Adam Roben  <aroben@apple.com>
+
         Only print the interesting text from VC++ Express build logs
 
         Fixes <http://webkit.org/b/49325> It's hard to find the interesting
