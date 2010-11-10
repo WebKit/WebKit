@@ -1,3 +1,16 @@
+2010-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Closing tabs sometimes crashes the WebProcess in invalidateContentsAndWindow
+        https://bugs.webkit.org/show_bug.cgi?id=49335
+        <rdar://problem/8646621>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        If we fail to send the DidChangeAcceleratedCompositing message, don't null out the
+        drawing area. This will happen during page teardown.
+
 2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Hyatt.

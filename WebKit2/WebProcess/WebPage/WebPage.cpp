@@ -256,7 +256,8 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     // drawing area types.
     DrawingArea::DrawingAreaInfo newDrawingAreaInfo;
 
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo), m_pageID);
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo), m_pageID))
+        return;
     
     if (newDrawingAreaInfo.type != drawingArea()->info().type) {
         m_drawingArea = 0;
