@@ -257,6 +257,15 @@ bool RenderObject::isHR() const
     return node() && node()->hasTagName(hrTag);
 }
 
+bool RenderObject::isLegend() const
+{
+    return node() && (node()->hasTagName(legendTag)
+#if ENABLE(WML)
+                      || node()->hasTagName(WMLNames::insertedLegendTag)
+#endif
+                     );
+}
+
 bool RenderObject::isHTMLMarquee() const
 {
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
