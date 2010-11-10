@@ -3399,8 +3399,5 @@ BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
 
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
-// Failures after WebKit roll 71000:71013
-BUGPFELDMAN WIN : inspector/console-log-syntax-error.html = TEXT
-
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
 
