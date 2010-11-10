@@ -295,7 +295,7 @@ WONTFIX LINUX MAC : platform/win = FAIL PASS
 
 // This is a Safari specific test to make WebKit behave like AppKit on the Mac.
 // We do not support it because PLATFORM(MAC) is not defined for the mac version.
-WONTFIX MAC : platform/mac/editing/deleting/backward-delete.html = TEXT
+WONTFIX SKIP : platform/mac/editing/deleting/backward-delete.html = TEXT
 
 // Ignored because we do not have OBJC bindings
 WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = FAIL
@@ -683,10 +683,6 @@ BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 // Fails due to textInputController.setInputMethod not implemented for Mac.
 BUG19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
 BUG19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
-
-// This only crashes on the old buildbot slave.
-// FIXME: Once we transition over to the new buildbot slaves, remove this line.
-BUG26344 LINUX DEBUG : platform/mac/editing/deleting/backward-delete.html = CRASH TEXT
 
 // New failures from merge 51412:51455.
 BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
