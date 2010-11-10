@@ -25,7 +25,6 @@
 # fast/dom/Window/window-screen-properties.html
 # fast/dom/null-document-location-href-put-crash.html
 # fast/dom/null-document-location-put-crash.html
-# fast/js/navigator-mimeTypes-length.html
 # media/video-currentTime-set.html
 # media/video-seek-past-end-playing.html
 # transitions/zero-duration-with-non-zero-delay-end.html
@@ -1959,7 +1958,6 @@ fast/invalid/table-inside-stray-table-content.html
 fast/invalid/table-residual-style-crash.html
 fast/invalid/td-inside-object.html
 fast/js/exception-linenums-in-html-3.html
-fast/js/navigator-mimeTypes-length.html
 fast/js/missing-style-end-tag-js.html
 fast/layers/add-layer-with-nested-stacking.html
 fast/layers/inline-dirty-z-order-lists.html
