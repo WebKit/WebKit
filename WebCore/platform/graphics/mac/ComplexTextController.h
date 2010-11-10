@@ -140,6 +140,7 @@ private:
         const CGSize* m_advances;
 #if USE(ATSUI)
         bool m_directionalOverride;
+        CFIndex m_indexOffset;
 #endif
         bool m_isMonotonic;
     };
