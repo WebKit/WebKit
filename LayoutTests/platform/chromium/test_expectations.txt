@@ -3393,7 +3393,7 @@ BUGWK49265 LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMod
 BUG62515 : printing/page-format-data-display-none.html = TEXT
 
 // WK r71700
-BUG62630 MAC : editing/selection/extended-by-word-002.html = IMAGE
+BUG62630 MAC : editing/selection/extend-by-word-002.html = IMAGE
 BUG62630 MAC : fast/lists/001-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/002-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/003-vertical.html = IMAGE
