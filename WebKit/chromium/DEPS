@@ -95,6 +95,8 @@ deps = {
     Var('chromium_svn')+'/ppapi@'+Var('chromium_rev'),
   'third_party/angle':  # needed by the gpu process
     From('chromium_deps', 'src/third_party/angle'),
+  'third_party/libvpx': # needed by webkit/media
+    From('chromium_deps', 'src/third_party/libvpx'),
   'third_party/ffmpeg': # needed by webkit/media
     From('chromium_deps', 'src/third_party/ffmpeg'),
   'third_party/libwebp':
