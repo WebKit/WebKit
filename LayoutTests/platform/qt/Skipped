@@ -5066,7 +5066,6 @@ canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.path.stroke.scale2.html
 canvas/philip/tests/2d.pattern.image.broken.html
-canvas/philip/tests/2d.pattern.image.incomplete.html
 canvas/philip/tests/2d.shadow.transform.2.html
 canvas/philip/tests/2d.text.draw.baseline.bottom.html
 canvas/philip/tests/2d.text.draw.baseline.hanging.html

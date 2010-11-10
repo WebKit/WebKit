@@ -13,6 +13,7 @@
 _addTest(function(canvas, ctx) {
 
 var img = new Image();
+img.src = "NotARealFileName.png";
 _assertSame(img.complete, false, "img.complete", "false");
 _assertSame(ctx.createPattern(img, 'repeat'), null, "ctx.createPattern(img, 'repeat')", "null");
 
