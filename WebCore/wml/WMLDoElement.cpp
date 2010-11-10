@@ -24,6 +24,7 @@
 #include "WMLDoElement.h"
 
 #include "Attribute.h"
+#include "BackForwardController.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"

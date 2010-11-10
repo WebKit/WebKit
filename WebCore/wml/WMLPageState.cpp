@@ -24,6 +24,7 @@
 #if ENABLE(WML)
 #include "WMLPageState.h"
 
+#include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Document.h"
 #include "Frame.h"

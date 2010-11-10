@@ -23,6 +23,7 @@
 #if ENABLE(WML)
 #include "WMLDocument.h"
 
+#include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Frame.h"
 #include "Page.h"

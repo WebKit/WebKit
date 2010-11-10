@@ -191,7 +191,7 @@ void WMLInputElement::restoreFormControlState(const String& state)
 void WMLInputElement::select()
 {
     if (RenderTextControl* r = toRenderTextControl(renderer()))
-        r->select();
+        setSelectionRange(this, 0, r->text().length());
 }
 
 void WMLInputElement::accessKeyAction(bool)
