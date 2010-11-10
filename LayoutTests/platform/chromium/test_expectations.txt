@@ -1782,7 +1782,9 @@ BUG27486 WIN LINUX : fast/forms/slider-zoomed.html = FAIL
 
 // See WebKit 41948
 // Regressed further at 57820, jamesr investigating
-BUG10468 MAC SKIP : fast/replaced/border-radius-clip.html = MISSING
+BUG10468 MAC SKIP : fast/replaced/border-radius-clip.html = IMAGE+TEXT
+// Failure after 63609
+BUG60384 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
 // Mac flaky failures.
 BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
@@ -3397,9 +3399,20 @@ BUG62630 MAC : editing/selection/extend-by-word-002.html = IMAGE
 BUG62630 MAC : fast/lists/001-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/002-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/003-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/004-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/005-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/006-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/007-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/008-vertical.html = IMAGE
 BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
+
+BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
+
+// Failures after WebKit roll 71000:71013
+BUGJEREMY MAC : fast/block/basic/truncation-rtl.html = IMAGE
+BUGPFELDMAN WIN : inspector/console-log-syntax-error.html = TEXT
+
+BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
+
+// Probably caused by activation of ICC on Chromium-Mac, likely only requires resume
+BUG48982 MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
+
