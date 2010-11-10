@@ -174,3 +174,6 @@ canvas/philip/tests/security.drawImage.image.html
 canvas/philip/tests/security.pattern.canvas.fillStyle.html
 canvas/philip/tests/security.pattern.canvas.strokeStyle.html
 canvas/philip/tests/security.reset.html
+
+# Disable the following test temporarily due to bug 49295 -- Regression in ATSUI handling.
+fast/text/international/bidi-control-chars-treated-as-ZWS.html
