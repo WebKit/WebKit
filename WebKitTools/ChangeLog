@@ -1,3 +1,19 @@
+2010-11-10  Adam Roben  <aroben@apple.com>
+
+        Only print the interesting text from VC++ Express build logs
+
+        Fixes <http://webkit.org/b/49325> It's hard to find the interesting
+        output from print-vse-failure-logs
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/print-vse-failure-logs: Removed unnecessary os.path import,
+        added newly-required imports. Removed a comment that was essentially a
+        FIXME, and is now fixed.
+        (PrintVisualStudioExpressLogs._relevant_text): Added. Uses
+        BeautifulSoup to extract the relevant text from the build log.
+        (PrintVisualStudioExpressLogs.main): Only print the relevant text.
+
 2010-11-09  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

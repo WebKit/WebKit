@@ -33,15 +33,13 @@
 from __future__ import with_statement
 
 import codecs
-import os.path
 import os
+import re
 
 from webkitpy.common.system.executive import Executive
+from webkitpy.thirdparty import BeautifulSoup
 
 
-# This is just enough to make the win-ews bot useable.  Others who
-# actually use Windows should feel encouraged to improve this class,
-# including just printing the text instead of the raw html.
 class PrintVisualStudioExpressLogs(object):
     def __init__(self):
         self._executive = Executive()
@@ -64,6 +62,16 @@ class PrintVisualStudioExpressLogs(object):
         build_directory = self._executive.run_command([build_directory_script_path, "--top-level"]).rstrip()
         return os.path.join(build_directory, "obj")
 
+    def _relevant_text(self, log):
+        soup = BeautifulSoup.BeautifulSoup(log)
+        # The Output Window table is where the useful output starts in the build log.
+        output_window_table = soup.find(text=re.compile("Output Window")).findParent("table")
+        result = []
+        for table in [output_window_table] + output_window_table.findNextSiblings("table"):
+            result.extend([text.replace("&nbsp;", "") for text in table.findAll(text=True)])
+            result.append("\n")
+        return "".join(result)
+
     def main(self):
         obj_directory = self._obj_directory()
         build_log_paths = self._find_buildlogs(obj_directory)
@@ -73,7 +81,7 @@ class PrintVisualStudioExpressLogs(object):
         for build_log_path in build_log_paths:
             print "%s:\n" % build_log_path
             with codecs.open(build_log_path, "r", "utf-16") as build_log:
-                print build_log.read()
+                print self._relevant_text(build_log)
 
 
 if __name__ == '__main__':
