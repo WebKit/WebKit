@@ -1,3 +1,21 @@
+2010-11-09  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        ARM JIT asserts when loading http://reader.google.com in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=48912
+
+        There are several cases when the uninterrupted sequence is larger than
+        maximum required offset for pathing the same sequence. Eg.: if in a
+        uninterrupted sequence the last macroassembler's instruction is a stub
+        call, it emits store instruction(s) which should not be included in the
+        calculation of length of uninterrupted sequence. So, the insnSpace and
+        constSpace should be upper limit instead of hard limit.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::endUninterruptedSequence):
+
 2010-11-09  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/49279> Fix include statements for local headers

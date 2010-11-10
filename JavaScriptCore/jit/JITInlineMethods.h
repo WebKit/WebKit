@@ -122,8 +122,15 @@ ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace
 ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace)
 {
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
-    ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) == insnSpace);
-    ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin == constSpace);
+    /* There are several cases when the uninterrupted sequence is larger than
+     * maximum required offset for pathing the same sequence. Eg.: if in a
+     * uninterrupted sequence the last macroassembler's instruction is a stub
+     * call, it emits store instruction(s) which should not be included in the
+     * calculation of length of uninterrupted sequence. So, the insnSpace and
+     * constSpace should be upper limit instead of hard limit.
+     */
+    ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) <= insnSpace);
+    ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin <= constSpace);
 #endif
     JSInterfaceJIT::endUninterruptedSequence();
 }
