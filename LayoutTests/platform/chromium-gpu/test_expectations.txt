@@ -367,6 +367,3 @@ BUG57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html
 BUG58534 WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
 BUG58536 WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
 BUG60965 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
-
-// This test probably just needs new results (not sure why it doesn't have any on any platform).
-BUGNONE : compositing/layer-creation/many-layers.html = MISSING

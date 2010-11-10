@@ -2944,7 +2944,7 @@ BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
+BUG62741 WIN LINUX DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -2961,11 +2961,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
-
-// Broken somewhere in the range 68574:68591.
-// thai-baht-space needs to run to rebaseline.
-//BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
-BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
 
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
@@ -2991,8 +2986,7 @@ BUG9798 WIN LINUX DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT PAS
 
 BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 
-// Started failing in WebKit r68388:68412.
-BUGSENORBLANCO WIN DEBUG : media/video-size.html = CRASH
+BUG62738 WIN LINUX : media/video-size.html = PASS TEXT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -3346,5 +3340,3 @@ BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
-BUG_SENORBLANCO LINUX : svg/filters/feLighting-crash.svg = IMAGE
