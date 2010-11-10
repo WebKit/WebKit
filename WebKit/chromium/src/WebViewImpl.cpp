@@ -571,13 +571,13 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
         WebInputEvent::RawKeyDown;
 #endif
 
-    if (((!event.modifiers && (event.windowsKeyCode == VKEY_APPS))
-        || ((event.modifiers == WebInputEvent::ShiftKey) && (event.windowsKeyCode == VKEY_F10)))
-        && event.type == contextMenuTriggeringEventType) {
+    bool isUnmodifiedMenuKey = !(event.modifiers & WebInputEvent::InputModifiers) && event.windowsKeyCode == VKEY_APPS;
+    bool isShiftF10 = event.modifiers == WebInputEvent::ShiftKey && event.windowsKeyCode == VKEY_F10;
+    if ((isUnmodifiedMenuKey || isShiftF10) && event.type == contextMenuTriggeringEventType) {
         sendContextMenuEvent(event);
         return true;
     }
-#endif
+#endif // OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
 
     // It's not clear if we should continue after detecting a capslock keypress.
     // I'll err on the side of continuing, which is the pre-existing behaviour.

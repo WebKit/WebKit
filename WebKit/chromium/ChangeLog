@@ -1,3 +1,18 @@
+2010-11-10  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] menu key doesn't work when capslock or numslock is on
+        https://bugs.webkit.org/show_bug.cgi?id=49289
+
+        Add a special bitmask for the "input" modifier keys (shift, alt, crtl, meta). The Modifier
+        enum has grown to something that might be better termed State, but changing the nomenclature
+        now is difficult. The bitmask gets its name from the related function getWebInputModifiers.
+
+        * public/WebInputEvent.h: add InputModifiers mask for true modifier keys
+        * src/WebViewImpl.cpp: disregard non-modifier keys
+        (WebKit::WebViewImpl::keyEvent):
+
 2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Hyatt.
