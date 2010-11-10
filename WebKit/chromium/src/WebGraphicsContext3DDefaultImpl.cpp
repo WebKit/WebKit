@@ -36,6 +36,7 @@
 
 #include "app/gfx/gl/gl_bindings.h"
 #include "app/gfx/gl/gl_context.h"
+#include "app/gfx/gl/gl_implementation.h"
 #include "NotImplemented.h"
 #include "WebView.h"
 #include <wtf/OwnArrayPtr.h>
@@ -69,6 +70,7 @@ WebGraphicsContext3DDefaultImpl::VertexAttribPointerState::VertexAttribPointerSt
 WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     : m_initialized(false)
     , m_renderDirectlyToWebView(false)
+    , m_isGLES2(false)
     , m_texture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
@@ -168,8 +170,10 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
 
     validateAttributes();
 
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    glEnable(GL_POINT_SPRITE);
+    if (gfx::GetGLImplementation() != gfx::kGLImplementationEGLGLES2) {
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+        glEnable(GL_POINT_SPRITE);
+    }
 
     if (!angleCreateCompilers()) {
         angleDestroyCompilers();
@@ -179,6 +183,7 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     glGenFramebuffersEXT(1, &m_copyTextureToParentTextureFBO);
 
     m_initialized = true;
+    m_isGLES2 = gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2;
     return true;
 }
 
@@ -187,7 +192,8 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
     const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 
     if (m_attributes.stencil) {
-        if (strstr(extensions, "GL_EXT_packed_depth_stencil")) {
+        if (strstr(extensions, "GL_OES_packed_depth_stencil")
+            || strstr(extensions, "GL_EXT_packed_depth_stencil")) {
             if (!m_attributes.depth)
                 m_attributes.depth = true;
         } else
@@ -201,7 +207,10 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
         if (!strstr(vendor, "NVIDIA"))
             isValidVendor = false;
 #endif
-        if (!isValidVendor || !strstr(extensions, "GL_EXT_framebuffer_multisample"))
+        if (!(isValidVendor
+              && (strstr(extensions, "GL_EXT_framebuffer_multisample")
+                  || (strstr(extensions, "GL_ANGLE_framebuffer_multisample")
+                      && strstr(extensions, "GL_OES_rgb8_rgba8")))))
             m_attributes.antialias = false;
 
         // Don't antialias when using Mesa to ensure more reliable testing and
@@ -220,7 +229,12 @@ void WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer(unsigned x,
     if (m_attributes.antialias) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        if (glBlitFramebufferEXT)
+            glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        else {
+            ASSERT(glBlitFramebufferANGLE);
+            glBlitFramebufferANGLE(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        }
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
     }
 }
@@ -263,7 +277,7 @@ int WebGraphicsContext3DDefaultImpl::sizeInBytes(int type)
 
 bool WebGraphicsContext3DDefaultImpl::isGLES2Compliant()
 {
-    return false;
+    return m_isGLES2;
 }
 
 bool WebGraphicsContext3DDefaultImpl::isGLES2NPOTStrict()
@@ -328,12 +342,16 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         }
     }
 
-    GLint internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
+    GLint internalMultisampledColorFormat, internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
     if (m_attributes.alpha) {
-        internalColorFormat = GL_RGBA8;
+        // GL_RGBA8_OES == GL_RGBA8
+        internalMultisampledColorFormat = GL_RGBA8;
+        internalColorFormat = m_isGLES2 ? GL_RGBA : GL_RGBA8;
         colorFormat = GL_RGBA;
     } else {
-        internalColorFormat = GL_RGB8;
+        // GL_RGB8_OES == GL_RGB8
+        internalMultisampledColorFormat = GL_RGB8;
+        internalColorFormat = m_isGLES2 ? GL_RGB : GL_RGB8;
         colorFormat = GL_RGB;
     }
     if (m_attributes.stencil || m_attributes.depth) {
@@ -341,8 +359,12 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         // See GraphicsContext3DInternal constructor.
         if (m_attributes.stencil && m_attributes.depth)
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
-        else
-            internalDepthStencilFormat = GL_DEPTH_COMPONENT;
+        else {
+            if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2)
+                internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
+            else
+                internalDepthStencilFormat = GL_DEPTH_COMPONENT;
+        }
     }
 
     bool mustRestoreFBO = false;
@@ -357,11 +379,21 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         }
         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalColorFormat, width, height);
+        if (glRenderbufferStorageMultisampleEXT)
+            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalMultisampledColorFormat, width, height);
+        else {
+            ASSERT(glRenderbufferStorageMultisampleANGLE);
+            glRenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER_EXT, sampleCount, internalMultisampledColorFormat, width, height);
+        }
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
         if (m_attributes.stencil || m_attributes.depth) {
             glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
+            if (glRenderbufferStorageMultisampleEXT)
+                glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
+            else {
+                ASSERT(glRenderbufferStorageMultisampleANGLE);
+                glRenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
+            }
             if (m_attributes.stencil)
                 glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
             if (m_attributes.depth)
@@ -508,9 +540,15 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
         mustRestorePackAlignment = true;
     }
 
-    // FIXME: OpenGL ES 2 does not support GL_BGRA so this fails when
-    // using that backend.
-    glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+    if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2) {
+        // FIXME: consider testing for presence of GL_OES_read_format
+        // and GL_EXT_read_format_bgra, and using GL_BGRA_EXT here
+        // directly.
+        glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        for (size_t i = 0; i < bufferSize; i += 4)
+            std::swap(pixels[i], pixels[i + 2]);
+    } else
+        glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 
     if (mustRestorePackAlignment)
         glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
@@ -951,11 +989,15 @@ void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsign
 
 void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* value)
 {
+    makeContextCurrent();
+    if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2) {
+        glGetIntegerv(pname, value);
+        return;
+    }
     // Need to emulate MAX_FRAGMENT/VERTEX_UNIFORM_VECTORS and MAX_VARYING_VECTORS
     // because desktop GL's corresponding queries return the number of components
     // whereas GLES2 return the number of vectors (each vector has 4 components).
     // Therefore, the value returned by desktop GL needs to be divided by 4.
-    makeContextCurrent();
     switch (pname) {
     case MAX_FRAGMENT_UNIFORM_VECTORS:
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
@@ -1551,11 +1593,21 @@ bool WebGraphicsContext3DDefaultImpl::angleValidateShaderSource(ShaderSourceEntr
     }
 
     int length = 0;
-    ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &length);
+    if (m_isGLES2) {
+        // ANGLE does not yet have a GLSL ES backend. Therefore if the
+        // compile succeeds we send the original source down.
+        length = strlen(entry.source);
+        if (length > 0)
+            ++length; // Add null terminator
+    } else
+        ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &length);
     if (length > 1) {
         if (!tryFastMalloc(length * sizeof(char)).getValue(entry.translatedSource))
             return false;
-        ShGetObjectCode(compiler, entry.translatedSource);
+        if (m_isGLES2)
+            strncpy(entry.translatedSource, entry.source, length);
+        else
+            ShGetObjectCode(compiler, entry.translatedSource);
     }
     entry.isValid = true;
     return true;

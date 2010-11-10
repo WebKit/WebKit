@@ -1,3 +1,30 @@
+2010-11-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        WebGraphicsContext3DDefaultImpl does not run on top of OpenGL ES 2.0 implementations
+        https://bugs.webkit.org/show_bug.cgi?id=48282
+
+        Fixed assumptions in WebGraphicsContext3DDefaultImpl that it was
+        running on top of desktop GL.
+
+        Tested various WebGL demos on Windows with ANGLE and
+        --in-process-webgl --disable-accelerated-compositing; all are now
+        working. Verified that --use-gl=desktop continues to work in the
+        same configuration.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::isGLES2Compliant):
+        (WebKit::WebGraphicsContext3DDefaultImpl::reshape):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getIntegerv):
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleValidateShaderSource):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-11-09  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
