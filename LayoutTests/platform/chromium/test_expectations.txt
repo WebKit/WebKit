@@ -3283,17 +3283,6 @@ BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 // Added in r71317
 BUG61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
 
-// Tests added in WK r71382 with incorrect Mac baselines
-BUG62025 MAC : fast/table/027-vertical.html = IMAGE
-BUG62025 MAC : fast/table/028-vertical.html = IMAGE
-BUG62025 MAC : fast/table/038-vertical.html = IMAGE
-BUG62025 MAC : fast/table/040-vertical.html = IMAGE
-BUG62025 MAC : fast/table/border-collapsing/002-vertical.html = IMAGE
-BUG62025 MAC : fast/table/border-collapsing/004-vertical.html = IMAGE
-BUG62025 MAC : fast/table/border-collapsing/equal-precedence-resolution-vertical.html = IMAGE
-BUG62025 MAC : fast/table/height-percent-test-vertical.html = IMAGE
-BUG62025 MAC : fast/table/table-display-types-vertical.html = IMAGE
-
 // Added in WK r71416, doesn't look like it's applicable to Chromium
 WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT
 
@@ -3358,4 +3347,3 @@ BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
