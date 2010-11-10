@@ -3359,12 +3359,6 @@ BUGWK48374 SLOW : editing/selection/extend-selection.html = PASS
 // Started failing at WK r71465
 BUG62299 MAC :  fast/blockflow/background-horizontal-bt.html = IMAGE
 BUG62299 MAC :  fast/blockflow/background-vertical-lr.html = IMAGE
-BUG62299 MAC :  fast/blockflow/border-radius-clipping-vertical-lr.html = IMAGE
-BUG62299 MAC :  fast/blockflow/border-vertical-lr.html = IMAGE
-BUG62299 MAC :  fast/blockflow/box-shadow-vertical-lr.html = IMAGE
-BUG62299 MAC :  fast/blockflow/japanese-lr-selection.html = IMAGE
-BUG62299 MAC :  fast/blockflow/japanese-lr-text.html = IMAGE
-BUG62299 MAC :  fast/blockflow/japanese-rl-selection.html = IMAGE
 
 // Update canvas/philip in WK r71481
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
