@@ -68,9 +68,7 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
 
-    // Note differences between Skia and Core Graphics versions:
-    //  - Skia uses BGRA
-    //  - Core Graphics uses RGBA
+    // Color is in BGRA order.
     char fragmentShaderString[] =
         "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
@@ -79,13 +77,7 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "void main()                                         \n"
         "{                                                   \n"
         "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-#if PLATFORM(SKIA)
         "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
-#elif PLATFORM(CG)
-        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
-#else
-#error "Need to implement for your platform."
-#endif
         "}                                                   \n";
 
     m_contentShaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
@@ -266,7 +258,7 @@ void ContentLayerChromium::updateContents()
     RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(tempVector.data(),
                                                                      dirtyRect.width(), dirtyRect.height(), 8, rowBytes,
                                                                      colorSpace.get(),
-                                                                     kCGImageAlphaPremultipliedLast));
+                                                                     kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     CGContextTranslateCTM(contextCG.get(), 0, dirtyRect.height());
     CGContextScaleCTM(contextCG.get(), 1, -1);
 
