@@ -4,16 +4,16 @@ function runTest()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-        
+
     var plugin = document.getElementById("testPlugin");
     var result = document.getElementById('result');
-    
+
     // First test NPN_Enumerate from the plugin's side
     var testObject = { "one" : 1, "two" : 2, "three" : 3, 4 : 4 }
     var outArray = [];    
     plugin.testEnumerate(testObject, outArray);
 
-    if (outArray.toString() != 'one,two,three,4') {
+    if (outArray.sort().toString() != '4,one,three,two') {
         result.innerHTML = 'FAILURE: Array returned from plugin was ' + outArray.toString();
         return;
     }
@@ -24,14 +24,14 @@ function runTest()
         propNames.push(v);
     }
     
-    if (propNames.toString() != 'foo,bar') {
+    if (propNames.sort().toString() != 'bar,foo') {
         result.innerHTML = 'FAILURE: Plugin object properties was ' + propNames.toString();
         return;
     }
 
     // Now try enumerating a plugin object's properties using Object.keys
     var keys = Object.keys(plugin.testObject);
-    if (keys.toString() != 'foo,bar') {
+    if (keys.sort().toString() != 'bar,foo') {
         result.innerHTML = 'FAILURE: Plugin object properties returned by Object.keys were ' + keys.toString();
         return;
     }

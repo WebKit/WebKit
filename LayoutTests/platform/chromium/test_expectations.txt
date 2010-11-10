@@ -715,9 +715,8 @@ BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 // Low priority, unclear if test expectations are correct (see bug)
 BUG6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
-// We don't support NPN_Enumerate, but don't know of any plugin
-// which depends on that functionality.  So we ignore this for beta.
-BUG21901 : plugins/npruntime/enumerate.html = FAIL
+// Object.keys on an NPObject produces the wrong output.
+BUG21901 : plugins/npruntime/enumerate.html = TEXT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
