@@ -38,9 +38,11 @@ class MappedMemoryPool;
 
 struct MappedMemory {
 
-    QFile* mappedFile() const
+    QString mappedFileName() const
     {
-        return file;
+        ASSERT(file);
+        ASSERT(mappedBytes);
+        return fileName;
     }
 
     void markFree()
@@ -76,6 +78,7 @@ private:
     };
 
     QFile* file;
+    QString fileName;
     union {
         uchar* mappedBytes;
         Data* dataPtr;
@@ -94,8 +97,11 @@ public:
     MappedMemory* mapMemory(size_t size);
     MappedMemory* mapFile(QString fileName, size_t size);
 
+    void clear();
+
 private:
     MappedMemoryPool() { };
+    ~MappedMemoryPool();
 
     Vector<MappedMemory> m_pool;
 };

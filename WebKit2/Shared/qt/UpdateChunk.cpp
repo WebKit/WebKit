@@ -62,7 +62,7 @@ UpdateChunk::~UpdateChunk()
 void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_rect);
-    encoder->encode(String(m_mappedMemory->mappedFile()->fileName()));
+    encoder->encode(String(m_mappedMemory->mappedFileName()));
 
     m_mappedMemory = 0;
 }

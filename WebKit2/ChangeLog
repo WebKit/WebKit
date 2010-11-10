@@ -1,3 +1,33 @@
+2010-11-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Fix re-use of memory-mapped files
+        https://bugs.webkit.org/show_bug.cgi?id=49310
+
+        QTemporaryFile::fileName() returns an empty string after close()
+        so we have to keep separate track of the filename.
+
+        Also, we can't reopen the file if it's been QFile::remove()d,
+        so we defer unlinking until the MappedMemoryPool is destroyed or
+        the CrashHandler kicks in.
+
+        This makes re-use of memory-mapped files work (after we kill an
+        assertion that the file size == the new mmap size - it's fine if
+        the file is larger, too.)
+
+        * Platform/qt/MappedMemoryPool.cpp:
+        (WebKit::MappedMemoryPool::~MappedMemoryPool):
+        (WebKit::MappedMemoryPool::clear):
+        (WebKit::MappedMemoryPool::mapMemory):
+        (WebKit::MappedMemoryPool::mapFile):
+        * Platform/qt/MappedMemoryPool.h:
+        (WebKit::MappedMemory::mappedFileName):
+        * Shared/qt/CrashHandler.cpp:
+        (WebKit::CrashHandler::deleteObjects):
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::encode):
+
 2010-11-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by the ever-picky Windows build-bot.

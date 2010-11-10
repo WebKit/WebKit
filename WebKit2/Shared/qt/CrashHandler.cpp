@@ -25,6 +25,7 @@
 
 #include "CrashHandler.h"
 
+#include "MappedMemoryPool.h"
 #include <csignal>
 #include <cstdlib>
 #include <wtf/AlwaysInline.h>
@@ -56,6 +57,8 @@ void CrashHandler::deleteObjects()
 {
     m_inDeleteObjects = true;
     qDeleteAll(m_objects);
+
+    MappedMemoryPool::instance()->clear();
 }
 
 } // namespace WebKit

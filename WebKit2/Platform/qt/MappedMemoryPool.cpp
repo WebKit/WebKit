@@ -34,6 +34,23 @@
 
 namespace WebKit {
 
+MappedMemoryPool::~MappedMemoryPool()
+{
+    clear();
+}
+
+void MappedMemoryPool::clear()
+{
+    for (unsigned n = 0; n < m_pool.size(); ++n) {
+        MappedMemory& current = m_pool.at(n);
+        if (!current.file)
+            continue;
+        current.file->remove();
+        delete current.file;
+    }
+    m_pool.clear();
+}
+
 MappedMemory* MappedMemoryPool::mapMemory(size_t size)
 {
     for (unsigned n = 0; n < m_pool.size(); ++n) {
@@ -48,6 +65,7 @@ MappedMemory* MappedMemoryPool::mapMemory(size_t size)
     newMap.dataSize = size;
     newMap.file = new QTemporaryFile(QDir::tempPath() + "/WebKit2UpdateChunk");
     newMap.file->open(QIODevice::ReadWrite);
+    newMap.fileName = newMap.file->fileName();
     newMap.file->resize(newMap.mapSize());
     newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
     newMap.file->close();
@@ -60,7 +78,7 @@ MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size)
 {
     for (unsigned n = 0; n < m_pool.size(); ++n) {
         MappedMemory& current = m_pool.at(n);
-        if (current.file->fileName() == fileName) {
+        if (current.fileName == fileName) {
             ASSERT(!current.isFree());
             return &current;
         }
@@ -70,13 +88,12 @@ MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size)
     newMap.file = new QFile(fileName);
     newMap.dataSize = size;
     ASSERT(newMap.file->exists());
-    ASSERT(newMap.file->size() == newMap.mapSize());
+    ASSERT(newMap.file->size() >= newMap.mapSize());
     newMap.file->open(QIODevice::ReadWrite);
     newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
     ASSERT(newMap.mappedBytes);
     ASSERT(!newMap.isFree());
     newMap.file->close();
-    newMap.file->remove(); // The map stays alive even when the file is unlinked.
     m_pool.append(newMap);
     return &m_pool.last();
 }
