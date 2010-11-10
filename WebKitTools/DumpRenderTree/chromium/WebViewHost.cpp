@@ -940,13 +940,14 @@ void WebViewHost::didChangeLocationWithinPage(WebFrame* frame)
 
 void WebViewHost::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebURLRequest& request)
 {
+     if (!m_shell->shouldDumpResourceLoadCallbacks())
+        return;
     ASSERT(!m_resourceIdentifierMap.contains(identifier));
     m_resourceIdentifierMap.set(identifier, descriptionSuitableForTestResult(request.url().spec()));
 }
 
 void WebViewHost::removeIdentifierForRequest(unsigned identifier)
 {
-    ASSERT(m_resourceIdentifierMap.contains(identifier));
     m_resourceIdentifierMap.remove(identifier);
 }
 

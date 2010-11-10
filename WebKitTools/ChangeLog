@@ -1,3 +1,23 @@
+2010-11-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] http/tests/security/XFrameOptions fail with Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=49286
+        
+        The tests in http/tests/security/XFrameOptions started to fail after
+        r71297, since it changed the WebViewHost::assignIdentifierToRequest
+        logic to always assign identifiers to requests, even if we're not going
+        to be dumping resource load callbacks at that point. These tests
+        only call LayoutTestController.dumpResourceLoadCallbacks after the
+        request is started, thus their expectations have "<unknown>" as the
+        identifier. Change WebViewHost to the previous behavior, which also
+        match the other ports'.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::assignIdentifierToRequest):
+        (WebViewHost::removeIdentifierForRequest):
+
 2010-11-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.
