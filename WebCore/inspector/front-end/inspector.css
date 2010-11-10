@@ -1759,9 +1759,9 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 }
 
 .sidebar-pane-subtitle {
-    float: right;
+    position: absolute;
+    right: 0;
     font-weight: normal;
-    overflow: hidden;
 }
 
 body.platform-windows .sidebar-pane-subtitle {
