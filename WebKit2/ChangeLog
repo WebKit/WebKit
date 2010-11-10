@@ -1,3 +1,11 @@
+2010-11-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add license to DerivedSources.make.
+
+        * DerivedSources.make:
+
 2010-11-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
