@@ -3348,7 +3348,7 @@ BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // Added in r71317
-BUG61978 WIN MAC : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
+BUG61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
 
 // Test added in WK r71382
 BUG62025 LINUX WIN : fast/table/027-vertical.html = IMAGE+TEXT
