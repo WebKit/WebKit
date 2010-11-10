@@ -1,3 +1,11 @@
+2010-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WKDownload.h should be a public header.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-11-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
