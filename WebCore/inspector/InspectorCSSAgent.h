@@ -49,26 +49,20 @@ class Node;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorCSSAgent : public RefCounted<InspectorCSSAgent>, public InspectorDOMAgent::DOMListener {
+class InspectorCSSAgent : public InspectorDOMAgent::DOMListener {
 public:
-    static PassRefPtr<InspectorCSSAgent> create(InspectorDOMAgent* domAgent, InspectorFrontend* frontend)
-    {
-        return adoptRef(new InspectorCSSAgent(domAgent, frontend));
-    }
-
     static CSSStyleSheet* parentStyleSheet(StyleBase*);
     static CSSStyleRule* asCSSStyleRule(StyleBase*);
 
-    InspectorCSSAgent(InspectorDOMAgent* domAgent, InspectorFrontend* frontend);
+    InspectorCSSAgent();
     ~InspectorCSSAgent();
 
+    void setDOMAgent(InspectorDOMAgent* domAgent);
+
     void reset();
-    void getMatchedRulesForNode2(long nodeId, RefPtr<InspectorArray>* rules);
-    void getMatchedPseudoRulesForNode2(long nodeId, RefPtr<InspectorArray>* rules);
-    void getAttributeStylesForNode2(long nodeId, RefPtr<InspectorValue>* styles);
+    void getStylesForNode2(long nodeId, RefPtr<InspectorValue>* result);
     void getInlineStyleForNode2(long nodeId, RefPtr<InspectorValue>* style);
     void getComputedStyleForNode2(long nodeId, RefPtr<InspectorValue>* style);
-    void getInheritedStylesForNode2(long nodeId, RefPtr<InspectorArray>* result);
     void getAllStyles2(RefPtr<InspectorArray>* styles);
     void getStyleSheet2(const String& styleSheetId, RefPtr<InspectorValue>* result);
     void setStyleSheetText2(const String& styleSheetId, const String& text);
@@ -77,6 +71,7 @@ public:
     void setRuleSelector2(const String& ruleId, const String& selector, RefPtr<InspectorValue>* result);
     void addRule2(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result);
     void getSupportedCSSProperties(RefPtr<InspectorArray>* result);
+    void querySelectorAll(const long nodeId, const String& selector, RefPtr<InspectorArray>* result);
 
 private:
     typedef HashMap<String, RefPtr<InspectorStyleSheet> > IdToInspectorStyleSheet;
@@ -101,8 +96,7 @@ private:
     virtual void didRemoveDocument(Document*);
     virtual void didRemoveDOMNode(Node*);
 
-    RefPtr<InspectorDOMAgent> m_domAgent;
-    InspectorFrontend* m_frontend;
+    InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;

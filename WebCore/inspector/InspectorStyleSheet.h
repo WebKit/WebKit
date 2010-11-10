@@ -87,6 +87,17 @@ struct InspectorStyleProperty {
     {
     }
 
+    void setRawTextFromStyleDeclaration(const String& styleDeclaration)
+    {
+        unsigned start = sourceData.range.start;
+        unsigned end = sourceData.range.end;
+        ASSERT(start < end);
+        ASSERT(end <= styleDeclaration.length());
+        rawText = styleDeclaration.substring(start, end - start);
+    }
+
+    bool hasRawText() const { return !rawText.isEmpty(); }
+
     CSSPropertySourceData sourceData;
     bool hasSource;
     bool disabled;
@@ -117,7 +128,7 @@ public:
 private:
     static unsigned disabledIndexByOrdinal(unsigned ordinal, bool canUseSubsequent, Vector<InspectorStyleProperty>& allProperties);
 
-    bool styleText(String* result);
+    bool styleText(String* result) const;
     bool disableProperty(unsigned indexToDisable, Vector<InspectorStyleProperty>& allProperties);
     bool enableProperty(unsigned indexToEnable, Vector<InspectorStyleProperty>& allProperties);
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
@@ -162,6 +173,8 @@ public:
 protected:
     bool canBind() const { return m_origin != "userAgent" && m_origin != "user"; }
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
+    void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
+    virtual bool text(String* result) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
@@ -174,7 +187,6 @@ protected:
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
-    bool text(String* result) const;
     bool ensureText() const;
     bool ensureSourceData(Node* ownerNode);
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
@@ -210,6 +222,7 @@ public:
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, id.ordinal() == "0"); return inlineStyle(); }
 
 protected:
+    virtual bool text(String* result) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const { return 0; }

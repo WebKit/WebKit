@@ -207,7 +207,19 @@ module core {
         [handler=DOM] void toggleStyleEnabled(in long styleId, in String propertyName, in boolean disabled, out Value style);
         [handler=DOM] void setRuleSelector(in long ruleId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
         [handler=DOM] void addRule(in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
-        [handler=DOM] void getSupportedCSSProperties(out Array cssProperties);
+
+        [handler=CSS] void getStylesForNode2(in long nodeId, out Value styles);
+        [handler=CSS] void getComputedStyleForNode2(in long nodeId, out Value style);
+        [handler=CSS] void getInlineStyleForNode2(in long nodeId, out Value style);
+        [handler=CSS] void getAllStyles2(out Array styleSheetIds);
+        [handler=CSS] void getStyleSheet2(in String styleSheetId, out Value styleSheet);
+        [handler=CSS] void setStyleSheetText2(in String styleSheetId, in String text);
+        [handler=CSS] void setPropertyText2(in String styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
+        [handler=CSS] void toggleProperty2(in String styleId, in long propertyIndex, in boolean disable, out Value style);
+        [handler=CSS] void setRuleSelector2(in String ruleId, in String selector, out Value rule);
+        [handler=CSS] void addRule2(in long contextNodeId, in String selector, out Value rule);
+        [handler=CSS] void getSupportedCSSProperties(out Array cssProperties);
+        [handler=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
 
         [handler=Controller] void getCookies(out Array cookies, out String cookiesString);
         [handler=Controller] void deleteCookie(in String cookieName, in String domain);

@@ -38,6 +38,11 @@ $typeTransform{"DOM"} = {
     "header" => "InspectorDOMAgent.h",
     "domainAccessor" => "m_inspectorController->domAgent()",
 };
+$typeTransform{"CSS"} = {
+    "forward" => "InspectorCSSAgent",
+    "header" => "InspectorCSSAgent.h",
+    "domainAccessor" => "m_inspectorController->cssAgent()",
+};
 $typeTransform{"ApplicationCache"} = {
     "forward" => "InspectorApplicationCacheAgent",
     "header" => "InspectorApplicationCacheAgent.h",

@@ -58,6 +58,7 @@ class InspectorArray;
 class InspectorBackend;
 class InspectorBackendDispatcher;
 class InspectorClient;
+class InspectorCSSAgent;
 class InspectorCSSStore;
 class InspectorDOMAgent;
 class InspectorDOMStorageResource;
@@ -298,6 +299,7 @@ private:
     void setSearchingForNode(bool enabled, bool* newState);
 
     void setMonitoringXHREnabled(bool enabled, bool* newState);
+    InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseFrontendLifetimeAgents();
 
@@ -340,6 +342,7 @@ private:
     OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
     bool m_openingFrontend;
     OwnPtr<InspectorFrontend> m_frontend;
+    OwnPtr<InspectorCSSAgent> m_cssAgent;
     RefPtr<InspectorDOMAgent> m_domAgent;
     RefPtr<InspectorStorageAgent> m_storageAgent;
     OwnPtr<InspectorCSSStore> m_cssStore;

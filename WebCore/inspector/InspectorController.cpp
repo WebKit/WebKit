@@ -58,6 +58,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
 #include "InspectorBackendDispatcher.h"
+#include "InspectorCSSAgent.h"
 #include "InspectorCSSStore.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
@@ -142,6 +143,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_openingFrontend(false)
+    , m_cssAgent(new InspectorCSSAgent())
     , m_cssStore(new InspectorCSSStore(this))
     , m_mainResourceIdentifier(0)
     , m_expiredConsoleMessageCount(0)
@@ -485,6 +487,8 @@ void InspectorController::connectFrontend()
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
     m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_frontend.get());
 
+    m_cssAgent->setDOMAgent(m_domAgent.get());
+
 #if ENABLE(DATABASE)
     m_storageAgent = InspectorStorageAgent::create(m_frontend.get());
 #endif
@@ -591,6 +595,9 @@ void InspectorController::disconnectFrontend()
 void InspectorController::releaseFrontendLifetimeAgents()
 {
     m_resourceAgent.clear();
+
+    // This should be invoked prior to m_domAgent destruction.
+    m_cssAgent->setDOMAgent(0);
 
     // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
     // no references to the DOM agent from the DOM tree.
@@ -744,6 +751,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         if (m_frontend) {
             m_frontend->reset();
             m_domAgent->reset();
+            m_cssAgent->reset();
         }
 #if ENABLE(WORKERS)
         m_workers.clear();

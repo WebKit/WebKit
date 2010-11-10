@@ -1538,15 +1538,6 @@ void InspectorDOMAgent::addRule(const String& selector, long selectedNodeId, Ref
     *ruleObject = buildObjectForRule(node->ownerDocument(), newRule);
 }
 
-void InspectorDOMAgent::getSupportedCSSProperties(RefPtr<InspectorArray>* cssProperties)
-{
-    RefPtr<InspectorArray> properties = InspectorArray::create();
-    for (int i = 0; i < numCSSProperties; ++i)
-        properties->pushString(propertyNameStrings[i]);
-
-    *cssProperties = properties.release();
-}
-
 PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyle(CSSStyleDeclaration* style, bool bind)
 {
     RefPtr<InspectorObject> result = InspectorObject::create();

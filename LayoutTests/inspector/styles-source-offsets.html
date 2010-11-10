@@ -43,7 +43,7 @@ function frontend_runTest(testController)
 function frontend_styleDataReceived(testController, ruleOrStyle, shouldBail, data)
 {
     var isRule = !!(ruleOrStyle.style);
-    testController.results.push((isRule ? ruleOrStyle.selectorText : "element.style") + ": [" + data.bodyRange.start + "-" + data.bodyRange.end + "]");
+    testController.results.push((isRule ? ruleOrStyle.selectorText : "element.style") + ": [" + data.selectorRange.start + "-" + data.selectorRange.end + "] [" + data.bodyRange.start + "-" + data.bodyRange.end + "]");
     for (var i = 0; i < data.propertyData.length; ++i) {
         var propertyDatum = data.propertyData[i];
         testController.results.push("['" + propertyDatum.name + "':'" + propertyDatum.value + "'" + (propertyDatum.important ? " !important" : "") + (propertyDatum.parsed ? "" : " non-parsed") +"] @[" + propertyDatum.start + "-" + propertyDatum.end + "]");
