@@ -25,6 +25,7 @@
 #include "AccessibilityRenderObject.h"
 #include "GOwnPtr.h"
 #include "Range.h"
+#include "SelectElement.h"
 #include "TextIterator.h"
 
 namespace WebCore {
@@ -41,17 +42,65 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     g_object_unref(atkObj);
 }
 
+static void notifyChildrenSelectionChange(AccessibilityObject* object)
+{
+    // This static variable is needed to keep track of the old focused
+    // object as per previous calls to this function, in order to
+    // properly decide whether to emit some signals or not.
+    static RefPtr<AccessibilityObject> oldFocusedObject = 0;
+
+    // Only list boxes supported so far.
+    if (!object || !object->isListBox())
+        return;
+
+    // Emit signal from the listbox's point of view first.
+    g_signal_emit_by_name(object->wrapper(), "selection-changed");
+
+    // Find the item where the selection change was triggered from.
+    AccessibilityObject::AccessibilityChildrenVector items = object->children();
+    SelectElement* select = toSelectElement(static_cast<Element*>(object->node()));
+    if (!select)
+        return;
+    int changedItemIndex = select->activeSelectionStartListIndex();
+    if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
+        return;
+    AccessibilityObject* item = items.at(changedItemIndex).get();
+
+    // Ensure the oldFocusedObject belongs to the same document that
+    // the current item so further comparisons make sense. Otherwise,
+    // just reset oldFocusedObject so it won't be taken into account.
+    if (item && oldFocusedObject && item->document() != oldFocusedObject->document())
+        oldFocusedObject = 0;
+
+    AtkObject* axItem = item ? item->wrapper() : 0;
+    AtkObject* axOldFocusedObject = oldFocusedObject ? oldFocusedObject->wrapper() : 0;
+
+    // Old focused object just lost focus, so emit the events.
+    if (axOldFocusedObject && axItem != axOldFocusedObject) {
+        g_signal_emit_by_name(axOldFocusedObject, "focus-event", false);
+        g_signal_emit_by_name(axOldFocusedObject, "state-change", "focused", false);
+    }
+
+    // Emit needed events for the currently (un)selected item.
+    if (axItem) {
+        bool isSelected = item->isSelected();
+        g_signal_emit_by_name(axItem, "state-change", "selected", isSelected);
+        g_signal_emit_by_name(axItem, "focus-event", isSelected);
+        g_signal_emit_by_name(axItem, "state-change", "focused", isSelected);
+    }
+
+    // Update pointer to the previously focused object.
+    oldFocusedObject = item;
+}
+
 void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AXNotification notification)
 {
     if (notification == AXCheckedStateChanged) {
         if (!coreObject->isCheckboxOrRadio())
             return;
         g_signal_emit_by_name(coreObject->wrapper(), "state-change", "checked", coreObject->isChecked());
-    } else if (notification == AXSelectedChildrenChanged) {
-        if (!coreObject->isListBox())
-            return;
-        g_signal_emit_by_name(coreObject->wrapper(), "selection-changed");
-    }
+    } else if (notification == AXSelectedChildrenChanged)
+        notifyChildrenSelectionChange(coreObject);
 }
 
 static void emitTextChanged(AccessibilityRenderObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
