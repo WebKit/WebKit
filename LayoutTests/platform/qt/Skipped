@@ -5063,7 +5063,6 @@ canvas/philip/tests/2d.line.miter.lineedge.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.quadraticCurveTo.shape.html
 canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
-canvas/philip/tests/2d.path.rect.winding.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.path.stroke.scale2.html
 canvas/philip/tests/2d.pattern.image.broken.html
