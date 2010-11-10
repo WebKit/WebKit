@@ -238,6 +238,14 @@ PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<Premultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
 }
 
+// This function does the equivalent of (a * b + 254) / 255, without an integer divide.
+// Valid for a, b in the range [0..255].
+unsigned mulDiv255Ceil(unsigned a, unsigned b)
+{
+    unsigned value = a * b + 255;
+    return (value + (value >> 8)) >> 8;
+}
+
 template <Multiply multiplied>
 void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, 
                   const SkBitmap& bitmap, const IntSize& size)
@@ -279,10 +287,13 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
         for (int x = 0; x < numColumns; ++x) {
             const unsigned char* srcPixel = &srcRow[x * 4];
-            if (multiplied == Unmultiplied)
-                destRow[x] = SkPreMultiplyARGB(srcPixel[3], srcPixel[0],
-                                               srcPixel[1], srcPixel[2]);
-            else
+            if (multiplied == Unmultiplied) {
+                unsigned char alpha = srcPixel[3];
+                unsigned char r = mulDiv255Ceil(srcPixel[0], alpha);
+                unsigned char g = mulDiv255Ceil(srcPixel[1], alpha);
+                unsigned char b = mulDiv255Ceil(srcPixel[2], alpha);
+                destRow[x] = SkPackARGB32(alpha, r, g, b);
+            } else
                 destRow[x] = SkPackARGB32(srcPixel[3], srcPixel[0],
                                           srcPixel[1], srcPixel[2]);
         }

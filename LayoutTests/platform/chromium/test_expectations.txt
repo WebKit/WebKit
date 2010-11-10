@@ -2402,7 +2402,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
