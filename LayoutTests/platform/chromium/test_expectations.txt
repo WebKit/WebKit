@@ -866,7 +866,7 @@ BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
 // test_shell, DRT do not correctly schedule paints when invalidating.
-BUG62433 WIN : fast/images/gif-loop-count.html = IMAGE
+BUG62433 : fast/images/gif-loop-count.html = IMAGE
 
 // -----------------------------------------------------------------
 // SVG TESTS
@@ -3348,7 +3348,7 @@ BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // Added in r71317
-BUG61978 WIN MAC : svg/animations/animate-path-nested-transforms.html = CRASH PASS
+BUG61978 WIN MAC : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
 
 // Test added in WK r71382
 BUG62025 LINUX WIN : fast/table/027-vertical.html = IMAGE+TEXT
