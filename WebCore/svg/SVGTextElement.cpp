@@ -86,7 +86,7 @@ AffineTransform SVGTextElement::getScreenCTM(StyleUpdateStrategy styleUpdateStra
 
 AffineTransform SVGTextElement::animatedLocalTransform() const
 {
-    return m_supplementalTransform ? transform()->concatenate().matrix() * *m_supplementalTransform : transform()->concatenate().matrix();
+    return m_supplementalTransform ? *m_supplementalTransform * transform()->concatenate().matrix() : transform()->concatenate().matrix();
 }
 
 AffineTransform* SVGTextElement::supplementalTransform()
