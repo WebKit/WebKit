@@ -1255,14 +1255,10 @@ void PopupListBox::layout()
     // Size our child items.
     int baseWidth = 0;
     int paddingWidth = 0;
-    int y = 0;
     for (int i = 0; i < numItems(); ++i) {
-        // Place the item vertically.
-        m_items[i]->yOffset = y;
         if (m_popupClient->itemStyle(i).isDisplayNone())
             continue;
         Font itemFont = getRowFont(i);
-        y += itemFont.height();
 
         // Ensure the popup is wide enough to fit this item.
         String text = m_popupClient->itemText(i);
@@ -1303,7 +1299,10 @@ void PopupListBox::layout()
 #endif
 
     for (int i = 0; i < m_visibleRows; ++i) {
+        // Place the item vertically.
         int rowHeight = getRowHeight(i);
+        m_items[i]->yOffset = windowHeight;
+
 #if !OS(DARWIN)
         // Only clip the window height for non-Mac platforms.
         if (windowHeight + rowHeight > m_maxHeight) {
