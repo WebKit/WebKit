@@ -274,12 +274,18 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     bool hLock = hScrollbar != ScrollbarAuto;
     bool vLock = vScrollbar != ScrollbarAuto;
 
+    bool paintsEntireContents = m_frame->view()->paintsEntireContents();
+
     m_frame->createView(m_webFrame->page()->viewportSize(),
                         backgroundColor, !backgroundColor.alpha(),
                         preferredLayoutSize.isValid() ? IntSize(preferredLayoutSize) : IntSize(),
                         preferredLayoutSize.isValid(),
                         hScrollbar, hLock,
                         vScrollbar, vLock);
+
+    bool isMainFrame = m_frame == m_frame->page()->mainFrame();
+    if (isMainFrame)
+        m_frame->view()->setPaintsEntireContents(paintsEntireContents);
 }
 
 void FrameLoaderClientQt::dispatchDidBecomeFrameset(bool)

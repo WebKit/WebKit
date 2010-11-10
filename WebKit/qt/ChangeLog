@@ -1,3 +1,16 @@
+2010-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Use paintEntireContents in combination with tiling, allowing to
+        actually set visibleContentRect to something different from
+        the actual contents size.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2010-11-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
