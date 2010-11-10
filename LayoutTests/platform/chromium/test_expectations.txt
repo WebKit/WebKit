@@ -2963,6 +2963,8 @@ BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
+// http://bugs.freedesktop.org/show_bug.cgi?id=31514
+BUGWEBGL : fast/canvas/webgl/is-object.html = TEXT
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUG60651 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS

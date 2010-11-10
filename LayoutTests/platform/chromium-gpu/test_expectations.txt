@@ -194,6 +194,7 @@ BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
+BUGWEBGL : fast/canvas/webgl/is-object.html = TEXT
 BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
