@@ -121,6 +121,10 @@ namespace WebCore {
 
         Element* getElementById(const AtomicString&) const;
 
+    protected:
+        virtual void willMoveToNewOwnerDocument();
+        virtual void didMoveToNewOwnerDocument();
+
     private:
         SVGSVGElement(const QualifiedName&, Document*);
         virtual ~SVGSVGElement();

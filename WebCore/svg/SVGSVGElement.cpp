@@ -91,6 +91,18 @@ SVGSVGElement::~SVGSVGElement()
     document()->accessSVGExtensions()->removeTimeContainer(this);
 }
 
+void SVGSVGElement::willMoveToNewOwnerDocument()
+{
+    document()->unregisterForDocumentActivationCallbacks(this);
+    SVGStyledLocatableElement::willMoveToNewOwnerDocument();
+}
+
+void SVGSVGElement::didMoveToNewOwnerDocument()
+{
+    document()->registerForDocumentActivationCallbacks(this);
+    SVGStyledLocatableElement::didMoveToNewOwnerDocument();
+}
+
 const AtomicString& SVGSVGElement::contentScriptType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/ecmascript"));
