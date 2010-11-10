@@ -35,15 +35,16 @@
 #include "ScriptSourceProvider.h"
 #include "StringSourceProvider.h"
 #include "KURL.h"
+#include <wtf/text/TextPosition.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class ScriptSourceCode {
 public:
-    ScriptSourceCode(const String& source, const KURL& url = KURL(), int startLine = 1)
+    ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition1& startPosition = TextPosition1::minimumPosition())
         : m_provider(StringSourceProvider::create(source, url.isNull() ? String() : url.string()))
-        , m_code(m_provider, startLine)
+        , m_code(m_provider, startPosition.m_line.oneBasedInt())
         , m_url(url)
     {
     }

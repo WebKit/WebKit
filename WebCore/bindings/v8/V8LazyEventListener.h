@@ -34,6 +34,7 @@
 #include "PlatformString.h"
 #include "V8AbstractEventListener.h"
 #include <v8.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -45,9 +46,9 @@ namespace WebCore {
     // A V8LazyEventListener is always a HTML event handler.
     class V8LazyEventListener : public V8AbstractEventListener {
     public:
-        static PassRefPtr<V8LazyEventListener> create(const String& functionName, bool isSVGEvent, const String& code, const String& sourceURL, int lineNumber, int columnNumber, const WorldContextHandle& worldContext)
+        static PassRefPtr<V8LazyEventListener> create(const String& functionName, bool isSVGEvent, const String& code, const String& sourceURL, const TextPosition0& position, const WorldContextHandle& worldContext)
         {
-            return adoptRef(new V8LazyEventListener(functionName, isSVGEvent, code, sourceURL, lineNumber, columnNumber, worldContext));
+            return adoptRef(new V8LazyEventListener(functionName, isSVGEvent, code, sourceURL, position, worldContext));
         }
 
         virtual bool isLazy() const { return true; }
@@ -56,7 +57,7 @@ namespace WebCore {
         virtual void prepareListenerObject(ScriptExecutionContext*);
 
     private:
-        V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, int lineNumber, int columnNumber, const WorldContextHandle& worldContext);
+        V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, const TextPosition0& position, const WorldContextHandle& worldContext);
 
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
 
@@ -70,8 +71,7 @@ namespace WebCore {
         bool m_isSVGEvent;
         String m_code;
         String m_sourceURL;
-        int m_lineNumber;
-        int m_columnNumber;
+        TextPosition0 m_position;
     };
 
 } // namespace WebCore

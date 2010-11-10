@@ -555,6 +555,7 @@
 		E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */; };
 		E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EF79A80CE97BA60088D500 /* UTF8.cpp */; };
 		E48E0F2D0F82151700A8CA37 /* FastAllocBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E0F2C0F82151700A8CA37 /* FastAllocBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F3BD31ED126735770065467F /* TextPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BD31D0126730180065467F /* TextPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -1144,6 +1145,7 @@
 		E1EF79A80CE97BA60088D500 /* UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8.cpp; sourceTree = "<group>"; };
 		E1EF79A90CE97BA60088D500 /* UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8.h; sourceTree = "<group>"; };
 		E48E0F2C0F82151700A8CA37 /* FastAllocBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastAllocBase.h; sourceTree = "<group>"; };
+		F3BD31D0126730180065467F /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextPosition.h; path = text/TextPosition.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1860,6 +1862,7 @@
 				868BFA07117CEFD100B908B1 /* StringImpl.h */,
 				86B99AE2117E578100DF5A90 /* StringImplBase.h */,
 				8626BECE11928E3900782FAB /* StringStatics.cpp */,
+				F3BD31D0126730180065467F /* TextPosition.h */,
 				868BFA15117CF19900B908B1 /* WTFString.cpp */,
 				868BFA16117CF19900B908B1 /* WTFString.h */,
 			);
@@ -2349,6 +2352,7 @@
 				90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */,
 				A730B6121250068F009D25B1 /* StrictEvalActivation.h in Headers */,
 				933F5CDC1269229B0049191E /* NullPtr.h in Headers */,
+				F3BD31ED126735770065467F /* TextPosition.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

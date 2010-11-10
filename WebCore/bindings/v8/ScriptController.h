@@ -155,8 +155,7 @@ public:
 
     void finishedWithEvent(Event*);
 
-    int eventHandlerLineNumber() const;
-    int eventHandlerColumnNumber() const;
+    TextPosition0 eventHandlerPosition() const;
 
     void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
     // FIXME: Currently we don't use the parameter world at all.

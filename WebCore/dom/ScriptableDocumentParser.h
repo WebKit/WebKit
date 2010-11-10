@@ -27,10 +27,10 @@
 #define ScriptableDocumentParser_h
 
 #include "DecodedDataDocumentParser.h"
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
-class SegmentedString;
 class XSSAuditor;
 
 class ScriptableDocumentParser : public DecodedDataDocumentParser {
@@ -47,7 +47,7 @@ public:
 
     // These are used to expose the current line/column to the scripting system.
     virtual int lineNumber() const = 0;
-    virtual int columnNumber() const = 0;
+    virtual TextPosition0 textPosition() const = 0;
 
     XSSAuditor* xssAuditor() const { return m_xssAuditor; }
     void setXSSAuditor(XSSAuditor* auditor) { m_xssAuditor = auditor; }

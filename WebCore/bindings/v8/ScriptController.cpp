@@ -263,20 +263,12 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, Shoul
     return ScriptValue(object);
 }
 
-int ScriptController::eventHandlerLineNumber() const
+TextPosition0 ScriptController::eventHandlerPosition() const
 {
     ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
     if (parser)
-        return parser->lineNumber();
-    return 0;
-}
-
-int ScriptController::eventHandlerColumnNumber() const
-{
-    ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
-    if (parser)
-        return parser->columnNumber();
-    return 0;
+        return parser->textPosition();
+    return TextPosition0::minimumPosition();
 }
 
 void ScriptController::finishedWithEvent(Event* event)
