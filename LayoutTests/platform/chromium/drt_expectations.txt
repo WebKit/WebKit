@@ -10,6 +10,7 @@
 
 // DRT needs to schedule paints on invalidations like Chrome does.
 BUG62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
+BUG62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
 
 // input-speech related failures
 BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
@@ -50,10 +51,16 @@ BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUGWK43960 WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // media/video-* flakyness
-BUG59665 MAC : media/video-aspect-ratio.html = TIMEOUT
+BUG59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-controls-rendering.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-delay-load-event.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-loop.html = CRASH TIMEOUT PASS
+
+// Also fails on the mac port; see http://webkit.org/b/34331
+BUG_DRT : http/tests/media/video-referer.html = TEXT
 
 // Occasionally times out with, only under the DRT for Linux
 BUG58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
