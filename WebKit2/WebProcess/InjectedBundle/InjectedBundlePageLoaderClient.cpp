@@ -35,19 +35,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient()
-{
-    initialize(0);
-}
-
-void InjectedBundlePageLoaderClient::initialize(WKBundlePageLoaderClient* client)
-{
-    if (client && !client->version)
-        m_client = *client;
-    else 
-        memset(&m_client, 0, sizeof(m_client));
-}
-
 void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didStartProvisionalLoadForFrame)

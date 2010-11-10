@@ -26,6 +26,7 @@
 #ifndef WebFormClient_h
 #define WebFormClient_h
 
+#include "APIClient.h"
 #include "WKPage.h"
 #include <utility>
 #include <wtf/Forward.h>
@@ -38,15 +39,9 @@ class WebPageProxy;
 class WebFrameProxy;
 class WebFormSubmissionListenerProxy;
 
-class WebFormClient {
+class WebFormClient : public APIClient<WKPageFormClient> {
 public:
-    WebFormClient();
-    void initialize(const WKPageFormClient*);
-
     bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy*); 
-
-private:
-    WKPageFormClient m_pageFormClient;
 };
 
 } // namespace WebKit

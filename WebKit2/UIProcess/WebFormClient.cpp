@@ -32,22 +32,9 @@
 
 namespace WebKit {
 
-WebFormClient::WebFormClient()
-{
-    initialize(0);
-}
-
-void WebFormClient::initialize(const WKPageFormClient* client)
-{
-    if (client && !client->version)
-        m_pageFormClient = *client;
-    else 
-        memset(&m_pageFormClient, 0, sizeof(m_pageFormClient));
-}
-
 bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy* listener)
 {
-    if (!m_pageFormClient.willSubmitForm)
+    if (!m_client.willSubmitForm)
         return false;
 
     ImmutableDictionary::MapType map;
@@ -55,7 +42,7 @@ bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, Web
         map.set(textFieldValues[i].first, WebString::create(textFieldValues[i].second));
     RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
 
-    m_pageFormClient.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_pageFormClient.clientInfo);
+    m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.clientInfo);
     return true;
 }
 

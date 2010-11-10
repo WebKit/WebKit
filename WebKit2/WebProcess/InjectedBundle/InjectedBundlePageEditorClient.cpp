@@ -35,19 +35,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundlePageEditorClient::InjectedBundlePageEditorClient()
-{
-    initialize(0);
-}
-
-void InjectedBundlePageEditorClient::initialize(WKBundlePageEditorClient* client)
-{
-    if (client && !client->version)
-        m_client = *client;
-    else 
-        memset(&m_client, 0, sizeof(m_client));
-}
-
 bool InjectedBundlePageEditorClient::shouldBeginEditing(WebPage* page, Range* range)
 {
     if (m_client.shouldBeginEditing) {

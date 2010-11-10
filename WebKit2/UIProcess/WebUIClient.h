@@ -26,6 +26,7 @@
 #ifndef WebUIClient_h
 #define WebUIClient_h
 
+#include "APIClient.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include <wtf/Forward.h>
@@ -44,11 +45,8 @@ class NativeWebKeyboardEvent;
 class WebFrameProxy;
 class WebPageProxy;
 
-class WebUIClient {
+class WebUIClient : public APIClient<WKPageUIClient> {
 public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
-
     PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
@@ -79,9 +77,6 @@ public:
 
     void didDraw(WebPageProxy*);
     void pageDidScroll(WebPageProxy*);
-
-private:
-    WKPageUIClient m_pageUIClient;
 };
 
 } // namespace WebKit

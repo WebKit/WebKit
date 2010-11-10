@@ -34,19 +34,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundlePageUIClient::InjectedBundlePageUIClient()
-{
-    initialize(0);
-}
-
-void InjectedBundlePageUIClient::initialize(WKBundlePageUIClient* client)
-{
-    if (client && !client->version)
-        m_client = *client;
-    else 
-        memset(&m_client, 0, sizeof(m_client));
-}
-
 void InjectedBundlePageUIClient::willAddMessageToConsole(WebPage* page, const String& message, int32_t lineNumber)
 {
     if (m_client.willAddMessageToConsole)

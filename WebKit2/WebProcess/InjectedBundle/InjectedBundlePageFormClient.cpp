@@ -37,19 +37,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundlePageFormClient::InjectedBundlePageFormClient()
-{
-    initialize(0);
-}
-
-void InjectedBundlePageFormClient::initialize(WKBundlePageFormClient* client)
-{
-    if (client && !client->version)
-        m_client = *client;
-    else 
-        memset(&m_client, 0, sizeof(m_client));
-}
-
 void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidBeginEditing)

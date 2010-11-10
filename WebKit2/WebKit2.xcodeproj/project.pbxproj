@@ -1572,8 +1572,6 @@
 		BC032D5E10F4372B0058C15A /* WebPage */ = {
 			isa = PBXGroup;
 			children = (
-				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
-				51871B5A127CB89D00F76232 /* WebContextMenu.h */,
 				BC963D6C113DD19500574BE2 /* mac */,
 				BC5F7BB21182376C0052C02C /* ChunkedUpdateDrawingArea.cpp */,
 				BC5F7BB31182376C0052C02C /* ChunkedUpdateDrawingArea.h */,
@@ -1587,6 +1585,8 @@
 				1A90C23512650717003E44D4 /* PageOverlay.h */,
 				BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */,
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
+				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
+				51871B5A127CB89D00F76232 /* WebContextMenu.h */,
 				BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */,
 				BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,

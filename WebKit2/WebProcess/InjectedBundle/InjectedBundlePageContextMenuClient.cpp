@@ -38,19 +38,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient()
-{
-    initialize(0);
-}
-
-void InjectedBundlePageContextMenuClient::initialize(WKBundlePageContextMenuClient* client)
-{
-    if (client && !client->version)
-        m_client = *client;
-    else 
-        memset(&m_client, 0, sizeof(m_client));
-}
-
 bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, WebCore::ContextMenu* defaultMenu, Vector<WebContextMenuItemData>& newMenu)
 {
     if (!m_client.getContextMenuFromDefaultMenu)

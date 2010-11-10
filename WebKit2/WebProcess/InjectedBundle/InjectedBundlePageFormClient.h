@@ -26,6 +26,7 @@
 #ifndef InjectedBundlePageFormClient_h
 #define InjectedBundlePageFormClient_h
 
+#include "APIClient.h"
 #include "WKBundlePage.h"
 #include <algorithm>
 #include <wtf/Forward.h>
@@ -44,20 +45,14 @@ class ImmutableDictionary;
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageFormClient {
+class InjectedBundlePageFormClient : public APIClient<WKBundlePageFormClient> {
 public:
-    InjectedBundlePageFormClient();
-    void initialize(WKBundlePageFormClient*);
-
     void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement*, WebFrame*);
     bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, WKInputFieldActionType, WebFrame*);    
     void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String> >&, RefPtr<APIObject>& userData);
-
-private:
-    WKBundlePageFormClient m_client;
 };
 
 } // namespace WebKit

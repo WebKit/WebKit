@@ -40,22 +40,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebUIClient::WebUIClient()
-{
-    initialize(0);
-}
-
-void WebUIClient::initialize(const WKPageUIClient* client)
-{
-    if (client && !client->version)
-        m_pageUIClient = *client;
-    else 
-        memset(&m_pageUIClient, 0, sizeof(m_pageUIClient));
-}
-
 PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button)
 {
-    if (!m_pageUIClient.createNewPage)
+    if (!m_client.createNewPage)
         return 0;
 
     ImmutableDictionary::MapType map;
@@ -76,47 +63,47 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Wi
     map.set("dialog", WebBoolean::create(windowFeatures.dialog));
     RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
 
-    return adoptRef(toImpl(m_pageUIClient.createNewPage(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_pageUIClient.clientInfo)));
+    return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)
 {
-    if (!m_pageUIClient.showPage)
+    if (!m_client.showPage)
         return;
     
-    m_pageUIClient.showPage(toAPI(page), m_pageUIClient.clientInfo);
+    m_client.showPage(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::close(WebPageProxy* page)
 {
-    if (!m_pageUIClient.close)
+    if (!m_client.close)
         return;
     
-    m_pageUIClient.close(toAPI(page), m_pageUIClient.clientInfo);
+    m_client.close(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame)
 {
-    if (!m_pageUIClient.runJavaScriptAlert)
+    if (!m_client.runJavaScriptAlert)
         return;
     
-    m_pageUIClient.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
+    m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
 }
 
 bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame)
 {
-    if (!m_pageUIClient.runJavaScriptConfirm)
+    if (!m_client.runJavaScriptConfirm)
         return false;
 
-    return m_pageUIClient.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
+    return m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
 }
 
 String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame)
 {
-    if (!m_pageUIClient.runJavaScriptPrompt)
+    if (!m_client.runJavaScriptPrompt)
         return String();
 
-    WebString* string = toImpl(m_pageUIClient.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_pageUIClient.clientInfo));
+    WebString* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.clientInfo));
     if (!string)
         return String();
 
@@ -128,126 +115,126 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
 
 void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
 {
-    if (!m_pageUIClient.setStatusText)
+    if (!m_client.setStatusText)
         return;
 
-    m_pageUIClient.setStatusText(toAPI(page), toAPI(text.impl()), m_pageUIClient.clientInfo);
+    m_client.setStatusText(toAPI(page), toAPI(text.impl()), m_client.clientInfo);
 }
 
 void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifiers modifiers, APIObject* userData)
 {
-    if (!m_pageUIClient.mouseDidMoveOverElement)
+    if (!m_client.mouseDidMoveOverElement)
         return;
 
-    m_pageUIClient.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_pageUIClient.clientInfo);
+    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
 void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)
 {
-    if (!m_pageUIClient.didNotHandleKeyEvent)
+    if (!m_client.didNotHandleKeyEvent)
         return;
-    m_pageUIClient.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_pageUIClient.clientInfo);
+    m_client.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_client.clientInfo);
 }
 
 bool WebUIClient::toolbarsAreVisible(WebPageProxy* page)
 {
-    if (!m_pageUIClient.toolbarsAreVisible)
+    if (!m_client.toolbarsAreVisible)
         return true;
-    return m_pageUIClient.toolbarsAreVisible(toAPI(page), m_pageUIClient.clientInfo);
+    return m_client.toolbarsAreVisible(toAPI(page), m_client.clientInfo);
 
 }
 void WebUIClient::setToolbarsAreVisible(WebPageProxy* page, bool visible)
 {
-    if (!m_pageUIClient.setToolbarsAreVisible)
+    if (!m_client.setToolbarsAreVisible)
         return;
-    m_pageUIClient.setToolbarsAreVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+    m_client.setToolbarsAreVisible(toAPI(page), visible, m_client.clientInfo);
 }
 
 bool WebUIClient::menuBarIsVisible(WebPageProxy* page)
 {
-    if (!m_pageUIClient.menuBarIsVisible)
+    if (!m_client.menuBarIsVisible)
         return true;
-    return m_pageUIClient.menuBarIsVisible(toAPI(page), m_pageUIClient.clientInfo);
+    return m_client.menuBarIsVisible(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::setMenuBarIsVisible(WebPageProxy* page, bool visible)
 {
-    if (!m_pageUIClient.setMenuBarIsVisible)
+    if (!m_client.setMenuBarIsVisible)
         return;
-    m_pageUIClient.setMenuBarIsVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+    m_client.setMenuBarIsVisible(toAPI(page), visible, m_client.clientInfo);
 }
 
 bool WebUIClient::statusBarIsVisible(WebPageProxy* page)
 {
-    if (!m_pageUIClient.statusBarIsVisible)
+    if (!m_client.statusBarIsVisible)
         return true;
-    return m_pageUIClient.statusBarIsVisible(toAPI(page), m_pageUIClient.clientInfo);
+    return m_client.statusBarIsVisible(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::setStatusBarIsVisible(WebPageProxy* page, bool visible)
 {
-    if (!m_pageUIClient.setStatusBarIsVisible)
+    if (!m_client.setStatusBarIsVisible)
         return;
-    m_pageUIClient.setStatusBarIsVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+    m_client.setStatusBarIsVisible(toAPI(page), visible, m_client.clientInfo);
 }
 
 bool WebUIClient::isResizable(WebPageProxy* page)
 {
-    if (!m_pageUIClient.isResizable)
+    if (!m_client.isResizable)
         return true;
-    return m_pageUIClient.isResizable(toAPI(page), m_pageUIClient.clientInfo);
+    return m_client.isResizable(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::setIsResizable(WebPageProxy* page, bool resizable)
 {
-    if (!m_pageUIClient.setIsResizable)
+    if (!m_client.setIsResizable)
         return;
-    m_pageUIClient.setIsResizable(toAPI(page), resizable, m_pageUIClient.clientInfo);
+    m_client.setIsResizable(toAPI(page), resizable, m_client.clientInfo);
 }
 
 void WebUIClient::setWindowFrame(WebPageProxy* page, const FloatRect& frame)
 {
-    if (!m_pageUIClient.setWindowFrame)
+    if (!m_client.setWindowFrame)
         return;
 
-    m_pageUIClient.setWindowFrame(toAPI(page), toAPI(frame), m_pageUIClient.clientInfo);
+    m_client.setWindowFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
 
 FloatRect WebUIClient::windowFrame(WebPageProxy* page)
 {
-    if (!m_pageUIClient.getWindowFrame)
+    if (!m_client.getWindowFrame)
         return FloatRect();
 
-    return toImpl(m_pageUIClient.getWindowFrame(toAPI(page), m_pageUIClient.clientInfo));
+    return toImpl(m_client.getWindowFrame(toAPI(page), m_client.clientInfo));
 }
 
 bool WebUIClient::canRunBeforeUnloadConfirmPanel()
 {
-    return m_pageUIClient.runBeforeUnloadConfirmPanel;
+    return m_client.runBeforeUnloadConfirmPanel;
 }
 
 bool WebUIClient::runBeforeUnloadConfirmPanel(WebPageProxy* page, const String& message, WebFrameProxy* frame)
 {
-    if (!m_pageUIClient.runBeforeUnloadConfirmPanel)
+    if (!m_client.runBeforeUnloadConfirmPanel)
         return true;
 
-    return m_pageUIClient.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
+    return m_client.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
 }
 
 void WebUIClient::didDraw(WebPageProxy* page)
 {
-    if (!m_pageUIClient.didDraw)
+    if (!m_client.didDraw)
         return;
 
-    m_pageUIClient.didDraw(toAPI(page), m_pageUIClient.clientInfo);
+    m_client.didDraw(toAPI(page), m_client.clientInfo);
 }
 
 void WebUIClient::pageDidScroll(WebPageProxy* page)
 {
-    if (!m_pageUIClient.pageDidScroll)
+    if (!m_client.pageDidScroll)
         return;
 
-    m_pageUIClient.pageDidScroll(toAPI(page), m_pageUIClient.clientInfo);
+    m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
 }
 
 } // namespace WebKit

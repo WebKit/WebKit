@@ -26,6 +26,7 @@
 #ifndef InjectedBundlePageEditorClient_h
 #define InjectedBundlePageEditorClient_h
 
+#include "APIClient.h"
 #include "WKBundlePage.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
@@ -42,11 +43,8 @@ namespace WebKit {
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageEditorClient {
+class InjectedBundlePageEditorClient : public APIClient<WKBundlePageEditorClient> {
 public:
-    InjectedBundlePageEditorClient();
-    void initialize(WKBundlePageEditorClient*);
-
     bool shouldBeginEditing(WebPage*, WebCore::Range*);
     bool shouldEndEditing(WebPage*, WebCore::Range*);
     bool shouldInsertNode(WebPage*, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
@@ -58,9 +56,6 @@ public:
     void didEndEditing(WebPage*, StringImpl* notificationName);
     void didChange(WebPage*, StringImpl* notificationName);
     void didChangeSelection(WebPage*, StringImpl* notificationName);
-
-private:
-    WKBundlePageEditorClient m_client;
 };
 
 } // namespace WebKit
