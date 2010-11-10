@@ -1332,6 +1332,36 @@ Length RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const
     return otherStyle->isLeftToRightDirection() ? marginBottom() : marginTop();
 }
 
+void RenderStyle::setMarginStart(Length margin)
+{
+    if (isHorizontalWritingMode()) {
+        if (isLeftToRightDirection())
+            setMarginLeft(margin);
+        else
+            setMarginRight(margin);
+    } else {
+        if (isLeftToRightDirection())
+            setMarginTop(margin);
+        else
+            setMarginBottom(margin);
+    }
+}
+
+void RenderStyle::setMarginEnd(Length margin)
+{
+    if (isHorizontalWritingMode()) {
+        if (isLeftToRightDirection())
+            setMarginRight(margin);
+        else
+            setMarginLeft(margin);
+    } else {
+        if (isLeftToRightDirection())
+            setMarginBottom(margin);
+        else
+            setMarginTop(margin);
+    }
+}
+
 Length RenderStyle::paddingBefore() const
 {
     switch (writingMode()) {

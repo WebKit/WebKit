@@ -229,14 +229,20 @@ caption {
 ul, menu, dir {
     display: block;
     list-style-type: disc;
-    margin: 1__qem 0 1em 0;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     -webkit-padding-start: 40px
 }
 
 ol {
     display: block;
     list-style-type: decimal;
-    margin: 1__qem 0 1em 0;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     -webkit-padding-start: 40px
 }
 
@@ -259,7 +265,10 @@ dd {
 
 dl {
     display: block;
-    margin: 1__qem 0 1em 0
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
 }
 
 dt {
@@ -267,8 +276,8 @@ dt {
 }
 
 ol ul, ul ol, ul ul, ol ol {
-    margin-top: 0;
-    margin-bottom: 0
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0
 }
 
 /* form elements */

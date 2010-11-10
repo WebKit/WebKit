@@ -969,6 +969,8 @@ public:
     void setMarginBottom(Length v) { SET_VAR(surround, margin.m_bottom, v) }
     void setMarginLeft(Length v) { SET_VAR(surround, margin.m_left, v) }
     void setMarginRight(Length v) { SET_VAR(surround, margin.m_right, v) }
+    void setMarginStart(Length);
+    void setMarginEnd(Length);
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)) }
     void setPaddingBox(const LengthBox& b) { SET_VAR(surround, padding, b) }

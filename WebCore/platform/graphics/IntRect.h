@@ -143,6 +143,8 @@ public:
     void inflate(int d) { inflateX(d); inflateY(d); }
     void scale(float s);
 
+    IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }
+
 #if PLATFORM(WX)
     IntRect(const wxRect&);
     operator wxRect() const;
