@@ -69,12 +69,30 @@ bool Extensions3DOpenGL::supports(const String& name)
             m_availableExtensions.add(availableExtensions[i]);
         m_initializedAvailableExtensions = true;
     }
+    
+    // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
+    // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample
+    if (name == "GL_ANGLE_framebuffer_blit")
+        return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
+    if (name == "GL_ANGLE_framebuffer_multisample")
+        return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
+        
     return m_availableExtensions.contains(name);
 }
 
 int Extensions3DOpenGL::getGraphicsResetStatusARB()
 {
     return GraphicsContext3D::NO_ERROR;
+}
+
+void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+{
+    ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+}
+
+void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+{
+    ::glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
 }
 
 } // namespace WebCore

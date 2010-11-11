@@ -118,18 +118,8 @@ void DrawingBuffer::publishToPlatformLayer()
 }
 #endif
 
-void DrawingBuffer::reset(const IntSize& newSize)
+void DrawingBuffer::didReset()
 {
-    if (!m_context)
-        return;
-        
-    if (m_size == newSize)
-        return;
-    m_size = newSize;
-
-    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_internal->offscreenColorTexture);
-    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_size.width(), m_size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
-
 #if USE(ACCELERATED_COMPOSITING)
     if (m_internal->platformLayer)
         m_internal->platformLayer->setTextureChanged();
@@ -145,7 +135,7 @@ PlatformLayer* DrawingBuffer::platformLayer()
 }
 #endif
 
-unsigned DrawingBuffer::getRenderingResultsAsTexture()
+Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
     return m_internal->offscreenColorTexture;
 }
