@@ -37,7 +37,7 @@ WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse
     return toAPI(response.release().releaseRef());
 }
 
-NSURLResponse* WKURLResponseCopyNSURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)
+NSURLResponse* WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)
 {
     return [toImpl(urlResponse)->platformResponse() copy];
 }

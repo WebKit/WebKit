@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Remove an unneeded CFAllocatorRef parameter.
+
+        * Shared/API/c/mac/WKURLResponseNS.h:
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        (WKURLResponseCopyNSURLResponse):
+
+2010-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add and implement WKDownloadCopyRequest
         https://bugs.webkit.org/show_bug.cgi?id=49393
 

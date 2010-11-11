@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 WK_EXPORT WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse);
-WK_EXPORT NSURLResponse* WKURLResponseCopyNSURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse);
+WK_EXPORT NSURLResponse* WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse);
 
 #ifdef __cplusplus
 }
