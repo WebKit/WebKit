@@ -92,7 +92,7 @@ void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, lon
 
 void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    ::glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
+    ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
 }
 
 } // namespace WebCore
