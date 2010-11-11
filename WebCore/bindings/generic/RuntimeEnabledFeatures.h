@@ -124,6 +124,8 @@ public:
     static bool ontouchmoveEnabled() { return isTouchEnabled; }
     static bool ontouchendEnabled() { return isTouchEnabled; }
     static bool ontouchcancelEnabled() { return isTouchEnabled; }
+    static bool createTouchEnabled() { return isTouchEnabled; }
+    static bool createTouchListEnabled() { return isTouchEnabled; }
 #endif
 
     static void setDeviceMotionEnabled(bool isEnabled) { isDeviceMotionEnabled = isEnabled; }

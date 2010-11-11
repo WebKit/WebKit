@@ -325,15 +325,15 @@ module core {
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-        [ReturnsNew] Touch createTouch(in DOMWindow window,
-                                       in EventTarget target,
-                                       in long identifier,
-                                       in long pageX,
-                                       in long pageY,
-                                       in long ScreenX,
-                                       in long screenY)
+        [ReturnsNew, EnabledAtRuntime] Touch createTouch(in DOMWindow window,
+                                                         in EventTarget target,
+                                                         in long identifier,
+                                                         in long pageX,
+                                                         in long pageY,
+                                                         in long ScreenX,
+                                                         in long screenY)
             raises (DOMException);
-        [ReturnsNew] TouchList createTouchList()
+        [ReturnsNew, EnabledAtRuntime] TouchList createTouchList()
             raises (DOMException);
 #endif
 
