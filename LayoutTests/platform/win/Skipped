@@ -377,6 +377,9 @@ fast/workers/storage/change-version-handle-reuse-sync.html
 # Sometimes fails http://webkit.org/b/49182
 animations/stop-animation-on-suspend.html
 
+# Crashing in AccessibilityUIElement::parentElement http://webkit.org/b/49379
+accessibility/iframe-bastardization.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
