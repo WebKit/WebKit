@@ -5102,16 +5102,6 @@ canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.imageData.put.wrongtype.html
 canvas/philip/tests/2d.pattern.image.incomplete.empty.html
 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
-canvas/philip/tests/security.drawImage.canvas.html
-canvas/philip/tests/security.drawImage.image.html
-canvas/philip/tests/security.pattern.canvas.fillStyle.html
-canvas/philip/tests/security.pattern.canvas.strokeStyle.html
-canvas/philip/tests/security.reset.html
-canvas/philip/tests/security.pattern.canvas.timing.html
-canvas/philip/tests/security.pattern.create.html
-canvas/philip/tests/security.pattern.cross.html
-canvas/philip/tests/security.pattern.image.fillStyle.html
-canvas/philip/tests/security.pattern.image.strokeStyle.html
 
 # ============================================================================= #
 # failing transforms tests
