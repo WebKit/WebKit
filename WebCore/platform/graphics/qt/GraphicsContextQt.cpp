@@ -220,8 +220,11 @@ public:
 #endif
     }
 
+    void takeOwnershipOfPlatformContext() { platformContextIsOwned = true; }
+
 private:
     QPainter* painter;
+    bool platformContextIsOwned;
 };
 
 
@@ -231,6 +234,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
     , solidColor(initialSolidColor)
     , imageInterpolationQuality(InterpolationDefault)
     , painter(p)
+    , platformContextIsOwned(false)
 {
     if (!painter)
         return;
@@ -243,6 +247,13 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
+    if (!platformContextIsOwned)
+        return;
+
+    painter->end();
+    QPaintDevice* device = painter->device();
+    delete painter;
+    delete device;
 }
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* painter)
@@ -1398,6 +1409,11 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality quality)
 InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 {
     return m_data->imageInterpolationQuality;
+}
+
+void GraphicsContext::takeOwnershipOfPlatformContext()
+{
+    m_data->takeOwnershipOfPlatformContext();
 }
 
 }

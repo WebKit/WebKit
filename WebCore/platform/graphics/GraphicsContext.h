@@ -395,6 +395,7 @@ namespace WebCore {
         bool inTransparencyLayer() const;
         PlatformPath* currentPath();
         void pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask);
+        void takeOwnershipOfPlatformContext();
         static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op);
 #endif
 

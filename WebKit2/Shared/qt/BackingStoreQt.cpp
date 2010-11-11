@@ -25,28 +25,41 @@
 
 #include "BackingStore.h"
 
-#include "NotImplemented.h"
+#include <QImage>
+#include <QPainter>
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static inline QImage createQImage(void* data, int width, int height)
+{
+    return QImage(reinterpret_cast<uchar*>(data), width, height, width * 4, QImage::Format_RGB32);
+}
+
 PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
 {
-    notImplemented();
-    return 0;
+    QImage* image = new QImage(createQImage(data(), m_size.width(), m_size.height()));
+    GraphicsContext* context = new GraphicsContext(new QPainter(image));
+    context->takeOwnershipOfPlatformContext();
+    return context;
 }
 
 PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
 {
-    notImplemented();
+    // This is CG specific so we should not use it.
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
-void BackingStore::paint(GraphicsContext&, const IntPoint&, const IntRect&)
+void BackingStore::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    notImplemented();
+    QImage image = createQImage(data(), m_size.width(), m_size.height());
+    QPainter* painter = context.platformContext();
+    painter->translate(-srcRect.x(), -srcRect.y());
+    painter->drawImage(dstPoint, image, QRect(srcRect));
+    painter->translate(srcRect.x(), srcRect.y());
 }
-        
+
 } // namespace WebKit

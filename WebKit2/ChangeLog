@@ -1,3 +1,19 @@
+2010-11-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Implement BackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=49377
+
+        * Shared/qt/BackingStoreQt.cpp:
+        (WebKit::createQImage): Added static helper. Creates a QImage
+        from the shared memory buffer.
+        (WebKit::BackingStore::createGraphicsContext):
+        (WebKit::BackingStore::createFlippedGraphicsContext): Leave
+        unimplemented with an ASSERT_NOT_REACHED since this is only
+        needed for the CoreGraphics backend.
+        (WebKit::BackingStore::paint):
+
 2010-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
