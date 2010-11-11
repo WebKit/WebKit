@@ -195,10 +195,14 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
     // Composite operation is specified with globalCompositeOperation.
     // The img parameter can be a <img> or <canvas> element.
     JSValue value = exec->argument(0);
+    if (value.isNull()) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
+    }
     if (!value.isObject())
         return throwTypeError(exec);
+
     JSObject* o = asObject(value);
-    
     ExceptionCode ec = 0;
     if (o->inherits(&JSHTMLImageElement::s_info)) {
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl());
@@ -267,9 +271,9 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
         }
 #endif
     } else
-       return throwTypeError(exec);
-    
-    return jsUndefined();    
+        return throwTypeError(exec);
+
+    return jsUndefined();
 }
 
 JSValue JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec)
