@@ -1,3 +1,11 @@
+2010-11-11  Adam Roben  <aroben@apple.com>
+
+        Build fix after r71816
+
+        * WebProcess/WebPage/WebPage.messages.in: Compile out
+        SetActualVisibleContentRect when ENABLE(TILED_BACKING_STORE) is
+        turned off.
+
 2010-11-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
