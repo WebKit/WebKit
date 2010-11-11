@@ -1439,7 +1439,6 @@ void HTMLMediaElement::playInternal()
     setPlaybackRate(defaultPlaybackRate());
     
     if (m_paused) {
-        invalidateCachedTime();
         m_paused = false;
         scheduleEvent(eventNames().playEvent);
 
@@ -1475,7 +1474,6 @@ void HTMLMediaElement::pauseInternal()
     m_autoplaying = false;
     
     if (!m_paused) {
-        refreshCachedTime();
         m_paused = true;
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
@@ -2120,9 +2118,9 @@ void HTMLMediaElement::updatePlayState()
         return;
 
     if (m_pausedInternal) {
-        refreshCachedTime();
         if (!m_player->paused())
             m_player->pause();
+        refreshCachedTime();
         m_playbackProgressTimer.stop();
         return;
     }
@@ -2148,9 +2146,9 @@ void HTMLMediaElement::updatePlayState()
         m_playing = true;
 
     } else { // Should not be playing right now
-        refreshCachedTime();
         if (!playerPaused)
             m_player->pause();
+        refreshCachedTime();
 
         m_playbackProgressTimer.stop();
         m_playing = false;
