@@ -23764,6 +23764,10 @@
 			Name="loader"
 			>
 			<File
+				RelativePath="..\loader\ ResourceLoadScheduler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CrossOriginAccessControl.cpp"
 				>
 			</File>
@@ -24008,10 +24012,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\ ResourceLoadScheduler.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\SinkDocument.cpp"
 				>
 			</File>
@@ -24227,6 +24227,86 @@
 				Name="cache"
 				>
 				<File
+					RelativePath="..\loader\cache\CachedCSSStyleSheet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedCSSStyleSheet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedFont.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedFont.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedImage.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceClientWalker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceClientWalker.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceHandle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceHandle.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceLoader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceLoader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedScript.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedScript.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedXSLStyleSheet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedXSLStyleSheet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachePolicy.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\MemoryCache.cpp"
 					>
 				</File>
@@ -24234,86 +24314,6 @@
 					RelativePath="..\loader\cache\MemoryCache.h"
 					>
 				</File>
-				<File
-        				RelativePath="..\loader\cache\CachedCSSStyleSheet.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedCSSStyleSheet.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedFont.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedFont.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedImage.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedImage.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResource.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResource.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceClient.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceClientWalker.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceClientWalker.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceHandle.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceHandle.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceLoader.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedResourceLoader.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedScript.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedScript.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedXSLStyleSheet.cpp"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachedXSLStyleSheet.h"
-        				>
-        			</File>
-        			<File
-        				RelativePath="..\loader\cache\CachePolicy.h"
-        				>
-        			</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -26545,6 +26545,46 @@
 							/>
 						</FileConfiguration>
 					</File>
+					<Filter
+						Name="cairo"
+						>
+						<File
+							RelativePath="..\platform\graphics\win\cairo\FontPlatformData.h"
+							>
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Debug_Internal|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Debug_All|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="cg"
@@ -27186,42 +27226,6 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\FontPlatformData.h"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug_Internal|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug_All|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -41991,7 +41995,7 @@
 				RelativePath="..\dom\DOMTimeStamp.h"
 				>
 			</File>
-				<File
+			<File
 				RelativePath="..\dom\DynamicNodeList.cpp"
 				>
 				<FileConfiguration
@@ -45984,7 +45988,7 @@
 				>
 			</File>
 			<File
-			RelativePath="..\editing\CorrectionPanelInfo.h"
+				RelativePath="..\editing\CorrectionPanelInfo.h"
 				>
 			</File>
 			<File
@@ -46340,10 +46344,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\editing\EditingStyle.h"
-				>
-			</File>
-			<File
 				RelativePath="..\editing\EditingStyle.cpp"
 				>
 				<FileConfiguration
@@ -46394,6 +46394,10 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\editing\EditingStyle.h"
+				>
 			</File>
 			<File
 				RelativePath="..\editing\Editor.cpp"
@@ -63968,11 +63972,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorFileSystemAgent.h"
+				RelativePath="..\inspector\InspectorFileSystemAgent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorFileSystemAgent.cpp"
+				RelativePath="..\inspector\InspectorFileSystemAgent.h"
 				>
 			</File>
 			<File

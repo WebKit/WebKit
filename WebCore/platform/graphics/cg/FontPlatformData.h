@@ -97,6 +97,6 @@ private:
     bool m_useGDI;
 };
 
-}
+} // namespace WebCore
 
 #endif

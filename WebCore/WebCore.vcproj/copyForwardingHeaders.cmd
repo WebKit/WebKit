@@ -39,6 +39,7 @@ xcopy /y /d "%ProjectDir%..\platform\graphics\*.h" "%WebKitOutputDir%\include\We
 xcopy /y /d "%ProjectDir%..\platform\graphics\%1\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\transforms\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\win\*.h" "%WebKitOutputDir%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\platform\graphics\win\%1\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\opentype\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\text\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\text\transcoder\*.h" "%WebKitOutputDir%\include\WebCore"
