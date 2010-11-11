@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsLayerCA_h
-#define GraphicsLayerCA_h
+#ifndef GraphicsLayerMac_h
+#define GraphicsLayerMac_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -43,11 +43,11 @@
 
 namespace WebCore {
 
-class GraphicsLayerCA : public GraphicsLayer {
+class GraphicsLayerMac : public GraphicsLayer {
 public:
 
-    GraphicsLayerCA(GraphicsLayerClient*);
-    virtual ~GraphicsLayerCA();
+    GraphicsLayerMac(GraphicsLayerClient*);
+    virtual ~GraphicsLayerMac();
 
     virtual void setName(const String&);
 
@@ -385,4 +385,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // GraphicsLayerCA_h
+#endif // GraphicsLayerMac_h

@@ -27,7 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#import "GraphicsLayerCA.h"
+#import "GraphicsLayerMac.h"
 
 #import "Animation.h"
 #import "BlockExceptions.h"
@@ -90,12 +90,12 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 @end
 
 @interface WebAnimationDelegate : NSObject {
-    WebCore::GraphicsLayerCA* m_graphicsLayer;
+    WebCore::GraphicsLayerMac* m_graphicsLayer;
 }
 
 - (void)animationDidStart:(CAAnimation *)anim;
-- (WebCore::GraphicsLayerCA*)graphicsLayer;
-- (void)setLayer:(WebCore::GraphicsLayerCA*)graphicsLayer;
+- (WebCore::GraphicsLayerMac*)graphicsLayer;
+- (void)setLayer:(WebCore::GraphicsLayerMac*)graphicsLayer;
 
 @end
 
@@ -107,12 +107,12 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
         m_graphicsLayer->animationDidStart(animation);
 }
 
-- (WebCore::GraphicsLayerCA*)graphicsLayer
+- (WebCore::GraphicsLayerMac*)graphicsLayer
 {
     return m_graphicsLayer;
 }
 
-- (void)setLayer:(WebCore::GraphicsLayerCA*)graphicsLayer
+- (void)setLayer:(WebCore::GraphicsLayerMac*)graphicsLayer
 {
     m_graphicsLayer = graphicsLayer;
 }
@@ -342,10 +342,10 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerCA(client);
+    return new GraphicsLayerMac(client);
 }
 
-GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
+GraphicsLayerMac::GraphicsLayerMac(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
@@ -367,11 +367,11 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-GraphicsLayerCA::~GraphicsLayerCA()
+GraphicsLayerMac::~GraphicsLayerMac()
 {
     // We release our references to the CALayers here, but do not actively unparent them,
     // since that will cause a commit and break our batched commit model. The layers will
-    // get released when the rootmost modified GraphicsLayerCA rebuilds its child layers.
+    // get released when the rootmost modified GraphicsLayerMac rebuilds its child layers.
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -395,19 +395,19 @@ GraphicsLayerCA::~GraphicsLayerCA()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GraphicsLayerCA::setName(const String& name)
+void GraphicsLayerMac::setName(const String& name)
 {
     String longName = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer.get(), this) + name;
     GraphicsLayer::setName(longName);
     noteLayerPropertyChanged(NameChanged);
 }
 
-NativeLayer GraphicsLayerCA::nativeLayer() const
+NativeLayer GraphicsLayerMac::nativeLayer() const
 {
     return m_layer.get();
 }
 
-bool GraphicsLayerCA::setChildren(const Vector<GraphicsLayer*>& children)
+bool GraphicsLayerMac::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool childrenChanged = GraphicsLayer::setChildren(children);
     if (childrenChanged)
@@ -416,31 +416,31 @@ bool GraphicsLayerCA::setChildren(const Vector<GraphicsLayer*>& children)
     return childrenChanged;
 }
 
-void GraphicsLayerCA::addChild(GraphicsLayer* childLayer)
+void GraphicsLayerMac::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildAtIndex(GraphicsLayer* childLayer, int index)
+void GraphicsLayerMac::addChildAtIndex(GraphicsLayer* childLayer, int index)
 {
     GraphicsLayer::addChildAtIndex(childLayer, index);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+void GraphicsLayerMac::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(childLayer, sibling);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+void GraphicsLayerMac::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(childLayer, sibling);
     noteSublayersChanged();
 }
 
-bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
+bool GraphicsLayerMac::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
     if (GraphicsLayer::replaceChild(oldChild, newChild)) {
         noteSublayersChanged();
@@ -449,14 +449,14 @@ bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newCh
     return false;
 }
 
-void GraphicsLayerCA::removeFromParent()
+void GraphicsLayerMac::removeFromParent()
 {
     if (m_parent)
-        static_cast<GraphicsLayerCA*>(m_parent)->noteSublayersChanged();
+        static_cast<GraphicsLayerMac*>(m_parent)->noteSublayersChanged();
     GraphicsLayer::removeFromParent();
 }
 
-void GraphicsLayerCA::setMaskLayer(GraphicsLayer* layer)
+void GraphicsLayerMac::setMaskLayer(GraphicsLayer* layer)
 {
     if (layer == m_maskLayer)
         return;
@@ -467,10 +467,10 @@ void GraphicsLayerCA::setMaskLayer(GraphicsLayer* layer)
     propagateLayerChangeToReplicas();
     
     if (m_replicatedLayer)
-        static_cast<GraphicsLayerCA*>(m_replicatedLayer)->propagateLayerChangeToReplicas();
+        static_cast<GraphicsLayerMac*>(m_replicatedLayer)->propagateLayerChangeToReplicas();
 }
 
-void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
+void GraphicsLayerMac::setReplicatedLayer(GraphicsLayer* layer)
 {
     if (layer == m_replicatedLayer)
         return;
@@ -479,7 +479,7 @@ void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
     noteLayerPropertyChanged(ReplicatedLayerChanged);
 }
 
-void GraphicsLayerCA::setReplicatedByLayer(GraphicsLayer* layer)
+void GraphicsLayerMac::setReplicatedByLayer(GraphicsLayer* layer)
 {
     if (layer == m_replicaLayer)
         return;
@@ -489,7 +489,7 @@ void GraphicsLayerCA::setReplicatedByLayer(GraphicsLayer* layer)
     noteLayerPropertyChanged(ReplicatedLayerChanged);
 }
 
-void GraphicsLayerCA::setPosition(const FloatPoint& point)
+void GraphicsLayerMac::setPosition(const FloatPoint& point)
 {
     if (point == m_position)
         return;
@@ -498,7 +498,7 @@ void GraphicsLayerCA::setPosition(const FloatPoint& point)
     noteLayerPropertyChanged(PositionChanged);
 }
 
-void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
+void GraphicsLayerMac::setAnchorPoint(const FloatPoint3D& point)
 {
     if (point == m_anchorPoint)
         return;
@@ -507,7 +507,7 @@ void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
     noteLayerPropertyChanged(AnchorPointChanged);
 }
 
-void GraphicsLayerCA::setSize(const FloatSize& size)
+void GraphicsLayerMac::setSize(const FloatSize& size)
 {
     if (size == m_size)
         return;
@@ -516,7 +516,7 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
     noteLayerPropertyChanged(SizeChanged);
 }
 
-void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
+void GraphicsLayerMac::setTransform(const TransformationMatrix& t)
 {
     if (t == m_transform)
         return;
@@ -525,7 +525,7 @@ void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(TransformChanged);
 }
 
-void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
+void GraphicsLayerMac::setChildrenTransform(const TransformationMatrix& t)
 {
     if (t == m_childrenTransform)
         return;
@@ -534,7 +534,7 @@ void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(ChildrenTransformChanged);
 }
 
-void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, CALayer *fromLayer, CALayer *toLayer)
+void GraphicsLayerMac::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, CALayer *fromLayer, CALayer *toLayer)
 {
     NSString *animationID = animationIdentifier;
     CAAnimation *anim = [fromLayer animationForKey:animationID];
@@ -555,7 +555,7 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
     }
 }
 
-void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, CALayer *fromLayer, CALayer *toLayer)
+void GraphicsLayerMac::moveOrCopyAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, CALayer *fromLayer, CALayer *toLayer)
 {
     // Look for running animations affecting this property.
     AnimationsMap::const_iterator end = m_runningAnimations.end();
@@ -570,7 +570,7 @@ void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, Anim
     }
 }
 
-void GraphicsLayerCA::setPreserves3D(bool preserves3D)
+void GraphicsLayerMac::setPreserves3D(bool preserves3D)
 {
     if (preserves3D == m_preserves3D)
         return;
@@ -579,7 +579,7 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
     noteLayerPropertyChanged(Preserves3DChanged);
 }
 
-void GraphicsLayerCA::setMasksToBounds(bool masksToBounds)
+void GraphicsLayerMac::setMasksToBounds(bool masksToBounds)
 {
     if (masksToBounds == m_masksToBounds)
         return;
@@ -588,7 +588,7 @@ void GraphicsLayerCA::setMasksToBounds(bool masksToBounds)
     noteLayerPropertyChanged(MasksToBoundsChanged);
 }
 
-void GraphicsLayerCA::setDrawsContent(bool drawsContent)
+void GraphicsLayerMac::setDrawsContent(bool drawsContent)
 {
     if (drawsContent == m_drawsContent)
         return;
@@ -597,7 +597,7 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
     noteLayerPropertyChanged(DrawsContentChanged);
 }
 
-void GraphicsLayerCA::setBackgroundColor(const Color& color)
+void GraphicsLayerMac::setBackgroundColor(const Color& color)
 {
     if (m_backgroundColorSet && m_backgroundColor == color)
         return;
@@ -608,7 +608,7 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color)
     noteLayerPropertyChanged(BackgroundColorChanged);
 }
 
-void GraphicsLayerCA::clearBackgroundColor()
+void GraphicsLayerMac::clearBackgroundColor()
 {
     if (!m_backgroundColorSet)
         return;
@@ -618,7 +618,7 @@ void GraphicsLayerCA::clearBackgroundColor()
     noteLayerPropertyChanged(BackgroundColorChanged);
 }
 
-void GraphicsLayerCA::setContentsOpaque(bool opaque)
+void GraphicsLayerMac::setContentsOpaque(bool opaque)
 {
     if (m_contentsOpaque == opaque)
         return;
@@ -627,7 +627,7 @@ void GraphicsLayerCA::setContentsOpaque(bool opaque)
     noteLayerPropertyChanged(ContentsOpaqueChanged);
 }
 
-void GraphicsLayerCA::setBackfaceVisibility(bool visible)
+void GraphicsLayerMac::setBackfaceVisibility(bool visible)
 {
     if (m_backfaceVisibility == visible)
         return;
@@ -636,7 +636,7 @@ void GraphicsLayerCA::setBackfaceVisibility(bool visible)
     noteLayerPropertyChanged(BackfaceVisibilityChanged);
 }
 
-void GraphicsLayerCA::setOpacity(float opacity)
+void GraphicsLayerMac::setOpacity(float opacity)
 {
     float clampedOpacity = max(0.0f, min(opacity, 1.0f));
 
@@ -647,7 +647,7 @@ void GraphicsLayerCA::setOpacity(float opacity)
     noteLayerPropertyChanged(OpacityChanged);
 }
 
-void GraphicsLayerCA::setNeedsDisplay()
+void GraphicsLayerMac::setNeedsDisplay()
 {
     FloatRect hugeRect(-numeric_limits<float>::max() / 2, -numeric_limits<float>::max() / 2,
                        numeric_limits<float>::max(), numeric_limits<float>::max());
@@ -655,7 +655,7 @@ void GraphicsLayerCA::setNeedsDisplay()
     setNeedsDisplayInRect(hugeRect);
 }
 
-void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& rect)
+void GraphicsLayerMac::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (!drawsContent())
         return;
@@ -675,12 +675,12 @@ void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& rect)
     noteLayerPropertyChanged(DirtyRectsChanged);
 }
 
-void GraphicsLayerCA::setContentsNeedsDisplay()
+void GraphicsLayerMac::setContentsNeedsDisplay()
 {
     noteLayerPropertyChanged(ContentsNeedsDisplay);
 }
 
-void GraphicsLayerCA::setContentsRect(const IntRect& rect)
+void GraphicsLayerMac::setContentsRect(const IntRect& rect)
 {
     if (rect == m_contentsRect)
         return;
@@ -689,7 +689,7 @@ void GraphicsLayerCA::setContentsRect(const IntRect& rect)
     noteLayerPropertyChanged(ContentsRectChanged);
 }
 
-bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
+bool GraphicsLayerMac::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
     ASSERT(!animationName.isEmpty());
 
@@ -720,7 +720,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
     return createdAnimations;
 }
 
-void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOffset)
+void GraphicsLayerMac::pauseAnimation(const String& animationName, double timeOffset)
 {
     if (!animationIsRunning(animationName))
         return;
@@ -737,7 +737,7 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
     noteLayerPropertyChanged(AnimationChanged);
 }
 
-void GraphicsLayerCA::removeAnimation(const String& animationName)
+void GraphicsLayerMac::removeAnimation(const String& animationName)
 {
     if (!animationIsRunning(animationName))
         return;
@@ -746,7 +746,7 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
     noteLayerPropertyChanged(AnimationChanged);
 }
 
-void GraphicsLayerCA::animationDidStart(CAAnimation* caAnimation)
+void GraphicsLayerMac::animationDidStart(CAAnimation* caAnimation)
 {
     bool hadNonZeroBeginTime = [[caAnimation valueForKey:WebKitAnimationBeginTimeSetKey] boolValue];
 
@@ -762,7 +762,7 @@ void GraphicsLayerCA::animationDidStart(CAAnimation* caAnimation)
         m_client->notifyAnimationStarted(this, startTime);
 }
 
-void GraphicsLayerCA::setContentsToImage(Image* image)
+void GraphicsLayerMac::setContentsToImage(Image* image)
 {
     if (image) {
         CGImageRef newImage = image->nativeImageForCurrentFrame();
@@ -799,7 +799,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
     noteLayerPropertyChanged(ContentsImageChanged);
 }
 
-void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
+void GraphicsLayerMac::setContentsToMedia(PlatformLayer* mediaLayer)
 {
     if (mediaLayer == m_contentsLayer)
         return;
@@ -811,7 +811,7 @@ void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
     noteLayerPropertyChanged(ContentsMediaLayerChanged);
 }
 
-void GraphicsLayerCA::didDisplay(PlatformLayer* layer)
+void GraphicsLayerMac::didDisplay(PlatformLayer* layer)
 {
     CALayer* sourceLayer;
     LayerMap* layerCloneMap;
@@ -840,41 +840,41 @@ void GraphicsLayerCA::didDisplay(PlatformLayer* layer)
     }
 }
 
-void GraphicsLayerCA::syncCompositingState()
+void GraphicsLayerMac::syncCompositingState()
 {
     recursiveCommitChanges();
 }
 
-void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
+void GraphicsLayerMac::syncCompositingStateForThisLayerOnly()
 {
     commitLayerChangesBeforeSublayers();
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::recursiveCommitChanges()
+void GraphicsLayerMac::recursiveCommitChanges()
 {
     commitLayerChangesBeforeSublayers();
 
     if (m_maskLayer)
-        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesBeforeSublayers();
+        static_cast<GraphicsLayerMac*>(m_maskLayer)->commitLayerChangesBeforeSublayers();
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
+        GraphicsLayerMac* curChild = static_cast<GraphicsLayerMac*>(childLayers[i]);
         curChild->recursiveCommitChanges();
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges();
+        static_cast<GraphicsLayerMac*>(m_replicaLayer)->recursiveCommitChanges();
 
     if (m_maskLayer)
-        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
+        static_cast<GraphicsLayerMac*>(m_maskLayer)->commitLayerChangesAfterSublayers();
 
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
+void GraphicsLayerMac::commitLayerChangesBeforeSublayers()
 {
     if (!m_uncommittedChanges)
         return;
@@ -951,7 +951,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GraphicsLayerCA::commitLayerChangesAfterSublayers()
+void GraphicsLayerMac::commitLayerChangesAfterSublayers()
 {
     if (!m_uncommittedChanges)
         return;
@@ -965,7 +965,7 @@ void GraphicsLayerCA::commitLayerChangesAfterSublayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GraphicsLayerCA::updateLayerNames()
+void GraphicsLayerMac::updateLayerNames()
 {
     switch (structuralLayerPurpose()) {
         case StructuralLayerForPreserves3D:
@@ -980,7 +980,7 @@ void GraphicsLayerCA::updateLayerNames()
     [m_layer.get() setName:name()];
 }
 
-void GraphicsLayerCA::updateSublayerList()
+void GraphicsLayerMac::updateSublayerList()
 {
     NSMutableArray* newSublayers = nil;
 
@@ -992,7 +992,7 @@ void GraphicsLayerCA::updateSublayerList()
         if (m_structuralLayer) {
             // Add the replica layer first.
             if (m_replicaLayer)
-                [newSublayers addObject:static_cast<GraphicsLayerCA*>(m_replicaLayer)->primaryLayer()];
+                [newSublayers addObject:static_cast<GraphicsLayerMac*>(m_replicaLayer)->primaryLayer()];
             // Add the primary layer. Even if we have negative z-order children, the primary layer always comes behind.
             [newSublayers addObject:m_layer.get()];
         } else if (m_contentsLayer) {
@@ -1004,7 +1004,7 @@ void GraphicsLayerCA::updateSublayerList()
         
         size_t numChildren = childLayers.size();
         for (size_t i = 0; i < numChildren; ++i) {
-            GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
+            GraphicsLayerMac* curChild = static_cast<GraphicsLayerMac*>(childLayers[i]);
             CALayer *childLayer = curChild->layerForSuperlayer();
             [newSublayers addObject:childLayer];
         }
@@ -1027,7 +1027,7 @@ void GraphicsLayerCA::updateSublayerList()
     [newSublayers release];
 }
 
-void GraphicsLayerCA::updateLayerPosition()
+void GraphicsLayerMac::updateLayerPosition()
 {
     FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : m_size;
 
@@ -1052,7 +1052,7 @@ void GraphicsLayerCA::updateLayerPosition()
     }
 }
 
-void GraphicsLayerCA::updateLayerSize()
+void GraphicsLayerMac::updateLayerSize()
 {
     CGRect rect = CGRectMake(0, 0, m_size.width(), m_size.height());
     if (m_structuralLayer) {
@@ -1101,7 +1101,7 @@ void GraphicsLayerCA::updateLayerSize()
     updateLayerPosition();
 }
 
-void GraphicsLayerCA::updateAnchorPoint()
+void GraphicsLayerMac::updateAnchorPoint()
 {
     [primaryLayer() setAnchorPoint:FloatPoint(m_anchorPoint.x(), m_anchorPoint.y())];
 #if HAVE_MODERN_QUARTZCORE
@@ -1122,7 +1122,7 @@ void GraphicsLayerCA::updateAnchorPoint()
     updateLayerPosition();
 }
 
-void GraphicsLayerCA::updateTransform()
+void GraphicsLayerMac::updateTransform()
 {
     CATransform3D transform;
     copyTransform(transform, m_transform);
@@ -1142,7 +1142,7 @@ void GraphicsLayerCA::updateTransform()
     }
 }
 
-void GraphicsLayerCA::updateChildrenTransform()
+void GraphicsLayerMac::updateChildrenTransform()
 {
     CATransform3D transform;
     copyTransform(transform, m_childrenTransform);
@@ -1157,7 +1157,7 @@ void GraphicsLayerCA::updateChildrenTransform()
     }
 }
 
-void GraphicsLayerCA::updateMasksToBounds()
+void GraphicsLayerMac::updateMasksToBounds()
 {
     [m_layer.get() setMasksToBounds:m_masksToBounds];
 
@@ -1172,7 +1172,7 @@ void GraphicsLayerCA::updateMasksToBounds()
     updateDebugIndicators();
 }
 
-void GraphicsLayerCA::updateContentsOpaque()
+void GraphicsLayerMac::updateContentsOpaque()
 {
     [m_layer.get() setOpaque:m_contentsOpaque];
 
@@ -1185,7 +1185,7 @@ void GraphicsLayerCA::updateContentsOpaque()
     }
 }
 
-void GraphicsLayerCA::updateBackfaceVisibility()
+void GraphicsLayerMac::updateBackfaceVisibility()
 {
     if (m_structuralLayer && structuralLayerPurpose() == StructuralLayerForReplicaFlattening) {
         [m_structuralLayer.get() setDoubleSided:m_backfaceVisibility];
@@ -1210,12 +1210,12 @@ void GraphicsLayerCA::updateBackfaceVisibility()
     }
 }
 
-void GraphicsLayerCA::updateStructuralLayer()
+void GraphicsLayerMac::updateStructuralLayer()
 {
     ensureStructuralLayer(structuralLayerPurpose());
 }
 
-void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
+void GraphicsLayerMac::ensureStructuralLayer(StructuralLayerPurpose purpose)
 {
     if (purpose == NoStructuralLayer) {
         if (m_structuralLayer) {
@@ -1300,7 +1300,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     updateOpacityOnLayer();
 }
 
-GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose() const
+GraphicsLayerMac::StructuralLayerPurpose GraphicsLayerMac::structuralLayerPurpose() const
 {
     if (preserves3D())
         return StructuralLayerForPreserves3D;
@@ -1311,7 +1311,7 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
     return NoStructuralLayer;
 }
 
-void GraphicsLayerCA::updateLayerDrawsContent()
+void GraphicsLayerMac::updateLayerDrawsContent()
 {
     bool needTiledLayer = requiresTiledLayer(m_size);
     if (needTiledLayer != m_usingTiledLayer)
@@ -1325,7 +1325,7 @@ void GraphicsLayerCA::updateLayerDrawsContent()
     updateDebugIndicators();
 }
 
-void GraphicsLayerCA::updateLayerBackgroundColor()
+void GraphicsLayerMac::updateLayerBackgroundColor()
 {
     if (!m_contentsLayer)
         return;
@@ -1337,7 +1337,7 @@ void GraphicsLayerCA::updateLayerBackgroundColor()
         clearLayerBackgroundColor(m_contentsLayer.get());
 }
 
-void GraphicsLayerCA::updateContentsImage()
+void GraphicsLayerMac::updateContentsImage()
 {
     if (m_pendingContentsImage) {
         if (!m_contentsLayer.get()) {
@@ -1372,7 +1372,7 @@ void GraphicsLayerCA::updateContentsImage()
     }
 }
 
-void GraphicsLayerCA::updateContentsMediaLayer()
+void GraphicsLayerMac::updateContentsMediaLayer()
 {
     // Video layer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {
@@ -1381,7 +1381,7 @@ void GraphicsLayerCA::updateContentsMediaLayer()
     }
 }
 
-void GraphicsLayerCA::updateContentsCanvasLayer()
+void GraphicsLayerMac::updateContentsCanvasLayer()
 {
     // CanvasLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {
@@ -1391,7 +1391,7 @@ void GraphicsLayerCA::updateContentsCanvasLayer()
     }
 }
 
-void GraphicsLayerCA::updateContentsRect()
+void GraphicsLayerMac::updateContentsRect()
 {
     if (!m_contentsLayer)
         return;
@@ -1416,12 +1416,12 @@ void GraphicsLayerCA::updateContentsRect()
     }
 }
 
-void GraphicsLayerCA::updateMaskLayer()
+void GraphicsLayerMac::updateMaskLayer()
 {
     CALayer *maskCALayer = m_maskLayer ? m_maskLayer->platformLayer() : 0;
     [m_layer.get() setMask:maskCALayer];
 
-    LayerMap* maskLayerCloneMap = m_maskLayer ? static_cast<GraphicsLayerCA*>(m_maskLayer)->primaryLayerClones() : 0;
+    LayerMap* maskLayerCloneMap = m_maskLayer ? static_cast<GraphicsLayerMac*>(m_maskLayer)->primaryLayerClones() : 0;
     
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
@@ -1434,7 +1434,7 @@ void GraphicsLayerCA::updateMaskLayer()
     }
 }
 
-void GraphicsLayerCA::updateReplicatedLayers()
+void GraphicsLayerMac::updateReplicatedLayers()
 {
     // Clone the descendants of the replicated layer, and parent under us.
     ReplicaState replicaState(ReplicaState::ReplicaBranch);
@@ -1450,7 +1450,7 @@ void GraphicsLayerCA::updateReplicatedLayers()
 }
 
 // For now, this assumes that layers only ever have one replica, so replicaIndices contains only 0 and 1.
-GraphicsLayerCA::CloneID GraphicsLayerCA::ReplicaState::cloneID() const
+GraphicsLayerMac::CloneID GraphicsLayerMac::ReplicaState::cloneID() const
 {
     size_t depth = m_replicaBranches.size();
 
@@ -1470,13 +1470,13 @@ GraphicsLayerCA::CloneID GraphicsLayerCA::ReplicaState::cloneID() const
     return String::adopt(result);
 }
 
-CALayer *GraphicsLayerCA::replicatedLayerRoot(ReplicaState& replicaState)
+CALayer *GraphicsLayerMac::replicatedLayerRoot(ReplicaState& replicaState)
 {
     // Limit replica nesting, to avoid 2^N explosion of replica layers.
     if (!m_replicatedLayer || replicaState.replicaDepth() == ReplicaState::maxReplicaDepth)
         return nil;
 
-    GraphicsLayerCA* replicatedLayer = static_cast<GraphicsLayerCA*>(m_replicatedLayer);
+    GraphicsLayerMac* replicatedLayer = static_cast<GraphicsLayerMac*>(m_replicatedLayer);
     
     CALayer *clonedLayerRoot = replicatedLayer->fetchCloneLayers(this, replicaState, RootCloneLevel);
     FloatPoint cloneRootPosition = replicatedLayer->positionForCloneRootLayer();
@@ -1488,7 +1488,7 @@ CALayer *GraphicsLayerCA::replicatedLayerRoot(ReplicaState& replicaState)
     return clonedLayerRoot;
 }
 
-void GraphicsLayerCA::updateLayerAnimations()
+void GraphicsLayerMac::updateLayerAnimations()
 {
     if (m_animationsToProcess.size()) {
         AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
@@ -1540,7 +1540,7 @@ void GraphicsLayerCA::updateLayerAnimations()
     }
 }
 
-void GraphicsLayerCA::setCAAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
+void GraphicsLayerMac::setCAAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
@@ -1582,7 +1582,7 @@ static void bug7311367Workaround(CALayer* transformLayer, const TransformationMa
     [transformLayer setTransform:caTransform];
 }
 
-bool GraphicsLayerCA::removeCAAnimationFromLayer(AnimatedPropertyID property, const String& animationName, int index)
+bool GraphicsLayerMac::removeCAAnimationFromLayer(AnimatedPropertyID property, const String& animationName, int index)
 {
     PlatformLayer* layer = animatedLayer(property);
 
@@ -1627,7 +1627,7 @@ static void copyAnimationProperties(CAPropertyAnimation* from, CAPropertyAnimati
         [to setValue:object forKey:WebKitAnimationBeginTimeSetKey];
 }
 
-void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
+void GraphicsLayerMac::pauseCAAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
@@ -1675,7 +1675,7 @@ void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const
     }
 }
 
-void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
+void GraphicsLayerMac::setContentsToCanvas(PlatformLayer* canvasLayer)
 {
     if (canvasLayer == m_contentsLayer)
         return;
@@ -1690,7 +1690,7 @@ void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
     noteLayerPropertyChanged(ContentsCanvasLayerChanged);
 }
     
-void GraphicsLayerCA::repaintLayerDirtyRects()
+void GraphicsLayerMac::repaintLayerDirtyRects()
 {
     if (!m_dirtyRects.size())
         return;
@@ -1701,13 +1701,13 @@ void GraphicsLayerCA::repaintLayerDirtyRects()
     m_dirtyRects.clear();
 }
 
-void GraphicsLayerCA::updateContentsNeedsDisplay()
+void GraphicsLayerMac::updateContentsNeedsDisplay()
 {
     if (m_contentsLayer)
         [m_contentsLayer.get() setNeedsDisplay];
 }
 
-bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
+bool GraphicsLayerMac::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
     ASSERT(valueList.property() != AnimatedPropertyWebkitTransform);
 
@@ -1740,7 +1740,7 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const IntSize& boxSize)
+bool GraphicsLayerMac::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const IntSize& boxSize)
 {
     ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
 
@@ -1799,21 +1799,21 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return validMatrices;
 }
 
-CABasicAnimation* GraphicsLayerCA::createBasicAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
+CABasicAnimation* GraphicsLayerMac::createBasicAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
 {
     CABasicAnimation* basicAnim = [CABasicAnimation animationWithKeyPath:propertyIdToString(property)];
     setupAnimation(basicAnim, anim, additive);
     return basicAnim;
 }
 
-CAKeyframeAnimation* GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
+CAKeyframeAnimation* GraphicsLayerMac::createKeyframeAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
 {
     CAKeyframeAnimation* keyframeAnim = [CAKeyframeAnimation animationWithKeyPath:propertyIdToString(property)];
     setupAnimation(keyframeAnim, anim, additive);
     return keyframeAnim;
 }
 
-void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const Animation* anim, bool additive)
+void GraphicsLayerMac::setupAnimation(CAPropertyAnimation* propertyAnim, const Animation* anim, bool additive)
 {
     double duration = anim->duration();
     if (duration <= 0)
@@ -1851,7 +1851,7 @@ void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const An
     [propertyAnim setDelegate:m_animationDelegate.get()];
 }
 
-CAMediaTimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
+CAMediaTimingFunction* GraphicsLayerMac::timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
 {
     const TimingFunction* tf = 0;
     if (animValue->timingFunction())
@@ -1862,7 +1862,7 @@ CAMediaTimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const An
     return getCAMediaTimingFunction(tf ? tf : CubicBezierTimingFunction::create().get());
 }
 
-bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, CABasicAnimation* basicAnim)
+bool GraphicsLayerMac::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, CABasicAnimation* basicAnim)
 {
     id fromValue = nil;
     id toValue = nil;
@@ -1891,7 +1891,7 @@ bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, const Animation* anim, CAKeyframeAnimation* keyframeAnim)
+bool GraphicsLayerMac::setAnimationKeyframes(const KeyframeValueList& valueList, const Animation* anim, CAKeyframeAnimation* keyframeAnim)
 {
     RetainPtr<NSMutableArray> keyTimes(AdoptNS, [[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray> values(AdoptNS, [[NSMutableArray alloc] init]);
@@ -1926,7 +1926,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, CABasicAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOp, bool isMatrixAnimation, const IntSize& boxSize)
+bool GraphicsLayerMac::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, CABasicAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOp, bool isMatrixAnimation, const IntSize& boxSize)
 {
     id fromValue;
     id toValue;
@@ -1971,7 +1971,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, CAKeyframeAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
+bool GraphicsLayerMac::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, CAKeyframeAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
 {
     RetainPtr<NSMutableArray> keyTimes(AdoptNS, [[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray> values(AdoptNS, [[NSMutableArray alloc] init]);
@@ -2015,7 +2015,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
-void GraphicsLayerCA::suspendAnimations(double time)
+void GraphicsLayerMac::suspendAnimations(double time)
 {
     double t = currentTimeToMediaTime(time ? time : currentTime());
     [primaryLayer() setSpeed:0];
@@ -2032,7 +2032,7 @@ void GraphicsLayerCA::suspendAnimations(double time)
     }
 }
 
-void GraphicsLayerCA::resumeAnimations()
+void GraphicsLayerMac::resumeAnimations()
 {
     [primaryLayer() setSpeed:1];
     [primaryLayer() setTimeOffset:0];
@@ -2048,32 +2048,32 @@ void GraphicsLayerCA::resumeAnimations()
     }
 }
 
-CALayer* GraphicsLayerCA::hostLayerForSublayers() const
+CALayer* GraphicsLayerMac::hostLayerForSublayers() const
 {
     return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); 
 }
 
-CALayer* GraphicsLayerCA::layerForSuperlayer() const
+CALayer* GraphicsLayerMac::layerForSuperlayer() const
 {
     return m_structuralLayer ? m_structuralLayer.get() : m_layer.get();
 }
 
-CALayer* GraphicsLayerCA::animatedLayer(AnimatedPropertyID property) const
+CALayer* GraphicsLayerMac::animatedLayer(AnimatedPropertyID property) const
 {
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayer.get() : primaryLayer();
 }
 
-GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedPropertyID property) const
+GraphicsLayerMac::LayerMap* GraphicsLayerMac::animatedLayerClones(AnimatedPropertyID property) const
 {
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayerClones.get() : primaryLayerClones();
 }
 
-PlatformLayer* GraphicsLayerCA::platformLayer() const
+PlatformLayer* GraphicsLayerMac::platformLayer() const
 {
     return primaryLayer();
 }
 
-void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
+void GraphicsLayerMac::setDebugBackgroundColor(const Color& color)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -2085,7 +2085,7 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
+void GraphicsLayerMac::setDebugBorder(const Color& color, float borderWidth)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -2100,7 +2100,7 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatSize GraphicsLayerCA::constrainedSize() const
+FloatSize GraphicsLayerMac::constrainedSize() const
 {
     float tileColumns = ceilf(m_size.width() / cTiledLayerTileSize);
     float tileRows = ceilf(m_size.height() / cTiledLayerTileSize);
@@ -2123,7 +2123,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
     return constrainedSize;
 }
 
-bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
+bool GraphicsLayerMac::requiresTiledLayer(const FloatSize& size) const
 {
     if (!m_drawsContent)
         return false;
@@ -2132,7 +2132,7 @@ bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
     return size.width() > cMaxPixelDimension || size.height() > cMaxPixelDimension;
 }
 
-void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
+void GraphicsLayerMac::swapFromOrToTiledLayer(bool useTiledLayer)
 {
     if (useTiledLayer == m_usingTiledLayer)
         return;
@@ -2198,7 +2198,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     updateDebugIndicators();
 }
 
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
+GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerMac::defaultContentsOrientation() const
 {
 #if !HAVE_MODERN_QUARTZCORE
     // Older QuartzCore does not support -geometryFlipped, so we manually flip the root
@@ -2210,7 +2210,7 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContent
 #endif
 }
 
-void GraphicsLayerCA::updateContentsTransform()
+void GraphicsLayerMac::updateContentsTransform()
 {
 #if !HAVE_MODERN_QUARTZCORE
     if (contentsOrientation() == CompositingCoordinatesBottomUp) {
@@ -2221,7 +2221,7 @@ void GraphicsLayerCA::updateContentsTransform()
 #endif
 }
 
-void GraphicsLayerCA::setupContentsLayer(CALayer* contentsLayer)
+void GraphicsLayerMac::setupContentsLayer(CALayer* contentsLayer)
 {
     // Turn off implicit animations on the inner layer.
     [contentsLayer setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
@@ -2244,7 +2244,7 @@ void GraphicsLayerCA::setupContentsLayer(CALayer* contentsLayer)
     }
 }
 
-CALayer *GraphicsLayerCA::findOrMakeClone(CloneID cloneID, CALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
+CALayer *GraphicsLayerMac::findOrMakeClone(CloneID cloneID, CALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
 {
     if (!sourceLayer)
         return 0;
@@ -2269,7 +2269,7 @@ CALayer *GraphicsLayerCA::findOrMakeClone(CloneID cloneID, CALayer *sourceLayer,
     return resultLayer;
 }   
 
-void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel cloneLevel)
+void GraphicsLayerMac::ensureCloneLayers(CloneID cloneID, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel cloneLevel)
 {
     structuralLayer = nil;
     contentsLayer = nil;
@@ -2288,14 +2288,14 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, CALayer *& primaryLayer
     contentsLayer = findOrMakeClone(cloneID, m_contentsLayer.get(), m_contentsLayerClones.get(), cloneLevel);
 }
 
-void GraphicsLayerCA::removeCloneLayers()
+void GraphicsLayerMac::removeCloneLayers()
 {
     m_layerClones = 0;
     m_structuralLayerClones = 0;
     m_contentsLayerClones = 0;
 }
 
-FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
+FloatPoint GraphicsLayerMac::positionForCloneRootLayer() const
 {
     // This can get called during a sync when we've just removed the m_replicaLayer.
     if (!m_replicaLayer)
@@ -2306,19 +2306,19 @@ FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
                       replicaPosition.y() + m_anchorPoint.y() * m_size.height());
 }
 
-void GraphicsLayerCA::propagateLayerChangeToReplicas()
+void GraphicsLayerMac::propagateLayerChangeToReplicas()
 {
     for (GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
-        GraphicsLayerCA* currLayerCA = static_cast<GraphicsLayerCA*>(currLayer);
+        GraphicsLayerMac* currLayerCA = static_cast<GraphicsLayerMac*>(currLayer);
         if (!currLayerCA->hasCloneLayers())
             break;
 
         if (currLayerCA->replicaLayer())
-            static_cast<GraphicsLayerCA*>(currLayerCA->replicaLayer())->noteLayerPropertyChanged(ReplicatedLayerChanged);
+            static_cast<GraphicsLayerMac*>(currLayerCA->replicaLayer())->noteLayerPropertyChanged(ReplicatedLayerChanged);
     }
 }
 
-CALayer *GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState& replicaState, CloneLevel cloneLevel)
+CALayer *GraphicsLayerMac::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState& replicaState, CloneLevel cloneLevel)
 {
     CALayer *primaryLayer;
     CALayer *structuralLayer;
@@ -2326,7 +2326,7 @@ CALayer *GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaSt
     ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, cloneLevel);
 
     if (m_maskLayer) {
-        CALayer *maskClone = static_cast<GraphicsLayerCA*>(m_maskLayer)->fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
+        CALayer *maskClone = static_cast<GraphicsLayerMac*>(m_maskLayer)->fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
         [primaryLayer setMask:maskClone];
     }
 
@@ -2352,7 +2352,7 @@ CALayer *GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaSt
     if (m_replicaLayer && m_replicaLayer != replicaRoot) {
         // We have nested replicas. Ask the replica layer for a clone of its contents.
         replicaState.setBranchType(ReplicaState::ReplicaBranch);
-        replicaLayer = static_cast<GraphicsLayerCA*>(m_replicaLayer)->fetchCloneLayers(replicaRoot, replicaState, RootCloneLevel);
+        replicaLayer = static_cast<GraphicsLayerMac*>(m_replicaLayer)->fetchCloneLayers(replicaRoot, replicaState, RootCloneLevel);
         replicaState.setBranchType(ReplicaState::ChildBranch);
     }
     
@@ -2377,7 +2377,7 @@ CALayer *GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaSt
 
         size_t numChildren = childLayers.size();
         for (size_t i = 0; i < numChildren; ++i) {
-            GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
+            GraphicsLayerMac* curChild = static_cast<GraphicsLayerMac*>(childLayers[i]);
 
             CALayer *childLayer = curChild->fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
             if (childLayer)
@@ -2410,7 +2410,7 @@ CALayer *GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaSt
     return result;
 }
 
-CALayer *GraphicsLayerCA::cloneLayer(CALayer *layer, CloneLevel cloneLevel)
+CALayer *GraphicsLayerMac::cloneLayer(CALayer *layer, CloneLevel cloneLevel)
 {
     static Class transformLayerClass = NSClassFromString(@"CATransformLayer");
     CALayer *newLayer = nil;
@@ -2449,7 +2449,7 @@ CALayer *GraphicsLayerCA::cloneLayer(CALayer *layer, CloneLevel cloneLevel)
     return newLayer;
 }
 
-void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
+void GraphicsLayerMac::setOpacityInternal(float accumulatedOpacity)
 {
     LayerMap* layerCloneMap = 0;
     
@@ -2472,7 +2472,7 @@ void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
     }
 }
 
-void GraphicsLayerCA::updateOpacityOnLayer()
+void GraphicsLayerMac::updateOpacityOnLayer()
 {
 #if !HAVE_MODERN_QUARTZCORE
     // Distribute opacity either to our own layer or to our children. We pass in the 
@@ -2495,13 +2495,13 @@ void GraphicsLayerCA::updateOpacityOnLayer()
 #endif
 }
 
-void GraphicsLayerCA::noteSublayersChanged()
+void GraphicsLayerMac::noteSublayersChanged()
 {
     noteLayerPropertyChanged(ChildrenChanged);
     propagateLayerChangeToReplicas();
 }
 
-void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
+void GraphicsLayerMac::noteLayerPropertyChanged(LayerChangeFlags flags)
 {
     if (!m_uncommittedChanges && m_client)
         m_client->notifySyncRequired(this);
