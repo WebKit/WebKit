@@ -1,3 +1,19 @@
+2010-11-11  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        FrameView: Don't clip to visibleContentRect in paintEntireContents mode
+        https://bugs.webkit.org/show_bug.cgi?id=49375
+
+        Use paintEntireContents in combination with tiling, allowing to
+        actually set visibleContentRect to something different from
+        the actual contents size.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2010-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r71733.

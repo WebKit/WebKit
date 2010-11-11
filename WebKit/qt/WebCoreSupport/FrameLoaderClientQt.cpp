@@ -280,6 +280,10 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
                         preferredLayoutSize.isValid(),
                         hScrollbar, hLock,
                         vScrollbar, vLock);
+
+    bool isMainFrame = m_frame == m_frame->page()->mainFrame();
+    if (isMainFrame && page->d->client)
+        m_frame->view()->setPaintsEntireContents(page->d->client->viewResizesToContentsEnabled());
 }
 
 void FrameLoaderClientQt::dispatchDidBecomeFrameset(bool)
