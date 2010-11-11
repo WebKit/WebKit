@@ -1,3 +1,10 @@
+2010-11-11  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        * .: Modified property svn:ignore.
+         - Add WebKitSupportLibrary.zip and WebKitBuild to the root ignore list.
+
 2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Hyatt.
