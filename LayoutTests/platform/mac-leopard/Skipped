@@ -94,6 +94,11 @@ media/video-aspect-ratio.html
 media/video-play-pause-events.html
 media/video-width-height.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=49390
+media/video-played-collapse.html
+media/video-played-ranges-1.html
+media/video-played-reset.html
+
 # Disable spelling tests for autocorrection panel
 platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
