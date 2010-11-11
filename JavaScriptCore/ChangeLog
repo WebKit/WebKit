@@ -1,3 +1,14 @@
+2010-11-11  Dan Horák  <dan@danny.cz>
+
+        Reviewed by Andreas Kling.
+
+        Add support for the s390/s390x architectures, it's big-endian
+        with s390 being 32-bit and s390x being 64-bit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34786
+
+        * wtf/Platform.h:
+
 2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Hyatt.
