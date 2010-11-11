@@ -265,21 +265,28 @@ WebInspector.ElementsTreeOutline.prototype = {
             return;
 
         var contextMenu = new WebInspector.ContextMenu();
-
-        var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
-        var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
-        var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
-        var needSeparator;
-        if (href)
-            needSeparator = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
-        if (tag && listItem.treeElement._populateTagContextMenu) {
-            if (needSeparator)
-                contextMenu.appendSeparator();
-            listItem.treeElement._populateTagContextMenu(contextMenu, event);
-        } else if (textNode && listItem.treeElement._populateTextContextMenu) {
-            if (needSeparator)
-                contextMenu.appendSeparator();
-            listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+        if (this.showInElementsPanelEnabled) {
+            function focusElement()
+            {
+                WebInspector.panels.elements.focusedDOMNode = listItem.treeElement.representedObject;
+            }
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
+        } else {
+            var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
+            var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
+            var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+            var needSeparator;
+            if (href)
+                needSeparator = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
+            if (tag && listItem.treeElement._populateTagContextMenu) {
+                if (needSeparator)
+                    contextMenu.appendSeparator();
+                listItem.treeElement._populateTagContextMenu(contextMenu, event);
+            } else if (textNode && listItem.treeElement._populateTextContextMenu) {
+                if (needSeparator)
+                    contextMenu.appendSeparator();
+                listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+            }
         }
         contextMenu.show(event);
     }
