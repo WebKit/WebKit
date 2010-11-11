@@ -1,3 +1,10 @@
+2010-11-11  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added WKBundlePageOverlay.h to the WebKit2 Target and made it public.
+
 2010-11-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
