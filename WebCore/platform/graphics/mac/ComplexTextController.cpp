@@ -487,7 +487,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     advance.width += m_font.letterSpacing();
 
                 // Handle justification and word-spacing.
-                if (glyph == fontData->spaceGlyph()) {
+                if (treatAsSpace) {
                     // Account for padding. WebCore uses space padding to justify text.
                     // We distribute the specified padding over the available spaces in the run.
                     if (m_padding) {
@@ -503,7 +503,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     }
 
                     // Account for word-spacing.
-                    if (treatAsSpace && characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
+                    if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 }
             }
