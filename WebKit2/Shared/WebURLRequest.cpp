@@ -9,10 +9,12 @@
 
 #include "WebURLRequest.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
-WebURLRequest::WebURLRequest(const WebCore::KURL& url)
-    : m_request(url)
+WebURLRequest::WebURLRequest(const ResourceRequest& request)
+    : m_request(request)
 {
 }
 

@@ -30,6 +30,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 static uint64_t generateDownloadID()
@@ -59,8 +61,10 @@ void DownloadProxy::invalidate()
     m_webContext = 0;
 }
 
-void DownloadProxy::didStart()
+void DownloadProxy::didStart(const ResourceRequest& request)
 {
+    m_request = request;
+
     if (!m_webContext)
         return;
 

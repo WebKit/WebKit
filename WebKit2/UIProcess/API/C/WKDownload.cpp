@@ -27,6 +27,7 @@
 
 #include "DownloadProxy.h"
 #include "WKAPICast.h"
+#include "WebURLRequest.h"
 
 using namespace WebKit;
 
@@ -35,3 +36,7 @@ WKTypeID WKDownloadGetTypeID()
     return toAPI(DownloadProxy::APIType);
 }
 
+WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
+{
+    return toAPI(WebURLRequest::create(toImpl(download)->request()).leakRef());
+}

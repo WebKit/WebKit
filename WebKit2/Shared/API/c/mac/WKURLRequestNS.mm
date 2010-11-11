@@ -37,7 +37,7 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
     return toAPI(request.release().releaseRef());
 }
 
-NSURLRequest* WKURLRequestCopyNSURLRequest(CFAllocatorRef alloc, WKURLRequestRef urlRequest)
+NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
 {
     return [toImpl(urlRequest)->platformRequest() copy];
 }

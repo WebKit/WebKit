@@ -26,6 +26,11 @@
 #ifndef Download_h
 #define Download_h
 
+#include "MessageSender.h"
+#include <WebCore/ResourceRequest.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
+
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #ifdef __OBJC__
@@ -36,11 +41,6 @@ class NSURLDownload;
 class WKDownloadAsDelegate;
 #endif
 #endif
-
-#include "MessageSender.h"
-#include <WebCore/ResourceRequest.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

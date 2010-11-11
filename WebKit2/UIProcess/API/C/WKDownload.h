@@ -38,6 +38,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKDownloadGetTypeID();
 
+WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
+
 #ifdef __cplusplus
 }
 #endif

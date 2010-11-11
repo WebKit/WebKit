@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DownloadProxy {
-    DidStart()
+    DidStart(WebCore::ResourceRequest request)
     DidCreateDestination(WTF::String path)
     DidFinish()
 }

@@ -1,3 +1,39 @@
+2010-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add and implement WKDownloadCopyRequest
+        https://bugs.webkit.org/show_bug.cgi?id=49393
+
+        * Shared/API/c/mac/WKURLRequestNS.h:
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCopyNSURLRequest):
+        Remove unneeded CFAllocator parameter.
+
+        * Shared/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::WebURLRequest):
+        * Shared/WebURLRequest.h:
+        (WebKit::WebURLRequest::create):
+        Change create to take a ResourceRequest instead.
+
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadCopyRequest):
+        Return a copied WKURLRequest.
+
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didStart):
+        Set the request.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::request):
+        Return the request.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didStart):
+        Pass the request along when sending the DidStart message.
+
 2010-11-11  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Anders Carlsson.
