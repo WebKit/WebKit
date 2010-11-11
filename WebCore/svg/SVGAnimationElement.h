@@ -104,6 +104,7 @@ namespace WebCore {
         float calculatePercentFromKeyPoints(float percent) const;
         void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
         float calculatePercentForSpline(float percent, unsigned splineIndex) const;
+        unsigned calculateKeyTimesIndex(float percent) const;
         
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
