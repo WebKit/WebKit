@@ -54,9 +54,10 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
     if (!m_coreTextIndices) {
         m_coreTextIndicesVector.grow(m_glyphCount);
         CTRunGetStringIndices(m_coreTextRun.get(), CFRangeMake(0, 0), m_coreTextIndicesVector.data());
-        if (runRange.location)
+        if (runRange.location) {
             for (unsigned i = 0; i < m_glyphCount; ++i)
                 m_coreTextIndicesVector[i] -= runRange.location;
+        }
         m_coreTextIndices = m_coreTextIndicesVector.data();
     }
 
