@@ -29,6 +29,7 @@
 
 #include "DrawingBuffer.h"
 
+#include "Extensions3D.h"
 #include "WebGLLayer.h"
 
 #import "BlockExceptions.h"
@@ -39,6 +40,11 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_size(size)
     , m_fbo(context->createFramebuffer())
+    , m_colorBuffer(0)
+    , m_depthStencilBuffer(0)
+    , m_multisampleFBO(0)
+    , m_multisampleColorBuffer(0)
+    , m_multisampleDepthStencilBuffer(0)
 {
     ASSERT(m_fbo);
     if (!m_fbo) {
@@ -53,6 +59,40 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
         [m_platformLayer.get() setName:@"DrawingBuffer Layer"];
 #endif    
     END_BLOCK_OBJC_EXCEPTIONS
+
+    // create a texture to render into
+    m_colorBuffer = context->createTexture();
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+    
+    // Create the FBO
+    m_fbo = context->createFramebuffer();
+    ASSERT(m_fbo);
+    if (!m_fbo) {
+        clear();
+        return;
+    }
+        
+    const GraphicsContext3D::Attributes& attributes = context->getContextAttributes();
+    
+    // Create the stencil and depth buffer if needed
+    if (!multisample() && (attributes.stencil || attributes.depth))
+        m_depthStencilBuffer = context->createRenderbuffer();
+
+    // create a multisample FBO
+    if (multisample()) {
+        m_multisampleFBO = context->createFramebuffer();
+        context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+        m_multisampleColorBuffer = context->createRenderbuffer();
+        if (attributes.stencil || attributes.depth)
+            m_multisampleDepthStencilBuffer = context->createRenderbuffer();
+    }
+    
+    reset(size);
 }
 
 DrawingBuffer::~DrawingBuffer()
@@ -60,24 +100,19 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
-void DrawingBuffer::reset(const IntSize& newSize)
+void DrawingBuffer::didReset()
 {
-    if (!m_context)
-        return;
-        
-    if (m_size == newSize)
-        return;
-    m_size = newSize;
-
-    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_size.width(), m_size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_platformLayer.get();
 }
-#endif
+
+Platform3DObject DrawingBuffer::platformColorBuffer() const
+{
+    return m_colorBuffer;
+}
 
 }
 

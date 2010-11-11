@@ -64,12 +64,17 @@ public:
     // to prevent invalid accesses to the resources.
     void clear();
     
+    // Copies the multisample color buffer to the normal color buffer and leaves m_fbo bound
+    void commit(long x = 0, long y = 0, long width = -1, long height = -1);
+    
+    bool multisample() const { return m_context && m_context->getContextAttributes().antialias && m_multisampleExtensionSupported; }
+    
+    Platform3DObject platformColorBuffer() const;
+
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     void publishToPlatformLayer();
 #endif
-
-    unsigned getRenderingResultsAsTexture();
 
 #if PLATFORM(CHROMIUM)
     class WillPublishCallback : public Noncopyable {
@@ -88,11 +93,22 @@ private:
     static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
     
     DrawingBuffer(GraphicsContext3D*, const IntSize&);
+    
+    // Platform specific function called after reset() so each platform can do extra work if needed
+    void didReset();
 
     RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;
+    bool m_multisampleExtensionSupported;
     Platform3DObject m_fbo;
+    Platform3DObject m_colorBuffer;
+    Platform3DObject m_depthStencilBuffer;
 
+    // For multisampling
+    Platform3DObject m_multisampleFBO;
+    Platform3DObject m_multisampleColorBuffer;
+    Platform3DObject m_multisampleDepthStencilBuffer;
+    
 #if PLATFORM(CHROMIUM)
     OwnPtr<WillPublishCallback> m_callback;
     OwnPtr<DrawingBufferInternal> m_internal;
