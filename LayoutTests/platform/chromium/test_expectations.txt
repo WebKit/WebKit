@@ -3271,8 +3271,9 @@ BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 // Fails because of http://trac.webkit.org/changeset/71268
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
-// Added in r71317
+// See also https://webkit.org/b/49045
 BUG61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
+BUG61978 : svg/animations/animate-text-nested-transforms.html = PASS TEXT
 
 // Added in WK r71416, doesn't look like it's applicable to Chromium
 WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT
@@ -3316,6 +3317,6 @@ BUGWK49265 LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMod
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUG62515 : printing/page-format-data-display-none.html = TEXT
 
-BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
+BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS

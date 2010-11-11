@@ -58,12 +58,20 @@ BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-controls-rendering.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-delay-load-event.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-loop.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-load-readyState.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/context-menu-actions.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-timeupdate-during-playback.html = CRASH TIMEOUT PASS
 
 // Also fails on the mac port; see http://webkit.org/b/34331
 BUG_DRT : http/tests/media/video-referer.html = TEXT
 
 // Occasionally times out with, only under the DRT for Linux
 BUG58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
+
+// Flaky on Linux with test_shell, fails consistently on Mac and Linux DRT
+BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop.html = IMAGE
+
+BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Tests differences from switching to webkit.org's test netscape plugin rather
 // than chromium's old forked copy.
