@@ -1224,9 +1224,9 @@ void HTMLMediaElement::invalidateCachedTime()
     // Don't try to cache movie time when playback first starts as the time reported by the engine
     // sometimes fluctuates for a short amount of time, so the cached time will be off if we take it
     // too early.
-    static const float minimumTimePlayingBeforeCacheSnapshot = 0.5;
+    static const double minimumTimePlayingBeforeCacheSnapshot = 0.5;
 
-    m_minimumWallClockTimeToCacheMediaTime = static_cast<float>(WTF::currentTime()) + minimumTimePlayingBeforeCacheSnapshot;
+    m_minimumWallClockTimeToCacheMediaTime = WTF::currentTime() + minimumTimePlayingBeforeCacheSnapshot;
     m_cachedTime = invalidMediaTime;
 }
 
