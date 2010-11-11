@@ -1,5 +1,24 @@
 2010-11-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Misc drawing area cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=49349
+        
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::setSize):
+        (WebKit::LayerBackedDrawingAreaProxy::setPageIsVisible):
+        (WebKit::LayerBackedDrawingAreaProxy::update):
+        Call process()->send() instead of process()->connection()->send() in case
+        the web process has not been launched yet.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Delay creation of the drawing area
+        until after other WebPage state has been initialized, in case
+        the DrawingArea creation needs to call back to the WebPage.
+
+2010-11-10  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adam Roben.
 
         Push m_viewSize down to DrawingAreaProxy base class

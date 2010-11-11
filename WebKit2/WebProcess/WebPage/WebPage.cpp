@@ -105,7 +105,6 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
-    , m_drawingArea(DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.id, this))
     , m_isInRedo(false)
     , m_isClosed(false)
 #if PLATFORM(MAC)
@@ -133,6 +132,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     
     platformInitialize();
     Settings::setMinDOMTimerInterval(0.004);
+
+    m_drawingArea = DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.id, this);
 
     m_mainFrame = WebFrame::createMainFrame(this);
 
