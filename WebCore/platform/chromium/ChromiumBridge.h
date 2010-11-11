@@ -171,6 +171,7 @@ namespace WebCore {
 
         // IndexedDB ----------------------------------------------------------
         static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
+        static void idbShutdown();
         // Extracts keyPath from values and returns the corresponding keys.
         static void createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys);
 

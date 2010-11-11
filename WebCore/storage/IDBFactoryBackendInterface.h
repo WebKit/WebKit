@@ -49,7 +49,7 @@ class SecurityOrigin;
 class IDBFactoryBackendInterface : public ThreadSafeShared<IDBFactoryBackendInterface> {
 public:
     static PassRefPtr<IDBFactoryBackendInterface> create();
-    virtual ~IDBFactoryBackendInterface() { }
+    virtual ~IDBFactoryBackendInterface();
 
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize) = 0;
 };
@@ -59,4 +59,3 @@ public:
 #endif
 
 #endif // IDBFactoryBackendInterface_h
-

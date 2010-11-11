@@ -514,6 +514,12 @@ PassRefPtr<IDBFactoryBackendInterface> ChromiumBridge::idbFactory()
     return IDBFactoryBackendProxy::create();
 }
 
+void ChromiumBridge::idbShutdown()
+{
+    // In the browser process, this shuts down the utility process. In the renderer process, it does nothing.
+    webKitClient()->idbShutdown();
+}
+
 void ChromiumBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys)
 {
     WebVector<WebSerializedScriptValue> webValues = values;
