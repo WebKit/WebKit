@@ -3252,10 +3252,6 @@ BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-pr
 // This started to crash on Debug Mac 10.5 bots after recent rolls.
 BUG61478 DEBUG MAC : fast/images/svg-as-background.html = CRASH
 
-// This test is added by http://trac.webkit.org/changeset/71066
-// Should be converted to dumpAsText() t oavoid grabbing useless baselines.
-BUGDIMICH : svg/animations/repeatDur-zero.xhtml = MISSING
-
 // Flaky: fails about 5% of the time.
 //BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 // Now fails all the time on Win and Linux, see bug for details.
