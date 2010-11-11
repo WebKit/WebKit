@@ -65,10 +65,7 @@ InjectedBundle::~InjectedBundle()
 
 void InjectedBundle::initializeClient(WKBundleClient* client)
 {
-    if (client && !client->version)
-        m_client = *client;
-    else
-        memset(&m_client, 0, sizeof(m_client));
+    m_client.initialize(client);
 }
 
 void InjectedBundle::postMessage(const String& messageName, APIObject* messageBody)
@@ -182,22 +179,34 @@ size_t InjectedBundle::javaScriptObjectsCount()
     return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
+void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
+{
+    if (!context || !exception)
+        return;
+
+    JSLock lock(JSC::SilenceAssertionsOnly);
+    JSC::ExecState* execState = toJS(context);
+
+    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
+    if (!toJSDOMWindow(execState->lexicalGlobalObject()))
+        return;
+
+    WebCore::reportException(execState, toJS(execState, exception));
+}
+
 void InjectedBundle::didCreatePage(WebPage* page)
 {
-    if (m_client.didCreatePage)
-        m_client.didCreatePage(toAPI(this), toAPI(page), m_client.clientInfo);
+    m_client.didCreatePage(this, page);
 }
 
 void InjectedBundle::willDestroyPage(WebPage* page)
 {
-    if (m_client.willDestroyPage)
-        m_client.willDestroyPage(toAPI(this), toAPI(page), m_client.clientInfo);
+    m_client.willDestroyPage(this, page);
 }
 
 void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* messageBody)
 {
-    if (m_client.didReceiveMessage)
-        m_client.didReceiveMessage(toAPI(this), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessage(this, messageName, messageBody);
 }
 
 void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -216,21 +225,6 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
-{
-    if (!context || !exception)
-        return;
-
-    JSLock lock(JSC::SilenceAssertionsOnly);
-    JSC::ExecState* execState = toJS(context);
-
-    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
-    if (!toJSDOMWindow(execState->lexicalGlobalObject()))
-        return;
-
-    WebCore::reportException(execState, toJS(execState, exception));
 }
 
 } // namespace WebKit

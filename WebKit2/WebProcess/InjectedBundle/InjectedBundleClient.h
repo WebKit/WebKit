@@ -23,31 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextInjectedBundleClient.h"
+#ifndef InjectedBundleClient_h
+#define InjectedBundleClient_h
 
-#include "WKAPICast.h"
-#include <wtf/text/WTFString.h>
-
-using namespace WebCore;
+#include "APIClient.h"
+#include "WKBundle.h"
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
-void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody)
-{
-    if (!m_client.didReceiveMessageFromInjectedBundle)
-        return;
+class APIObject;
+class InjectedBundle;
+class WebPage;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
-}
-
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
-{
-    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
-        return;
-
-    WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.clientInfo);
-    returnData = adoptRef(toImpl(returnDataRef));
-}
+class InjectedBundleClient : public APIClient<WKBundleClient> {
+public:
+    void didCreatePage(InjectedBundle*, WebPage*);
+    void willDestroyPage(InjectedBundle*, WebPage*);
+    void didReceiveMessage(InjectedBundle*, const String& messageName, APIObject* messageBody);
+};
 
 } // namespace WebKit
+
+
+#endif // InjectedBundleClient_h

@@ -1,3 +1,38 @@
+2010-11-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move the remaining API client classes to use the APIClient base class.
+        https://bugs.webkit.org/show_bug.cgi?id=49404
+
+        Also moves InjectedBundleClient into its own class to match other API clients.
+
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebHistoryClient.cpp:
+        (WebKit::WebHistoryClient::didNavigateWithNavigationData):
+        (WebKit::WebHistoryClient::didPerformClientRedirect):
+        (WebKit::WebHistoryClient::didPerformServerRedirect):
+        (WebKit::WebHistoryClient::didUpdateHistoryTitle):
+        (WebKit::WebHistoryClient::populateVisitedLinks):
+        * UIProcess/WebHistoryClient.h:
+        (WebKit::WebHistoryClient::shouldTrackVisitedLinks):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::initializeClient):
+        (WebKit::InjectedBundle::reportException):
+        (WebKit::InjectedBundle::didCreatePage):
+        (WebKit::InjectedBundle::willDestroyPage):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp: Added.
+        (WebKit::InjectedBundleClient::didCreatePage):
+        (WebKit::InjectedBundleClient::willDestroyPage):
+        (WebKit::InjectedBundleClient::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundleClient.h: Added.
+        * win/WebKit2.vcproj:
+
 2010-11-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

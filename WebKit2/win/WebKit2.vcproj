@@ -1328,6 +1328,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardList.cpp"
 					>
 				</File>

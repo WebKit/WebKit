@@ -23,31 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextInjectedBundleClient.h"
+#include "InjectedBundleClient.h"
 
-#include "WKAPICast.h"
-#include <wtf/text/WTFString.h>
-
-using namespace WebCore;
+#include "WKBundleAPICast.h"
 
 namespace WebKit {
 
-void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody)
+void InjectedBundleClient::didCreatePage(InjectedBundle* bundle, WebPage* page)
 {
-    if (!m_client.didReceiveMessageFromInjectedBundle)
+    if (!m_client.didCreatePage)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didCreatePage(toAPI(bundle), toAPI(page), m_client.clientInfo);
 }
 
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
+void InjectedBundleClient::willDestroyPage(InjectedBundle* bundle, WebPage* page)
 {
-    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
+    if (!m_client.willDestroyPage)
         return;
 
-    WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.clientInfo);
-    returnData = adoptRef(toImpl(returnDataRef));
+    m_client.willDestroyPage(toAPI(bundle), toAPI(page), m_client.clientInfo);
+}
+
+void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const String& messageName, APIObject* messageBody)
+{
+    if (!m_client.didReceiveMessage)
+        return;
+
+    m_client.didReceiveMessage(toAPI(bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
 } // namespace WebKit

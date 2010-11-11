@@ -320,6 +320,7 @@ HEADERS += \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
+    WebProcess/InjectedBundle/InjectedBundleClient.h \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
@@ -491,6 +492,7 @@ SOURCES += \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
+    WebProcess/InjectedBundle/InjectedBundleClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp \
     WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \    
