@@ -111,7 +111,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
     if (m_data.m_platformContext.useGPU() && context->platformContext()->useGPU()) {
         if (context->platformContext()->canAccelerate()) {
             DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
-            unsigned sourceTexture = static_cast<unsigned>(sourceDrawingBuffer->platformColorBuffer());
+            unsigned sourceTexture = sourceDrawingBuffer->getRenderingResultsAsTexture();
             FloatRect destRectFlipped(destRect);
             destRectFlipped.setY(destRect.y() + destRect.height());
             destRectFlipped.setHeight(-destRect.height());

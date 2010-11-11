@@ -48,13 +48,12 @@ public:
     //   GL_EXT_read_format_bgra
     //   GL_ARB_robustness
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
-    //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
     virtual bool supports(const String&) = 0;
 
-    enum ExtensionsEnumType {
+    enum {
         // GL_EXT_texture_format_BGRA8888 enums
         BGRA_EXT = 0x80E1,
 
@@ -64,28 +63,11 @@ public:
         UNKNOWN_CONTEXT_RESET_ARB = 0x8255,
 
         // GL_EXT/OES_packed_depth_stencil enums
-        DEPTH24_STENCIL8 = 0x88F0,
-        
-        // GL_ANGLE_framebuffer_blit names
-        READ_FRAMEBUFFER = 0x8CA8,
-        DRAW_FRAMEBUFFER = 0x8CA9,
-        DRAW_FRAMEBUFFER_BINDING = 0x8CA6, 
-        READ_FRAMEBUFFER_BINDING = 0x8CAA,
-        
-        // GL_ANGLE_framebuffer_multisample names
-        RENDERBUFFER_SAMPLES = 0x8CAB,
-        FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
-        MAX_SAMPLES = 0x8D57
+        DEPTH24_STENCIL8 = 0x88F0
     };
 
     // GL_ARB_robustness
     virtual int getGraphicsResetStatusARB() = 0;
-    
-    // GL_ANGLE_framebuffer_blit
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) = 0;
-    
-    // GL_ANGLE_framebuffer_multisample
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;    
 };
 
 } // namespace WebCore
