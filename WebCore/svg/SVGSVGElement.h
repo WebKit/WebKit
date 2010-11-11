@@ -35,6 +35,7 @@
 namespace WebCore {
     class SVGAngle;
     class SVGLength;
+    class SVGMatrix;
     class SVGTransform;
     class SVGViewSpec;
     class SVGViewElement;
@@ -108,10 +109,10 @@ namespace WebCore {
         static SVGLength createSVGLength();
         static SVGAngle createSVGAngle();
         static FloatPoint createSVGPoint();
-        static AffineTransform createSVGMatrix();
+        static SVGMatrix createSVGMatrix();
         static FloatRect createSVGRect();
         static SVGTransform createSVGTransform();
-        static SVGTransform createSVGTransformFromMatrix(const AffineTransform&);
+        static SVGTransform createSVGTransformFromMatrix(const SVGMatrix&);
 
         AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 

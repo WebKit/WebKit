@@ -50,18 +50,9 @@ my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
 
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
-my %podTypeHash = ("SVGTransform" => 1);
-my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
-
-my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
-                                   "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
-                                   "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
-                                   "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
-                                   "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1,
-                                   "SVGAnimatedString" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -81,17 +72,21 @@ my %svgTypeNeedingTearOff = (
     "SVGAngle" => "SVGPropertyTearOff<SVGAngle>",
     "SVGLength" => "SVGPropertyTearOff<SVGLength>",
     "SVGLengthList" => "SVGListPropertyTearOff<SVGLengthList>",
+    "SVGMatrix" => "SVGPropertyTearOff<SVGMatrix>",
     "SVGNumber" => "SVGPropertyTearOff<float>",
     "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
     "SVGPoint" => "SVGPropertyTearOff<FloatPoint>",
     "SVGPointList" => "SVGListPropertyTearOff<SVGPointList>",
     "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",
     "SVGRect" => "SVGPropertyTearOff<FloatRect>",
-    "SVGStringList" => "SVGStaticListPropertyTearOff<SVGStringList>"
+    "SVGStringList" => "SVGStaticListPropertyTearOff<SVGStringList>",
+    "SVGTransform" => "SVGPropertyTearOff<SVGTransform>",
+    "SVGTransformList" => "SVGTransformListPropertyTearOff"
 );
 
 my %svgTypeWithWritablePropertiesNeedingTearOff = (
-    "SVGPoint" => 1
+    "SVGPoint" => 1,
+    "SVGMatrix" => 1
 );
 
 # Cache of IDL file pathnames.
@@ -312,28 +307,8 @@ sub AvoidInclusionOfType
     my $object = shift;
     my $type = shift;
 
-    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h / SVGMatrix.h do not exist.
-    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix";
-    return 0;
-}
-
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub IsPodType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return 1 if $podTypeHash{$type};
-    return 1 if $podTypesWithWritablePropertiesHash{$type};
-    return 0;
-}
-
-sub IsPodTypeWithWriteableProperties
-{
-    my $object = shift;
-    my $type = shift;
-
-    return 1 if $podTypesWithWritablePropertiesHash{$type};
+    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h do not exist.
+    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber";
     return 0;
 }
 
@@ -415,20 +390,12 @@ sub GetSVGWrappedTypeNeedingTearOff
         $svgTypeNeedingTearOff =~ s/SVGListPropertyTearOff<//;
     } elsif ($svgTypeNeedingTearOff =~ /SVGStaticListPropertyTearOff/) {
         $svgTypeNeedingTearOff =~ s/SVGStaticListPropertyTearOff<//;
-    }
+    }  elsif ($svgTypeNeedingTearOff =~ /SVGTransformListPropertyTearOff/) {
+        $svgTypeNeedingTearOff =~ s/SVGTransformListPropertyTearOff<//;
+    } 
 
     $svgTypeNeedingTearOff =~ s/>//;
     return $svgTypeNeedingTearOff;
-}
-
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub IsSVGNewStyleAnimatedType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return 1 if $svgNewStyleAnimatedTypeHash{$type};
-    return 0;
 }
 
 sub IsSVGAnimatedType

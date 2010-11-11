@@ -26,53 +26,52 @@
 #include "AffineTransform.h"
 #include "SVGSVGElement.h"
 #include "SVGTransform.h"
+#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGTransformList::SVGTransformList(const QualifiedName& attributeName)
-    : SVGPODList<SVGTransform>(attributeName)
-{
-}
-
-SVGTransformList::~SVGTransformList()
-{
-}
-
-SVGTransform SVGTransformList::createSVGTransformFromMatrix(const AffineTransform& matrix) const
+SVGTransform SVGTransformList::createSVGTransformFromMatrix(const SVGMatrix& matrix) const
 {
     return SVGSVGElement::createSVGTransformFromMatrix(matrix);
 }
 
 SVGTransform SVGTransformList::consolidate()
 {
-    ExceptionCode ec = 0;
-    return initialize(concatenate(), ec);
+    AffineTransform matrix;
+    if (!concatenate(matrix))
+        return SVGTransform();
+
+    SVGTransform transform(matrix);
+    clear();
+    append(transform);
+    return transform;
 }
 
-SVGTransform SVGTransformList::concatenate() const
+bool SVGTransformList::concatenate(AffineTransform& result) const
 {
-    unsigned int length = numberOfItems();
-    if (!length)
-        return SVGTransform();
-        
-    AffineTransform matrix;
-    ExceptionCode ec = 0;
-    for (unsigned int i = 0; i < length; i++)
-        matrix = getItem(i, ec).matrix() * matrix;
+    unsigned size = this->size();
+    if (!size)
+        return false;
 
-    return SVGTransform(matrix);
+    for (unsigned i = 0; i < size; ++i)
+        result = at(i).matrix() * result;
+
+    return true;
 }
 
 String SVGTransformList::valueAsString() const
 {
     // TODO: We may want to build a real transform string, instead of concatting to a matrix(...).
-    SVGTransform transform = concatenate();
-    if (transform.type() == SVGTransform::SVG_TRANSFORM_MATRIX) {
-        AffineTransform matrix = transform.matrix();
-        return String::format("matrix(%f %f %f %f %f %f)", matrix.a(), matrix.b(), matrix.c(), matrix.d(), matrix.e(), matrix.f());
-    }
+    AffineTransform matrix;
+    concatenate(matrix);
 
-    return String();
+    StringBuilder builder;
+    builder.append(makeString("matrix(", String::number(matrix.a()), ' ', String::number(matrix.b()), ' ', String::number(matrix.c()), ' '));
+    builder.append(makeString(String::number(matrix.d()), ' ', String::number(matrix.e()), ' ', String::number(matrix.f()), ')'));
+    return builder.toString();
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(SVG)

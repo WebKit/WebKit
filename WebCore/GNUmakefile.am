@@ -798,7 +798,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSSVGContextCache.h \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
-	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
 	WebCore/bindings/js/JSSVGPODListCustom.h \
@@ -3060,6 +3059,7 @@ webcore_sources += \
 	WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
 	WebCore/svg/properties/SVGAnimatedPropertyTearOff.h \
 	WebCore/svg/properties/SVGAnimatedStaticPropertyTearOff.h \
+	WebCore/svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
 	WebCore/svg/properties/SVGListProperty.h \
 	WebCore/svg/properties/SVGListPropertyTearOff.h \
 	WebCore/svg/properties/SVGProperty.h \
@@ -3067,6 +3067,8 @@ webcore_sources += \
 	WebCore/svg/properties/SVGPropertyTraits.h \
 	WebCore/svg/properties/SVGStaticListPropertyTearOff.h \
 	WebCore/svg/properties/SVGStaticPropertyTearOff.h \
+	WebCore/svg/properties/SVGStaticPropertyWithParentTearOff.h \
+	WebCore/svg/properties/SVGTransformListPropertyTearOff.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \
@@ -3089,6 +3091,7 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	WebCore/svg/SVGAnimatedRect.h \
 	WebCore/svg/SVGAnimatedString.h \
+	WebCore/svg/SVGAnimatedTransformList.h \
 	WebCore/svg/SVGAnimateElement.cpp \
 	WebCore/svg/SVGAnimateElement.h \
 	WebCore/svg/SVGAnimateMotionElement.cpp \
@@ -3231,6 +3234,7 @@ webcore_sources += \
 	WebCore/svg/SVGMarkerElement.h \
 	WebCore/svg/SVGMaskElement.cpp \
 	WebCore/svg/SVGMaskElement.h \
+	WebCore/svg/SVGMatrix.h \
 	WebCore/svg/SVGMetadataElement.cpp \
 	WebCore/svg/SVGMetadataElement.h \
 	WebCore/svg/SVGMissingGlyphElement.cpp \

@@ -19,17 +19,17 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "SVGAngle.h"
 #include "SVGSVGElement.h"
 #include "SVGTransform.h"
 
-#include <math.h>
+#include <wtf/MathExtras.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGTransform::SVGTransform()
     : m_type(SVG_TRANSFORM_UNKNOWN)
@@ -40,8 +40,6 @@ SVGTransform::SVGTransform()
 SVGTransform::SVGTransform(SVGTransformType type)
     : m_type(type)
     , m_angle(0)
-    , m_center(FloatPoint())
-    , m_matrix(AffineTransform())
 {
 }
 
@@ -52,37 +50,20 @@ SVGTransform::SVGTransform(const AffineTransform& matrix)
 {
 }
 
-bool SVGTransform::isValid()
-{
-    return (m_type != SVG_TRANSFORM_UNKNOWN);
-}
-
-SVGTransform::SVGTransformType SVGTransform::type() const
-{
-    return m_type;
-}
-
-AffineTransform SVGTransform::matrix() const
-{
-    return m_matrix;
-}
-
-float SVGTransform::angle() const
-{
-    return m_angle;
-}
-
-FloatPoint SVGTransform::rotationCenter() const
-{
-    return m_center;
-}
-
-void SVGTransform::setMatrix(AffineTransform matrix)
+void SVGTransform::setMatrix(const AffineTransform& matrix)
 {
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;
-
     m_matrix = matrix;
+}
+
+void SVGTransform::updateMatrix()
+{
+    // The underlying matrix has been changed, alter the transformation type.
+    // Spec: In case the matrix object is changed directly (i.e., without using the methods on the SVGTransform interface itself)
+    // then the type of the SVGTransform changes to SVG_TRANSFORM_MATRIX.
+    m_type = SVG_TRANSFORM_MATRIX;
+    m_angle = 0;
 }
 
 void SVGTransform::setTranslate(float tx, float ty)
@@ -145,5 +126,6 @@ void SVGTransform::setSkewY(float angle)
     m_matrix.skewY(angle);
 }
 
-#endif // ENABLE(SVG)
+} // namespace WebCore
 
+#endif // ENABLE(SVG)

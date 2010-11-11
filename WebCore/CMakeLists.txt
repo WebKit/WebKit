@@ -1715,7 +1715,6 @@ IF (ENABLE_SVG)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSSVGElementInstanceCustom.cpp
         bindings/js/JSSVGLengthCustom.cpp
-        bindings/js/JSSVGMatrixCustom.cpp
         bindings/js/JSSVGPathSegCustom.cpp
         bindings/js/JSSVGPathSegListCustom.cpp
         css/SVGCSSComputedStyleDeclaration.cpp

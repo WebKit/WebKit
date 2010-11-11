@@ -42,7 +42,7 @@ namespace WebCore {
         bool parseViewSpec(const String&);
 
         void setTransform(const String&);
-        SVGTransformList* transform() const { return m_transform.get(); }
+        SVGTransformList transform() const { return m_transform; }
 
         void setViewBoxString(const String&);
 
@@ -61,7 +61,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
-        mutable RefPtr<SVGTransformList> m_transform;
+        SVGTransformList m_transform;
         String m_viewTargetString;
     };
 

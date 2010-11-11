@@ -38,7 +38,6 @@ namespace WebCore {
 inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
@@ -50,11 +49,12 @@ PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, 
 void SVGTextElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGTransformable::isKnownAttribute(attr->name())) {
-        SVGTransformList* localTransforms = transformBaseValue();
-        if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value())) {
-            ExceptionCode ec = 0;
-            localTransforms->clear(ec);
-        }
+        SVGTransformList newList;
+        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
+            newList.clear();
+
+        detachAnimatedTransformListWrappers(newList.size());
+        transformBaseValue() = newList;
     } else
         SVGTextPositioningElement::parseMappedAttribute(attr);
 }
@@ -86,7 +86,9 @@ AffineTransform SVGTextElement::getScreenCTM(StyleUpdateStrategy styleUpdateStra
 
 AffineTransform SVGTextElement::animatedLocalTransform() const
 {
-    return m_supplementalTransform ? *m_supplementalTransform * transform()->concatenate().matrix() : transform()->concatenate().matrix();
+    AffineTransform matrix;
+    transform().concatenate(matrix);
+    return m_supplementalTransform ? *m_supplementalTransform * matrix : matrix;
 }
 
 AffineTransform* SVGTextElement::supplementalTransform()

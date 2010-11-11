@@ -6,11 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS gradient.gradientTransform.baseVal.consolidate().matrix.e is 0
-PASS gradient.gradientTransform.animVal.consolidate().matrix.e is 0
+PASS gradient.gradientTransform.animVal.consolidate().matrix.e threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS gradient.gradientTransform.baseVal.consolidate().matrix.e is 100
-PASS gradient.gradientTransform.animVal.consolidate().matrix.e is 100
+PASS gradient.gradientTransform.animVal.consolidate().matrix.e threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS gradient.gradientTransform.baseVal.consolidate().matrix.e is 200
-PASS gradient.gradientTransform.animVal.consolidate().matrix.e is 200
+PASS gradient.gradientTransform.animVal.consolidate().matrix.e threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS successfullyParsed is true
 
 TEST COMPLETE

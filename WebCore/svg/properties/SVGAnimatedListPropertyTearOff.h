@@ -91,6 +91,7 @@ private:
         return adoptRef(new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, values));
     }
 
+protected:
     SVGAnimatedListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& values)
         : SVGAnimatedProperty(contextElement, attributeName)
         , m_values(values)
@@ -99,7 +100,6 @@ private:
             m_wrappers.fill(0, values.size());
     }
 
-private:
     PropertyType& m_values;
 
     // FIXME: The list wrapper cache is shared between baseVal/animVal. If we implement animVal,

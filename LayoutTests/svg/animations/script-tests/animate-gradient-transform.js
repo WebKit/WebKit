@@ -46,21 +46,21 @@ function sample1() {
     // FIXME: Add animVal support. Animates baseVal at the moment.
     // Check initial conditions
     shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "0");
-    shouldBe("gradient.gradientTransform.animVal.consolidate().matrix.e", "0");
+    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 
 function sample2() {
     // FIXME: Add animVal support. Animates baseVal at the moment.
     // Check half-time conditions
     shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "100");
-    shouldBe("gradient.gradientTransform.animVal.consolidate().matrix.e", "100");
+    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 
 function sample3() {
     // FIXME: Add animVal support. Animates baseVal at the moment.
     // Check end conditions
     shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "200");
-    shouldBe("gradient.gradientTransform.animVal.consolidate().matrix.e", "200");
+    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 
 function executeTest() {  

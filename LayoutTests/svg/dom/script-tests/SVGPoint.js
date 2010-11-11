@@ -23,4 +23,29 @@ debug("Check that the point is still containing the correct values");
 shouldBe("point.x", "100");
 shouldBe("point.y", "0");
 
+debug("");
+debug("Reset to -50, 100");
+point.x = -50;
+point.y = 100;
+
+debug("");
+debug("Check 'matrixTransform' method - multiply with -1,0,0,2,10,10 matrix, should flip x coordinate, multiply y by two and translate each coordinate by 10");
+var ctm = svgElement.createSVGMatrix();
+ctm.a = -1;
+ctm.d = 2;
+ctm.e = 10;
+ctm.f = 10;
+shouldBeEqualToString("(newPoint = point.matrixTransform(ctm)).toString()", "[object SVGPoint]");
+shouldBe("newPoint.x", "60");
+shouldBe("newPoint.y", "210");
+
+debug("");
+debug("Check invalid arguments for 'matrixTransform'");
+shouldThrow("point.matrixTransform()");
+shouldThrow("point.matrixTransform(-1)");
+shouldThrow("point.matrixTransform(5)");
+shouldThrow("point.matrixTransform('aString')");
+shouldThrow("point.matrixTransform(point)");
+shouldThrow("point.matrixTransform(svgElement)");
+
 successfullyParsed = true;

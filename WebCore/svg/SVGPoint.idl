@@ -26,7 +26,7 @@ module svg {
         attribute [StrictTypeChecking] float x;
         attribute [StrictTypeChecking] float y;
 
-        SVGPoint matrixTransform(in SVGMatrix matrix);
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPoint matrixTransform(in SVGMatrix matrix);
     };
 
 }

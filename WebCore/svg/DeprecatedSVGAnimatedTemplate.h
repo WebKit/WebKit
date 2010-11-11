@@ -27,10 +27,10 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
+// FIXME: Remove this file!
 namespace WebCore {
    
     class SVGElement;
-    class SVGTransformList;
 
     struct DeprecatedSVGAnimatedTypeWrapperKey {            
         // Empty value
@@ -150,9 +150,6 @@ namespace WebCore {
 
         return wrapper.release();
     }
-
-    // Common type definitions, to ease IDL generation.
-    typedef DeprecatedSVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList;
 
 }
 

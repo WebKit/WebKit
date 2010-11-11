@@ -30,6 +30,7 @@
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGStringList.h"
+#include "SVGTransformList.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -128,6 +129,13 @@ template<>
 struct SVGPropertyTraits<SVGPointList> {
     static SVGPointList initialValue() { return SVGPointList(); }
     typedef FloatPoint ListItemType;
+};
+
+template<>
+struct SVGPropertyTraits<SVGTransformList> {
+    static SVGTransformList initialValue() { return SVGTransformList(); }
+    static String toString(const SVGTransformList& type) { return type.valueAsString(); }
+    typedef SVGTransform ListItemType;
 };
 
 }

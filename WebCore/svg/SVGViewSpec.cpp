@@ -33,13 +33,12 @@ namespace WebCore {
 
 SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
     : m_contextElement(contextElement)
-    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
 void SVGViewSpec::setTransform(const String& transform)
 {
-    SVGTransformable::parseTransformAttribute(m_transform.get(), transform);
+    SVGTransformable::parseTransformAttribute(m_transform, transform);
 }
 
 void SVGViewSpec::setViewBoxString(const String& viewBoxStr)
@@ -144,7 +143,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
             if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
-            SVGTransformable::parseTransformAttribute(m_transform.get(), currViewSpec, end, SVGTransformable::DoNotClearList);
+            SVGTransformable::parseTransformAttribute(m_transform, currViewSpec, end, SVGTransformable::DoNotClearList);
             if (currViewSpec >= end || *currViewSpec != ')')
                 return false;
             currViewSpec++;

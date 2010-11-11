@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -70,7 +71,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::heightAttr, SVGLength, Height, height)
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternUnitsAttr, int, PatternUnits, patternUnits)
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternContentUnitsAttr, int, PatternContentUnits, patternContentUnits)
-        DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::patternTransformAttr, SVGTransformList*, PatternTransform, patternTransform)
+        DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(SVGPatternElement, SVGNames::patternTransformAttr, SVGTransformList, PatternTransform, patternTransform)
 
         // SVGURIReference
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, XLinkNames::hrefAttr, String, Href, href)

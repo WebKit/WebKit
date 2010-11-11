@@ -60,7 +60,7 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
 
-    DECLARE_ANIMATED_PROPERTY(SVGStyledTransformableElement, SVGNames::transformAttr, SVGTransformList*, Transform, transform)
+    DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(SVGStyledTransformableElement, SVGNames::transformAttr, SVGTransformList, Transform, transform)
 
 private:
     virtual bool isStyledTransformable() const { return true; }

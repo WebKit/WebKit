@@ -109,7 +109,7 @@ public:
         return Base::appendItemValuesAndWrappers(m_animatedProperty.get(), passNewItem, ec);
     }
 
-private:
+protected:
     SVGListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
         : SVGListProperty<PropertyType>(role)
         , m_animatedProperty(animatedProperty)
@@ -179,7 +179,6 @@ private:
         }
     }
 
-private:
     // Back pointer to the animated property that created us
     // For example (text.x.baseVal): m_animatedProperty points to the 'x' SVGAnimatedLengthList object
     RefPtr<AnimatedListPropertyTearOff> m_animatedProperty;

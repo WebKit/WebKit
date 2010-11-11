@@ -34,7 +34,6 @@ namespace WebCore {
 
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document)
     : SVGStyledLocatableElement(tagName, document)
-    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
@@ -54,9 +53,11 @@ AffineTransform SVGStyledTransformableElement::getScreenCTM(StyleUpdateStrategy 
 
 AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
 {
-    return m_supplementalTransform ? *m_supplementalTransform * transform()->concatenate().matrix() : transform()->concatenate().matrix();
+    AffineTransform matrix;
+    transform().concatenate(matrix);
+    return m_supplementalTransform ? *m_supplementalTransform * matrix : matrix;
 }
-    
+
 AffineTransform* SVGStyledTransformableElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
@@ -67,11 +68,11 @@ AffineTransform* SVGStyledTransformableElement::supplementalTransform()
 void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
 {
     if (SVGTransformable::isKnownAttribute(attr->name())) {
-        SVGTransformList* localTransforms = transformBaseValue();
-        if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value())) {
-            ExceptionCode ec = 0;
-            localTransforms->clear(ec);
-        }
+        SVGTransformList newList;
+        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
+            newList.clear();
+        detachAnimatedTransformListWrappers(newList.size());
+        transformBaseValue() = newList;
     } else 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
 }

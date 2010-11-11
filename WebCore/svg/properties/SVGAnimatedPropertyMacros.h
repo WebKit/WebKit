@@ -27,6 +27,7 @@
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedPropertySynchronizer.h"
 #include "SVGAnimatedPropertyTearOff.h"
+#include "SVGAnimatedTransformListPropertyTearOff.h"
 #include "SVGNames.h" // FIXME: Temporary hack, until we expand the macros in all files, so we don't need a global SVGNames.h include
 #include "SVGPropertyTraits.h"
 
@@ -155,6 +156,19 @@ void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
         return; \
     static_cast<SVGAnimatedListPropertyTearOff<PropertyType>*>(wrapper)->detachListWrappers(newListSize); \
 }
+
+#define DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedTransformListPropertyTearOff, PropertyType, UpperProperty, LowerProperty) \
+\
+void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
+{ \
+    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
+    SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGAnimatedTransformListPropertyTearOff>(contextElement, DOMAttribute.localName()); \
+    if (!wrapper) \
+        return; \
+    static_cast<SVGAnimatedTransformListPropertyTearOff*>(wrapper)->detachListWrappers(newListSize); \
+}
+
 
 }
 

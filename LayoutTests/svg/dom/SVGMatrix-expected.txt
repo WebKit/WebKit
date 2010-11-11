@@ -1,0 +1,124 @@
+This test checks the SVGMatrix API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial matrix values
+PASS matrix.a is 1
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 0
+
+Check assigning matrices
+PASS matrix.a = 2 is 2
+PASS matrix.f = 200 is 200
+
+Check assigning invalid matrices
+PASS matrix.a = matrix threw exception TypeError: Type error.
+PASS matrix.a = svgElement threw exception TypeError: Type error.
+PASS matrix.a = 'aString' threw exception TypeError: Type error.
+PASS matrix.b = matrix threw exception TypeError: Type error.
+PASS matrix.b = svgElement threw exception TypeError: Type error.
+PASS matrix.b = 'aString' threw exception TypeError: Type error.
+PASS matrix.c = matrix threw exception TypeError: Type error.
+PASS matrix.c = svgElement threw exception TypeError: Type error.
+PASS matrix.c = 'aString' threw exception TypeError: Type error.
+PASS matrix.d = matrix threw exception TypeError: Type error.
+PASS matrix.d = svgElement threw exception TypeError: Type error.
+PASS matrix.d = 'aString' threw exception TypeError: Type error.
+PASS matrix.e = matrix threw exception TypeError: Type error.
+PASS matrix.e = svgElement threw exception TypeError: Type error.
+PASS matrix.e = 'aString' threw exception TypeError: Type error.
+PASS matrix.f = matrix threw exception TypeError: Type error.
+PASS matrix.f = svgElement threw exception TypeError: Type error.
+PASS matrix.f = 'aString' threw exception TypeError: Type error.
+
+Check that the matrix is still containing the correct values
+PASS matrix.a is 2
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 200
+
+Check assigning null works as expected
+PASS matrix.f = null is null
+PASS matrix.a is 2
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 0
+
+Check calling 'multiply' with invalid arguments
+PASS matrix.multiply() threw exception SyntaxError: Not enough arguments.
+PASS matrix.multiply(true) threw exception TypeError: Type error.
+PASS matrix.multiply(2) threw exception TypeError: Type error.
+PASS matrix.multiply('aString') threw exception TypeError: Type error.
+PASS matrix.multiply(svgElement) threw exception TypeError: Type error.
+
+Check calling 'translate' with invalid arguments
+PASS matrix.translate() threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate(true) threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate(2) threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate('aString') threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate('aString', 'aString') threw exception TypeError: Type error.
+PASS matrix.translate(svgElement, svgElement) threw exception TypeError: Type error.
+PASS matrix.translate(2, 'aString') threw exception TypeError: Type error.
+PASS matrix.translate(2, svgElement) threw exception TypeError: Type error.
+PASS matrix.translate('aString', 2) threw exception TypeError: Type error.
+PASS matrix.translate(svgElement, 2) threw exception TypeError: Type error.
+
+Check calling 'scale' with invalid arguments
+PASS matrix.scale() threw exception SyntaxError: Not enough arguments.
+PASS matrix.scale('aString') threw exception TypeError: Type error.
+PASS matrix.scale(svgElement) threw exception TypeError: Type error.
+
+Check calling 'scaleNonUniform' with invalid arguments
+PASS matrix.scaleNonUniform() threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform(true) threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform(2) threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform('aString') threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform('aString', 'aString') threw exception TypeError: Type error.
+PASS matrix.scaleNonUniform(svgElement, svgElement) threw exception TypeError: Type error.
+PASS matrix.scaleNonUniform(2, 'aString') threw exception TypeError: Type error.
+PASS matrix.scaleNonUniform(2, svgElement) threw exception TypeError: Type error.
+PASS matrix.scaleNonUniform('aString', 2) threw exception TypeError: Type error.
+PASS matrix.scaleNonUniform(svgElement, 2) threw exception TypeError: Type error.
+
+Check calling 'rotate' with invalid arguments
+PASS matrix.rotate() threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotate('aString') threw exception TypeError: Type error.
+PASS matrix.rotate(svgElement) threw exception TypeError: Type error.
+
+Check calling 'rotateFromVector' with invalid arguments
+PASS matrix.rotateFromVector() threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector(true) threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector(2) threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector('aString') threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector('aString', 'aString') threw exception TypeError: Type error.
+PASS matrix.rotateFromVector(svgElement, svgElement) threw exception TypeError: Type error.
+PASS matrix.rotateFromVector(2, 'aString') threw exception TypeError: Type error.
+PASS matrix.rotateFromVector(2, svgElement) threw exception TypeError: Type error.
+PASS matrix.rotateFromVector('aString', 2) threw exception TypeError: Type error.
+PASS matrix.rotateFromVector(svgElement, 2) threw exception TypeError: Type error.
+
+Check calling 'skewX' with invalid arguments
+PASS matrix.skewX() threw exception SyntaxError: Not enough arguments.
+PASS matrix.skewX('aString') threw exception TypeError: Type error.
+PASS matrix.skewX(svgElement) threw exception TypeError: Type error.
+
+Check calling 'skewY' with invalid arguments
+PASS matrix.skewY() threw exception SyntaxError: Not enough arguments.
+PASS matrix.skewY('aString') threw exception TypeError: Type error.
+PASS matrix.skewY(svgElement) threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

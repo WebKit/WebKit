@@ -86,15 +86,16 @@ void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
 }
 
     
-static PassRefPtr<SVGTransformList> transformListFor(SVGElement* element)
+static SVGTransformList* transformListFor(SVGElement* element)
 {
     ASSERT(element);
     if (element->isStyledTransformable())
-        return static_cast<SVGStyledTransformableElement*>(element)->transform();
+        return &static_cast<SVGStyledTransformableElement*>(element)->transform();
     if (element->hasTagName(SVGNames::textTag))
-        return static_cast<SVGTextElement*>(element)->transform();
+        return &static_cast<SVGTextElement*>(element)->transform();
     if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
-        return static_cast<SVGGradientElement*>(element)->gradientTransform();
+        return &static_cast<SVGGradientElement*>(element)->gradientTransform();
+    // FIXME: Handle patternTransform, which is obviously missing!
     return 0;
 }
     
@@ -109,9 +110,8 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
     }
 
     if (baseValue.isEmpty()) {
-        ExceptionCode ec;
-        RefPtr<SVGTransformList> list = transformListFor(targetElement());
-        list->clear(ec);
+        if (SVGTransformList* list = transformListFor(targetElement()))
+            list->clear();
     } else
         targetElement()->setAttribute(SVGNames::transformAttr, baseValue);
 }
@@ -121,18 +121,17 @@ void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsign
     if (!hasValidTarget())
         return;
     SVGElement* targetElement = resultElement->targetElement();
-    RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
+    SVGTransformList* transformList = transformListFor(targetElement);
     ASSERT(transformList);
 
-    ExceptionCode ec;
     if (!isAdditive())
-        transformList->clear(ec);
+        transformList->clear();
     if (isAccumulated() && repeat) {
         SVGTransform accumulatedTransform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(repeat).addToSVGTransform(SVGTransform());
-        transformList->appendItem(accumulatedTransform, ec);
+        transformList->append(accumulatedTransform);
     }
     SVGTransform transform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
-    transformList->appendItem(transform, ec);
+    transformList->append(transform);
 }
     
 bool SVGAnimateTransformElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -181,18 +180,22 @@ void SVGAnimateTransformElement::applyResultsToTarget()
     }
 
     // ...except in case where we have additional instances in <use> trees.
+    SVGTransformList* transformList = transformListFor(targetElement);
+    if (!transformList)
+        return;
+
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-    RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         ASSERT(shadowTreeElement);
         if (shadowTreeElement->isStyledTransformable())
-            static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
+            static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(*transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::textTag))
-            static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
+            static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(*transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::linearGradientTag) || shadowTreeElement->hasTagName(SVGNames::radialGradientTag))
-            static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(transformList.get());
+            static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(*transformList);
+        // FIXME: Handle patternTransform, obviously missing!
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);

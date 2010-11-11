@@ -155,7 +155,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8SVGDocumentCustom.cpp \
 	bindings/v8/custom/V8SVGElementCustom.cpp \
 	bindings/v8/custom/V8SVGLengthCustom.cpp \
-	bindings/v8/custom/V8SVGMatrixCustom.cpp
 	bindings/v8/custom/V8SVGPathSegCustom.cpp \
 endif
 

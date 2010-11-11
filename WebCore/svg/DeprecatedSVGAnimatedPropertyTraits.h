@@ -22,25 +22,12 @@
 #define DeprecatedSVGAnimatedPropertyTraits_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
-#include "SVGTransformList.h"
 
+// FIXME: Remove this file!
 namespace WebCore {
 
 template<typename Type>
 struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
-
-// SVGAnimatedTransformList
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<SVGTransformList*> : public Noncopyable {
-    typedef SVGTransformList* PassType;
-    typedef SVGTransformList* ReturnType;
-    typedef RefPtr<SVGTransformList> StoredType;
-
-    static ReturnType null() { return 0; }
-    static ReturnType toReturnType(const StoredType& type) { return type.get(); }
-    static String toString(PassType type) { return type ? type->valueAsString() : String(); }
-};
 
 }
 

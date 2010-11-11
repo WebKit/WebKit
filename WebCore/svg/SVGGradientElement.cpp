@@ -41,7 +41,6 @@ namespace WebCore {
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_gradientTransform(SVGTransformList::create(SVGNames::gradientTransformAttr))
 {
 }
 
@@ -53,11 +52,12 @@ void SVGGradientElement::parseMappedAttribute(Attribute* attr)
         else if (attr->value() == "objectBoundingBox")
             setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::gradientTransformAttr) {
-        SVGTransformList* gradientTransforms = gradientTransformBaseValue();
-        if (!SVGTransformable::parseTransformAttribute(gradientTransforms, attr->value())) {
-            ExceptionCode ec = 0;
-            gradientTransforms->clear(ec);
-        }
+        SVGTransformList newList;
+        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
+            newList.clear();
+
+        detachAnimatedGradientTransformListWrappers(newList.size());
+        gradientTransformBaseValue() = newList;
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if (attr->value() == "reflect")
             setSpreadMethodBaseValue(SpreadMethodReflect);

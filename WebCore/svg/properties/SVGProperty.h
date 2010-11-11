@@ -34,6 +34,8 @@ enum SVGPropertyRole {
 class SVGProperty : public RefCounted<SVGProperty> {
 public:
     virtual ~SVGProperty() { }
+
+    virtual void commitChange() = 0;
 };
 
 }

@@ -31,20 +31,22 @@ module svg {
 
         void clear()
             raises(DOMException);
-        SVGTransform initialize(in SVGTransform item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform initialize(in SVGTransform item)
             raises(DOMException, SVGException);
-        SVGTransform getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform getItem(in unsigned long index)
             raises(DOMException);
-        SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGTransform removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform removeItem(in unsigned long index)
             raises(DOMException);
-        SVGTransform appendItem(in SVGTransform item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform appendItem(in SVGTransform item)
             raises(DOMException, SVGException);
-        SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
-        SVGTransform consolidate();
+
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
+        SVGTransform consolidate()
+            raises(DOMException);
     };
 
 }

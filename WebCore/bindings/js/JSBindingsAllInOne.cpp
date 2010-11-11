@@ -116,7 +116,6 @@
 #include "JSSQLTransactionSyncCustom.cpp"
 #include "JSSVGElementInstanceCustom.cpp"
 #include "JSSVGLengthCustom.cpp"
-#include "JSSVGMatrixCustom.cpp"
 #include "JSSVGPathSegCustom.cpp"
 #include "JSSVGPathSegListCustom.cpp"
 #include "JSScriptProfileNodeCustom.cpp"

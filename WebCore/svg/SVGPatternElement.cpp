@@ -57,7 +57,6 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     , m_height(LengthModeHeight)
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(SVGTransformList::create(SVGNames::patternTransformAttr))
 {
 }
 
@@ -79,11 +78,12 @@ void SVGPatternElement::parseMappedAttribute(Attribute* attr)
         else if (attr->value() == "objectBoundingBox")
             setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
-        SVGTransformList* patternTransforms = patternTransformBaseValue();
-        if (!SVGTransformable::parseTransformAttribute(patternTransforms, attr->value())) {
-            ExceptionCode ec = 0;
-            patternTransforms->clear(ec);
-        }
+        SVGTransformList newList;
+        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
+            newList.clear();
+
+        detachAnimatedPatternTransformListWrappers(newList.size());
+        patternTransformBaseValue() = newList;
     } else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
@@ -224,8 +224,11 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         if (!attributes.hasBoundingBoxModeContent() && current->hasAttribute(SVGNames::patternContentUnitsAttr))
             attributes.setBoundingBoxModeContent(current->patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
-        if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr))
-            attributes.setPatternTransform(current->patternTransform()->consolidate().matrix());
+        if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr)) {
+            AffineTransform transform;
+            current->patternTransform().concatenate(transform);
+            attributes.setPatternTransform(transform);
+        }
 
         if (!attributes.hasPatternContentElement() && current->hasChildNodes())
             attributes.setPatternContentElement(current);

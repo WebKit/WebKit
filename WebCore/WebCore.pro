@@ -471,7 +471,6 @@ v8 {
         bindings/v8/custom/V8SVGDocumentCustom.cpp \
         bindings/v8/custom/V8SVGElementCustom.cpp \
         bindings/v8/custom/V8SVGLengthCustom.cpp \
-        bindings/v8/custom/V8SVGMatrixCustom.cpp \
         bindings/v8/custom/V8SVGPathSegCustom.cpp \
         \
         bindings/v8/specialization/V8BindingState.cpp\
@@ -2371,6 +2370,7 @@ HEADERS += \
     svg/properties/SVGAnimatedPropertySynchronizer.h \
     svg/properties/SVGAnimatedPropertyTearOff.h \
     svg/properties/SVGAnimatedStaticPropertyTearOff.h \
+    svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
     svg/properties/SVGListProperty.h \
     svg/properties/SVGListPropertyTearOff.h \
     svg/properties/SVGProperty.h \
@@ -2378,6 +2378,8 @@ HEADERS += \
     svg/properties/SVGPropertyTraits.h \
     svg/properties/SVGStaticListPropertyTearOff.h \
     svg/properties/SVGStaticPropertyTearOff.h \
+    svg/properties/SVGStaticPropertyWithParentTearOff.h \
+    svg/properties/SVGTransformListPropertyTearOff.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
@@ -2394,6 +2396,7 @@ HEADERS += \
     svg/SVGAnimatedPreserveAspectRatio.h \
     svg/SVGAnimatedRect.h \
     svg/SVGAnimatedString.h \
+    svg/SVGAnimatedTransformList.h \
     svg/SVGAnimateElement.h \
     svg/SVGAnimateMotionElement.h \
     svg/SVGAnimateTransformElement.h \
@@ -2463,6 +2466,7 @@ HEADERS += \
     svg/SVGLocatable.h \
     svg/SVGMarkerElement.h \
     svg/SVGMaskElement.h \
+    svg/SVGMatrix.h \
     svg/SVGMetadataElement.h \
     svg/SVGMissingGlyphElement.h \
     svg/SVGMPathElement.h \
@@ -3369,7 +3373,6 @@ contains(DEFINES, ENABLE_SVG=1) {
     # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
             bindings/js/JSSVGElementInstanceCustom.cpp \
             bindings/js/JSSVGLengthCustom.cpp \
-            bindings/js/JSSVGMatrixCustom.cpp \
             bindings/js/JSSVGPathSegCustom.cpp \
             bindings/js/JSSVGPathSegListCustom.cpp
     }

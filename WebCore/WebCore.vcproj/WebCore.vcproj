@@ -60251,58 +60251,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSSVGMatrixCustom.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSSVGPathSegCustom.cpp"
 					>
 					<FileConfiguration
@@ -61884,6 +61832,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedTransformList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimateElement.h"
 				>
 			</File>
@@ -62377,6 +62329,10 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGMaskElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGMatrix.h"
 				>
 			</File>
 			<File
@@ -62931,6 +62887,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\svg\properties\SVGAnimatedTransformListPropertyTearOff.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\properties\SVGListProperty.h"
 					>
 				</File>
@@ -62956,6 +62916,14 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGStaticPropertyTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGStaticPropertyWithParentTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGTransformListPropertyTearOff.h"
 					>
 				</File>
 			</Filter>
