@@ -306,9 +306,6 @@ fast/events/dragging-mouse-moves.html
 # Crash beneath SocketStream::readStreamCallback http://webkit.org/b/44138
 http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html
 
-# http://webkit.org/b/46911
-accessibility/aria-hidden-update.html
-
 # Causes next test to time out http://webkit.org/b/46975
 http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
 
@@ -481,7 +478,6 @@ accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/document-attributes.html
 accessibility/editable-webarea-context-menu-point.html
-accessibility/iframe-bastardization.html
 accessibility/ignore-spacer-elements.html
 accessibility/image-link.html
 accessibility/image-map1.html

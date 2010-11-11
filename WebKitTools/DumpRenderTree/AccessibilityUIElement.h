@@ -70,8 +70,8 @@ public:
 
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 
-    bool isEqual(AccessibilityUIElement* otherElement) { return platformUIElement() == otherElement->platformUIElement(); }
-    
+    bool isEqual(AccessibilityUIElement* otherElement);
+
     void getLinkedUIElements(Vector<AccessibilityUIElement>&);
     void getDocumentLinks(Vector<AccessibilityUIElement>&);
     void getChildren(Vector<AccessibilityUIElement>&);

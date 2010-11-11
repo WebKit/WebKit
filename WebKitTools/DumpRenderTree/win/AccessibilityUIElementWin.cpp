@@ -35,6 +35,16 @@
 
 using std::wstring;
 
+static COMPtr<IAccessibleComparable> comparableObject(IAccessible* accessible)
+{
+    COMPtr<IServiceProvider> serviceProvider(Query, accessible);
+    if (!serviceProvider)
+        return 0;
+    COMPtr<IAccessibleComparable> comparable;
+    serviceProvider->QueryService(SID_AccessibleComparable, __uuidof(IAccessibleComparable), reinterpret_cast<void**>(&comparable));
+    return comparable;
+}
+
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
 {
@@ -47,6 +57,18 @@ AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& oth
 
 AccessibilityUIElement::~AccessibilityUIElement()
 {
+}
+
+bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
+{
+    COMPtr<IAccessibleComparable> comparable = comparableObject(m_element.get());
+    COMPtr<IAccessibleComparable> otherComparable = comparableObject(otherElement->m_element.get());
+    if (!comparable || !otherComparable)
+        return false;
+    BOOL isSame = FALSE;
+    if (FAILED(comparable->isSameObject(otherComparable.get(), &isSame)))
+        return false;
+    return isSame;
 }
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>&)

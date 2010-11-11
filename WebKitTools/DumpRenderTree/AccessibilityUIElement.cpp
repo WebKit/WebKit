@@ -787,6 +787,13 @@ unsigned AccessibilityUIElement::selectedChildrenCount() const { return 0; }
 AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned) const { return 0; }
 #endif
 
+#if !PLATFORM(WIN)
+bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
+{
+    return platformUIElement() == otherElement->platformUIElement();
+}
+#endif
+
 #if !SUPPORTS_AX_TEXTMARKERS
 
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement*)

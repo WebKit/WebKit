@@ -1,3 +1,17 @@
+2010-11-10  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Use IAccessibleComparable to compare accessibility objects.
+        https://bugs.webkit.org/show_bug.cgi?id=49118
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::isEqual):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (comparableObject):
+        (AccessibilityUIElement::isEqual):
+
 2010-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Hyatt.
