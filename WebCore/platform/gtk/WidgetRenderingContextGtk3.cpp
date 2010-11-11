@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext, const IntRect& targetRect)
-    : m_graphicsContext(graphicsContext)
+WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* context, const IntRect& targetRect)
+    : m_graphicsContext(context)
     , m_targetRect(targetRect)
     , m_paintRect(targetRect)
     , m_hadError(false)
