@@ -3323,9 +3323,6 @@ BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = 
 // Added by WK r71783
 BUG62785 LINUX WIN : fast/text/justification-padding-mid-word.html = TEXT
 
-// Added by WK r71784
-BUG62787 : fast/images/png_per_row_alpha_decoding.html = MISSING
-
 // Start failing at r71783?
 BUG62788 MAC : fast/text/international/bidi-control-chars-treated-as-ZWS.html = TEXT
 
