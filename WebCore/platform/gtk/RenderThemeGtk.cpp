@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +41,7 @@
 #include "Scrollbar.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
+#include "WidgetRenderingContext.h"
 #include "gtkdrawing.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -151,15 +153,26 @@ RenderThemeGtk::RenderThemeGtk()
     , m_pauseButton(0)
     , m_seekBackButton(0)
     , m_seekForwardButton(0)
-    , m_partsTable(adoptPlatformRef(g_hash_table_new_full(0, 0, 0, g_free)))
+#ifdef GTK_API_VERSION_2
+    , m_themePartsHaveRGBAColormap(true)
+#endif
 {
+
+    memset(&m_themeParts, 0, sizeof(GtkThemeParts));
+#ifdef GTK_API_VERSION_2
+    GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
+    if (!colormap) {
+        m_themePartsHaveRGBAColormap = false;
+        colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
+    }
+    m_themeParts.colormap = colormap;
+#endif
+
+    // Initialize the Mozilla theme drawing code.
     if (!mozGtkRefCount) {
         moz_gtk_init();
-
-        // Use the theme parts for the default drawable.
-        moz_gtk_use_theme_parts(partsForDrawable(0));
+        moz_gtk_use_theme_parts(&m_themeParts);
     }
-
     ++mozGtkRefCount;
 
 #if ENABLE(VIDEO)
@@ -182,36 +195,19 @@ RenderThemeGtk::~RenderThemeGtk()
     m_seekBackButton.clear();
     m_seekForwardButton.clear();
 
-    GList* values = g_hash_table_get_values(m_partsTable.get());
-    for (guint i = 0; i < g_list_length(values); i++)
-        moz_gtk_destroy_theme_parts_widgets(
-            static_cast<GtkThemeParts*>(g_list_nth_data(values, i)));
-
     gtk_widget_destroy(m_gtkWindow);
 }
 
-GtkThemeParts* RenderThemeGtk::partsForDrawable(GdkDrawable* drawable) const
+void RenderThemeGtk::getIndicatorMetrics(ControlPart part, int& indicatorSize, int& indicatorSpacing) const
 {
-#ifdef GTK_API_VERSION_2
-    // A null drawable represents the default screen colormap.
-    GdkColormap* colormap = 0;
-    if (!drawable)
-        colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
-    else
-        colormap = gdk_drawable_get_colormap(drawable);
-
-    GtkThemeParts* parts = static_cast<GtkThemeParts*>(g_hash_table_lookup(m_partsTable.get(), colormap));
-    if (!parts) {
-        parts = g_new0(GtkThemeParts, 1);
-        parts->colormap = colormap;
-        g_hash_table_insert(m_partsTable.get(), colormap, parts);
+    ASSERT(part == CheckboxPart || part == RadioPart);
+    if (part == CheckboxPart) {
+        moz_gtk_checkbox_get_metrics(&indicatorSize, &indicatorSpacing);
+        return;
     }
-#else
-    // For GTK+ 3.0 we no longer have to worry about maintaining a set of widgets per-colormap.
-    static GtkThemeParts* parts = g_slice_new0(GtkThemeParts);
-#endif // GTK_API_VERSION_2
 
-    return parts;
+    // RadioPart
+    moz_gtk_radio_get_metrics(&indicatorSize, &indicatorSpacing);
 }
 
 static bool supportsFocus(ControlPart appearance)
@@ -289,69 +285,6 @@ static void adjustMozillaStyle(const RenderThemeGtk* theme, RenderStyle* style, 
     style->setPaddingBottom(Length(ypadding + bottom, Fixed));
 }
 
-#ifdef GTK_API_VERSION_2
-bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsContext* context, const IntRect& rect, GtkWidgetState* widgetState, int flags, GtkTextDirection textDirection)
-{
-    // Painting is disabled so just claim to have succeeded
-    if (context->paintingDisabled())
-        return false;
-
-    PlatformRefPtr<GdkDrawable> drawable(context->gdkDrawable());
-    GdkRectangle paintRect, clipRect;
-    if (drawable) {
-        AffineTransform ctm = context->getCTM();
-        IntPoint pos = ctm.mapPoint(rect.location());
-        paintRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
-
-        // Intersect the cairo rectangle with the target widget region. This  will
-        // prevent the theme drawing code from drawing into regions that cairo will
-        // clip anyway.
-        double clipX1, clipX2, clipY1, clipY2;
-        cairo_clip_extents(context->platformContext(), &clipX1, &clipY1, &clipX2, &clipY2);
-        IntPoint clipPos = ctm.mapPoint(IntPoint(clipX1, clipY1));
-
-        clipRect.width = clipX2 - clipX1;
-        clipRect.height = clipY2 - clipY1;
-        clipRect.x = clipPos.x();
-        clipRect.y = clipPos.y();
-        gdk_rectangle_intersect(&paintRect, &clipRect, &clipRect);
-
-    } else {
-        // In some situations, like during print previews, this GraphicsContext is not
-        // backed by a GdkDrawable. In those situations, we render onto a pixmap and then
-        // copy the rendered data back to the GraphicsContext via Cairo.
-        drawable = adoptPlatformRef(gdk_pixmap_new(0, rect.width(), rect.height(), gdk_visual_get_depth(gdk_visual_get_system())));
-        paintRect = clipRect = IntRect(0, 0, rect.width(), rect.height());
-    }
-
-    moz_gtk_use_theme_parts(partsForDrawable(drawable.get()));
-    bool success = moz_gtk_widget_paint(type, drawable.get(), &paintRect, &clipRect, widgetState, flags, textDirection) == MOZ_GTK_SUCCESS;
-
-    // If the drawing was successful and we rendered onto a pixmap, copy the
-    // results back to the original GraphicsContext.
-    if (success && !context->gdkDrawable()) {
-        cairo_t* cairoContext = context->platformContext();
-        cairo_save(cairoContext);
-        gdk_cairo_set_source_pixmap(cairoContext, drawable.get(), rect.x(), rect.y());
-        cairo_paint(cairoContext);
-        cairo_restore(cairoContext);
-    }
-
-    return !success;
-}
-#else
-bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsContext* context, const IntRect& rect, GtkWidgetState* widgetState, int flags, GtkTextDirection textDirection)
-{
-    // Painting is disabled so just claim to have succeeded
-    if (context->paintingDisabled())
-        return false;
-
-    // false == success, because of awesome.
-    GdkRectangle paintRect = rect;
-    return moz_gtk_widget_paint(type, context->platformContext(), &paintRect, widgetState, flags, textDirection) != MOZ_GTK_SUCCESS;
-}
-#endif
-
 bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
 {
     // Painting is disabled so just claim to have succeeded
@@ -382,8 +315,8 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
     else
         widgetState.depressed = false;
 
-    GtkTextDirection textDirection = gtkTextDirection(renderObject->style()->direction());
-    return paintMozillaGtkWidget(type, context, rect, &widgetState, flags, textDirection);
+    WidgetRenderingContext widgetContext(context, rect);
+    return !widgetContext.paintMozillaWidget(type, &widgetState, flags, gtkTextDirection(renderObject->style()->direction()));
 }
 
 static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, ControlPart appearance)
@@ -394,19 +327,7 @@ static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, Contr
 
     // FIXME: This is probably not correct use of indicatorSize and indicatorSpacing.
     gint indicatorSize, indicatorSpacing;
-
-    switch (appearance) {
-    case CheckboxPart:
-        if (moz_gtk_checkbox_get_metrics(&indicatorSize, &indicatorSpacing) != MOZ_GTK_SUCCESS)
-            return;
-        break;
-    case RadioPart:
-        if (moz_gtk_radio_get_metrics(&indicatorSize, &indicatorSpacing) != MOZ_GTK_SUCCESS)
-            return;
-        break;
-    default:
-        return;
-    }
+    theme->getIndicatorMetrics(appearance, indicatorSize, indicatorSpacing);
 
     // Other ports hard-code this to 13, but GTK+ users tend to demand the native look.
     // It could be made a configuration option values other than 13 actually break site compatibility.
@@ -614,7 +535,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     if (part == SliderVerticalPart)
         gtkPart = MOZ_GTK_SCALE_VERTICAL;
 
-    return paintRenderObject(gtkPart, object, info.context, toRenderBox(object)->absoluteContentBox());
+    return paintRenderObject(gtkPart, object, info.context, rect);
 }
 
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const

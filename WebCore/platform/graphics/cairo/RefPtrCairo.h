@@ -26,6 +26,7 @@ typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo_font_face cairo_font_face_t;
 typedef struct _cairo_scaled_font cairo_scaled_font_t;
+typedef struct _cairo_pattern cairo_pattern_t;
 
 #if defined(USE_FREETYPE)
 typedef struct _FcPattern FcPattern;
@@ -44,6 +45,9 @@ template<> void derefIfNotNull(cairo_font_face_t* ptr);
 
 template<> void refIfNotNull(cairo_scaled_font_t* ptr);
 template<> void derefIfNotNull(cairo_scaled_font_t* ptr);
+
+template<> void refIfNotNull(cairo_pattern_t*);
+template<> void derefIfNotNull(cairo_pattern_t*);
 
 #if defined(USE_FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr);

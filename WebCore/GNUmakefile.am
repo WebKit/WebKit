@@ -3631,6 +3631,9 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	WebCore/platform/gtk/WheelEventGtk.cpp \
 	WebCore/platform/gtk/WidgetGtk.cpp \
+	WebCore/platform/gtk/WidgetRenderingContextGtk2.cpp \
+	WebCore/platform/gtk/WidgetRenderingContextGtk3.cpp \
+	WebCore/platform/gtk/WidgetRenderingContext.h \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
 	WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \

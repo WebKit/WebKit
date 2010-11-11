@@ -76,6 +76,18 @@ template<> void derefIfNotNull(cairo_scaled_font_t* ptr)
         cairo_scaled_font_destroy(ptr);
 }
 
+template<> void refIfNotNull(cairo_pattern_t* ptr)
+{
+    if (LIKELY(ptr != 0))
+        cairo_pattern_reference(ptr);
+}
+
+template<> void derefIfNotNull(cairo_pattern_t* ptr)
+{
+    if (LIKELY(ptr != 0))
+        cairo_pattern_destroy(ptr);
+}
+
 #if defined(USE_FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr)
 {

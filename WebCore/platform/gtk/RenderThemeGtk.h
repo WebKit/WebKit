@@ -83,7 +83,7 @@ public:
     virtual String extraMediaControlsStyleSheet();
 #endif
 
-    bool paintMozillaGtkWidget(GtkThemeWidgetType, GraphicsContext*, const IntRect&, GtkWidgetState*, int flags, GtkTextDirection = GTK_TEXT_DIR_NONE);
+    void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing) const;
 
     GtkWidget* gtkScrollbar();
 
@@ -169,7 +169,6 @@ private:
     GtkContainer* gtkContainer() const;
 
     bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect& rect, int flags = 0);
-    GtkThemeParts* partsForDrawable(GdkDrawable*) const;
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkContainer* m_gtkContainer;
@@ -193,9 +192,11 @@ private:
     RefPtr<Image> m_pauseButton;
     RefPtr<Image> m_seekBackButton;
     RefPtr<Image> m_seekForwardButton;
-    Page* m_page;
-    PlatformRefPtr<GHashTable> m_partsTable;
-
+    GtkThemeParts m_themeParts;
+#ifdef GTK_API_VERSION_2
+    bool m_themePartsHaveRGBAColormap;
+#endif
+    friend class WidgetRenderingContext;
 };
 
 }

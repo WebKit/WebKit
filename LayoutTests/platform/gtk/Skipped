@@ -5234,11 +5234,6 @@ fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/disconnected-frame-already.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 
-# GTK+ theme-rendered widgets do not support CSS transforms
-# https://bugs.webkit.org/show_bug.cgi?id=40139
-fast/forms/slider-transformed.html
-fast/forms/slider-transformed.html
-
 # Some input type=range tests fail because of the size 
 # of the slider thumb in GTK+ themes.
 fast/forms/slider-mouse-events.html
