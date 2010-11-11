@@ -129,6 +129,11 @@ public:
     // engine uses rational numbers to represent media time.
     virtual float mediaTimeForTimeValue(float timeValue) const { return timeValue; }
 
+    // Overide this if it is safe for HTMLMediaElement to cache movie time and report
+    // 'currentTime' as [cached time + elapsed wall time]. Returns the maximum wall time
+    // it is OK to calculate movie time before refreshing the cached time.
+    virtual double maximumDurationToCacheMediaTime() const { return 0; }
+
 };
 
 }
