@@ -1,3 +1,14 @@
+2010-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add an API for overriding the actual visible content rect in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=49373
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setActualVisibleContentRect):
+        * Api/qwebpage.h:
+
 2010-11-11  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

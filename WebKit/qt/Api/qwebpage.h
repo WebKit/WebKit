@@ -280,6 +280,7 @@ public:
 
     QSize preferredContentsSize() const;
     void setPreferredContentsSize(const QSize &size) const;
+    void setActualVisibleContentRect(const QRect& rect) const;
 
     virtual bool event(QEvent*);
     bool focusNextPrevChild(bool next);

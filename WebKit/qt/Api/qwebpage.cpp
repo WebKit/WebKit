@@ -2540,6 +2540,26 @@ void QWebPage::setPreferredContentsSize(const QSize& size) const
     view->layout();
 }
 
+/*
+    This function is to be called after any (animated) scroll/pan has ended, in the case the application handles the
+    scrolling/panning of the web contents. This is commonly used in combination with tiling where is it common for
+    the application to pan the actual view, which then resizes itself to the size of the contents.
+
+    \note Calling this function makes WebKit stop trying to calculate the visibleContentRect. To turn that on
+    again, call this method with an empty rect.
+
+    \sa QGraphicsWebView::resizesToContents, QWebSettings::TiledBackingStoreEnabled
+*/
+void QWebPage::setActualVisibleContentRect(const QRect& rect) const
+{
+    QWebFrame* frame = mainFrame();
+    if (!frame->d->frame || !frame->d->frame->view())
+        return;
+
+    WebCore::FrameView* view = frame->d->frame->view();
+    view->setActualVisibleContentRect(rect);
+}
+
 /*!
     \fn bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)
 
