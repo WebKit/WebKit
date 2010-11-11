@@ -126,8 +126,10 @@ public:
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
     // and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
-    // included.
+    // included. In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to
+    // override the current visibleContentRect by using setActualVisibleContentRect, for instance when a pan ends.
     IntRect visibleContentRect(bool includeScrollbars = false) const;
+    void setActualVisibleContentRect(IntRect actualVisibleContentRect) { m_actualVisibleContentRect = actualVisibleContentRect; }
     int visibleWidth() const { return visibleContentRect().width(); }
     int visibleHeight() const { return visibleContentRect().height(); }
 
@@ -287,6 +289,7 @@ private:
     // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
 
+    IntRect m_actualVisibleContentRect;
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
