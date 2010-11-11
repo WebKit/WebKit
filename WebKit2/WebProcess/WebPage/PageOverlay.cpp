@@ -81,8 +81,15 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     IntRect paintRect = intersection(dirtyRect, bounds());
     if (paintRect.isEmpty())
         return;
-    
+
+    graphicsContext.save();
+    graphicsContext.beginTransparencyLayer(1);
+    graphicsContext.setCompositeOperation(CompositeCopy);
+
     m_client->drawRect(this, graphicsContext, paintRect);
+
+    graphicsContext.endTransparencyLayer();
+    graphicsContext.restore();
 }
     
 bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)

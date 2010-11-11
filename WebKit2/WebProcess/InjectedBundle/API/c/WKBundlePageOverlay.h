@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-// Page overload client.
+// Page overlay client.
 typedef void (*WKBundlePageOverlayWillMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundlePageOverlayDidMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundlePageOverlayDrawRectCallback)(WKBundlePageOverlayRef pageOverlay, void* graphicsContext, WKRect dirtyRect, const void *clientInfo);
