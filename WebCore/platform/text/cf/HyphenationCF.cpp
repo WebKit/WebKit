@@ -33,6 +33,38 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(WIN)
+
+#include "SoftLinking.h"
+
+#ifdef DEBUG_ALL
+SOFT_LINK_DEBUG_LIBRARY(CoreFoundation)
+#else
+SOFT_LINK_LIBRARY(CoreFoundation)
+#endif
+
+SOFT_LINK_OPTIONAL(CoreFoundation, CFStringGetHyphenationLocationBeforeIndex, CFIndex, , (CFStringRef string, CFIndex location, CFRange limitRange, CFOptionFlags options, CFLocaleRef locale, UTF32Char *character))
+SOFT_LINK_OPTIONAL(CoreFoundation, CFStringIsHyphenationAvailableForLocale, Boolean, , (CFLocaleRef locale))
+
+static CFIndex wkCFStringGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex location, CFRange limitRange, CFOptionFlags options, CFLocaleRef locale, UTF32Char *character)
+{
+    static CFStringGetHyphenationLocationBeforeIndexPtrType cfStringGetHyphenationLocationBeforeIndex = CFStringGetHyphenationLocationBeforeIndexPtr();
+    if (!cfStringGetHyphenationLocationBeforeIndex)
+        return kCFNotFound;
+    return cfStringGetHyphenationLocationBeforeIndex(string, location, limitRange, options, locale, character);
+}
+
+static Boolean wkCFStringIsHyphenationAvailableForLocale(CFLocaleRef locale)
+{
+    static CFStringIsHyphenationAvailableForLocalePtrType cfStringIsHyphenationAvailableForLocale = CFStringIsHyphenationAvailableForLocalePtr();
+    return cfStringIsHyphenationAvailableForLocale && cfStringIsHyphenationAvailableForLocale(locale);
+}
+
+#define CFStringGetHyphenationLocationBeforeIndex wkCFStringGetHyphenationLocationBeforeIndex
+#define CFStringIsHyphenationAvailableForLocale wkCFStringIsHyphenationAvailableForLocale
+
+#endif // PLATFORM(WIN)
+
 namespace WebCore {
 
 template<>
@@ -65,7 +97,7 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters, length, kCFAllocatorNull));
+    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), length, kCFAllocatorNull));
 
     RetainPtr<CFLocaleRef> locale = cfLocaleCache().get(localeIdentifier);
     ASSERT(locale);

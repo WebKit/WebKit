@@ -29139,10 +29139,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\Hyphenation.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\Hyphenation.h"
 					>
 				</File>
@@ -29365,6 +29361,10 @@
 				<Filter
 					Name="cf"
 					>
+					<File
+						RelativePath="..\platform\text\cf\HyphenationCF.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\platform\text\cf\StringCF.cpp"
 						>
