@@ -82,7 +82,6 @@ private:
     bool m_isWaitingForDidSetFrameNotification;
     bool m_isVisible;
 
-    WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
     WebCore::IntSize m_lastSetViewSize;
 
 #if PLATFORM(MAC)

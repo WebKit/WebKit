@@ -48,7 +48,7 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
     if (!m_backingStoreImage.isNull())
         return;
 
-    m_backingStoreImage = QImage(m_viewSize.width(), m_viewSize.height(), QImage::Format_RGB32);
+    m_backingStoreImage = QImage(size().width(), size().height(), QImage::Format_RGB32);
 }
 
 void ChunkedUpdateDrawingAreaProxy::invalidateBackingStore()

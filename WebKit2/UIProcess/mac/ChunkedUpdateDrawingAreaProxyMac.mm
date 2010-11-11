@@ -47,10 +47,11 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
         return;
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_viewSize.width(), m_viewSize.height(), 8, m_viewSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    const IntSize& viewSize = size();
+    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, viewSize.width(), viewSize.height(), 8, viewSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     
     // Flip the bitmap context coordinate system.
-    CGContextTranslateCTM(m_bitmapContext.get(), 0, m_viewSize.height());
+    CGContextTranslateCTM(m_bitmapContext.get(), 0, viewSize.height());
     CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
 }
 
@@ -75,7 +76,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
     RetainPtr<CGImageRef> image(updateChunk->createImage());
     const IntRect& updateChunkRect = updateChunk->rect();
 
-    CGContextDrawImage(m_bitmapContext.get(), CGRectMake(updateChunkRect.x(), m_viewSize.height() - updateChunkRect.bottom(), 
+    CGContextDrawImage(m_bitmapContext.get(), CGRectMake(updateChunkRect.x(), size().height() - updateChunkRect.bottom(), 
                                                          updateChunkRect.width(), updateChunkRect.height()), image.get());
     [m_webView setNeedsDisplayInRect:NSRectFromCGRect(updateChunkRect)];
 }

@@ -27,6 +27,7 @@
 #define DrawingAreaProxy_h
 
 #include "DrawingAreaBase.h"
+#include <WebCore/IntSize.h>
 
 #if PLATFORM(QT)
 class QPainter;
@@ -52,7 +53,8 @@ public:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*) { ASSERT_NOT_REACHED(); }
 
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
-    virtual void setSize(const WebCore::IntSize&) = 0;
+    virtual void setSize(const WebCore::IntSize& size) { m_size = size; }
+    const WebCore::IntSize& size() const { return m_size; }
 
     virtual void setPageIsVisible(bool isVisible) = 0;
     
@@ -63,6 +65,7 @@ public:
 
 protected:
     DrawingAreaProxy(Type);
+    WebCore::IntSize m_size;
 };
 
 } // namespace WebKit

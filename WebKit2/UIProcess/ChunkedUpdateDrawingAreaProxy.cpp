@@ -75,6 +75,8 @@ void ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCo
 
 void ChunkedUpdateDrawingAreaProxy::setSize(const IntSize& viewSize)
 {
+    DrawingAreaProxy::setSize(viewSize);
+
     WebPageProxy* page = this->page();
     if (!page->isValid())
         return;
@@ -82,7 +84,6 @@ void ChunkedUpdateDrawingAreaProxy::setSize(const IntSize& viewSize)
     if (viewSize.isEmpty())
         return;
 
-    m_viewSize = viewSize;
     m_lastSetViewSize = viewSize;
 
     if (m_isWaitingForDidSetFrameNotification)

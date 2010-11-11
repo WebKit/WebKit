@@ -44,7 +44,7 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
     if (m_backingStoreBitmap)
         return;
 
-    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(m_viewSize);
+    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(size());
 
     void* pixels = 0;
     m_backingStoreBitmap.set(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));

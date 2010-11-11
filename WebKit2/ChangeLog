@@ -1,3 +1,33 @@
+2010-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Push m_viewSize down to DrawingAreaProxy base class
+        https://bugs.webkit.org/show_bug.cgi?id=49347
+        
+        Some refactoring so that the various drawing area classes
+        can share m_size.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setSize):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setSize):
+        (WebKit::DrawingAreaProxy::size):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::setSize):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        (WebKit::LayerBackedDrawingAreaProxy::platformSetSize):
+        (WebKit::LayerBackedDrawingAreaProxy::attachCompositingContext):
+        * UIProcess/win/ChunkedUpdateDrawingAreaProxyWin.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+
 2010-11-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

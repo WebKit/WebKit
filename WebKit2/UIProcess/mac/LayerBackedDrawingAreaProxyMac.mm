@@ -45,7 +45,7 @@ WebPageProxy* LayerBackedDrawingAreaProxy::page()
 
 void LayerBackedDrawingAreaProxy::platformSetSize()
 {
-    [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, m_viewSize.width(), m_viewSize.height())];
+    [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, size().width(), size().height())];
 }
 
 void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
@@ -69,7 +69,7 @@ void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
     [m_compositingRootLayer.get() setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
     
     [m_compositingRootLayer.get() setAnchorPoint:CGPointZero];
-    [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, m_viewSize.width(), m_viewSize.height())];
+    [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, size().width(), size().height())];
     
     // FIXME: this fixes the layer jiggle when resizing the window, but breaks layer flipping because
     // CA doesn't propagate the kCALayerFlagFlippedAbove through the remote layer.
