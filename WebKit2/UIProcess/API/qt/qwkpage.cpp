@@ -431,6 +431,11 @@ QWKPage::ViewportAttributes QWKPage::viewportAttributesForSize(const QSize& avai
     return result;
 }
 
+void QWKPage::setActualVisibleContentsRect(const QRect& rect) const
+{
+    d->page->setActualVisibleContentRect(rect);
+}
+
 void QWKPage::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();

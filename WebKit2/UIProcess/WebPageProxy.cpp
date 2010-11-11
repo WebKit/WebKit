@@ -410,6 +410,16 @@ void WebPageProxy::updateWindowFrame(const IntRect& windowFrame)
 }
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::SetActualVisibleContentRect(rect), m_pageID);
+}
+#endif
+
 void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
 {
     if (!isValid())

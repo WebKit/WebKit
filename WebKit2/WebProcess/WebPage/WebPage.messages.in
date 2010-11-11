@@ -55,6 +55,7 @@ messages -> WebPage {
     PreferencesDidChange(WebKit::WebPreferencesStore store)
 
     SetCustomUserAgent(WTF::String customUserAgent)
+    SetActualVisibleContentRect(WebCore::IntRect rect)
 
     Close()
     TryClose()

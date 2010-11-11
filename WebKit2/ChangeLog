@@ -1,3 +1,24 @@
+2010-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add a Qt WebKit2 API for overriding the actual visible content rect
+        https://bugs.webkit.org/show_bug.cgi?id=49381
+
+        Add an Qt WebKit2 API for overriding the actual visible content rect in
+        WebCore. This is supposed to be used in combination with tiling.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::setActualVisibleContentsRect):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setActualVisibleContentRect):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActualVisibleContentRect):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
