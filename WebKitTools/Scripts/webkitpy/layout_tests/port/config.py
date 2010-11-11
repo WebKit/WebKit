@@ -40,16 +40,20 @@ from webkitpy.common.system import logutils
 _log = logutils.get_logger(__file__)
 
 #
-# This is used to record if we've already hit the filesystem to look
+# FIXME: This is used to record if we've already hit the filesystem to look
 # for a default configuration. We cache this to speed up the unit tests,
-# but this can be reset with clear_cached_configuration().
+# but this can be reset with clear_cached_configuration(). This should be
+# replaced with us consistently using MockConfigs() for tests that don't
+# hit the filesystem at all and provide a reliable value.
 #
-_determined_configuration = None
+_have_determined_configuration = False
+_configuration = "Release"
 
 
 def clear_cached_configuration():
-    global _determined_configuration
-    _determined_configuration = -1
+    global _have_determined_configuration, _configuration
+    _have_determined_configuration = False
+    _configuration = "Release"
 
 
 class Config(object):
@@ -137,8 +141,11 @@ class Config(object):
 
     def _determine_configuration(self):
         # This mirrors the logic in webkitdirs.pm:determineConfiguration().
-        global _determined_configuration
-        if _determined_configuration == -1:
+        #
+        # FIXME: See the comment at the top of the file regarding unit tests
+        # and our use of global mutable static variables.
+        global _have_determined_configuration, _configuration
+        if not _have_determined_configuration:
             contents = self._read_configuration()
             if not contents:
                 contents = "Release"
@@ -146,8 +153,9 @@ class Config(object):
                 contents = "Release"
             if contents == "Development":
                 contents = "Debug"
-            _determined_configuration = contents
-        return _determined_configuration
+            _configuration = contents
+            _have_determined_configuration = True
+        return _configuration
 
     def _read_configuration(self):
         configuration_path = self._filesystem.join(self.build_directory(None),

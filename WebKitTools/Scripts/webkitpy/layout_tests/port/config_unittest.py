@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 import unittest
 
 from webkitpy.common.system import executive
@@ -48,7 +49,7 @@ class ConfigTest(unittest.TestCase):
 
     def assert_configuration(self, contents, expected):
         # This tests that a configuration file containing
-        # _contents_ endsd up being interpreted as _expected_.
+        # _contents_ ends up being interpreted as _expected_.
         c = self.make_config('foo', {'foo/Configuration': contents})
         self.assertEqual(c.default_configuration(), expected)
 
@@ -118,6 +119,25 @@ class ConfigTest(unittest.TestCase):
         oc.capture_output()
         self.assert_configuration('Unknown', 'Unknown')
         oc.restore_output()
+
+    def test_default_configuration__standalone(self):
+        # FIXME: This test runs a standalone python script to test
+        # reading the default configuration to work around any possible
+        # caching / reset bugs. See https://bugs.webkit.org/show_bug?id=49360
+        # for the motivation. We can remove this test when we remove the
+        # global configuration cache in config.py.
+        e = executive.Executive()
+        fs = filesystem.FileSystem()
+        c = config.Config(e, fs)
+        script = c.path_from_webkit_base('WebKitTools', 'Scripts',
+            'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
+
+        # Note: don't use 'Release' here, since that's the normal default.
+        expected = 'Debug'
+
+        args = [sys.executable, script, '--mock', expected]
+        actual = e.run_command(args).rstrip()
+        self.assertEqual(actual, expected)
 
     def test_path_from_webkit_base(self):
         # FIXME: We use a real filesystem here. Should this move to a

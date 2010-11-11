@@ -1,3 +1,17 @@
+2010-11-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Fix NRWT to respect set-webkit-configuration again :(
+
+        This change fixes a typo in config.py that was causing the wrong
+        value to be read initially and us never actually looking into
+        the filesystem to get the default configuration.
+        
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_standalone.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
 2010-11-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
