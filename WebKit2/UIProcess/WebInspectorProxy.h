@@ -27,12 +27,23 @@
 #define WebInspectorProxy_h
 
 #include "APIObject.h"
+#include "Connection.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#ifdef __OBJC__
+@class WKView;
+#else
+class WKView;
+#endif
+#endif
 
 namespace WebKit {
 
 class WebPageProxy;
+struct WebPageCreationParameters;
 
 class WebInspectorProxy : public APIObject {
 public:
@@ -69,10 +80,23 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
+    // Implemented in generated WebInspectorProxyMessageReceiver.cpp
+    void didReceiveWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+
 private:
     WebInspectorProxy(WebPageProxy* page);
 
     virtual Type type() const { return APIType; }
+
+    WebPageProxy* platformCreateInspectorPage();
+
+    // Implemented the platform WebInspectorProxy file
+    String inspectorPageURL() const;
+
+    // Called by WebInspectorProxy messages
+    void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
+    void didLoadInspectorPage();
 
     WebPageProxy* m_page;
 
@@ -81,6 +105,10 @@ private:
     bool m_isDebuggingJavaScript;
     bool m_isProfilingJavaScript;
     bool m_isProfilingPage;
+
+#if PLATFORM(MAC)
+    RetainPtr<WKView> m_inspectorView;
+#endif
 };
 
 } // namespace WebKit

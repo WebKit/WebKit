@@ -244,6 +244,8 @@ public:
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
 
+    WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
+
 private:
     WebPageProxy(WebPageNamespace*, uint64_t pageID);
 
@@ -353,8 +355,6 @@ private:
     void didGetSourceForFrame(const String&, uint64_t);
 
     void focusedFrameChanged(uint64_t frameID);
-
-    WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing, DrawingAreaBase::DrawingAreaInfo&);

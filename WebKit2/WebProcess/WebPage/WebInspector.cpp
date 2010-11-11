@@ -25,7 +25,10 @@
 
 #include "WebInspector.h"
 
+#include "WebInspectorProxyMessages.h"
 #include "WebPage.h"
+#include "WebPageCreationParameters.h"
+#include "WebProcess.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 
@@ -35,7 +38,39 @@ namespace WebKit {
 
 WebInspector::WebInspector(WebPage* page)
     : m_page(page)
+    , m_inspectorPage(0)
 {
+}
+
+// Called from WebInspectorClient
+WebPage* WebInspector::createInspectorPage()
+{
+    if (!m_page)
+        return 0;
+
+    uint64_t inspectorPageID = 0;
+    WebPageCreationParameters parameters;
+
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPage(),
+            Messages::WebInspectorProxy::CreateInspectorPage::Reply(inspectorPageID, parameters),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    if (!inspectorPageID)
+        return 0;
+
+    WebProcess::shared().createWebPage(inspectorPageID, parameters);
+    m_inspectorPage = WebProcess::shared().webPage(inspectorPageID);
+    ASSERT(m_inspectorPage);
+
+    return m_inspectorPage;
+}
+
+// Called from WebInspectorFrontendClient
+void WebInspector::didLoadInspectorPage()
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidLoadInspectorPage(), m_page->pageID());
 }
 
 // Called by WebInspector messages

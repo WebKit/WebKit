@@ -23,40 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorFrontendClient_h
-#define WebInspectorFrontendClient_h
+#import "WebInspectorProxy.h"
 
-#include <WebCore/InspectorFrontendClientLocal.h>
+#import "WKAPICast.h"
+#import "WKView.h"
+#import "WebPageProxy.h"
+#import <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebPage;
+WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+{
+    ASSERT(m_page);
+    ASSERT(!m_inspectorView);
 
-class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
-public:
-    WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage);
+    m_inspectorView.adoptNS([[WKView alloc] initWithFrame:NSZeroRect pageNamespaceRef:toAPI(m_page->pageNamespace())]);
+    ASSERT(m_inspectorView);
 
-private:
-    virtual void frontendLoaded();
+    return toImpl([m_inspectorView.get() pageRef]);
+}
 
-    virtual String localizedStringsURL();
-    virtual String hiddenPanels();
+String WebInspectorProxy::inspectorPageURL() const
+{
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+    ASSERT(path);
 
-    virtual void bringToFront();
-    virtual void closeWindow();
-    virtual void disconnectFromBackend();
-
-    virtual void attachWindow();
-    virtual void detachWindow();
-    virtual void setAttachedWindowHeight(unsigned);
-
-    virtual void inspectedURLChanged(const String&);
-
-    virtual void sendMessageToBackend(const String&);
-
-    WebPage* m_page;
-};
+    return [[NSURL fileURLWithPath:path] absoluteString];
+}
 
 } // namespace WebKit
-
-#endif // WebInspectorFrontendClient_h

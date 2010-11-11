@@ -156,6 +156,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebContextMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessages.h \
+    $$OUTPUT_DIR/WebKit2/generated/WebInspectorProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessages.h \
@@ -170,6 +171,7 @@ WEBKIT2_GENERATED_SOURCES = \
     $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebContextMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessageReceiver.cpp \
+    $$OUTPUT_DIR/WebKit2/generated/WebInspectorProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessageReceiver.cpp \
@@ -191,11 +193,11 @@ HEADERS += \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
-    Platform/qt/MappedMemoryPool.h \
     Platform/RunLoop.h \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
+    Platform/qt/MappedMemoryPool.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
     Shared/API/c/WKGeometry.h \
@@ -209,11 +211,11 @@ HEADERS += \
     Shared/API/c/WKURLRequest.h \
     Shared/API/c/WKURLResponse.h \
     Shared/API/c/WKUserContentURLPattern.h \
-    Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
-    Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/BackingStore.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
+    Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
+    Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
@@ -221,30 +223,29 @@ HEADERS += \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
-    Shared/StringPairVector.h \
-    Shared/qt/CrashHandler.h \
-    Shared/qt/PlatformCertificateInfo.h \
-    Shared/qt/UpdateChunk.h \
-    Shared/qt/WebEventFactoryQt.h \
     Shared/PlatformPopupMenuData.h \
+    Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
     Shared/WebContextMenuItem.h \
     Shared/WebContextMenuItemData.h \
-    Shared/WebEvent.h \
     Shared/WebError.h \
+    Shared/WebEvent.h \
     Shared/WebEventConversion.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \
     Shared/WebPopupItem.h \
-    Shared/WebProcessCreationParameters.h \
     Shared/WebPreferencesStore.h \
+    Shared/WebProcessCreationParameters.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
-    UIProcess/API/C/WebKit2.h \
+    Shared/qt/CrashHandler.h \
+    Shared/qt/PlatformCertificateInfo.h \
+    Shared/qt/UpdateChunk.h \
+    Shared/qt/WebEventFactoryQt.h \
     UIProcess/API/C/WKAPICast.h \
     UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKBackForwardListItem.h \
@@ -260,10 +261,12 @@ HEADERS += \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
+    UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
+    UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
-    UIProcess/API/cpp/WKRetainPtr.h \
+    UIProcess/API/qt/ClientImpl.h \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkhistory.h \
     UIProcess/API/qt/qwkhistory_p.h \
@@ -271,16 +274,15 @@ HEADERS += \
     UIProcess/API/qt/qwkpage_p.h \
     UIProcess/API/qt/qwkpreferences.h \
     UIProcess/ChunkedUpdateDrawingAreaProxy.h \
+    UIProcess/Downloads/DownloadProxy.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/FindIndicator.h \
     UIProcess/GenericCallback.h \
-    UIProcess/Downloads/DownloadProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
-    UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/PageClient.h \
+    UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/ProcessModel.h \
-    UIProcess/API/qt/ClientImpl.h \
     UIProcess/ResponsivenessTimer.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
@@ -327,11 +329,8 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-    WebProcess/Plugins/Plugin.h \
-    WebProcess/Plugins/PluginController.h \
-    WebProcess/Plugins/PluginView.h \
-    WebProcess/Plugins/Netscape/JSNPObject.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
+    WebProcess/Plugins/Netscape/JSNPObject.h \
     WebProcess/Plugins/Netscape/NPJSObject.h \
     WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
@@ -339,6 +338,9 @@ HEADERS += \
     WebProcess/Plugins/Netscape/NetscapePlugin.h \
     WebProcess/Plugins/Netscape/NetscapePluginModule.h \
     WebProcess/Plugins/Netscape/NetscapePluginStream.h \
+    WebProcess/Plugins/Plugin.h \
+    WebProcess/Plugins/PluginController.h \
+    WebProcess/Plugins/PluginView.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
     WebProcess/WebCoreSupport/WebDragClient.h \
@@ -347,9 +349,9 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
+    WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
-    WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
@@ -396,14 +398,6 @@ SOURCES += \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
-    Shared/qt/BackingStoreQt.cpp \
-    Shared/qt/CrashHandler.cpp \
-    Shared/qt/NativeWebKeyboardEventQt.cpp \
-    Shared/qt/UpdateChunk.cpp \
-    Shared/qt/WebCoreArgumentCodersQt.cpp \
-    Shared/qt/WebEventFactoryQt.cpp \
-    Shared/qt/WebURLRequestQt.cpp \
-    Shared/qt/WebURLResponseQt.cpp \
     Shared/PlatformPopupMenuData.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebContextMenuItem.cpp \
@@ -422,6 +416,14 @@ SOURCES += \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
+    Shared/qt/BackingStoreQt.cpp \
+    Shared/qt/CrashHandler.cpp \
+    Shared/qt/NativeWebKeyboardEventQt.cpp \
+    Shared/qt/UpdateChunk.cpp \
+    Shared/qt/WebCoreArgumentCodersQt.cpp \
+    Shared/qt/WebEventFactoryQt.cpp \
+    Shared/qt/WebURLRequestQt.cpp \
+    Shared/qt/WebURLResponseQt.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKContext.cpp \
@@ -434,30 +436,30 @@ SOURCES += \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKPreferencesPrivate.cpp \
+    UIProcess/API/cpp/qt/WKStringQt.cpp \
+    UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
     UIProcess/API/qt/qwkhistory.cpp \
     UIProcess/API/qt/qwkpage.cpp \
     UIProcess/API/qt/qwkpreferences.cpp \
-    UIProcess/API/cpp/qt/WKStringQt.cpp \
-    UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
+    UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/FindIndicator.cpp \
-    UIProcess/Plugins/PluginInfoStore.cpp \
-    UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
-    UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
+    UIProcess/Plugins/PluginInfoStore.cpp \
+    UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
-    UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
+    UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebDownloadClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFindClient.cpp \
@@ -477,6 +479,10 @@ SOURCES += \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
+    UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
+    UIProcess/qt/WebContextMenuProxyQt.cpp \
+    UIProcess/qt/WebContextQt.cpp \
+    UIProcess/qt/WebPopupMenuProxyQt.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
@@ -503,10 +509,8 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
-    WebProcess/Plugins/Plugin.cpp \
-    WebProcess/Plugins/PluginView.cpp \
-    WebProcess/Plugins/Netscape/JSNPObject.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \
+    WebProcess/Plugins/Netscape/JSNPObject.cpp \
     WebProcess/Plugins/Netscape/NPJSObject.cpp \
     WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
@@ -515,6 +519,8 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
     WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
+    WebProcess/Plugins/Plugin.cpp \
+    WebProcess/Plugins/PluginView.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     WebProcess/WebCoreSupport/WebDragClient.cpp \
@@ -522,9 +528,9 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
+    WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
-    WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
@@ -532,19 +538,16 @@ SOURCES += \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
+    WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebInspector.cpp \
     WebProcess/WebPage/WebPage.cpp \
-    WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
     WebProcess/WebProcess.cpp \
-    UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
-    UIProcess/qt/WebContextQt.cpp \
-    UIProcess/qt/WebContextMenuProxyQt.cpp \
-    UIProcess/qt/WebPopupMenuProxyQt.cpp \
+    WebProcess/qt/WebInspectorQt.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES

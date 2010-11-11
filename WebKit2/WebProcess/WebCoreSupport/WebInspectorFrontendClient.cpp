@@ -25,6 +25,7 @@
 
 #include "WebInspectorFrontendClient.h"
 
+#include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/Page.h>
 #include <wtf/text/WTFString.h>
@@ -42,10 +43,16 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebPage* page, WebPage* i
 {
 }
 
+void WebInspectorFrontendClient::frontendLoaded()
+{
+    InspectorFrontendClientLocal::frontendLoaded();
+
+    m_page->inspector()->didLoadInspectorPage();
+}
+
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    notImplemented();
-    return String();
+    return m_page->inspector()->localizedStringsURL();
 }
 
 String WebInspectorFrontendClient::hiddenPanels()

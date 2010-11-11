@@ -1271,6 +1271,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\WebProcess\WebPage\win\WebInspectorWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\WebProcess\WebPage\win\WebPageWin.cpp"
 						>
 					</File>
@@ -2180,6 +2184,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\UIProcess\win\WebInspectorProxyWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\win\WebPopupMenuProxyWin.cpp"
 					>
 				</File>
@@ -2510,6 +2518,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorProxyMessages.h"
 				>
 			</File>
 			<File

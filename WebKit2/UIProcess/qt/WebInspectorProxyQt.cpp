@@ -23,40 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorFrontendClient_h
-#define WebInspectorFrontendClient_h
+#import "WebInspectorProxy.h"
 
-#include <WebCore/InspectorFrontendClientLocal.h>
+#import <wtf/text/WTFString.h>
+
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebPage;
+WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+{
+    notImplemented();
+    return 0;
+}
 
-class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
-public:
-    WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage);
-
-private:
-    virtual void frontendLoaded();
-
-    virtual String localizedStringsURL();
-    virtual String hiddenPanels();
-
-    virtual void bringToFront();
-    virtual void closeWindow();
-    virtual void disconnectFromBackend();
-
-    virtual void attachWindow();
-    virtual void detachWindow();
-    virtual void setAttachedWindowHeight(unsigned);
-
-    virtual void inspectedURLChanged(const String&);
-
-    virtual void sendMessageToBackend(const String&);
-
-    WebPage* m_page;
-};
+String WebInspectorProxy::inspectorPageURL() const
+{
+    notImplemented();
+    return String();
+}
 
 } // namespace WebKit
-
-#endif // WebInspectorFrontendClient_h

@@ -625,6 +625,12 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         return;
     }
 
+    if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
+        if (WebInspectorProxy* inspector = this->inspector())
+            inspector->didReceiveWebInspectorProxyMessage(connection, messageID, arguments);
+        return;
+    }
+
     didReceiveWebPageProxyMessage(connection, messageID, arguments);
 }
 
@@ -632,6 +638,12 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
         m_drawingArea->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
+        if (WebInspectorProxy* inspector = this->inspector())
+            inspector->didReceiveSyncWebInspectorProxyMessage(connection, messageID, arguments, reply);
         return;
     }
 

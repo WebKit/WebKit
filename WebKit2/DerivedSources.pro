@@ -95,6 +95,7 @@ MESSAGE_RECEIVERS = \
     PluginProcessProxy.messages.in \
     PluginProxy.messages.in \
     WebContext.messages.in \
+    WebInspectorProxy.messages.in \
     WebPage/WebInspector.messages.in \
     WebPage/WebPage.messages.in \
     WebPageProxy.messages.in \

@@ -27,6 +27,7 @@
 
 #include "WebInspectorMessages.h"
 #include "WebPageProxy.h"
+#include "WebPageCreationParameters.h"
 #include "WebProcessProxy.h"
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
@@ -133,6 +134,30 @@ void WebInspectorProxy::togglePageProfiling()
 
     // FIXME: have the WebProcess notify us on state changes.
     m_isProfilingPage = !m_isProfilingPage;
+}
+
+// Called by WebInspectorProxy messages
+void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters& inspectorPageParameters)
+{
+    inspectorPageID = 0;
+
+    if (!m_page)
+        return;
+
+    WebPageProxy* inspectorPage = platformCreateInspectorPage();
+    ASSERT(inspectorPage);
+    if (!inspectorPage)
+        return;
+
+    inspectorPageID = inspectorPage->pageID();
+    inspectorPageParameters = inspectorPage->creationParameters(IntSize(0, 0));
+
+    inspectorPage->loadURL(inspectorPageURL());
+}
+
+void WebInspectorProxy::didLoadInspectorPage()
+{
+    // FIXME: show the window or attach the inspector here.
 }
 
 } // namespace WebKit

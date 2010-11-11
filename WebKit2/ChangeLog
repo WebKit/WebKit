@@ -1,3 +1,64 @@
+2010-11-08  Timothy Hatcher  <timothy@apple.com>
+
+        Create and load the Web Inspector page.
+
+        https://webkit.org/b/49207
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): Added. Call platformCreateInspectorPage and then
+        call WebPageProxy::loadURL with inspectorPageURL.
+        (WebKit::WebInspectorProxy::didLoadInspectorPage): Added stub.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Call WebInspectorProxy::didReceiveWebInspectorProxyMessage.
+        (WebKit::WebPageProxy::didReceiveSyncMessage): Call WebInspectorProxy::didReceiveSyncWebInspectorProxyMessage.
+        * UIProcess/WebPageProxy.h: Made creationParameters public so WebInspectorProxy can use it.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Make a WkView and return the WebPageProxy.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Return the file URL for the inspector.html file.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Added stub.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Ditto.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Added stub.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Ditto.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openInspectorFrontend): Call WebInspector::createInspectorPage and set up the WebInspectorFrontendClient.
+        (WebKit::WebInspectorClient::sendMessageToFrontend): Call doDispatchMessageOnFrontendPage in the base class.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::frontendLoaded): Call WebInspector::didLoadInspectorPage.
+        (WebKit::WebInspectorFrontendClient::localizedStringsURL): Call WebInspector::localizedStringsURL.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::WebInspector):
+        (WebKit::WebInspector::createInspectorPage): Send a sync WebInspectorProxy::CreateInspectorPage message and set up
+        the WebPage using the result page ID.
+        (WebKit::WebInspector::didLoadInspectorPage): Send a WebInspectorProxy::DidLoadInspectorPage message.
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::inspectorPage): Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage): Call WebInspector::didReceiveWebInspectorMessage.
+
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::WebInspector::localizedStringsURL): Return the file URL for the localizedStrings.js file.
+        * WebProcess/WebPage/qt/WebInspectorQt.cpp:
+        (WebKit::WebInspector::localizedStringsURL): Added stub.
+        * WebProcess/WebPage/win/WebInspectorWin.cpp:
+        (WebKit::WebInspector::localizedStringsURL): Added stub.
+
+        * DerivedSources.make: Added WebInspectorProxy.messages.in.
+        * DerivedSources.pro: Ditto.
+
+        * WebKit2.pro: Added new files.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+
 2010-11-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
