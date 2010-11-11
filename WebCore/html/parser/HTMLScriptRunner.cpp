@@ -140,20 +140,22 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         if (errorOccurred)
             scriptElement->dispatchEvent(createScriptErrorEvent());
         else {
-            executeScript(sourceCode);
+            executeScript(scriptElement.get(), sourceCode);
             scriptElement->dispatchEvent(createScriptLoadEvent());
         }
     }
     ASSERT(!m_scriptNestingLevel);
 }
 
-void HTMLScriptRunner::executeScript(const ScriptSourceCode& sourceCode) const
+void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode) const
 {
-    ASSERT(m_document);
+    ASSERT(element);
+    ASSERT(element->document());
     ASSERT(isExecutingScript());
-    if (!m_document->frame())
+    Frame* frame = element->document()->frame();
+    if (!frame)
         return;
-    m_document->frame()->script()->executeScript(sourceCode);
+    frame->script()->executeScript(sourceCode);
 }
 
 void HTMLScriptRunner::watchForLoad(PendingScript& pendingScript)
@@ -318,7 +320,7 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
             // ASSERT(document()->haveStylesheetsLoaded());
             ASSERT(isExecutingScript());
             ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
-            executeScript(sourceCode);
+            executeScript(script, sourceCode);
         }
     }
 }
