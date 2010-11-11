@@ -1,3 +1,13 @@
+2010-11-11  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebScriptWorld::world() may crash
+        https://bugs.webkit.org/show_bug.cgi?id=49342
+
+        * Api/qwebscriptworld.cpp:
+        (QWebScriptWorld::world):
+
 2010-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
