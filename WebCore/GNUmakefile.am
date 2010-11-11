@@ -3540,7 +3540,6 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
-	WebCore/platform/graphics/cairo/FontPlatformData.h \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
@@ -3754,28 +3753,34 @@ endif # END ENABLE_FAST_MOBILE_SCROLLING
 # FreeType font backend
 # ---
 if USE_FREETYPE
-webcoregtk_cppflags += -DUSE_FREETYPE=1
+webcoregtk_cppflags += \
+	-DUSE_FREETYPE=1 \
+	-I$(srcdir)/WebCore/platform/graphics/freetype
+
 webcoregtk_sources += \
-	WebCore/platform/graphics/cairo/FontCacheFreeType.cpp \
-	WebCore/platform/graphics/cairo/FontCustomPlatformData.cpp \
-	WebCore/platform/graphics/cairo/FontPlatformDataFreeType.cpp \
-	WebCore/platform/graphics/cairo/FontPlatformDataFreeType.h \
-	WebCore/platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp \
-	WebCore/platform/graphics/cairo/SimpleFontDataCairo.cpp
+	WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
+	WebCore/platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp \
+	WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp \
+	WebCore/platform/graphics/freetype/FontPlatformData.h \
+	WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
+	WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp
 endif # END USE_FREETYPE
 
 # ---
 # Pango font backend
 # ---
 if USE_PANGO
-webcoregtk_cppflags += -DUSE_PANGO=1
+webcoregtk_cppflags += \
+	-DUSE_PANGO=1 \
+	-I$(srcdir)/WebCore/platform/graphics/pango
+
 webcoregtk_sources += \
-	WebCore/platform/graphics/gtk/FontCachePango.cpp \
-	WebCore/platform/graphics/gtk/FontCustomPlatformDataPango.cpp \
-	WebCore/platform/graphics/gtk/FontPlatformDataPango.cpp \
-	WebCore/platform/graphics/gtk/FontPlatformDataPango.h \
-	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \
-	WebCore/platform/graphics/gtk/SimpleFontDataPango.cpp
+	WebCore/platform/graphics/pango/FontCachePango.cpp \
+	WebCore/platform/graphics/pango/FontCustomPlatformDataPango.cpp \
+	WebCore/platform/graphics/pango/FontPlatformDataPango.cpp \
+	WebCore/platform/graphics/pango/FontPlatformData.h \
+	WebCore/platform/graphics/pango/GlyphPageTreeNodePango.cpp \
+	WebCore/platform/graphics/pango/SimpleFontDataPango.cpp
 endif # END USE_PANGO
 
 # ----

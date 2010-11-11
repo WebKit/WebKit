@@ -27190,7 +27190,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\cairo\FontPlatformData.h"
+						RelativePath="..\platform\graphics\win\FontPlatformData.h"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"

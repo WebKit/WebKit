@@ -11,6 +11,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     "${WEBKIT_DIR}/efl/WebCoreSupport"
     "${WEBCORE_DIR}/platform/efl"
+    "${WEBCORE_DIR}/platform/graphics/freetype"
     ${Cairo_INCLUDE_DIRS}
     ${ECORE_X_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}

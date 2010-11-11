@@ -65,15 +65,12 @@ LIST(APPEND WebCore_SOURCES
 IF (WTF_PLATFORM_CAIRO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"
+    "${WEBCORE_DIR}/platform/graphics/freetype"
   )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/cairo/CairoUtilities.cpp
     platform/graphics/cairo/ContextShadowCairo.cpp
-    platform/graphics/cairo/FontCacheFreeType.cpp
     platform/graphics/cairo/FontCairo.cpp
-    platform/graphics/cairo/FontCustomPlatformData.cpp
-    platform/graphics/cairo/FontPlatformDataFreeType.cpp
-    platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp
     platform/graphics/cairo/ImageBufferCairo.cpp
@@ -82,8 +79,12 @@ IF (WTF_PLATFORM_CAIRO)
     platform/graphics/cairo/PathCairo.cpp
     platform/graphics/cairo/PatternCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
-    platform/graphics/cairo/SimpleFontDataCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
+    platform/graphics/freetype/FontCacheFreeType.cpp
+    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+    platform/graphics/freetype/FontPlatformDataFreeType.cpp
+    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
+    platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
   )
