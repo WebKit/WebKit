@@ -105,9 +105,6 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_context(context)
     , m_videoCache(4)
     , m_contextLost(false)
-    , m_stencilMask(0xFFFFFFFF)
-    , m_stencilFuncRef(0)
-    , m_stencilFuncMask(0xFFFFFFFF)
 {
     ASSERT(m_context);
     initializeNewContext();
@@ -122,11 +119,15 @@ void WebGLRenderingContext::initializeNewContext()
     m_unpackAlignment = 4;
     m_unpackFlipY = false;
     m_unpackPremultiplyAlpha = false;
+    m_unpackColorspaceConversion = GraphicsContext3D::BROWSER_DEFAULT_WEBGL;
     m_boundArrayBuffer = 0;
     m_boundElementArrayBuffer = 0;
     m_currentProgram = 0;
     m_framebufferBinding = 0;
     m_renderbufferBinding = 0;
+    m_stencilMask = 0xFFFFFFFF;
+    m_stencilFuncRef = 0;
+    m_stencilFuncMask = 0xFFFFFFFF;
     m_vertexAttribState.clear();
 
     int numCombinedTextureImageUnits = 0;
@@ -1632,6 +1633,8 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
         return WebGLGetInfo(m_unpackFlipY);
     case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         return WebGLGetInfo(m_unpackPremultiplyAlpha);
+    case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
+        return WebGLGetInfo(m_unpackColorspaceConversion);
     case GraphicsContext3D::VENDOR:
         return WebGLGetInfo("Webkit (" + m_context->getString(GraphicsContext3D::VENDOR) + ")");
     case GraphicsContext3D::VERSION:
@@ -2148,21 +2151,32 @@ void WebGLRenderingContext::pixelStorei(unsigned long pname, long param)
     case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         m_unpackPremultiplyAlpha = param;
         break;
+    case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
+        if (param == GraphicsContext3D::BROWSER_DEFAULT_WEBGL || param == GraphicsContext3D::NONE)
+            m_unpackColorspaceConversion = static_cast<unsigned long>(param);
+        else {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return;
+        }
+        break;
     case GraphicsContext3D::PACK_ALIGNMENT:
     case GraphicsContext3D::UNPACK_ALIGNMENT:
-        m_context->pixelStorei(pname, param);
         if (param == 1 || param == 2 || param == 4 || param == 8) {
             if (pname == GraphicsContext3D::PACK_ALIGNMENT)
                 m_packAlignment = static_cast<int>(param);
             else // GraphicsContext3D::UNPACK_ALIGNMENT:
                 m_unpackAlignment = static_cast<int>(param);
+            m_context->pixelStorei(pname, param);
+            cleanupAfterGraphicsCall(false);
+        } else {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return;
         }
         break;
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
-    cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::polygonOffset(double factor, double units)

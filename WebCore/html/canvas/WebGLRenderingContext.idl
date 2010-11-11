@@ -37,10 +37,6 @@ module html {
         const unsigned int STENCIL_BUFFER_BIT             = 0x00000400;
         const unsigned int COLOR_BUFFER_BIT               = 0x00004000;
 
-        /* Boolean */
-        const unsigned int FALSE                          = 0;
-        const unsigned int TRUE                           = 1;
-
         /* BeginMode */
         const unsigned int POINTS                         = 0x0000;
         const unsigned int LINES                          = 0x0001;
@@ -230,7 +226,6 @@ module html {
         const unsigned int INT                            = 0x1404;
         const unsigned int UNSIGNED_INT                   = 0x1405;
         const unsigned int FLOAT                          = 0x1406;
-        const unsigned int FIXED                          = 0x140C;
 
         /* PixelFormat */
         const unsigned int DEPTH_COMPONENT                = 0x1902;
@@ -398,10 +393,6 @@ module html {
         const unsigned int SHADER_SOURCE_LENGTH           = 0x8B88;
         const unsigned int SHADER_COMPILER                = 0x8DFA;
 
-        /* Shader Binary */
-        const unsigned int SHADER_BINARY_FORMATS          = 0x8DF8;
-        const unsigned int NUM_SHADER_BINARY_FORMATS      = 0x8DF9;
-
         /* Shader Precision-Specified Types */
         const unsigned int LOW_FLOAT                      = 0x8DF0;
         const unsigned int MEDIUM_FLOAT                   = 0x8DF1;
@@ -457,9 +448,11 @@ module html {
         const unsigned int INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
 
         /* WebGL-specific enums */
-        const unsigned int UNPACK_FLIP_Y_WEBGL            = 0x9240;
-        const unsigned int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
-        const unsigned int CONTEXT_LOST_WEBGL             = 0x9242;
+        const unsigned int UNPACK_FLIP_Y_WEBGL                = 0x9240;
+        const unsigned int UNPACK_PREMULTIPLY_ALPHA_WEBGL     = 0x9241;
+        const unsigned int CONTEXT_LOST_WEBGL                 = 0x9242;
+        const unsigned int UNPACK_COLORSPACE_CONVERSION_WEBGL = 0x9243;
+        const unsigned int BROWSER_DEFAULT_WEBGL              = 0x9244;
 
         [StrictTypeChecking] void         activeTexture(in unsigned long texture) raises(DOMException);
         [StrictTypeChecking] void         attachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);

@@ -29,6 +29,9 @@ PASS getError was expected value: INVALID_OPERATION : a different mask value for
 PASS getError was expected value: INVALID_OPERATION : a different mask value for front and back facing is illegal
 PASS undefined is undefined.
 PASS undefined is undefined.
+PASS gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.BROWSER_DEFAULT_WEBGL
+PASS gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.NONE
+PASS getError was expected value: NO_ERROR : set/get UNPACK_COLORSPACE_CONVERSION_WEBGL should generate no error
 PASS successfullyParsed is true
 
 TEST COMPLETE

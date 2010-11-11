@@ -101,6 +101,12 @@ glErrorShouldBe(gl, gl.INVALID_OPERATION,
 shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
 shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_TYPE);
 
+shouldBe("gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL)", "gl.BROWSER_DEFAULT_WEBGL");
+gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+shouldBe("gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL)", "gl.NONE");
+glErrorShouldBe(gl, gl.NO_ERROR,
+    "set/get UNPACK_COLORSPACE_CONVERSION_WEBGL should generate no error");
+
 successfullyParsed = true;
 </script>
 

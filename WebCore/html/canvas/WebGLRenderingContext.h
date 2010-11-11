@@ -422,6 +422,7 @@ public:
     int m_unpackAlignment;
     bool m_unpackFlipY;
     bool m_unpackPremultiplyAlpha;
+    unsigned long m_unpackColorspaceConversion;
     bool m_contextLost;
 
     long m_stencilBits;
