@@ -41,23 +41,19 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 
 namespace WebCore {
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, CFRange runRange)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
     : m_coreTextRun(ctRun)
     , m_fontData(fontData)
-    , m_characters(characters + runRange.location)
-    , m_stringLocation(stringLocation + runRange.location)
-    , m_stringLength(runRange.length)
+    , m_characters(characters)
+    , m_stringLocation(stringLocation)
+    , m_stringLength(stringLength)
     , m_isMonotonic(true)
 {
     m_glyphCount = CTRunGetGlyphCount(m_coreTextRun.get());
-    m_coreTextIndices = runRange.location ? 0 : CTRunGetStringIndicesPtr(m_coreTextRun.get());
+    m_coreTextIndices = CTRunGetStringIndicesPtr(m_coreTextRun.get());
     if (!m_coreTextIndices) {
         m_coreTextIndicesVector.grow(m_glyphCount);
         CTRunGetStringIndices(m_coreTextRun.get(), CFRangeMake(0, 0), m_coreTextIndicesVector.data());
-        if (runRange.location) {
-            for (unsigned i = 0; i < m_glyphCount; ++i)
-                m_coreTextIndicesVector[i] -= runRange.location;
-        }
         m_coreTextIndices = m_coreTextIndicesVector.data();
     }
 
@@ -168,8 +164,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
     for (CFIndex r = 0; r < runCount; r++) {
         CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, r));
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
-        CFRange runRange = CTRunGetStringRange(ctRun);
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, runRange));
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, length));
     }
 }
 

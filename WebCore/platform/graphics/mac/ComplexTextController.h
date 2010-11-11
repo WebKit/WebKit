@@ -72,9 +72,9 @@ private:
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
 #if USE(CORE_TEXT)
-        static PassRefPtr<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, CFRange runRange)
+        static PassRefPtr<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
         {
-            return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, runRange));
+            return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength));
         }
 #endif
 #if USE(ATSUI)
@@ -102,7 +102,7 @@ private:
 
     private:
 #if USE(CORE_TEXT)
-        ComplexTextRun(CTRunRef, const SimpleFontData*, const UChar* characters, unsigned stringLocation, CFRange runRange);
+        ComplexTextRun(CTRunRef, const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength);
         void createTextRunFromFontDataCoreText(bool ltr);
 #endif
 #if USE(ATSUI)
