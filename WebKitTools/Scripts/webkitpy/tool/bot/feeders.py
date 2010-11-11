@@ -26,8 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.common.net.bugzilla import CommitterValidator
 from webkitpy.tool.grammar import pluralize
 
 

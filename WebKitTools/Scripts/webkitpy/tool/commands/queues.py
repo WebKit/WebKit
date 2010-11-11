@@ -38,7 +38,8 @@ from datetime import datetime
 from optparse import make_option
 from StringIO import StringIO
 
-from webkitpy.common.net.bugzilla import CommitterValidator, Attachment
+from webkitpy.common.config.committervalidator import CommitterValidator
+from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.deprecated_logging import error, log

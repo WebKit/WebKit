@@ -1,4 +1,8 @@
 # Required for Python to search this directory for module files
 
-# Eventually bugzilla will have one-file-per-class and we'll only export public classes.
-from .bugzilla import *
+# We only export public API here.
+# FIXME: parse_bug_id should not be a free function.
+from .bugzilla import Bugzilla, parse_bug_id
+# Unclear if Bug and Attachment need to be public classes.
+from .bug import Bug
+from .attachment import Attachment

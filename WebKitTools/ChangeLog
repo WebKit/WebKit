@@ -1,3 +1,24 @@
+2010-11-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out Bug, Attachment and CommitterValidator from bugzilla.py
+        https://bugs.webkit.org/show_bug.cgi?id=49403
+
+        CommitterValidator really had nothing to do with bugzilla.py.
+        I've put it next to committers.py for now since its rather tied to that file.
+
+        * Scripts/webkitpy/common/config/committervalidator.py: Added.
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/__init__.py:
+        * Scripts/webkitpy/common/net/bugzilla/attachment.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/bug.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-11-11  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

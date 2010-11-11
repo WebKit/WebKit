@@ -27,36 +27,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-
 import datetime
 
-from webkitpy.common.config.committers import CommitterList, Reviewer, Committer
-from webkitpy.common.net.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
+from .bugzilla import Bugzilla, BugzillaQueries, parse_bug_id
+
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockBrowser
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
-
-
-class BugTest(unittest.TestCase):
-    def test_is_unassigned(self):
-        for email in Bug.unassigned_emails:
-            bug = Bug({"assigned_to_email" : email}, bugzilla=None)
-            self.assertTrue(bug.is_unassigned())
-        bug = Bug({"assigned_to_email" : "test@test.com"}, bugzilla=None)
-        self.assertFalse(bug.is_unassigned())
-
-
-class CommitterValidatorTest(unittest.TestCase):
-    def test_flag_permission_rejection_message(self):
-        validator = CommitterValidator(bugzilla=None)
-        self.assertEqual(validator._committers_py_path(), "WebKitTools/Scripts/webkitpy/common/config/committers.py")
-        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.
-
-- If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
-
-- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
-        self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
 
 
 class BugzillaTest(unittest.TestCase):
