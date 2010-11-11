@@ -5052,7 +5052,6 @@ canvas/philip/tests/2d.gradient.radial.touch2.html
 canvas/philip/tests/2d.gradient.radial.touch3.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
-canvas/philip/tests/2d.imageData.get.source.negative.html
 canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.imageData.put.unchanged.html
 canvas/philip/tests/2d.line.cap.open.html
@@ -5086,7 +5085,6 @@ canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/2d.transformation.setTransform.skewed.html
 canvas/philip/tests/2d.transformation.transform.skewed.html
-canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 canvas/philip/tests/type.prototype.html
 
 # [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
