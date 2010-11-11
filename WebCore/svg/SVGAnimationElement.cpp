@@ -409,9 +409,8 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
 {
     ASSERT(!m_keyPoints.isEmpty());
     ASSERT(calcMode() != CalcModePaced);
-    unsigned keyTimesCount = m_keyTimes.size();
-    ASSERT(keyTimesCount > 1);
-    ASSERT(m_keyPoints.size() == keyTimesCount);
+    ASSERT(m_keyTimes.size() > 1);
+    ASSERT(m_keyPoints.size() == m_keyTimes.size());
 
     unsigned index = calculateKeyTimesIndex(percent);
     float fromPercent = m_keyTimes[index];
@@ -514,7 +513,7 @@ void SVGAnimationElement::startedActiveInterval()
     if (calcMode == CalcModeSpline) {
         unsigned splinesCount = m_keySplines.size() + 1;
         if ((hasAttribute(SVGNames::keyPointsAttr) && m_keyPoints.size() != splinesCount)
-            || animationMode == ValuesAnimation && m_values.size() != splinesCount)
+            || (animationMode == ValuesAnimation && m_values.size() != splinesCount))
             return;
     }
 
