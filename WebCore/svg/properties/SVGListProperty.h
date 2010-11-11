@@ -287,7 +287,7 @@ public:
         processIncomingListItemWrapper(newItem, &index);
 
         // Detach the existing wrapper.
-        RefPtr<ListItemTearOff>& oldItem = wrappers.at(index);
+        RefPtr<ListItemTearOff> oldItem = wrappers.at(index);
         if (oldItem)
             oldItem->detachWrapper();
 
@@ -336,7 +336,7 @@ public:
         ASSERT(values.size() == wrappers.size());
 
         // Detach the existing wrapper.
-        RefPtr<ListItemTearOff>& oldItem = wrappers.at(index);
+        RefPtr<ListItemTearOff> oldItem = wrappers.at(index);
         if (oldItem)
             oldItem->detachWrapper();
 
