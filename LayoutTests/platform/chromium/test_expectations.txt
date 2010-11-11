@@ -3319,12 +3319,3 @@ BUG62515 : printing/page-format-data-display-none.html = TEXT
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
-// Added by WK r71783
-BUG62785 LINUX WIN : fast/text/justification-padding-mid-word.html = TEXT
-
-// Start failing at r71783?
-BUG62788 MAC : fast/text/international/bidi-control-chars-treated-as-ZWS.html = TEXT
-
-// Updated at WK r71787
-BUG62789 MAC : fast/text/international/bidi-neutral-run.html = TEXT
