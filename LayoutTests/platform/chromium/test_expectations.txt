@@ -3215,6 +3215,14 @@ BUGWK48634 MAC : fast/lists/005.html = IMAGE
 BUGWK48634 MAC : fast/lists/006.html = IMAGE
 BUGWK48634 MAC : fast/lists/007.html = IMAGE
 BUGWK48634 MAC : fast/lists/009.html = IMAGE
+BUGWK48634 MAC : fast/lists/001-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/002-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/003-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/005-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/006-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/007-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/008-vertical.html = IMAGE
+BUGWK48634 MAC : fast/lists/009-vertical.html = IMAGE
 BUGWK48634 MAC : fast/lists/anonymous-items.html = IMAGE
 BUGWK48634 MAC : fast/lists/big-list-marker.html = IMAGE
 BUGWK48634 MAC : fast/lists/drag-into-marker.html = IMAGE
@@ -3312,16 +3320,6 @@ BUGWK49265 LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMod
 
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUG62515 : printing/page-format-data-display-none.html = TEXT
-
-// WK r71700
-BUG62630 MAC : fast/lists/001-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/002-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/003-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/005-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/006-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/007-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/008-vertical.html = IMAGE
-BUG62630 MAC : fast/lists/009-vertical.html = IMAGE
 
 BUG60393 MAC DEBUG : fast/selectors/001.html = PASS TIMEOUT
 
