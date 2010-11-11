@@ -201,7 +201,7 @@ class Executive(object):
                     return
                 raise
 
-    def _win32_check_running_pid(self):
+    def _win32_check_running_pid(self, pid):
 
         class PROCESSENTRY32(ctypes.Structure):
             _fields_ = [("dwSize", ctypes.c_ulong),
@@ -246,7 +246,7 @@ class Executive(object):
             except OSError:
                 return False
         elif sys.platform == 'win32':
-            return self._win32_check_running_pid()
+            return self._win32_check_running_pid(pid)
 
         assert(False)
 
