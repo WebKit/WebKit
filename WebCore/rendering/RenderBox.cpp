@@ -378,7 +378,7 @@ void RenderBox::layout()
         return;
     }
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
     while (child) {
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
@@ -1174,7 +1174,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
         fixed |= isFixedPos;
     
     IntSize containerOffset = offsetFromContainer(o, roundedIntPoint(transformState.mappedPoint()));
-
+    
     bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (useTransforms && shouldUseTransformFromContainer(o)) {
         TransformationMatrix t;
@@ -1234,9 +1234,11 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o, const IntPoint& point) c
         offset += relativePositionOffset();
 
     if (!isInline() || isReplaced()) {
-        if (style()->position() != AbsolutePosition && style()->position() != FixedPosition)
+        if (style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
             o->adjustForColumns(offset, IntPoint(point.x() + x(), point.y() + y()));
-        offset.expand(x(), y());
+            offset += locationOffsetIncludingFlipping();
+        } else
+            offset += locationOffset();
     }
 
     if (o->hasOverflowClip())
@@ -1329,12 +1331,21 @@ IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintCo
             r.inflate(v->maximalOutlineSize());
         }
     }
+    
     computeRectForRepaint(repaintContainer, r);
     return r;
 }
 
 void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
 {
+    // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
+    // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
+    // offset corner for the enclosing container).  This allows for a fully RL or BT document to repaint
+    // properly even during layout, since the rect remains flipped all the way until the end.
+    //
+    // RenderView::computeRectForRepaint then converts the rect to physical coordinates.  We also convert to
+    // physical when we hit a repaintContainer boundary.  Therefore the final rect returned is always in the
+    // physical coordinate space of the repaintContainer.
     if (RenderView* v = view()) {
         // LayoutState is only valid for root-relative repainting
         if (v->layoutStateEnabled() && !repaintContainer) {
@@ -1357,8 +1368,11 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
     if (hasReflection())
         rect.unite(reflectedRect(rect));
 
-    if (repaintContainer == this)
+    if (repaintContainer == this) {
+        if (repaintContainer->style()->isFlippedBlocksWritingMode())
+            flipForWritingMode(rect);
         return;
+    }
 
     bool containerSkipped;
     RenderObject* o = container(repaintContainer, &containerSkipped);
@@ -1366,7 +1380,10 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         return;
 
     IntPoint topLeft = rect.location();
-    topLeft.move(x(), y());
+    if (isWritingModeRoot() && !isPositioned())
+        topLeft.move(locationOffsetIncludingFlipping());
+    else
+        topLeft.move(x(), y());
 
     EPosition position = style()->position();
 
@@ -1376,7 +1393,10 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(rect);
         topLeft = rect.location();
-        topLeft.move(x(), y());
+        if (isWritingModeRoot() && !isPositioned())
+            topLeft.move(locationOffsetIncludingFlipping());
+        else
+            topLeft.move(x(), y());
     } else if (position == FixedPosition)
         fixed = true;
 
@@ -1424,10 +1444,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         rect.move(-containerOffset);
         return;
     }
-    
-    if (o->isBox())
-        toRenderBox(o)->flipForWritingMode(rect);
-    
+
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
@@ -3199,7 +3216,7 @@ void RenderBox::blockDirectionOverflow(bool isLineHorizontal, int& logicalTopLay
     } 
 }
 
-IntPoint RenderBox::flipForWritingMode(RenderBox* child, const IntPoint& point, FlippingAdjustment adjustment)
+IntPoint RenderBox::flipForWritingMode(const RenderBox* child, const IntPoint& point, FlippingAdjustment adjustment) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return point;
@@ -3211,7 +3228,7 @@ IntPoint RenderBox::flipForWritingMode(RenderBox* child, const IntPoint& point, 
     return IntPoint(point.x() + width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), point.y());
 }
 
-void RenderBox::flipForWritingMode(IntRect& rect)
+void RenderBox::flipForWritingMode(IntRect& rect) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return;
@@ -3222,35 +3239,35 @@ void RenderBox::flipForWritingMode(IntRect& rect)
         rect.setX(width() - rect.right());
 }
 
-int RenderBox::flipForWritingMode(int position)
+int RenderBox::flipForWritingMode(int position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
     return logicalHeight() - position;
 }
 
-IntPoint RenderBox::flipForWritingMode(const IntPoint& position)
+IntPoint RenderBox::flipForWritingMode(const IntPoint& position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
     return style()->isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
 }
 
-IntSize RenderBox::flipForWritingMode(const IntSize& offset)
+IntSize RenderBox::flipForWritingMode(const IntSize& offset) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return offset;
     return style()->isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
 }
 
-IntSize RenderBox::locationOffsetIncludingFlipping()
+IntSize RenderBox::locationOffsetIncludingFlipping() const
 {
     if (!parent() || !parent()->isBox())
         return locationOffset();
     
-    RenderBox* parent = parentBox();
-    IntPoint localPoint = parent->flipForWritingMode(this, location(), ChildToParentFlippingAdjustment);
-    return IntSize(localPoint.x(), localPoint.y());
+    IntRect rect(frameRect());
+    parentBox()->flipForWritingMode(rect);
+    return IntSize(rect.x(), rect.y());
 }
 
 } // namespace WebCore

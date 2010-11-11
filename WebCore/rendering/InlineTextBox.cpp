@@ -171,9 +171,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int width = isHorizontal() ? logicalWidth : selHeight;
     int height = isHorizontal() ? selHeight : logicalWidth;
     
-    IntRect result = IntRect(topPoint, IntSize(width, height));
-    flipForWritingMode(result);
-    return result;
+    return IntRect(topPoint, IntSize(width, height));
 }
 
 void InlineTextBox::deleteLine(RenderArena* arena)

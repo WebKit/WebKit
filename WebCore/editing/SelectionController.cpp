@@ -970,8 +970,11 @@ IntRect SelectionController::absoluteBoundsForLocalRect(const IntRect& rect) con
     RenderObject* caretPainter = caretRenderer();
     if (!caretPainter)
         return IntRect();
-        
-    return caretPainter->localToAbsoluteQuad(FloatRect(rect)).enclosingBoundingBox();
+    
+    IntRect localRect(rect);
+    if (caretPainter->isBox())
+        toRenderBox(caretPainter)->flipForWritingMode(localRect);
+    return caretPainter->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 IntRect SelectionController::absoluteCaretBounds()
@@ -1085,6 +1088,8 @@ void SelectionController::paintCaret(GraphicsContext* context, int tx, int ty, c
         return;
 
     IntRect drawingRect = localCaretRectForPainting();
+    if (caretRenderer() && caretRenderer()->isBox())
+        toRenderBox(caretRenderer())->flipForWritingMode(drawingRect);
     drawingRect.move(tx, ty);
     IntRect caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())

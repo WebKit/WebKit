@@ -381,12 +381,12 @@ public:
     virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
-    IntPoint flipForWritingMode(RenderBox* child, const IntPoint&, FlippingAdjustment);
-    int flipForWritingMode(int position);
-    IntPoint flipForWritingMode(const IntPoint&);
-    IntSize flipForWritingMode(const IntSize&);
-    void flipForWritingMode(IntRect&);
-    IntSize locationOffsetIncludingFlipping();
+    IntPoint flipForWritingMode(const RenderBox* child, const IntPoint&, FlippingAdjustment) const;
+    int flipForWritingMode(int position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
+    IntPoint flipForWritingMode(const IntPoint&) const;
+    IntSize flipForWritingMode(const IntSize&) const;
+    void flipForWritingMode(IntRect&) const;
+    IntSize locationOffsetIncludingFlipping() const;
 
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

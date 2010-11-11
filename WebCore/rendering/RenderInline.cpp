@@ -628,7 +628,6 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     }
 
     IntRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
-    cb->flipForWritingMode(r);
 
     if (cb->hasColumns())
         cb->adjustRectForColumns(r);

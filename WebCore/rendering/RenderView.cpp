@@ -292,6 +292,15 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
     if (printing())
         return;
 
+    if (style()->isFlippedBlocksWritingMode()) {
+        // We have to flip by hand since the view's logical height has not been determined.  We
+        // can use the viewport width and height.
+        if (style()->isHorizontalWritingMode())
+            rect.setY(viewHeight() - rect.bottom());
+        else
+            rect.setX(viewWidth() - rect.right());
+    }
+
     if (fixed && m_frameView)
         rect.move(m_frameView->scrollX(), m_frameView->scrollY());
         

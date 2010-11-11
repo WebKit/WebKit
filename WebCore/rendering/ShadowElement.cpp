@@ -45,7 +45,7 @@ void ShadowBlockElement::layoutAsPart(const IntRect& partRect)
     RenderBox* selfRenderer = toRenderBox(renderer());
     IntRect oldRect = selfRenderer->frameRect();
 
-    LayoutStateMaintainer statePusher(parentRenderer->view(), parentRenderer, parentRenderer->size());
+    LayoutStateMaintainer statePusher(parentRenderer->view(), parentRenderer, parentRenderer->size(), parentRenderer->style()->isFlippedBlocksWritingMode());
 
     if (oldRect.size() != partRect.size())
         selfRenderer->setChildNeedsLayout(true, false);

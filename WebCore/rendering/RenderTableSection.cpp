@@ -393,7 +393,7 @@ void RenderTableSection::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
     for (RenderObject* child = children()->firstChild(); child; child = child->nextSibling()) {
         if (child->isTableRow()) {
             child->layoutIfNeeded();
@@ -484,7 +484,7 @@ int RenderTableSection::layoutRows(int toAdd)
     int vspacing = table()->vBorderSpacing();
     int nEffCols = table()->numEffCols();
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
 
     for (int r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.
