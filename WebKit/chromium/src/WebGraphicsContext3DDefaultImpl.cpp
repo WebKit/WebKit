@@ -170,7 +170,9 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
 
     validateAttributes();
 
-    if (gfx::GetGLImplementation() != gfx::kGLImplementationEGLGLES2) {
+    m_isGLES2 = gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2;
+
+    if (m_isGLES2) {
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
         glEnable(GL_POINT_SPRITE);
     }
@@ -183,7 +185,6 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     glGenFramebuffersEXT(1, &m_copyTextureToParentTextureFBO);
 
     m_initialized = true;
-    m_isGLES2 = gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2;
     return true;
 }
 
@@ -360,7 +361,7 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         if (m_attributes.stencil && m_attributes.depth)
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else {
-            if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2)
+            if (m_isGLES2)
                 internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
             else
                 internalDepthStencilFormat = GL_DEPTH_COMPONENT;
@@ -540,7 +541,7 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
         mustRestorePackAlignment = true;
     }
 
-    if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2) {
+    if (m_isGLES2) {
         // FIXME: consider testing for presence of GL_OES_read_format
         // and GL_EXT_read_format_bgra, and using GL_BGRA_EXT here
         // directly.
@@ -990,7 +991,7 @@ void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsign
 void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* value)
 {
     makeContextCurrent();
-    if (gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2) {
+    if (m_isGLES2) {
         glGetIntegerv(pname, value);
         return;
     }
