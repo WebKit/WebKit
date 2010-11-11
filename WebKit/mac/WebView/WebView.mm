@@ -2627,13 +2627,13 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     SchemeRegistry::registerURLSchemeAsSecure(scheme);
 }
 
-- (void)_scaleWebView:(float)scale
+- (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin
 {
     Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return;
 
-    coreFrame->scalePage(scale);
+    coreFrame->scalePage(scale, IntPoint(origin));
 }
 
 - (float)_viewScaleFactor

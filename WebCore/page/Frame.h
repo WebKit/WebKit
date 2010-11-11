@@ -144,7 +144,7 @@ namespace WebCore {
         float textZoomFactor() const { return m_textZoomFactor; }
         void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
-        void scalePage(float scale);
+        void scalePage(float scale, const IntPoint& origin);
         float pageScaleFactor() const { return m_pageScaleFactor; }
 
 #if ENABLE(ORIENTATION_EVENTS)

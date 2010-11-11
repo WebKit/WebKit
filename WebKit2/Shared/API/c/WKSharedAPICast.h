@@ -36,6 +36,7 @@
 #include "WebURL.h"
 #include <WebCore/IntRect.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/TypeTraits.h>
 
 namespace WebKit {
@@ -165,6 +166,11 @@ inline WebCore::FloatRect toImpl(const WKRect& wkRect)
 {
     return WebCore::FloatRect(static_cast<float>(wkRect.origin.x), static_cast<float>(wkRect.origin.y),
                               static_cast<float>(wkRect.size.width), static_cast<float>(wkRect.size.height));
+}
+
+inline WebCore::IntPoint toImpl(const WKPoint& wkPoint)
+{
+    return WebCore::IntPoint(static_cast<int>(wkPoint.x), static_cast<int>(wkPoint.y));
 }
 
 inline WKRect toAPI(const WebCore::FloatRect& rect)

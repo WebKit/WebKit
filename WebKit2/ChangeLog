@@ -1,3 +1,26 @@
+2010-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=49356 
+        -[WebView _scaleWebView:] should take and origin and scroll the 
+        document
+        -and corresponding-
+        <rdar://problem/8643921>
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toImpl):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageScaleWebView):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleWebView):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleWebView):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-10  Ada Chan  <adachan@apple.com>
         
         Fix Windows build.

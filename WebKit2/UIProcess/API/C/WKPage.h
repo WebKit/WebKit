@@ -253,7 +253,7 @@ WK_EXPORT double WKPageGetPageZoomFactor(WKPageRef page);
 WK_EXPORT void WKPageSetPageZoomFactor(WKPageRef page, double zoomFactor);
 WK_EXPORT void WKPageSetPageAndTextZoomFactors(WKPageRef page, double pageZoomFactor, double textZoomFactor);
 
-WK_EXPORT void WKPageScaleWebView(WKPageRef page, double scale);
+WK_EXPORT void WKPageScaleWebView(WKPageRef page, double scale, WKPoint origin);
 WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
 
 // Find.
