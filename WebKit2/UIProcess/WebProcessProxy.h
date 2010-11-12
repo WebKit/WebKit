@@ -154,7 +154,7 @@ private:
 template<typename E, typename T>
 bool WebProcessProxy::send(E messageID, uint64_t destinationID, const T& arguments)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder(new CoreIPC::ArgumentEncoder(destinationID));
+    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(arguments);
 
     return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder.release());
@@ -163,7 +163,7 @@ bool WebProcessProxy::send(E messageID, uint64_t destinationID, const T& argumen
 template<typename T>
 bool WebProcessProxy::send(const T& message, uint64_t destinationID)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder(new CoreIPC::ArgumentEncoder(destinationID));
+    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(message);
 
     return sendMessage(CoreIPC::MessageID(T::messageID), argumentEncoder.release());

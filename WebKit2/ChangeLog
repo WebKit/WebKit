@@ -1,3 +1,26 @@
+2010-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        CoreIPC cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=49455
+
+        Add a static create function to ArgumentEncoder. 
+        Factor sync message argument encoder creation out into a new function,
+        createSyncMessageArgumentEncoder.
+        
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::create):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::createSyncMessageArgumentEncoder):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::send):
+
 2010-11-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -28,6 +28,7 @@
 
 #include "ArgumentCoder.h"
 #include "Attachment.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +38,7 @@ class ArgumentEncoder;
 
 class ArgumentEncoder {
 public:
-    explicit ArgumentEncoder(uint64_t destinationID);
+    static PassOwnPtr<ArgumentEncoder> create(uint64_t destinationID);
     ~ArgumentEncoder();
 
     void encodeBytes(const uint8_t*, size_t);
@@ -67,6 +68,7 @@ public:
 #endif
 
 private:
+    explicit ArgumentEncoder(uint64_t destinationID);
     uint8_t* grow(unsigned alignment, size_t size);
     
     uint8_t* m_buffer;
