@@ -213,6 +213,13 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
     if (!rawCommand)
         return;
 
+    if (isSpatialNavigationEnabled(core(client->webView())->focusController()->focusedOrMainFrame()) && step == 1) {
+        if (direction == 1)
+            rawCommand = "MoveRight";
+        else if (!direction)
+            rawCommand = "MoveLeft";
+    }
+
     for (int i = 0; i < abs(count); i++)
         client->addPendingEditorCommand(rawCommand);
 }

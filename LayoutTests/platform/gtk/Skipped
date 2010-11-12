@@ -4964,11 +4964,6 @@ scrollbars/scrollbar-middleclick-nopaste.html
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
-# Spatial Navigation
-# https://bugs.webkit.org/show_bug.cgi?id=49056
-fast/events/spatial-navigation/snav-input.html
-fast/events/spatial-navigation/snav-textarea.html
-
 # Implement LayoutTestController::callShouldCloseOnWebView()
 fast/events/onbeforeunload-focused-iframe.html
 
