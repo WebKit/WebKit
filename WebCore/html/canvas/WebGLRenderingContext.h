@@ -54,7 +54,6 @@ class HTMLVideoElement;
 class ImageBuffer;
 class ImageData;
 class IntSize;
-class WebKitCSSMatrix;
 
 class WebGLRenderingContext : public CanvasRenderingContext {
 public:
