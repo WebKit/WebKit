@@ -152,8 +152,8 @@ def subn(pattern, replacement, s):
     return _regexp_compile_cache[pattern].subn(replacement, s)
 
 
-def iteratively_replace_matches_with_char(pattern, s, char):
-    """Returns the string with replacements.
+def iteratively_replace_matches_with_char(pattern, char_replacement, s):
+    """Returns the string with replacement done.
 
     Every character in the match is replaced with char.
     Due to the iterative nature, pattern should not match char or
@@ -161,14 +161,15 @@ def iteratively_replace_matches_with_char(pattern, s, char):
 
     Example:
       pattern = r'<[^>]>' # template parameters
+      char_replacement =  '_'
       s =     'A<B<C, D>>'
-      char =  '_'
       Returns 'A_________'
 
     Args:
-      pattern: the regex to match
-      s: the string on which to do the replacements.
-      char: the character to put in the place of the match
+      pattern: The regex to match.
+      char_replacement: The character to put in place of every
+                        character of the match.
+      s: The string on which to do the replacements.
 
     Returns:
       True, if the given line is blank.
@@ -180,7 +181,7 @@ def iteratively_replace_matches_with_char(pattern, s, char):
         start_match_index = matched.start(0)
         end_match_index = matched.end(0)
         match_length = end_match_index - start_match_index
-        s = s[:start_match_index] + char * match_length + s[end_match_index:]
+        s = s[:start_match_index] + char_replacement * match_length + s[end_match_index:]
 
 
 def up_to_unmatched_closing_paren(s):
@@ -1178,18 +1179,15 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
             starting_func = True
 
     if starting_func:
-        body_found = False
         for start_line_number in xrange(line_number, clean_lines.num_lines()):
             start_line = lines[start_line_number]
             joined_line += ' ' + start_line.lstrip()
             if search(r'(;|})', start_line):  # Declarations and trivial functions
-                body_found = True
                 break                              # ... ignore
             if search(r'{', start_line):
-                body_found = True
                 # Replace template constructs with _ so that no spaces remain in the function name,
                 # while keeping the column numbers of other characters the same as "line".
-                line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', line, "_")
+                line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
                 match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
 
                 # Use the column numbers from the modified line to find the
@@ -1204,7 +1202,7 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
                     function += '()'
                 function_state.begin(function)
                 break
-        if not body_found:
+        else:
             # No body for the function (or evidence of a non-function) was found.
             error(line_number, 'readability/fn_size', 5,
                   'Lint failed to find start of function body.')

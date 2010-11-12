@@ -1,3 +1,16 @@
+2010-11-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        cpp.py needs some tidying.
+        https://bugs.webkit.org/show_bug.cgi?id=49443
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+          Fix parameter ordering for iteratively_replace_matches_with_char
+          to mirror other similar functions (and improved comments, etc.)
+          Also, use a python-ism (for/else) to get rid of a variable that
+          was there to determine if something had been found in the loop.
+
 2010-11-12  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by James Robinson.
