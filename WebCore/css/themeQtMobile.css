@@ -33,7 +33,8 @@ select {
     padding: 2px 18px 3px 18px;
     border: 1px solid gray;
     -webkit-border-radius:5px;
-    background: -webkit-gradient(linear, left bottom, left top, color-stop(0.0, #e5e5e5), color-stop(0.4, #ffffff));
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0.0, rgba(0, 0, 0, 0.35)), color-stop(0.4, rgba(0, 0, 0, 0.0)));
+    background-color: #ffffff;
     color: #3e3e3e;
 }
 
@@ -76,7 +77,8 @@ input[type="number"],
 input[type="url"],
 textarea {
     border: 1px solid gray;
-    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, #bfbfbf), color-stop(0.2, #ffffff));
+    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, rgba(0, 0, 0, 0.35)), color-stop(0.2, rgba(0, 0, 0, 0.0)));
+    background-color: #ffffff;
     color: #3e3e3e;
     -webkit-border-radius:5px;
 }
@@ -93,7 +95,8 @@ input[type="number"]:disabled,
 input[type="url"]:disabled,
 textarea:disabled {
     border: 1px solid gray;
-    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, #e5e5e5), color-stop(0.2, #ffffff));
+    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, rgba(0, 0, 0, 0.3)), color-stop(0.2, rgba(0, 0, 0, 0.0)));
+    background-color: #ffffff;
     color: #e5e5e5;
 }
 
