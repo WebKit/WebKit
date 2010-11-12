@@ -23,18 +23,25 @@ var buf = gl.createBuffer();
 shouldBeNonNull(buf);
 
 gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
-shouldBe("gl.getError()", "gl.INVALID_OPERATION"); 
+glErrorShouldBe(gl, gl.INVALID_OPERATION);
 
 gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-shouldBe("gl.getError()", "gl.NO_ERROR");
+glErrorShouldBe(gl, gl.NO_ERROR);
+
+// This should not crash, but the selection of the overload is ambiguous per Web IDL.
+gl.bufferData(gl.ARRAY_BUFFER, null, gl.STATIC_DRAW);
+gl.getError();
 
 gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
-shouldBe("gl.getError()", "gl.NO_ERROR");
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 array = new ArrayBuffer(64);
 
 gl.bufferSubData(gl.ARRAY_BUFFER, 10, array);
-shouldBe("gl.getError()", "gl.NO_ERROR");
+glErrorShouldBe(gl, gl.NO_ERROR);
+
+gl.bufferSubData(gl.ARRAY_BUFFER, 10, null);
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 successfullyParsed = true;
 </script>

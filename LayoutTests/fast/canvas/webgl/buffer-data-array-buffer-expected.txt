@@ -6,10 +6,11 @@ Regression test for https://bugs.webkit.org/show_bug.cgi?id=41884 : Implement bu
 PASS gl is non-null.
 PASS array is non-null.
 PASS [object WebGLBuffer] is non-null.
-PASS gl.getError() is gl.INVALID_OPERATION
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: INVALID_OPERATION : 
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS successfullyParsed is true
 
 TEST COMPLETE
