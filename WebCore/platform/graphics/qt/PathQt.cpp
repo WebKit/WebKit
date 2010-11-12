@@ -290,12 +290,15 @@ void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool antic
     double width  = radius*2;
     double height = radius*2;
 
-    if ((!anticlockwise && (ea - sa >= 360)) || (anticlockwise && (sa - ea >= 360)))
+    if ((!anticlockwise && (ea - sa >= 360)) || (anticlockwise && (sa - ea >= 360))) {
         // If the anticlockwise argument is false and endAngle-startAngle is equal to or greater than 2*PI, or, if the
         // anticlockwise argument is true and startAngle-endAngle is equal to or greater than 2*PI, then the arc is the whole
         // circumference of this circle.
         span = 360;
-    else {
+
+        if (anticlockwise)
+            span = -span;
+    } else {
         if (!anticlockwise && (ea < sa))
             span += 360;
         else if (anticlockwise && (sa < ea))
