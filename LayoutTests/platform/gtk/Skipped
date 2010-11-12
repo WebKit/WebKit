@@ -5254,6 +5254,7 @@ fast/events/mouse-click-events.html
 fast/events/right-click-focus.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
+media/controls-right-click-on-timebar.html
 
 # Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the
 # preloader tests.
