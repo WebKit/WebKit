@@ -1187,11 +1187,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] throw\t\t %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_new_error: {
-            int r0 = (++it)->u.operand;
-            int errorType = (++it)->u.operand;
+        case op_throw_reference_error: {
             int k0 = (++it)->u.operand;
-            printf("[%4d] new_error\t %s, %d, %s\n", location, registerName(exec, r0).data(), errorType, constantName(exec, k0, getConstant(k0)).data());
+            printf("[%4d] throw_reference_error\t %s\n", location, constantName(exec, k0, getConstant(k0)).data());
+            break;
+        }
+        case op_throw_syntax_error: {
+            int k0 = (++it)->u.operand;
+            printf("[%4d] throw_syntax_error\t %s\n", location, constantName(exec, k0, getConstant(k0)).data());
             break;
         }
         case op_jsr: {
@@ -1639,7 +1642,7 @@ int CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned b
         else
             high = mid;
     }
-    
+
     ASSERT(low);
     if (!low) {
         startOffset = 0;

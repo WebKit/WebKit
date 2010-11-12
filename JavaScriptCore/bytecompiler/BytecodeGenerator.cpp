@@ -2050,13 +2050,16 @@ RegisterID* BytecodeGenerator::emitCatch(RegisterID* targetRegister, Label* star
     return targetRegister;
 }
 
-RegisterID* BytecodeGenerator::emitNewError(RegisterID* dst, bool isReferenceError, JSValue message)
+void BytecodeGenerator::emitThrowReferenceError(const UString& message)
 {
-    emitOpcode(op_new_error);
-    instructions().append(dst->index());
-    instructions().append(isReferenceError);
-    instructions().append(addConstantValue(message)->index());
-    return dst;
+    emitOpcode(op_throw_reference_error);
+    instructions().append(addConstantValue(jsString(globalData(), message))->index());
+}
+
+void BytecodeGenerator::emitThrowSyntaxError(const UString& message)
+{
+    emitOpcode(op_throw_syntax_error);
+    instructions().append(addConstantValue(jsString(globalData(), message))->index());
 }
 
 PassRefPtr<Label> BytecodeGenerator::emitJumpSubroutine(RegisterID* retAddrDst, Label* finally)
@@ -2211,9 +2214,8 @@ RegisterID* BytecodeGenerator::emitThrowExpressionTooDeepException()
     // that from an arbitrary node. However, calling emitExpressionInfo without any useful data
     // is still good enough to get us an accurate line number.
     emitExpressionInfo(0, 0, 0);
-    RegisterID* exception = emitNewError(newTemporary(), false, jsString(globalData(), "Expression too deep"));
-    emitThrow(exception);
-    return exception;
+    emitThrowSyntaxError("Expression too deep");
+    return newTemporary();
 }
 
 void BytecodeGenerator::setIsNumericCompareFunction(bool isNumericCompareFunction)

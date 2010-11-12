@@ -3563,19 +3563,24 @@ DEFINE_STUB_FUNCTION(void, op_put_setter)
     baseObj->defineSetter(callFrame, stackFrame.args[1].identifier(), asObject(stackFrame.args[2].jsValue()));
 }
 
-DEFINE_STUB_FUNCTION(JSObject*, op_new_error)
+DEFINE_STUB_FUNCTION(void, op_throw_reference_error)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned isReference = stackFrame.args[0].int32();
-    UString message = stackFrame.args[1].jsValue().toString(callFrame);
-    unsigned bytecodeOffset = stackFrame.args[2].int32();
+    UString message = stackFrame.args[0].jsValue().toString(callFrame);
+    stackFrame.globalData->exception = createReferenceError(callFrame, message);
+    VM_THROW_EXCEPTION_AT_END();
+}
 
-    JSObject* error = isReference ? createReferenceError(callFrame, message) : createSyntaxError(callFrame, message);
-    unsigned lineNumber = codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
-    return addErrorInfo(stackFrame.globalData, error, lineNumber, codeBlock->ownerExecutable()->source());
+DEFINE_STUB_FUNCTION(void, op_throw_syntax_error)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    UString message = stackFrame.args[0].jsValue().toString(callFrame);
+    stackFrame.globalData->exception = createSyntaxError(callFrame, message);
+    VM_THROW_EXCEPTION_AT_END();
 }
 
 DEFINE_STUB_FUNCTION(void, op_debug)

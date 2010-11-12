@@ -4584,24 +4584,27 @@ skip_id_custom_self:
         vPC = codeBlock->instructions().begin() + handler->target;
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_new_error) {
-        /* new_error dst(r) type(n) message(k)
+    DEFINE_OPCODE(op_throw_reference_error) {
+        /* op_throw_reference_error message(k)
 
-           Constructs a new Error instance using the original
-           constructor, using immediate number n as the type and
-           constant message as the message string. The result is
-           written to register dst.
+           Constructs a new reference Error instance using the
+           original constructor, using constant message as the
+           message string. The result is thrown.
         */
-        int dst = vPC[1].u.operand;
-        int isReference = vPC[2].u.operand;
-        UString message = callFrame->r(vPC[3].u.operand).jsValue().toString(callFrame);
+        UString message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame);
+        exceptionValue = JSValue(createReferenceError(callFrame, message));
+        goto vm_throw;
+    }
+    DEFINE_OPCODE(op_throw_syntax_error) {
+        /* op_throw_syntax_error message(k)
 
-        JSObject* error = isReference ? createReferenceError(callFrame, message) : createSyntaxError(callFrame, message);
-        addErrorInfo(globalData, error, codeBlock->lineNumberForBytecodeOffset(callFrame, vPC - codeBlock->instructions().begin()), codeBlock->ownerExecutable()->source());
-        callFrame->r(dst) = JSValue(error);
-
-        vPC += OPCODE_LENGTH(op_new_error);
-        NEXT_INSTRUCTION();
+           Constructs a new syntax Error instance using the
+           original constructor, using constant message as the
+           message string. The result is thrown.
+        */
+        UString message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame);
+        exceptionValue = JSValue(createSyntaxError(callFrame, message));
+        goto vm_throw;
     }
     DEFINE_OPCODE(op_end) {
         /* end result(r)

@@ -1462,17 +1462,22 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
     jump(regT0);
 }
 
-void JIT::emit_op_new_error(Instruction* currentInstruction)
+void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned type = currentInstruction[2].u.operand;
-    unsigned message = currentInstruction[3].u.operand;
+    unsigned message = currentInstruction[1].u.operand;
 
-    JITStubCall stubCall(this, cti_op_new_error);
-    stubCall.addArgument(Imm32(type));
+    JITStubCall stubCall(this, cti_op_throw_reference_error);
     stubCall.addArgument(m_codeBlock->getConstant(message));
-    stubCall.addArgument(Imm32(m_bytecodeOffset));
-    stubCall.call(dst);
+    stubCall.call();
+}
+
+void JIT::emit_op_throw_syntax_error(Instruction* currentInstruction)
+{
+    unsigned message = currentInstruction[1].u.operand;
+
+    JITStubCall stubCall(this, cti_op_throw_syntax_error);
+    stubCall.addArgument(m_codeBlock->getConstant(message));
+    stubCall.call();
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)

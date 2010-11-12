@@ -1,3 +1,56 @@
+2010-11-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 49420 - Clean up syntax/reference error throw.
+
+        Some errors detected at compile time are thrown at runtime. We currently do so using a op_new_error/op_throw bytecode pair.
+        This is not ideal. op_throw is used for explicit user throw statements, and has different requirements in terms or meta data
+        attached to the exception (controlled by the explicitThrow parameter passed to Interpreter::throwException). To work around
+        this, op_new_error has to add the meta data at an early stage, which is unlike other VM exceptions being raised.
+
+        We can simplify this and bring into line with other exception behaviour by changing new_error from just allocating an
+        Exception instance to also throwing it – but as a regular VM throw, correctly passing explicitThrow as false.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitThrowSyntaxError):
+        (JSC::BytecodeGenerator::emitThrowExpressionTooDeepException):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowReferenceError):
+        (JSC::ThrowableExpressionData::emitThrowSyntaxError):
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::PostfixErrorNode::emitBytecode):
+        (JSC::PrefixErrorNode::emitBytecode):
+        (JSC::AssignErrorNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw_reference_error):
+        (JSC::JIT::emit_op_throw_syntax_error):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw_reference_error):
+        (JSC::JIT::emit_op_throw_syntax_error):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * parser/Nodes.h:
+
 2010-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

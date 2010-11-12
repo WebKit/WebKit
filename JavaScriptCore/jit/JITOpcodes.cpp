@@ -1133,13 +1133,18 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
     jump(regT0);
 }
 
-void JIT::emit_op_new_error(Instruction* currentInstruction)
+void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_error);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[3].u.operand))));
-    stubCall.addArgument(Imm32(m_bytecodeOffset));
-    stubCall.call(currentInstruction[1].u.operand);
+    JITStubCall stubCall(this, cti_op_throw_reference_error);
+    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
+    stubCall.call();
+}
+
+void JIT::emit_op_throw_syntax_error(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_throw_syntax_error);
+    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
+    stubCall.call();
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)

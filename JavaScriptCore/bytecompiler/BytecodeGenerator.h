@@ -230,8 +230,10 @@ namespace JSC {
                 LineInfo info = { instructions().size(), n->lineNo() };
                 m_codeBlock->addLineInfo(info);
             }
-            if (m_emitNodeDepth >= s_maxEmitNodeDepth)
+            if (m_emitNodeDepth >= s_maxEmitNodeDepth) {
                 emitThrowExpressionTooDeepException();
+                return;
+            }
             ++m_emitNodeDepth;
             n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
             --m_emitNodeDepth;
@@ -380,7 +382,9 @@ namespace JSC {
             emitUnaryNoDstOp(op_throw, exc);
         }
 
-        RegisterID* emitNewError(RegisterID* dst, bool isReferenceError, JSValue message);
+        void emitThrowReferenceError(const UString& message);
+        void emitThrowSyntaxError(const UString& message);
+
         void emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value);
 
         RegisterID* emitPushScope(RegisterID* scope);
