@@ -140,8 +140,7 @@ JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef 
 
 JSValueRef LayoutTestController::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
 {
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
+    return DumpRenderTreeSupportGtk::nodesFromRect(context, value, x, y, top, right, bottom, left, ignoreClipping);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const

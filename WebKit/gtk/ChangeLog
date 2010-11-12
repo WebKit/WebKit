@@ -1,3 +1,16 @@
+2010-11-11  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Antonio Gomes.
+
+        [GTK][DRT] Implement LayoutTestController::nodesFromRect
+        https://bugs.webkit.org/show_bug.cgi?id=46598
+
+        Support nodesFromRect in DRT
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::nodesFromRect): Added.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2010-11-11  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Antonio Gomes.

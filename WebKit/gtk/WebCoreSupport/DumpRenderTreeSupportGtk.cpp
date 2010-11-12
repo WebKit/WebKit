@@ -19,9 +19,17 @@
 #include "config.h"
 #include "DumpRenderTreeSupportGtk.h"
 
-#include "webkitwebview.h"
+#include "APICast.h"
+#include "Document.h"
+#include "JSDocument.h"
+#include "JSLock.h"
+#include "JSNodeList.h"
+#include "JSValue.h"
+#include "NodeList.h"
 #include "webkitprivate.h"
+#include "webkitwebview.h"
 
+using namespace JSC;
 using namespace WebCore;
 
 bool DumpRenderTreeSupportGtk::s_drtRun = false;
@@ -54,3 +62,18 @@ bool DumpRenderTreeSupportGtk::linksIncludedInFocusChain()
     return s_linksIncludedInTabChain;
 }
 
+JSValueRef DumpRenderTreeSupportGtk::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    ExecState* exec = toJS(context);
+    if (!value)
+        return JSValueMakeUndefined(context);
+    JSValue jsValue = toJS(exec, value);
+    if (!jsValue.inherits(&JSDocument::s_info))
+       return JSValueMakeUndefined(context);
+
+    JSDocument* jsDocument = static_cast<JSDocument*>(asObject(jsValue));
+    Document* document = jsDocument->impl();
+    RefPtr<NodeList> nodes = document->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
+    return toRef(exec, toJS(exec, jsDocument->globalObject(), nodes.get()));
+}
