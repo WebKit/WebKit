@@ -30,6 +30,11 @@
 
 #include <cstdlib>
 #include <QCoreApplication>
+#if (QT_VERSION >= 0x040700)
+#    include <QElapsedTimer>
+#else
+#    include <QTime>
+#endif
 #include <QEventLoop>
 #include <QFileInfo>
 #include <QLibrary>
@@ -48,18 +53,20 @@ class RunUntilConditionLoop : public QObject {
     Q_OBJECT
 
 public:
-    static void start(bool& done)
+    static void start(bool& done, int timeout)
     {
         static RunUntilConditionLoop* instance = new RunUntilConditionLoop;
-        instance->run(done);
+        instance->run(done, timeout);
     }
 
 private:
     RunUntilConditionLoop() {}
 
-    void run(bool& done)
+    void run(bool& done, int timeout)
     {
         m_condition = &done;
+        m_timeout = timeout;
+        m_elapsedTime.start();
         m_timerID = startTimer(kTimerIntervalMS);
         ASSERT(m_timerID);
         m_eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
@@ -67,7 +74,7 @@ private:
 
     virtual void timerEvent(QTimerEvent*)
     {
-        if (!*m_condition)
+        if (!*m_condition && m_elapsedTime.elapsed() < m_timeout)
             return;
 
         killTimer(m_timerID);
@@ -77,17 +84,21 @@ private:
     QEventLoop m_eventLoop;
     bool* m_condition;
     int m_timerID;
+    int m_timeout;
+#if (QT_VERSION >= 0x040700)
+    QElapsedTimer m_elapsedTime;
+#else
+    QTime m_elapsedTime;
+#endif
 };
 
 void TestController::platformInitialize()
 {
 }
 
-void TestController::platformRunUntil(bool& done, double)
+void TestController::platformRunUntil(bool& done, double timeout)
 {
-    // FIXME: Honor the timeout parameter <http://webkit.org/b/48941>.
-    RunUntilConditionLoop::start(done);
-    ASSERT(done);
+    RunUntilConditionLoop::start(done, static_cast<int>(timeout * 1000));
 }
 
 static bool isExistingLibrary(const QString& path)

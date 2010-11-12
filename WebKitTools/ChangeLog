@@ -1,3 +1,23 @@
+2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] TestController::runUntil doesn't honor the timeout parameter
+        https://bugs.webkit.org/show_bug.cgi?id=48941
+
+        Implement the missing timeout of WebKitTestRunner for Qt.
+
+        A QElapsedTimer has been added to RunUntilConditionLoop in order
+        to measure how long the loop has been running. When the timer
+        is bigger or equal than the timeout, the loop ends even if the
+        condition is not met.
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::RunUntilConditionLoop::start):
+        (WTR::RunUntilConditionLoop::run):
+        (WTR::RunUntilConditionLoop::timerEvent):
+        (WTR::TestController::platformRunUntil):
+
 2010-11-11  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
