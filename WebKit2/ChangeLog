@@ -1,3 +1,9 @@
+2010-11-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows Build Fix. Change #imports to #includes.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+
 2010-11-08  Timothy Hatcher  <timothy@apple.com>
 
         Create and load the Web Inspector page.
