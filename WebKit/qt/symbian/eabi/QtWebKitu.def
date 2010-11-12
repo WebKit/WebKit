@@ -827,4 +827,9 @@ EXPORTS
 	_ZN8QWebPage18ViewportAttributesD1Ev @ 826 NONAME
 	_ZN8QWebPage18ViewportAttributesD2Ev @ 827 NONAME
 	_ZN8QWebPage18ViewportAttributesaSERKS0_ @ 828 NONAME
+	_ZN23DumpRenderTreeSupportQt13nodesFromRectERK11QWebElementiijjjjb @ 829 NONAME
+	_ZN23DumpRenderTreeSupportQt28dumpUserGestureInFrameLoaderEb @ 830 NONAME
+	_ZNK8QWebPage19supportsContentTypeERK7QString @ 831 NONAME
+	_ZNK8QWebPage21supportedContentTypesEv @ 832 NONAME
+	_ZNK8QWebPage27setActualVisibleContentRectERK5QRect @ 833 NONAME
 

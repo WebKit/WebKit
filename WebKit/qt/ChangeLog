@@ -1,3 +1,14 @@
+2010-11-12  Jacob Dinu  <dinu.jacob@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Update .def file for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=49456
+
+        Added missing symbols from revisions r69825, r70470, r71806
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
