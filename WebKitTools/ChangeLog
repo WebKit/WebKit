@@ -1,3 +1,15 @@
+2010-11-12  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [Chromium/DRT] Make EventSendingController send complete touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=49285
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::addTouchPoint):
+        (EventSender::updateTouchPoint):
+        (EventSender::sendCurrentTouchEvent):
+
 2010-11-12  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed rollout of r71858.
