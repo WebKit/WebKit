@@ -1,3 +1,12 @@
+2010-11-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed Target for WKBundlePageOverlay.cpp.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Changed Target for WKBundlePageOverlay.cpp from WebProcess to WebKit2.
+
 2010-11-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
