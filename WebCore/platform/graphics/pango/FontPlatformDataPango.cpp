@@ -39,7 +39,6 @@
 #include <cairo-ft.h>
 #include <pango/pangofc-fontmap.h>
 #endif
-#include <gtk/gtk.h>
 
 namespace WebCore {
 
