@@ -84,8 +84,6 @@ module html {
         // WinIE extension:
         attribute boolean indeterminate;
 
-        // WinIE & FireFox extension:
-
         attribute [Custom] long selectionStart;
         attribute [Custom] long selectionEnd;
         [Custom] void setSelectionRange(in long start, in long end);
