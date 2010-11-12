@@ -26,6 +26,51 @@
 namespace WebCore {
 
 class Range;
+class Position;
+
+class TextCheckingParagraph {
+public:
+    explicit TextCheckingParagraph(PassRefPtr<Range> checkingRange);
+    ~TextCheckingParagraph();
+
+    int rangeLength() const;
+    PassRefPtr<Range> subrange(int characterOffset, int characterCount) const;
+    int offsetTo(const Position&, ExceptionCode&) const;
+    void expandRangeToNextEnd();
+
+    int textLength() const { return text().length(); }
+    String textSubstring(unsigned pos, unsigned len = UINT_MAX) const { return text().substring(pos, len); }
+    const UChar* textCharacters() const { return text().characters(); }
+    UChar textCharAt(int index) const { return text()[index]; }
+
+    bool isEmpty() const;
+    bool isTextEmpty() const { return text().isEmpty(); }
+    bool isRangeEmpty() const { return checkingStart() >= checkingEnd(); }
+
+    int checkingStart() const;
+    int checkingEnd() const;
+    int checkingLength() const;
+    String checkingSubstring() const { return textSubstring(checkingStart(), checkingLength()); }
+
+    bool checkingRangeMatches(int location, int length) const { return location == checkingStart() && length == checkingLength(); }
+    bool isCheckingRangeCoveredBy(int location, int length) const { return location <= checkingStart() && location + length >= checkingStart() + checkingLength(); }
+    bool checkingRangeCovers(int location, int length) const { return location < checkingEnd() && location + length > checkingStart(); }
+
+private:
+    void invalidateParagraphRangeValues();
+    PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
+    PassRefPtr<Range> paragraphRange() const;
+    PassRefPtr<Range> offsetAsRange() const;
+    const String& text() const;
+
+    RefPtr<Range> m_checkingRange;
+    mutable RefPtr<Range> m_paragraphRange;
+    mutable RefPtr<Range> m_offsetAsRange;
+    mutable String m_text;
+    mutable int m_checkingStart;
+    mutable int m_checkingEnd;
+    mutable int m_checkingLength;
+};
 
 class TextCheckingHelper : public Noncopyable {
 public:
@@ -41,7 +86,6 @@ public:
 
     bool isUngrammatical(Vector<String>& guessesVector) const;
     Vector<String> guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const;
-    PassRefPtr<Range> paragraphAlignedRange(int& offsetIntoParagraphAlignedRange, String& paragraphString) const;
 private:
     EditorClient* m_client;
     RefPtr<Range> m_range;

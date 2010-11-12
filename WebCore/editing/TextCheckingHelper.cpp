@@ -34,6 +34,121 @@
 
 namespace WebCore {
 
+static PassRefPtr<Range> expandToParagraphBoundary(PassRefPtr<Range> range)
+{
+    ExceptionCode ec = 0;
+    RefPtr<Range> paragraphRange = range->cloneRange(ec);
+    setStart(paragraphRange.get(), startOfParagraph(range->startPosition()));
+    setEnd(paragraphRange.get(), endOfParagraph(range->endPosition()));
+    return paragraphRange;
+}
+
+TextCheckingParagraph::TextCheckingParagraph(PassRefPtr<Range> checkingRange)
+    : m_checkingRange(checkingRange)
+    , m_checkingStart(-1)
+    , m_checkingEnd(-1)
+    , m_checkingLength(-1)
+{
+}
+
+TextCheckingParagraph::~TextCheckingParagraph()
+{
+}
+
+void TextCheckingParagraph::expandRangeToNextEnd()
+{
+    ASSERT(m_checkingRange);
+    setEnd(paragraphRange().get(), endOfParagraph(startOfNextParagraph(paragraphRange()->startPosition())));
+    invalidateParagraphRangeValues();
+}
+
+void TextCheckingParagraph::invalidateParagraphRangeValues()
+{
+    m_checkingStart = m_checkingEnd = -1;
+    m_offsetAsRange = 0;
+    m_text = String();
+}
+
+int TextCheckingParagraph::rangeLength() const
+{
+    ASSERT(m_checkingRange);
+    return TextIterator::rangeLength(paragraphRange().get());
+}
+
+PassRefPtr<Range> TextCheckingParagraph::paragraphRange() const
+{
+    ASSERT(m_checkingRange);
+    if (!m_paragraphRange)
+        m_paragraphRange = expandToParagraphBoundary(checkingRange());
+    return m_paragraphRange;
+}
+
+PassRefPtr<Range> TextCheckingParagraph::subrange(int characterOffset, int characterCount) const
+{
+    ASSERT(m_checkingRange);
+    return TextIterator::subrange(paragraphRange().get(), characterOffset, characterCount);
+}
+
+int TextCheckingParagraph::offsetTo(const Position& position, ExceptionCode& ec) const
+{
+    ASSERT(m_checkingRange);
+    RefPtr<Range> range = offsetAsRange();
+    range->setEnd(position.containerNode(), position.computeOffsetInContainerNode(), ec);
+    if (ec)
+        return 0;
+    return TextIterator::rangeLength(range.get());
+}
+
+bool TextCheckingParagraph::isEmpty() const
+{
+    // Both predicates should have same result, but we check both just for sure.
+    // We need to investigate to remove this redundancy.
+    return isRangeEmpty() || isTextEmpty();
+}
+
+PassRefPtr<Range> TextCheckingParagraph::offsetAsRange() const
+{
+    ASSERT(m_checkingRange);
+    if (!m_offsetAsRange) {
+        ExceptionCode ec = 0;
+        m_offsetAsRange = Range::create(paragraphRange()->startContainer(ec)->document(), paragraphRange()->startPosition(), checkingRange()->startPosition());
+    }
+
+    return m_offsetAsRange;
+}
+
+const String& TextCheckingParagraph::text() const
+{
+    ASSERT(m_checkingRange);
+    if (m_text.isEmpty())
+        m_text = plainText(paragraphRange().get());
+    return m_text; 
+}
+
+int TextCheckingParagraph::checkingStart() const
+{
+    ASSERT(m_checkingRange);
+    if (m_checkingStart == -1)
+        m_checkingStart = TextIterator::rangeLength(offsetAsRange().get());
+    return m_checkingStart;
+}
+
+int TextCheckingParagraph::checkingEnd() const
+{
+    ASSERT(m_checkingRange);
+    if (m_checkingEnd == -1)
+        m_checkingEnd = checkingStart() + TextIterator::rangeLength(checkingRange().get());
+    return m_checkingEnd;
+}
+
+int TextCheckingParagraph::checkingLength() const
+{
+    ASSERT(m_checkingRange);
+    if (-1 == m_checkingLength)
+        m_checkingLength = TextIterator::rangeLength(checkingRange().get());
+    return m_checkingLength;
+}
+
 TextCheckingHelper::TextCheckingHelper(EditorClient* client, PassRefPtr<Range> range)
     : m_client(client)
     , m_range(range)
@@ -44,33 +159,6 @@ TextCheckingHelper::TextCheckingHelper(EditorClient* client, PassRefPtr<Range> r
 
 TextCheckingHelper::~TextCheckingHelper()
 {
-}
-
-PassRefPtr<Range> TextCheckingHelper::paragraphAlignedRange(int& offsetIntoParagraphAlignedRange, String& paragraphString) const
-{
-#ifndef BUILDING_ON_TIGER
-    ExceptionCode ec = 0;
-    
-    // Expand range to paragraph boundaries
-    RefPtr<Range> paragraphRange = m_range->cloneRange(ec);
-    setStart(paragraphRange.get(), startOfParagraph(m_range->startPosition()));
-    setEnd(paragraphRange.get(), endOfParagraph(m_range->endPosition()));
-    
-    // Compute offset from start of expanded range to start of original range
-    RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), m_range->startPosition());
-    offsetIntoParagraphAlignedRange = TextIterator::rangeLength(offsetAsRange.get());
-    
-    // Fill in out parameter with string representing entire paragraph range.
-    // Someday we might have a caller that doesn't use this, but for now all callers do.
-    paragraphString = plainText(paragraphRange.get());
-
-    return paragraphRange;
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(offsetIntoParagraphAlignedRange);
-    UNUSED_PARAM(paragraphString);
-    return PassRefPtr<Range>(0);
-#endif
 }
 
 String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange)
@@ -325,21 +413,15 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
     // Expand the search range to encompass entire paragraphs, since grammar checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
     // since we will want to ignore results in this area.
-    int searchRangeStartOffset;
-    String paragraphString;
-    RefPtr<Range> paragraphRange = paragraphAlignedRange(searchRangeStartOffset, paragraphString);
-        
-    // Determine the character offset from the start of the paragraph to the end of the original search range, 
-    // since we will want to ignore results in this area also.
-    int searchRangeEndOffset = searchRangeStartOffset + TextIterator::rangeLength(m_range.get());
-        
+    TextCheckingParagraph paragraph(m_range);
+    
     // Start checking from beginning of paragraph, but skip past results that occur before the start of the original search range.
     int startOffset = 0;
-    while (startOffset < searchRangeEndOffset) {
+    while (startOffset < paragraph.checkingEnd()) {
         Vector<GrammarDetail> grammarDetails;
         int badGrammarPhraseLocation = -1;
         int badGrammarPhraseLength = 0;
-        m_client->checkGrammarOfString(paragraphString.characters() + startOffset, paragraphString.length() - startOffset, grammarDetails, &badGrammarPhraseLocation, &badGrammarPhraseLength);
+        m_client->checkGrammarOfString(paragraph.textCharacters() + startOffset, paragraph.textLength() - startOffset, grammarDetails, &badGrammarPhraseLocation, &badGrammarPhraseLength);
         
         if (!badGrammarPhraseLength) {
             ASSERT(badGrammarPhraseLocation == -1);
@@ -351,7 +433,7 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
 
         
         // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
-        int badGrammarIndex = findFirstGrammarDetail(grammarDetails, badGrammarPhraseLocation, badGrammarPhraseLength, searchRangeStartOffset, searchRangeEndOffset, markAll);
+        int badGrammarIndex = findFirstGrammarDetail(grammarDetails, badGrammarPhraseLocation, badGrammarPhraseLength, paragraph.checkingStart(), paragraph.checkingEnd(), markAll);
         if (badGrammarIndex >= 0) {
             ASSERT(static_cast<unsigned>(badGrammarIndex) < grammarDetails.size());
             outGrammarDetail = grammarDetails[badGrammarIndex];
@@ -360,8 +442,8 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
         // If we found a detail in range, then we have found the first bad phrase (unless we found one earlier but
         // kept going so we could mark all instances).
         if (badGrammarIndex >= 0 && firstBadGrammarPhrase.isEmpty()) {
-            outGrammarPhraseOffset = badGrammarPhraseLocation - searchRangeStartOffset;
-            firstBadGrammarPhrase = paragraphString.substring(badGrammarPhraseLocation, badGrammarPhraseLength);
+            outGrammarPhraseOffset = badGrammarPhraseLocation - paragraph.checkingStart();
+            firstBadGrammarPhrase = paragraph.textSubstring(badGrammarPhraseLocation, badGrammarPhraseLength);
             
             // Found one. We're done now, unless we're marking each instance.
             if (!markAll)
@@ -446,21 +528,18 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
         return guesses;
 
     // Expand the range to encompass entire paragraphs, since text checking needs that much context.
-    int rangeStartOffset;
-    String paragraphString;
-    RefPtr<Range> paragraphRange = paragraphAlignedRange(rangeStartOffset, paragraphString);
-    int rangeLength = TextIterator::rangeLength(m_range.get());
-    if (!rangeLength || !paragraphString.length())
+    TextCheckingParagraph paragraph(m_range);
+    if (paragraph.isEmpty())
         return guesses;
 
     Vector<TextCheckingResult> results;
     uint64_t checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-    m_client->checkTextOfParagraph(paragraphString.characters(), paragraphString.length(), checkingTypes, results);
+    m_client->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
     
     for (unsigned i = 0; i < results.size(); i++) {
         const TextCheckingResult* result = &results[i];
-        if (result->type == TextCheckingTypeSpelling && result->location == rangeStartOffset && result->length == rangeLength) {
-            String misspelledWord = paragraphString.substring(rangeStartOffset, rangeLength);
+        if (result->type == TextCheckingTypeSpelling && paragraph.checkingRangeMatches(result->location, result->length)) {
+            String misspelledWord = paragraph.checkingSubstring();
             ASSERT(misspelledWord.length());
             m_client->getGuessesForWord(misspelledWord, guesses);
             m_client->updateSpellingUIWithMisspelledWord(misspelledWord);
@@ -474,12 +553,12 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
         
     for (unsigned i = 0; i < results.size(); i++) {
         const TextCheckingResult* result = &results[i];
-        if (result->type == TextCheckingTypeGrammar && result->location <= rangeStartOffset && result->location + result->length >= rangeStartOffset + rangeLength) {
+        if (result->type == TextCheckingTypeGrammar && paragraph.isCheckingRangeCoveredBy(result->location, result->length)) {
             for (unsigned j = 0; j < result->details.size(); j++) {
                 const GrammarDetail* detail = &result->details[j];
                 ASSERT(detail->length > 0 && detail->location >= 0);
-                if (result->location + detail->location == rangeStartOffset && detail->length == rangeLength) {
-                    String badGrammarPhrase = paragraphString.substring(result->location, result->length);
+                if (paragraph.checkingRangeMatches(result->location + detail->location, detail->length)) {
+                    String badGrammarPhrase = paragraph.textSubstring(result->location, result->length);
                     ASSERT(badGrammarPhrase.length());
                     for (unsigned k = 0; k < detail->guesses.size(); k++)
                         guesses.append(detail->guesses[k]);

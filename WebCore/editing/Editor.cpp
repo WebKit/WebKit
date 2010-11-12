@@ -2185,46 +2185,30 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
         return;
 
     // Expand the range to encompass entire paragraphs, since text checking needs that much context.
-    int spellingRangeStartOffset = 0;
-    int spellingRangeEndOffset = 0;
-    int grammarRangeStartOffset = 0;
-    int grammarRangeEndOffset = 0;
-    int offsetDueToReplacement = 0;
-    int paragraphLength = 0;
     int selectionOffset = 0;
     int ambiguousBoundaryOffset = -1;
     bool selectionChanged = false;
     bool restoreSelectionAfterChange = false;
     bool adjustSelectionForParagraphBoundaries = false;
-    String paragraphString;
-    RefPtr<Range> paragraphRange;
 
-    if (shouldMarkGrammar) {
-        // The spelling range should be contained in the paragraph-aligned extension of the grammar range.
-        paragraphRange = TextCheckingHelper(client(), grammarRange).paragraphAlignedRange(grammarRangeStartOffset, paragraphString);
-        RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), spellingRange->startPosition());
-        spellingRangeStartOffset = TextIterator::rangeLength(offsetAsRange.get());
-        grammarRangeEndOffset = grammarRangeStartOffset + TextIterator::rangeLength(grammarRange);
-    } else {
-        paragraphRange = TextCheckingHelper(client(), spellingRange).paragraphAlignedRange(spellingRangeStartOffset, paragraphString);
-    }
-    spellingRangeEndOffset = spellingRangeStartOffset + TextIterator::rangeLength(spellingRange);
-    paragraphLength = paragraphString.length();
-    if (paragraphLength <= 0 || (spellingRangeStartOffset >= spellingRangeEndOffset && (!shouldMarkGrammar || grammarRangeStartOffset >= grammarRangeEndOffset)))
+    TextCheckingParagraph spellingParagraph(spellingRange);
+    TextCheckingParagraph grammarParagraph(shouldMarkGrammar ? grammarRange : 0);
+    TextCheckingParagraph& paragraph = shouldMarkGrammar ? grammarParagraph : spellingParagraph; 
+
+    if (shouldMarkGrammar ? (spellingParagraph.isRangeEmpty() && grammarParagraph.isEmpty()) : spellingParagraph.isEmpty())
         return;
 
     if (shouldPerformReplacement) {
         if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
-            RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), paragraphRange->startPosition());
             Position caretPosition = m_frame->selection()->end();
-            offsetAsRange->setEnd(caretPosition.containerNode(), caretPosition.computeOffsetInContainerNode(), ec);
+            int offset = paragraph.offsetTo(caretPosition, ec);
             if (!ec) {
-                selectionOffset = TextIterator::rangeLength(offsetAsRange.get());
+                selectionOffset = offset;
                 restoreSelectionAfterChange = true;
-                if (selectionOffset > 0 && (selectionOffset > paragraphLength || paragraphString[selectionOffset - 1] == newlineCharacter))
+                if (selectionOffset > 0 && (selectionOffset > paragraph.textLength() || paragraph.textCharAt(selectionOffset - 1) == newlineCharacter))
                     adjustSelectionForParagraphBoundaries = true;
-                if (selectionOffset > 0 && selectionOffset <= paragraphLength && isAmbiguousBoundaryCharacter(paragraphString[selectionOffset - 1]))
+                if (selectionOffset > 0 && selectionOffset <= paragraph.textLength() && isAmbiguousBoundaryCharacter(paragraph.textCharAt(selectionOffset - 1)))
                     ambiguousBoundaryOffset = selectionOffset - 1;
             }
         }
@@ -2250,7 +2234,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
         if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
             checkingTypes |= TextCheckingTypeCorrection;
     }
-    client()->checkTextOfParagraph(paragraphString.characters(), paragraphLength, checkingTypes, results);
+    client()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
 
 #if SUPPORT_AUTOCORRECTION_PANEL
     // If this checking is only for showing correction panel, we shouldn't bother to mark misspellings.
@@ -2258,25 +2242,28 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
         shouldMarkSpelling = false;
 #endif
 
+    int offsetDueToReplacement = 0;
+
     for (unsigned i = 0; i < results.size(); i++) {
+        int spellingRangeEndOffset = spellingParagraph.checkingEnd() + offsetDueToReplacement;
         const TextCheckingResult* result = &results[i];
         int resultLocation = result->location + offsetDueToReplacement;
         int resultLength = result->length;
-        if (shouldMarkSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= spellingRangeStartOffset && resultLocation + resultLength <= spellingRangeEndOffset) {
+        if (shouldMarkSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= spellingParagraph.checkingStart() && resultLocation + resultLength <= spellingRangeEndOffset) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
-            RefPtr<Range> misspellingRange = TextIterator::subrange(spellingRange, resultLocation - spellingRangeStartOffset, resultLength);
+            RefPtr<Range> misspellingRange = spellingParagraph.subrange(resultLocation, resultLength);
             misspellingRange->startContainer(ec)->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-        } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && resultLocation < grammarRangeEndOffset && resultLocation + resultLength > grammarRangeStartOffset) {
+        } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && grammarParagraph.checkingRangeCovers(resultLocation, resultLength)) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             for (unsigned j = 0; j < result->details.size(); j++) {
                 const GrammarDetail* detail = &result->details[j];
                 ASSERT(detail->length > 0 && detail->location >= 0);
-                if (resultLocation + detail->location >= grammarRangeStartOffset && resultLocation + detail->location + detail->length <= grammarRangeEndOffset) {
-                    RefPtr<Range> badGrammarRange = TextIterator::subrange(grammarRange, resultLocation + detail->location - grammarRangeStartOffset, detail->length);
+                if (grammarParagraph.checkingRangeCovers(resultLocation + detail->location, detail->length)) {
+                    RefPtr<Range> badGrammarRange = grammarParagraph.subrange(resultLocation + detail->location, detail->length);
                     grammarRange->startContainer(ec)->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
                 }
             }
-        } else if ((shouldPerformReplacement || shouldShowCorrectionPanel) && resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingRangeStartOffset
+        } else if ((shouldPerformReplacement || shouldShowCorrectionPanel) && resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingParagraph.checkingStart()
                     && (result->type == TextCheckingTypeLink
                     || result->type == TextCheckingTypeQuote
                     || result->type == TextCheckingTypeDash
@@ -2290,7 +2277,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
             int replacementLength = result->replacement.length();
             bool doReplacement = (replacementLength > 0);
-            RefPtr<Range> rangeToReplace = TextIterator::subrange(paragraphRange.get(), resultLocation, resultLength);
+            RefPtr<Range> rangeToReplace = paragraph.subrange(resultLocation, resultLength);
             VisibleSelection selectionToReplace(rangeToReplace.get(), DOWNSTREAM);
         
             // avoid correcting text after an ambiguous boundary character has been typed
@@ -2356,13 +2343,12 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 #endif
                     if (doReplacement) {
                         replaceSelectionWithText(result->replacement, false, false);
-                        spellingRangeEndOffset += replacementLength - resultLength;
                         offsetDueToReplacement += replacementLength - resultLength;
                         if (resultLocation < selectionOffset)
                             selectionOffset += replacementLength - resultLength;
                         if (result->type == TextCheckingTypeCorrection) {
                             // Add a marker so that corrections can easily be undone and won't be re-corrected.
-                            RefPtr<Range> replacedRange = TextIterator::subrange(paragraphRange.get(), resultLocation, replacementLength);
+                            RefPtr<Range> replacedRange = paragraph.subrange(resultLocation, replacementLength);
                             replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
                             replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator, replacedString);
                         }
@@ -2374,10 +2360,9 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
     if (selectionChanged) {
         // Restore the caret position if we have made any replacements
-        setEnd(paragraphRange.get(), endOfParagraph(startOfNextParagraph(paragraphRange->startPosition())));
-        int newLength = TextIterator::rangeLength(paragraphRange.get());
-        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= newLength) {
-            RefPtr<Range> selectionRange = TextIterator::subrange(paragraphRange.get(), 0, selectionOffset);
+        paragraph.expandRangeToNextEnd();
+        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= paragraph.rangeLength()) {
+            RefPtr<Range> selectionRange = paragraph.subrange(0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
                 m_frame->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
@@ -2398,11 +2383,9 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     if (!shouldInsertText(replacedString, selection.get(), EditorInsertActionPasted))
         return;
     
-    String paragraphString;
-    int selectionOffset;
-    RefPtr<Range> paragraphRange = TextCheckingHelper(client(), selection).paragraphAlignedRange(selectionOffset, paragraphString);
+    TextCheckingParagraph paragraph(selection);
     replaceSelectionWithText(replacedString, false, false);
-    RefPtr<Range> changedRange = TextIterator::subrange(paragraphRange.get(), selectionOffset, replacedString.length());
+    RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::Replacement, String());
 }
 
