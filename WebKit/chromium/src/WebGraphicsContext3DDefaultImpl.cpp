@@ -172,7 +172,7 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
 
     m_isGLES2 = gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2;
 
-    if (m_isGLES2) {
+    if (!m_isGLES2) {
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
         glEnable(GL_POINT_SPRITE);
     }

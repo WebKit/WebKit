@@ -1,3 +1,15 @@
+2010-11-12  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by James Robinson.
+
+        WebGraphicsContext3DDefaultImpl does not run on top of OpenGL ES 2.0 implementations
+        https://bugs.webkit.org/show_bug.cgi?id=48282
+
+        Simple fix for a regression introduced in r71793.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+
 2010-11-12  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Eric Seidel.
