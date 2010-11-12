@@ -26,20 +26,20 @@ RUNNING TEST: extension_testAPI
     }
     panels : {
         elements : {
-            createSidebarPane : <function>
-            createWatchExpressionSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>
                 removeListener : <function>
             }
+            createSidebarPane : <function>
+            createWatchExpressionSidebarPane : <function>
         }
         scripts : {
-            createSidebarPane : <function>
-            createWatchExpressionSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>
                 removeListener : <function>
             }
+            createSidebarPane : <function>
+            createWatchExpressionSidebarPane : <function>
         }
         create : <function>
     }

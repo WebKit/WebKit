@@ -7,12 +7,12 @@ RUNNING TEST: extension_testCreatePanel
 done createPanel
 Panel created
 {
-    createSidebarPane : <function>
-    createWatchExpressionSidebarPane : <function>
     onSelectionChanged : {
         addListener : <function>
         removeListener : <function>
     }
+    createSidebarPane : <function>
+    createWatchExpressionSidebarPane : <function>
     onSearch : {
         addListener : <function>
         removeListener : <function>
@@ -30,14 +30,14 @@ RUNNING TEST: extension_testExtensionWatchSidebarObject
 Watch sidebar created, callback arguments dump follows:
 {
     0 : {
-        setHeight : <function>
-        setExpanded : <function>
-        setExpression : <function>
-        setObject : <function>
         onUpdated : {
             addListener : <function>
             removeListener : <function>
         }
+        setExpression : <function>
+        setObject : <function>
+        setHeight : <function>
+        setExpanded : <function>
     }
 }
 Sidebar content: f0: "object"f1: undefinedf2: nullf3: { }f4: [0]f5: [3]f6: {...}f7: 42

@@ -13,12 +13,12 @@ Added audit category, result dump follows:
 }
 category.onAuditStarted fired, results dump follows:
 {
-    addResult : <function>
-    createResult : <function>
-    done : <function>
     url : <function>
     snippet : <function>
     text : <function>
+    addResult : <function>
+    createResult : <function>
+    done : <function>
     Severity : {
         Info : "info"
         Warning : "warning"

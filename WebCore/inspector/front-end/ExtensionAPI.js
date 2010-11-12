@@ -85,13 +85,6 @@ EventSinkImpl.prototype = {
     }
 }
 
-function EventSink(type, customDispatch)
-{
-    var impl = new EventSinkImpl(type, customDispatch);
-    this.addListener = bind(impl.addListener, impl);
-    this.removeListener = bind(impl.removeListener, impl);
-}
-
 function InspectorExtensionAPI()
 {
     this.audits = new Audits();
@@ -183,6 +176,7 @@ Panels.prototype = {
 function PanelImpl(id)
 {
     this._id = id;
+    this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
 }
 
 PanelImpl.prototype = {
@@ -213,24 +207,11 @@ PanelImpl.prototype = {
     }
 }
 
-function Panel(id)
-{
-    var impl = new PanelImpl(id);
-    this.createSidebarPane = bind(impl.createSidebarPane, impl);
-    this.createWatchExpressionSidebarPane = bind(impl.createWatchExpressionSidebarPane, impl);
-    this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
-}
-
 function ExtensionPanel(id)
 {
     Panel.call(this, id);
     this.onSearch = new EventSink("panel-search-" + id);
 }
-
-ExtensionPanel.prototype = {
-}
-
-ExtensionPanel.prototype.__proto__ = Panel.prototype;
 
 function ExtensionSidebarPaneImpl(id)
 {
@@ -249,17 +230,10 @@ ExtensionSidebarPaneImpl.prototype = {
     }
 }
 
-function ExtensionSidebarPane(id, impl)
-{
-    if (!impl)
-        impl = new ExtensionSidebarPaneImpl(id);
-    this.setHeight = bind(impl.setHeight, impl);
-    this.setExpanded = bind(impl.setExpanded, impl);
-}
-
 function WatchExpressionSidebarPaneImpl(id)
 {
     ExtensionSidebarPaneImpl.call(this, id);
+    this.onUpdated = new EventSink("watch-sidebar-updated-" + id);
 }
 
 WatchExpressionSidebarPaneImpl.prototype = {
@@ -274,13 +248,12 @@ WatchExpressionSidebarPaneImpl.prototype = {
     }
 }
 
+WatchExpressionSidebarPaneImpl.prototype.__proto__ = ExtensionSidebarPaneImpl.prototype;
+
 function WatchExpressionSidebarPane(id)
 {
     var impl = new WatchExpressionSidebarPaneImpl(id);
     ExtensionSidebarPane.call(this, id, impl);
-    this.setExpression = bind(impl.setExpression, impl);
-    this.setObject = bind(impl.setObject, impl);
-    this.onUpdated = new EventSink("watch-sidebar-updated-" + id);
 }
 
 function Audits()
@@ -296,7 +269,7 @@ Audits.prototype = {
     }
 }
 
-function AuditCategory(id)
+function AuditCategoryImpl(id)
 {
     function customDispatch(request)
     {
@@ -308,22 +281,13 @@ function AuditCategory(id)
             auditResult.done();
         }
     }
-    var impl = new AuditCategoryImpl(id);
+    this._id = id;
     this.onAuditStarted = new EventSink("audit-started-" + id, customDispatch);
 }
 
-function AuditCategoryImpl(id)
+function AuditResultImpl(id)
 {
     this._id = id;
-}
-
-function AuditResult(id)
-{
-    var impl = new AuditResultImpl(id);
-
-    this.addResult = bind(impl.addResult, impl);
-    this.createResult = bind(impl.createResult, impl);
-    this.done = bind(impl.done, impl);
 
     var formatterTypes = [
         "url",
@@ -331,19 +295,7 @@ function AuditResult(id)
         "text"
     ];
     for (var i = 0; i < formatterTypes.length; ++i)
-        this[formatterTypes[i]] = bind(impl._nodeFactory, null, formatterTypes[i]);
-}
-
-AuditResult.prototype = {
-    get Severity()
-    {
-        return private.audits.Severity;
-    }
-}
-
-function AuditResultImpl(id)
-{
-    this._id = id;
+        this[formatterTypes[i]] = bind(this._nodeFactory, null, formatterTypes[i]);
 }
 
 AuditResultImpl.prototype = {
@@ -374,6 +326,11 @@ AuditResultImpl.prototype = {
     done: function()
     {
         extensionServer.sendRequest({ command: "stopAuditCategoryRun", resultId: this._id });
+    },
+
+    get Severity()
+    {
+        return private.audits.Severity;
     },
 
     _nodeFactory: function(type)
@@ -502,6 +459,34 @@ function bind(func, thisObject)
     var args = Array.prototype.slice.call(arguments, 2);
     return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))); };
 }
+
+function populateInterfaceClass(interface, implementation)
+{
+    for (var member in implementation) {
+        if (member.charAt(0) === "_")
+            continue;
+        var value = implementation[member];
+        interface[member] = typeof value === "function" ? bind(value, implementation)
+            : interface[member] = implementation[member];
+    }
+}
+
+function declareInterfaceClass(implConstructor)
+{
+    return function()
+    {
+        var impl = { __proto__: implConstructor.prototype };
+        implConstructor.apply(impl, arguments);
+        populateInterfaceClass(this, impl);
+    }
+}
+
+var EventSink = declareInterfaceClass(EventSinkImpl);
+var Panel = declareInterfaceClass(PanelImpl);
+var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
+var WatchExpressionSidebarPane = declareInterfaceClass(WatchExpressionSidebarPaneImpl);
+var AuditCategory = declareInterfaceClass(AuditCategoryImpl);
+var AuditResult = declareInterfaceClass(AuditResultImpl);
 
 var extensionServer = new ExtensionServerClient();
 
