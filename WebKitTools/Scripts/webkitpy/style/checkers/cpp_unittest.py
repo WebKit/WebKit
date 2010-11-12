@@ -2448,13 +2448,12 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
         trigger_level = self.trigger_lines(self.min_confidence)
-        # FIXME: handle spaces in the template parameters
         self.assert_function_lengths_check(
-            ('my_namespace::my_other_namespace::MyVeryLongTypeName<Type1>*\n'
-             'my_namespace::my_other_namespace<Type2,Type3>::~MyFunction<Type4>(int arg1, char* arg2)'
+            ('my_namespace::my_other_namespace::MyVeryLongTypeName<Type1, Type2>*\n'
+             'my_namespace::my_other_namespace<Type3, Type4>::~MyFunction<Type5<Type6, Type7> >(int arg1, char* arg2)'
              + self.function_body(error_lines)),
             ('Small and focused functions are preferred: '
-             'my_namespace::my_other_namespace<Type2,Type3>::~MyFunction<Type4>()'
+             'my_namespace::my_other_namespace<Type3, Type4>::~MyFunction<Type5<Type6, Type7> >()'
              ' has %d non-comment lines '
              '(error triggered by exceeding %d lines).'
              '  [readability/fn_size] [%d]')

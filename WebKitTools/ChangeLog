@@ -1,3 +1,15 @@
+2010-11-11  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style function detection doesn't handle templates with spaces.
+        https://bugs.webkit.org/show_bug.cgi?id=49427
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Stripped out templates when
+          finding the function name.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Made the test have a
+          template with a space.
+
 2010-11-11  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Shinichiro Hamaji.

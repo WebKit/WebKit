@@ -152,6 +152,37 @@ def subn(pattern, replacement, s):
     return _regexp_compile_cache[pattern].subn(replacement, s)
 
 
+def iteratively_replace_matches_with_char(pattern, s, char):
+    """Returns the string with replacements.
+
+    Every character in the match is replaced with char.
+    Due to the iterative nature, pattern should not match char or
+    there will be an infinite loop.
+
+    Example:
+      pattern = r'<[^>]>' # template parameters
+      s =     'A<B<C, D>>'
+      char =  '_'
+      Returns 'A_________'
+
+    Args:
+      pattern: the regex to match
+      s: the string on which to do the replacements.
+      char: the character to put in the place of the match
+
+    Returns:
+      True, if the given line is blank.
+    """
+    while True:
+        matched = search(pattern, s)
+        if not matched:
+            return s
+        start_match_index = matched.start(0)
+        end_match_index = matched.end(0)
+        match_length = end_match_index - start_match_index
+        s = s[:start_match_index] + char * match_length + s[end_match_index:]
+
+
 def up_to_unmatched_closing_paren(s):
     """Splits a string into two parts up to first unmatched ')'.
 
@@ -1156,7 +1187,15 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
                 break                              # ... ignore
             if search(r'{', start_line):
                 body_found = True
-                function = search(r'((\w|:|<|>|,|~)*)\(', line).group(1)
+                # Replace template constructs with _ so that no spaces remain in the function name,
+                # while keeping the column numbers of other characters the same as "line".
+                line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', line, "_")
+                match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
+
+                # Use the column numbers from the modified line to find the
+                # function name in the original line.
+                function = line[match_function.start(1):match_function.end(1)]
+
                 if match(r'TEST', function):    # Handle TEST... macros
                     parameter_regexp = search(r'(\(.*\))', joined_line)
                     if parameter_regexp:             # Ignore bad syntax
