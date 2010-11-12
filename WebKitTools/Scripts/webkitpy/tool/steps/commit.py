@@ -26,7 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.checkout.scm import AuthenticationError, AmbiguousCommitError
+from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.tool.steps.abstractstep import AbstractStep
@@ -61,7 +63,11 @@ class Commit(AbstractStep):
             num_tries += 1
 
             try:
-                self._state["commit_text"] = self._tool.scm().commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, force_squash=force_squash)
+                scm = self._tool.scm()
+                commit_text = scm.commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, force_squash=force_squash)
+                svn_revision = scm.svn_revision_from_commit_text(commit_text)
+                log("Committed r%s: <%s>" % (svn_revision, view_source_url(svn_revision)))
+                self._state["commit_text"] = commit_text
                 break;
             except AmbiguousCommitError, e:
                 if self._tool.user.confirm(self._commit_warning(e)):

@@ -95,7 +95,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(ApplyFromBug(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_diff(self):
-        expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nUpdating bug 42\n"
+        expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n"
         mock_tool = MockTool()
         mock_tool.scm().create_patch = Mock()
         mock_tool.checkout().modified_changelogs = Mock(return_value=[])
@@ -105,7 +105,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_red_builders(self):
-        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://dummy_buildbot_host/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nUpdating bug 42\n'
+        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://dummy_buildbot_host/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n'
         mock_tool = MockTool()
         mock_tool.buildbot.light_tree_on_fire()
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
@@ -128,6 +128,7 @@ Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
+Committed r49824: <http://trac.webkit.org/changeset/49824>
 Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
 """
         self.assert_execute_outputs(LandAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
@@ -143,6 +144,7 @@ Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
+Committed r49824: <http://trac.webkit.org/changeset/49824>
 Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
 Updating working directory
 Processing patch 128 from bug 42.
@@ -151,6 +153,7 @@ Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
+Committed r49824: <http://trac.webkit.org/changeset/49824>
 Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
 """
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
@@ -181,7 +184,7 @@ where ATTACHMENT_ID is the ID of this attachment.
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nMOCK: user.open_url: file://...\nBuilding WebKit\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nMOCK: user.open_url: file://...\nBuilding WebKit\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\n"
         expected_stdout = "Was that diff correct?\n"
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stdout=expected_stdout, expected_stderr=expected_stderr)
 
