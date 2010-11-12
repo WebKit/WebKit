@@ -441,42 +441,6 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
         loadInternal();
 }
 
-static String serializeTimeOffset(float time)
-{
-    String timeString = String::number(time);
-    // FIXME serialize time offset values properly (format not specified yet)
-    timeString.append("s");
-    return timeString;
-}
-
-static float parseTimeOffset(const String& timeString, bool* ok = 0)
-{
-    const UChar* characters = timeString.characters();
-    unsigned length = timeString.length();
-    
-    if (length && characters[length - 1] == 's')
-        length--;
-    
-    // FIXME parse time offset values (format not specified yet)
-    float val = charactersToFloat(characters, length, ok);
-    return val;
-}
-
-float HTMLMediaElement::getTimeOffsetAttribute(const QualifiedName& name, float valueOnError) const
-{
-    bool ok;
-    String timeString = getAttribute(name);
-    float result = parseTimeOffset(timeString, &ok);
-    if (ok)
-        return result;
-    return valueOnError;
-}
-
-void HTMLMediaElement::setTimeOffsetAttribute(const QualifiedName& name, float value)
-{
-    setAttribute(name, serializeTimeOffset(value));
-}
-
 PassRefPtr<MediaError> HTMLMediaElement::error() const 
 {
     return m_error;
