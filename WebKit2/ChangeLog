@@ -1,3 +1,9 @@
+2010-11-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for r71587.
+
+        * WebKit2.xcodeproj/project.pbxproj: No longer uses absolute path.
+
 2010-11-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed WebKit2 buildfix after r71587.
