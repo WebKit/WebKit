@@ -1,3 +1,14 @@
+2010-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        CString(const char*) crashes when passed a null pointer
+        https://bugs.webkit.org/show_bug.cgi?id=49450
+
+        * wtf/text/CString.cpp:
+        (WTF::CString::CString):
+        Return early if str is null.
+
 2010-11-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
