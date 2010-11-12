@@ -38,6 +38,7 @@
       ["Down", "2"],
       ["Down", "3"],
       ["Up", "2"],
+      ["Up", "2"],
       ["Up", "1"],
       ["Up", "start"],
       ["DONE", "DONE"]
@@ -71,15 +72,17 @@
   </head>
 
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
-    <p>That is is a normal <a id="start" href="a">link_1</a>.</p>
+    <a id="start" href="a"><img src="resources/green.png" width=30px height=30px></a>
     <div class="scroll">
-      <p>This is a scrollable Div created with the CSS property overflow.</p>
-      <p>It has a visible <a id="1" href="a">link_2</a>.</p>
-      <br><br><br><br><br><br>
-      <p>... and an overflowed link like <a id="2" href="a">link_3</a>.</p>
+      <a id="1" href="a"><img src="resources/green.png" width=30px height=30px></a>
+      <div></div>
+      <img src="resources/green.png" width=200px height=200px>
+      <div></div>
+      <a id="2" href="a"><img src="resources/green.png" width=30px height=30px></a>.</p>
     </div>
-    <p>And this is another normal <a id="3" href="a">link_4</a>.</p>
+    <a id="3" href="a"><img src="resources/green.png" width=30px height=30px></a>
     <div id="console"></div>
+    <div>This test tests that a div with css overflow:auto will scroll to reveal its focusable elements</div>
   </body>
 </html>
 
