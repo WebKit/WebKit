@@ -1613,6 +1613,8 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true);
     boundingBox.move(mainFrameOffset);
 
+    IntRect titleReferenceBox = boundingBox;
+
     ASSERT(m_inspectedPage);
 
     FrameView* view = m_inspectedPage->mainFrame()->view();
@@ -1639,6 +1641,10 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
                           paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
         IntRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
                           borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
+
+        titleReferenceBox = marginBox;
+        titleReferenceBox.move(mainFrameOffset);
+        titleReferenceBox.move(boundingBox.x(), boundingBox.y());
 
         FloatQuad absContentQuad = renderBox->localToAbsoluteQuad(FloatRect(contentBox));
         FloatQuad absPaddingQuad = renderBox->localToAbsoluteQuad(FloatRect(paddingBox));
@@ -1667,7 +1673,7 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         return;
 
     WebCore::Settings* settings = containingFrame->settings();
-    drawElementTitle(context, boundingBox, overlayRect, settings);
+    drawElementTitle(context, titleReferenceBox, overlayRect, settings);
 }
 
 void InspectorController::drawElementTitle(GraphicsContext& context, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings* settings) const
@@ -1725,12 +1731,27 @@ void InspectorController::drawElementTitle(GraphicsContext& context, const IntRe
     // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
     int dx = -borderWidthPx;
     int dy = borderWidthPx;
+
+    // If the tip sticks beyond the right of overlayRect, right-align the tip with the said boundary.
     if (titleRect.right() > overlayRect.right())
-        dx += overlayRect.right() - titleRect.right();
+        dx = overlayRect.right() - titleRect.right();
+
+    // If the tip sticks beyond the left of overlayRect, left-align the tip with the said boundary.
     if (titleRect.x() + dx < overlayRect.x())
-        dx = overlayRect.x() - titleRect.x();
-    if (titleRect.bottom() > overlayRect.bottom())
-        dy += overlayRect.bottom() - titleRect.bottom() - borderWidthPx;
+        dx = overlayRect.x() - titleRect.x() - borderWidthPx;
+
+    // If the tip sticks beyond the bottom of overlayRect, show the tip at top of bounding box.
+    if (titleRect.bottom() > overlayRect.bottom()) {
+        dy = boundingBox.y() - titleRect.bottom() - borderWidthPx;
+        // If the tip still sticks beyond the bottom of overlayRect, bottom-align the tip with the said boundary.
+        if (titleRect.bottom() + dy > overlayRect.bottom())
+            dy = overlayRect.bottom() - titleRect.bottom();
+    }
+
+    // If the tip sticks beyond the top of overlayRect, show the tip at top of overlayRect.
+    if (titleRect.y() + dy < overlayRect.y())
+        dy = overlayRect.y() - titleRect.y() + borderWidthPx;
+
     titleRect.move(dx, dy);
     context.setStrokeColor(tooltipBorderColor, ColorSpaceDeviceRGB);
     context.setStrokeThickness(borderWidthPx);
