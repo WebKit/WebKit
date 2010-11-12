@@ -275,12 +275,15 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
 
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
-        if (Font::treatAsSpace(ch)) {
+        bool treatAsSpace = Font::treatAsSpace(ch);
+        bool treatAsZeroWidthSpace = ch == zeroWidthSpace || Font::treatAsZeroWidthSpace(ch);
+        if (treatAsSpace || treatAsZeroWidthSpace) {
             // Substitute in the space glyph at the appropriate place in the glyphs
             // array.
             glyphs[clusters[k]] = fontData->spaceGlyph();
-            advances[clusters[k]] = logicalSpaceWidth;
-            spaceCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
+            advances[clusters[k]] = treatAsSpace ? logicalSpaceWidth : 0;
+            if (treatAsSpace)
+                spaceCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
         }
 
         if (Font::isRoundingHackCharacter(ch))
@@ -335,7 +338,9 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 advance += m_font.letterSpacing();
 
             // Handle justification and word-spacing.
-            if (glyph == fontData->spaceGlyph()) {
+            int characterIndex = spaceCharacters[k];
+            // characterIndex is left at the initial value of -1 for glyphs that do not map back to treated-as-space characters.
+            if (characterIndex != -1) {
                 // Account for padding. WebCore uses space padding to justify text.
                 // We distribute the specified padding over the available spaces in the run.
                 if (m_padding) {
@@ -351,7 +356,6 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 }
 
                 // Account for word-spacing.
-                int characterIndex = spaceCharacters[k];
                 if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                     advance += m_font.wordSpacing();
             }
