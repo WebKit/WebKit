@@ -38,15 +38,25 @@ namespace VectorMath {
 
 #if OS(DARWIN)
 // On the Mac we use the highly optimized versions in Accelerate.framework
+// In 32-bit mode (__ppc__ or __i386__) <Accelerate/Accelerate.h> includes <vecLib/vDSP_translate.h> which defines macros of the same name as
+// our namespaced function names, so we must handle this case differently.  Other architectures (64bit, ARM, etc.) do not include this header file.
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {
+#if defined(__ppc__) || defined(__i386__)
+    ::vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
+#else
     vDSP_vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
+#endif
 }
 
 void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
+#if defined(__ppc__) || defined(__i386__)
+    ::vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#else
     vDSP_vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#endif
 }
 
 #else
