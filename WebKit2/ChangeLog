@@ -1,3 +1,9 @@
+2010-11-12  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * win/WebKit2Generated.make: Copy WKBundlePageOverlay.h.
+
 2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Unreviewed fix after r71857.

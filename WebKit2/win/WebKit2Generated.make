@@ -57,6 +57,7 @@ all:
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandlePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePage.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePageOverlay.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleRangeHandle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
