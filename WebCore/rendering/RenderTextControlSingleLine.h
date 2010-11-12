@@ -161,7 +161,7 @@ private:
 };
 
 inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
-{ 
+{
     ASSERT(!object || object->isTextField());
     return static_cast<RenderTextControlSingleLine*>(object);
 }

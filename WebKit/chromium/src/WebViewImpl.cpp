@@ -2346,7 +2346,7 @@ void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect&
 
         // Move the damage
         innerDamage.move(scrollDelta.width(), scrollDelta.height());
-        
+
         // Merge it back into the damaged rect
         m_rootLayerDirtyRect.unite(innerDamage);
     }
@@ -2366,7 +2366,7 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     if (!page())
         return;
 
-    // FIXME: add a smarter damage aggregation logic and/or unify with 
+    // FIXME: add a smarter damage aggregation logic and/or unify with
     // LayerChromium's damage logic
     m_rootLayerDirtyRect.unite(rect);
     setRootLayerNeedsDisplay();

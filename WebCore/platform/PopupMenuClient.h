@@ -62,10 +62,10 @@ public:
     virtual bool shouldPopOver() const = 0;
     virtual bool valueShouldChangeOnHotTrack() const = 0;
     virtual void setTextFromItem(unsigned listIndex) = 0;
-    
+
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
-    
+
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) = 0;
 };
 

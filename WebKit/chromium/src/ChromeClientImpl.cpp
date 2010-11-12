@@ -841,7 +841,7 @@ PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client)
 {
     if (WebViewImpl::useExternalPopupMenus())
         return adoptRef(new ExternalPopupMenu(client, m_webView->client()));
-    
+
     return adoptRef(new PopupMenuChromium(client));
 }
 

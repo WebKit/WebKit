@@ -137,7 +137,7 @@ private:
 };
 
 inline RenderMenuList* toRenderMenuList(RenderObject* object)
-{ 
+{
     ASSERT(!object || object->isMenuList());
     return static_cast<RenderMenuList*>(object);
 }

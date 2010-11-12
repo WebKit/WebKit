@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -113,7 +113,7 @@ public:
     // Updates our internal list to match the client.
     void updateFromElement();
 
-    // Frees any allocated resources used in a particular popup session. 
+    // Frees any allocated resources used in a particular popup session.
     void clear();
 
     // Sets the index of the option that is displayed in the <select> widget in the page
@@ -194,10 +194,10 @@ private:
     void scrollToRevealRow(int index);
     void scrollToRevealSelection() { scrollToRevealRow(m_selectedIndex); }
 
-    // Invalidates the row at the given index. 
+    // Invalidates the row at the given index.
     void invalidateRow(int index);
 
-    // Get the bounds of a row. 
+    // Get the bounds of a row.
     IntRect getRowBounds(int index);
 
     // Converts a point to an index of the row the point is over
@@ -224,11 +224,11 @@ private:
     PopupContainerSettings m_settings;
 
     // This is the index of the item marked as "selected" - i.e. displayed in the widget on the
-    // page. 
+    // page.
     int m_originalIndex;
 
-    // This is the index of the item that the user is hovered over or has selected using the 
-    // keyboard in the list. They have not confirmed this selection by clicking or pressing 
+    // This is the index of the item that the user is hovered over or has selected using the
+    // keyboard in the list. They have not confirmed this selection by clicking or pressing
     // enter yet however.
     int m_selectedIndex;
 
@@ -240,7 +240,7 @@ private:
 
     // This is the number of rows visible in the popup. The maximum number visible at a time is
     // defined as being kMaxVisibleRows. For a scrolled popup, this can be thought of as the
-    // page size in data units. 
+    // page size in data units.
     int m_visibleRows;
 
     // Our suggested width, not including scrollbar.
@@ -538,7 +538,7 @@ ChromeClientChromium* PopupContainer::chromeClientChromium()
 void PopupContainer::show(const IntRect& r, FrameView* v, int index)
 {
     // The rect is the size of the select box. It's usually larger than we need.
-    // subtract border size so that usually the container will be displayed 
+    // subtract border size so that usually the container will be displayed
     // exactly the same width as the select box.
     listBox()->setBaseWidth(max(r.width() - kBorderSize * 2, 0));
 
@@ -897,7 +897,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         gc->fillRect(rowRect, Color::white, ColorSpaceDeviceRGB);
 
     gc->fillRect(rowRect, backColor, ColorSpaceDeviceRGB);
-    
+
     if (m_popupClient->itemIsSeparator(rowIndex)) {
         IntRect separatorRect(
             rowRect.x() + separatorPadding,
@@ -906,7 +906,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         gc->fillRect(separatorRect, textColor, ColorSpaceDeviceRGB);
         return;
     }
-    
+
     if (!style.isVisible())
         return;
 
@@ -1125,7 +1125,7 @@ void PopupListBox::scrollToRevealRow(int index)
         return;
 
     IntRect rowRect = getRowBounds(index);
- 
+
     if (rowRect.y() < scrollY()) {
         // Row is above current scroll position, scroll up.
         ScrollView::setScrollPosition(IntPoint(0, rowRect.y()));
@@ -1358,10 +1358,10 @@ bool PopupListBox::isPointInBounds(const IntPoint& point)
 
 ///////////////////////////////////////////////////////////////////////////////
 // PopupMenuChromium implementation
-// 
-// Note: you cannot add methods to this class, since it is defined above the 
+//
+// Note: you cannot add methods to this class, since it is defined above the
 //       portability layer. To access methods and properties on the
-//       popup widgets, use |popupWindow| above. 
+//       popup widgets, use |popupWindow| above.
 
 PopupMenuChromium::PopupMenuChromium(PopupMenuClient* client)
     : m_popupClient(client)

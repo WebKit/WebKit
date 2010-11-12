@@ -1,3 +1,16 @@
+2010-11-12  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove some trailing whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=49433
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createPopupMenu):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+
 2010-11-11  MORITA Hajime  <morrita@google.com>
 
         Unreviewed another attempt to fx windows build.
