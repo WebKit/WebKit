@@ -39,4 +39,15 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     return false;
 }
 
+void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+{
+    notImplemented();
+}
+
+bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace CoreIPC

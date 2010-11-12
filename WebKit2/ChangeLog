@@ -1,3 +1,24 @@
+2010-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add an argument coder for ResourceResponse.
+        https://bugs.webkit.org/show_bug.cgi?id=49415
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+
 2010-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix for r71587.

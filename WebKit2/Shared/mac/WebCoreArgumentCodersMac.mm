@@ -58,4 +58,20 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     return true;
 }
 
+void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+{
+    encodeWithNSKeyedArchiver(encoder, resourceResponse.nsURLResponse());
+}
+
+bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+{
+    NSURLResponse *nsURLResponse = decodeWithNSKeyedArchiver(decoder);
+    if (!nsURLResponse)
+        return false;
+
+    resourceResponse = WebCore::ResourceResponse(nsURLResponse);
+    return true;
+}
+
+
 } // namespace CoreIPC

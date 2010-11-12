@@ -151,6 +151,22 @@ template<> struct ArgumentCoder<WebCore::ResourceRequest> {
     }
 };
 
+// These two functions are implemented in a platform specific manner.
+void encodeResourceResponse(ArgumentEncoder*, const WebCore::ResourceResponse&);
+bool decodeResourceResponse(ArgumentDecoder*, WebCore::ResourceResponse&);
+
+template<> struct ArgumentCoder<WebCore::ResourceResponse> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+    {
+        encodeResourceResponse(encoder, resourceResponse);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+    {
+        return decodeResourceResponse(decoder, resourceResponse);
+    }
+};
+
 template<> struct ArgumentCoder<WebCore::ResourceError> {
     static void encode(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
     {
