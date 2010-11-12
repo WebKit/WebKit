@@ -1,3 +1,15 @@
+2010-11-12  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt][WK2] Fix leaking of mapped files
+
+        MappedMemory::fileName was never set on the receiving side, which led
+        the MappedMemoryPool to call QFile::map() again when reusing an existing file.
+
+        * Platform/qt/MappedMemoryPool.cpp:
+        (WebKit::MappedMemoryPool::mapFile):
+
 2010-11-12  Adam Roben  <aroben@apple.com>
 
         Windows build fix

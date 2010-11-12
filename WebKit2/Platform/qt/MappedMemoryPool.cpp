@@ -86,6 +86,7 @@ MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size)
 
     MappedMemory newMap;
     newMap.file = new QFile(fileName);
+    newMap.fileName = fileName;
     newMap.dataSize = size;
     ASSERT(newMap.file->exists());
     ASSERT(newMap.file->size() >= newMap.mapSize());
