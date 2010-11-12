@@ -1,3 +1,13 @@
+2010-11-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        Windows [Cairo] build fix. Unreviewed.
+
+        Provide stubs for two BackingStore methods.
+
+        * Shared/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createFlippedGraphicsContext):
+        (WebKit::BackingStore::paint):
+
 2010-11-11  Brian Weinstein  <bweinstein@apple.com>
 
         Windows Build Fix. Change #imports to #includes.

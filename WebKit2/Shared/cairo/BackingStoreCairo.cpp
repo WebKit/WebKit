@@ -38,7 +38,13 @@ PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
     return 0;
 }
 
-void BackingStore::paint(GraphicsContext*, const IntRect&)
+PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
+{
+    notImplemented();
+    return 0;
+}
+
+void BackingStore::paint(GraphicsContext&, const IntPoint&, const IntRect&)
 {
     notImplemented();
 }
