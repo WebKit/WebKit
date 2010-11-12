@@ -57,10 +57,6 @@ public:
     void servePendingRequests(Priority minimumPriority = VeryLow);
     void suspendPendingRequests();
     void resumePendingRequests();
-    
-#ifndef NDEBUG
-    void assertLoaderBeingCounted(ResourceLoader*);
-#endif
 
 private:
     ResourceLoadScheduler();
@@ -81,10 +77,6 @@ private:
         void remove(ResourceLoader*);
         bool hasRequests() const;
         bool limitRequests() const { return m_requestsLoading.size() >= m_maxRequestsInFlight; }
-        
-#ifndef NDEBUG
-        void assertLoaderBeingCounted(ResourceLoader*);
-#endif
 
         typedef Deque<RefPtr<ResourceLoader> > RequestQueue;
         RequestQueue& requestsPending(Priority priority) { return m_requestsPending[priority]; }

@@ -179,7 +179,6 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Priority
 
     for (int priority = High; priority >= minimumPriority; --priority) {
         HostInformation::RequestQueue& requestsPending = host->requestsPending((Priority) priority);
-        HostInformation::RequestQueue deferredRequests;
 
         while (!requestsPending.isEmpty()) {
             RefPtr<ResourceLoader> resourceLoader = requestsPending.first();
@@ -189,20 +188,14 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Priority
             // and we don't know all stylesheets yet.
             Document* document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame()->document() : 0;
             bool shouldLimitRequests = !host->name().isNull() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
-            if (shouldLimitRequests && host->limitRequests()) {
-                while (!deferredRequests.isEmpty())
-                    requestsPending.append(deferredRequests.takeFirst());
+            if (shouldLimitRequests && host->limitRequests())
                 return;
-            }
 
-            if (resourceLoader->start())
+            resourceLoader->start();
+            if (!resourceLoader->reachedTerminalState())
                 host->addLoadInProgress(resourceLoader.get());
-            else
-                deferredRequests.append(resourceLoader);
             requestsPending.removeFirst();
         }
-
-        requestsPending.swap(deferredRequests);
     }
 }
 
@@ -232,29 +225,6 @@ void ResourceLoadScheduler::requestTimerFired(Timer<ResourceLoadScheduler>*)
     LOG(ResourceLoading, "ResourceLoadScheduler::requestTimerFired\n");
     servePendingRequests();
 }
-
-#ifndef NDEBUG
-void ResourceLoadScheduler::assertLoaderBeingCounted(ResourceLoader* resourceLoader)
-{
-    HostInformation* host = hostForURL(resourceLoader->url());
-    ASSERT(host);
-    host->assertLoaderBeingCounted(resourceLoader);
-}
-
-void ResourceLoadScheduler::HostInformation::assertLoaderBeingCounted(ResourceLoader* resourceLoader)
-{
-    // If a load is being started, it should be at the front of the highest priority queue
-    // that actually contains a request.
-    for (int priority = High; priority >= VeryLow; --priority) {  
-        if (!m_requestsPending[priority].isEmpty()) {
-            ASSERT(m_requestsPending[priority].first().get() == resourceLoader);
-            return;
-        }
-    }
-
-    ASSERT_NOT_REACHED();
-}
-#endif
 
 ResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsigned maxRequestsInFlight)
     : m_name(name)

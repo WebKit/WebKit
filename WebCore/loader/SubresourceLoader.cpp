@@ -86,8 +86,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
     subloader->documentLoader()->addSubresourceLoader(subloader.get());
-    if (!subloader->load(newRequest))
-        return 0;
+    subloader->init(newRequest);
 
     return subloader.release();
 }

@@ -54,7 +54,7 @@ namespace WebCore {
 
         void cancel();
 
-        virtual bool load(const ResourceRequest&);
+        virtual void init(const ResourceRequest&);
 
         FrameLoader* frameLoader() const;
         DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
@@ -126,8 +126,7 @@ namespace WebCore {
         ResourceHandle* handle() const { return m_handle.get(); }
         bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
 
-        // Called by ResourceLoadScheduler to create a ResourceHandle and actually begin the load.
-        bool start();
+        bool reachedTerminalState() const { return m_reachedTerminalState; }
 
         void setShouldBufferData(bool shouldBufferData);
 
@@ -137,12 +136,15 @@ namespace WebCore {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         friend class ApplicationCacheHost;  // for access to request()
 #endif
-
+        friend class ResourceLoadScheduler; // for access to start()
+        // start() actually sends the load to the network (unless the load is being 
+        // deferred) and should only be called by ResourceLoadScheduler or setDefersLoading().
+        void start();
+        
         virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart(double finishTime);
 
         const ResourceRequest& request() const { return m_request; }
-        bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
         bool defersLoading() const { return m_defersLoading; }
 
