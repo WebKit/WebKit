@@ -1,3 +1,14 @@
+2010-11-12  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed rollout of r71858.
+
+        Rollout out r71858 since it breaks new-run-webkit-httpd as used by the
+        NaCl tests.
+
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_standalone.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
 2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
