@@ -1,3 +1,10 @@
+2010-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed WebKit2 buildfix after r71587.
+
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        * WebKit2.pro:
+
 2010-11-11  Brian Weinstein  <bweinstein@apple.com>
 
         More Windows build fixing. Change another #import to a #include, and remove an unneeded

@@ -30,8 +30,6 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
