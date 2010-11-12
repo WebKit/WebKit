@@ -1,3 +1,15 @@
+2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Need to implement WebKit::pluginWillHandleLoadError for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48764
+
+        Add the missing error to Qt support.
+
+        * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp:
+        (WebKit::pluginWillHandleLoadError):
+
 2010-11-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.

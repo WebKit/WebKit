@@ -26,7 +26,6 @@
 
 #include "WebErrors.h"
 
-#include "NotImplemented.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
@@ -46,6 +45,7 @@ enum {
     WebKitErrorCannotFindPlugIn =                               200,
     WebKitErrorCannotLoadPlugIn =                               201,
     WebKitErrorJavaUnavailable =                                202,
+    WebKitErrorPluginWillHandleLoad =                           203
 };
 
 ResourceError cancelledError(const ResourceRequest& request)
@@ -86,10 +86,10 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
                          QCoreApplication::translate("QWebFrame", "File does not exist", 0, QCoreApplication::UnicodeUTF8));
 }
 
-ResourceError pluginWillHandleLoadError(const ResourceResponse&)
+ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    notImplemented();
-    return ResourceError();
+    return ResourceError("WebKit", WebKitErrorPluginWillHandleLoad, response.url().string(),
+                         QCoreApplication::translate("QWebFrame", "Loading is handled by the media engine", 0, QCoreApplication::UnicodeUTF8));
 }
 
 } // namespace WebKit
