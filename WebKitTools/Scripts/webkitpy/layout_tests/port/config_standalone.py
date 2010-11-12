@@ -34,13 +34,21 @@ this test when we remove the global configuration cache in config.py."""
 
 import os
 import unittest
+import sys
+
+
+# Ensure that webkitpy is in PYTHONPATH.
+this_dir = os.path.abspath(sys.path[0])
+up = os.path.dirname
+script_dir = up(up(up(this_dir)))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
 
 from webkitpy.common.system import executive
 from webkitpy.common.system import executive_mock
 from webkitpy.common.system import filesystem
 from webkitpy.common.system import filesystem_mock
 
-import sys
 import config
 
 
