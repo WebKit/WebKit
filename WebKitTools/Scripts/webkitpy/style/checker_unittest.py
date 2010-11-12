@@ -223,11 +223,29 @@ class GlobalVariablesTest(unittest.TestCase):
                       "readability/naming")
         assertNoCheck("WebCore/css/CSSParser.cpp",
                       "readability/naming")
+
+        # Test if Qt exceptions are indeed working
+        assertCheck("JavaScriptCore/qt/api/qscriptengine.cpp",
+                    "readability/braces")
+        assertCheck("WebKit/qt/Api/qwebpage.cpp",
+                    "readability/braces")
+        assertCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
+                    "readability/braces")
+        assertCheck("WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
+                    "readability/braces")
+        assertCheck("WebKit/qt/examples/platformplugin/WebPlugin.cpp",
+                    "readability/braces")
+        assertNoCheck("JavaScriptCore/qt/api/qscriptengine.cpp",
+                      "readability/naming")
+        assertNoCheck("WebKit/qt/Api/qwebpage.cpp",
+                      "readability/naming")
         assertNoCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
                       "readability/naming")
-        assertNoCheck(
-            "JavaScriptCore/qt/tests/qscriptengine/tst_qscriptengine.cpp",
-            "readability/naming")
+        assertNoCheck("WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
+                      "readability/naming")
+        assertNoCheck("WebKit/qt/examples/platformplugin/WebPlugin.cpp",
+                      "readability/naming")
+
         assertNoCheck("WebCore/ForwardingHeaders/debugger/Debugger.h",
                       "build/header_guard")
 
@@ -277,12 +295,9 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         paths_to_skip = [
            "gtk2drawing.c",
            "gtkdrawing.h",
-           "JavaScriptCore/qt/api/qscriptengine_p.h",
            "WebCore/platform/gtk/gtk2drawing.c",
            "WebCore/platform/gtk/gtkdrawing.h",
            "WebKit/gtk/tests/testatk.c",
-           "WebKit/qt/Api/qwebpage.h",
-           "WebKit/qt/tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp",
             ]
 
         for path in paths_to_skip:

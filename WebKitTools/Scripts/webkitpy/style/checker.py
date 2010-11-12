@@ -131,11 +131,13 @@ _PATH_RULES_SPECIFIER = [
       "WebKit/efl/ewk/",
       # There is no clean way to avoid "yy_*" names used by flex.
       "WebCore/css/CSSParser.cpp",
-      # There is no clean way to avoid "xxx_data" methods inside
-      # Qt's autotests since they are called automatically by the
-      # QtTest module.
+      # Qt code uses '_' in some places (such as private slots
+      # and on test xxx_data methos on tests)
+      "JavaScriptCore/qt/api/",
+      "WebKit/qt/Api/",
       "WebKit/qt/tests/",
-      "JavaScriptCore/qt/tests"],
+      "WebKit/qt/declarative/",
+      "WebKit/qt/examples/"],
      ["-readability/naming"]),
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
@@ -232,15 +234,9 @@ _TEXT_FILE_EXTENSIONS = [
 # WebKit maintains some files in Mozilla style on purpose to ease
 # future merges.
 _SKIPPED_FILES_WITH_WARNING = [
-    # The Qt API and tests do not follow WebKit style.
-    # They follow Qt style. :)
     "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
     "gtkdrawing.h", # WebCore/platform/gtk/gtkdrawing.h
-    "JavaScriptCore/qt/api/",
     "WebKit/gtk/tests/",
-    "WebKit/qt/Api/",
-    "WebKit/qt/tests/",
-    "WebKit/qt/examples/",
     # Soup API that is still being cooked, will be removed from WebKit
     # in a few months when it is merged into soup proper. The style
     # follows the libsoup style completely.

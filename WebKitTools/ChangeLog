@@ -1,3 +1,16 @@
+2010-11-11  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Enable check-webkit-style on Qt files
+        https://bugs.webkit.org/show_bug.cgi?id=48322
+
+        Adding exception for _q_... private slots and
+        ..._data() methods in tests
+
+        * Scripts/webkitpy/style/checker.py: enable Qt dirs, add exceptions
+        * Scripts/webkitpy/style/checker_unittest.py: improve unittests
+
 2010-11-11  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
