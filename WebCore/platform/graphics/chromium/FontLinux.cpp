@@ -164,7 +164,8 @@ public:
     TextRunWalker(const TextRun&, unsigned, const Font*);
     ~TextRunWalker();
 
-    bool isWordBreak(unsigned, bool);
+    bool isWordBreak(unsigned);
+    unsigned determineWordBreakSpacing(unsigned);
     // setPadding sets a number of pixels to be distributed across the TextRun.
     // WebKit uses this to justify text.
     void setPadding(int);
@@ -182,10 +183,8 @@ public:
     // setLetterSpacingAdjustment sets an additional number of pixels that is
     // added to the advance after each output cluster. This matches the behaviour
     // of WidthIterator::advance.
-    //
-    // (NOTE: currently does nothing because I don't know how to get the
-    // cluster information from Harfbuzz.)
     void setLetterSpacingAdjustment(int letterSpacingAdjustment) { m_letterSpacing = letterSpacingAdjustment; }
+    int letterSpacing() const { return m_letterSpacing; }
 
     // Set the x offset for the next script run. This affects the values in
     // |xPositions|
@@ -301,11 +300,32 @@ TextRunWalker::~TextRunWalker()
     delete[] m_item.log_clusters;
 }
 
-bool TextRunWalker::isWordBreak(unsigned index, bool isRTL)
+bool TextRunWalker::isWordBreak(unsigned index)
 {
-    if (!isRTL)
-        return index && isCodepointSpace(m_item.string[index]) && !isCodepointSpace(m_item.string[index - 1]);
-    return index != m_item.stringLength - 1 && isCodepointSpace(m_item.string[index]) && !isCodepointSpace(m_item.string[index + 1]);
+    return index && isCodepointSpace(m_item.string[index]) && !isCodepointSpace(m_item.string[index - 1]);
+}
+
+unsigned TextRunWalker::determineWordBreakSpacing(unsigned logClustersIndex)
+{
+    unsigned wordBreakSpacing = 0;
+    // The first half of the conjunction works around the case where
+    // output glyphs aren't associated with any codepoints by the
+    // clusters log.
+    if (logClustersIndex < m_item.item.length
+        && isWordBreak(m_item.item.pos + logClustersIndex)) {
+        wordBreakSpacing = m_wordSpacingAdjustment;
+
+        if (m_padding > 0) {
+            unsigned toPad = roundf(m_padPerWordBreak + m_padError);
+            m_padError += m_padPerWordBreak - toPad;
+
+            if (m_padding < toPad)
+                toPad = m_padding;
+            m_padding -= toPad;
+            wordBreakSpacing += toPad;
+        }
+    }
+    return wordBreakSpacing;
 }
 
 // setPadding sets a number of pixels to be distributed across the TextRun.
@@ -323,7 +343,7 @@ void TextRunWalker::setPadding(int padding)
     bool isRTL = m_iterateBackwards;
 
     for (unsigned i = 0; i < m_item.stringLength; i++) {
-        if (isWordBreak(i, isRTL))
+        if (isWordBreak(i))
             numWordBreaks++;
     }
 
@@ -490,51 +510,49 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
     // RTL) codepoint of the current glyph.  Each time we advance a glyph,
     // we skip over all the codepoints that contributed to the current
     // glyph.
-    unsigned logClustersIndex = isRTL ? m_item.num_glyphs - 1 : 0;
+    int logClustersIndex = 0;
 
-    for (unsigned iter = 0; iter < m_item.num_glyphs; ++iter) {
+    if (isRTL) {
+        logClustersIndex = m_item.num_glyphs - 1;
+
         // Glyphs are stored in logical order, but for layout purposes we
         // always go left to right.
-        int i = isRTL ? m_item.num_glyphs - iter - 1 : iter;
+        for (int i = m_item.num_glyphs - 1; i >= 0; --i) {
+            // Whitespace must be laid out in logical order, so when inserting
+            // spaces in RTL (but iterating in LTR order) we must insert spaces
+            // _before_ the next glyph.
+            if (i + 1 >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
+                position += m_letterSpacing;
 
-        m_glyphs16[i] = m_item.glyphs[i];
-        double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
-        m_xPositions[i] = m_offsetX + position + offsetX;
+            position += determineWordBreakSpacing(logClustersIndex);
 
-        double advance = truncateFixedPointToInteger(m_item.advances[i]);
-        // The first half of the conjuction works around the case where
-        // output glyphs aren't associated with any codepoints by the
-        // clusters log.
-        if (logClustersIndex < m_item.item.length
-            && isWordBreak(m_item.item.pos + logClustersIndex, isRTL)) {
-            advance += m_wordSpacingAdjustment;
+            m_glyphs16[i] = m_item.glyphs[i];
+            double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
+            m_xPositions[i] = m_offsetX + position + offsetX;
 
-            if (m_padding > 0) {
-                unsigned toPad = roundf(m_padPerWordBreak + m_padError);
-                m_padError += m_padPerWordBreak - toPad;
-
-                if (m_padding < toPad)
-                    toPad = m_padding;
-                m_padding -= toPad;
-                advance += toPad;
-            }
-        }
-
-        // We would like to add m_letterSpacing after each cluster, but I
-        // don't know where the cluster information is. This is typically
-        // fine for Roman languages, but breaks more complex languages
-        // terribly.
-        // advance += m_letterSpacing;
-
-        if (isRTL) {
             while (logClustersIndex > 0 && logClusters()[logClustersIndex] == i)
                 logClustersIndex--;
-        } else {
+
+            position += truncateFixedPointToInteger(m_item.advances[i]);
+        }
+    } else {
+        for (int i = 0; i < m_item.num_glyphs; ++i) {
+            m_glyphs16[i] = m_item.glyphs[i];
+            double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
+            m_xPositions[i] = m_offsetX + position + offsetX;
+
+            double advance = truncateFixedPointToInteger(m_item.advances[i]);
+
+            advance += determineWordBreakSpacing(logClustersIndex);
+
+            if (m_item.attributes[i].clusterStart)
+                advance += m_letterSpacing;
+
             while (logClustersIndex < m_item.item.length && logClusters()[logClustersIndex] == i)
                 logClustersIndex++;
-        }
 
-        position += advance;
+            position += advance;
+        }
     }
 
     m_pixelWidth = position;
@@ -675,16 +693,19 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 static int glyphIndexForXPositionInScriptRun(const TextRunWalker& walker, int x)
 {
     const HB_Fixed* advances = walker.advances();
+    int letterSpacing = walker.letterSpacing();
     int glyphIndex;
     if (walker.rtl()) {
         for (glyphIndex = walker.length() - 1; glyphIndex >= 0; --glyphIndex) {
-            if (x < truncateFixedPointToInteger(advances[glyphIndex]))
+            // When iterating LTR over RTL text, we must include the whitespace
+            // _before_ the glyph, so no + 1 here.
+            if (x < (walker.length() - glyphIndex) * letterSpacing + truncateFixedPointToInteger(advances[glyphIndex]))
                 break;
             x -= truncateFixedPointToInteger(advances[glyphIndex]);
         }
     } else {
         for (glyphIndex = 0; static_cast<unsigned>(glyphIndex) < walker.length(); ++glyphIndex) {
-            if (x < truncateFixedPointToInteger(advances[glyphIndex]))
+            if (x < (glyphIndex * letterSpacing + truncateFixedPointToInteger(advances[glyphIndex])))
                 break;
             x -= truncateFixedPointToInteger(advances[glyphIndex]);
         }
