@@ -273,6 +273,18 @@ bool SecurityOrigin::taintsCanvas(const KURL& url) const
     return true;
 }
 
+bool SecurityOrigin::canReceiveDragData(const SecurityOrigin* dragInitiator) const
+{
+    // FIXME: Currently we treat data URLs as having a unique origin, contrary to the
+    // current (9/19/2009) draft of the HTML5 specification. We still want to allow
+    // drop across data URLs, so we special case data URLs below. If we change to
+    // match HTML5 w.r.t. data URL security, then we can remove this check.
+    if (m_protocol == "data")
+        return true;
+
+    return canAccess(dragInitiator);  
+}
+
 bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) const
 {
     if (OriginAccessWhiteList* list = originAccessMap().get(toString())) {
