@@ -763,6 +763,7 @@ BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIME
 BUG13907 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 BUG13907 : media/video-loop.html = PASS FAIL TIMEOUT
 BUG62995 WIN : http/tests/media/video-cookie.html = CRASH PASS TEXT TIMEOUT
+BUG13907 : http/tests/media/reload-after-dialog.html = CRASH PASS TIMEOUT
 
 // These tests need to be changed to not rely on setTimeout().
 BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
@@ -2872,6 +2873,8 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
+BUGWK45209 WIN DBEUG SLOW : inspector/styles-source-lines-inline.html = PASS
+BUGWK45209 WIN DEBUG SLOW : inspector/styles-disable-inherited.html = PASS
 
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
@@ -2899,7 +2902,7 @@ BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
 
-BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
+BUGWK45667 LINUX MAC : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
