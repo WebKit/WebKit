@@ -1,3 +1,11 @@
+2010-11-11  Brian Weinstein  <bweinstein@apple.com>
+
+        More Windows build fixing. Change another #import to a #include, and remove an unneeded
+        namespace.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        * WebProcess/WebPage/win/WebInspectorWin.cpp:
+
 2010-11-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Windows [Cairo] build fix. Unreviewed.
