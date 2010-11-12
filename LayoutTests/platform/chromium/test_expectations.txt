@@ -2350,7 +2350,6 @@ BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
-BUG43960 WIN LINUX : fast/css/input-search-padding.html = IMAGE+TEXT
 
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
@@ -3206,11 +3205,6 @@ BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 BUGWK49413 : fast/table/colspanMinWidth-vertical.html = TEXT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
-// Need rebaselines, missed during a roll
-BUG_MIHAIP MAC : fast/css/input-search-padding.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
-BUG_MIHAIP MAC : fast/lists/markers-in-selection.html = IMAGE
 
 // Malformed image results in humongous malloc; if this test is run it will 
 // affect ones that follow it.
