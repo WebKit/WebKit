@@ -114,7 +114,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
     if (!shouldShowOverlay) {
         if (m_findPageOverlay) {
             // Get rid of the overlay.
-            m_webPage->uninstallPageOverlay();
+            m_webPage->uninstallPageOverlay(m_findPageOverlay);
         }
         
         ASSERT(!m_findPageOverlay);
@@ -134,7 +134,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
 void FindController::hideFindUI()
 {
     if (m_findPageOverlay)
-        m_webPage->uninstallPageOverlay();
+        m_webPage->uninstallPageOverlay(m_findPageOverlay);
 
     hideFindIndicator();
 }

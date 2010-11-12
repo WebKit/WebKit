@@ -138,7 +138,7 @@ void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlay
     toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef));
 }
 
-void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef)
+void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay();
+    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef));
 }
