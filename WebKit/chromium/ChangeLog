@@ -1,3 +1,10 @@
+2010-11-11  MORITA Hajime <morrita@google.com>
+
+        Unreviewed attempt to fx windows build.
+
+        * src/WebBindings.cpp:
+        (WebKit::makeStringArrayImpl):
+
 2010-11-11  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

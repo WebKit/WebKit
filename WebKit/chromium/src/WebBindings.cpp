@@ -328,7 +328,7 @@ static NPObject* makeStringArrayImpl(const WebVector<WebString>& data)
     v8::HandleScope handleScope;
     v8::Handle<v8::Array> result = v8::Array::New(data.size());
     for (size_t i = 0; i < data.size(); ++i)
-        result->Set(i, data[i].data() ? v8::String::New(data[i].data()) : v8::String::New(""));
+        result->Set(i, data[i].data() ? v8::String::New(reinterpret_cast<const uint16_t*>((data[i].data())) : v8::String::New("")));
 
     WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
     return npCreateV8ScriptObject(0, result, window);
