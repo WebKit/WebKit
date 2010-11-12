@@ -3319,4 +3319,7 @@ BUG62515 : printing/page-format-data-display-none.html = TEXT
 
 BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
+// Fails on upstream mac port too, will be rebaselined there
+BUGWK49416 : fast/table/colspanMinWidth-vertical.html = TEXT
+
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
