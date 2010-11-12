@@ -1508,10 +1508,6 @@ svg/dom/SVGRectElement/rect-modify-rx.svg
 svg/hixie/dynamic/002.xml
 svg/hixie/mixed/007.xml
 
-# https://bugs.webkit.org/show_bug.cgi?id=48966
-svg/dom/SVGScriptElement/script-clone-rerun-self.svg
-svg/dom/SVGScriptElement/script-clone-rerun.svg
-
 # ============================================================================= #
 # failing animations tests
 # ============================================================================= #

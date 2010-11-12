@@ -611,7 +611,7 @@ void XMLDocumentParser::parseEndElement()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
+            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
     }
     m_requestingScript = false;
     popCurrentNode();
