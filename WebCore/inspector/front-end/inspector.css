@@ -813,16 +813,12 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 }
 
 .resource-view.visible {
-    display: block;
+    display: -webkit-box;
 }
 
 .resource-view .tabbed-pane-header {
     display: none;
-    position: absolute;
     height: 20px;
-    top: 0;
-    left: 0;
-    right: 0;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
     border-bottom: 1px solid rgb(163, 163, 163);
 }
@@ -845,10 +841,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     right: 0;
     bottom: 0;
     overflow: auto;
-}
-
-.resource-view.headers-visible .resource-view-headers {
-    top: 20px;
 }
 
 .resource-view-headers .outline-disclosure .parent {
@@ -894,11 +886,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     overflow: auto;
 }
 
-.resource-view.headers-visible .resource-view-content {
-    top: 20px;
-}
-
-.resource-view .resource-view-cookies {
+.resource-view-cookies {
     position: absolute;
     top: 0;
     right: 0;
@@ -906,10 +894,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     bottom: 0;
     overflow: auto;
     padding: 12px;
-}
-
-.resource-view.headers-visible .resource-view-cookies {
-    top: 20px;
+    height: 100%;
 }
 
 .resource-view-cookies.table .data-grid {
@@ -2654,6 +2639,16 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 #console-filter {
     margin-top: 1px;
+}
+
+.tabbed-pane {
+    -webkit-box-orient: vertical;
+    height: 100%;
+}
+
+.tabbed-pane-content {
+    -webkit-box-flex: 1;
+    position: relative;
 }
 
 .tabbed-pane-header {

@@ -31,10 +31,9 @@
 WebInspector.TabbedPane = function(element)
 {
     this.element = element || document.createElement("div");
-
-    this.tabsElement = document.createElement("div");
-    this.tabsElement.className = "tabbed-pane-header";
-    this.element.appendChild(this.tabsElement);
+    this.element.addStyleClass("tabbed-pane");
+    this.tabsElement = this.element.createChild("div", "tabbed-pane-header");
+    this.contentElement = this.element.createChild("div", "tabbed-pane-content");
 
     this._tabObjects = {};
 }
@@ -46,7 +45,7 @@ WebInspector.TabbedPane.prototype = {
         tabElement.textContent = tabTitle;
         tabElement.addEventListener("click", tabClickListener, false);
         this.tabsElement.appendChild(tabElement);
-        this.element.appendChild(contentElement);
+        this.contentElement.appendChild(contentElement);
         this._tabObjects[id] = {tab: tabElement, content: contentElement};
     },
     

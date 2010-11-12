@@ -624,20 +624,6 @@
     padding-top: 5px;
 }
 
-#network-views .resource-view-headers,
-#network-views .resource-view-content,
-#network-views .resource-view-cookies
-{
-    top: 31px;
-}
-
-#network-views.small .resource-view-headers,
-#network-views.small .resource-view-content,
-#network-views.small .resource-view-cookies
-{
-    top: 23px;
-}
-
 .network.panel:not(.viewing-resource) .data-grid tr.selected {
     background-color: transparent;
     color: black;
