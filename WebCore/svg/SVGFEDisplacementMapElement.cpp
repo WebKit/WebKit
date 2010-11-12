@@ -69,6 +69,18 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::xChannelSelectorAttr
+        || attrName == SVGNames::yChannelSelectorAttr
+        || attrName == SVGNames::inAttr
+        || attrName == SVGNames::in2Attr
+        || attrName == SVGNames::scaleAttr)
+        invalidate();
+}
+
 void SVGFEDisplacementMapElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
