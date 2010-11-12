@@ -643,14 +643,24 @@ void WebViewHost::show(WebNavigationPolicy)
     updatePaintRect(WebRect(0, 0, size.width, size.height));
 }
 
-void WebViewHost::closeWidgetSoon()
+
+
+void WebViewHost::closeWidget()
 {
     m_hasWindow = false;
     m_shell->closeWindow(this);
-    if (m_inModalLoop) {
-      m_inModalLoop = false;
-      webkit_support::QuitMessageLoop();
-    }
+    // No more code here, we should be deleted at this point.
+}
+
+static void invokeCloseWidget(void* context)
+{
+    WebViewHost* wvh = static_cast<WebViewHost*>(context);
+    wvh->closeWidget();
+}
+
+void WebViewHost::closeWidgetSoon()
+{
+    webkit_support::PostDelayedTask(invokeCloseWidget, static_cast<void*>(this), 0);
 }
 
 void WebViewHost::didChangeCursor(const WebCursorInfo& cursorInfo)
@@ -1085,6 +1095,18 @@ WebViewHost::WebViewHost(TestShell* shell)
 
 WebViewHost::~WebViewHost()
 {
+    // Navigate to an empty page to fire all the destruction logic for the
+    // current page.
+    loadURLForFrame(GURL("about:blank"), WebString());
+
+    // Call GC twice to clean up garbage.
+    m_shell->callJSGC();
+    m_shell->callJSGC();
+
+    webWidget()->close();
+
+    if (m_inModalLoop)
+        webkit_support::QuitMessageLoop();
 }
 
 WebView* WebViewHost::webView() const

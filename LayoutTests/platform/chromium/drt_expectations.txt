@@ -17,10 +17,6 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
-// Plugin failures
-BUG48431 WIN LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
-BUG48431 WIN LINUX : plugins/open-and-close-window-with-plugin.html = TEXT
-
 // Inspector-related failures
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH

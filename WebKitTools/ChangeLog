@@ -1,3 +1,34 @@
+2010-11-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Load a blank page when closing DRT WebViewHosts
+        https://bugs.webkit.org/show_bug.cgi?id=49417
+
+        In test_shell, when we close a window, we first load about:blank
+        and run GC to fire the destruction logic of the page.  In test_shell,
+        this happens in ~TestShell.  In DRT, we manage virtual windows as
+        WebViewHosts, so we need to replicate this logic in ~WebViewHost.
+
+        Managing focus is a bit trickier, since normally you would get window
+        events to reset the focus to the right window.  We do it manually
+        instead.
+
+        This fixes 2 plugin tests on DRT.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell): Move window close logic to ~WebViewHost.
+        (TestShell::closeWindow): Move widget close() to WVH destructor and
+            manage focus manually.
+        (TestShell::closeRemainingWindows): Comment typo.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::closeWidget):
+        (invokeCloseWidget):
+        (WebViewHost::closeWidgetSoon): Close the window asynchronously (matches
+            test_shell).
+        (WebViewHost::~WebViewHost):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-11-12  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

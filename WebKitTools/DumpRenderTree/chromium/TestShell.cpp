@@ -117,14 +117,8 @@ TestShell::~TestShell()
     // Note: DevTools are closed together with all the other windows in the
     // windows list.
 
-    loadURL(GURL("about:blank"));
-    // Call GC twice to clean up garbage.
-    callJSGC();
-    callJSGC();
-
     // Destroy the WebView before its WebViewHost.
     m_drtDevToolsAgent->setWebView(0);
-    m_webView->close();
 }
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)
@@ -588,16 +582,24 @@ void TestShell::closeWindow(WebViewHost* window)
         return;
     }
     m_windowList.remove(i);
+    WebWidget* focusedWidget = m_focusedWidget;
     if (window->webWidget() == m_focusedWidget)
-        m_focusedWidget = 0;
-    window->webWidget()->close();
+        focusedWidget = 0;
+
     delete window;
+    // We set the focused widget after deleting the web view host because it
+    // can change the focus.
+    m_focusedWidget = focusedWidget;
+    if (m_focusedWidget) {
+        webView()->setIsActive(true);
+        m_focusedWidget->setFocus(true);
+    }
 }
 
 void TestShell::closeRemainingWindows()
 {
     // Iterate through the window list and close everything except the main
-    // ihwindow. We don't want to delete elements as we're iterating, so we copy
+    // window. We don't want to delete elements as we're iterating, so we copy
     // to a temp vector first.
     Vector<WebViewHost*> windowsToDelete;
     for (unsigned i = 0; i < m_windowList.size(); ++i) {
