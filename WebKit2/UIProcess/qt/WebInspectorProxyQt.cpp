@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebInspectorProxy.h"
+#include "WebInspectorProxy.h"
 
-#import <wtf/text/WTFString.h>
+#include <wtf/text/WTFString.h>
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"

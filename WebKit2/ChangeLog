@@ -1,3 +1,10 @@
+2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Unreviewed fix after r71857.
+
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        * WebProcess/WebPage/qt/WebInspectorQt.cpp:
+
 2010-11-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
