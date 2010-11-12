@@ -56,7 +56,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_timings, expectations, result_summary, all_tests,
-        generate_incremental_results=False, test_results_server=None):
+        generate_incremental_results=False, test_results_server=None,
+        test_type="", master_name=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -67,7 +68,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         super(JSONLayoutResultsGenerator, self).__init__(
             builder_name, build_name, build_number, results_file_base_path,
             builder_base_url, {}, port.test_repository_paths(),
-            generate_incremental_results, test_results_server)
+            generate_incremental_results, test_results_server,
+            test_type, master_name)
 
         self._port = port
         self._expectations = expectations
@@ -117,7 +119,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         return set(self._failures.keys())
 
     # override
-    def _get_result_type_char(self, test_name):
+    def _get_modifier_char(self, test_name):
         if test_name not in self._all_tests:
             return self.NO_DATA_RESULT
 

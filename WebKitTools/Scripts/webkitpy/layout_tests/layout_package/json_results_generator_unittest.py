@@ -47,43 +47,68 @@ class JSONGeneratorTest(unittest.TestCase):
         self.build_number = 'DUMMY_BUILDER_NUMBER'
         self._json = None
         self._num_runs = 0
-        self._tests_list = set([])
+        self._tests_set = set([])
         self._test_timings = {}
-        self._failed_tests = {}
-        self._passed_tests = set([])
-        self._skipped_tests = set([])
+        self._failed_tests = set([])
 
-    def _test_json_generation(self, passed_tests, failed_tests, skipped_tests):
-        # Make sure we have sets (rather than lists).
-        passed_tests = set(passed_tests)
-        skipped_tests = set(skipped_tests)
-        tests_list = passed_tests | set(failed_tests.keys())
+        self._PASS_tests = set([])
+        self._DISABLED_tests = set([])
+        self._FLAKY_tests = set([])
+        self._FAILS_tests = set([])
+
+    def _get_test_modifier(self, test_name):
+        if test_name.startswith('DISABLED_'):
+            return json_results_generator.JSONResultsGenerator.SKIP_RESULT
+        elif test_name.startswith('FLAKY_'):
+            return json_results_generator.JSONResultsGenerator.FLAKY_RESULT
+        elif test_name.startswith('FAILS_'):
+            return json_results_generator.JSONResultsGenerator.FAIL_RESULT
+        return json_results_generator.JSONResultsGenerator.PASS_RESULT
+
+    def _test_json_generation(self, passed_tests_list, failed_tests_list):
+        tests_set = set(passed_tests_list) | set(failed_tests_list)
+
+        DISABLED_tests = set([t for t in tests_set
+                             if t.startswith('DISABLED_')])
+        FLAKY_tests = set([t for t in tests_set
+                           if t.startswith('FLAKY_')])
+        FAILS_tests = set([t for t in tests_set
+                           if t.startswith('FAILS_')])
+        PASS_tests = tests_set ^ (DISABLED_tests | FLAKY_tests | FAILS_tests)
+
+        passed_tests = set(passed_tests_list) ^ DISABLED_tests
+        failed_tests = set(failed_tests_list)
+
         test_timings = {}
         i = 0
-        for test in tests_list:
+        for test in tests_set:
             test_timings[test] = float(self._num_runs * 100 + i)
             i += 1
 
-        port_obj = port.get(None)
+        # For backward compatibility.
+        reason = test_expectations.TEXT
+        failed_tests_dict = dict([(name, reason) for name in failed_tests])
 
+        port_obj = port.get(None)
         generator = json_results_generator.JSONResultsGenerator(port_obj,
             self.builder_name, self.build_name, self.build_number,
             '',
             None,   # don't fetch past json results archive
             test_timings,
-            failed_tests,
+            failed_tests_dict,
             passed_tests,
-            skipped_tests,
-            tests_list)
+            (),
+            tests_set)
 
         # Test incremental json results
         incremental_json = generator.get_json(incremental=True)
         self._verify_json_results(
-            tests_list,
+            tests_set,
             test_timings,
-            passed_tests,
             failed_tests,
-            skipped_tests,
+            PASS_tests,
+            DISABLED_tests,
+            FLAKY_tests,
             incremental_json,
             1)
 
@@ -92,23 +117,25 @@ class JSONGeneratorTest(unittest.TestCase):
         json = generator.get_json(incremental=False)
         self._json = json
         self._num_runs += 1
-        self._tests_list |= tests_list
+        self._tests_set |= tests_set
         self._test_timings.update(test_timings)
         self._failed_tests.update(failed_tests)
-        self._passed_tests |= passed_tests
-        self._skipped_tests |= skipped_tests
+        self._PASS_tests |= PASS_tests
+        self._DISABLED_tests |= DISABLED_tests
+        self._FLAKY_tests |= FLAKY_tests
         self._verify_json_results(
-            self._tests_list,
+            self._tests_set,
             self._test_timings,
-            self._passed_tests,
             self._failed_tests,
-            self._skipped_tests,
+            self._PASS_tests,
+            self._DISABLED_tests,
+            self._FLAKY_tests,
             self._json,
             self._num_runs)
 
-    def _verify_json_results(self, tests_list, test_timings,
-                             passed_tests, failed_tests,
-                             skipped_tests, json, num_runs):
+    def _verify_json_results(self, tests_set, test_timings, failed_tests,
+                             PASS_tests, DISABLED_tests, FLAKY_tests,
+                             json, num_runs):
         # Aliasing to a short name for better access to its constants.
         JRG = json_results_generator.JSONResultsGenerator
 
@@ -118,10 +145,10 @@ class JSONGeneratorTest(unittest.TestCase):
         buildinfo = json[self.builder_name]
         self.assertTrue(JRG.FIXABLE in buildinfo)
         self.assertTrue(JRG.TESTS in buildinfo)
-        self.assertTrue(len(buildinfo[JRG.BUILD_NUMBERS]) == num_runs)
-        self.assertTrue(buildinfo[JRG.BUILD_NUMBERS][0] == self.build_number)
+        self.assertEqual(len(buildinfo[JRG.BUILD_NUMBERS]), num_runs)
+        self.assertEqual(buildinfo[JRG.BUILD_NUMBERS][0], self.build_number)
 
-        if tests_list or skipped_tests:
+        if tests_set or DISABLED_tests:
             fixable = {}
             for fixable_items in buildinfo[JRG.FIXABLE]:
                 for (type, count) in fixable_items.iteritems():
@@ -130,52 +157,58 @@ class JSONGeneratorTest(unittest.TestCase):
                     else:
                         fixable[type] = count
 
-            if passed_tests:
-                self.assertTrue(fixable[JRG.PASS_RESULT] == len(passed_tests))
+            if PASS_tests:
+                self.assertEqual(fixable[JRG.PASS_RESULT], len(PASS_tests))
             else:
                 self.assertTrue(JRG.PASS_RESULT not in fixable or
                                 fixable[JRG.PASS_RESULT] == 0)
-            if skipped_tests:
-                self.assertTrue(fixable[JRG.SKIP_RESULT] == len(skipped_tests))
+            if DISABLED_tests:
+                self.assertEqual(fixable[JRG.SKIP_RESULT], len(DISABLED_tests))
             else:
                 self.assertTrue(JRG.SKIP_RESULT not in fixable or
                                 fixable[JRG.SKIP_RESULT] == 0)
+            if FLAKY_tests:
+                self.assertEqual(fixable[JRG.FLAKY_RESULT], len(FLAKY_tests))
+            else:
+                self.assertTrue(JRG.FLAKY_RESULT not in fixable or
+                                fixable[JRG.FLAKY_RESULT] == 0)
 
         if failed_tests:
             tests = buildinfo[JRG.TESTS]
-            for test_name, failure in failed_tests.iteritems():
+            for test_name in failed_tests:
                 self.assertTrue(test_name in tests)
                 test = tests[test_name]
 
                 failed = 0
+                modifier = self._get_test_modifier(test_name)
                 for result in test[JRG.RESULTS]:
-                    if result[1] == JRG.FAIL_RESULT:
+                    if result[1] == modifier:
                         failed = result[0]
-                self.assertTrue(failed == 1)
+                self.assertEqual(1, failed)
 
                 timing_count = 0
                 for timings in test[JRG.TIMES]:
                     if timings[1] == test_timings[test_name]:
                         timing_count = timings[0]
-                self.assertTrue(timing_count == 1)
+                self.assertEqual(1, timing_count)
 
-        fixable_count = len(skipped_tests) + len(failed_tests.keys())
-        if skipped_tests or failed_tests:
-            self.assertTrue(sum(buildinfo[JRG.FIXABLE_COUNT]) == fixable_count)
+        fixable_count = len(DISABLED_tests | failed_tests)
+        if DISABLED_tests or failed_tests:
+            self.assertEqual(sum(buildinfo[JRG.FIXABLE_COUNT]), fixable_count)
 
     def test_json_generation(self):
-        reason = test_expectations.TEXT
-
-        self._test_json_generation([], {}, [])
-        self._test_json_generation(['A1', 'B1'], {}, [])
-        self._test_json_generation([], {'A2': reason, 'B2': reason}, [])
-        self._test_json_generation([], {}, ['A3', 'B3'])
-        self._test_json_generation(['A4'], {'B4': reason, 'C4': reason}, [])
+        self._test_json_generation([], [])
+        self._test_json_generation(['A1', 'B1'], [])
+        self._test_json_generation([], ['FAILS_A2', 'FAILS_B2'])
+        self._test_json_generation(['DISABLED_A3', 'DISABLED_B3'], [])
+        self._test_json_generation(['A4'], ['B4', 'FAILS_C4'])
+        self._test_json_generation(['DISABLED_C5', 'DISABLED_D5'], ['A5', 'B5'])
         self._test_json_generation(
-            [], {'A5': reason, 'B5': reason}, ['C5', 'D5'])
+            ['A6', 'B6', 'FAILS_C6', 'DISABLED_E6', 'DISABLED_F6'],
+            ['FAILS_D6'])
         self._test_json_generation(
-            ['A6', 'B6', 'C6'], {'D6': reason}, ['E6', 'F6'])
-
+            ['A7', 'FLAKY_B7', 'DISABLED_C7'],
+            ['FAILS_D7', 'FLAKY_D8'])
 
 if __name__ == '__main__':
     unittest.main()
