@@ -41,7 +41,7 @@ namespace WebCore {
         void setType(const String&);
 
     private:
-        SVGScriptElement(const QualifiedName&, Document*, bool createdByParser);
+        SVGScriptElement(const QualifiedName&, Document*, bool createdByParser, bool isEvaluated);
 
         virtual String scriptContent() const;
 
@@ -74,6 +74,9 @@ namespace WebCore {
 
         virtual void dispatchLoadEvent();
         virtual void dispatchErrorEvent();
+
+        PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+        void executeScript(const ScriptSourceCode& sourceCode);
 
         // SVGURIReference
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)

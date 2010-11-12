@@ -32,9 +32,9 @@
 #include "Element.h"
 #include "Event.h"
 #include "Frame.h"
-#include "HTMLScriptRunnerHost.h"
 #include "HTMLInputStream.h"
 #include "HTMLNames.h"
+#include "HTMLScriptRunnerHost.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "NestingLevelIncrementer.h"
 #include "NotImplemented.h"
@@ -133,29 +133,19 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         stopWatchingForLoad(pendingScript);
 
     // Clear the pending script before possible rentrancy from executeScript()
-    RefPtr<Element> scriptElement = pendingScript.releaseElementAndClear();
-    {
+    RefPtr<Element> element = pendingScript.releaseElementAndClear();
+    if (ScriptElement* scriptElement = toScriptElement(element.get())) {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
         IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_document);
         if (errorOccurred)
-            scriptElement->dispatchEvent(createScriptErrorEvent());
+            element->dispatchEvent(createScriptErrorEvent());
         else {
-            executeScript(scriptElement.get(), sourceCode);
-            scriptElement->dispatchEvent(createScriptLoadEvent());
+            ASSERT(isExecutingScript());
+            scriptElement->executeScript(sourceCode);
+            element->dispatchEvent(createScriptLoadEvent());
         }
     }
     ASSERT(!m_scriptNestingLevel);
-}
-
-void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode) const
-{
-    ASSERT(element);
-    ASSERT(element->document());
-    ASSERT(isExecutingScript());
-    Frame* frame = element->document()->frame();
-    if (!frame)
-        return;
-    frame->script()->executeScript(sourceCode);
 }
 
 void HTMLScriptRunner::watchForLoad(PendingScript& pendingScript)
@@ -320,7 +310,7 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
             // ASSERT(document()->haveStylesheetsLoaded());
             ASSERT(isExecutingScript());
             ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
-            executeScript(script, sourceCode);
+            scriptElement->executeScript(sourceCode);
         }
     }
 }

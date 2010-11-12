@@ -69,7 +69,6 @@ private:
 
     void executeParsingBlockingScript();
     void executePendingScriptAndDispatchEvent(PendingScript&);
-    void executeScript(Element*, const ScriptSourceCode&) const;
     bool haveParsingBlockingScript() const;
     bool executeParsingBlockingScripts();
 

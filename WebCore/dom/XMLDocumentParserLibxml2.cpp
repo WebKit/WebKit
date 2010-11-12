@@ -910,7 +910,7 @@ void XMLDocumentParser::endElementNs()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
+            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
 
         // JavaScript may have detached the parser
         if (isDetached())
