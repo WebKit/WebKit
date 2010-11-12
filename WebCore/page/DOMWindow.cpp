@@ -392,8 +392,8 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 }
 
 DOMWindow::DOMWindow(Frame* frame)
-    : m_printDeferred(false),
-      m_frame(frame)
+    : m_shouldPrintWhenFinishedLoading(false)
+    , m_frame(frame)
 {
 }
 
@@ -892,11 +892,11 @@ void DOMWindow::print()
     if (!page)
         return;
 
-    if (m_frame->loader()->isLoading()) {
-        m_printDeferred = true;
+    if (m_frame->loader()->activeDocumentLoader()->isLoading()) {
+        m_shouldPrintWhenFinishedLoading = true;
         return;
     }
-    m_printDeferred = false;
+    m_shouldPrintWhenFinishedLoading = false;
     page->chrome()->print(m_frame);
 }
 
@@ -1565,6 +1565,14 @@ void DOMWindow::captureEvents()
 void DOMWindow::releaseEvents()
 {
     // Not implemented.
+}
+
+void DOMWindow::finishedLoading()
+{
+    if (m_shouldPrintWhenFinishedLoading) {
+        m_shouldPrintWhenFinishedLoading = false;
+        print();
+    }
 }
 
 EventTargetData* DOMWindow::eventTargetData()

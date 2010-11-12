@@ -34,6 +34,7 @@
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "Event.h"
@@ -356,7 +357,13 @@ void DocumentLoader::updateLoading()
         return;
     }
     ASSERT(this == frameLoader()->activeDocumentLoader());
+    bool wasLoading = m_loading;
     setLoading(frameLoader()->isLoading());
+
+    if (wasLoading && !m_loading) {
+        if (DOMWindow* window = m_frame->existingDOMWindow())
+            window->finishedLoading();
+    }
 }
 
 void DocumentLoader::setFrame(Frame* frame)
