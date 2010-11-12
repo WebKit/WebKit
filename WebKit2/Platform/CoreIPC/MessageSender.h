@@ -33,17 +33,25 @@ namespace CoreIPC {
     
 template<typename T> class MessageSender {
 public:
+    template<typename U> bool send(const U& message)
+    {
+        return send(message, static_cast<T*>(this)->destinationID());
+    }
+
     template<typename U> bool send(const U& message, uint64_t destinationID)
+    {
+        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
+        argumentEncoder->encode(message);
+        
+        return static_cast<T*>(this)->sendMessage(MessageID(U::messageID), argumentEncoder.release());
+    }
+    
+    bool sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> argumentEncoder)
     {
         Connection* connection = static_cast<T*>(this)->connection();
         ASSERT(connection);
 
-        return connection->send(message, destinationID);
-    }
-
-    template<typename U> bool send(const U& message)
-    {
-        return send(message, static_cast<T*>(this)->destinationID());
+        return connection->sendMessage(messageID, argumentEncoder);
     }
 };
 

@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Allow MessageSender to override sendMessage
+        https://bugs.webkit.org/show_bug.cgi?id=49457
+
+        Change MessageSender::send to encode the message and then call sendMessage.
+        This allows for clients to override sendMessage, something which WebProcessProxy
+        will be able to take advantage of.
+
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        (CoreIPC::MessageSender::sendMessage):
+
+2010-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         CoreIPC cleanup
         https://bugs.webkit.org/show_bug.cgi?id=49455
 
