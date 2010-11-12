@@ -3213,3 +3213,5 @@ BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = 
 // Malformed image results in humongous malloc; if this test is run it will 
 // affect ones that follow it.
 BUGWK48634 MAC SKIP : fast/images/size-failure.html = CRASH
+
+BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
