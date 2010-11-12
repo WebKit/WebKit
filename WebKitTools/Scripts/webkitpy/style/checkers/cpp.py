@@ -325,7 +325,7 @@ class _FunctionState(object):
                       self.current_function, self.lines_in_function, trigger))
 
     def end(self):
-        """Stop analizing function body."""
+        """Stop analyzing function body."""
         self.in_a_function = False
 
 
@@ -1137,7 +1137,7 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
     joined_line = ''
 
     starting_func = False
-    regexp = r'(\w(\w|::|\*|\&|\s)*)\('  # decls * & space::name( ...
+    regexp = r'(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
     match_result = match(regexp, line)
     if match_result:
         # If the name is all caps and underscores, figure it's a macro and
@@ -1156,7 +1156,7 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
                 break                              # ... ignore
             if search(r'{', start_line):
                 body_found = True
-                function = search(r'((\w|:)*)\(', line).group(1)
+                function = search(r'((\w|:|<|>|,|~)*)\(', line).group(1)
                 if match(r'TEST', function):    # Handle TEST... macros
                     parameter_regexp = search(r'(\(.*\))', joined_line)
                     if parameter_regexp:             # Ignore bad syntax

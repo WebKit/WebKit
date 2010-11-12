@@ -1,3 +1,13 @@
+2010-11-11  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style function detection doesn't work for templates and destructors.
+        https://bugs.webkit.org/show_bug.cgi?id=49425
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Changed regex for templates and destructors.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Made the test hit this issue.
+
 2010-11-11  Joone Hur  <joone@kldp.org>
 
         Reviewed by Antonio Gomes.
