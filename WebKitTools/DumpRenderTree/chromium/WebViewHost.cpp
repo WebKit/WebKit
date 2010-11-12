@@ -443,10 +443,20 @@ bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString&)
     return true; // Allow window closure.
 }
 
-void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData&)
+void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
+    m_lastContextMenuData = adoptPtr(new WebContextMenuData(contextMenuData));
 }
 
+void WebViewHost::clearContextMenuData()
+{
+    m_lastContextMenuData.clear();
+}
+
+WebContextMenuData* WebViewHost::lastContextMenuData() const
+{
+    return m_lastContextMenuData.get();
+}
 
 void WebViewHost::setStatusText(const WebString& text)
 {

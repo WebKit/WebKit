@@ -696,7 +696,6 @@ BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
-BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 
 // Selection is wrong.
 BUG10292 MAC : editing/selection/5354455-1.html = FAIL

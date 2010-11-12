@@ -1,3 +1,17 @@
+2010-11-11  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        editing/selection/context-menu-on-text.html fails on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45898
+
+        Added makeStringArray(), that is used by DumpRenderTree.
+        
+        * public/WebBindings.h:
+        * src/WebBindings.cpp:
+        (WebKit::makeStringArrayImpl): Added.
+        (WebKit::WebBindings::makeStringArray): Added.
+
 2010-11-11  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Nate Chapin.
