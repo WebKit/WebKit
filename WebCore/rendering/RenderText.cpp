@@ -59,6 +59,9 @@ static void makeCapitalized(String* string, UChar previous)
     unsigned length = string->length();
     const UChar* characters = string->characters();
 
+    if (length >= numeric_limits<unsigned>::max())
+        CRASH();
+
     StringBuffer stringWithPrevious(length + 1);
     stringWithPrevious[0] = previous == noBreakSpace ? ' ' : previous;
     for (unsigned i = 1; i < length + 1; i++) {
