@@ -762,6 +762,7 @@ BUG13907 : http/tests/security/local-video-source-from-remote.html = PASS FAIL T
 BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
 BUG13907 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 BUG13907 : media/video-loop.html = PASS FAIL TIMEOUT
+BUG62995 WIN : http/tests/media/video-cookie.html = CRASH PASS TEXT TIMEOUT
 
 // These tests need to be changed to not rely on setTimeout().
 BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
