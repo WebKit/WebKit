@@ -2365,7 +2365,19 @@ bool CSSParser::parseContent(int propId, bool important)
             // close-quote
             // no-open-quote
             // no-close-quote
+            // inherit
             // FIXME: These are not yet implemented (http://bugs.webkit.org/show_bug.cgi?id=6503).
+            // none
+            // normal
+            switch (val->id) {
+            case CSSValueOpenQuote:
+            case CSSValueCloseQuote:
+            case CSSValueNoOpenQuote:
+            case CSSValueNoCloseQuote:
+            case CSSValueNone:
+            case CSSValueNormal:
+                parsedValue = CSSPrimitiveValue::createIdentifier(val->id);
+            }
         } else if (val->unit == CSSPrimitiveValue::CSS_STRING) {
             parsedValue = CSSPrimitiveValue::create(val->string, CSSPrimitiveValue::CSS_STRING);
         }
