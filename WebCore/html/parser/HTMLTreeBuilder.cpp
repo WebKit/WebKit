@@ -554,14 +554,14 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
         return;
     notImplemented(); // Acknowledge self-closing flag
     processFakeStartTag(formTag);
-    Attribute* actionAttribute = token.getAttributeItem(actionAttr);
+    RefPtr<Attribute> actionAttribute = token.getAttributeItem(actionAttr);
     if (actionAttribute) {
         ASSERT(m_tree.currentElement()->hasTagName(formTag));
         m_tree.currentElement()->setAttribute(actionAttr, actionAttribute->value());
     }
     processFakeStartTag(hrTag);
     processFakeStartTag(labelTag);
-    Attribute* promptAttribute = token.getAttributeItem(promptAttr);
+    RefPtr<Attribute> promptAttribute = token.getAttributeItem(promptAttr);
     if (promptAttribute)
         processFakeCharacters(promptAttribute->value());
     else
