@@ -2873,7 +2873,7 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
-BUGWK45209 WIN DBEUG SLOW : inspector/styles-source-lines-inline.html = PASS
+BUGWK45209 WIN DEBUG SLOW : inspector/styles-source-lines-inline.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/styles-disable-inherited.html = PASS
 
 // WebKit r67068
