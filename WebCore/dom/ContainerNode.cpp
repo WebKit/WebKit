@@ -355,8 +355,11 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
 void ContainerNode::willRemove()
 {
-    for (Node *n = m_firstChild; n != 0; n = n->nextSibling())
-        n->willRemove();
+    NodeVector nodes;
+    for (Node* n = m_lastChild; n; n = n->previousSibling())
+        nodes.append(n);
+    for (; nodes.size(); nodes.removeLast())
+        nodes.last().get()->willRemove();
     Node::willRemove();
 }
 
