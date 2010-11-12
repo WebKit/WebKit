@@ -41,7 +41,7 @@ WKURLRef WKURLCreateWithUTF8CString(const char* string)
 
 WKStringRef WKURLCopyString(WKURLRef url)
 {
-    return toAPI(WebString::create(toImpl(url)->string()).leakRef());
+    return toCopiedAPI(toImpl(url)->string());
 }
 
 bool WKURLIsEqual(WKURLRef a, WKURLRef b)

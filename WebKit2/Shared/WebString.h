@@ -81,7 +81,7 @@ public:
 
 private:
     WebString(const String& string)
-        : m_string(string)
+        : m_string(!string.impl() ? String(StringImpl::empty()) : string)
     {
     }
 

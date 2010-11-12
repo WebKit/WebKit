@@ -1,3 +1,26 @@
+2010-11-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        ASSERTION when converting some WKStringRefs returned from willSubmitForm to CFStringRef
+        <rdar://problem/8662180>
+        https://bugs.webkit.org/show_bug.cgi?id=49454
+
+        Enforce the invariant that a WebString never contains a null WTF::String at a
+        lower level, in the WebString constructor, instead of relying on the callers of
+        WebString::create to do it.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toCopiedAPI): Remove null string check...
+
+        * Shared/WebString.h:
+        (WebKit::WebString::WebString): ... and move it to the constructor.
+
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCopyString): Use toCopiedAPI() instead of calling WebString directly
+        to match other similar uses.
+
 2010-11-12  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antonio Gomes.
