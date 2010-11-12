@@ -45,6 +45,7 @@
 #include "DynamicNodeList.h"
 #include "Element.h"
 #include "Event.h"
+#include "EventContext.h"
 #include "EventException.h"
 #include "EventHandler.h"
 #include "EventListener.h"
@@ -80,6 +81,7 @@
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
+#include "WindowEventContext.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include <wtf/HashSet.h>
@@ -734,9 +736,9 @@ inline void Node::setStyleChange(StyleChangeType changeType)
 
 inline void Node::markAncestorsWithChildNeedsStyleRecalc()
 {
-    for (ContainerNode* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
+    for (ContainerNode* p = parentOrHostNode(); p && !p->childNeedsStyleRecalc(); p = p->parentOrHostNode())
         p->setChildNeedsStyleRecalc();
-    
+
     if (document()->childNeedsStyleRecalc())
         document()->scheduleStyleRecalc();
 }
@@ -1321,7 +1323,7 @@ void Node::createRendererIfNeeded()
 
     ASSERT(!renderer());
     
-    ContainerNode* parent = parentNode();    
+    ContainerNode* parent = parentOrHostNode();
     ASSERT(parent);
     
     RenderObject* parentRenderer = parent->renderer();
@@ -2239,14 +2241,9 @@ void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
     addSubresourceAttributeURLs(urls);
 }
 
-ContainerNode* Node::eventParentNode()
-{
-    return parentNode();
-}
-
 Node* Node::enclosingLinkEventParentOrSelf()
 {
-    for (Node* node = this; node; node = node->eventParentNode()) {
+    for (Node* node = this; node; node = node->parentOrHostNode()) {
         // For imagemaps, the enclosing link node is the associated area element not the image itself.
         // So we don't let images be the enclosingLinkNode, even though isLink sometimes returns true
         // for them.
@@ -2484,12 +2481,13 @@ void Node::handleLocalEvents(Event* event)
     fireEventListeners(event);
 }
 
-#if ENABLE(SVG)
-static inline SVGElementInstance* eventTargetAsSVGElementInstance(Node* referenceNode)
+static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNode)
 {
     ASSERT(referenceNode);
+
+#if ENABLE(SVG)
     if (!referenceNode->isSVGElement())
-        return 0;
+        return referenceNode;
 
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
@@ -2503,36 +2501,41 @@ static inline SVGElementInstance* eventTargetAsSVGElementInstance(Node* referenc
         if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
             return instance;
     }
-
-    return 0;
-}
-#endif
-
-static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNode)
-{
-    ASSERT(referenceNode);
-
-#if ENABLE(SVG)
-    if (SVGElementInstance* instance = eventTargetAsSVGElementInstance(referenceNode)) {
-        ASSERT(instance->shadowTreeElement() == referenceNode);
-        return instance;
-    }
 #endif
 
     return referenceNode;
 }
 
-void Node::eventAncestors(Vector<RefPtr<ContainerNode> > &ancestors)
+void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* originalTarget, EventDispatchBehavior behavior)
 {
-    if (inDocument()) {
-        for (ContainerNode* ancestor = eventParentNode(); ancestor; ancestor = ancestor->eventParentNode()) {
+    if (!inDocument())
+        return;
+
+    EventTarget* target = originalTarget;
+    Node* ancestor = this;
+    bool shouldSkipNextAncestor = false;
+    while (true) {
+        if (ancestor->isShadowNode()) {
+            if (behavior == StayInsideShadowDOM)
+                return;
+            ancestor = ancestor->shadowParentNode();
+            if (!shouldSkipNextAncestor)
+                target = ancestor;
+        } else
+            ancestor = ancestor->parentNode();
+
+        if (!ancestor)
+            return;
+
 #if ENABLE(SVG)
-            // Skip <use> shadow tree elements.
-            if (ancestor->isSVGElement() && ancestor->isShadowNode())
-                continue;
+        // Skip SVGShadowTreeRootElement.
+        shouldSkipNextAncestor = ancestor->isSVGElement() && ancestor->isShadowNode();
+        if (shouldSkipNextAncestor)
+            continue;
 #endif
-            ancestors.append(ancestor);
-        }
+        // FIXME: Unroll the extra loop inside eventTargetRespectingSVGTargetRules into this loop.
+        ancestors.append(EventContext(ancestor, eventTargetRespectingSVGTargetRules(ancestor), target));
+
     }
 }
 
@@ -2547,6 +2550,11 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
+static const EventContext* topEventContext(const Vector<EventContext>& ancestors)
+{
+    return ancestors.isEmpty() ? 0 : &ancestors.last();
+}
+
 bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
@@ -2559,20 +2567,13 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     // If the node is not in a document just send the event to it.
     // Be sure to ref all of nodes since event handlers could result in the last reference going away.
     RefPtr<Node> thisNode(this);
-    Vector<RefPtr<ContainerNode> > ancestors;
-    eventAncestors(ancestors);
+    RefPtr<EventTarget> originalTarget = event->target();
+    Vector<EventContext> ancestors;
+    getEventAncestors(ancestors, originalTarget.get(), event->isMutationEvent() ? StayInsideShadowDOM : RetargetEvent);
 
-    // Set up a pointer to indicate whether / where to dispatch window events.
-    // We don't dispatch load events to the window. That quirk was originally
-    // added because Mozilla doesn't propagate load events to the window object.
-    DOMWindow* targetForWindowEvents = 0;
-    if (event->type() != eventNames().loadEvent) {
-        Node* topLevelContainer = ancestors.isEmpty() ? this : ancestors.last().get();
-        if (topLevelContainer->isDocumentNode())
-            targetForWindowEvents = static_cast<Document*>(topLevelContainer)->domWindow();
-    }
+    WindowEventContext windowContext(event.get(), this, topEventContext(ancestors));
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(document(), *event, targetForWindowEvents, this, ancestors);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(document(), *event, windowContext.window(), this, ancestors);
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     void* data = preDispatchEventHandler(event.get());
@@ -2582,22 +2583,17 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     // Trigger capturing event handlers, starting at the top and working our way down.
     event->setEventPhase(Event::CAPTURING_PHASE);
 
-    if (targetForWindowEvents) {
-        event->setCurrentTarget(targetForWindowEvents);
-        targetForWindowEvents->fireEventListeners(event.get());
-        if (event->propagationStopped())
-            goto doneDispatching;
-    }
+    if (windowContext.handleLocalEvents(event.get()) && event->propagationStopped())
+        goto doneDispatching;
+
     for (size_t i = ancestors.size(); i; --i) {
-        ContainerNode* ancestor = ancestors[i - 1].get();
-        event->setCurrentTarget(eventTargetRespectingSVGTargetRules(ancestor));
-        ancestor->handleLocalEvents(event.get());
+        ancestors[i - 1].handleLocalEvents(event.get());
         if (event->propagationStopped())
             goto doneDispatching;
     }
 
     event->setEventPhase(Event::AT_TARGET);
-
+    event->setTarget(originalTarget.get());
     event->setCurrentTarget(eventTargetRespectingSVGTargetRules(this));
     handleLocalEvents(event.get());
     if (event->propagationStopped())
@@ -2609,21 +2605,15 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 
         size_t size = ancestors.size();
         for (size_t i = 0; i < size; ++i) {
-            ContainerNode* ancestor = ancestors[i].get();
-            event->setCurrentTarget(eventTargetRespectingSVGTargetRules(ancestor));
-            ancestor->handleLocalEvents(event.get());
+            ancestors[i].handleLocalEvents(event.get());
             if (event->propagationStopped() || event->cancelBubble())
                 goto doneDispatching;
         }
-        if (targetForWindowEvents) {
-            event->setCurrentTarget(targetForWindowEvents);
-            targetForWindowEvents->fireEventListeners(event.get());
-            if (event->propagationStopped() || event->cancelBubble())
-                goto doneDispatching;
-        }
+        windowContext.handleLocalEvents(event.get());
     }
 
 doneDispatching:
+    event->setTarget(originalTarget.get());
     event->setCurrentTarget(0);
     event->setEventPhase(0);
 
@@ -2644,8 +2634,7 @@ doneDispatching:
         if (event->bubbles()) {
             size_t size = ancestors.size();
             for (size_t i = 0; i < size; ++i) {
-                ContainerNode* ancestor = ancestors[i].get();
-                ancestor->defaultEventHandler(event.get());
+                ancestors[i].node()->defaultEventHandler(event.get());
                 ASSERT(!event->defaultPrevented());
                 if (event->defaultHandled())
                     goto doneWithDefault;
@@ -2655,6 +2644,10 @@ doneDispatching:
 
 doneWithDefault:
 
+    // Ensure that after event dispatch, the event's target object is the
+    // outermost shadow DOM boundary.
+    event->setTarget(windowContext.target());
+    event->setCurrentTarget(0);
     InspectorInstrumentation::didDispatchEvent(cookie);
 
     return !event->defaultPrevented();

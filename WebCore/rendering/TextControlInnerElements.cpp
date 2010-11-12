@@ -154,7 +154,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
         if (shadowAncestor && shadowAncestor != this)
             shadowAncestor->defaultEventHandler(event);
     }
-    if (event->defaultHandled())
+    if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
 }
 
