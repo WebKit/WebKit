@@ -1,3 +1,30 @@
+2010-11-11  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [chromium] Convert WebPerformance doubles to seconds
+        https://bugs.webkit.org/show_bug.cgi?id=49232
+
+        This makes them suitable for passing to Time::FromDoubleT().
+
+        * src/WebPerformance.cpp:
+        (WebKit::millisecondsToSeconds):
+        (WebKit::WebPerformance::navigationStart):
+        (WebKit::WebPerformance::unloadEventEnd):
+        (WebKit::WebPerformance::redirectStart):
+        (WebKit::WebPerformance::redirectEnd):
+        (WebKit::WebPerformance::fetchStart):
+        (WebKit::WebPerformance::domainLookupStart):
+        (WebKit::WebPerformance::domainLookupEnd):
+        (WebKit::WebPerformance::connectStart):
+        (WebKit::WebPerformance::connectEnd):
+        (WebKit::WebPerformance::requestStart):
+        (WebKit::WebPerformance::requestEnd):
+        (WebKit::WebPerformance::responseStart):
+        (WebKit::WebPerformance::responseEnd):
+        (WebKit::WebPerformance::loadEventStart):
+        (WebKit::WebPerformance::loadEventEnd):
+
 2010-11-11  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
