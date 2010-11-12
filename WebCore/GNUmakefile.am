@@ -2102,15 +2102,15 @@ webcore_sources += \
 	WebCore/page/FrameTree.h \
 	WebCore/page/FrameView.cpp \
 	WebCore/page/FrameView.h \
-	WebCore/page/GeolocationControllerClient.h \
+	WebCore/page/Geolocation.cpp \
+	WebCore/page/Geolocation.h \
+	WebCore/page/GeolocationClient.h \
+	WebCore/page/GeolocationError.h \
 	WebCore/page/GeolocationController.cpp \
 	WebCore/page/GeolocationController.h \
-	WebCore/page/Geolocation.cpp \
-	WebCore/page/GeolocationError.h \
-	WebCore/page/Geolocation.h \
+	WebCore/page/GeolocationPosition.h \
 	WebCore/page/GeolocationPositionCache.cpp \
 	WebCore/page/GeolocationPositionCache.h \
-	WebCore/page/GeolocationPosition.h \
 	WebCore/page/Geoposition.h \
 	WebCore/page/GroupSettings.cpp \
 	WebCore/page/GroupSettings.h \

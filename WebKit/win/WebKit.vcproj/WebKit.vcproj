@@ -1296,11 +1296,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebCoreSupport\WebGeolocationControllerClient.cpp"
+				RelativePath="..\WebCoreSupport\WebGeolocationClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\WebCoreSupport\WebGeolocationControllerClient.h"
+				RelativePath="..\WebCoreSupport\WebGeolocationClient.h"
 				>
 			</File>
 			<File

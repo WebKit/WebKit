@@ -54,8 +54,8 @@ namespace WebCore {
     class EditorClient;
     class FocusController;
     class Frame;
+    class GeolocationClient;
     class GeolocationController;
-    class GeolocationControllerClient;
     class HaltablePlugin;
     class HistoryItem;
     class InspectorClient;
@@ -104,7 +104,7 @@ namespace WebCore {
             DragClient* dragClient;
             InspectorClient* inspectorClient;
             PluginHalterClient* pluginHalterClient;
-            GeolocationControllerClient* geolocationControllerClient;
+            GeolocationClient* geolocationClient;
             DeviceMotionClient* deviceMotionClient;
             DeviceOrientationClient* deviceOrientationClient;
             RefPtr<BackForwardList> backForwardClient;

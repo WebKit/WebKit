@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/GeolocationControllerClient.h>
+#ifndef WebGeolocationClient_h
+#define WebGeolocationClient_h
+
+#include "COMPtr.h"
+#include <WebCore/GeolocationClient.h>
 
 namespace WebCore {
     class GeolocationPosition;
 }
 
-@class WebView;
+class WebView;
 
-class WebGeolocationControllerClient : public WebCore::GeolocationControllerClient {
+class WebGeolocationClient : public WebCore::GeolocationClient {
 public:
-    WebGeolocationControllerClient(WebView *);
-    WebView *webView() { return m_webView; }
+    WebGeolocationClient(WebView*);
 
-    void geolocationDestroyed();
-    void startUpdating();
-    void stopUpdating();
-    void setEnableHighAccuracy(bool) { }
-
-    WebCore::GeolocationPosition* lastPosition();
+    virtual void geolocationDestroyed();
+    virtual void startUpdating();
+    virtual void stopUpdating();
+    virtual void setEnableHighAccuracy(bool) { }
+    virtual WebCore::GeolocationPosition* lastPosition();
 
 private:
-    WebView *m_webView;
+    COMPtr<WebView> m_webView;
 };
+
+#endif // WebGeolocationClient_h

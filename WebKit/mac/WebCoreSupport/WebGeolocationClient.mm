@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKitDLL.h"
-#include "WebGeolocationControllerClient.h"
+#import "WebGeolocationClient.h"
 
-#include "WebGeolocationPosition.h"
-#include "WebView.h"
+#import "WebGeolocationPositionInternal.h"
+#import "WebViewInternal.h"
 
 using namespace WebCore;
 
-WebGeolocationControllerClient::WebGeolocationControllerClient(WebView* webView)
+WebGeolocationClient::WebGeolocationClient(WebView *webView)
     : m_webView(webView)
 {
 }
 
-void WebGeolocationControllerClient::geolocationDestroyed()
+void WebGeolocationClient::geolocationDestroyed()
 {
     delete this;
 }
 
-void WebGeolocationControllerClient::startUpdating()
+void WebGeolocationClient::startUpdating()
 {
-    COMPtr<IWebGeolocationProvider> provider;
-    if (FAILED(m_webView->geolocationProvider(&provider)))
-        return;
-    provider->registerWebView(m_webView.get());
+    [[m_webView _geolocationProvider] registerWebView:m_webView];
 }
 
-void WebGeolocationControllerClient::stopUpdating()
+void WebGeolocationClient::stopUpdating()
 {
-    COMPtr<IWebGeolocationProvider> provider;
-    if (FAILED(m_webView->geolocationProvider(&provider)))
-        return;
-    provider->unregisterWebView(m_webView.get());
+    [[m_webView _geolocationProvider] unregisterWebView:m_webView];
 }
 
-GeolocationPosition* WebGeolocationControllerClient::lastPosition()
+GeolocationPosition* WebGeolocationClient::lastPosition()
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    COMPtr<IWebGeolocationProvider> provider;
-    if (FAILED(m_webView->geolocationProvider(&provider)))
-        return 0;
-    COMPtr<IWebGeolocationPosition> position;
-    if (FAILED(provider->lastPosition(&position)))
-        return 0;
-    return core(position.get());
+    return core([[m_webView _geolocationProvider] lastPosition]);
 #else
     return 0;
 #endif

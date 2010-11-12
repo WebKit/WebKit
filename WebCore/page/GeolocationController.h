@@ -35,14 +35,14 @@
 
 namespace WebCore {
 
-class GeolocationControllerClient;
+class GeolocationClient;
 class GeolocationError;
 class GeolocationPosition;
 class Page;
 
 class GeolocationController : public Noncopyable {
 public:
-    GeolocationController(Page*, GeolocationControllerClient*);
+    GeolocationController(Page*, GeolocationClient*);
     ~GeolocationController();
 
     void addObserver(Geolocation*, bool enableHighAccuracy);
@@ -55,7 +55,7 @@ public:
 
 private:
     Page* m_page;
-    GeolocationControllerClient* m_client;
+    GeolocationClient* m_client;
 
     RefPtr<GeolocationPosition> m_lastPosition;
     typedef HashSet<RefPtr<Geolocation> > ObserversSet;

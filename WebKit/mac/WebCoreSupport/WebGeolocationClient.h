@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationControllerClient_h
-#define GeolocationControllerClient_h
+#import <WebCore/GeolocationClient.h>
 
 namespace WebCore {
+    class GeolocationPosition;
+}
 
-class GeolocationPosition;
+@class WebView;
 
-class GeolocationControllerClient {
+class WebGeolocationClient : public WebCore::GeolocationClient {
 public:
-    virtual void geolocationDestroyed() = 0;
+    WebGeolocationClient(WebView *);
+    WebView *webView() { return m_webView; }
 
-    virtual void startUpdating() = 0;
-    virtual void stopUpdating() = 0;
-    // FIXME: The V2 Geolocation specification proposes that this property is
-    // renamed. See http://www.w3.org/2008/geolocation/track/issues/6
-    // We should update WebKit to reflect this if and when the V2 specification
-    // is published.
-    virtual void setEnableHighAccuracy(bool) = 0;
-    virtual GeolocationPosition* lastPosition() = 0;
+    void geolocationDestroyed();
+    void startUpdating();
+    void stopUpdating();
+    void setEnableHighAccuracy(bool) { }
 
-protected:
-    virtual ~GeolocationControllerClient() { }
+    WebCore::GeolocationPosition* lastPosition();
+
+private:
+    WebView *m_webView;
 };
-
-} // namespace WebCore
-
-#endif // GeolocationControllerClient_h

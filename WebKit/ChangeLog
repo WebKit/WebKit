@@ -1,3 +1,12 @@
+2010-11-12  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename GeolocationControllerClient to GeolocationClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49259
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-11-08  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Build fix after r71496.

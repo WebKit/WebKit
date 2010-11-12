@@ -42,7 +42,7 @@
 #include "WebEditorClient.h"
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
-#include "WebGeolocationControllerClient.h"
+#include "WebGeolocationClient.h"
 #include "WebGeolocationPosition.h"
 #include "WebIconDatabase.h"
 #include "WebInspector.h"
@@ -2594,7 +2594,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     pageClients.inspectorClient = new WebInspectorClient(this);
     pageClients.pluginHalterClient = new WebPluginHalterClient(this);
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    pageClients.geolocationControllerClient = new WebGeolocationControllerClient(this);
+    pageClients.geolocationClient = new WebGeolocationClient(this);
 #endif
     m_page = new Page(pageClients);
 

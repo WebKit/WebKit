@@ -1,3 +1,23 @@
+2010-11-12  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename GeolocationControllerClient to GeolocationClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49259
+
+        * WebCoreSupport/WebGeolocationClient.h: Renamed from WebKit/mac/WebCoreSupport/WebGeolocationControllerClient.h.
+        (WebGeolocationClient::webView):
+        (WebGeolocationClient::setEnableHighAccuracy):
+        * WebCoreSupport/WebGeolocationClient.mm: Renamed from WebKit/mac/WebCoreSupport/WebGeolocationControllerClient.mm.
+        (WebGeolocationClient::WebGeolocationClient):
+        (WebGeolocationClient::geolocationDestroyed):
+        (WebGeolocationClient::startUpdating):
+        (WebGeolocationClient::stopUpdating):
+        (WebGeolocationClient::lastPosition):
+        * WebKit.order:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2010-11-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
