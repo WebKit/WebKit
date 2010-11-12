@@ -447,8 +447,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSNamedNodeMap.cpp \
 	DerivedSources/WebCore/JSNamedNodeMap.h \
-	DerivedSources/WebCore/JSNavigation.cpp \
-	DerivedSources/WebCore/JSNavigation.h \
 	DerivedSources/WebCore/JSNavigator.cpp \
 	DerivedSources/WebCore/JSNavigator.h \
 	DerivedSources/WebCore/JSNode.cpp \
@@ -471,6 +469,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSPageTransitionEvent.h \
 	DerivedSources/WebCore/JSPerformance.cpp \
 	DerivedSources/WebCore/JSPerformance.h \
+	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
+	DerivedSources/WebCore/JSPerformanceNavigation.h \
+	DerivedSources/WebCore/JSPerformanceTiming.cpp \
+	DerivedSources/WebCore/JSPerformanceTiming.h \
 	DerivedSources/WebCore/JSPopStateEvent.cpp \
 	DerivedSources/WebCore/JSPopStateEvent.h \
 	DerivedSources/WebCore/JSPositionError.cpp \
@@ -512,8 +514,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTextMetrics.h \
 	DerivedSources/WebCore/JSTimeRanges.cpp \
 	DerivedSources/WebCore/JSTimeRanges.h \
-	DerivedSources/WebCore/JSTiming.cpp \
-	DerivedSources/WebCore/JSTiming.h \
 	DerivedSources/WebCore/JSTouch.cpp \
 	DerivedSources/WebCore/JSTouchEvent.cpp \
 	DerivedSources/WebCore/JSTouchEvent.h \
@@ -2128,8 +2128,6 @@ webcore_sources += \
 	WebCore/page/MemoryInfo.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/MouseEventWithHitTestResults.h \
-	WebCore/page/Navigation.cpp \
-	WebCore/page/Navigation.h \
 	WebCore/page/NavigatorBase.cpp \
 	WebCore/page/NavigatorBase.h \
 	WebCore/page/Navigator.cpp \
@@ -2144,6 +2142,10 @@ webcore_sources += \
 	WebCore/page/Page.h \
 	WebCore/page/Performance.cpp \
 	WebCore/page/Performance.h \
+	WebCore/page/PerformanceNavigation.cpp \
+	WebCore/page/PerformanceNavigation.h \
+	WebCore/page/PerformanceTiming.cpp \
+	WebCore/page/PerformanceTiming.h \
 	WebCore/page/PluginHalterClient.h \
 	WebCore/page/PluginHalter.cpp \
 	WebCore/page/PluginHalter.h \
@@ -2170,8 +2172,6 @@ webcore_sources += \
 	WebCore/page/SpeechInputResult.h \
 	WebCore/page/SuspendableTimer.cpp \
 	WebCore/page/SuspendableTimer.h \
-	WebCore/page/Timing.cpp \
-	WebCore/page/Timing.h \
 	WebCore/page/UserContentTypes.h \
 	WebCore/page/UserContentURLPattern.cpp \
 	WebCore/page/UserContentURLPattern.h \

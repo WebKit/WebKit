@@ -32,8 +32,8 @@
 #include "Performance.h"
 
 #include "MemoryInfo.h"
-#include "Navigation.h"
-#include "Timing.h"
+#include "PerformanceNavigation.h"
+#include "PerformanceTiming.h"
 
 #if ENABLE(WEB_TIMING)
 
@@ -72,18 +72,18 @@ MemoryInfo* Performance::memory() const
     return m_memory.get();
 }
 
-Navigation* Performance::navigation() const
+PerformanceNavigation* Performance::navigation() const
 {
     if (!m_navigation)
-        m_navigation = Navigation::create(m_frame);
+        m_navigation = PerformanceNavigation::create(m_frame);
 
     return m_navigation.get();
 }
 
-Timing* Performance::timing() const
+PerformanceTiming* Performance::timing() const
 {
     if (!m_timing)
-        m_timing = Timing::create(m_frame);
+        m_timing = PerformanceTiming::create(m_frame);
 
     return m_timing.get();
 }

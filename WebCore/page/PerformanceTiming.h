@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Timing_h
-#define Timing_h
+#ifndef PerformanceTiming_h
+#define PerformanceTiming_h
 
 #if ENABLE(WEB_TIMING)
 
@@ -44,9 +44,9 @@ struct DocumentTiming;
 class Frame;
 class ResourceLoadTiming;
 
-class Timing : public RefCounted<Timing> {
+class PerformanceTiming : public RefCounted<PerformanceTiming> {
 public:
-    static PassRefPtr<Timing> create(Frame* frame) { return adoptRef(new Timing(frame)); }
+    static PassRefPtr<PerformanceTiming> create(Frame* frame) { return adoptRef(new PerformanceTiming(frame)); }
 
     Frame* frame() const;
     void disconnectFrame();
@@ -72,7 +72,7 @@ public:
     unsigned long long loadEventEnd() const;
 
 private:
-    Timing(Frame*);
+    PerformanceTiming(Frame*);
 
     const DocumentTiming* documentTiming() const;
     DocumentLoader* documentLoader() const;
@@ -86,4 +86,4 @@ private:
 }
 
 #endif // !ENABLE(WEB_TIMING)
-#endif // !defined(Timing_h)
+#endif // !defined(PerformanceTiming_h)

@@ -28,41 +28,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Navigation_h
-#define Navigation_h
+#include "config.h"
+#include "PerformanceNavigation.h"
 
 #if ENABLE(WEB_TIMING)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "DocumentLoader.h"
+#include "Frame.h"
+#include "FrameLoaderTypes.h"
 
 namespace WebCore {
 
-class Frame;
-
-class Navigation : public RefCounted<Navigation> {
-public:
-    static PassRefPtr<Navigation> create(Frame* frame) { return adoptRef(new Navigation(frame)); }
-
-    Frame* frame() const;
-    void disconnectFrame();
-
-    enum NavigationType {
-        NAVIGATE,
-        RELOAD,
-        BACK_FORWARD
-    };
-
-    unsigned short type() const;
-    unsigned short redirectCount() const;
-
-private:
-    Navigation(Frame*);
-
-    Frame* m_frame;
-};
-
+PerformanceNavigation::PerformanceNavigation(Frame* frame)
+    : m_frame(frame)
+{
 }
 
-#endif // !ENABLE(WEB_TIMING)
-#endif // !defined(Navigation_h)
+Frame* PerformanceNavigation::frame() const
+{
+    return m_frame;
+}
+
+void PerformanceNavigation::disconnectFrame()
+{
+    m_frame = 0;
+}
+
+unsigned short PerformanceNavigation::type() const
+{
+    if (!m_frame)
+        return NAVIGATE;
+
+    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+    if (!documentLoader)
+        return NAVIGATE;
+
+    WebCore::NavigationType navigationType = documentLoader->triggeringAction().type();
+    switch (navigationType) {
+    case NavigationTypeReload:
+        return RELOAD;
+    case NavigationTypeBackForward:
+        return BACK_FORWARD;
+    default:
+        return NAVIGATE;
+    }
+}
+
+unsigned short PerformanceNavigation::redirectCount() const
+{
+    if (!m_frame)
+        return 0;
+
+    DocumentLoader* loader = m_frame->loader()->documentLoader();
+    if (!loader)
+        return 0;
+
+    return loader->timing()->redirectCount;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_TIMING)

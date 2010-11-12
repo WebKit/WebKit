@@ -32,8 +32,8 @@ module window {
 
     // See: http://dev.w3.org/2006/webapi/WebTiming/
     interface [Conditional=WEB_TIMING, OmitConstructor] Performance {
-        readonly attribute Navigation navigation;
-        readonly attribute Timing timing;
+        readonly attribute PerformanceNavigation navigation;
+        readonly attribute PerformanceTiming timing;
         readonly attribute MemoryInfo memory;
     };
 

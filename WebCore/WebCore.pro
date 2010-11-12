@@ -1090,7 +1090,6 @@ SOURCES += \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \
-    page/Navigation.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \
     page/DragController.cpp \
@@ -1113,6 +1112,8 @@ SOURCES += \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
     page/Performance.cpp \
+    page/PerformanceNavigation.cpp \
+    page/PerformanceTiming.cpp \
     page/PluginHalter.cpp \
     page/PrintContext.cpp \
     page/SecurityOrigin.cpp \
@@ -1120,7 +1121,6 @@ SOURCES += \
     page/Settings.cpp \
     page/SpatialNavigation.cpp \
     page/SuspendableTimer.cpp \
-    page/Timing.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
     page/XSSAuditor.cpp \

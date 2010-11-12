@@ -31,7 +31,7 @@
 module window {
 
     // See: http://dev.w3.org/2006/webapi/WebTiming/
-    interface [Conditional=WEB_TIMING, OmitConstructor] Navigation {
+    interface [Conditional=WEB_TIMING, OmitConstructor] PerformanceNavigation {
         const unsigned short NAVIGATE = 0;
         const unsigned short RELOAD = 1;
         const unsigned short BACK_FORWARD = 2;

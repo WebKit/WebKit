@@ -279,7 +279,6 @@ DOM_CLASSES = \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \
-    Navigation \
     Navigator \
     Node \
     NodeFilter \
@@ -291,6 +290,8 @@ DOM_CLASSES = \
     OverflowEvent \
     PageTransitionEvent \
     Performance \
+    PerformanceNavigation \
+    PerformanceTiming \
     PopStateEvent \
     PositionError \
     ProcessingInstruction \
@@ -470,7 +471,6 @@ DOM_CLASSES = \
     TextEvent \
     TextMetrics \
     TimeRanges \
-    Timing \
     Touch \
     TouchEvent \
     TouchList \

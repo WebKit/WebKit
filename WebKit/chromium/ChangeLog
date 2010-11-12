@@ -1,3 +1,15 @@
+2010-11-12  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Rename interfaces:
+        - Navigation -> PerformanceNavigation
+        - Timing -> PerformanceTiming
+        https://bugs.webkit.org/show_bug.cgi?id=48919
+
+        * src/WebPerformance.cpp:
+        (WebKit::WebPerformance::navigationType):
+
 2010-11-12  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by James Robinson.

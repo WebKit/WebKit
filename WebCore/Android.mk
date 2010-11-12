@@ -418,7 +418,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/History.cpp \
 	page/Location.cpp \
 	page/MouseEventWithHitTestResults.cpp \
-	page/Navigation.cpp \
 	page/Navigator.cpp \
 	page/NavigatorBase.cpp \
 	page/OriginAccessEntry.cpp \
@@ -426,6 +425,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/PageGroup.cpp \
 	page/PageGroupLoadDeferrer.cpp \
 	page/Performance.cpp \
+	page/PerformanceNavigation.cpp \
+	page/PerformanceTiming.cpp \
 	page/PluginHalter.cpp \
 	page/PrintContext.cpp \
 	page/Screen.cpp \
@@ -435,7 +436,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/SpeechInput.cpp \
 	page/SpeechInputResult.cpp \
 	page/SuspendableTimer.cpp \
-	page/Timing.cpp \
 	page/UserContentURLPattern.cpp \
 	page/WindowFeatures.cpp \
 	page/WorkerNavigator.cpp \
