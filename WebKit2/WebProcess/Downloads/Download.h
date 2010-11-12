@@ -42,6 +42,10 @@ class WKDownloadAsDelegate;
 #endif
 #endif
 
+namespace WebCore {
+    class ResourceResponse;
+}
+
 namespace WebKit {
 
 class Download : public CoreIPC::MessageSender<Download> {
@@ -58,6 +62,7 @@ public:
     void start();
 
     void didStart();
+    void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     void didCreateDestination(const String& path);
     void didFinish();

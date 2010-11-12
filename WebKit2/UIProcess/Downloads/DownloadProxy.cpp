@@ -71,6 +71,22 @@ void DownloadProxy::didStart(const ResourceRequest& request)
     m_webContext->downloadClient().didStart(m_webContext, this);
 }
 
+void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
+{
+    if (!m_webContext)
+        return;
+
+    m_webContext->downloadClient().didReceiveResponse(m_webContext, this, response);
+}
+
+void DownloadProxy::didReceiveData(uint64_t length)
+{
+    if (!m_webContext)
+        return;
+
+    m_webContext->downloadClient().didReceiveData(m_webContext, this, length);
+}
+
 void DownloadProxy::didCreateDestination(const String& path)
 {
     if (!m_webContext)

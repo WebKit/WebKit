@@ -26,6 +26,9 @@
 #include "WebDownloadClient.h"
 
 #include "WKAPICast.h"
+#include "WebURLResponse.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -35,6 +38,22 @@ void WebDownloadClient::didStart(WebContext* webContext, DownloadProxy* download
         return;
 
     m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+}
+
+void WebDownloadClient::didReceiveResponse(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceResponse& response)
+{
+    if (!m_client.didReceiveResponse)
+        return;
+
+    m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(WebURLResponse::create(response).get()), m_client.clientInfo);
+}
+
+void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* downloadProxy, uint64_t length)
+{
+    if (!m_client.didReceiveData)
+        return;
+
+    m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.clientInfo);
 }
 
 void WebDownloadClient::didCreateDestination(WebContext* webContext, DownloadProxy* downloadProxy, const String& path)

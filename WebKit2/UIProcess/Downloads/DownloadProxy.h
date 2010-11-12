@@ -37,6 +37,10 @@ namespace CoreIPC {
     class MessageID;
 }
 
+namespace WebCore {
+    class ResourceResponse;
+}
+
 namespace WebKit {
 
 class WebContext;
@@ -62,6 +66,8 @@ private:
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&);
+    void didReceiveResponse(const WebCore::ResourceResponse&);
+    void didReceiveData(uint64_t length);
     void didCreateDestination(const String& path);
     void didFinish();
 

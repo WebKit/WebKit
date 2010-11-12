@@ -25,6 +25,7 @@
 
 #include "Download.h"
 
+#include <WebCore/ResourceResponse.h>
 #include "NotImplemented.h"
 
 @interface WKDownloadAsDelegate : NSObject <NSURLConnectionDelegate> {
@@ -46,6 +47,9 @@ void Download::start()
 
     m_delegate.adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
     m_nsURLDownload.adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest() delegate:m_delegate.get()]);
+
+    // FIXME: Allow this to be changed by the client.
+    [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
 }
 
 void Download::platformInvalidate()
@@ -116,8 +120,8 @@ void Download::platformInvalidate()
 
 - (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didReceiveResponse(response);
 }
 
 - (void)download:(NSURLDownload *)download willResumeWithResponse:(NSURLResponse *)response fromByte:(long long)startingByte

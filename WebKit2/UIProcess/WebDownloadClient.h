@@ -30,6 +30,10 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
+namespace WebCore {
+    class ResourceResponse;
+}
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -38,6 +42,8 @@ class WebContext;
 class WebDownloadClient : public APIClient<WKContextDownloadClient> {
 public:
     void didStart(WebContext*, DownloadProxy*);
+    void didReceiveResponse(WebContext*, DownloadProxy*, const WebCore::ResourceResponse&);
+    void didReceiveData(WebContext*, DownloadProxy*, uint64_t length);
     void didCreateDestination(WebContext*, DownloadProxy*, const String& path);
     void didFinish(WebContext*, DownloadProxy*);
 };

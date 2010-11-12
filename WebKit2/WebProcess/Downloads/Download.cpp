@@ -61,8 +61,14 @@ void Download::didStart()
     send(Messages::DownloadProxy::DidStart(m_request));
 }
 
+void Download::didReceiveResponse(const ResourceResponse& response)
+{
+    send(Messages::DownloadProxy::DidReceiveResponse(response));
+}
+
 void Download::didReceiveData(uint64_t length)
 {
+    send(Messages::DownloadProxy::DidReceiveData(length));
 }
 
 void Download::didCreateDestination(const String& path)

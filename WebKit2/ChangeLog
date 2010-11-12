@@ -1,5 +1,43 @@
 2010-11-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Add didReceiveResponse and didReceiveData to the download client
+        https://bugs.webkit.org/show_bug.cgi?id=49418
+
+        * UIProcess/API/C/WKContext.h:
+        Add didReceiveResponse and didReceiveData to WKContextDownloadClient.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveResponse):
+        (WebKit::DownloadProxy::didReceiveData):
+        Call WebDownloadClient member functions.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add DidReceiveResponse and DidReceiveData messages.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didReceiveResponse):
+        (WebKit::WebDownloadClient::didReceiveData):
+        Call client functions.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Let Xcode update the file.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveResponse):
+        (WebKit::Download::didReceiveData):
+        Send messages.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        Set deletesFileUponFailure to NO.
+
+        (-[WKDownloadAsDelegate download:didReceiveResponse:]):
+        Call didReceiveResponse.
+
+2010-11-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add an argument coder for ResourceResponse.
