@@ -52,7 +52,7 @@ static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef cont
     const FontPlatformData& platformData = font->platformData();
     if (!platformData.isColorBitmapFont()) {
         CGAffineTransform savedMatrix;
-        bool isVertical = platformData.orientation() == Vertical;
+        bool isVertical = font->orientation() == Vertical;
 
         if (isVertical) {
             CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);

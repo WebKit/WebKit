@@ -31,6 +31,7 @@
 #ifndef FontPlatformDataLinux_h
 #define FontPlatformDataLinux_h
 
+#include "FontOrientation.h"
 #include "FontRenderStyle.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -104,6 +105,8 @@ public:
 
     unsigned hash() const;
     float size() const { return m_textSize; }
+
+    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
 
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);

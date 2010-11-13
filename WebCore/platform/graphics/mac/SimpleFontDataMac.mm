@@ -260,6 +260,24 @@ void SimpleFontData::platformInit()
         m_descent = 3;
     }
     
+    if (m_orientation == Vertical) {
+        // Ignore vertical orientation when the font doesn't support vertical metrics.
+        // The check doesn't look neat but this is what AppKit does for vertical writing...
+        RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(m_platformData.ctFont(), kCTFontTableOptionExcludeSynthetic));
+        CFIndex numTables = CFArrayGetCount(tableTags.get());
+        bool found = false;
+        for (CFIndex index = 0; index < numTables; ++index) {
+            CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
+            if (tag == kCTFontTableVhea || tag == kCTFontTableVORG) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found == false)
+            m_orientation = Horizontal;
+    }
+
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
@@ -423,7 +441,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     FloatRect boundingBox;
 #ifndef BUILDING_ON_TIGER
     boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(),
-                    m_platformData.orientation() == Vertical ? kCTFontVerticalOrientation : kCTFontHorizontalOrientation, &glyph, 0, 1);
+                    orientation() == Vertical ? kCTFontVerticalOrientation : kCTFontHorizontalOrientation, &glyph, 0, 1);
     boundingBox.setY(-boundingBox.bottom());
 #else
     // FIXME: Custom fonts don't have NSFonts, so this function doesn't compute correct bounds for these on Tiger.
@@ -441,7 +459,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance;
-    if (m_platformData.orientation() == Horizontal) {
+    if (orientation() == Horizontal || m_isBrokenIdeographFont) {
         NSFont* font = platformData().font();
         float pointSize = platformData().m_size;
         CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);

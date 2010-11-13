@@ -26,6 +26,7 @@
 #define FontPlatformDataPango_h
 
 #include "FontDescription.h"
+#include "FontOrientation.h"
 #include "GlyphBuffer.h"
 #include <cairo.h>
 #include <pango/pangocairo.h>
@@ -65,6 +66,8 @@ public:
     void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
+
+    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
 
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 

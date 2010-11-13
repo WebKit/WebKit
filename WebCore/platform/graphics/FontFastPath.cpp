@@ -74,8 +74,23 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
             page = node->page();
             if (page) {
                 GlyphData data = page->glyphDataForCharacter(c);
-                if (data.fontData)
+                if (data.fontData) {
+                    if (data.fontData->platformData().orientation() == Vertical && data.fontData->orientation() == Horizontal && Font::isCJKIdeograph(c)) {
+                        const SimpleFontData* ideographFontData = data.fontData->brokenIdeographFontData();
+                        GlyphPageTreeNode* ideographNode = GlyphPageTreeNode::getRootChild(ideographFontData, pageNumber);
+                        const GlyphPage* ideographPage = ideographNode->page();
+                        if (ideographPage) {
+                            GlyphData data = ideographPage->glyphDataForCharacter(c);
+                            if (data.fontData)
+                                return data;
+                        }
+                        
+                        // Shouldn't be possible to even reach this point.
+                        ASSERT_NOT_REACHED();
+                    }
                     return data;
+                }
+
                 if (node->isSystemFallback())
                     break;
             }

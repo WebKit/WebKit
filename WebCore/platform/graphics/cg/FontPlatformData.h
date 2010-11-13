@@ -24,6 +24,7 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
+#include "FontOrientation.h"
 #include "RefCountedGDIHandle.h"
 #include "StringImpl.h"
 #include <wtf/Forward.h>
@@ -65,6 +66,8 @@ public:
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
     bool useGDI() const { return m_useGDI; }
+
+    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
 
     unsigned hash() const
     {
