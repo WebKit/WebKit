@@ -359,7 +359,7 @@ WebInspector.StoragePanel.prototype = {
 
         if (line) {
             var view = WebInspector.ResourceManager.resourceViewForResource(resource);
-            view.selectContentTab(true);
+            view.selectContentTab();
             if (view.revealLine)
                 view.revealLine(line);
             if (view.highlightLine)

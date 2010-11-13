@@ -39,42 +39,55 @@ WebInspector.TabbedPane = function(element)
 }
 
 WebInspector.TabbedPane.prototype = {
-    appendTab: function(id, tabTitle, contentElement, tabClickListener)
+    appendTab: function(id, tabTitle, content, tabClickListener)
     {
         var tabElement = document.createElement("li");
         tabElement.textContent = tabTitle;
         tabElement.addEventListener("click", tabClickListener, false);
         this.tabsElement.appendChild(tabElement);
-        this.contentElement.appendChild(contentElement);
-        this._tabObjects[id] = {tab: tabElement, content: contentElement};
-    },
-    
-    tabObjectForId: function(id)
-    {
-        return this._tabObjects[id];
-    },
-
-    hideTab: function(id)
-    {
-        var tabObject = this._tabObjects[id];
-        if (tabObject)
-            tabObject.tab.addStyleClass("hidden");
-    },
-
-    selectTabById: function(selectId)
-    {
-        var selected = false;
-        for (var id in this._tabObjects) {
-            var tabObject = this._tabObjects[id];
-            if (id === selectId) {
-                selected = true;
-                tabObject.tab.addStyleClass("selected");
-                tabObject.content.removeStyleClass("hidden");
-            } else {
-                tabObject.tab.removeStyleClass("selected");
-                tabObject.content.addStyleClass("hidden");
-            }
+        var tabObject = { tab: tabElement };
+        if (content instanceof HTMLElement) {
+            tabObject.element = content;
+            this.contentElement.appendChild(content);
         }
-        return selected;
+        else {
+            this.contentElement.appendChild(content.element);
+            tabObject.view = content;
+        }
+        this._tabObjects[id] = tabObject;
+    },
+
+    hasTab: function(tabId)
+    {
+        return tabId in this._tabObjects;
+    },
+     
+    selectTabById: function(tabId)
+    {
+        for (var id in this._tabObjects) {
+            if (id === tabId)
+                this._showTab(this._tabObjects[id]);
+            else
+                this._hideTab(this._tabObjects[id]);
+        }
+        return this.hasTab(tabId);
+    },
+
+    _showTab: function(tabObject)
+    {
+        tabObject.tab.addStyleClass("selected");
+        if (tabObject.element)
+            tabObject.element.removeStyleClass("hidden");
+        else
+            tabObject.view.visible = true;
+    },
+
+    _hideTab: function(tabObject)
+    {
+        tabObject.tab.removeStyleClass("selected");
+        if (tabObject.element)
+            tabObject.element.addStyleClass("hidden");
+        else
+            tabObject.view.visible = false;
     }
 }

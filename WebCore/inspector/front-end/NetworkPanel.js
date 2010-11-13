@@ -864,7 +864,7 @@ WebInspector.NetworkPanel.prototype = {
         view.show(this._viewsContainerElement);
 
         if (line) {
-            view.selectContentTab(true);
+            view.selectContentTab();
             if (view.revealLine)
                 view.revealLine(line);
             if (view.highlightLine)

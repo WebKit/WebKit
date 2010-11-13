@@ -39,12 +39,12 @@ WebInspector.ResourceView = function(resource)
 
     this.headersElement = document.createElement("div");
     this.headersElement.className = "resource-view-headers";
-    this.tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this.headersElement, this._selectHeadersTab.bind(this, true));
+    this.tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this.headersElement, this._selectTab.bind(this, "headers"));
 
     if (this.hasContentTab()) {
         this.contentElement = document.createElement("div");
         this.contentElement.className = "resource-view-content";
-        this.tabbedPane.appendTab("content", WebInspector.UIString("Content"), this.contentElement, this.selectContentTab.bind(this, true));
+        this.tabbedPane.appendTab("content", WebInspector.UIString("Content"), this.contentElement, this._selectTab.bind(this, "content"));
     }
 
     this.headersListElement = document.createElement("ol");
@@ -145,51 +145,32 @@ WebInspector.ResourceView.prototype = {
             this._cookiesView.resize();
     },
 
-    _selectTab: function()
+    selectContentTab: function()
     {
-        var preferredTab = WebInspector.settings.resourceViewTab;
-        if (this._headersVisible && this._cookiesView && preferredTab === "cookies")
-            this._selectCookiesTab();
-        else if (this._headersVisible && (!this.hasContentTab() || preferredTab === "headers"))
-            this._selectHeadersTab();
-        else
-            this._innerSelectContentTab();
+        this._selectTab("content");
     },
 
-    _selectHeadersTab: function(updatePrefs)
+    _selectTab: function(tab)
     {
-        if (updatePrefs)
-            WebInspector.settings.resourceViewTab = "headers";
-        this.tabbedPane.selectTabById("headers");
-    },
+        if (tab)
+            WebInspector.settings.resourceViewTab = tab;
+        else {
+            var preferredTab = WebInspector.settings.resourceViewTab;
+            tab = "content";
 
-    selectContentTab: function(updatePrefs)
-    {
-        if (updatePrefs)
-            WebInspector.settings.resourceViewTab = "content";
-        this._innerSelectContentTab();
+            // Honor user tab preference (if we can). Fallback to content if headers not visible, headers otherwise.
+            if (this._headersVisible)
+                tab = this.tabbedPane.hasTab(preferredTab) ? preferredTab : "headers";
+        }
+        this.tabbedPane.selectTabById(tab);
+        if (tab === "content" && this.hasContentTab())
+            this.contentTabSelected();
     },
 
     hasContentTab: function()
     {
         // Derived classes should override this method and define this.contentTabSelected for content rendering.
         return false;
-    },
-
-    _selectCookiesTab: function(updatePrefs)
-    {
-        if (updatePrefs)
-            WebInspector.settings.resourceViewTab = "cookies";
-        this.tabbedPane.selectTabById("cookies");
-        this._cookiesView.resize();
-    },
-
-    _innerSelectContentTab: function()
-    {
-        this.tabbedPane.selectTabById("content");
-        this.resize();
-        if (this.hasContentTab())
-            this.contentTabSelected();
     },
 
     _refreshURL: function()
@@ -370,7 +351,7 @@ WebInspector.ResourceView.prototype = {
             if (!this.resource.requestCookies && !this.resource.responseCookies)
                 return;
             this._cookiesView = new WebInspector.ResourceCookiesTab();
-            this.tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView.element, this._selectCookiesTab.bind(this, true));
+            this.tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView, this._selectTab.bind(this, "cookies"));
         }
         this._cookiesView.requestCookies = this.resource.requestCookies;
         this._cookiesView.responseCookies = this.resource.responseCookies;
@@ -391,6 +372,12 @@ WebInspector.ResourceCookiesTab = function()
 }
 
 WebInspector.ResourceCookiesTab.prototype = {
+    show: function(parentElement)
+    {
+        WebInspector.CookiesTable.prototype.show.call(this, parentElement);
+        this.resize();
+    },
+
     set requestCookies(cookies)
     {
         if (this._requestCookies === cookies)

@@ -887,6 +887,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 }
 
 .resource-view-cookies {
+    display: none;
     position: absolute;
     top: 0;
     right: 0;
@@ -895,6 +896,10 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     overflow: auto;
     padding: 12px;
     height: 100%;
+}
+
+.resource-view-cookies.visible {
+    display: block;
 }
 
 .resource-view-cookies.table .data-grid {
