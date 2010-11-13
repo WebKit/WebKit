@@ -202,9 +202,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_suppressOpenerInNewFrame(false)
     , m_sandboxFlags(SandboxAll)
     , m_forcedSandboxFlags(SandboxNone)
-#ifndef NDEBUG
-    , m_didDispatchDidCommitLoad(false)
-#endif
 {
 }
 
@@ -1511,11 +1508,6 @@ bool FrameLoader::willLoadMediaElementURL(KURL& url)
     return error.isNull();
 }
 
-ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request)
-{
-    return m_client->interruptForPolicyChangeError(request);
-}
-
 bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader)
 {
     KURL unreachableURL = docLoader->unreachableURL();
@@ -2414,9 +2406,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 return;
 
             const ResourceError& error = dl->mainDocumentError();
-#ifndef NDEBUG
-            m_didDispatchDidCommitLoad = false;
-#endif
             if (!error.isNull())
                 m_client->dispatchDidFailLoad(error);
             else
@@ -3300,6 +3289,11 @@ ResourceError FrameLoader::cannotShowURLError(const ResourceRequest& request) co
     return m_client->cannotShowURLError(request);
 }
 
+ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request) const
+{
+    return m_client->interruptForPolicyChangeError(request);
+}
+
 ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& response) const
 {
     return m_client->fileDoesNotExistError(response);    
@@ -3413,10 +3407,6 @@ void FrameLoader::dispatchDidCommitLoad()
 {
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
-
-#ifndef NDEBUG
-    m_didDispatchDidCommitLoad = true;
-#endif
 
     m_client->dispatchDidCommitLoad();
 
