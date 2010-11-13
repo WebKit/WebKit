@@ -173,6 +173,18 @@ void Console::addMessage(MessageType type, MessageLevel level, PassOwnPtr<Script
     if (!acceptNoArguments && !arguments->argumentCount())
         return;
 
+    if (Console::shouldPrintExceptions()) {
+        printSourceURLAndLine(lastCaller.sourceURL(), 0);
+        printMessageSourceAndLevelPrefix(JSMessageSource, level);
+
+        for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
+            String argAsString;
+            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString))
+                printf(" %s", argAsString.utf8().data());
+        }
+        printf("\n");
+    }
+
     String message;
     if (arguments->getFirstArgumentAsString(message))
         page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
@@ -180,19 +192,6 @@ void Console::addMessage(MessageType type, MessageLevel level, PassOwnPtr<Script
 #if ENABLE(INSPECTOR)
     page->inspectorController()->addMessageToConsole(JSMessageSource, type, level, message, arguments, callStack);
 #endif
-
-    if (!Console::shouldPrintExceptions())
-        return;
-
-    printSourceURLAndLine(lastCaller.sourceURL(), 0);
-    printMessageSourceAndLevelPrefix(JSMessageSource, level);
-
-    for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
-        String argAsString;
-        if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString))
-            printf(" %s", argAsString.utf8().data());
-    }
-    printf("\n");
 }
 
 void Console::debug(PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack> callStack)
