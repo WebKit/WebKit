@@ -47,6 +47,7 @@ find(\&wanted, "JavaScriptCore");
 find(\&wanted, "JavaScriptGlue");
 find(\&wanted, "WebCore");
 find(\&wanted, "WebKit");
+find(\&wanted, "WebKit2");
 
 sub wanted
 {

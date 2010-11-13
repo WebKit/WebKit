@@ -1,3 +1,14 @@
+2010-11-12  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Nikolas Zimmermann.
+
+        Make do-file-rename rename files in the directory WebKit2.
+
+        This also makes the list of searched directories in do-file-rename
+        consistent with the list of searched directories in the script do-webcore-rename.
+
+        * Scripts/do-file-rename:
+
 2010-11-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by James Robinson.
