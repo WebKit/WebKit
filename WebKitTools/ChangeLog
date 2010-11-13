@@ -1,3 +1,16 @@
+2010-11-12  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch land logs commit message twice
+        https://bugs.webkit.org/show_bug.cgi?id=49482
+        
+        Don't log the comment that's used by bugzilla.close_bug_as_fixed, since
+        that's just the commit message, which we now output following the
+        actual commit.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+
 2010-11-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

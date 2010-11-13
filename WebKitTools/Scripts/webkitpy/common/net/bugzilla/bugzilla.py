@@ -622,7 +622,6 @@ class Bugzilla(object):
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         if comment_text:
-            log(comment_text)
             self.browser['comment'] = comment_text
         self.browser['bug_status'] = ['RESOLVED']
         self.browser['resolution'] = ['FIXED']
