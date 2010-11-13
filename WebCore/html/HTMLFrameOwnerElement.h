@@ -65,7 +65,6 @@ protected:
 private:
     friend class Frame;
 
-    virtual void setName() { }
     virtual bool isFrameOwnerElement() const { return true; }
     virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
 

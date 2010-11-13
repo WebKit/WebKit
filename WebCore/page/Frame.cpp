@@ -732,16 +732,9 @@ void Frame::transferChildFrameToNewDocument()
         didTransfer = true;
     }
 
-    // Update the frame tree.
-    Frame* oldParent = tree()->parent();
-    if (oldParent != newParent) {
-        if (oldParent)
-            oldParent->tree()->removeChild(this);
-        if (newParent) {
-            newParent->tree()->appendChild(this);
-            m_ownerElement->setName();
-        }
-        didTransfer = true;
+    if (newParent) {
+        // Update the frame tree.
+        didTransfer = newParent->tree()->transferChild(this);
     }
 
     // Avoid unnecessary calls to client and frame subtree if the frame ended

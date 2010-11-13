@@ -63,11 +63,35 @@ Frame* FrameTree::parent(bool checkForDisconnectedFrame) const
     return m_parent;
 }
 
+bool FrameTree::transferChild(PassRefPtr<Frame> child)
+{
+    Frame* oldParent = child->tree()->parent();
+    if (oldParent == m_thisFrame)
+        return false; // |child| is already a child of m_thisFrame.
+
+    if (oldParent)
+        oldParent->tree()->removeChild(child.get());
+
+    ASSERT(child->page() == m_thisFrame->page());
+    child->tree()->m_parent = m_thisFrame;
+
+    // We need to ensure that the child still has a unique frame name with respect to its new parent.
+    child->tree()->setName(child->tree()->m_name);
+
+    actuallyAppendChild(child); // Note, on return |child| is null.
+    return true;
+}
+
 void FrameTree::appendChild(PassRefPtr<Frame> child)
 {
     ASSERT(child->page() == m_thisFrame->page());
     child->tree()->m_parent = m_thisFrame;
+    actuallyAppendChild(child); // Note, on return |child| is null.
+}
 
+void FrameTree::actuallyAppendChild(PassRefPtr<Frame> child)
+{
+    ASSERT(child->tree()->m_parent == m_thisFrame);
     Frame* oldLast = m_lastChild;
     m_lastChild = child.get();
 

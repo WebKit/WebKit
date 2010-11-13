@@ -57,6 +57,7 @@ namespace WebCore {
         Frame* traversePreviousWithWrap(bool) const;
         
         void appendChild(PassRefPtr<Frame>);
+        bool transferChild(PassRefPtr<Frame>);
         void detachFromParent() { m_parent = 0; }
         void removeChild(Frame*);
 
@@ -70,6 +71,7 @@ namespace WebCore {
 
     private:
         Frame* deepLastChild() const;
+        void actuallyAppendChild(PassRefPtr<Frame>);
 
         Frame* m_thisFrame;
 
