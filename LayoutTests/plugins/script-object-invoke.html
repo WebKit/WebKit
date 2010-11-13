@@ -1,6 +1,6 @@
 <html>
 <script>
-// A simple script object with a member function that takes 
+// A simple script object with a member function that takes
 // an NPObject as an argument
 FactoryFunction = function() {
     var TestObject = function() {
@@ -25,21 +25,17 @@ function runTest()
         layoutTestController.dumpAsText();
 
     var plugin = document.getElementById("testPlugin");
-    var returned_object = plugin.testScriptObjectInvoke("new_script_object", "createObject", plugin);
+    var returned_object = plugin.testScriptObjectInvoke("new_script_object", "createObject");
 
-    /* Bug# 1175346 - This will crash in single process mode (or test shell)
-       TODO(joshia): Enable this and fix the NPObject cleanup so that
-                     it works in single process mode.
+    // Make sure the cloned object outlives the plugin.
     plugin.parentNode.removeChild(plugin);
-
     try {
         returned_object.property;
     } catch (e) {
         if (e instanceof ReferenceError)
             document.getElementById("result").innerHTML = "SUCCESS";
     }
-    */
-    
+
     document.getElementById("result").innerHTML = "SUCCESS";
 }
 </script>
@@ -49,7 +45,7 @@ function runTest()
 Test proper tracking of script NPObjects
 
 Test 1: Ensure that script NPObjects are properly tracked (i.e. added to
-        the live objects map in V8). 
+        the live objects map in V8).
 
 Test 2: Test tracking of derived NPObjects by invoking a method on a
         script object and passing it an internally created NPObject.

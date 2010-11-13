@@ -182,6 +182,8 @@ enum {
     ID_TEST_CONSTRUCT,
     ID_TEST_THROW_EXCEPTION_METHOD,
     ID_TEST_FAIL_METHOD,
+    ID_TEST_CLONE_OBJECT,
+    ID_TEST_SCRIPT_OBJECT_INVOKE,
     ID_DESTROY_NULL_STREAM,
     ID_TEST_RELOAD_PLUGINS_NO_PAGES,
     ID_TEST_RELOAD_PLUGINS_AND_PAGES,
@@ -220,6 +222,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testConstruct",
     "testThrowException",
     "testFail",
+    "testCloneObject",
+    "testScriptObjectInvoke",
     "destroyNullStream",
     "reloadPluginsNoPages",
     "reloadPluginsAndPages",
@@ -783,6 +787,58 @@ static bool testConstruct(PluginObject* obj, const NPVariant* args, uint32_t arg
     return browser->construct(obj->npp, NPVARIANT_TO_OBJECT(args[0]), args + 1, argCount - 1, result);
 }
 
+// Invoke a script callback to get a script NPObject. Then call a method on the
+// script NPObject passing it a freshly created NPObject.
+static bool testScriptObjectInvoke(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 2 || !NPVARIANT_IS_STRING(args[0]) || !NPVARIANT_IS_STRING(args[1]))
+        return false;
+    NPObject* windowScriptObject;
+    browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);
+
+    // Arg1 is the name of the callback
+    NPUTF8* callbackString = createCStringFromNPVariant(&args[0]);
+    NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
+    free(callbackString);
+
+    // Invoke a callback that returns a script object
+    NPVariant object_result;
+    browser->invoke(obj->npp, windowScriptObject, callbackIdentifier, &args[1], 1, &object_result);
+
+    // Script object returned
+    NPObject* script_object = object_result.value.objectValue;
+
+    // Arg2 is the name of the method to be called on the script object
+    NPUTF8* object_mehod_string = createCStringFromNPVariant(&args[1]);
+    NPIdentifier object_method = browser->getstringidentifier(object_mehod_string);
+    free(object_mehod_string);
+
+    // Create a fresh NPObject to be passed as an argument
+    NPObject* object_arg = browser->createobject(obj->npp, &pluginClass);
+    NPVariant invoke_args[1];
+    OBJECT_TO_NPVARIANT(object_arg, invoke_args[0]);
+
+    // Invoke the script method
+    NPVariant object_method_result;
+    browser->invoke(obj->npp, script_object, object_method, invoke_args, 1, &object_method_result);
+
+    browser->releasevariantvalue(&object_result);
+    VOID_TO_NPVARIANT(*result);
+    if (NPVARIANT_IS_OBJECT(object_method_result)) {
+        // Now return the callbacks return value back to our caller.
+        // BUG 897451: This should be the same as the
+        // windowScriptObject, but its not (in Chrome) - or at least, it
+        // has a different refcount. This means Chrome will delete the
+        // object before returning it and the calling JS gets a garbage
+        // value.  Firefox handles it fine.
+        OBJECT_TO_NPVARIANT(NPVARIANT_TO_OBJECT(object_method_result), *result);
+    } else {
+        browser->releasevariantvalue(&object_method_result);
+        VOID_TO_NPVARIANT(*result);
+    }
+    return true;
+}
+
 // Helper function to notify the layout test controller that the test completed.
 void notifyTestCompletion(NPP npp, NPObject* object)
 {
@@ -961,6 +1017,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testPostURLFile(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_CONSTRUCT])
         return testConstruct(plugin, args, argCount, result);
+    if (name == pluginMethodIdentifiers[ID_TEST_SCRIPT_OBJECT_INVOKE])
+        return testScriptObjectInvoke(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
         browser->setexception(header, "plugin object testThrowException SUCCESS");
         return true;
@@ -970,6 +1028,12 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         browser->getvalue(plugin->npp, NPNVWindowNPObject, &windowScriptObject);
         browser->invoke(plugin->npp, windowScriptObject, name, args, argCount, result);
         return false;
+    }
+    if (name == pluginMethodIdentifiers[ID_TEST_CLONE_OBJECT]) {
+        NPObject* new_object = browser->createobject(plugin->npp, &pluginClass);
+        assert(new_object->referenceCount == 1);
+        OBJECT_TO_NPVARIANT(new_object, *result);
+        return true;
     }
     if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM])
         return destroyNullStream(plugin, args, argCount, result);
