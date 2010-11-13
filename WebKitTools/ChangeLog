@@ -1,3 +1,19 @@
+2010-11-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Attempt yet again to land the fix for bug 49360 (respecting
+        set-webkit-configuration). We need to handle the cases where
+        trying to run webkit-build-directory to find out where the
+        default configuration might be fails (that shows up on some
+        Chromium bots that apparently don't have perl installed).
+
+        https://bugs.webkit.org/show_bug.cgi?id=49360
+
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_standalone.py: Added.
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
 2010-11-12  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
