@@ -331,11 +331,13 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         updateRelativeLengthsInformation();
     }
 
+    if (SVGTests::handleAttributeChange(const_cast<SVGSVGElement*>(this), attrName))
+        return;
+
     if (!renderer())
         return;
 
     if (updateRelativeLengths
-        || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
         || SVGZoomAndPan::isKnownAttribute(attrName)

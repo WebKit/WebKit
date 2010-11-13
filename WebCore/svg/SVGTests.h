@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2010 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@ namespace WebCore {
 
 class Attribute;
 class QualifiedName;
+class SVGElement;
 
 class SVGTests {
 public:
@@ -40,6 +41,8 @@ public:
 
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
+
+    static bool handleAttributeChange(SVGElement*, const QualifiedName&);
 
 protected:
     SVGTests();

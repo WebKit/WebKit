@@ -55,6 +55,9 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
+    if (SVGTests::handleAttributeChange(const_cast<SVGGElement*>(this), attrName))
+        return;
+
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return;
@@ -65,8 +68,7 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGTests::isKnownAttribute(attrName)
-        || SVGLangSpace::isKnownAttribute(attrName)
+    if (SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }

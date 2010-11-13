@@ -143,6 +143,9 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     if (isXYAttribute || isWidthHeightAttribute)
         updateRelativeLengthsInformation();
 
+    if (SVGTests::handleAttributeChange(const_cast<SVGUseElement*>(this), attrName))
+        return;
+
     RenderObject* object = renderer();
     if (!object)
         return;
@@ -180,8 +183,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGTests::isKnownAttribute(attrName)
-        || SVGLangSpace::isKnownAttribute(attrName)
+    if (SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
         invalidateShadowTree();
 }

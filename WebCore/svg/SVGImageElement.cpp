@@ -98,6 +98,9 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (isLengthAttribute)
         updateRelativeLengthsInformation();
 
+    if (SVGTests::handleAttributeChange(const_cast<SVGImageElement*>(this), attrName))
+        return;
+
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return;
@@ -115,7 +118,6 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (attrName == SVGNames::preserveAspectRatioAttr
-        || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName))
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);

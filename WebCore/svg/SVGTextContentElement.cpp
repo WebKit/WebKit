@@ -201,11 +201,20 @@ void SVGTextContentElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
 }
 
+void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    if (SVGTests::handleAttributeChange(const_cast<SVGTextContentElement*>(this), attrName))
+        return;
+
+    // FIXME: also handle attribute changes for lengthAdjust and textLength
+}
+
 bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)
 {
     return (attrName.matches(SVGNames::lengthAdjustAttr) ||
             attrName.matches(SVGNames::textLengthAttr) ||
-            SVGTests::isKnownAttribute(attrName) ||
             SVGLangSpace::isKnownAttribute(attrName) ||
             SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
             SVGStyledElement::isKnownAttribute(attrName));
