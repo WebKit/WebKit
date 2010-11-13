@@ -287,11 +287,11 @@ public:
     {
     }
 
-    virtual void begin(float width)
+    virtual void begin(float width, float height)
     {
         ASSERT(!m_printedPageWidth);
         m_printedPageWidth = width;
-        PrintContext::begin(m_printedPageWidth);
+        PrintContext::begin(m_printedPageWidth, height);
     }
 
     virtual void end()
@@ -1286,7 +1286,7 @@ int WebFrameImpl::printBegin(const WebSize& pageSize, int printerDPI, bool *useB
 
     FloatRect rect(0, 0, static_cast<float>(pageSize.width),
                          static_cast<float>(pageSize.height));
-    m_printContext->begin(rect.width());
+    m_printContext->begin(rect.width(), rect.height());
     float pageHeight;
     // We ignore the overlays calculation for now since they are generated in the
     // browser. pageHeight is actually an output parameter.

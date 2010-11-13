@@ -1,3 +1,14 @@
+2010-11-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] print doesn't work on http://nodejs.org/api.html
+        https://bugs.webkit.org/show_bug.cgi?id=49304
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePrintContext::begin):
+        (WebKit::WebFrameImpl::printBegin):
+
 2010-11-12  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.
