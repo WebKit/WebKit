@@ -1461,7 +1461,7 @@ body.inactive .placard.selected {
 
 .event-bar {
     position: relative;
-    left: 10px;
+    margin-left: 10px;
 }
 
 .event-bars .event-bar .header {
