@@ -252,8 +252,8 @@ sub GenerateHeader
     
     push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\ntemplate<typename PropertyType> class SVGPropertyTearOff;\n") if $svgPropertyType;
-    if ($svgListPropertyType) {
-        if ($svgListPropertyType =~ /SVGStaticListPropertyTearOff/) {
+    if ($svgNativeType) {
+        if ($svgNativeType =~ /SVGStaticListPropertyTearOff/) {
             push(@headerContent, "\ntemplate<typename PropertyType> class SVGStaticListPropertyTearOff;\n");
         } else {
             push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n");
