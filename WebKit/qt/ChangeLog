@@ -1,3 +1,16 @@
+2010-11-14  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        REGRESSION(r71895): API test javaScriptWindowObjectCleared fails
+        https://bugs.webkit.org/show_bug.cgi?id=49466
+
+        As of r71895 empty inline scripts are no longer executed and so
+        the javaScriptWindowObjectCleared() signal is no longer triggered
+        by <script></script>.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-11-12  Jacob Dinu  <dinu.jacob@nokia.com>
 
         Reviewed by Andreas Kling.
