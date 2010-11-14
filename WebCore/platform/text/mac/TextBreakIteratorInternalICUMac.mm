@@ -38,17 +38,15 @@ static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 
 static RetainPtr<CFStringRef> topLanguagePreference()
 {
-    RetainPtr<CFPropertyListRef> languages(AdoptCF, CFPreferencesCopyValue(CFSTR("AppleLanguages"),
-        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-    if (!languages || CFGetTypeID(languages.get()) != CFArrayGetTypeID())
+    NSArray *languagesArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"AppleLanguages"];
+    if (!languagesArray)
         return 0;
-    CFArrayRef languagesArray = static_cast<CFArrayRef>(languages.get());
-    if (CFArrayGetCount(languagesArray) < 1)
+    if ([languagesArray count] < 1)
         return 0;
-    const void* value = CFArrayGetValueAtIndex(languagesArray, 0);
-    if (!value || CFGetTypeID(value) != CFStringGetTypeID())
+    NSString *value = [languagesArray objectAtIndex:0];
+    if (![value isKindOfClass:[NSString class]])
         return 0;
-    return static_cast<CFStringRef>(value);
+    return reinterpret_cast<CFStringRef>(value);
 }
 
 static RetainPtr<CFStringRef> canonicalLanguageIdentifier(CFStringRef locale)
