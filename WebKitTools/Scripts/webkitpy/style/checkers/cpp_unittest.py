@@ -2463,7 +2463,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
         error_lines = self.trigger_lines(error_level) + 1
         trigger_level = self.trigger_lines(self.min_confidence)
         self.assert_function_lengths_check(
-            ('my_namespace::my_other_namespace::MyVeryLongTypeName<Type1, Type2>*\n'
+            ('my_namespace::my_other_namespace::MyVeryLongTypeName<Type1, bool func(const Element*)>*\n'
              'my_namespace::my_other_namespace<Type3, Type4>::~MyFunction<Type5<Type6, Type7> >(int arg1, char* arg2)'
              + self.function_body(error_lines)),
             ('Small and focused functions are preferred: '

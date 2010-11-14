@@ -1,3 +1,16 @@
+2010-11-13  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style function detection crashes on functions in templates.
+        https://bugs.webkit.org/show_bug.cgi?id=49504
+
+        For example "template <bool shouldClose(const Element*)>".
+
+        * Scripts/webkitpy/style/checkers/cpp.py: If not function is detected, bail out.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Modified the complex
+          function detection test to expose this issue.
+
 2010-11-12  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

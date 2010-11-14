@@ -1195,6 +1195,8 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
                 # while keeping the column numbers of other characters the same as "line".
                 line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
                 match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
+                if not match_function:
+                    return  # The '(' must have been inside of a template.
 
                 # Use the column numbers from the modified line to find the
                 # function name in the original line.
