@@ -316,9 +316,12 @@ class _FunctionState(object):
         self.current_function = ''
         self.in_a_function = False
         self.lines_in_function = 0
-        self.ending_line_number = 0
+        # Make sure these will not be mistaken for real lines (even when a
+        # small amount is added to them).
+        self.body_start_line_number = -1000
+        self.ending_line_number = -1000
 
-    def begin(self, function_name, ending_line_number):
+    def begin(self, function_name, body_start_line_number, ending_line_number):
         """Start analyzing function body.
 
         Args:
@@ -328,11 +331,12 @@ class _FunctionState(object):
         self.in_a_function = True
         self.lines_in_function = 0
         self.current_function = function_name
+        self.body_start_line_number = body_start_line_number
         self.ending_line_number = ending_line_number
 
-    def count(self):
+    def count(self, line_number):
         """Count line in current function body."""
-        if self.in_a_function:
+        if self.in_a_function and line_number >= self.body_start_line_number:
             self.lines_in_function += 1
 
     def check(self, error, line_number):
@@ -1146,16 +1150,85 @@ def is_blank_line(line):
     return not line or line.isspace()
 
 
-def check_for_function_lengths(clean_lines, line_number, function_state, error):
-    """Reports for long function bodies.
-
-    For an overview why this is done, see:
-    http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Write_Short_Functions
+def detect_functions(clean_lines, line_number, function_state, error):
+    """Finds where functions start and end.
 
     Uses a simplistic algorithm assuming other style guidelines
     (especially spacing) are followed.
     Trivial bodies are unchecked, so constructors with huge initializer lists
     may be missed.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      function_state: Current function name and lines in body so far.
+      error: The function to call with any errors found.
+    """
+    # Are we now past the end of a function?
+    if function_state.ending_line_number + 1 == line_number:
+        function_state.end()
+
+    # If we're in a function, don't try to detect a new one.
+    if function_state.in_a_function:
+        return
+
+    lines = clean_lines.lines
+    line = lines[line_number]
+    raw = clean_lines.raw_lines
+    raw_line = raw[line_number]
+
+    regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
+    match_result = match(regexp, line)
+    if not match_result:
+        return
+
+    # If the name is all caps and underscores, figure it's a macro and
+    # ignore it, unless it's TEST or TEST_F.
+    function_name = match_result.group(1).split()[-1]
+    if function_name != 'TEST' and function_name != 'TEST_F' and match(r'[A-Z_]+$', function_name):
+        return
+
+    joined_line = ''
+    for start_line_number in xrange(line_number, clean_lines.num_lines()):
+        start_line = lines[start_line_number]
+        joined_line += ' ' + start_line.lstrip()
+        if search(r'(;|})', start_line):  # Declarations and trivial functions
+            return                              # ... ignore
+
+        if search(r'{', start_line):
+            # Replace template constructs with _ so that no spaces remain in the function name,
+            # while keeping the column numbers of other characters the same as "line".
+            line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
+            match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
+            if not match_function:
+                return  # The '(' must have been inside of a template.
+
+            # Use the column numbers from the modified line to find the
+            # function name in the original line.
+            function = line[match_function.start(1):match_function.end(1)]
+
+            if match(r'TEST', function):    # Handle TEST... macros
+                parameter_regexp = search(r'(\(.*\))', joined_line)
+                if parameter_regexp:             # Ignore bad syntax
+                    function += parameter_regexp.group(1)
+            else:
+                function += '()'
+            open_brace_index = start_line.find('{')
+            ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
+            function_state.begin(function, start_line_number + 1, ending_line_number)
+            return
+
+    # No body for the function (or evidence of a non-function) was found.
+    error(line_number, 'readability/fn_size', 5,
+          'Lint failed to find start of function body.')
+
+
+def check_for_function_lengths(clean_lines, line_number, function_state, error):
+    """Reports for issues related to functions.
+
+    For an overview why this is done, see:
+    http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Write_Short_Functions
+
     Blank/comment lines are not counted so as to avoid encouraging the removal
     of vertical space and commments just to get through a lint check.
     NOLINT *on the last line of a function* disables this check.
@@ -1170,58 +1243,12 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
     line = lines[line_number]
     raw = clean_lines.raw_lines
     raw_line = raw[line_number]
-    joined_line = ''
 
-    starting_func = False
-    regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
-    match_result = None
-    if not function_state.in_a_function:
-        match_result = match(regexp, line)
-    if match_result:
-        # If the name is all caps and underscores, figure it's a macro and
-        # ignore it, unless it's TEST or TEST_F.
-        function_name = match_result.group(1).split()[-1]
-        if function_name == 'TEST' or function_name == 'TEST_F' or (not match(r'[A-Z_]+$', function_name)):
-            starting_func = True
-
-    if starting_func:
-        for start_line_number in xrange(line_number, clean_lines.num_lines()):
-            start_line = lines[start_line_number]
-            joined_line += ' ' + start_line.lstrip()
-            if search(r'(;|})', start_line):  # Declarations and trivial functions
-                break                              # ... ignore
-            if search(r'{', start_line):
-                # Replace template constructs with _ so that no spaces remain in the function name,
-                # while keeping the column numbers of other characters the same as "line".
-                line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
-                match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
-                if not match_function:
-                    return  # The '(' must have been inside of a template.
-
-                # Use the column numbers from the modified line to find the
-                # function name in the original line.
-                function = line[match_function.start(1):match_function.end(1)]
-
-                if match(r'TEST', function):    # Handle TEST... macros
-                    parameter_regexp = search(r'(\(.*\))', joined_line)
-                    if parameter_regexp:             # Ignore bad syntax
-                        function += parameter_regexp.group(1)
-                else:
-                    function += '()'
-                open_brace_index = start_line.find('{')
-                ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
-                function_state.begin(function, ending_line_number)
-                break
-        else:
-            # No body for the function (or evidence of a non-function) was found.
-            error(line_number, 'readability/fn_size', 5,
-                  'Lint failed to find start of function body.')
-    elif function_state.in_a_function and function_state.ending_line_number == line_number:  # function end
+    if function_state.ending_line_number == line_number:  # last line
         if not search(r'\bNOLINT\b', raw_line):
             function_state.check(error, line_number)
-        function_state.end()
     elif not match(r'^\s*$', line):
-        function_state.count()  # Count non-blank/non-comment lines.
+        function_state.count(line_number)  # Count non-blank/non-comment lines.
 
 
 def check_spacing(file_extension, clean_lines, line_number, error):
@@ -2902,6 +2929,7 @@ def process_line(filename, file_extension,
 
     """
     raw_lines = clean_lines.raw_lines
+    detect_functions(clean_lines, line, function_state, error)
     check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return

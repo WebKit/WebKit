@@ -205,6 +205,8 @@ class CppStyleTestBase(unittest.TestCase):
         cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
         for i in xrange(lines.num_lines()):
+            cpp_style.detect_functions(lines, i,
+                                       function_state, error_collector)
             cpp_style.check_for_function_lengths(lines, i,
                                                  function_state, error_collector)
         return error_collector.results()
@@ -2444,7 +2446,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
              'test_indent() has %d non-comment lines '
              '(error triggered by exceeding %d lines).'
              '  [readability/fn_size] [%d]')
-            % (error_lines + 1, trigger_level, error_level))
+            % (error_lines, trigger_level, error_level))
 
     def test_function_length_check_definition_severity1_plus_blanks(self):
         error_level = 1
@@ -2498,7 +2500,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
              'FixGoogleUpdate_AllValues_MachineApp) has %d non-comment lines '
              '(error triggered by exceeding %d lines).'
              '  [readability/fn_size] [%d]')
-            % (error_lines+1, trigger_level, error_level))
+            % (error_lines, trigger_level, error_level))
 
     def test_function_length_check_definition_severity1_for_bad_test_doesnt_break(self):
         error_level = 1

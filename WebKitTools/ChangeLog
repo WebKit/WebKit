@@ -1,3 +1,15 @@
+2010-11-14  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style function detection and the line count style checks should be separate.
+        https://bugs.webkit.org/show_bug.cgi?id=49512
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Do the separation.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Adjust the test to
+          call the detection function and fix line counts in two places now that
+          the code really only counts the lines in the body of the function.
+
 2010-11-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antonio Gomes.
