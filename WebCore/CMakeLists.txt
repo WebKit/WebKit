@@ -295,10 +295,6 @@ SET(WebCore_IDL_FILES
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/CanvasRenderingContext.idl
-    html/canvas/WebGLRenderingContext.idl
-
-    html/canvas/ArrayBuffer.idl
-    html/canvas/ArrayBufferView.idl
     html/canvas/Float32Array.idl
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl
@@ -306,6 +302,7 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint16Array.idl
     html/canvas/Uint32Array.idl
     html/canvas/Uint8Array.idl
+    html/canvas/WebGLRenderingContext.idl
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
@@ -571,7 +568,6 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityTableHeaderContainer.cpp
     accessibility/AccessibilityTableRow.cpp
 
-    bindings/js/specialization/JSBindingState.cpp
     bindings/ScriptControllerBase.cpp
 
     bindings/generic/ActiveDOMCallback.cpp
@@ -703,6 +699,8 @@ SET(WebCore_SOURCES
     bindings/js/ScriptValue.cpp
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WorkerScriptController.cpp
+
+    bindings/js/specialization/JSBindingState.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp
@@ -1089,12 +1087,14 @@ SET(WebCore_SOURCES
     html/ValidationMessage.cpp
     html/ValidityState.cpp
     html/WeekInputType.cpp
+
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
     html/canvas/CanvasPixelArray.cpp
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+
     html/parser/CSSPreloadScanner.cpp
     html/parser/HTMLConstructionSite.cpp
     html/parser/HTMLDocumentParser.cpp
@@ -1142,17 +1142,8 @@ SET(WebCore_SOURCES
     inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
 
-    loader/cache/CachedCSSStyleSheet.cpp
-    loader/cache/CachedFont.cpp
-    loader/cache/CachedImage.cpp
-    loader/cache/CachedResource.cpp
-    loader/cache/CachedResourceClientWalker.cpp
-    loader/cache/CachedResourceHandle.cpp
-    loader/cache/CachedScript.cpp
-    loader/cache/CachedXSLStyleSheet.cpp
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
-    loader/cache/CachedResourceLoader.cpp
     loader/DocumentLoader.cpp
     loader/DocumentThreadableLoader.cpp
     loader/DocumentWriter.cpp
@@ -1182,6 +1173,7 @@ SET(WebCore_SOURCES
     loader/TextResourceDecoder.cpp
     loader/ThreadableLoader.cpp
     loader/WorkerThreadableLoader.cpp
+    loader/loader.cpp
 
     loader/appcache/ApplicationCache.cpp
     loader/appcache/ApplicationCacheGroup.cpp
@@ -1195,13 +1187,21 @@ SET(WebCore_SOURCES
     loader/archive/ArchiveResource.cpp
     loader/archive/ArchiveResourceCollection.cpp
 
+    loader/cache/CachedCSSStyleSheet.cpp
+    loader/cache/CachedFont.cpp
+    loader/cache/CachedImage.cpp
+    loader/cache/CachedResource.cpp
+    loader/cache/CachedResourceClientWalker.cpp
+    loader/cache/CachedResourceHandle.cpp
+    loader/cache/CachedResourceLoader.cpp
+    loader/cache/CachedScript.cpp
+    loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp
 
     loader/icon/IconDatabase.cpp
     loader/icon/IconLoader.cpp
     loader/icon/IconRecord.cpp
     loader/icon/PageURLRecord.cpp
-    loader/loader.cpp
 
     page/BarInfo.cpp
     page/Chrome.cpp
@@ -1484,6 +1484,7 @@ SET(WebCore_SOURCES
     rendering/TextControlInnerElements.cpp
     rendering/TransformState.cpp
     rendering/break_lines.cpp
+
     rendering/style/ContentData.cpp
     rendering/style/CounterDirectives.cpp
     rendering/style/FillLayer.cpp
