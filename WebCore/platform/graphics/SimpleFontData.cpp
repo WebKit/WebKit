@@ -184,12 +184,17 @@ SimpleFontData::~SimpleFontData()
 #endif
         platformDestroy();
 
-    if (!isCustomFont()) {
-        if (m_smallCapsFontData)
-            fontCache()->releaseFontData(m_smallCapsFontData);
+    if (!isCustomFont())
         GlyphPageTreeNode::pruneTreeFontData(this);
+    else {
+        if (m_smallCapsFontData)
+            GlyphPageTreeNode::pruneTreeCustomFontData(m_smallCapsFontData);
+
+        if (m_brokenIdeographFontData)
+            GlyphPageTreeNode::pruneTreeCustomFontData(m_brokenIdeographFontData);
     }
-    
+
+    delete m_smallCapsFontData;
     delete m_brokenIdeographFontData;
 }
 

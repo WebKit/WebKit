@@ -47,7 +47,7 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typese
     if (!addResult.second)
         return attributesDictionary.get();
 
-    bool allowLigatures = platformData().allowsLigatures() || (typesettingFeatures & Ligatures);
+    bool allowLigatures = (orientation() == Horizontal && platformData().allowsLigatures()) || (typesettingFeatures & Ligatures);
 
     static const int ligaturesNotAllowedValue = 0;
     static CFNumberRef ligaturesNotAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesNotAllowedValue);

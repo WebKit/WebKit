@@ -357,6 +357,11 @@ void SimpleFontData::platformCharWidthInit()
 
 void SimpleFontData::platformDestroy()
 {
+    if (m_smallCapsFontData && !isCustomFont()) {
+        fontCache()->releaseFontData(m_smallCapsFontData);
+        m_smallCapsFontData = 0;
+    }
+
 #ifdef BUILDING_ON_TIGER
     if (m_styleGroup)
         wkReleaseStyleGroup(m_styleGroup);

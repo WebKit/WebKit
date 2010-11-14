@@ -167,7 +167,7 @@ bool FontPlatformData::roundsGlyphAdvances() const
 
 bool FontPlatformData::allowsLigatures() const
 {
-    return m_orientation == Horizontal && ![[m_font coveredCharacterSet] characterIsMember:'a'];
+    return ![[m_font coveredCharacterSet] characterIsMember:'a'];
 }
 
 CTFontRef FontPlatformData::ctFont() const

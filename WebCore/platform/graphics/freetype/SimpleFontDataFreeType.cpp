@@ -77,8 +77,6 @@ void SimpleFontData::platformCharWidthInit()
 
 void SimpleFontData::platformDestroy()
 {
-    delete m_smallCapsFontData;
-    m_smallCapsFontData = 0;
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
@@ -87,7 +85,8 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
     if (!m_smallCapsFontData)
         m_smallCapsFontData = new SimpleFontData(
             FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
-            0.70f * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()));
+            0.70f * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()),
+            isCustomFont(), false);
 
     return m_smallCapsFontData;
 }
