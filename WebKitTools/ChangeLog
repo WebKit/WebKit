@@ -1,3 +1,17 @@
+2010-11-14  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        http/tests/plugins tests print "Unhandled variable" to stderr under Qt
+        https://bugs.webkit.org/show_bug.cgi?id=33438
+
+        Stifle "Unhandled variable" warning to match what the other
+        TestNetscapePlugin does (NPP_GetValue in TestNetscapePlugIn/main.cpp
+        simply returns NPERR_GENERIC_ERROR for unhandled variables.)
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_get_value):
+
 2010-11-13  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
