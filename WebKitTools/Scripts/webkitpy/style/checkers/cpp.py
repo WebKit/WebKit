@@ -316,16 +316,19 @@ class _FunctionState(object):
         self.current_function = ''
         self.in_a_function = False
         self.lines_in_function = 0
+        self.ending_line_number = 0
 
-    def begin(self, function_name):
+    def begin(self, function_name, ending_line_number):
         """Start analyzing function body.
 
         Args:
             function_name: The name of the function being tracked.
+            ending_line_number: The line number where the function ends.
         """
         self.in_a_function = True
         self.lines_in_function = 0
         self.current_function = function_name
+        self.ending_line_number = ending_line_number
 
     def count(self):
         """Count line in current function body."""
@@ -609,8 +612,8 @@ class CleansedLines(object):
 def close_expression(clean_lines, line_number, pos):
     """If input points to ( or { or [, finds the position that closes it.
 
-    If lines[line_number][pos] points to a '(' or '{' or '[', finds the the
-    line_number/pos that correspond to the closing of the expression.
+    If clean_lines.elided[line_number][pos] points to a '(' or '{' or '[', finds
+    the line_number/pos that correspond to the closing of the expression.
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -619,8 +622,8 @@ def close_expression(clean_lines, line_number, pos):
 
     Returns:
       A tuple (line, line_number, pos) pointer *past* the closing brace, or
-      (line, len(lines), -1) if we never find a close.  Note we ignore
-      strings and comments when matching; and the line we return is the
+      ('', len(clean_lines.elided), -1) if we never find a close.  Note we
+      ignore strings and comments when matching; and the line we return is the
       'cleansed' line at line_number.
     """
 
@@ -636,8 +639,10 @@ def close_expression(clean_lines, line_number, pos):
         end_character = '}'
 
     num_open = line.count(start_character) - line.count(end_character)
-    while line_number < clean_lines.num_lines() and num_open > 0:
+    while num_open > 0:
         line_number += 1
+        if line_number >= clean_lines.num_lines():
+            return ('', len(clean_lines.elided), -1)
         line = clean_lines.elided[line_number]
         num_open += line.count(start_character) - line.count(end_character)
     # OK, now find the end_character that actually got us back to even
@@ -1149,7 +1154,6 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
 
     Uses a simplistic algorithm assuming other style guidelines
     (especially spacing) are followed.
-    Only checks unindented functions, so class members are unchecked.
     Trivial bodies are unchecked, so constructors with huge initializer lists
     may be missed.
     Blank/comment lines are not counted so as to avoid encouraging the removal
@@ -1169,8 +1173,10 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
     joined_line = ''
 
     starting_func = False
-    regexp = r'(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
-    match_result = match(regexp, line)
+    regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
+    match_result = None
+    if not function_state.in_a_function:
+        match_result = match(regexp, line)
     if match_result:
         # If the name is all caps and underscores, figure it's a macro and
         # ignore it, unless it's TEST or TEST_F.
@@ -1200,13 +1206,15 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
                         function += parameter_regexp.group(1)
                 else:
                     function += '()'
-                function_state.begin(function)
+                open_brace_index = start_line.find('{')
+                ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
+                function_state.begin(function, ending_line_number)
                 break
         else:
             # No body for the function (or evidence of a non-function) was found.
             error(line_number, 'readability/fn_size', 5,
                   'Lint failed to find start of function body.')
-    elif match(r'^\}\s*$', line):  # function end
+    elif function_state.in_a_function and function_state.ending_line_number == line_number:  # function end
         if not search(r'\bNOLINT\b', raw_line):
             function_state.check(error, line_number)
         function_state.end()

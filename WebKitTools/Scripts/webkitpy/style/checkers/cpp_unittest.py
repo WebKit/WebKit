@@ -2432,6 +2432,20 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_above_severity1(self):
         self.assert_function_length_check_above_error_level(1)
 
+    def test_function_length_check_definition_severity1_plus_indented(self):
+        error_level = 1
+        error_lines = self.trigger_lines(error_level) + 1
+        trigger_level = self.trigger_lines(self.min_confidence)
+        indent_spaces = '    '
+        self.assert_function_lengths_check(
+            re.sub(r'(?m)^(.)', indent_spaces + r'\1',
+                   'void test_indent(int x)\n' + self.function_body(error_lines)),
+            ('Small and focused functions are preferred: '
+             'test_indent() has %d non-comment lines '
+             '(error triggered by exceeding %d lines).'
+             '  [readability/fn_size] [%d]')
+            % (error_lines + 1, trigger_level, error_level))
+
     def test_function_length_check_definition_severity1_plus_blanks(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1

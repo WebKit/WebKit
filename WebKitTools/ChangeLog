@@ -1,3 +1,23 @@
+2010-11-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style function detection doesn't detect indented functions declaractions.
+        https://bugs.webkit.org/show_bug.cgi?id=49446
+
+        Indented function declarations occur inside class definitions, so
+        they are a pretty common (and worth detecting).
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+          Changed regex to allow indentation.
+          Changed the function start detection to only happen when not in a
+          function.
+          Changed function end detection to work based on matching braces
+          instead of finding a close brace at the beginning of the line.
+          Fixed close_expression to do what it says when it doesn't find
+          the close.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Indented function test.
+
 2010-11-12  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Nikolas Zimmermann.
