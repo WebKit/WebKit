@@ -65,7 +65,6 @@ LIST(APPEND WebCore_SOURCES
 IF (WTF_PLATFORM_CAIRO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
   )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/cairo/CairoUtilities.cpp
@@ -80,14 +79,39 @@ IF (WTF_PLATFORM_CAIRO)
     platform/graphics/cairo/PatternCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
-    platform/graphics/freetype/FontCacheFreeType.cpp
-    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
-    platform/graphics/freetype/FontPlatformDataFreeType.cpp
-    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-    platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
   )
+
+  IF (WTF_USE_FREETYPE)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+      "${WEBCORE_DIR}/platform/graphics/freetype"
+    )
+    LIST(APPEND WebCore_SOURCES
+      platform/graphics/freetype/FontCacheFreeType.cpp
+      platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+      platform/graphics/freetype/FontPlatformDataFreeType.cpp
+      platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
+      platform/graphics/freetype/SimpleFontDataFreeType.cpp
+    )
+  ENDIF ()
+
+  IF (WTF_USE_PANGO)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+      "${WEBCORE_DIR}/platform/graphics/pango"
+      ${Pango_INCLUDE_DIRS}
+    )
+    LIST(APPEND WebCore_SOURCES
+      platform/graphics/pango/FontCachePango.cpp
+      platform/graphics/pango/FontCustomPlatformDataPango.cpp
+      platform/graphics/pango/FontPlatformDataPango.cpp
+      platform/graphics/pango/GlyphPageTreeNodePango.cpp
+      platform/graphics/pango/SimpleFontDataPango.cpp
+    )
+    LIST(APPEND WebCore_LIBRARIES
+      ${Pango_LIBRARIES}
+    )
+  ENDIF ()
 ENDIF ()
 
 IF (WTF_USE_SOUP)
@@ -165,7 +189,6 @@ LIST(APPEND WebCore_LIBRARIES
   ${ICU_LIBRARIES}
   ${LIBXML2_LIBRARIES}
   ${LIBXSLT_LIBRARIES}
-  ${Pango_LIBRARIES}
   ${SQLITE_LIBRARIES}
 )
 
@@ -199,7 +222,6 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${ICU_INCLUDE_DIRS}
   ${LIBXML2_INCLUDE_DIR}
   ${LIBXSLT_INCLUDE_DIRS}
-  ${Pango_INCLUDE_DIRS}
   ${SQLITE_INCLUDE_DIRS}
 )
 

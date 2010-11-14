@@ -12,9 +12,14 @@ SET(WTF_PLATFORM_EFL 1)
 SET(ALL_NETWORK_BACKENDS soup curl)
 SET(NETWORK_BACKEND "soup" CACHE STRING "choose which network backend to use (one of ${ALL_NETWORK_BACKENDS})")
 
+# -----------------------------------------------------------------------------
+# Determine which font backend will be used
+# -----------------------------------------------------------------------------
+SET(ALL_FONT_BACKENDS freetype pango)
+SET(FONT_BACKEND "freetype" CACHE STRING "choose which network backend to use (one of ${ALL_FONT_BACKENDS})")
+
 FIND_PACKAGE(Cairo 1.6 REQUIRED)
 FIND_PACKAGE(EFL REQUIRED)
-FIND_PACKAGE(Freetype 9.0 REQUIRED)
 FIND_PACKAGE(Fontconfig 2.8.0 REQUIRED)
 FIND_PACKAGE(Sqlite REQUIRED)
 FIND_PACKAGE(LibXml2 2.6 REQUIRED)
@@ -33,9 +38,6 @@ LIST(APPEND WTF_INCLUDE_DIRECTORIES ${ICU_INCLUDE_DIRS})
 
 SET(WTF_PLATFORM_CAIRO 1)
 ADD_DEFINITIONS(-DWTF_PLATFORM_CAIRO=1)
-
-SET(WTF_USE_FREETYPE 1)
-ADD_DEFINITIONS(-DUSE_FREETYPE=1)
 
 SET(JSC_EXECUTABLE_NAME jsc_efl)
 SET(WTF_LIBRARY_NAME wtf_efl)
@@ -110,6 +112,21 @@ ELSE ()
   FIND_PACKAGE(CURL REQUIRED)
   SET(WTF_USE_CURL 1)
   ADD_DEFINITIONS(-DWTF_USE_CURL=1)
+ENDIF ()
+
+IF (FONT_BACKEND STREQUAL "freetype")
+  FIND_PACKAGE(Freetype 9.0 REQUIRED)
+  SET(WTF_USE_FREETYPE 1)
+  ADD_DEFINITIONS(-DUSE_FREETYPE=1)
+ELSE ()
+  FIND_PACKAGE(Pango REQUIRED)
+  SET(WTF_USE_PANGO 1)
+  ADD_DEFINITIONS(-DUSE_PANGO=1)
+
+  IF (NOT ENABLE_GLIB_SUPPORT)
+    SET(ENABLE_GLIB_SUPPORT 1)
+    MESSAGE("Forcing Glib support")
+  ENDIF ()
 ENDIF ()
 
 IF (ENABLE_VIDEO)

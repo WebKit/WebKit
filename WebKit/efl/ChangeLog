@@ -1,3 +1,14 @@
+2010-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] add pango support
+        https://bugs.webkit.org/show_bug.cgi?id=46029
+
+        Add pango in include and libs.
+
+        * CMakeListsEfl.txt:
+
 2010-11-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Adam Barth.

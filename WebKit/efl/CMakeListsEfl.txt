@@ -11,7 +11,6 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     "${WEBKIT_DIR}/efl/WebCoreSupport"
     "${WEBCORE_DIR}/platform/efl"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
     ${Cairo_INCLUDE_DIRS}
     ${ECORE_X_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
@@ -31,6 +30,22 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     ${GStreamer-Video_INCLUDE_DIRS}
 )
 ENDIF()
+
+IF (WTF_USE_FREETYPE)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/freetype"
+  )
+ENDIF ()
+
+IF (WTF_USE_PANGO)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/pango"
+    ${Pango_INCLUDE_DIRS}
+  )
+  LIST(APPEND WebKit_LIBRARIES
+    ${Pango_LIBRARIES}
+  )
+ENDIF ()
 
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/ChromeClientEfl.cpp
@@ -59,7 +74,6 @@ LIST(APPEND WebKit_LIBRARIES
     ${EFLDEPS_LIBRARIES}
     ${Freetype_LIBRARIES}
     ${LIBXML2_LIBRARIES}
-    ${Pango_LIBRARIES}
     ${SQLITE_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${PNG_LIBRARY}
