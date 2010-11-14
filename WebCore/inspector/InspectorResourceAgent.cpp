@@ -31,6 +31,8 @@
 #include "config.h"
 #include "InspectorResourceAgent.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "Base64.h"
 #include "MemoryCache.h"
 #include "CachedResource.h"
@@ -59,8 +61,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuffer.h>
-
-#if ENABLE(INSPECTOR)
 
 namespace WebCore {
 

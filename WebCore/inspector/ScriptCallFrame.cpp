@@ -54,6 +54,7 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
         && m_lineNumber == o.m_lineNumber;
 }
 
+#if ENABLE(INSPECTOR)
 PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
 {
     RefPtr<InspectorObject> frame = InspectorObject::create();
@@ -62,5 +63,6 @@ PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
     frame->setNumber("lineNumber", m_lineNumber);
     return frame;
 }
+#endif
 
 } // namespace WebCore

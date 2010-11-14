@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ConsoleMessage.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
@@ -134,3 +136,5 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

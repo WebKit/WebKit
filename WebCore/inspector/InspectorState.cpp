@@ -29,10 +29,10 @@
 #include "config.h"
 #include "InspectorState.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "InspectorClient.h"
 #include "InspectorController.h"
-
-#if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
