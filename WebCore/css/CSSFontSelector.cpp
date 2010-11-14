@@ -224,7 +224,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             }
         }
     } else
-        traitsMask |= FontVariantNormalMask;
+        traitsMask |= FontVariantMask;
 
     // Each item in the src property's list is a single CSSFontFaceSource. Put them all into a CSSFontFace.
     RefPtr<CSSFontFace> fontFace;
@@ -316,13 +316,6 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
         if (familyName.isEmpty())
             continue;
-
-#if ENABLE(SVG_FONTS)
-        // SVG allows several <font> elements with the same font-family, differing only
-        // in ie. font-variant. Be sure to pick up the right one - in getFontData below.
-        if (foundSVGFont && (traitsMask & FontVariantSmallCapsMask))
-            familyName += "-webkit-svg-small-caps";
-#endif
 
         Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(familyName);
         if (!familyFontFaces) {
@@ -469,11 +462,6 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
 
     String family = familyName.string();
 
-#if ENABLE(SVG_FONTS)
-    if (fontDescription.smallCaps())
-        family += "-webkit-svg-small-caps";
-#endif
-
     Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(family);
     // If no face was found, then return 0 and let the OS come up with its best match for the name.
     if (!familyFontFaces || familyFontFaces->isEmpty()) {
@@ -504,6 +492,12 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
                 continue;
             if ((traitsMask & FontVariantNormalMask) && !(candidateTraitsMask & FontVariantNormalMask))
                 continue;
+#if ENABLE(SVG_FONTS)
+            // For SVG Fonts that specify that they only support the "normal" variant, we will assume they are incapable
+            // of small-caps synthesis and just ignore the font face as a candidate.
+            if (candidate->hasSVGFontFaceSource() && (traitsMask & FontVariantSmallCapsMask) && !(candidateTraitsMask & FontVariantSmallCapsMask))
+                continue;
+#endif
             candidateFontFaces.append(candidate);
         }
 

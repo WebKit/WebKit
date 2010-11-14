@@ -118,5 +118,16 @@ SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription,
     return 0;
 }
 
+#if ENABLE(SVG_FONTS)
+bool CSSFontFace::hasSVGFontFaceSource() const
+{
+    for (unsigned i = 0; i < m_sources.size(); i++) {
+        if (m_sources[i]->isSVGFontFaceSource())
+            return true;
+    }
+    return false;
+}
+#endif
+
 }
 

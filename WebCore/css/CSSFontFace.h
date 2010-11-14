@@ -79,6 +79,10 @@ public:
         UChar32 m_to;
     };
 
+#if ENABLE(SVG_FONTS)
+    bool hasSVGFontFaceSource() const;
+#endif
+
 private:
     CSSFontFace(FontTraitsMask traitsMask)
         : m_traitsMask(traitsMask)

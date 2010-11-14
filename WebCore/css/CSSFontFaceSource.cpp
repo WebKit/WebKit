@@ -189,4 +189,11 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     return fontDataRawPtr;
 }
 
+#if ENABLE(SVG_FONTS)
+bool CSSFontFaceSource::isSVGFontFaceSource() const
+{
+    return m_svgFontFaceElement || (m_font && m_font->isSVGFont());
+}
+#endif
+
 }

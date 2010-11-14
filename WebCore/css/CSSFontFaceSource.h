@@ -65,6 +65,7 @@ public:
 #if ENABLE(SVG_FONTS)
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
     void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
+    bool isSVGFontFaceSource() const;
 #endif
 
 private:
