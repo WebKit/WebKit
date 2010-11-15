@@ -5015,15 +5015,7 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 
 # meter element is not supported
 # http://bugs.webkit.org/show_bug.cgi?id=48713
-fast/dom/HTMLMeterElement/meter-element.html
-fast/dom/HTMLMeterElement/set-meter-properties.html
-fast/dom/HTMLMeterElement/meter-appearances-capacity.html
-fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
-fast/dom/HTMLMeterElement/meter-optimums.html
-fast/dom/HTMLMeterElement/meter-percent-size.html
-fast/dom/HTMLMeterElement/meter-styles.html
-fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
-fast/dom/HTMLMeterElement/meter-element-with-child-crash.html
+fast/dom/HTMLMeterElement
 fast/forms/form-attribute.html
 
 # Needs mock support, and build slave Geolocation service
