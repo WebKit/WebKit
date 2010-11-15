@@ -1224,7 +1224,7 @@ def detect_functions(clean_lines, line_number, function_state, error):
 
 
 def check_for_function_lengths(clean_lines, line_number, function_state, error):
-    """Reports for issues related to functions.
+    """Reports for long function bodies.
 
     For an overview why this is done, see:
     http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Write_Short_Functions
@@ -1249,6 +1249,32 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
             function_state.check(error, line_number)
     elif not match(r'^\s*$', line):
         function_state.count(line_number)  # Count non-blank/non-comment lines.
+
+
+def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
+    """Check for proper usage of Pass*Ptr.
+
+    Currently this is limited to detecting declarations of Pass*Ptr
+    variables inside of functions.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      function_state: Current function name and lines in body so far.
+      error: The function to call with any errors found.
+    """
+    if not function_state.in_a_function:
+        return
+
+    lines = clean_lines.lines
+    line = lines[line_number]
+    if line_number >= function_state.body_start_line_number:
+        matched_pass_ptr = match(r'^\s*Pass([A-Z][A-Za-z]*)Ptr<', line)
+        if matched_pass_ptr:
+            type_name = 'Pass%sPtr' % matched_pass_ptr.group(1)
+            error(line_number, 'readability/pass_ptr', 5,
+                  'Local variables should never be %s (see '
+                  'http://webkit.org/coding/RefPtr.html).' % type_name)
 
 
 def check_spacing(file_extension, clean_lines, line_number, error):
@@ -2933,6 +2959,7 @@ def process_line(filename, file_extension,
     check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
+    check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
@@ -3017,6 +3044,7 @@ class CppChecker(object):
         'readability/multiline_string',
         'readability/naming',
         'readability/null',
+        'readability/pass_ptr',
         'readability/streams',
         'readability/todo',
         'readability/utf8',
