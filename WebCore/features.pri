@@ -8,6 +8,10 @@ CONFIG(production) {
     DEFINES += ENABLE_XSLT=0
 }
 
+meegotouch {
+    DEFINES += WTF_USE_MEEGOTOUCH=1
+}
+
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
 

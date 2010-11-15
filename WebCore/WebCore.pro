@@ -2,10 +2,6 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
-meegotouch {
-    DEFINES += WTF_USE_MEEGOTOUCH=1
-}
-
 v8:exists($$[QT_INSTALL_PREFIX]/src/3rdparty/v8/include/v8.h) {
     message(Using V8 with QtScript)
     QT += script
