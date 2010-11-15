@@ -2,6 +2,14 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Make sure qwkpage.h and qwkpreferences.h are copied into includes/WebKit2
+
+        * UIProcess/API/qt/WKView.h:
+
+2010-11-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Use $${PYTHON} rather than "python" to execute Python scripts
 
         Fixes building with the old Python that currently ships with Scratchbox.
