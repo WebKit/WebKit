@@ -3951,24 +3951,38 @@ webcore_cppflags += -DENABLE_FILE_SYSTEM=1
 webcore_built_sources += \
 	DerivedSources/WebCore/JSDirectoryEntry.cpp \
 	DerivedSources/WebCore/JSDirectoryEntry.h \
+	DerivedSources/WebCore/JSDirectoryEntrySync.cpp \
+	DerivedSources/WebCore/JSDirectoryEntrySync.h \
 	DerivedSources/WebCore/JSDirectoryReader.cpp \
 	DerivedSources/WebCore/JSDirectoryReader.h \
+	DerivedSources/WebCore/JSDirectoryReaderSync.cpp \
+	DerivedSources/WebCore/JSDirectoryReaderSync.h \
 	DerivedSources/WebCore/JSDOMFileSystem.cpp \
 	DerivedSources/WebCore/JSDOMFileSystem.h \
+	DerivedSources/WebCore/JSDOMFileSystemSync.cpp \
+	DerivedSources/WebCore/JSDOMFileSystemSync.h \
 	DerivedSources/WebCore/JSEntriesCallback.cpp \
 	DerivedSources/WebCore/JSEntriesCallback.h \
 	DerivedSources/WebCore/JSEntry.cpp \
 	DerivedSources/WebCore/JSEntry.h \
 	DerivedSources/WebCore/JSEntryArray.cpp \
 	DerivedSources/WebCore/JSEntryArray.h \
+	DerivedSources/WebCore/JSEntryArraySync.cpp \
+	DerivedSources/WebCore/JSEntryArraySync.h \
 	DerivedSources/WebCore/JSEntryCallback.cpp \
 	DerivedSources/WebCore/JSEntryCallback.h \
+	DerivedSources/WebCore/JSEntrySync.cpp \
+	DerivedSources/WebCore/JSEntrySync.h \
 	DerivedSources/WebCore/JSErrorCallback.cpp \
 	DerivedSources/WebCore/JSErrorCallback.h \
 	DerivedSources/WebCore/JSFileCallback.cpp \
 	DerivedSources/WebCore/JSFileCallback.h \
 	DerivedSources/WebCore/JSFileEntry.cpp \
 	DerivedSources/WebCore/JSFileEntry.h \
+	DerivedSources/WebCore/JSFileEntrySync.cpp \
+	DerivedSources/WebCore/JSFileEntrySync.h \
+	DerivedSources/WebCore/JSFileException.cpp \
+	DerivedSources/WebCore/JSFileException.h \
 	DerivedSources/WebCore/JSFileSystemCallback.cpp \
 	DerivedSources/WebCore/JSFileSystemCallback.h \
 	DerivedSources/WebCore/JSFileWriter.cpp \
