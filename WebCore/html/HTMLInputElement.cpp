@@ -1689,7 +1689,7 @@ PassRefPtr<HTMLFormElement> HTMLInputElement::createTemporaryFormForIsIndex()
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const
 {
-    return (attr->name() == srcAttr);
+    return (attr->name() == srcAttr || attr->name() == formactionAttr);
 }
 
 String HTMLInputElement::defaultValue() const
