@@ -90,6 +90,14 @@ void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
+void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::preserveAspectRatioAttr)
+        invalidate();
+}
+
 void SVGFEImageElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);

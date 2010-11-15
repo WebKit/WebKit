@@ -48,6 +48,7 @@ private:
     SVGFEImageElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void notifyFinished(CachedResource*);
 
