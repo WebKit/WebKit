@@ -60,6 +60,9 @@ BrowserWindow::BrowserWindow()
 
     m_browser->setFocus(Qt::OtherFocusReason);
 
+    QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
+    connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
+
     resize(960, 640);
     show();
 }
@@ -75,6 +78,12 @@ BrowserWindow* BrowserWindow::newWindow(const QString& url)
     BrowserWindow* window = new BrowserWindow();
     window->load(url);
     return window;
+}
+
+void BrowserWindow::openLocation()
+{
+    m_addressBar->selectAll();
+    m_addressBar->setFocus();
 }
 
 void BrowserWindow::changeLocation()

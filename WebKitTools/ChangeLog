@@ -1,3 +1,17 @@
+2010-11-15  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Add Ctrl+L shortcut to Qt Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=49544
+
+        Add the shortcut to BrowserWindow.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::openLocation):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2010-11-14  David Levin  <levin@chromium.org>
 
         Reviewed by Daniel Bates.
