@@ -57,6 +57,7 @@ using namespace HTMLNames;
 
 RenderImage::RenderImage(Node* node)
     : RenderReplaced(node, IntSize(0, 0))
+    , m_needsToSetSizeForAltText(false)
 {
     updateAltText();
 
@@ -85,39 +86,50 @@ static const unsigned short paddingHeight = 4;
 static const int maxAltTextWidth = 1024;
 static const int maxAltTextHeight = 256;
 
+IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
+{
+    ASSERT_ARG(newImage, newImage);
+    ASSERT_ARG(newImage, newImage->image());
+
+    // imageSize() returns 0 for the error image. We need the true size of the
+    // error image, so we have to get it by grabbing image() directly.
+    return IntSize(paddingWidth + newImage->image()->width() * style()->effectiveZoom(), paddingHeight + newImage->image()->height() * style()->effectiveZoom());
+}
+
 // Sets the image height and width to fit the alt text.  Returns true if the
 // image size changed.
 bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
 {
-    int imageWidth = 0;
-    int imageHeight = 0;
-  
-    // If we'll be displaying either text or an image, add a little padding.
-    if (!m_altText.isEmpty() || newImage) {
-        imageWidth = paddingWidth;
-        imageHeight = paddingHeight;
+    IntSize imageSize;
+    if (newImage && newImage->image())
+        imageSize = imageSizeForError(newImage);
+    else if (!m_altText.isEmpty() || newImage) {
+        // If we'll be displaying either text or an image, add a little padding.
+        imageSize = IntSize(paddingWidth, paddingHeight);
     }
-  
-    if (newImage && newImage->image()) {
-        // imageSize() returns 0 for the error image.  We need the true size of the
-        // error image, so we have to get it by grabbing image() directly.
-        imageWidth += newImage->image()->width() * style()->effectiveZoom();
-        imageHeight += newImage->image()->height() * style()->effectiveZoom();
-    }
-  
+
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const Font& font = style()->font();
-        imageWidth = max(imageWidth, min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth));
-        imageHeight = max(imageHeight, min(font.height(), maxAltTextHeight));
+        IntSize textSize(min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth), min(font.height(), maxAltTextHeight));
+        imageSize = imageSize.expandedTo(textSize);
     }
-  
-    IntSize imageSize = IntSize(imageWidth, imageHeight);
+
     if (imageSize == intrinsicSize())
         return false;
 
     setIntrinsicSize(imageSize);
     return true;
+}
+
+void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderReplaced::styleDidChange(diff, oldStyle);
+    if (m_needsToSetSizeForAltText) {
+        if (!m_altText.isEmpty() && setImageSizeForAltText(m_imageResource->cachedImage()))
+            imageDimensionsChanged(true /* imageSizeChanged */);
+        m_needsToSetSizeForAltText = false;
+    }
 }
 
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
@@ -137,12 +149,29 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     bool imageSizeChanged = false;
 
     // Set image dimensions, taking into account the size of the alt text.
-    if (m_imageResource->errorOccurred())
-        imageSizeChanged = setImageSizeForAltText(m_imageResource->cachedImage());
+    if (m_imageResource->errorOccurred()) {
+        if (!m_altText.isEmpty()) {
+            ASSERT(node());
+            if (node()) {
+                m_needsToSetSizeForAltText = true;
+                node()->setNeedsStyleRecalc(SyntheticStyleChange);
+            }
+            return;
+        }
+        IntSize errorImageSize = imageSizeForError(m_imageResource->cachedImage());
+        if (errorImageSize != intrinsicSize()) {
+            setIntrinsicSize(errorImageSize);
+            imageSizeChanged = true;
+        }
+    }
 
+    imageDimensionsChanged(imageSizeChanged, rect);
+}
+
+void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* rect)
+{
     bool shouldRepaint = true;
 
-    // Image dimensions have been changed, see what needs to be done
     if (m_imageResource->imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
         if (!m_imageResource->errorOccurred())
             setIntrinsicSize(m_imageResource->imageSize(style()->effectiveZoom()));
