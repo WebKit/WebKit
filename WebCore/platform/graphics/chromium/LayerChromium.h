@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerChromium.h"
 #include "PlatformString.h"
+#include "RenderSurfaceChromium.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -139,10 +140,7 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    void setDrawTransform(const TransformationMatrix& transform) { m_drawTransform = transform; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-
-    void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
     float drawOpacity() const { return m_drawOpacity; }
 
     bool preserves3D() { return m_owner && m_owner->preserves3D(); }
@@ -165,8 +163,7 @@ public:
 
     void drawDebugBorder();
 
-    // Draws the layer without a texture. This is used for stencil operations.
-    void drawAsMask();
+    RenderSurfaceChromium* createRenderSurface();
 
     // Stores values that are shared between instances of this class that are
     // associated with the same LayerRendererChromium (and hence the same GL
@@ -198,6 +195,8 @@ public:
 
     static void prepareForDraw(const SharedValues*);
 
+    LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
+
 protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);
@@ -205,10 +204,12 @@ protected:
     // This is called to clean up resources being held in the same context as
     // layerRendererContext(). Subclasses should override this method if they
     // hold context-dependent resources such as textures.
-    virtual void cleanupResources() { }
+    virtual void cleanupResources();
 
-    LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
     GraphicsContext3D* layerRendererContext() const;
+
+    // Returns true if any of the layer's descendants has content to draw.
+    bool descendantsDrawContent();
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
@@ -221,6 +222,12 @@ protected:
     IntSize m_bounds;
     FloatRect m_dirtyRect;
     bool m_contentsDirty;
+
+    // Render surface this layer draws into. This is a surface that can belong
+    // either to this layer (if m_targetRenderSurface == m_renderSurface) or
+    // to an ancestor of this layer. The target render surface determines the
+    // coordinate system the layer's transforms are relative to.
+    RenderSurfaceChromium* m_targetRenderSurface;
 
     // All layer shaders share the same attribute locations for the vertex positions
     // and texture coordinates. This allows switching shaders without rebinding attribute
@@ -244,6 +251,8 @@ private:
     // This should only be called from removeFromSuperlayer.
     void removeSublayer(LayerChromium*);
 
+    bool descendantsDrawContentRecursive();
+
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
 
@@ -266,6 +275,10 @@ private:
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
 
+    // The global depth value of the center of the layer. This value is used
+    // to sort layers from back to front.
+    float m_drawDepth;
+
     // Points to the layer renderer that updates and draws this layer.
     RefPtr<LayerRendererChromium> m_layerRenderer;
 
@@ -273,6 +286,18 @@ private:
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_drawTransform;
+
+    // The scissor rectangle that should be used when this layer is drawn.
+    // Inherited by the parent layer and further restricted if this layer masks
+    // to bounds.
+    IntRect m_scissorRect;
+
+    // Render surface associated with this layer. The layer and its descendants
+    // will render to this surface.
+    OwnPtr<RenderSurfaceChromium> m_renderSurface;
+
+    // Hierarchical bounding rect containing the layer and its descendants.
+    IntRect m_drawableContentRect;
 
     String m_name;
 };

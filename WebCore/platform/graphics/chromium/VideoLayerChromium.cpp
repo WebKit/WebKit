@@ -188,6 +188,7 @@ VideoLayerChromium::~VideoLayerChromium()
 
 void VideoLayerChromium::cleanupResources()
 {
+    LayerChromium::cleanupResources();
     releaseCurrentFrame();
     if (!layerRenderer())
         return;

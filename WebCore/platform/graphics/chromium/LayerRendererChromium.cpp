@@ -48,29 +48,38 @@
 
 namespace WebCore {
 
-static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top, float nearZ, float farZ)
+static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
 {
     float deltaX = right - left;
     float deltaY = top - bottom;
-    float deltaZ = farZ - nearZ;
     TransformationMatrix ortho;
-    if (!deltaX || !deltaY || !deltaZ)
+    if (!deltaX || !deltaY)
         return ortho;
     ortho.setM11(2.0f / deltaX);
     ortho.setM41(-(right + left) / deltaX);
     ortho.setM22(2.0f / deltaY);
     ortho.setM42(-(top + bottom) / deltaY);
-    ortho.setM33(-2.0f / deltaZ);
-    ortho.setM43(-(nearZ + farZ) / deltaZ);
+
+    // Z component of vertices is always set to zero as we don't use the depth buffer
+    // while drawing.
+    ortho.setM33(0);
+
     return ortho;
 }
 
-static inline bool compareLayerZ(const LayerChromium* a, const LayerChromium* b)
+// Returns true if the matrix has no rotation, skew or perspective components to it.
+static bool isScaleOrTranslation(const TransformationMatrix& m)
 {
-    const TransformationMatrix& transformA = a->drawTransform();
-    const TransformationMatrix& transformB = b->drawTransform();
+    return !m.m12() && !m.m13() && !m.m14()
+           && !m.m21() && !m.m23() && !m.m24()
+           && !m.m31() && !m.m32() && !m.m43()
+           && m.m44();
 
-    return transformA.m43() < transformB.m43();
+}
+
+bool LayerRendererChromium::compareLayerZ(const LayerChromium* a, const LayerChromium* b)
+{
+    return a->m_drawDepth < b->m_drawDepth;
 }
 
 PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context)
@@ -89,11 +98,14 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     : m_rootLayerTextureId(0)
     , m_rootLayerTextureWidth(0)
     , m_rootLayerTextureHeight(0)
-    , m_scrollShaderProgram(0)
+    , m_textureLayerShaderProgram(0)
     , m_rootLayer(0)
     , m_scrollPosition(IntPoint(-1, -1))
     , m_currentShader(0)
+    , m_currentRenderSurface(0)
+    , m_offscreenFramebufferId(0)
     , m_context(context)
+    , m_defaultRenderSurface(0)
 {
     m_hardwareCompositing = initializeSharedObjects();
 }
@@ -181,11 +193,14 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     int visibleRectWidth = visibleRect.width();
     int visibleRectHeight = visibleRect.height();
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
-        m_rootLayerTextureWidth = visibleRect.width();
-        m_rootLayerTextureHeight = visibleRect.height();
+        m_rootLayerTextureWidth = visibleRectWidth;
+        m_rootLayerTextureHeight = visibleRectHeight;
 
-        m_projectionMatrix = orthoMatrix(0, visibleRectWidth, visibleRectHeight, 0, -1000, 1000);
         GLC(m_context, m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0));
+
+        // Reset the current render surface to force an update of the viewport and
+        // projection matrix next time useRenderSurface is called.
+        m_currentRenderSurface = 0;
 
         // The root layer texture was just resized so its contents are not
         // useful for scrolling.
@@ -201,8 +216,7 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     // FIXME: These calls can be made once, when the compositor context is initialized.
     GLC(m_context, m_context->disable(GraphicsContext3D::DEPTH_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::CULL_FACE));
-    GLC(m_context, m_context->depthFunc(GraphicsContext3D::LEQUAL));
-    GLC(m_context, m_context->clearStencil(0));
+
     // Blending disabled by default. Root layer alpha channel on Windows is incorrect when Skia uses ClearType. 
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND)); 
 
@@ -230,11 +244,11 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
             0.5 * visibleRect.height() + scrollDelta.y(), 0);
         scrolledLayerMatrix.scale3d(1, -1, 1);
 
-        useShader(m_scrollShaderProgram);
-        GLC(m_context, m_context->uniform1i(m_scrollShaderSamplerLocation, 0));
+        useShader(m_textureLayerShaderProgram);
+        GLC(m_context, m_context->uniform1i(m_textureLayerShaderSamplerLocation, 0));
         LayerChromium::drawTexturedQuad(m_context.get(), m_projectionMatrix, scrolledLayerMatrix,
                                         visibleRect.width(), visibleRect.height(), 1,
-                                        m_scrollShaderMatrixLocation, -1);
+                                        m_textureLayerShaderMatrixLocation, m_textureLayerShaderAlphaLocation);
 
         GLC(m_context, m_context->copyTexSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, 0, 0, contentRect.width(), contentRect.height()));
     }
@@ -275,8 +289,16 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
 {
     ASSERT(m_hardwareCompositing);
 
+    m_defaultRenderSurface = m_rootLayer->m_renderSurface.get();
+    if (!m_defaultRenderSurface)
+        m_defaultRenderSurface = m_rootLayer->createRenderSurface();
+    m_defaultRenderSurface->m_contentRect = IntRect(0, 0, m_rootLayerTextureWidth, m_rootLayerTextureHeight);
+
+    useRenderSurface(m_defaultRenderSurface);
+
+    // Clear to blue to make it easier to spot unrendered regions.
     m_context->clearColor(0, 0, 1, 1);
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
+    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
     GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_rootLayerTextureId));
 
@@ -295,46 +317,54 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
                                     contentLayerValues->shaderMatrixLocation(), contentLayerValues->shaderAlphaLocation());
     GLC(m_context, m_context->colorMask(true, true, true, true));
 
-    // If culling is enabled then we will cull the backface.
-    GLC(m_context, m_context->cullFace(GraphicsContext3D::BACK));
-    // The orthographic projection is setup such that Y starts at zero and
-    // increases going down the page so we need to adjust the winding order of
-    // front facing triangles.
-    GLC(m_context, m_context->frontFace(GraphicsContext3D::CW));
+    // Set the root visible/content rects --- used by subsequent drawLayers calls.
+    m_rootVisibleRect = visibleRect;
+    m_rootContentRect = contentRect;
+
+    // Scissor out the scrollbars to avoid rendering on top of them.
+    IntRect rootScissorRect(contentRect);
+    // The scissorRect should not include the scroll offset.
+    rootScissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
+    m_rootLayer->m_scissorRect = rootScissorRect;
+
+    Vector<LayerChromium*> renderSurfaceLayerList;
+    renderSurfaceLayerList.append(m_rootLayer.get());
+
+    TransformationMatrix identityMatrix;
+    m_defaultRenderSurface->m_layerList.clear();
+    updateLayersRecursive(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
     // The shader used to render layers returns pre-multiplied alpha colors
     // so we need to send the blending mode appropriately.
     GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
     GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-
-    // Set the root visible/content rects --- used by subsequent drawLayers calls.
-    m_rootVisibleRect = visibleRect;
-    m_rootContentRect = contentRect;
-
-    // Traverse the layer tree and update the layer transforms.
-    float opacity = 1;
-    const Vector<RefPtr<LayerChromium> >& sublayers = m_rootLayer->getSublayers();
-    size_t i;
-    TransformationMatrix identityMatrix;
-    for (i = 0; i < sublayers.size(); i++)
-        updateLayersRecursive(sublayers[i].get(), identityMatrix, opacity);
-
-    // Enable scissoring to avoid rendering composited layers over the scrollbars.
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
-    IntRect scissorRect(contentRect);
 
-    // The scissorRect should not include the scroll offset.
-    scissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
-    scissorToRect(scissorRect);
+    // Update the contents of the render surfaces. We traverse the array from
+    // back to front to guarantee that nested render surfaces get rendered in the
+    // correct order.
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
+        ASSERT(renderSurfaceLayer->m_renderSurface);
 
-    // Clear the stencil buffer to 0.
-    GLC(m_context, m_context->clear(GraphicsContext3D::STENCIL_BUFFER_BIT));
-    // Disable writes to the stencil buffer.
-    GLC(m_context, m_context->stencilMask(0));
+        // Render surfaces whose drawable area has zero width or height
+        // will have no layers associated with them and should be skipped.
+        if (!renderSurfaceLayer->m_renderSurface->m_layerList.size())
+            continue;
 
-    // Traverse the layer tree one more time to draw the layers.
-    for (size_t i = 0; i < sublayers.size(); i++)
-        drawLayersRecursive(sublayers[i].get());
+        useRenderSurface(renderSurfaceLayer->m_renderSurface.get());
+        if (renderSurfaceLayer != m_rootLayer) {
+            GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+            GLC(m_context, m_context->clearColor(0, 0, 0, 0));
+            GLC(m_context, m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
+            GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+        }
+
+        Vector<LayerChromium*>& layerList = renderSurfaceLayer->m_renderSurface->m_layerList;
+        ASSERT(layerList.size());
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
+            drawLayer(layerList[layerIndex], renderSurfaceLayer->m_renderSurface.get());
+    }
 
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
@@ -408,10 +438,12 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
     return mappedRect.intersects(FloatRect(-1, -1, 2, 2));
 }
 
-// Recursively walks the layer tree starting at the given node and updates the 
-// transform and opacity values.
-void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity)
+// Recursively walks the layer tree starting at the given node and computes all the
+// necessary transformations, scissor rectangles, render surfaces, etc.
+void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<LayerChromium*>& renderSurfaceLayerList, Vector<LayerChromium*>& layerList)
 {
+    layer->setLayerRenderer(this);
+
     // Compute the new matrix transformation that will be applied to this layer and
     // all its sublayers. It's important to remember that the layer's position
     // is the position of the layer's anchor point. Also, the coordinate system used
@@ -438,182 +470,254 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     float centerOffsetX = (0.5 - anchorPoint.x()) * bounds.width();
     float centerOffsetY = (0.5 - anchorPoint.y()) * bounds.height();
 
-    // M = M[p]
-    TransformationMatrix localMatrix = parentMatrix;
-    // M = M[p] * Tr[l]
-    localMatrix.translate3d(position.x(), position.y(), layer->anchorPointZ());
-    // M = M[p] * Tr[l] * M[l]
-    localMatrix.multLeft(layer->transform());
-    // M = M[p] * Tr[l] * M[l] * Tr[c]
-    localMatrix.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
+    TransformationMatrix layerLocalTransform;
+    // LT = Tr[l]
+    layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
+    // LT = Tr[l] * M[l]
+    layerLocalTransform.multLeft(layer->transform());
+    // LT = Tr[l] * M[l] * Tr[c]
+    layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
-    // Calculate the layer's opacity.
-    opacity *= layer->opacity();
+    TransformationMatrix combinedTransform = parentMatrix;
+    combinedTransform = combinedTransform.multLeft(layerLocalTransform);
 
-    layer->setDrawTransform(localMatrix);
-    layer->setDrawOpacity(opacity);
+    FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
+    IntRect transformedLayerRect;
+
+    // The layer and its descendants render on a new RenderSurface if any of
+    // these conditions hold:
+    // 1. The layer clips its descendants and its transform is not a simple translation.
+    // 2. If the layer has opacity != 1 and does not have a preserves-3d transform style.
+    // If a layer preserves-3d then we don't create a RenderSurface for it to avoid flattening
+    // out its children. The opacity value of the children layers is multiplied by the opacity
+    // of their parent.
+    bool useSurfaceForClipping = layer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
+    bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
+    if ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent()) {
+        RenderSurfaceChromium* renderSurface = layer->m_renderSurface.get();
+        if (!renderSurface)
+            renderSurface = layer->createRenderSurface();
+
+        // The origin of the new surface is the upper left corner of the layer.
+        layer->m_drawTransform = TransformationMatrix();
+        layer->m_drawTransform.translate3d(0.5 * bounds.width(), 0.5 * bounds.height(), 0);
+
+        transformedLayerRect = IntRect(0, 0, bounds.width(), bounds.height());
+
+        // Layer's opacity will be applied when drawing the render surface.
+        renderSurface->m_drawOpacity = layer->opacity();
+        if (layer->superlayer()->preserves3D())
+            renderSurface->m_drawOpacity *= layer->superlayer()->m_drawOpacity;
+        layer->m_drawOpacity = 1;
+
+        TransformationMatrix layerOriginTransform = combinedTransform;
+        layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
+        renderSurface->m_originTransform = layerOriginTransform;
+        if (layerOriginTransform.isInvertible() && layer->superlayer()) {
+            TransformationMatrix parentToLayer = layerOriginTransform.inverse();
+
+            layer->m_scissorRect = parentToLayer.mapRect(layer->superlayer()->m_scissorRect);
+        } else
+            layer->m_scissorRect = IntRect();
+
+        // The render surface scissor rect is the scissor rect that needs to
+        // be applied before drawing the render surface onto its containing
+        // surface and is therefore expressed in the superlayer's coordinate system.
+        renderSurface->m_scissorRect = layer->superlayer()->m_scissorRect;
+
+        renderSurface->m_layerList.clear();
+
+        renderSurfaceLayerList.append(layer);
+    } else {
+        // DT = M[p] * LT
+        layer->m_drawTransform = combinedTransform;
+        transformedLayerRect = enclosingIntRect(layer->m_drawTransform.mapRect(layerRect));
+
+        layer->m_drawOpacity = layer->opacity();
+
+        if (layer->superlayer()) {
+            if (layer->superlayer()->preserves3D())
+               layer->m_drawOpacity *= layer->superlayer()->m_drawOpacity;
+
+            // Layers inherit the scissor rect from their superlayer.
+            layer->m_scissorRect = layer->superlayer()->m_scissorRect;
+
+            layer->m_targetRenderSurface = layer->superlayer()->m_targetRenderSurface;
+        }
+
+        if (layer != m_rootLayer)
+            layer->m_renderSurface = 0;
+
+        if (layer->masksToBounds())
+            layer->m_scissorRect.intersect(transformedLayerRect);
+    }
+
+    if (layer->m_renderSurface)
+        layer->m_targetRenderSurface = layer->m_renderSurface.get();
+    else {
+        ASSERT(layer->superlayer());
+        layer->m_targetRenderSurface = layer->superlayer()->m_targetRenderSurface;
+    }
+
+    // m_drawableContentRect is always stored in the coordinate system of the
+    // RenderSurface the layer draws into.
+    if (layer->drawsContent())
+        layer->m_drawableContentRect = transformedLayerRect;
+    else
+        layer->m_drawableContentRect = IntRect();
+
+    TransformationMatrix sublayerMatrix = layer->m_drawTransform;
 
     // Flatten to 2D if the layer doesn't preserve 3D.
     if (!layer->preserves3D()) {
-        localMatrix.setM13(0);
-        localMatrix.setM23(0);
-        localMatrix.setM31(0);
-        localMatrix.setM32(0);
-        localMatrix.setM33(1);
-        localMatrix.setM34(0);
-        localMatrix.setM43(0);
+        sublayerMatrix.setM13(0);
+        sublayerMatrix.setM23(0);
+        sublayerMatrix.setM31(0);
+        sublayerMatrix.setM32(0);
+        sublayerMatrix.setM33(1);
+        sublayerMatrix.setM34(0);
+        sublayerMatrix.setM43(0);
     }
 
     // Apply the sublayer transform at the center of the layer.
-    localMatrix.multLeft(layer->sublayerTransform());
+    sublayerMatrix.multLeft(layer->sublayerTransform());
 
-    // The origin of the sublayers is actually the bottom left corner of the layer
-    // (or top left when looking it it from the browser's pespective) instead of the center.
-    // The matrix passed down to the sublayers is therefore:
+    // The origin of the sublayers is the top left corner of the layer, not the
+    // center. The matrix passed down to the sublayers is therefore:
     // M[s] = M * Tr[-center]
-    localMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
+    sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
+
+    Vector<LayerChromium*>& descendants = (layer->m_renderSurface ? layer->m_renderSurface->m_layerList : layerList);
+    descendants.append(layer);
+    unsigned thisLayerIndex = descendants.size() - 1;
 
     const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); i++)
-        updateLayersRecursive(sublayers[i].get(), localMatrix, opacity);
+    for (size_t i = 0; i < sublayers.size(); ++i) {
+        LayerChromium* sublayer = sublayers[i].get();
+        updateLayersRecursive(sublayer, sublayerMatrix, renderSurfaceLayerList, descendants);
 
-    layer->setLayerRenderer(this);
+        if (sublayer->m_renderSurface) {
+            RenderSurfaceChromium* sublayerRenderSurface = sublayer->m_renderSurface.get();
+            const IntRect& contentRect = sublayerRenderSurface->m_contentRect;
+            FloatRect sublayerRect(-0.5 * contentRect.width(), -0.5 * contentRect.height(),
+                                   contentRect.width(), contentRect.height());
+            layer->m_drawableContentRect.unite(enclosingIntRect(sublayerRenderSurface->m_drawTransform.mapRect(sublayerRect)));
+            descendants.append(sublayer);
+        } else
+            layer->m_drawableContentRect.unite(sublayer->m_drawableContentRect);
+    }
+
+    if (layer->masksToBounds())
+        layer->m_drawableContentRect.intersect(transformedLayerRect);
+
+    if (layer->m_renderSurface && layer != m_rootLayer) {
+        RenderSurfaceChromium* renderSurface = layer->m_renderSurface.get();
+        renderSurface->m_contentRect = layer->m_drawableContentRect;
+        FloatPoint surfaceCenter = renderSurface->contentRectCenter();
+
+        // Restrict the RenderSurface size to the portion that's visible.
+        FloatSize centerOffsetDueToClipping;
+        renderSurface->m_contentRect.intersect(layer->m_scissorRect);
+        FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
+        centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
+
+        // The RenderSurface backing texture cannot exceed the maximum supported
+        // texture size.
+        renderSurface->m_contentRect.setWidth(std::min(renderSurface->m_contentRect.width(), m_maxTextureSize));
+        renderSurface->m_contentRect.setHeight(std::min(renderSurface->m_contentRect.height(), m_maxTextureSize));
+
+        if (renderSurface->m_contentRect.isEmpty())
+            renderSurface->m_layerList.clear();
+
+        // Since the layer starts a new render surface we need to adjust its
+        // scissor rect to be expressed in the new surface's coordinate system.
+        layer->m_scissorRect = layer->m_drawableContentRect;
+
+        // Adjust the origin of the transform to be the center of the render surface.
+        renderSurface->m_drawTransform = renderSurface->m_originTransform;
+        renderSurface->m_drawTransform.translate3d(surfaceCenter.x() + centerOffsetDueToClipping.width(), surfaceCenter.y() + centerOffsetDueToClipping.height(), 0);
+    }
+
+    // Compute the depth value of the center of the layer which will be used when
+    // sorting the layers for the preserves-3d property.
+    TransformationMatrix& layerDrawMatrix = layer->m_renderSurface ? layer->m_renderSurface->m_drawTransform : layer->m_drawTransform;
+    if (layer->superlayer()) {
+        if (!layer->superlayer()->preserves3D())
+            layer->m_drawDepth = layer->superlayer()->m_drawDepth;
+        else
+            layer->m_drawDepth = layerDrawMatrix.m43();
+    } else
+        layer->m_drawDepth = 0;
+
+    // If preserves-3d then sort all the descendants by the Z coordinate of their
+    // center. If the preserves-3d property is also set on the superlayer then
+    // skip the sorting as the superlayer will sort all the descendants anyway.
+    if (layer->preserves3D() && (!layer->superlayer() || !layer->superlayer()->preserves3D()))
+        std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
 }
 
-// Does a quick draw of the given layer into the stencil buffer. If decrement
-// is true then it decrements the current stencil values otherwise it increments them.
-void LayerRendererChromium::drawLayerIntoStencilBuffer(LayerChromium* layer, bool decrement)
+bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurface)
 {
-    // Enable writes to the stencil buffer and increment the stencil values
-    // by one for every pixel under the current layer.
-    GLC(m_context, m_context->stencilMask(0xff));
-    GLC(m_context, m_context->stencilFunc(GraphicsContext3D::ALWAYS, 1, 0xff));
-    unsigned stencilOp = (decrement ? GraphicsContext3D::DECR : GraphicsContext3D::INCR);
-    GLC(m_context, m_context->stencilOp(stencilOp, stencilOp, stencilOp));
+    if (m_currentRenderSurface == renderSurface)
+        return true;
 
-    GLC(m_context, m_context->colorMask(false, false, false, false));
+    m_currentRenderSurface = renderSurface;
 
-    layer->drawAsMask();
+    if (renderSurface == m_defaultRenderSurface) {
+        GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+        setDrawViewportRect(renderSurface->m_contentRect, true);
+        return true;
+    }
 
-    // Disable writes to the stencil buffer.
-    GLC(m_context, m_context->stencilMask(0));
-    GLC(m_context, m_context->colorMask(true, true, true, true));
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
+
+    renderSurface->prepareContentsTexture();
+
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0,
+                                                   GraphicsContext3D::TEXTURE_2D, renderSurface->m_contentsTextureId, 0));
+
+#if !defined ( NDEBUG )
+    if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+#endif
+
+    setDrawViewportRect(renderSurface->m_contentRect, false);
+    return true;
 }
 
-// Recursively walk the layer tree and draw the layers.
-void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer)
+void LayerRendererChromium::drawLayer(LayerChromium* layer, RenderSurfaceChromium* targetSurface)
 {
-    static bool depthTestEnabledForSubtree = false;
-    static int currentStencilValue = 0;
+    if (layer->m_renderSurface && layer->m_renderSurface != targetSurface) {
+        GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, layer->m_renderSurface->m_contentsTextureId));
+        useShader(m_textureLayerShaderProgram);
+
+        setScissorToRect(layer->m_renderSurface->m_scissorRect);
+
+        IntRect contentRect = layer->m_renderSurface->m_contentRect;
+        LayerChromium::drawTexturedQuad(m_context.get(), m_projectionMatrix, layer->m_renderSurface->m_drawTransform,
+                                        contentRect.width(), contentRect.height(), layer->m_renderSurface->m_drawOpacity,
+                                        m_textureLayerShaderMatrixLocation, m_textureLayerShaderAlphaLocation);
+        return;
+    }
+
+    if (layer->m_bounds.isEmpty())
+        return;
+
+    setScissorToRect(layer->m_scissorRect);
 
     // Check if the layer falls within the visible bounds of the page.
     IntRect layerRect = layer->getDrawRect();
-    bool isLayerVisible = m_currentScissorRect.intersects(layerRect);
+    bool isLayerVisible = layer->m_scissorRect.intersects(layerRect);
+    if (!isLayerVisible)
+        return;
 
-    // Enable depth testing for this layer and all its descendants if preserves3D is set.
-    bool mustClearDepth = false;
-    if (layer->preserves3D()) {
-        if (!depthTestEnabledForSubtree) {
-            GLC(m_context, m_context->enable(GraphicsContext3D::DEPTH_TEST));
-            depthTestEnabledForSubtree = true;
-
-            // Need to clear the depth buffer when we're done rendering this subtree.
-            mustClearDepth = true;
-        }
-    }
-
-    if (isLayerVisible)
-        drawLayer(layer);
-
-    // FIXME: We should check here if the layer has descendants that draw content
-    // before we setup for clipping.
-    IntRect previousScissorRect = m_currentScissorRect;
-    bool mustResetScissorRect = false;
-    bool didStencilDraw = false;
-    if (layer->masksToBounds()) {
-        // If the layer isn't rotated then we can use scissoring otherwise we need
-        // to clip using the stencil buffer.
-        if (layer->drawTransform().isIdentityOrTranslation()) {
-            IntRect currentScissorRect = previousScissorRect;
-            currentScissorRect.intersect(layerRect);
-            if (currentScissorRect != previousScissorRect) {
-                scissorToRect(currentScissorRect);
-                mustResetScissorRect = true;
-            }
-        } else if (currentStencilValue < ((1 << m_numStencilBits) - 1)) {
-            // Clipping using the stencil buffer works as follows: When we encounter
-            // a clipping layer we increment the stencil buffer values for all the pixels
-            // the layer touches. As a result 1's will be stored in the stencil buffer for pixels under
-            // the first clipping layer found in a traversal, 2's for pixels in the intersection
-            // of two nested clipping layers, etc. When the sublayers of a clipping layer are drawn
-            // we turn on stencil testing to render only pixels that have the correct stencil
-            // value (one that matches the value of currentStencilValue). As the recursion unravels,
-            // we decrement the stencil buffer values for each clipping layer. When the entire layer tree
-            // is rendered, the stencil values should be all back to zero. An 8 bit stencil buffer
-            // will allow us up to 255 nested clipping layers which is hopefully enough.
-            if (!currentStencilValue)
-                GLC(m_context, m_context->enable(GraphicsContext3D::STENCIL_TEST));
-
-            drawLayerIntoStencilBuffer(layer, false);
-
-            currentStencilValue++;
-            didStencilDraw = true;
-        }
-    }
-    // Sublayers will render only if the value in the stencil buffer is equal to
-    // currentStencilValue.
-    if (didStencilDraw) {
-        // The sublayers will render only if the stencil test passes.
-        GLC(m_context, m_context->stencilFunc(GraphicsContext3D::EQUAL, currentStencilValue, 0xff));
-    }
-
-    // If we're using depth testing then we need to sort the children in Z to
-    // get the transparency to work properly.
-    if (depthTestEnabledForSubtree) {
-        const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-        Vector<LayerChromium*> sublayerList;
-        size_t i;
-        for (i = 0; i < sublayers.size(); i++)
-            sublayerList.append(sublayers[i].get());
-
-        // Sort by the z coordinate of the layer center so that layers further away
-        // are drawn first.
-        std::stable_sort(sublayerList.begin(), sublayerList.end(), compareLayerZ);
-
-        for (i = 0; i < sublayerList.size(); i++)
-            drawLayersRecursive(sublayerList[i]);
-    } else {
-        const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-        for (size_t i = 0; i < sublayers.size(); i++)
-            drawLayersRecursive(sublayers[i].get());
-    }
-
-    if (didStencilDraw) {
-        // Draw into the stencil buffer subtracting 1 for every pixel hit
-        // effectively removing this mask
-        drawLayerIntoStencilBuffer(layer, true);
-        currentStencilValue--;
-        if (!currentStencilValue) {
-            // Disable stencil testing.
-            GLC(m_context, m_context->disable(GraphicsContext3D::STENCIL_TEST));
-            GLC(m_context, m_context->stencilFunc(GraphicsContext3D::ALWAYS, 0, 0xff));
-        }
-    }
-
-    if (mustResetScissorRect) {
-        scissorToRect(previousScissorRect);
-    }
-
-    if (mustClearDepth) {
-        GLC(m_context, m_context->disable(GraphicsContext3D::DEPTH_TEST));
-        GLC(m_context, m_context->clear(GraphicsContext3D::DEPTH_BUFFER_BIT));
-        depthTestEnabledForSubtree = false;
-    }
-}
-
-void LayerRendererChromium::drawLayer(LayerChromium* layer)
-{
-    IntSize bounds = layer->bounds();
+    // FIXME: Need to take into account the transform of the containing
+    // RenderSurface here, otherwise single-sided layers that draw on
+    // transformed surfaces won't always be culled properly.
+    if (!layer->doubleSided() && layer->m_drawTransform.m33() < 0)
+         return;
 
     if (layer->drawsContent()) {
         // Update the contents of the layer if necessary.
@@ -622,11 +726,6 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
             layer->updateContents();
             m_context->makeContextCurrent();
         }
-
-        if (layer->doubleSided())
-            m_context->disable(GraphicsContext3D::CULL_FACE);
-        else
-            m_context->enable(GraphicsContext3D::CULL_FACE);
 
         layer->draw();
     }
@@ -637,12 +736,19 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
 
 // Sets the scissor region to the given rectangle. The coordinate system for the
 // scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::scissorToRect(const IntRect& scissorRect)
+void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
 {
-    // Compute the lower left corner of the scissor rect.
-    int bottom = std::max(m_rootVisibleRect.height() - scissorRect.bottom(), 0);
-    GLC(m_context, m_context->scissor(scissorRect.x(), bottom, scissorRect.width(), scissorRect.height()));
-    m_currentScissorRect = scissorRect;
+    // The scissor coordinates must be supplied in viewport space so we need to offset
+    // by the relative position of the top left corner of the current render surface.
+    int scissorX = scissorRect.x() - m_currentRenderSurface->m_contentRect.x();
+    // When rendering to the default render surface we're rendering upside down so the top
+    // of the GL scissor is the bottom of our layer.
+    int scissorY;
+    if (m_currentRenderSurface == m_defaultRenderSurface)
+        scissorY = m_currentRenderSurface->m_contentRect.height() - (scissorRect.bottom() - m_currentRenderSurface->m_contentRect.y());
+    else
+        scissorY = scissorRect.y() - m_currentRenderSurface->m_contentRect.y();
+    GLC(m_context, m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
 }
 
 bool LayerRendererChromium::makeContextCurrent()
@@ -659,6 +765,20 @@ bool LayerRendererChromium::checkTextureSize(const IntSize& textureSize)
     return true;
 }
 
+// Sets the coordinate range of content that ends being drawn onto the target render surface.
+// The target render surface is assumed to have an origin at 0, 0 and the width and height of
+// of the drawRect.
+void LayerRendererChromium::setDrawViewportRect(const IntRect& drawRect, bool flipY)
+{
+    if (flipY)
+        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.right(), drawRect.bottom(), drawRect.y());
+    else
+        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.right(), drawRect.y(), drawRect.bottom());
+    GLC(m_context, m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
+}
+
+
+
 void LayerRendererChromium::resizeOnscreenContent(const IntSize& size)
 {
     if (m_context)
@@ -669,10 +789,10 @@ bool LayerRendererChromium::initializeSharedObjects()
 {
     makeContextCurrent();
 
-    // Vertex and fragment shaders for rendering the scrolled root layer quad.
-    // They differ from a regular content layer shader in that they don't swizzle
-    // the colors or take an alpha value.
-    char scrollVertexShaderString[] =
+    // The following program composites layers whose contents are the results of a previous
+    // render operation and therefore doesn't perform any color swizzling. It is used
+    // in scrolling and for compositing offscreen textures.
+    char textureLayerVertexShaderString[] =
         "attribute vec4 a_position;   \n"
         "attribute vec2 a_texCoord;   \n"
         "uniform mat4 matrix;         \n"
@@ -682,27 +802,29 @@ bool LayerRendererChromium::initializeSharedObjects()
         "  gl_Position = matrix * a_position; \n"
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
-    char scrollFragmentShaderString[] =
+    char textureLayerFragmentShaderString[] =
         "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
         "uniform sampler2D s_texture;                        \n"
+        "uniform float alpha;                                \n"
         "void main()                                         \n"
         "{                                                   \n"
         "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w); \n"
+        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
         "}                                                   \n";
 
-    m_scrollShaderProgram = LayerChromium::createShaderProgram(m_context.get(), scrollVertexShaderString, scrollFragmentShaderString);
-    if (!m_scrollShaderProgram) {
+    m_textureLayerShaderProgram = LayerChromium::createShaderProgram(m_context.get(), textureLayerVertexShaderString, textureLayerFragmentShaderString);
+    if (!m_textureLayerShaderProgram) {
         LOG_ERROR("LayerRendererChromium: Failed to create scroll shader program");
         cleanupSharedObjects();
         return false;
     }
 
-    GLC(m_context, m_scrollShaderSamplerLocation = m_context->getUniformLocation(m_scrollShaderProgram, "s_texture"));
-    GLC(m_context, m_scrollShaderMatrixLocation = m_context->getUniformLocation(m_scrollShaderProgram, "matrix"));
-    if (m_scrollShaderSamplerLocation == -1 || m_scrollShaderMatrixLocation == -1) {
-        LOG_ERROR("Failed to initialize scroll shader.");
+    GLC(m_context, m_textureLayerShaderSamplerLocation = m_context->getUniformLocation(m_textureLayerShaderProgram, "s_texture"));
+    GLC(m_context, m_textureLayerShaderMatrixLocation = m_context->getUniformLocation(m_textureLayerShaderProgram, "matrix"));
+    GLC(m_context, m_textureLayerShaderAlphaLocation = m_context->getUniformLocation(m_textureLayerShaderProgram, "alpha"));
+    if (m_textureLayerShaderSamplerLocation == -1 || m_textureLayerShaderMatrixLocation == -1 || m_textureLayerShaderAlphaLocation == -1) {
+        LOG_ERROR("Failed to initialize texture layer shader.");
         cleanupSharedObjects();
         return false;
     }
@@ -723,8 +845,8 @@ bool LayerRendererChromium::initializeSharedObjects()
     // Get the max texture size supported by the system.
     GLC(m_context, m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize));
 
-    // Get the number of bits available in the stencil buffer.
-    GLC(m_context, m_context->getIntegerv(GraphicsContext3D::STENCIL_BITS, &m_numStencilBits));
+    // Create an FBO for doing offscreen rendering.
+    GLC(m_context, m_offscreenFramebufferId = m_context->createFramebuffer());
 
     m_layerSharedValues = adoptPtr(new LayerChromium::SharedValues(m_context.get()));
     m_contentLayerSharedValues = adoptPtr(new ContentLayerChromium::SharedValues(m_context.get()));
@@ -751,15 +873,18 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_videoLayerSharedValues.clear();
     m_pluginLayerSharedValues.clear();
 
-    if (m_scrollShaderProgram) {
-        GLC(m_context, m_context->deleteProgram(m_scrollShaderProgram));
-        m_scrollShaderProgram = 0;
+    if (m_textureLayerShaderProgram) {
+        GLC(m_context, m_context->deleteProgram(m_textureLayerShaderProgram));
+        m_textureLayerShaderProgram = 0;
     }
 
     if (m_rootLayerTextureId) {
         deleteLayerTexture(m_rootLayerTextureId);
         m_rootLayerTextureId = 0;
     }
+
+    if (m_offscreenFramebufferId)
+        GLC(m_context, m_context->deleteFramebuffer(m_offscreenFramebufferId));
 }
 
 } // namespace WebCore

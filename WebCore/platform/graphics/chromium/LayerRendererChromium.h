@@ -39,6 +39,7 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "PluginLayerChromium.h"
+#include "RenderSurfaceChromium.h"
 #include "SkBitmap.h"
 #include "VideoLayerChromium.h"
 #include <wtf/HashMap.h>
@@ -94,8 +95,6 @@ public:
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
 
-    IntRect currentScissorRect() const { return m_currentScissorRect; }
-
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
@@ -118,20 +117,21 @@ public:
 
 private:
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
+    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<LayerChromium*>& renderSurfaceLayerList, Vector<LayerChromium*>& layerList);
 
-    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity);
-
-    void drawLayersRecursive(LayerChromium*);
-
-    void drawLayer(LayerChromium*);
+    void drawLayer(LayerChromium*, RenderSurfaceChromium*);
 
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
-    void drawLayerIntoStencilBuffer(LayerChromium*, bool decrement);
+    void setScissorToRect(const IntRect&);
 
-    void scissorToRect(const IntRect&);
+    void setDrawViewportRect(const IntRect&, bool flipY);
+
+    bool useRenderSurface(RenderSurfaceChromium*);
 
     bool makeContextCurrent();
+
+    static bool compareLayerZ(const LayerChromium*, const LayerChromium*);
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
@@ -140,10 +140,12 @@ private:
     int m_rootLayerTextureWidth;
     int m_rootLayerTextureHeight;
 
-    // Scroll shader uniform locations.
-    unsigned m_scrollShaderProgram;
-    int m_scrollShaderSamplerLocation;
-    int m_scrollShaderMatrixLocation;
+    // Shader uniform locations used by layers whose contents are the results of a
+    // previous rendering operation.
+    unsigned m_textureLayerShaderProgram;
+    int m_textureLayerShaderSamplerLocation;
+    int m_textureLayerShaderMatrixLocation;
+    int m_textureLayerShaderAlphaLocation;
 
     TransformationMatrix m_projectionMatrix;
 
@@ -152,7 +154,10 @@ private:
     IntPoint m_scrollPosition;
     bool m_hardwareCompositing;
 
-    unsigned int m_currentShader;
+    unsigned m_currentShader;
+    RenderSurfaceChromium* m_currentRenderSurface;
+
+    unsigned m_offscreenFramebufferId;
 
 #if PLATFORM(SKIA)
     OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;
@@ -168,11 +173,9 @@ private:
 
     IntRect m_rootVisibleRect;
     IntRect m_rootContentRect;
-    IntRect m_currentScissorRect;
 
+    // Maximum texture dimensions supported.
     int m_maxTextureSize;
-
-    int m_numStencilBits;
 
     // Store values that are shared between instances of each layer type
     // associated with this instance of the compositor. Since there can be
@@ -185,6 +188,8 @@ private:
     OwnPtr<PluginLayerChromium::SharedValues> m_pluginLayerSharedValues;
 
     RefPtr<GraphicsContext3D> m_context;
+
+    RenderSurfaceChromium* m_defaultRenderSurface;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

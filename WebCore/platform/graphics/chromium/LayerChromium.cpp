@@ -143,6 +143,7 @@ PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     : m_owner(owner)
     , m_contentsDirty(false)
+    , m_targetRenderSurface(0)
     , m_superlayer(0)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
@@ -158,7 +159,9 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_opaque(true)
     , m_geometryFlipped(false)
     , m_needsDisplayOnBoundsChange(false)
+    , m_drawDepth(0)
     , m_layerRenderer(0)
+    , m_renderSurface(0)
 {
 }
 
@@ -172,6 +175,12 @@ LayerChromium::~LayerChromium()
     removeAllSublayers();
 }
 
+void LayerChromium::cleanupResources()
+{
+    if (m_renderSurface)
+        m_renderSurface->cleanupResources();
+}
+
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
 {
     // If we're changing layer renderers then we need to free up any resources
@@ -182,6 +191,12 @@ void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
     }
 
     m_layerRenderer = renderer;
+}
+
+RenderSurfaceChromium* LayerChromium::createRenderSurface()
+{
+    m_renderSurface = new RenderSurfaceChromium(this);
+    return m_renderSurface.get();
 }
 
 unsigned LayerChromium::createShaderProgram(GraphicsContext3D* context, const char* vertexShaderSource, const char* fragmentShaderSource)
@@ -463,24 +478,27 @@ const IntRect LayerChromium::getDrawRect() const
     return mappedRect;
 }
 
-// Draws the layer with a single colored shader. This method is used to do
-// quick draws into the stencil buffer.
-void LayerChromium::drawAsMask()
+// Returns true if any of the layer's descendants has drawable content.
+bool LayerChromium::descendantsDrawContent()
 {
-    ASSERT(layerRenderer());
-    const SharedValues* sv = layerRenderer()->layerSharedValues();
-    ASSERT(sv && sv->initialized());
-    layerRenderer()->useShader(sv->borderShaderProgram());
+    const Vector<RefPtr<LayerChromium> >& sublayers = getSublayers();
+    for (size_t i = 0; i < sublayers.size(); ++i)
+        if (sublayers[i]->descendantsDrawContentRecursive())
+            return true;
+    return false;
+}
 
-    // We reuse the border shader here as all we need a single colored shader pass.
-    // The color specified here is only for debug puproses as typically when we call this
-    // method, writes to the color channels are disabled.
-    GraphicsContext3D* context = layerRendererContext();
-    GLC(context, context->uniform4f(sv->borderShaderColorLocation(), 0, 1 , 0, 0.7));
+// Returns true if either this layer or one of its descendants has drawable content.
+bool LayerChromium::descendantsDrawContentRecursive()
+{
+    if (drawsContent())
+        return true;
 
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                     bounds().width(), bounds().height(), drawOpacity(),
-                     sv->borderShaderMatrixLocation(), -1);
+    const Vector<RefPtr<LayerChromium> >& sublayers = getSublayers();
+    for (size_t i = 0; i < sublayers.size(); ++i)
+        if (sublayers[i]->descendantsDrawContentRecursive())
+            return true;
+    return false;
 }
 
 // static
