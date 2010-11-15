@@ -109,13 +109,13 @@ SCRIPTS = \
     $$PWD/Scripts/webkit2/__init__.py \
     $$PWD/Scripts/webkit2/messages.py
 
-message_header_generator.commands = python $${SRC_ROOT_DIR}WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
+message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_header_generator.input = MESSAGE_RECEIVERS
 message_header_generator.depends = $$SCRIPTS
 message_header_generator.output_function = message_header_generator_output
 addExtraCompiler(message_header_generator)
 
-message_receiver_generator.commands = python $${SRC_ROOT_DIR}WebKit2/Scripts/generate-message-receiver.py  ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
+message_receiver_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-message-receiver.py  ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_receiver_generator.input = MESSAGE_RECEIVERS
 message_receiver_generator.depends = $$SCRIPTS
 message_receiver_generator.output_function = message_receiver_generator_output

@@ -1,3 +1,13 @@
+2010-11-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Use $${PYTHON} rather than "python" to execute Python scripts
+
+        Fixes building with the old Python that currently ships with Scratchbox.
+
+        * DerivedSources.pro:
+
 2010-11-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by a better attempt at a Windows build fix.
