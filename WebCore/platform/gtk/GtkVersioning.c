@@ -225,7 +225,7 @@ gdk_pixbuf_get_from_surface(cairo_surface_t * surface,
     GdkPixbuf * dest;
 
     /* General sanity checks */
-    g_return_val_if_fail(!surface, NULL);
+    g_return_val_if_fail(surface, NULL);
     g_return_val_if_fail(srcX >= 0 && srcY >= 0, NULL);
     g_return_val_if_fail(width > 0 && height > 0, NULL);
 
