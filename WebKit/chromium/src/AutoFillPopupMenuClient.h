@@ -78,7 +78,7 @@ public:
     virtual WTF::String itemIcon(unsigned listIndex) const;
     virtual WTF::String itemToolTip(unsigned lastIndex) const { return WTF::String(); }
     virtual WTF::String itemAccessibilityText(unsigned lastIndex) const { return WTF::String(); }
-    virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
+    virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle menuStyle() const;
     virtual int clientInsetLeft() const { return 0; }
@@ -130,6 +130,8 @@ private:
     int getSelectedIndex() const { return m_selectedIndex; }
     void setSelectedIndex(int index) { m_selectedIndex = index; }
 
+    bool itemIsWarning(unsigned listIndex) const;
+
     // The names, labels and icons that make up the contents of the menu items.
     Vector<WTF::String> m_names;
     Vector<WTF::String> m_labels;
@@ -143,7 +145,8 @@ private:
     int m_selectedIndex;
 
     RefPtr<WebCore::HTMLInputElement> m_textField;
-    OwnPtr<WebCore::PopupMenuStyle> m_style;
+    OwnPtr<WebCore::PopupMenuStyle> m_regularStyle;
+    OwnPtr<WebCore::PopupMenuStyle> m_warningStyle;
 
     // DEPRECATED: Will be removed once Autocomplete and AutoFill merge is
     // complete.

@@ -1,3 +1,24 @@
+2010-11-15  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add capability for displaying warnings to autofill popup
+        Warnings are displayed in dark gray italic.
+        https://bugs.webkit.org/show_bug.cgi?id=49291
+        http://code.google.com/p/chromium/issues/detail?id=58509
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::canRemoveSuggestionAtIndex):
+          Updated logic -- can only remove Autocomplete suggestions, which have unique ID 0.
+        (WebKit::AutoFillPopupMenuClient::itemIsEnabled): False for warnings.
+        (WebKit::AutoFillPopupMenuClient::itemStyle): Dark gray italic for warnings.
+        (WebKit::AutoFillPopupMenuClient::menuStyle): Variable name changed.
+        (WebKit::AutoFillPopupMenuClient::itemIsWarning): True for unique ID < 0.
+        (WebKit::AutoFillPopupMenuClient::initialize): Updated cached styles (see above).
+        * src/AutoFillPopupMenuClient.h: Added itemIsEnabled(), variable to cache warning style.
+        * src/WebViewImpl.cpp: Minor cleanup.
+        (WebKit::WebViewImpl::applyAutoFillSuggestions): 
+
 2010-11-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

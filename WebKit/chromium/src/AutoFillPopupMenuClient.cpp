@@ -115,10 +115,10 @@ void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 
 bool AutoFillPopupMenuClient::canRemoveSuggestionAtIndex(unsigned listIndex)
 {
-    // Only allow deletion of items before the separator and those that don't
-    // have a label (autocomplete).
+    // Only allow deletion of items before the separator that have unique id 0
+    // (i.e. are autocomplete rather than autofill items).
     int index = convertListIndexToInternalIndex(listIndex);
-    return m_labels[index].isEmpty() && (m_separatorIndex == -1 || listIndex < static_cast<unsigned>(m_separatorIndex));
+    return !m_uniqueIDs[index] && (m_separatorIndex == -1 || listIndex < static_cast<unsigned>(m_separatorIndex));
 }
 
 void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
@@ -194,14 +194,19 @@ String AutoFillPopupMenuClient::itemIcon(unsigned listIndex) const
     return getIcon(listIndex);
 }
 
+bool AutoFillPopupMenuClient::itemIsEnabled(unsigned listIndex) const
+{
+    return !itemIsWarning(listIndex);
+}
+
 PopupMenuStyle AutoFillPopupMenuClient::itemStyle(unsigned listIndex) const
 {
-    return *m_style;
+    return itemIsWarning(listIndex) ? *m_warningStyle : *m_regularStyle;
 }
 
 PopupMenuStyle AutoFillPopupMenuClient::menuStyle() const
 {
-    return *m_style;
+    return *m_regularStyle;
 }
 
 int AutoFillPopupMenuClient::clientPaddingLeft() const
@@ -237,6 +242,16 @@ void AutoFillPopupMenuClient::popupDidHide()
 bool AutoFillPopupMenuClient::itemIsSeparator(unsigned listIndex) const
 {
     return (m_separatorIndex != -1 && static_cast<unsigned>(m_separatorIndex) == listIndex);
+}
+
+bool AutoFillPopupMenuClient::itemIsWarning(unsigned listIndex) const
+{
+    int index = convertListIndexToInternalIndex(listIndex);
+    if (index == -1)
+        return false;
+
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_uniqueIDs.size());
+    return m_uniqueIDs[index] < 0;
 }
 
 void AutoFillPopupMenuClient::setTextFromItem(unsigned listIndex)
@@ -282,19 +297,31 @@ void AutoFillPopupMenuClient::initialize(
     // AutoFillPopupMenuClient.
     setSuggestions(names, labels, icons, uniqueIDs, separatorIndex);
 
-    FontDescription fontDescription;
+    FontDescription regularFontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
-                                            fontDescription);
+                                            regularFontDescription);
     RenderStyle* style = m_textField->computedStyle();
-    fontDescription.setComputedSize(style->fontDescription().computedSize());
+    regularFontDescription.setComputedSize(style->fontDescription().computedSize());
 
-    Font font(fontDescription, 0, 0);
-    font.update(textField->document()->styleSelector()->fontSelector());
+    Font regularFont(regularFontDescription, 0, 0);
+    regularFont.update(textField->document()->styleSelector()->fontSelector());
     // The direction of text in popup menu is set the same as the direction of
     // the input element: textField.
-    m_style.set(new PopupMenuStyle(Color::black, Color::white, font, true,
-                                   false, Length(WebCore::Fixed),
-                                   textField->renderer()->style()->direction()));
+    m_regularStyle.set(new PopupMenuStyle(Color::black, Color::white, regularFont,
+                                          true, false, Length(WebCore::Fixed),
+                                          textField->renderer()->style()->direction()));
+
+    FontDescription warningFontDescription = regularFont.fontDescription();
+    warningFontDescription.setItalic(true);
+    Font warningFont(warningFontDescription, regularFont.letterSpacing(), regularFont.wordSpacing());
+    warningFont.update(regularFont.fontSelector());
+    m_warningStyle.set(new PopupMenuStyle(Color::darkGray,
+                                          m_regularStyle->backgroundColor(),
+                                          warningFont,
+                                          m_regularStyle->isVisible(),
+                                          m_regularStyle->isDisplayNone(),
+                                          m_regularStyle->textIndent(),
+                                          m_regularStyle->textDirection()));
 }
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,

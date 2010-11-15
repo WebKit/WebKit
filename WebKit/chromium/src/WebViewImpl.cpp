@@ -178,7 +178,7 @@ static const PopupContainerSettings autoFillPopupSettings = {
     false, // acceptOnAbandon
     true,  // loopSelectionNavigation
     false, // restrictWidthOfListBox (For security reasons show the entire entry
-           // so the user doesn't enter information it did not intend to.)
+           // so the user doesn't enter information he did not intend to.)
     // For suggestions, we use the direction of the input field as the direction
     // of the popup items. The main reason is to keep the display of items in
     // drop-down the same as the items in the input field.
@@ -1943,12 +1943,9 @@ void WebViewImpl::applyAutoFillSuggestions(
     }
 
     if (m_autoFillPopupShowing) {
-        m_autoFillPopupClient->setSuggestions(
-            names, labels, icons, uniqueIDs, separatorIndex);
         refreshAutoFillPopup();
     } else {
-        m_autoFillPopup->show(focusedNode->getRect(),
-                                 focusedNode->ownerDocument()->view(), 0);
+        m_autoFillPopup->show(focusedNode->getRect(), focusedNode->ownerDocument()->view(), 0);
         m_autoFillPopupShowing = true;
     }
 

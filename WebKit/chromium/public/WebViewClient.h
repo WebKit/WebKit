@@ -309,11 +309,13 @@ public:
                                            const WebString& value) { }
 
     // Informs the browser that the user has accepted an AutoFill suggestion for
-    // a WebNode.  |name| and |label| form a key into the set of AutoFill
-    // profiles.  |index| is an index of the selected suggestion in the list of
-    // suggestions provided by the client
+    // a WebNode.  |uniqueID| is used as a key into the set of AutoFill profiles,
+    // and should never be negative.  If it is 0, then the suggestion is an
+    // Autocomplete suggestion; and |value| stores the suggested text.  |index|
+    // is an index of the selected suggestion in the list of suggestions provided
+    // by the client.
     virtual void didAcceptAutoFillSuggestion(const WebNode&,
-                                             const WebString& name,
+                                             const WebString& value,
                                              const WebString& label,
                                              int uniqueID,
                                              unsigned index) { }

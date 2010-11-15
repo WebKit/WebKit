@@ -32,18 +32,20 @@
 #define PopupMenuChromium_h
 
 #include "config.h"
-#include "PopupMenuClient.h"
 
 #include "FramelessScrollView.h"
 #include "IntRect.h"
+#include "PlatformString.h"
 #include "PopupMenu.h"
 #include "PopupMenuPrivate.h"
+#include "PopupMenuStyle.h"
 
 namespace WebCore {
 
 class ChromeClientChromium;
 class FrameView;
 class PopupListBox;
+class PopupMenuClient;
 
 // A container for the data for each menu item (e.g. represented by <option>
 // or <optgroup> in a <select> widget) and is used by PopupListBox.

@@ -49,6 +49,7 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"
 #include "PlatformWheelEvent.h"
+#include "PopupMenuClient.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
@@ -991,7 +992,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
 
 Font PopupListBox::getRowFont(int rowIndex)
 {
-    Font itemFont = m_popupClient->menuStyle().font();
+    Font itemFont = m_popupClient->itemStyle(rowIndex).font();
     if (m_popupClient->itemIsLabel(rowIndex)) {
         // Bold-ify labels (ie, an <optgroup> heading).
         FontDescription d = itemFont.fontDescription();
@@ -1069,13 +1070,16 @@ void PopupListBox::selectIndex(int index)
     if (index < 0 || index >= numItems())
         return;
 
-    if (index != m_selectedIndex && isSelectableItem(index)) {
+    bool isSelectable = isSelectableItem(index);
+    if (index != m_selectedIndex && isSelectable) {
         invalidateRow(m_selectedIndex);
         m_selectedIndex = index;
         invalidateRow(m_selectedIndex);
 
         scrollToRevealSelection();
         m_popupClient->selectionChanged(m_selectedIndex);
+    } else if (!isSelectable) {
+        clearSelection();
     }
 }
 

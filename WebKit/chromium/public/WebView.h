@@ -289,7 +289,11 @@ public:
 
     // Notifies the WebView that AutoFill suggestions are available for a node.
     // |uniqueIDs| is a vector of IDs that represent the unique ID of each
-    // AutoFill profile in the suggestions popup.
+    // AutoFill profile in the suggestions popup.  If a unique ID is 0, then the
+    // corresponding suggestion comes from Autocomplete rather than AutoFill.
+    // If a unique ID is negative, then the corresponding "suggestion" is
+    // actually a user-facing warning, e.g. explaining why AutoFill is
+    // unavailable for the current form.
     virtual void applyAutoFillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
