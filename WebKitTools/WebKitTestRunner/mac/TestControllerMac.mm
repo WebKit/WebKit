@@ -30,6 +30,10 @@
 
 namespace WTR {
 
+void TestController::notifyDone()
+{
+}
+
 void TestController::platformInitialize()
 {
 }

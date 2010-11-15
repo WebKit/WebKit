@@ -163,6 +163,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         m_gotInitialResponse = true;
         m_gotFinalMessage = true;
         m_error = true;
+        TestController::shared().notifyDone();
         return;
     }
 
@@ -171,6 +172,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKStringRef messageBodyString = static_cast<WKStringRef>(messageBody);
         if (WKStringIsEqualToUTF8CString(messageBodyString, "BeginTest")) {
             m_gotInitialResponse = true;
+            TestController::shared().notifyDone();
             return;
         }
 
@@ -184,6 +186,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         dump(toSTD(messageBodyString).c_str());
 
         m_gotFinalMessage = true;
+        TestController::shared().notifyDone();
         return;
     }
 
