@@ -17,6 +17,9 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
+// Similar to the above, input-search related failures
+BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
+
 // Inspector-related failures
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
@@ -53,8 +56,10 @@ BUG59665 MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-controls-rendering.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-delay-load-event.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-loop.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-load-readyState.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-pause-immediately.html = CRASH PASS
 BUG59665 MAC : media/context-menu-actions.html = CRASH TIMEOUT PASS
 BUG59665 MAC : media/video-timeupdate-during-playback.html = CRASH TIMEOUT PASS
 
@@ -101,13 +106,14 @@ BUG_DRT LINUX : fast/forms/select-script-onchange.html = CRASH
 BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
 BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
-BUG_DRT LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
+BUG_DRT LINUX MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
 BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
 BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
+BUG_DRT MAC : svg/custom/selectSubString.html = TIMEOUT
 
 // PASS with DRT though FAIL on test_shell
 BUG_AWESOME : platform/chromium/accessibility = PASS
