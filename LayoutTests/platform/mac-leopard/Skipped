@@ -172,8 +172,3 @@ canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.imageData.put.wrongtype.html
 canvas/philip/tests/2d.pattern.image.incomplete.empty.html
 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
-
-# This test crashes DumpRenderTree after r72003.
-# https://bugs.webkit.org/show_bug.cgi?id=49562
-fast/forms/submit-form-attributes.html
-
