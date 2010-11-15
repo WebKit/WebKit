@@ -1276,7 +1276,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     }
 
     if (hasSpinButton() && evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent()) {
-        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+        const String& key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         int step = 0;
         if (key == "Up")
             step = 1;
@@ -1410,7 +1410,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     }
 
     if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent()) {
-        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+        const String& key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
         if (key == "U+0020") {
             switch (deprecatedInputType()) {
@@ -1471,7 +1471,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (evt->type() == eventNames().keyupEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
 
-        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+        const String& key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
         if (key == "U+0020") {
             switch (deprecatedInputType()) {
@@ -1606,7 +1606,7 @@ void HTMLInputElement::handleKeyEventForRange(KeyboardEvent* event)
 {
     if (event->type() != eventNames().keydownEvent)
         return;
-    String key = event->keyIdentifier();
+    const String& key = event->keyIdentifier();
     if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
         return;
 

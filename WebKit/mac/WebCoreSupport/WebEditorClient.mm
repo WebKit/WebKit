@@ -643,7 +643,7 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
     // Eventually, we should move all of the auto-fill code down to WebKit and remove the need for this function by
     // not relying on the selector in the new implementation.
     // The key identifiers are from <http://www.w3.org/TR/DOM-Level-3-Events/keyset.html#KeySet-Set>
-    String key = event->keyIdentifier();
+    const String& key = event->keyIdentifier();
     if (key == "Up")
         return @selector(moveUp:);
     if (key == "Down")

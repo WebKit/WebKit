@@ -1,3 +1,14 @@
+2010-11-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        KeyboardEvent::keyIdentifier() should return "const String&"
+        https://bugs.webkit.org/show_bug.cgi?id=49426
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (selectorForKeyEvent):
+          Change the type of a variable to have keyIdentifier(); String -> const String&
+
 2010-11-12  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
