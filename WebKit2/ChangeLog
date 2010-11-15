@@ -1,5 +1,11 @@
 2010-11-15  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by my attempt to fix the Windows build
+
+        * win/WebKit2Generated.make: Add new API headers here.
+
+2010-11-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig.
 
         Finish off <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=48720
