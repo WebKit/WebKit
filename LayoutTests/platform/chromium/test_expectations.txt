@@ -3110,7 +3110,7 @@ BUGWK48459 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
 BUGWK48459 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGWK48459 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGWK48459 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
-BUGWK48459 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGWK48459 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
@@ -3210,8 +3210,10 @@ BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = 
 BUGWK48634 MAC SKIP : fast/images/size-failure.html = CRASH
 
 // Added in WK r71969
-BUGWK40887 : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 MAC : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 MAC : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 WIN LINUX : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = TIMEOUT
+BUGWK40887 WIN LINUX : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = TIMEOUT
 BUGWK40887 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = MISSING
 BUGWK40887 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = MISSING
 BUGWK40887 : svg/dynamic-updates/SVGEllipseElement-dom-requiredFeatures.html = MISSING
