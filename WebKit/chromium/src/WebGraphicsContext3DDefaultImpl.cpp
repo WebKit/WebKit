@@ -71,6 +71,9 @@ WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     : m_initialized(false)
     , m_renderDirectlyToWebView(false)
     , m_isGLES2(false)
+    , m_haveEXTFramebufferObject(false)
+    , m_haveEXTFramebufferMultisample(false)
+    , m_haveANGLEFramebufferMultisample(false)
     , m_texture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
@@ -168,9 +171,13 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     if (renderDirectlyToWebView)
         m_attributes.antialias = false;
 
-    validateAttributes();
-
     m_isGLES2 = gfx::GetGLImplementation() == gfx::kGLImplementationEGLGLES2;
+    const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    m_haveEXTFramebufferObject = strstr(extensions, "GL_EXT_framebuffer_object");
+    m_haveEXTFramebufferMultisample = strstr(extensions, "GL_EXT_framebuffer_multisample");
+    m_haveANGLEFramebufferMultisample = strstr(extensions, "GL_ANGLE_framebuffer_multisample");
+
+    validateAttributes();
 
     if (!m_isGLES2) {
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -209,9 +216,8 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
             isValidVendor = false;
 #endif
         if (!(isValidVendor
-              && (strstr(extensions, "GL_EXT_framebuffer_multisample")
-                  || (strstr(extensions, "GL_ANGLE_framebuffer_multisample")
-                      && strstr(extensions, "GL_OES_rgb8_rgba8")))))
+              && (m_haveEXTFramebufferMultisample
+                  || (m_haveANGLEFramebufferMultisample && strstr(extensions, "GL_OES_rgb8_rgba8")))))
             m_attributes.antialias = false;
 
         // Don't antialias when using Mesa to ensure more reliable testing and
@@ -230,10 +236,10 @@ void WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer(unsigned x,
     if (m_attributes.antialias) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        if (glBlitFramebufferEXT)
+        if (m_haveEXTFramebufferMultisample)
             glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         else {
-            ASSERT(glBlitFramebufferANGLE);
+            ASSERT(m_haveANGLEFramebufferMultisample);
             glBlitFramebufferANGLE(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         }
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
@@ -380,19 +386,19 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         }
         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        if (glRenderbufferStorageMultisampleEXT)
+        if (m_haveEXTFramebufferMultisample)
             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalMultisampledColorFormat, width, height);
         else {
-            ASSERT(glRenderbufferStorageMultisampleANGLE);
+            ASSERT(m_haveANGLEFramebufferMultisample);
             glRenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER_EXT, sampleCount, internalMultisampledColorFormat, width, height);
         }
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
         if (m_attributes.stencil || m_attributes.depth) {
             glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-            if (glRenderbufferStorageMultisampleEXT)
+            if (m_haveEXTFramebufferMultisample)
                 glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
             else {
-                ASSERT(glRenderbufferStorageMultisampleANGLE);
+                ASSERT(m_haveANGLEFramebufferMultisample);
                 glRenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
             }
             if (m_attributes.stencil)
@@ -884,7 +890,7 @@ DELEGATE_TO_GL_1(frontFace, FrontFace, unsigned long)
 void WebGraphicsContext3DDefaultImpl::generateMipmap(unsigned long target)
 {
     makeContextCurrent();
-    if (glGenerateMipmapEXT)
+    if (m_isGLES2 || m_haveEXTFramebufferObject)
         glGenerateMipmapEXT(target);
     // FIXME: provide alternative code path? This will be unpleasant
     // to implement if glGenerateMipmapEXT is not available -- it will
@@ -1139,10 +1145,10 @@ WebString WebGraphicsContext3DDefaultImpl::getString(unsigned long name)
     StringBuilder result;
     result.append(reinterpret_cast<const char*>(glGetString(name)));
     if (name == GL_EXTENSIONS) {
-        // GL_CHROMIUM_copy_texture_to_parent_texture requires this
-        // desktopGL-only function (GLES2 doesn't support it), so
-        // check for its existence here.
-        if (glGetTexLevelParameteriv)
+        // GL_CHROMIUM_copy_texture_to_parent_texture requires the
+        // desktopGL-only function glGetTexLevelParameteriv (GLES2
+        // doesn't support it).
+        if (!m_isGLES2)
             result.append(" GL_CHROMIUM_copy_texture_to_parent_texture");
     }
     return WebString(result.toString());

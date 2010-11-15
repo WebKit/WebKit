@@ -1,3 +1,23 @@
+2010-11-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove assumption that GL functions are function pointers
+        https://bugs.webkit.org/show_bug.cgi?id=49486
+
+        Added appropriate extension queries and no longer assume that GL
+        function names are function pointers which can be tested.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::reshape):
+        (WebKit::WebGraphicsContext3DDefaultImpl::generateMipmap):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getString):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-11-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Kent Tamura.
