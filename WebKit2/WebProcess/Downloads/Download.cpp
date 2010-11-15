@@ -71,6 +71,15 @@ void Download::didReceiveData(uint64_t length)
     send(Messages::DownloadProxy::DidReceiveData(length));
 }
 
+String Download::decideDestinationWithSuggestedFilename(const String& filename)
+{
+    String destination;
+    if (!sendSync(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(filename), Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::Reply(destination)))
+        return String();
+
+    return destination;
+}
+
 void Download::didCreateDestination(const String& path)
 {
     send(Messages::DownloadProxy::DidCreateDestination(path));

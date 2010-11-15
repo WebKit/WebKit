@@ -87,6 +87,14 @@ void DownloadProxy::didReceiveData(uint64_t length)
     m_webContext->downloadClient().didReceiveData(m_webContext, this, length);
 }
 
+void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, String& destination)
+{
+    if (!m_webContext)
+        return;
+
+    destination = m_webContext->downloadClient().decideDestinationWithSuggestedFilename(m_webContext, this, filename);
+}
+
 void DownloadProxy::didCreateDestination(const String& path)
 {
     if (!m_webContext)

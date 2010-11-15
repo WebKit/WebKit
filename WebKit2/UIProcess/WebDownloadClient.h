@@ -44,6 +44,7 @@ public:
     void didStart(WebContext*, DownloadProxy*);
     void didReceiveResponse(WebContext*, DownloadProxy*, const WebCore::ResourceResponse&);
     void didReceiveData(WebContext*, DownloadProxy*, uint64_t length);
+    String decideDestinationWithSuggestedFilename(WebContext*, DownloadProxy*, const String& filename);
     void didCreateDestination(WebContext*, DownloadProxy*, const String& path);
     void didFinish(WebContext*, DownloadProxy*);
 };

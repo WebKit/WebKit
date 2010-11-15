@@ -145,8 +145,13 @@ void Download::platformInvalidate()
 
 - (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename
 {
-    // FIXME: Implement.
-    notImplemented();
+    String destination;
+    if (_download)
+        destination = _download->decideDestinationWithSuggestedFilename(filename);
+
+    // FIXME: AllowOverwrite should come from the client too.
+    if (!destination.isNull())
+        [download setDestination:destination allowOverwrite:YES];
 }
 
 - (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path

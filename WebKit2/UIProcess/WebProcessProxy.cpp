@@ -239,7 +239,7 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
     }
 #endif
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>())
+    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>()  || messageID.is<CoreIPC::MessageClassDownloadProxy>())
         return m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
 
     uint64_t pageID = arguments->destinationID();

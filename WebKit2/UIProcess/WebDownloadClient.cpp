@@ -27,6 +27,7 @@
 
 #include "WKAPICast.h"
 #include "WebURLResponse.h"
+#include "WKRetainPtr.h"
 
 using namespace WebCore;
 
@@ -54,6 +55,15 @@ void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* do
         return;
 
     m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.clientInfo);
+}
+
+String WebDownloadClient::decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename)
+{
+    if (!m_client.decideDestinationWithSuggestedFilename)
+        return String();
+
+    WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), m_client.clientInfo));
+    return toWTFString(destination.get());
 }
 
 void WebDownloadClient::didCreateDestination(WebContext* webContext, DownloadProxy* downloadProxy, const String& path)

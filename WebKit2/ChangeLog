@@ -1,3 +1,45 @@
+2010-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add decideDestinationWithSuggestedFilename WKContextDownloadClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=49554
+
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::sendSync):
+        Add sendSync capabilities to Messagesender.
+        
+        * UIProcess/API/C/WKContext.h:
+        AdddecideDestinationWithSuggestedFilename callback.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        Call WebDownloadClient::decideDestinationWithSuggestedFilename.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add DecideDestinationWithSuggestedFilename.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveSyncMessage):
+        Process MessageClassDownloadProxy messages.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::decideDestinationWithSuggestedFilename):
+        Ask the WKContextDownloadClient for the destination.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        MessageClassDownloadProxy messages should go to the WebContext.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        Send the DecideDestinationWithSuggestedFilename message.
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:decideDestinationWithSuggestedFilename:]):
+        call Download::decideDestinationWithSuggestedFilename and set the destination.
+
 2010-11-15  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

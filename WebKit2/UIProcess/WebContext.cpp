@@ -474,6 +474,13 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
     if (messageID.is<CoreIPC::MessageClassWebContext>())
         return didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
 
+    if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
+        if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
+            return downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, arguments, reply);
+
+        return CoreIPC::AutomaticReply;
+    }
+    
     switch (messageID.get<WebContextLegacyMessage::Kind>()) {
         case WebContextLegacyMessage::PostSynchronousMessage: {
             // FIXME: We should probably encode something in the case that the arguments do not decode correctly.

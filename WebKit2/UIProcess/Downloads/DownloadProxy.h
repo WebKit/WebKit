@@ -27,15 +27,10 @@
 #define DownloadProxy_h
 
 #include "APIObject.h"
+#include "Connection.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
-}
 
 namespace WebCore {
     class ResourceResponse;
@@ -58,6 +53,7 @@ public:
     void invalidate();
 
     void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
 private:
     explicit DownloadProxy(WebContext*);
@@ -68,6 +64,7 @@ private:
     void didStart(const WebCore::ResourceRequest&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
+    void decideDestinationWithSuggestedFilename(const String& filename, String& destination);
     void didCreateDestination(const String& path);
     void didFinish();
 

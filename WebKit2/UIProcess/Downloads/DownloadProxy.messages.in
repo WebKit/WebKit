@@ -24,6 +24,7 @@ messages -> DownloadProxy {
     DidStart(WebCore::ResourceRequest request)
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(uint64_t length)
+    DecideDestinationWithSuggestedFilename(String filename) -> (String destination)
     DidCreateDestination(WTF::String path)
     DidFinish()
 }
