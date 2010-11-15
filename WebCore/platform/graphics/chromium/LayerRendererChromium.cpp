@@ -271,7 +271,7 @@ void LayerRendererChromium::updateRootLayerTextureRect(const IntRect& updateRect
 
 #if PLATFORM(SKIA)
     // Get the contents of the updated rect.
-    const SkBitmap bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
+    const SkBitmap& bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
     ASSERT(bitmap.width() == updateRect.width() && bitmap.height() == updateRect.height());
     void* pixels = bitmap.getPixels();
 #elif PLATFORM(CG)
