@@ -416,15 +416,6 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     if (firstHasDesiredStyle != secondHasDesiredStyle)
         return firstHasDesiredStyle;
 
-    if (desiredTraitsMaskForComparison & FontStyleItalicMask) {
-        // Prefer a font that has indicated that it can only support italic to a font that claims to support
-        // all styles.  The specialized font is more likely to be what the author wants.
-        bool firstRequiresItalics = (firstTraitsMask & FontStyleItalicMask) && !(firstTraitsMask & FontStyleNormalMask);
-        bool secondRequiresItalics = (secondTraitsMask & FontStyleItalicMask) && !(secondTraitsMask & FontStyleNormalMask);
-        if (firstRequiresItalics != secondRequiresItalics)
-            return firstRequiresItalics;
-    }
-
     if (secondTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
         return false;
     if (firstTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
