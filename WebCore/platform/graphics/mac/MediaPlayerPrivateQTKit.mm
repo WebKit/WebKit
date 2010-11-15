@@ -243,21 +243,49 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 void MediaPlayerPrivate::createQTMovie(const String& url)
 {
     NSURL *cocoaURL = KURL(ParsedURLString, url);
-    NSDictionary *movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                        cocoaURL, QTMovieURLAttribute,
                        [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,
                        [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
                        [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                        [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
                        [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-                       [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",
-#endif
 #ifndef BUILDING_ON_TIGER
                        QTMovieApertureModeClean, QTMovieApertureModeAttribute,
 #endif
                        nil];
 
+#if defined(BUILDING_ON_SNOW_LEOPARD)
+    CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
+    CFArrayRef proxiesForURL = CFNetworkCopyProxiesForURL((CFURLRef)cocoaURL, proxySettings);
+    BOOL willUseProxy = YES;
+    
+    if (!proxiesForURL || !CFArrayGetCount(proxiesForURL))
+        willUseProxy = NO;
+    
+    if (CFArrayGetCount(proxiesForURL) == 1) {
+        CFDictionaryRef proxy = (CFDictionaryRef)CFArrayGetValueAtIndex(proxiesForURL, 0);
+        ASSERT(CFGetTypeID(proxy) == CFDictionaryGetTypeID());
+        
+        CFStringRef proxyType = (CFStringRef)CFDictionaryGetValue(proxy, kCFProxyTypeKey);
+        ASSERT(CFGetTypeID(proxyType) == CFStringGetTypeID());
+        
+        if (CFStringCompare(proxyType, kCFProxyTypeNone, 0) == kCFCompareEqualTo)
+            willUseProxy = NO;
+    }
+
+    if (!willUseProxy) {
+        // Only pass the QTMovieOpenForPlaybackAttribute flag if there are no proxy servers, due
+        // to rdar://problem/7531776.
+        [movieAttributes setObject:[NSNumber numberWithBool:YES] forKey:@"QTMovieOpenForPlaybackAttribute"];
+    }
+    
+    if (proxiesForURL)
+        CFRelease(proxiesForURL);
+    if (proxySettings)
+        CFRelease(proxySettings);
+#endif
+    
     createQTMovie(cocoaURL, movieAttributes);
 }
 
