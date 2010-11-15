@@ -44,6 +44,9 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
         LayerBackedDrawingAreaType,
 #endif
+#if ENABLE(TILED_BACKING_STORE)
+        TiledDrawingAreaType,
+#endif
     };
     
     typedef uint64_t DrawingAreaID;

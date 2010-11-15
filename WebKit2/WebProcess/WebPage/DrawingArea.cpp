@@ -31,6 +31,10 @@
 #include "LayerBackedDrawingArea.h"
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+#include "TiledDrawingArea.h"
+#endif
+
 namespace WebKit {
 
 PassRefPtr<DrawingArea> DrawingArea::create(Type type, DrawingAreaID identifier, WebPage* webPage)
@@ -46,6 +50,10 @@ PassRefPtr<DrawingArea> DrawingArea::create(Type type, DrawingAreaID identifier,
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
         case LayerBackedDrawingAreaType:
             return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
+#endif
+#if ENABLE(TILED_BACKING_STORE)
+        case TiledDrawingAreaType:
+            return adoptRef(new TiledDrawingArea(identifier, webPage));
 #endif
     }
 

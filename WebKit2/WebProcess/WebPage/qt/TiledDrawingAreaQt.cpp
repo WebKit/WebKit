@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaMessageKinds_h
-#define DrawingAreaMessageKinds_h
-
-#include "MessageID.h"
-
-// Messages sent from the web process to the UI process.
-
-namespace DrawingAreaMessage {
-
-enum Kind {
-    // Called whenever the size of the drawing area needs to be updated.
-    SetSize,
-
-    // Called when the drawing area should stop painting.
-    SuspendPainting,
-
-    // Called when the drawing area should start painting again.
-    ResumePainting,
-
-    // Called when an update chunk sent to the drawing area has been
-    // incorporated into the backing store.
-    DidUpdate,
-
 #if ENABLE(TILED_BACKING_STORE)
-    // Called to request a tile update.
-    RequestTileUpdate,
 
-    // Called to cancel a requested tile update.
-    CancelTileUpdate,
-#endif
-};
+#include "TiledDrawingArea.h"
 
+#include "UpdateChunk.h"
+#include "WebPage.h"
+#include <WebCore/GraphicsContext.h>
+
+#include <QImage>
+#include <QPainter>
+
+using namespace WebCore;
+
+namespace WebKit {
+
+void TiledDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk, float scale)
+{
+    IntRect tileRect = updateChunk->rect();
+    QImage image(updateChunk->createImage());
+    QPainter painter(&image);
+    // Now paint into the backing store.
+    GraphicsContext graphicsContext(&painter);
+    graphicsContext.translate(-tileRect.x(), -tileRect.y());
+    graphicsContext.scale(FloatSize(scale, scale));
+    IntRect contentRect = enclosingIntRect(FloatRect(tileRect.x() / scale,
+                                                     tileRect.y() / scale,
+                                                     tileRect.width() / scale,
+                                                     tileRect.height() / scale));
+    m_webPage->drawRect(graphicsContext, contentRect);
 }
 
-namespace CoreIPC {
+} // namespace WebKit
 
-template<> struct MessageKindTraits<DrawingAreaMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassDrawingArea;
-};
-
-}
-
-#endif // DrawingAreaMessageKinds_h
+#endif // TILED_BACKING_STORE

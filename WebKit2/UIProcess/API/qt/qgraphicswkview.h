@@ -48,6 +48,9 @@ public:
     // FIXME: should not be public
     virtual QRectF visibleRect() const;
 
+    void prepareScaleChange();
+    void commitScaleChange();
+
 public:
     Q_SIGNAL void titleChanged(const QString& title);
     Q_SIGNAL void loadStarted();
@@ -80,8 +83,11 @@ protected:
     virtual void focusOutEvent(QFocusEvent*);
 
 private:
+    Q_PRIVATE_SLOT(d, void onScaleChanged());
+
     QGraphicsWKViewPrivate* d;
     friend class QGraphicsWKViewPrivate;
+    friend class TiledDrawingAreaProxy;
 };
 
 #endif /* qgraphicswkview_h */

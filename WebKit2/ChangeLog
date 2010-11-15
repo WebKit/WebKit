@@ -1,3 +1,135 @@
+2010-11-15  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WK2][Qt] WebKit2 implementation of tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=49526
+
+        Basic opt-in tiling implementation for WebKit2/Qt.
+
+        Original patch by Antti Koivisto.
+
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:
+        New messages: RequestTileUpdate and CancelTileUpdate.
+
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        New messages: Invalidate, TileUpdated, AllTileUpdatesProcessed.
+
+        * Shared/DrawingAreaBase.h:
+        New area type: TiledDrawingAreaType.
+
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKView::setGeometry):
+        (QGraphicsWKViewPrivate::QGraphicsWKViewPrivate):
+        (QGraphicsWKView::prepareScaleChange):
+        (QGraphicsWKView::commitScaleChange):
+        (QGraphicsWKViewPrivate::onScaleChanged):
+        (QGraphicsWKViewPrivate::commitScale):
+        Support for tiled backing store.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp: Added.
+        (WebKit::TiledDrawingAreaProxy::create):
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::~TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::setSize):
+        (WebKit::TiledDrawingAreaProxy::setPageIsVisible):
+        (WebKit::TiledDrawingAreaProxy::didSetSize):
+        (WebKit::TiledDrawingAreaProxy::didReceiveMessage):
+        (WebKit::TiledDrawingAreaProxy::didReceiveSyncMessage):
+        (WebKit::TiledDrawingAreaProxy::requestTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::waitUntilUpdatesComplete):
+        (WebKit::TiledDrawingAreaProxy::createTile):
+        (WebKit::TiledDrawingAreaProxy::setTileSize):
+        (WebKit::TiledDrawingAreaProxy::setTileCreationDelay):
+        (WebKit::TiledDrawingAreaProxy::setKeepAndCoverAreaMultipliers):
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+        (WebKit::TiledDrawingAreaProxy::updateTileBuffers):
+        (WebKit::TiledDrawingAreaProxy::tileBufferUpdateComplete):
+        (WebKit::TiledDrawingAreaProxy::paint):
+        (WebKit::TiledDrawingAreaProxy::adjustVisibleRect):
+        (WebKit::TiledDrawingAreaProxy::setContentsScale):
+        (WebKit::TiledDrawingAreaProxy::removeAllTiles):
+        (WebKit::TiledDrawingAreaProxy::tileDistance):
+        (WebKit::TiledDrawingAreaProxy::calculateKeepRect):
+        (WebKit::TiledDrawingAreaProxy::calculateCoverRect):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        (WebKit::TiledDrawingAreaProxy::resizeEdgeTiles):
+        (WebKit::TiledDrawingAreaProxy::dropTilesOutsideRect):
+        (WebKit::TiledDrawingAreaProxy::tileAt):
+        (WebKit::TiledDrawingAreaProxy::setTile):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        (WebKit::TiledDrawingAreaProxy::mapToContents):
+        (WebKit::TiledDrawingAreaProxy::mapFromContents):
+        (WebKit::TiledDrawingAreaProxy::contentsRect):
+        (WebKit::TiledDrawingAreaProxy::tileRectForCoordinate):
+        (WebKit::TiledDrawingAreaProxy::tileCoordinateForPoint):
+        (WebKit::TiledDrawingAreaProxy::startTileBufferUpdateTimer):
+        (WebKit::TiledDrawingAreaProxy::tileBufferUpdateTimerFired):
+        (WebKit::TiledDrawingAreaProxy::startTileCreationTimer):
+        (WebKit::TiledDrawingAreaProxy::tileCreationTimerFired):
+        (WebKit::TiledDrawingAreaProxy::hasPendingUpdates):
+        * UIProcess/TiledDrawingAreaProxy.h: Added.
+        (WebKit::TiledDrawingAreaProxy::contentsScale):
+        (WebKit::TiledDrawingAreaProxy::attachCompositingContext):
+        (WebKit::TiledDrawingAreaProxy::detachCompositingContext):
+        (WebKit::TiledDrawingAreaProxy::tileSize):
+        (WebKit::TiledDrawingAreaProxy::tileCreationDelay):
+        (WebKit::TiledDrawingAreaProxy::getKeepAndCoverAreaMultipliers):
+        * UIProcess/TiledDrawingAreaTile.h: Added.
+        (WebKit::TiledDrawingAreaTile::create):
+        (WebKit::TiledDrawingAreaTile::hasBackBufferUpdatePending):
+        (WebKit::TiledDrawingAreaTile::coordinate):
+        (WebKit::TiledDrawingAreaTile::rect):
+        (WebKit::TiledDrawingAreaTile::ID):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/TiledDrawingArea.cpp: Added.
+        (WebKit::TiledDrawingArea::TiledDrawingArea):
+        (WebKit::TiledDrawingArea::~TiledDrawingArea):
+        (WebKit::TiledDrawingArea::invalidateWindow):
+        (WebKit::TiledDrawingArea::invalidateContentsAndWindow):
+        (WebKit::TiledDrawingArea::invalidateContentsForSlowScroll):
+        (WebKit::TiledDrawingArea::scroll):
+        (WebKit::TiledDrawingArea::setNeedsDisplay):
+        (WebKit::TiledDrawingArea::display):
+        (WebKit::TiledDrawingArea::scheduleDisplay):
+        (WebKit::TiledDrawingArea::setSize):
+        (WebKit::TiledDrawingArea::suspendPainting):
+        (WebKit::TiledDrawingArea::resumePainting):
+        (WebKit::TiledDrawingArea::didUpdate):
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired):
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/TiledDrawingArea.h: Added.
+        (WebKit::TiledDrawingArea::attachCompositingContext):
+        (WebKit::TiledDrawingArea::detachCompositingContext):
+        (WebKit::TiledDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledDrawingArea::scheduleCompositingLayerSync):
+        (WebKit::TiledDrawingArea::syncCompositingLayers):
+        * WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp: Added.
+        (WebKit::TiledDrawingArea::paintIntoUpdateChunk):
+        * WebKit2.pro:
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp: Added.
+        (WebKit::checkeredPixmap):
+        (WebKit::TiledDrawingAreaTile::TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::~TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::isDirty):
+        (WebKit::TiledDrawingAreaTile::isReadyToPaint):
+        (WebKit::TiledDrawingAreaTile::hasReadyBackBuffer):
+        (WebKit::TiledDrawingAreaTile::invalidate):
+        (WebKit::TiledDrawingAreaTile::resize):
+        (WebKit::TiledDrawingAreaTile::swapBackBufferToFront):
+        (WebKit::TiledDrawingAreaTile::paint):
+        (WebKit::TiledDrawingAreaTile::paintCheckerPattern):
+        (WebKit::TiledDrawingAreaTile::updateFromChunk):
+        (WebKit::TiledDrawingAreaTile::updateBackBuffer):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp: Added.
+        (WebKit::TiledDrawingAreaProxy::updateWebView):
+        (WebKit::TiledDrawingAreaProxy::webViewVisibleRect):
+        (WebKit::TiledDrawingAreaProxy::page):
+
 2010-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

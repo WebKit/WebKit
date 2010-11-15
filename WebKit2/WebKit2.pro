@@ -284,6 +284,7 @@ HEADERS += \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
+    UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
@@ -454,6 +455,7 @@ SOURCES += \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
+    UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBackForwardListItem.cpp \
@@ -480,6 +482,8 @@ SOURCES += \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
+    UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
+    UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
@@ -539,6 +543,7 @@ SOURCES += \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
+    WebProcess/WebPage/TiledDrawingArea.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \
@@ -547,6 +552,7 @@ SOURCES += \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
+    WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaMessageKinds_h
-#define DrawingAreaMessageKinds_h
+#include "TiledDrawingAreaProxy.h"
 
-#include "MessageID.h"
+#include "DrawingAreaMessageKinds.h"
+#include "DrawingAreaProxyMessageKinds.h"
+#include "UpdateChunk.h"
+#include "WKAPICast.h"
+#include "WebPageProxy.h"
 
-// Messages sent from the web process to the UI process.
+#include "qgraphicswkview.h"
 
-namespace DrawingAreaMessage {
+using namespace WebCore;
 
-enum Kind {
-    // Called whenever the size of the drawing area needs to be updated.
-    SetSize,
+#define TILE_DEBUG_LOG
 
-    // Called when the drawing area should stop painting.
-    SuspendPainting,
+namespace WebKit {
 
-    // Called when the drawing area should start painting again.
-    ResumePainting,
+void TiledDrawingAreaProxy::updateWebView(const Vector<IntRect>& paintedArea)
+{
+    if (!page() || !page()->isValid())
+        return;
 
-    // Called when an update chunk sent to the drawing area has been
-    // incorporated into the backing store.
-    DidUpdate,
-
-#if ENABLE(TILED_BACKING_STORE)
-    // Called to request a tile update.
-    RequestTileUpdate,
-
-    // Called to cancel a requested tile update.
-    CancelTileUpdate,
-#endif
-};
-
+    unsigned size = paintedArea.size();
+    for (unsigned n = 0; n < size; ++n)
+        m_webView->update(QRect(paintedArea[n]));
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<DrawingAreaMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassDrawingArea;
-};
-
+IntRect TiledDrawingAreaProxy::webViewVisibleRect()
+{
+    return enclosingIntRect(FloatRect(m_webView->visibleRect()));
 }
 
-#endif // DrawingAreaMessageKinds_h
+WebPageProxy* TiledDrawingAreaProxy::page()
+{
+    return toImpl(m_webView->page()->pageRef());
+}
+
+} // namespace WebKit
