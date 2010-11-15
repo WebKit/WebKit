@@ -38,16 +38,23 @@
 #if PLATFORM(CAIRO)
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
-typedef cairo_surface_t* PlatformImage;
-typedef cairo_t* PlatformContext;
 #elif PLATFORM(QT)
 #include <QImage>
 class QPainter;
-typedef QImage PlatformImage;
-typedef QPainter* PlatformContext;
 #endif
 
 namespace WebCore {
+
+#if PLATFORM(CAIRO)
+typedef cairo_surface_t* PlatformImage;
+typedef cairo_t* PlatformContext;
+#elif PLATFORM(QT)
+typedef QImage PlatformImage;
+typedef QPainter* PlatformContext;
+#else
+typedef void* PlatformImage;
+typedef void* PlatformContext;
+#endif
 
 // This is to track and keep the shadow state. We use this rather than
 // using GraphicsContextState to allow possible optimizations (right now
