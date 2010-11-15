@@ -72,6 +72,8 @@ public:
         const String& acceptCharset() const { return m_acceptCharset; }
         void setAcceptCharset(const String& value) { m_acceptCharset = value; }
 
+        void copyFrom(const Attributes&);
+
     private:
         Method m_method;
         bool m_isMultiPartForm;

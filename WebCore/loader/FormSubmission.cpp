@@ -110,6 +110,17 @@ void FormSubmission::Attributes::parseMethodType(const String& type)
         m_method = FormSubmission::GetMethod;
 }
 
+void FormSubmission::Attributes::copyFrom(const Attributes& other)
+{
+    m_method = other.m_method;
+    m_isMultiPartForm = other.m_isMultiPartForm;
+
+    m_action = other.m_action;
+    m_target = other.m_target;
+    m_encodingType = other.m_encodingType;
+    m_acceptCharset = other.m_acceptCharset;
+}
+
 inline FormSubmission::FormSubmission(Method method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState> state, PassRefPtr<FormData> data, const String& boundary, bool lockHistory, PassRefPtr<Event> event)
     : m_method(method)
     , m_action(action)
@@ -126,21 +137,40 @@ inline FormSubmission::FormSubmission(Method method, const KURL& action, const S
 PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attributes& attributes, PassRefPtr<Event> event, bool lockHistory, FormSubmissionTrigger trigger)
 {
     ASSERT(form);
+
+    HTMLFormControlElement* submitButton = 0;
+    if (event && event->target() && event->target()->toNode())
+        submitButton = static_cast<HTMLFormControlElement*>(event->target()->toNode());
+
+    FormSubmission::Attributes copiedAttributes;
+    copiedAttributes.copyFrom(attributes);
+    if (submitButton) {
+        String attributeValue;
+        if (!(attributeValue = submitButton->getAttribute(formactionAttr)).isNull())
+            copiedAttributes.parseAction(attributeValue);
+        if (!(attributeValue = submitButton->getAttribute(formenctypeAttr)).isNull())
+            copiedAttributes.parseEncodingType(attributeValue);
+        if (!(attributeValue = submitButton->getAttribute(formmethodAttr)).isNull())
+            copiedAttributes.parseMethodType(attributeValue);
+        if (!(attributeValue = submitButton->getAttribute(formtargetAttr)).isNull())
+            copiedAttributes.setTarget(attributeValue);
+    }
+    
     Document* document = form->document();
-    KURL actionURL = document->completeURL(attributes.action().isEmpty() ? document->url().string() : attributes.action());
+    KURL actionURL = document->completeURL(copiedAttributes.action().isEmpty() ? document->url().string() : copiedAttributes.action());
     bool isMailtoForm = actionURL.protocolIs("mailto");
     bool isMultiPartForm = false;
-    String encodingType = attributes.encodingType();
+    String encodingType = copiedAttributes.encodingType();
 
-    if (attributes.method() == PostMethod) {
-        isMultiPartForm = attributes.isMultiPartForm();
+    if (copiedAttributes.method() == PostMethod) {
+        isMultiPartForm = copiedAttributes.isMultiPartForm();
         if (isMultiPartForm && isMailtoForm) {
             encodingType = "application/x-www-form-urlencoded";
             isMultiPartForm = false;
         }
     }
 
-    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(attributes.acceptCharset(), document);
+    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
     Vector<pair<String, String> > formValues;
 
@@ -166,7 +196,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         boundary = formData->boundary().data();
     } else {
         formData = FormData::create(*(static_cast<FormDataList*>(domFormData.get())), domFormData->encoding());
-        if (attributes.method() == PostMethod && isMailtoForm) {
+        if (copiedAttributes.method() == PostMethod && isMailtoForm) {
             // Convert the form data into a string that we put into the URL.
             appendMailtoPostFormDataToURL(actionURL, *formData, encodingType);
             formData = FormData::create();
@@ -174,9 +204,9 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     }
 
     formData->setIdentifier(generateFormDataIdentifier());
-    String targetOrBaseTarget = attributes.target().isEmpty() ? document->baseTarget() : attributes.target();
+    String targetOrBaseTarget = copiedAttributes.target().isEmpty() ? document->baseTarget() : copiedAttributes.target();
     RefPtr<FormState> formState = FormState::create(form, formValues, document->frame(), trigger);
-    return adoptRef(new FormSubmission(attributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
+    return adoptRef(new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
 }
 
 KURL FormSubmission::requestURL() const

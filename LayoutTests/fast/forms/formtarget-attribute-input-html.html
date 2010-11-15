@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<form action="resources/success.txt" method="GET" target="failFrame">
+<input type="submit" id="button" formtarget="passFrame">
+</form>
+<script>
+description("Test for the formtarget attribute in an input tag.");
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.setAllowUniversalAccessFromFileURLs(true);
+        layoutTestController.waitUntilDone();
+    }
+
+    // Not dumping as text since the DumpRenderTree does not dump the text content of child frames.                
+    var button = document.getElementById('button');
+    button.click();
+}
+
+function passFrameLoaded()
+{
+    if (document.getElementById('pass').contentDocument.URL == "about:blank")
+        return;
+    testPassed("The formtarget attribute was successfully used.");
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function failFrameLoaded()
+{
+    if (document.getElementById('fail').contentDocument.URL == "about:blank")
+        return;
+    testFailed("The formtarget attribute was not used.");
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+var successfullyParsed = true;
+</script>
+<iframe src="about:blank" id="pass" name="passFrame" onload="passFrameLoaded()"></iframe>
+<iframe src="about:blank" id="fail" name="failFrame" onload="failFrameLoaded()"></iframe>
+</body>
+</html>

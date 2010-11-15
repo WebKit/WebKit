@@ -23,7 +23,11 @@ module html {
     interface HTMLButtonElement : HTMLElement {
         readonly attribute HTMLFormElement form;
 
+        attribute [Reflect, URL] DOMString formAction;
+        attribute [Reflect] DOMString formEnctype;
+        attribute [Reflect] DOMString formMethod;
         attribute [Reflect] boolean formNoValidate;
+        attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
 
         attribute [Reflect] DOMString accessKey;
