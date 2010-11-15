@@ -5660,3 +5660,7 @@ fast/events/scroll-after-click-on-tab-index.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=49179
 animations/stop-animation-on-suspend.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49529
+svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html
+svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html
