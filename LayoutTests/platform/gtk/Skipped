@@ -5024,6 +5024,7 @@ fast/dom/HTMLMeterElement/meter-percent-size.html
 fast/dom/HTMLMeterElement/meter-styles.html
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
 fast/dom/HTMLMeterElement/meter-element-with-child-crash.html
+fast/forms/form-attribute.html
 
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053
