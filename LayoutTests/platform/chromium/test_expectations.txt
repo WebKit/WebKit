@@ -3107,6 +3107,10 @@ BUGWK46868 WONTFIX : platform/chromium/fast/text/chromium-mac-duplicate-ime-comp
 BUGWK48459 WIN LINUX : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
 BUGWK48459 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
 BUGWK48459 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
+BUGWK48459 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGWK48459 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
+BUGWK48459 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
+BUGWK48459 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
@@ -3199,13 +3203,41 @@ BUG62515 : printing/page-format-data-display-none.html = TEXT
 
 BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
-// Fails on upstream mac port too, will be rebaselined there
-BUGWK49413 : fast/table/colspanMinWidth-vertical.html = TEXT
-
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
 
 // Malformed image results in humongous malloc; if this test is run it will 
 // affect ones that follow it.
 BUGWK48634 MAC SKIP : fast/images/size-failure.html = CRASH
+
+// Added in WK r71969
+BUGWK40887 : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGEllipseElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGForeignObjectElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGForeignObjectElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGGElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGGElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGImageElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPathElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPathElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPolygonElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPolygonElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPolylineElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGPolylineElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGRectElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGRectElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGSVGElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGTextElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGTextElement-svgdom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html = MISSING
+BUGWK40887 : svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html = MISSING
+
+// Fails on upstream mac port too, will be rebaselined there
+BUGWK49521 : svg/W3C-SVG-1.1/fonts-desc-02-t.svg  = IMAGE
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
