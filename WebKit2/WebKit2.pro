@@ -200,6 +200,8 @@ HEADERS += \
     Platform/qt/MappedMemoryPool.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
+    Shared/API/c/WKContextMenuItem.h \
+    Shared/API/c/WKContextMenuItemTypes.h \
     Shared/API/c/WKGeometry.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKSerializedScriptValue.h \
@@ -302,6 +304,7 @@ HEADERS += \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
+    UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebPageNamespace.h \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
@@ -385,6 +388,7 @@ SOURCES += \
     Platform/qt/WorkQueueQt.cpp \
     Shared/API/c/WKArray.cpp \
     Shared/API/c/WKCertificateInfo.cpp \
+    Shared/API/c/WKContextMenuItem.cpp \
     Shared/API/c/WKNumber.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
     Shared/API/c/WKString.cpp \
@@ -474,6 +478,7 @@ SOURCES += \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
+    UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageNamespace.cpp \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \

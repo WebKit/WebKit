@@ -23,29 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageContextMenuClient_h
-#define InjectedBundlePageContextMenuClient_h
+#ifndef WebPageContextMenuClient_h
+#define WebPageContextMenuClient_h
 
 #include "APIClient.h"
-#include "WKBundlePage.h"
+#include "WKPage.h"
 #include <wtf/Vector.h>
-
-namespace WebCore {
-    class ContextMenu;
-}
 
 namespace WebKit {
 
 class APIObject;
-class InjectedBundleHitTestResult;
 class WebContextMenuItemData;
-class WebPage;
+class WebPageProxy;
 
-class InjectedBundlePageContextMenuClient : public APIClient<WKBundlePageContextMenuClient> {
+class WebPageContextMenuClient : public APIClient<WKPageContextMenuClient> {
 public:
-    bool getCustomMenuFromDefaultItems(WebPage*, InjectedBundleHitTestResult*, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<APIObject>& userData);
+    bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, APIObject* userData);
 };
 
 } // namespace WebKit
 
-#endif // InjectedBundlePageEditorClient_h
+#endif // WebPageContextMenuClient_h

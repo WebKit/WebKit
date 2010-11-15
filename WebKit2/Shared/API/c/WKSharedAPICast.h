@@ -27,6 +27,7 @@
 #define WKSharedAPICast_h
 
 #include "WKBase.h"
+#include "WKContextMenuItemTypes.h"
 #include "WKEvent.h"
 #include "WKGeometry.h"
 #include "WebError.h"
@@ -34,6 +35,7 @@
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include <WebCore/ContextMenuItem.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntPoint.h>
@@ -46,6 +48,7 @@ class ImmutableDictionary;
 class MutableArray;
 class MutableDictionary;
 class WebCertificateInfo;
+class WebContextMenuItem;
 class WebData;
 class WebSerializedScriptValue;
 class WebURLRequest;
@@ -62,6 +65,7 @@ template<typename ImplType> struct ImplTypeInfo { };
 WK_ADD_API_MAPPING(WKArrayRef, ImmutableArray)
 WK_ADD_API_MAPPING(WKBooleanRef, WebBoolean)
 WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
+WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, WebData)
 WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, WebDouble)
@@ -232,6 +236,375 @@ inline WKEventMouseButton toAPI(WebMouseEvent::Button mouseButton)
     }
 
     return wkMouseButton;
+}
+
+inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
+{
+    switch (action) {
+    case WebCore::ContextMenuItemTagNoAction:
+        return kWKContextMenuItemTagNoAction;
+    case WebCore::ContextMenuItemTagOpenLinkInNewWindow:
+        return kWKContextMenuItemTagOpenLinkInNewWindow;
+    case WebCore::ContextMenuItemTagDownloadLinkToDisk:
+        return kWKContextMenuItemTagDownloadLinkToDisk;
+    case WebCore::ContextMenuItemTagCopyLinkToClipboard:
+        return kWKContextMenuItemTagCopyLinkToClipboard;
+    case WebCore::ContextMenuItemTagOpenImageInNewWindow:
+        return kWKContextMenuItemTagOpenImageInNewWindow;
+    case WebCore::ContextMenuItemTagDownloadImageToDisk:
+        return kWKContextMenuItemTagDownloadImageToDisk;
+    case WebCore::ContextMenuItemTagCopyImageToClipboard:
+        return kWKContextMenuItemTagCopyImageToClipboard;
+    case WebCore::ContextMenuItemTagOpenFrameInNewWindow:
+        return kWKContextMenuItemTagOpenFrameInNewWindow;
+    case WebCore::ContextMenuItemTagCopy:
+        return kWKContextMenuItemTagCopy;
+    case WebCore::ContextMenuItemTagGoBack:
+        return kWKContextMenuItemTagGoBack;
+    case WebCore::ContextMenuItemTagGoForward:
+        return kWKContextMenuItemTagGoForward;
+    case WebCore::ContextMenuItemTagStop:
+        return kWKContextMenuItemTagStop;
+    case WebCore::ContextMenuItemTagReload:
+        return kWKContextMenuItemTagReload;
+    case WebCore::ContextMenuItemTagCut:
+        return kWKContextMenuItemTagCut;
+    case WebCore::ContextMenuItemTagPaste:
+        return kWKContextMenuItemTagPaste;
+    case WebCore::ContextMenuItemTagSpellingGuess:
+        return kWKContextMenuItemTagSpellingGuess;
+    case WebCore::ContextMenuItemTagNoGuessesFound:
+        return kWKContextMenuItemTagNoGuessesFound;
+    case WebCore::ContextMenuItemTagIgnoreSpelling:
+        return kWKContextMenuItemTagIgnoreSpelling;
+    case WebCore::ContextMenuItemTagLearnSpelling:
+        return kWKContextMenuItemTagLearnSpelling;
+    case WebCore::ContextMenuItemTagOther:
+        return kWKContextMenuItemTagOther;
+    case WebCore::ContextMenuItemTagSearchInSpotlight:
+        return kWKContextMenuItemTagSearchInSpotlight;
+    case WebCore::ContextMenuItemTagSearchWeb:
+        return kWKContextMenuItemTagSearchWeb;
+    case WebCore::ContextMenuItemTagLookUpInDictionary:
+        return kWKContextMenuItemTagLookUpInDictionary;
+    case WebCore::ContextMenuItemTagOpenWithDefaultApplication:
+        return kWKContextMenuItemTagOpenWithDefaultApplication;
+    case WebCore::ContextMenuItemPDFActualSize:
+        return kWKContextMenuItemTagPDFActualSize;
+    case WebCore::ContextMenuItemPDFZoomIn:
+        return kWKContextMenuItemTagPDFZoomIn;
+    case WebCore::ContextMenuItemPDFZoomOut:
+        return kWKContextMenuItemTagPDFZoomOut;
+    case WebCore::ContextMenuItemPDFAutoSize:
+        return kWKContextMenuItemTagPDFAutoSize;
+    case WebCore::ContextMenuItemPDFSinglePage:
+        return kWKContextMenuItemTagPDFSinglePage;
+    case WebCore::ContextMenuItemPDFFacingPages:
+        return kWKContextMenuItemTagPDFFacingPages;
+    case WebCore::ContextMenuItemPDFContinuous:
+        return kWKContextMenuItemTagPDFContinuous;
+    case WebCore::ContextMenuItemPDFNextPage:
+        return kWKContextMenuItemTagPDFNextPage;
+    case WebCore::ContextMenuItemPDFPreviousPage:
+        return kWKContextMenuItemTagPDFPreviousPage;
+    case WebCore::ContextMenuItemTagOpenLink:
+        return kWKContextMenuItemTagOpenLink;
+    case WebCore::ContextMenuItemTagIgnoreGrammar:
+        return kWKContextMenuItemTagIgnoreGrammar;
+    case WebCore::ContextMenuItemTagSpellingMenu:
+        return kWKContextMenuItemTagSpellingMenu;
+    case WebCore::ContextMenuItemTagShowSpellingPanel:
+        return kWKContextMenuItemTagShowSpellingPanel;
+    case WebCore::ContextMenuItemTagCheckSpelling:
+        return kWKContextMenuItemTagCheckSpelling;
+    case WebCore::ContextMenuItemTagCheckSpellingWhileTyping:
+        return kWKContextMenuItemTagCheckSpellingWhileTyping;
+    case WebCore::ContextMenuItemTagCheckGrammarWithSpelling:
+        return kWKContextMenuItemTagCheckGrammarWithSpelling;
+    case WebCore::ContextMenuItemTagFontMenu:
+        return kWKContextMenuItemTagFontMenu;
+    case WebCore::ContextMenuItemTagShowFonts:
+        return kWKContextMenuItemTagShowFonts;
+    case WebCore::ContextMenuItemTagBold:
+        return kWKContextMenuItemTagBold;
+    case WebCore::ContextMenuItemTagItalic:
+        return kWKContextMenuItemTagItalic;
+    case WebCore::ContextMenuItemTagUnderline:
+        return kWKContextMenuItemTagUnderline;
+    case WebCore::ContextMenuItemTagOutline:
+        return kWKContextMenuItemTagOutline;
+    case WebCore::ContextMenuItemTagStyles:
+        return kWKContextMenuItemTagStyles;
+    case WebCore::ContextMenuItemTagShowColors:
+        return kWKContextMenuItemTagShowColors;
+    case WebCore::ContextMenuItemTagSpeechMenu:
+        return kWKContextMenuItemTagSpeechMenu;
+    case WebCore::ContextMenuItemTagStartSpeaking:
+        return kWKContextMenuItemTagStartSpeaking;
+    case WebCore::ContextMenuItemTagStopSpeaking:
+        return kWKContextMenuItemTagStopSpeaking;
+    case WebCore::ContextMenuItemTagWritingDirectionMenu:
+        return kWKContextMenuItemTagWritingDirectionMenu;
+    case WebCore::ContextMenuItemTagDefaultDirection:
+        return kWKContextMenuItemTagDefaultDirection;
+    case WebCore::ContextMenuItemTagLeftToRight:
+        return kWKContextMenuItemTagLeftToRight;
+    case WebCore::ContextMenuItemTagRightToLeft:
+        return kWKContextMenuItemTagRightToLeft;
+    case WebCore::ContextMenuItemTagPDFSinglePageScrolling:
+        return kWKContextMenuItemTagPDFSinglePageScrolling;
+    case WebCore::ContextMenuItemTagPDFFacingPagesScrolling:
+        return kWKContextMenuItemTagPDFFacingPagesScrolling;
+    case WebCore::ContextMenuItemTagInspectElement:
+        return kWKContextMenuItemTagInspectElement;
+    case WebCore::ContextMenuItemTagTextDirectionMenu:
+        return kWKContextMenuItemTagTextDirectionMenu;
+    case WebCore::ContextMenuItemTagTextDirectionDefault:
+        return kWKContextMenuItemTagTextDirectionDefault;
+    case WebCore::ContextMenuItemTagTextDirectionLeftToRight:
+        return kWKContextMenuItemTagTextDirectionLeftToRight;
+    case WebCore::ContextMenuItemTagTextDirectionRightToLeft:
+        return kWKContextMenuItemTagTextDirectionRightToLeft;
+    case WebCore::ContextMenuItemTagOpenMediaInNewWindow:
+        return kWKContextMenuItemTagOpenMediaInNewWindow;
+    case WebCore::ContextMenuItemTagCopyMediaLinkToClipboard:
+        return kWKContextMenuItemTagCopyMediaLinkToClipboard;
+    case WebCore::ContextMenuItemTagToggleMediaControls:
+        return kWKContextMenuItemTagToggleMediaControls;
+    case WebCore::ContextMenuItemTagToggleMediaLoop:
+        return kWKContextMenuItemTagToggleMediaLoop;
+    case WebCore::ContextMenuItemTagEnterVideoFullscreen:
+        return kWKContextMenuItemTagEnterVideoFullscreen;
+    case WebCore::ContextMenuItemTagMediaPlayPause:
+        return kWKContextMenuItemTagMediaPlayPause;
+    case WebCore::ContextMenuItemTagMediaMute:
+        return kWKContextMenuItemTagMediaMute;
+#if PLATFORM(MAC)
+    case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
+        return kWKContextMenuItemTagCorrectSpellingAutomatically;
+    case WebCore::ContextMenuItemTagSubstitutionsMenu:
+        return kWKContextMenuItemTagSubstitutionsMenu;
+    case WebCore::ContextMenuItemTagShowSubstitutions:
+        return kWKContextMenuItemTagShowSubstitutions;
+    case WebCore::ContextMenuItemTagSmartCopyPaste:
+        return kWKContextMenuItemTagSmartCopyPaste;
+    case WebCore::ContextMenuItemTagSmartQuotes:
+        return kWKContextMenuItemTagSmartQuotes;
+    case WebCore::ContextMenuItemTagSmartDashes:
+        return kWKContextMenuItemTagSmartDashes;
+    case WebCore::ContextMenuItemTagSmartLinks:
+        return kWKContextMenuItemTagSmartLinks;
+    case WebCore::ContextMenuItemTagTextReplacement:
+        return kWKContextMenuItemTagTextReplacement;
+    case WebCore::ContextMenuItemTagTransformationsMenu:
+        return kWKContextMenuItemTagTransformationsMenu;
+    case WebCore::ContextMenuItemTagMakeUpperCase:
+        return kWKContextMenuItemTagMakeUpperCase;
+    case WebCore::ContextMenuItemTagMakeLowerCase:
+        return kWKContextMenuItemTagMakeLowerCase;
+    case WebCore::ContextMenuItemTagCapitalize:
+        return kWKContextMenuItemTagCapitalize;
+    case WebCore::ContextMenuItemTagChangeBack:
+        return kWKContextMenuItemTagChangeBack;
+#endif
+    default:
+        if (action < WebCore::ContextMenuItemBaseApplicationTag)
+            LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::  ContextMenuItemBaseApplicationTag);
+        return static_cast<WKContextMenuItemTag>(action);
+    }
+}
+
+inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
+{
+    switch (tag) {
+    case kWKContextMenuItemTagNoAction:
+        return WebCore::ContextMenuItemTagNoAction;
+    case kWKContextMenuItemTagOpenLinkInNewWindow:
+        return WebCore::ContextMenuItemTagOpenLinkInNewWindow;
+    case kWKContextMenuItemTagDownloadLinkToDisk:
+        return WebCore::ContextMenuItemTagDownloadLinkToDisk;
+    case kWKContextMenuItemTagCopyLinkToClipboard:
+        return WebCore::ContextMenuItemTagCopyLinkToClipboard;
+    case kWKContextMenuItemTagOpenImageInNewWindow:
+        return WebCore::ContextMenuItemTagOpenImageInNewWindow;
+    case kWKContextMenuItemTagDownloadImageToDisk:
+        return WebCore::ContextMenuItemTagDownloadImageToDisk;
+    case kWKContextMenuItemTagCopyImageToClipboard:
+        return WebCore::ContextMenuItemTagCopyImageToClipboard;
+    case kWKContextMenuItemTagOpenFrameInNewWindow:
+        return WebCore::ContextMenuItemTagOpenFrameInNewWindow;
+    case kWKContextMenuItemTagCopy:
+        return WebCore::ContextMenuItemTagCopy;
+    case kWKContextMenuItemTagGoBack:
+        return WebCore::ContextMenuItemTagGoBack;
+    case kWKContextMenuItemTagGoForward:
+        return WebCore::ContextMenuItemTagGoForward;
+    case kWKContextMenuItemTagStop:
+        return WebCore::ContextMenuItemTagStop;
+    case kWKContextMenuItemTagReload:
+        return WebCore::ContextMenuItemTagReload;
+    case kWKContextMenuItemTagCut:
+        return WebCore::ContextMenuItemTagCut;
+    case kWKContextMenuItemTagPaste:
+        return WebCore::ContextMenuItemTagPaste;
+    case kWKContextMenuItemTagSpellingGuess:
+        return WebCore::ContextMenuItemTagSpellingGuess;
+    case kWKContextMenuItemTagNoGuessesFound:
+        return WebCore::ContextMenuItemTagNoGuessesFound;
+    case kWKContextMenuItemTagIgnoreSpelling:
+        return WebCore::ContextMenuItemTagIgnoreSpelling;
+    case kWKContextMenuItemTagLearnSpelling:
+        return WebCore::ContextMenuItemTagLearnSpelling;
+    case kWKContextMenuItemTagOther:
+        return WebCore::ContextMenuItemTagOther;
+    case kWKContextMenuItemTagSearchInSpotlight:
+        return WebCore::ContextMenuItemTagSearchInSpotlight;
+    case kWKContextMenuItemTagSearchWeb:
+        return WebCore::ContextMenuItemTagSearchWeb;
+    case kWKContextMenuItemTagLookUpInDictionary:
+        return WebCore::ContextMenuItemTagLookUpInDictionary;
+    case kWKContextMenuItemTagOpenWithDefaultApplication:
+        return WebCore::ContextMenuItemTagOpenWithDefaultApplication;
+    case kWKContextMenuItemTagPDFActualSize:
+        return WebCore::ContextMenuItemPDFActualSize;
+    case kWKContextMenuItemTagPDFZoomIn:
+        return WebCore::ContextMenuItemPDFZoomIn;
+    case kWKContextMenuItemTagPDFZoomOut:
+        return WebCore::ContextMenuItemPDFZoomOut;
+    case kWKContextMenuItemTagPDFAutoSize:
+        return WebCore::ContextMenuItemPDFAutoSize;
+    case kWKContextMenuItemTagPDFSinglePage:
+        return WebCore::ContextMenuItemPDFSinglePage;
+    case kWKContextMenuItemTagPDFFacingPages:
+        return WebCore::ContextMenuItemPDFFacingPages;
+    case kWKContextMenuItemTagPDFContinuous:
+        return WebCore::ContextMenuItemPDFContinuous;
+    case kWKContextMenuItemTagPDFNextPage:
+        return WebCore::ContextMenuItemPDFNextPage;
+    case kWKContextMenuItemTagPDFPreviousPage:
+        return WebCore::ContextMenuItemPDFPreviousPage;
+    case kWKContextMenuItemTagOpenLink:
+        return WebCore::ContextMenuItemTagOpenLink;
+    case kWKContextMenuItemTagIgnoreGrammar:
+        return WebCore::ContextMenuItemTagIgnoreGrammar;
+    case kWKContextMenuItemTagSpellingMenu:
+        return WebCore::ContextMenuItemTagSpellingMenu;
+    case kWKContextMenuItemTagShowSpellingPanel:
+        return WebCore::ContextMenuItemTagShowSpellingPanel;
+    case kWKContextMenuItemTagCheckSpelling:
+        return WebCore::ContextMenuItemTagCheckSpelling;
+    case kWKContextMenuItemTagCheckSpellingWhileTyping:
+        return WebCore::ContextMenuItemTagCheckSpellingWhileTyping;
+    case kWKContextMenuItemTagCheckGrammarWithSpelling:
+        return WebCore::ContextMenuItemTagCheckGrammarWithSpelling;
+    case kWKContextMenuItemTagFontMenu:
+        return WebCore::ContextMenuItemTagFontMenu;
+    case kWKContextMenuItemTagShowFonts:
+        return WebCore::ContextMenuItemTagShowFonts;
+    case kWKContextMenuItemTagBold:
+        return WebCore::ContextMenuItemTagBold;
+    case kWKContextMenuItemTagItalic:
+        return WebCore::ContextMenuItemTagItalic;
+    case kWKContextMenuItemTagUnderline:
+        return WebCore::ContextMenuItemTagUnderline;
+    case kWKContextMenuItemTagOutline:
+        return WebCore::ContextMenuItemTagOutline;
+    case kWKContextMenuItemTagStyles:
+        return WebCore::ContextMenuItemTagStyles;
+    case kWKContextMenuItemTagShowColors:
+        return WebCore::ContextMenuItemTagShowColors;
+    case kWKContextMenuItemTagSpeechMenu:
+        return WebCore::ContextMenuItemTagSpeechMenu;
+    case kWKContextMenuItemTagStartSpeaking:
+        return WebCore::ContextMenuItemTagStartSpeaking;
+    case kWKContextMenuItemTagStopSpeaking:
+        return WebCore::ContextMenuItemTagStopSpeaking;
+    case kWKContextMenuItemTagWritingDirectionMenu:
+        return WebCore::ContextMenuItemTagWritingDirectionMenu;
+    case kWKContextMenuItemTagDefaultDirection:
+        return WebCore::ContextMenuItemTagDefaultDirection;
+    case kWKContextMenuItemTagLeftToRight:
+        return WebCore::ContextMenuItemTagLeftToRight;
+    case kWKContextMenuItemTagRightToLeft:
+        return WebCore::ContextMenuItemTagRightToLeft;
+    case kWKContextMenuItemTagPDFSinglePageScrolling:
+        return WebCore::ContextMenuItemTagPDFSinglePageScrolling;
+    case kWKContextMenuItemTagPDFFacingPagesScrolling:
+        return WebCore::ContextMenuItemTagPDFFacingPagesScrolling;
+    case kWKContextMenuItemTagInspectElement:
+        return WebCore::ContextMenuItemTagInspectElement;
+    case kWKContextMenuItemTagTextDirectionMenu:
+        return WebCore::ContextMenuItemTagTextDirectionMenu;
+    case kWKContextMenuItemTagTextDirectionDefault:
+        return WebCore::ContextMenuItemTagTextDirectionDefault;
+    case kWKContextMenuItemTagTextDirectionLeftToRight:
+        return WebCore::ContextMenuItemTagTextDirectionLeftToRight;
+    case kWKContextMenuItemTagTextDirectionRightToLeft:
+        return WebCore::ContextMenuItemTagTextDirectionRightToLeft;
+    case kWKContextMenuItemTagOpenMediaInNewWindow:
+        return WebCore::ContextMenuItemTagOpenMediaInNewWindow;
+    case kWKContextMenuItemTagCopyMediaLinkToClipboard:
+        return WebCore::ContextMenuItemTagCopyMediaLinkToClipboard;
+    case kWKContextMenuItemTagToggleMediaControls:
+        return WebCore::ContextMenuItemTagToggleMediaControls;
+    case kWKContextMenuItemTagToggleMediaLoop:
+        return WebCore::ContextMenuItemTagToggleMediaLoop;
+    case kWKContextMenuItemTagEnterVideoFullscreen:
+        return WebCore::ContextMenuItemTagEnterVideoFullscreen;
+    case kWKContextMenuItemTagMediaPlayPause:
+        return WebCore::ContextMenuItemTagMediaPlayPause;
+    case kWKContextMenuItemTagMediaMute:
+        return WebCore::ContextMenuItemTagMediaMute;
+#if PLATFORM(MAC)
+    case kWKContextMenuItemTagCorrectSpellingAutomatically:
+        return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;
+    case kWKContextMenuItemTagSubstitutionsMenu:
+        return WebCore::ContextMenuItemTagSubstitutionsMenu;
+    case kWKContextMenuItemTagShowSubstitutions:
+        return WebCore::ContextMenuItemTagShowSubstitutions;
+    case kWKContextMenuItemTagSmartCopyPaste:
+        return WebCore::ContextMenuItemTagSmartCopyPaste;
+    case kWKContextMenuItemTagSmartQuotes:
+        return WebCore::ContextMenuItemTagSmartQuotes;
+    case kWKContextMenuItemTagSmartDashes:
+        return WebCore::ContextMenuItemTagSmartDashes;
+    case kWKContextMenuItemTagSmartLinks:
+        return WebCore::ContextMenuItemTagSmartLinks;
+    case kWKContextMenuItemTagTextReplacement:
+        return WebCore::ContextMenuItemTagTextReplacement;
+    case kWKContextMenuItemTagTransformationsMenu:
+        return WebCore::ContextMenuItemTagTransformationsMenu;
+    case kWKContextMenuItemTagMakeUpperCase:
+        return WebCore::ContextMenuItemTagMakeUpperCase;
+    case kWKContextMenuItemTagMakeLowerCase:
+        return WebCore::ContextMenuItemTagMakeLowerCase;
+    case kWKContextMenuItemTagCapitalize:
+        return WebCore::ContextMenuItemTagCapitalize;
+    case kWKContextMenuItemTagChangeBack:
+        return WebCore::ContextMenuItemTagChangeBack;
+#endif
+    default:
+        if (tag < kWKContextMenuItemBaseApplicationTag)
+            LOG_ERROR("WKContextMenuItemTag %i is an unknown tag but is below the allowable custom tag value of %i", tag, kWKContextMenuItemBaseApplicationTag);
+        return static_cast<WebCore::ContextMenuAction>(tag);
+    }
+}
+
+inline WKContextMenuItemType toAPI(WebCore::ContextMenuItemType type)
+{
+    switch(type) {
+    case WebCore::ActionType:
+        return kWKContextMenuItemTypeAction;
+    case WebCore::CheckableActionType:
+        return kWKContextMenuItemTypeCheckableAction;
+    case WebCore::SeparatorType:
+        return kWKContextMenuItemTypeSeparator;
+    case WebCore::SubmenuType:
+        return kWKContextMenuItemTypeSubmenu;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKContextMenuItemTypeAction;
+    }
 }
 
 } // namespace WebKit

@@ -25,11 +25,53 @@
  
 #include "WebContextMenuItem.h"
 
+#include "ImmutableArray.h"
+#include <WebCore/ContextMenuItem.h>
+
 namespace WebKit {
 
 WebContextMenuItem::WebContextMenuItem(const WebContextMenuItemData& data)
     : m_webContextMenuItemData(data)
 {
+}
+
+PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, ImmutableArray* submenuItems)
+{
+    size_t size = submenuItems->size();
+    
+    Vector<WebContextMenuItemData> submenu;
+    submenu.reserveCapacity(size);
+    
+    for (size_t i = 0; i < size; ++i) {
+        WebContextMenuItem* item = submenuItems->at<WebContextMenuItem>(i);
+        if (item)
+            submenu.append(*item->data());
+    }
+    
+    return adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
+}
+
+WebContextMenuItem* WebContextMenuItem::separatorItem()
+{
+    static RefPtr<WebContextMenuItem> separatorItem = adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
+    return separatorItem.get();
+}
+
+PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() const
+{    
+    if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
+        return ImmutableArray::create();
+
+    const Vector<WebContextMenuItemData>& submenuVector(m_webContextMenuItemData.submenu());
+    unsigned size = submenuVector.size();
+    
+    Vector<RefPtr<APIObject> > result;
+    result.reserveCapacity(size);
+    
+    for (unsigned i = 0; i < size; ++i)
+        result.append(WebContextMenuItem::create(submenuVector[i]));
+    
+    return ImmutableArray::adopt(result);
 }
 
 } // namespace WebKit

@@ -23,29 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageContextMenuClient_h
-#define InjectedBundlePageContextMenuClient_h
+#ifndef WKContextMenuItem_h
+#define WKContextMenuItem_h
 
-#include "APIClient.h"
-#include "WKBundlePage.h"
-#include <wtf/Vector.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKContextMenuItemTypes.h>
 
-namespace WebCore {
-    class ContextMenu;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKContextMenuItemGetTypeID();
+
+WK_EXPORT WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag, WKStringRef title, bool enabled);
+WK_EXPORT WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemTag, WKStringRef title, bool enabled, bool checked);
+WK_EXPORT WKContextMenuItemRef WKContextMenuItemCreateAsSubmenu(WKStringRef title, bool enabled, WKArrayRef submenuItems);
+WK_EXPORT WKContextMenuItemRef WKContextMenuItemSeparatorItem();
+
+WK_EXPORT WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef);
+WK_EXPORT WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef);
+WK_EXPORT WKStringRef WKContextMenuItemCopyTitle(WKContextMenuItemRef);
+WK_EXPORT bool WKContextMenuItemGetEnabled(WKContextMenuItemRef);
+WK_EXPORT bool WKContextMenuItemGetChecked(WKContextMenuItemRef);
+WK_EXPORT WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class APIObject;
-class InjectedBundleHitTestResult;
-class WebContextMenuItemData;
-class WebPage;
-
-class InjectedBundlePageContextMenuClient : public APIClient<WKBundlePageContextMenuClient> {
-public:
-    bool getCustomMenuFromDefaultItems(WebPage*, InjectedBundleHitTestResult*, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<APIObject>& userData);
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundlePageEditorClient_h
+#endif /* WKContextMenuItem_h */

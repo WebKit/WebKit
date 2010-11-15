@@ -668,6 +668,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKContextMenuItem.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKContextMenuItem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKContextMenuItemTypes.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
 					>
 				</File>
@@ -1862,6 +1874,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebNavigationData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebPageContextMenuClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebPageContextMenuClient.h"
 				>
 			</File>
 			<File

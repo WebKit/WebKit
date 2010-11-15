@@ -182,7 +182,7 @@ struct WKBundlePageFormClient {
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;
 
 // ContextMenu client
-typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, const void* clientInfo);
+typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePageContextMenuClient {
     int                                                                 version;

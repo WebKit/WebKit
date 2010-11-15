@@ -23,71 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextMenuClient.h"
+#include "WebPageContextMenuClient.h"
 
-#include "WebContextMenuItemData.h"
-#include "WebPage.h"
-#include <WebCore/ContextMenu.h>
-
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
-
-using namespace WebCore;
+#include "Logging.h"
+#include "MutableArray.h"
+#include "WebContextMenuItem.h"
+#include "WKAPICast.h"
+#include "WKSharedAPICast.h"
 
 namespace WebKit {
 
-void WebContextMenuClient::contextMenuDestroyed()
+bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page, const Vector<WebContextMenuItemData>& proposedMenuVector, Vector<WebContextMenuItemData>& customMenu, APIObject* userData)
 {
-    delete this;
+    if (!m_client.getContextMenuFromProposedMenu)
+        return false;
+        
+    unsigned size = proposedMenuVector.size();
+    RefPtr<MutableArray> proposedMenu = MutableArray::create();
+    proposedMenu->reserveCapacity(size);
+    for (unsigned i = 0; i < size; ++i)
+        proposedMenu->append(WebContextMenuItem::create(proposedMenuVector[i]).get());
+        
+    WKArrayRef newMenu = 0;
+    m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(proposedMenu.get()), &newMenu, toAPI(userData), m_client.clientInfo);
+    RefPtr<ImmutableArray> array = adoptRef(toImpl(newMenu));
+    
+    customMenu.clear();
+    
+    size_t newSize = array ? array->size() : 0;
+    for (size_t i = 0; i < newSize; ++i) {
+        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
+        if (!item) {
+            LOG(ContextMenu, "New menu entry at index %i is not a WebContextMenuItem", (int)i);
+            continue;
+        }
+        
+        customMenu.append(*item->data());
+    }
+    
+    return true;
 }
-
-PlatformMenuDescription WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
-{
-    // WebKit2 ignores this client callback and does context menu customization when it is told to show the menu.
-    return menu->platformDescription();
-}
-
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
-{
-    notImplemented();
-}
-
-void WebContextMenuClient::downloadURL(const KURL& url)
-{
-    notImplemented();
-}
-
-void WebContextMenuClient::searchWithGoogle(const Frame*)
-{
-    notImplemented();
-}
-
-void WebContextMenuClient::lookUpInDictionary(Frame*)
-{
-    notImplemented();
-}
-
-bool WebContextMenuClient::isSpeaking()
-{
-    notImplemented();
-    return false;
-}
-
-void WebContextMenuClient::speak(const String&)
-{
-    notImplemented();
-}
-
-void WebContextMenuClient::stopSpeaking()
-{
-    notImplemented();
-}
-
-#if PLATFORM(MAC)
-void WebContextMenuClient::searchWithSpotlight()
-{
-    notImplemented();
-}
-#endif
 
 } // namespace WebKit

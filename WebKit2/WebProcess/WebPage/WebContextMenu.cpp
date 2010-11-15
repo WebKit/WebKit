@@ -21,6 +21,7 @@
 
 #include "WebContextMenu.h"
 
+#include "InjectedBundleUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -58,10 +59,16 @@ void WebContextMenu::show()
     if (!view)
         return;
 
-    IntPoint point = view->contentsToWindow(menu->hitTestResult().point());
-    Vector<ContextMenuItem> items = contextMenuItemVector(menu->platformDescription());
+    // Give the bundle client a chance to process the menu.
+    Vector<ContextMenuItem> coreItems = contextMenuItemVector(menu->platformDescription());
+    Vector<WebContextMenuItemData> proposedMenu = kitItems(coreItems, menu);
+    Vector<WebContextMenuItemData> newMenu;
+    RefPtr<APIObject> userData;
+    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, 0, proposedMenu, newMenu, userData))
+        proposedMenu = newMenu;
 
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(point, kitItems(items, menu)));
+    // Notify the UIProcess.
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(menu->hitTestResult().point()), proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

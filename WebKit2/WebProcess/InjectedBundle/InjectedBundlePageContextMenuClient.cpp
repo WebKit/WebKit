@@ -38,24 +38,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, WebCore::ContextMenu* defaultMenu, Vector<WebContextMenuItemData>& newMenu)
+bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, InjectedBundleHitTestResult* hitTestResult, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<APIObject>& userData)
 {
     if (!m_client.getContextMenuFromDefaultMenu)
         return false;
 
-    RefPtr<InjectedBundleHitTestResult> hitTestResult = InjectedBundleHitTestResult::create(defaultMenu->hitTestResult());
-    
-    Vector<WebCore::ContextMenuItem> coreItems = WebCore::contextMenuItemVector(defaultMenu->platformDescription());
-    Vector<WebContextMenuItemData> webItems = kitItems(coreItems, defaultMenu);
-
     RefPtr<MutableArray> defaultMenuArray = MutableArray::create();
-    defaultMenuArray->reserveCapacity(webItems.size());
-    for (unsigned i = 0; i < webItems.size(); ++i)
-        defaultMenuArray->append(WebContextMenuItem::create(webItems[i]).get());
+    defaultMenuArray->reserveCapacity(defaultMenu.size());
+    for (unsigned i = 0; i < defaultMenu.size(); ++i)
+        defaultMenuArray->append(WebContextMenuItem::create(defaultMenu[i]).get());
 
     WKArrayRef newMenuWK = 0;
-    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult.get()), toAPI(defaultMenuArray.get()), &newMenuWK, m_client.clientInfo);
+    WKTypeRef userDataToPass = 0;
+    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(defaultMenuArray.get()), &newMenuWK, &userDataToPass, m_client.clientInfo);
     RefPtr<ImmutableArray> array = adoptRef(toImpl(newMenuWK));
+    userData = adoptRef(toImpl(userDataToPass));
     
     newMenu.clear();
     

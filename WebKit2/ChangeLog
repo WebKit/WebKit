@@ -1,3 +1,72 @@
+2010-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Finish off <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=48720
+        Customizable context menu support in WebKit2.
+
+        - Adds an API-level WKContextMenuItem.
+        - Round trips through both the InjectedBundle client and the new PageContextMenuClient before
+          actually displaying the menu.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKContextMenuItem.cpp: Added.
+        (WKContextMenuItemGetTypeID):
+        (WKContextMenuItemCreateAsAction):
+        (WKContextMenuItemCreateAsCheckableAction):
+        (WKContextMenuItemCreateAsSubmenu):
+        (WKContextMenuItemSeparatorItem):
+        (WKContextMenuItemGetTag):
+        (WKContextMenuItemGetType):
+        (WKContextMenuItemCopyTitle):
+        (WKContextMenuItemGetEnabled):
+        (WKContextMenuItemGetChecked):
+        (WKContextMenuCopySubmenuItems):
+        * Shared/API/c/WKContextMenuItem.h: Added.
+        * Shared/API/c/WKContextMenuItemTypes.h: Added.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::create):
+        (WebKit::WebContextMenuItem::separatorItem):
+        (WebKit::WebContextMenuItem::submenuItemsAsImmutableArray):
+        * Shared/WebContextMenuItem.h:
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageFindClient):
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/WebPageContextMenuClient.cpp: Added.
+        (WebKit::WebPageContextMenuClient::getContextMenuFromProposedMenu):
+        * UIProcess/WebPageContextMenuClient.h: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeContextMenuClient):
+        (WebKit::WebPageProxy::showContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+
 2010-11-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

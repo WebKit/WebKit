@@ -44,6 +44,7 @@ typedef const struct OpaqueWKDictionary* WKDictionaryRef;
 typedef struct OpaqueWKDictionary* WKMutableDictionaryRef;
 
 typedef const struct OpaqueWKBoolean* WKBooleanRef;
+typedef const struct OpaqueWKContextMenuItem* WKContextMenuItemRef;
 typedef const struct OpaqueWKData* WKDataRef;
 typedef const struct OpaqueWKDouble* WKDoubleRef;
 typedef const struct OpaqueWKError* WKErrorRef;

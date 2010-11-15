@@ -203,6 +203,16 @@ enum {
     kWKMoreThanMaximumMatchCount = -1
 };
 
+// ContextMenu client
+typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKTypeRef userData, const void* clientInfo);
+
+struct WKPageContextMenuClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKPageGetContextMenuFromProposedContextMenuCallback                 getContextMenuFromProposedMenu;
+};
+typedef struct WKPageContextMenuClient WKPageContextMenuClient;
+
 WK_EXPORT WKTypeID WKPageGetTypeID();
 
 WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
@@ -275,11 +285,12 @@ WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindDirect
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
 WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, bool caseInsensitive, unsigned maxMatchCount);
 
+WK_EXPORT void WKPageSetPageContextMenuClient(WKPageRef page, const WKPageContextMenuClient* client);
+WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* client);
+WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
-WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);
-WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, WKErrorRef, void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);

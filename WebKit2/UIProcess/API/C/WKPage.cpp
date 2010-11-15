@@ -238,6 +238,27 @@ void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, bool caseIn
     toImpl(pageRef)->countStringMatches(toImpl(string)->string(), caseInsensitive, maxMatchCount);
 }
 
+void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeContextMenuClient(wkClient);
+}
+
+void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeFindClient(wkClient);
+}
+
+void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeFormClient(wkClient);
+}
+
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
     if (wkClient && wkClient->version)
@@ -252,25 +273,11 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkCl
     toImpl(pageRef)->initializePolicyClient(wkClient);
 }
 
-void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient)
-{
-    if (wkClient && wkClient->version)
-        return;
-    toImpl(pageRef)->initializeFormClient(wkClient);
-}
-
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
     toImpl(pageRef)->initializeUIClient(wkClient);
-}
-
-void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClient* wkClient)
-{
-    if (wkClient && wkClient->version)
-        return;
-    toImpl(pageRef)->initializeFindClient(wkClient);
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
