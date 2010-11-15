@@ -99,6 +99,9 @@ public:
     
     bool readOnly() const { return m_readOnly; }
 
+    void resetFormOwner(HTMLFormElement*);
+    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
 

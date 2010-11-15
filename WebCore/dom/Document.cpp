@@ -4365,6 +4365,25 @@ void Document::setIconURL(const String& iconURL, const String& type)
         f->loader()->setIconURL(m_iconURL);
 }
 
+void Document::registerFormElementWithFormAttribute(Element* control)
+{
+    ASSERT(control->fastHasAttribute(formAttr));
+    m_formElementsWithFormAttribute.add(control);
+}
+
+void Document::unregisterFormElementWithFormAttribute(Element* control)
+{
+    m_formElementsWithFormAttribute.remove(control);
+}
+
+void Document::resetFormElementsOwner(HTMLFormElement* form)
+{
+    typedef FormElementListHashSet::iterator Iterator;
+    Iterator end = m_formElementsWithFormAttribute.end();
+    for (Iterator it = m_formElementsWithFormAttribute.begin(); it != end; ++it)
+        static_cast<HTMLFormControlElement*>(*it)->resetFormOwner(form);
+}
+
 void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
 {
     if (m_useSecureKeyboardEntryWhenActive == usesSecureKeyboard)

@@ -65,6 +65,8 @@ using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_associatedElementsBeforeIndex(0)
+    , m_associatedElementsAfterIndex(0)
     , m_wasUserSubmitted(false)
     , m_autocomplete(true)
     , m_insubmit(false)
@@ -133,6 +135,9 @@ void HTMLFormElement::insertedIntoDocument()
         static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
 
     HTMLElement::insertedIntoDocument();
+
+    if (hasID())
+        document()->resetFormElementsOwner(this);
 }
 
 void HTMLFormElement::removedFromDocument()
@@ -141,6 +146,9 @@ void HTMLFormElement::removedFromDocument()
         static_cast<HTMLDocument*>(document())->removeNamedItem(m_name);
 
     HTMLElement::removedFromDocument();
+
+    if (hasID())
+        document()->resetFormElementsOwner(0);
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)
@@ -388,24 +396,64 @@ template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T*
         }
 }
 
+unsigned HTMLFormElement::formElementIndexWithFormAttribute(HTMLFormControlElement* element)
+{
+    // Compares the position of the form element and the inserted element.
+    // Updates the indeces in order to the relation of the position:
+    unsigned short position = compareDocumentPosition(element);
+    if (position & DOCUMENT_POSITION_CONTAINS)
+        ++m_associatedElementsAfterIndex;
+    else if (position & DOCUMENT_POSITION_PRECEDING) {
+        ++m_associatedElementsBeforeIndex;
+        ++m_associatedElementsAfterIndex;
+    }
+
+    if (m_associatedElements.isEmpty())
+        return 0;
+
+    // Does binary search on m_associatedElements in order to find the index
+    // to be inserted.
+    unsigned left = 0, right = m_associatedElements.size() - 1;
+    while (left != right) {
+        unsigned middle = left + ((right - left) / 2);
+        position = element->compareDocumentPosition(m_associatedElements[middle]);
+        if (position & DOCUMENT_POSITION_FOLLOWING)
+            right = middle;
+        else
+            left = middle + 1;
+    }
+
+    position = element->compareDocumentPosition(m_associatedElements[left]);
+    if (position & DOCUMENT_POSITION_FOLLOWING)
+        return left;
+    return left + 1;
+}
+
 unsigned HTMLFormElement::formElementIndex(HTMLFormControlElement* e)
 {
+    // Treats separately the case where this element has the form attribute
+    // for performance consideration.
+    if (e->fastHasAttribute(formAttr))
+        return formElementIndexWithFormAttribute(e);
+
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
     // common case that occurs during parsing; instead we'll just return a value
     // that says "add this form element to the end of the array".
     if (e->traverseNextNode(this)) {
-        unsigned i = 0;
+        unsigned i = m_associatedElementsBeforeIndex;
         for (Node* node = this; node; node = node->traverseNextNode(this)) {
-            if (node == e)
+            if (node == e) {
+                ++m_associatedElementsAfterIndex;
                 return i;
+            }
             if (node->isHTMLElement()
                     && static_cast<Element*>(node)->isFormControlElement()
                     && static_cast<HTMLFormControlElement*>(node)->form() == this)
                 ++i;
         }
     }
-    return m_associatedElements.size();
+    return m_associatedElementsAfterIndex++;
 }
 
 void HTMLFormElement::registerFormElement(HTMLFormControlElement* e)
@@ -418,6 +466,18 @@ void HTMLFormElement::registerFormElement(HTMLFormControlElement* e)
 void HTMLFormElement::removeFormElement(HTMLFormControlElement* e)
 {
     m_checkedRadioButtons.removeButton(e);
+    if (e->fastHasAttribute(formAttr)) {
+        unsigned index;
+        for (index = 0; index < m_associatedElements.size(); ++index)
+            if (m_associatedElements[index] == e)
+                break;
+        ASSERT(index < m_associatedElements.size());
+        if (index < m_associatedElementsBeforeIndex)
+            --m_associatedElementsBeforeIndex;
+        if (index < m_associatedElementsAfterIndex)
+            --m_associatedElementsAfterIndex;
+    } else
+        --m_associatedElementsAfterIndex;
     removeFromVector(m_associatedElements, e);
 }
 

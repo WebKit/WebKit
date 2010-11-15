@@ -483,6 +483,10 @@ public:
     bool hasStateForNewFormElements() const;
     bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
 
+    void registerFormElementWithFormAttribute(Element*);
+    void unregisterFormElementWithFormAttribute(Element*);
+    void resetFormElementsOwner(HTMLFormElement*);
+
     FrameView* view() const; // can be NULL
     Frame* frame() const { return m_frame; } // can be NULL
     Page* page() const; // can be NULL
@@ -1197,6 +1201,7 @@ private:
 
     typedef ListHashSet<Element*, 64> FormElementListHashSet;
     FormElementListHashSet m_formElementsWithState;
+    FormElementListHashSet m_formElementsWithFormAttribute;
 
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     FormElementStateMap m_stateForNewFormElements;

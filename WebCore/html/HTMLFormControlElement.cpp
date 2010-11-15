@@ -154,6 +154,16 @@ void HTMLFormControlElement::attach()
 
 void HTMLFormControlElement::insertedIntoTree(bool deep)
 {
+    if (fastHasAttribute(formAttr)) {
+        document()->registerFormElementWithFormAttribute(this);
+        Element* element = document()->getElementById(fastGetAttribute(formAttr));
+        if (element && element->hasTagName(formTag)) {
+            if (m_form)
+                m_form->removeFormElement(this);
+            m_form = static_cast<HTMLFormElement*>(element);
+            m_form->registerFormElement(this);
+        }
+    }
     if (!m_form) {
         // This handles the case of a new form element being created by
         // JavaScript and inserted inside a form.  In the case of the parser
@@ -179,6 +189,9 @@ static inline Node* findRoot(Node* n)
 
 void HTMLFormControlElement::removedFromTree(bool deep)
 {
+    if (fastHasAttribute(formAttr))
+        document()->unregisterFormElementWithFormAttribute(this);
+
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
     if (m_form && findRoot(this) != findRoot(m_form)) {
@@ -429,6 +442,50 @@ void HTMLFormControlElement::removeFromForm()
         return;
     m_form->removeFormElement(this);
     m_form = 0;
+}
+
+void HTMLFormControlElement::resetFormOwner(HTMLFormElement* form)
+{
+    if (m_form) {
+        if (!fastHasAttribute(formAttr))
+            return;
+        m_form->removeFormElement(this);
+    }
+    m_form = 0;
+    if (fastHasAttribute(formAttr)) {
+        // The HTML5 spec says that the element should be associated with
+        // the first element in the document to have an ID that equal to
+        // the value of form attribute, so we put the result of
+        // document()->getElementById() over the given element.
+        Element* firstElement = document()->getElementById(fastGetAttribute(formAttr));
+        if (firstElement && firstElement->hasTagName(formTag))
+            m_form = static_cast<HTMLFormElement*>(firstElement);
+        else
+            m_form = form;
+    } else
+        m_form = findFormAncestor();
+    if (m_form)
+        m_form->registerFormElement(this);
+    else
+        document()->checkedRadioButtons().addButton(this);
+}
+
+void HTMLFormControlElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    if (attr->name() == formAttr) {
+        if (!fastHasAttribute(formAttr)) {
+            // The form attribute removed. We need to reset form owner here.
+            if (m_form)
+                m_form->removeFormElement(this);
+            m_form = findFormAncestor();
+            if (m_form)
+                m_form->registerFormElement(this);
+            else
+                document()->checkedRadioButtons().addButton(this);
+        } else
+            resetFormOwner(0);
+    }
+    HTMLElement::attributeChanged(attr, preserveDecls);
 }
 
 bool HTMLFormControlElement::isLabelable() const

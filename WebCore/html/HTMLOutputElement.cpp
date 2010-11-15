@@ -58,7 +58,6 @@ const AtomicString& HTMLOutputElement::formControlType() const
 
 void HTMLOutputElement::parseMappedAttribute(Attribute* attr)
 {
-    // FIXME: Should handle the 'form' attribute here.
     if (attr->name() == HTMLNames::forAttr)
         setFor(attr->value());
     else
@@ -73,11 +72,6 @@ DOMSettableTokenList* HTMLOutputElement::htmlFor() const
 void HTMLOutputElement::setFor(const String& value)
 {
     m_tokens->setValue(value);
-}
-
-void HTMLOutputElement::setForm(const String& /*id*/)
-{
-    // FIXME: Implement this function.
 }
 
 void HTMLOutputElement::childrenChanged(bool createdByParser, Node*, Node*, int)
