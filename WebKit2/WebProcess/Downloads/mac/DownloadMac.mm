@@ -138,20 +138,21 @@ void Download::platformInvalidate()
 
 - (BOOL)download:(NSURLDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)encodingType
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (!_download)
+        return _download->shouldDecodeSourceDataOfMIMEType(encodingType);
+
     return YES;
 }
 
 - (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename
 {
     String destination;
+    bool allowOverwrite;
     if (_download)
-        destination = _download->decideDestinationWithSuggestedFilename(filename);
+        destination = _download->decideDestinationWithSuggestedFilename(filename, allowOverwrite);
 
-    // FIXME: AllowOverwrite should come from the client too.
     if (!destination.isNull())
-        [download setDestination:destination allowOverwrite:YES];
+        [download setDestination:destination allowOverwrite:allowOverwrite];
 }
 
 - (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path

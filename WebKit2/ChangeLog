@@ -2,6 +2,49 @@
 
         Reviewed by Sam Weinig.
 
+        Add shouldDecodeSourceDataOfMIMEType WKContextDownloadClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=49558
+
+        * UIProcess/API/C/WKContext.h:
+        Add shouldDecodeSourceDataOfMIMEType callback.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType):
+        Call WebDownloadClient::shouldDecodeSourceDataOfMIMEType.
+
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        Add allowOverwrite out parameter.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add ShouldDecodeSourceDataOfMIMEType message.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::shouldDecodeSourceDataOfMIMEType):
+        Call the WKContextDownloadClient.
+
+        (WebKit::WebDownloadClient::decideDestinationWithSuggestedFilename):
+        Add allowOverwrite out parameter.
+
+        * UIProcess/WebDownloadClient.h:
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::shouldDecodeSourceDataOfMIMEType):
+        Send the ShouldDecodeSourceDataOfMIMEType message.
+
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        Add allowOverwrite reply parameter.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:shouldDecodeSourceDataOfMIMEType:]):
+        Call Download::shouldDecodeSourceDataOfMIMEType.
+
+        (-[WKDownloadAsDelegate download:decideDestinationWithSuggestedFilename:]):
+        Add allowOverwrite parameter.
+
+2010-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add decideDestinationWithSuggestedFilename WKContextDownloadClient callback
         https://bugs.webkit.org/show_bug.cgi?id=49554
 
@@ -10,7 +53,7 @@
         Add sendSync capabilities to Messagesender.
         
         * UIProcess/API/C/WKContext.h:
-        AdddecideDestinationWithSuggestedFilename callback.
+        Add decideDestinationWithSuggestedFilename callback.
 
         * UIProcess/Downloads/DownloadProxy.cpp:
         (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):

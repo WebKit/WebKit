@@ -71,10 +71,19 @@ void Download::didReceiveData(uint64_t length)
     send(Messages::DownloadProxy::DidReceiveData(length));
 }
 
-String Download::decideDestinationWithSuggestedFilename(const String& filename)
+bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
+{
+    bool result;
+    if (!sendSync(Messages::DownloadProxy::ShouldDecodeSourceDataOfMIMEType(mimeType), Messages::DownloadProxy::ShouldDecodeSourceDataOfMIMEType::Reply(result)))
+        return true;
+
+    return result;
+}
+
+String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
-    if (!sendSync(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(filename), Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::Reply(destination)))
+    if (!sendSync(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(filename), Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::Reply(destination, allowOverwrite)))
         return String();
 
     return destination;

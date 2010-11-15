@@ -64,7 +64,8 @@ private:
     void didStart(const WebCore::ResourceRequest&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
-    void decideDestinationWithSuggestedFilename(const String& filename, String& destination);
+    void shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result);
+    void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite);
     void didCreateDestination(const String& path);
     void didFinish();
 

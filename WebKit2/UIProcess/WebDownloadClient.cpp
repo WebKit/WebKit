@@ -57,12 +57,20 @@ void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* do
     m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.clientInfo);
 }
 
-String WebDownloadClient::decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename)
+bool WebDownloadClient::shouldDecodeSourceDataOfMIMEType(WebContext* webContext, DownloadProxy* downloadProxy, const String& mimeType)
+{
+    if (!m_client.shouldDecodeSourceDataOfMIMEType)
+        return true;
+
+    return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(webContext), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.clientInfo);
+}
+
+String WebDownloadClient::decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite)
 {
     if (!m_client.decideDestinationWithSuggestedFilename)
         return String();
 
-    WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), m_client.clientInfo));
+    WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.clientInfo));
     return toWTFString(destination.get());
 }
 
