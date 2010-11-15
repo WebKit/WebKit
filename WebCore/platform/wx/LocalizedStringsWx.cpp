@@ -396,31 +396,49 @@ String validationMessageTypeMismatchText()
     return String();
 }
 
+String validationMessageTypeMismatchForEmailText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
+String validationMessageTypeMismatchForMultipleEmailText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
+String validationMessageTypeMismatchForURLText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 String validationMessagePatternMismatchText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageTooLongText()
+String validationMessageTooLongText(int, int)
 {
     notImplemented();
     return String();
 }
 
-String validationMessageRangeUnderflowText()
+String validationMessageRangeUnderflowText(const String&)
 {
     notImplemented();
     return String();
 }
 
-String validationMessageRangeOverflowText()
+String validationMessageRangeOverflowText(const String&)
 {
     notImplemented();
     return String();
 }
 
-String validationMessageStepMismatchText()
+String validationMessageStepMismatchText(const String&, const String&)
 {
     notImplemented();
     return String();

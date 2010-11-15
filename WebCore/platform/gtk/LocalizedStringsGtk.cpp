@@ -559,27 +559,45 @@ String validationMessageTypeMismatchText()
     return String::fromUTF8(_("type mismatch"));
 }
 
+String validationMessageTypeMismatchForEmailText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
+String validationMessageTypeMismatchForMultipleEmailText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
+String validationMessageTypeMismatchForURLText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 String validationMessagePatternMismatchText()
 {
     return String::fromUTF8(_("pattern mismatch"));
 }
 
-String validationMessageTooLongText()
+String validationMessageTooLongText(int, int)
 {
     return String::fromUTF8(_("too long"));
 }
 
-String validationMessageRangeUnderflowText()
+String validationMessageRangeUnderflowText(const String&)
 {
     return String::fromUTF8(_("range underflow"));
 }
 
-String validationMessageRangeOverflowText()
+String validationMessageRangeOverflowText(const String&)
 {
     return String::fromUTF8(_("range overflow"));
 }
 
-String validationMessageStepMismatchText()
+String validationMessageStepMismatchText(const String&, const String&)
 {
     return String::fromUTF8(_("step mismatch"));
 }

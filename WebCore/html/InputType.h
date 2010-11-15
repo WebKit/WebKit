@@ -96,6 +96,7 @@ public:
     virtual bool parsedStepValueShouldBeInteger() const;
     virtual bool scaledStepValeuShouldBeInteger() const;
     virtual double acceptableError(double) const;
+    virtual String typeMismatchText() const;
 
     // Miscellaneous functions
 

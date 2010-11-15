@@ -68,6 +68,11 @@ public:
     bool getAllowedValueStepWithDecimalPlaces(double*, unsigned*) const;
     // For ValidityState.
     bool stepMismatch(const String&) const;
+    String minimumString() const;
+    String maximumString() const;
+    String stepBaseString() const;
+    String stepString() const;
+    String typeMismatchText() const;
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);
@@ -171,7 +176,7 @@ public:
 
     KURL src() const;
 
-    int maxLength() const;
+    virtual int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
 
     bool multiple() const;

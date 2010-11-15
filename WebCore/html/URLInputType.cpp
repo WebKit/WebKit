@@ -32,6 +32,7 @@
 #include "URLInputType.h"
 
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include "KURL.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -55,6 +56,11 @@ bool URLInputType::typeMismatchFor(const String& value) const
 bool URLInputType::typeMismatch() const
 {
     return typeMismatchFor(element()->value());
+}
+
+String URLInputType::typeMismatchText() const
+{
+    return validationMessageTypeMismatchForURLText();
 }
 
 } // namespace WebCore

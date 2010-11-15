@@ -251,6 +251,37 @@ bool HTMLInputElement::stepMismatch(const String& value) const
     return m_inputType->stepMismatch(value, step);
 }
 
+String HTMLInputElement::minimumString() const
+{
+    return m_inputType->serialize(minimum());
+}
+
+String HTMLInputElement::maximumString() const
+{
+    return m_inputType->serialize(maximum());
+}
+
+String HTMLInputElement::stepBaseString() const
+{
+    return m_inputType->serialize(m_inputType->stepBase());
+}
+
+String HTMLInputElement::stepString() const
+{
+    double step;
+    if (!getAllowedValueStep(&step)) {
+        // stepString() should be called only if stepMismatch() can be true.
+        ASSERT_NOT_REACHED();
+        return String();
+    }
+    return serializeForNumberType(step / m_inputType->stepScaleFactor());
+}
+
+String HTMLInputElement::typeMismatchText() const
+{
+    return m_inputType->typeMismatchText();
+}
+
 bool HTMLInputElement::getAllowedValueStep(double* step) const
 {
     return getAllowedValueStepWithDecimalPlaces(step, 0);

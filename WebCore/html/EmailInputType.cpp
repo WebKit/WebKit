@@ -25,6 +25,7 @@
 #include "EmailInputType.h"
 
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include "RegularExpression.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -77,6 +78,11 @@ bool EmailInputType::typeMismatchFor(const String& value) const
 bool EmailInputType::typeMismatch() const
 {
     return typeMismatchFor(element()->value());
+}
+
+String EmailInputType::typeMismatchText() const
+{
+    return element()->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
 }
 
 } // namespace WebCore

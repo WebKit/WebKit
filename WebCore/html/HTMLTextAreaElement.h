@@ -40,12 +40,12 @@ public:
 
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
-    String value() const;
+    virtual String value() const;
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
-    int maxLength() const;
+    virtual int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
     bool valueMissing(const String& value) const { return isRequiredFormControl() && !disabled() && !readOnly() && value.isEmpty(); }
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
