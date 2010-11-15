@@ -2322,7 +2322,6 @@ BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.ht
 
 // Started failing at r57969
 // Becoming flaky on linux around r68501
-BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG8729 LINUX RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 
 // Started failing at r58152
@@ -3068,7 +3067,7 @@ BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
-BUGJAMESR : fast/text/international/vertical-text-metrics-test.html = TEXT
+BUGJAMESR LINUX WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
