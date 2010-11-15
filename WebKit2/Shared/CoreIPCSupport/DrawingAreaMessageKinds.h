@@ -52,6 +52,9 @@ enum Kind {
 
     // Called to cancel a requested tile update.
     CancelTileUpdate,
+
+    // Called to take a snapshot of the page contents.
+    TakeSnapshot,
 #endif
 };
 

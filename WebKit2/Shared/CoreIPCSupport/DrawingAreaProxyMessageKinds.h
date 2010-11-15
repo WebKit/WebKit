@@ -42,6 +42,7 @@ enum Kind {
     Invalidate,
     TileUpdated,
     AllTileUpdatesProcessed,
+    SnapshotTaken,
 #endif
 };
 

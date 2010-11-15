@@ -59,4 +59,9 @@ WebPageProxy* TiledDrawingAreaProxy::page()
     return toImpl(m_webView->page()->pageRef());
 }
 
+void TiledDrawingAreaProxy::snapshotTaken(UpdateChunk& chunk)
+{
+    emit m_webView->snapshotTaken(chunk.createImage());
+}
+
 } // namespace WebKit

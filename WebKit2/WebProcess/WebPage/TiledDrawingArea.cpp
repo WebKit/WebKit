@@ -219,6 +219,25 @@ void TiledDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageI
         }
         break;
     }
+    case DrawingAreaMessage::TakeSnapshot: {
+        IntSize targetSize;
+        IntRect contentsRect;
+
+        if (!arguments->decode(CoreIPC::Out(targetSize, contentsRect)))
+            return;
+
+        m_webPage->layoutIfNeeded();
+
+        contentsRect.intersect(IntRect(IntPoint::zero(), m_webPage->mainFrame()->coreFrame()->view()->contentsSize()));
+
+        float targetScale = float(targetSize.width()) / contentsRect.width();
+
+        UpdateChunk updateChunk(IntRect(IntPoint(contentsRect.x() * targetScale, contentsRect.y() * targetScale), targetSize));
+        paintIntoUpdateChunk(&updateChunk, targetScale);
+
+        WebProcess::shared().connection()->send(DrawingAreaProxyMessage::SnapshotTaken, m_webPage->pageID(), CoreIPC::In(updateChunk));
+        break;
+    }
     default:
         ASSERT_NOT_REACHED();
         break;

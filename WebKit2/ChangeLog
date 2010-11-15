@@ -1,3 +1,34 @@
+2010-11-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WK2][Qt] Add "page snapshot" functionality to tiled backing store
+
+        Original patch by Antti Koivisto.
+
+        Add a way to take a snapshot of a specific part of the page, at a specific scale.
+        Only implemented for the tiled drawing area.
+
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:
+        New message: TakeSnapshot.
+
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        New message: SnapshotTaken.
+
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::takeSnapshot):
+        Expose the snapshot functionality.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::didReceiveMessage):
+        (WebKit::TiledDrawingAreaProxy::takeSnapshot):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::snapshotTaken):
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+
 2010-11-15  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

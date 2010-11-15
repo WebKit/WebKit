@@ -286,6 +286,17 @@ void QGraphicsWKView::focusOutEvent(QFocusEvent*)
     page()->d->page->setActive(false);
 }
 
+void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)
+{
+#if ENABLE(TILED_BACKING_STORE)
+    DrawingAreaProxy* drawingArea = page()->d->page->drawingArea();
+    if (drawingArea->info().type != DrawingAreaProxy::TiledDrawingAreaType)
+        return;
+    TiledDrawingAreaProxy* tiledDrawingArea = static_cast<TiledDrawingAreaProxy*>(drawingArea);
+    tiledDrawingArea->takeSnapshot(size, contentsRect);
+#endif
+}
+
 QGraphicsWKViewPrivate::QGraphicsWKViewPrivate(QGraphicsWKView* view)
     : q(view)
     , m_scaleCommitTimer(RunLoop::current(), this, &QGraphicsWKViewPrivate::commitScale)
