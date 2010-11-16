@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 44x19
+          text run at (0,0) width 44: "10pt = "
+        RenderText {#text} at (44,0) size 384x19
+          text run at (44,0) width 384: "3.4395833015441895mm (should be 3.4395833015441895)"
+        RenderText {#text} at (0,0) size 0x0
