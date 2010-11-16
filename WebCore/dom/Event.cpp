@@ -229,6 +229,13 @@ bool Event::isDeviceOrientationEvent() const
 }
 #endif
 
+#if ENABLE(WEB_AUDIO)
+bool Event::isAudioProcessingEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::fromUserGesture()
 {
     if (!UserGestureIndicator::processingUserGesture())

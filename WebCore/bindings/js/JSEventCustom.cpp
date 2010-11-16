@@ -98,6 +98,11 @@
 #include "JSIDBSuccessEvent.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "AudioProcessingEvent.h"
+#include "JSAudioProcessingEvent.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -183,6 +188,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceMotionEvent, event);
     else if (event->isDeviceOrientationEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceOrientationEvent, event);
+#endif
+#if ENABLE(WEB_AUDIO)
+    else if (event->isAudioProcessingEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, AudioProcessingEvent, event);
 #endif
     else
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, Event, event);

@@ -174,6 +174,8 @@ namespace WebCore {
     macro(webglcontextrestored) \
     macro(webglcontextcreationerror) \
     \
+    macro(audioprocess) \
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames : public Noncopyable {

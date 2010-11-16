@@ -82,6 +82,10 @@
 #include "V8SVGElementInstance.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "V8JavaScriptAudioNode.h"
+#endif
+
 #include <algorithm>
 #include <utility>
 #include <v8-debug.h>
@@ -433,6 +437,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
     if (FileWriter* fileWriter = target->toFileWriter())
         return toV8(fileWriter);
 #endif
+
+#if ENABLE(WEB_AUDIO)
+    if (JavaScriptAudioNode* jsAudioNode = target->toJavaScriptAudioNode())
+        return toV8(jsAudioNode);
+#endif    
 
     ASSERT(0);
     return notHandledByInterceptor();

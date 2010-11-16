@@ -68,6 +68,10 @@
 #include "V8SVGZoomEvent.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "V8AudioProcessingEvent.h"
+#endif
+
 namespace WebCore {
 
 void V8Event::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -163,6 +167,10 @@ v8::Handle<v8::Value> toV8(Event* impl)
         return toV8(static_cast<DeviceMotionEvent*>(impl));
     if (impl->isDeviceOrientationEvent())
         return toV8(static_cast<DeviceOrientationEvent*>(impl));
+#endif
+#if ENABLE(WEB_AUDIO)
+    if (impl->isAudioProcessingEvent())
+        return toV8(static_cast<AudioProcessingEvent*>(impl));
 #endif
     if (impl->isCustomEvent())
         return toV8(static_cast<CustomEvent*>(impl));
