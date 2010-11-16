@@ -30,7 +30,10 @@ module audio {
         readonly attribute unsigned long numberOfInputs;
         readonly attribute unsigned long numberOfOutputs;
 
-        [Custom] void connect(in AudioNode destination, in unsigned long output, in unsigned long input);
-        [Custom] void disconnect(in unsigned long output);
+        [Custom] void connect(in AudioNode destination, in unsigned long output, in unsigned long input)
+            raises(DOMException);
+
+        [Custom] void disconnect(in unsigned long output)
+            raises(DOMException);
     };
 }
