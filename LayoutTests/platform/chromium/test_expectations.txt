@@ -3140,9 +3140,6 @@ BUG61406 WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequ
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
-// This started to crash on Debug Mac 10.5 bots after recent rolls.
-BUG61478 DEBUG MAC : fast/images/svg-as-background.html = CRASH
-
 // Flaky: fails about 5% of the time.
 //BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 // Now fails all the time on Win and Linux, see bug for details.
@@ -3203,10 +3200,6 @@ BUG62515 : printing/page-format-data-display-none.html = TEXT
 BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
-// Malformed image results in humongous malloc; if this test is run it will 
-// affect ones that follow it.
-BUGWK48634 MAC SKIP : fast/images/size-failure.html = CRASH
 
 // Added in WK r71969
 BUGWK40887 MAC : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = MISSING

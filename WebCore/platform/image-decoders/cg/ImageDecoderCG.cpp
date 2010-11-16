@@ -60,8 +60,13 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
 
 bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 {
-    m_backingStore.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    CFDataSetLength(m_backingStore.get(), newWidth * newHeight * sizeof(PixelData));
+    ASSERT(!m_backingStore);
+    size_t backingStoreSize = newWidth * newHeight * sizeof(PixelData);
+    CFMutableDataRef backingStoreRef = CFDataCreateMutable(kCFAllocatorDefault, backingStoreSize);
+    if (!backingStoreRef)
+        return false;
+    m_backingStore.adoptCF(backingStoreRef);
+    CFDataSetLength(backingStoreRef, backingStoreSize);
     m_bytes = reinterpret_cast<PixelData*>(CFDataGetMutableBytePtr(m_backingStore.get()));
     m_size = IntSize(newWidth, newHeight);
 
