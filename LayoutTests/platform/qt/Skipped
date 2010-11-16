@@ -714,6 +714,9 @@ fast/encoding/mailto-always-utf-8.html
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 
+# Missing layoutTestController.setPrinting()
+printing/page-rule-in-media-query.html
+
 # Missing layoutTestController.setUseDashboardCompatibilityMode()
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
