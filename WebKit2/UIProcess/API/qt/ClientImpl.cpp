@@ -155,6 +155,7 @@ void qt_wk_showPage(WKPageRef page, const void* clientInfo)
 
 void qt_wk_close(WKPageRef page, const void* clientInfo)
 {
+    emit toQWKPage(clientInfo)->windowCloseRequested();
 }
 
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
