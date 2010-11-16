@@ -637,11 +637,11 @@ var windowLoaded = function()
     } else
         WebInspector.loaded();
 
-    window.removeEventListener("load", windowLoaded, false);
+    window.removeEventListener("DOMContentLoaded", windowLoaded, false);
     delete windowLoaded;
 };
 
-window.addEventListener("load", windowLoaded, false);
+window.addEventListener("DOMContentLoaded", windowLoaded, false);
 
 WebInspector.dispatch = function(message) {
     // We'd like to enforce asynchronous interaction between the inspector controller and the frontend.
