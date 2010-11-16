@@ -174,7 +174,10 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 #if USE(GSTREAMER)
         MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
 #endif
+
+#if !PLATFORM(GTK) && !PLATFORM(EFL)
         PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
+#endif
     }
     
     return installedEngines;
