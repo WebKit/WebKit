@@ -267,22 +267,25 @@ CSSStyleDeclaration* StyledElement::style()
     return getInlineStyleDecl();
 }
 
-void StyledElement::addCSSProperty(Attribute* attr, int id, const String &value)
+void StyledElement::addCSSProperty(Attribute* attribute, int id, const String &value)
 {
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setProperty(id, value, false);
+    if (!attribute->decl())
+        createMappedDecl(attribute);
+    attribute->decl()->setProperty(id, value, false);
 }
 
-void StyledElement::addCSSProperty(Attribute* attr, int id, int value)
+void StyledElement::addCSSProperty(Attribute* attribute, int id, int value)
 {
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setProperty(id, value, false);
+    if (!attribute->decl())
+        createMappedDecl(attribute);
+    attribute->decl()->setProperty(id, value, false);
 }
 
-void StyledElement::addCSSImageProperty(Attribute* attr, int id, const String& url)
+void StyledElement::addCSSImageProperty(Attribute* attribute, int id, const String& url)
 {
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setImageProperty(id, url, false);
+    if (!attribute->decl())
+        createMappedDecl(attribute);
+    attribute->decl()->setImageProperty(id, url, false);
 }
 
 void StyledElement::addCSSLength(Attribute* attr, int id, const String &value)
