@@ -63,8 +63,6 @@
 #include "JSCSSStyleSheet.cpp"
 #include "JSCSSValue.cpp"
 #include "JSCSSValueList.cpp"
-#include "JSCSSVariablesDeclaration.cpp"
-#include "JSCSSVariablesRule.cpp"
 #include "JSCustomEvent.cpp"
 #include "JSDatabase.cpp"
 #include "JSDatabaseCallback.cpp"
