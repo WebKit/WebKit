@@ -1,3 +1,32 @@
+2010-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=11004
+        
+        font-size:0 is ignored.  Remove the minimum font size of 1 in CSSStyleSelector.
+        Change the pref value for minimum font size from 1 to 0.  Make sure to never use the NSFont's size,
+        since it doesn't honor a size of 0.  Instead pass the size in to the FontPlatformData(NSFont*) version
+        of the constructor rather than using [NSFont pointSize].
+
+        https://bugs.webkit.org/show_bug.cgi?id=49582
+        
+        Negative leading is not handled correctly.  There are two bugs here.  The first is that
+        maxAscent and maxDescent can be negative, so we need a notion of whether or not we have
+        set them before so that we can allow them to be < 0.
+        
+        The second issue is that we should understand where fonts will end up relative to
+        our baseline (excluding line height), and only allow those boxes to impact ascent and
+        descent if the actual font box (without factoring in line height) is above or below the
+        root line box baseline.
+
+        Added fast/css/negative-leading.html
+        
+        These two bug fixes have to land together to keep the Acid 3 test rendering correctly.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+
 2010-11-16  Anders Carlsson  <andersca@apple.com>
 
         Fix clang++ build.

@@ -397,8 +397,19 @@ static int verticalPositionForBox(InlineBox* curr, bool firstLine)
 }
 
 void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
-                                             int& maxAscent, int& maxDescent, bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+                                             int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
+                                             bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
+    // The primary purpose of this function is to compute the maximal ascent and descent values for
+    // a line.
+    //
+    // The maxAscent value represents the distance of the highest point of any box (including line-height) from
+    // the root box's baseline.  The maxDescent value represents the distance of the lowest point of any box
+    // (also including line-height) from the root box baseline.  These values can be negative.
+    //
+    // A secondary purpose of this function is to store the offset of very box's baseline from the root box's
+    // baseline.  This information is cached in the logicalTop() of every box. We're effectively just using
+    // the logicalTop() as scratch space. 
     if (isRootInlineBox()) {
         // Examine our root box.
         int height = lineHeight();
@@ -406,10 +417,14 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
         if (hasTextChildren() || strictMode) {
             int ascent = baseline;
             int descent = height - ascent;
-            if (maxAscent < ascent)
+            if (maxAscent < ascent || !setMaxAscent) {
                 maxAscent = ascent;
-            if (maxDescent < descent)
+                setMaxAscent = true;
+            }
+            if (maxDescent < descent || !setMaxDescent) {
                 maxDescent = descent;
+                setMaxDescent = true;
+            }
         }
     }
 
@@ -418,7 +433,18 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             continue; // Positioned placeholders don't affect calculations.
         
         bool isInlineFlow = curr->isInlineFlowBox();
-
+        
+        // Because a box can be positioned such that it ends up fully above or fully below the
+        // root line box, we only consider it to affect the maxAscent and maxDescent values if some
+        // part of the box (EXCLUDING line-height) is above (for ascent) or below (for descent) the root box's baseline.
+        bool affectsAscent = false;
+        bool affectsDescent = false;
+        
+        // The verticalPositionForBox function returns the distance between the child box's baseline
+        // and the root box's baseline.  The value is negative if the child box's baseline is above the
+        // root box's baseline, and it is positive if the child box's baseline is below the root box's baseline.
+        curr->setLogicalTop(verticalPositionForBox(curr, m_firstLine));
+        
         int lineHeight;
         int baseline;
         Vector<const SimpleFontData*>* usedFonts = 0;
@@ -437,6 +463,10 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                     int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
                     baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
                     baselineToBottom = max(baselineToBottom, usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent() - halfLeading);
+                    if (!affectsAscent)
+                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
+                    if (!affectsDescent)
+                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
                 }
                 lineHeight = baseline + baselineToBottom;
             } else if (parentLineHeight.isPercent()) {
@@ -445,6 +475,10 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 for (size_t i = 0; i < usedFonts->size(); ++i) {
                     int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
                     baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
+                    if (!affectsAscent)
+                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
+                    if (!affectsDescent)
+                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
                 }
             } else {
                 lineHeight = parentLineHeight.value();
@@ -452,14 +486,31 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 for (size_t i = 0; i < usedFonts->size(); ++i) {
                     int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
                     baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
+                    if (!affectsAscent)
+                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
+                    if (!affectsDescent)
+                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
                 }
             }
         } else {
             lineHeight = curr->lineHeight();
             baseline = curr->baselinePosition();
+            if (curr->isText() || isInlineFlow) {
+                // Examine the font box for inline flows and text boxes to see if any part of it is above the baseline.
+                // If the top of our font box relative to the root box baseline is above the root box baseline, then
+                // we are contributing to the maxAscent value.
+                affectsAscent = curr->renderer()->style(m_firstLine)->font().ascent() - curr->logicalTop() > 0;
+                
+                // Descent is similar.  If any part of our font box is below the root box's baseline, then
+                // we contribute to the maxDescent value.
+                affectsDescent = curr->renderer()->style(m_firstLine)->font().descent() + curr->logicalTop() > 0;
+            } else {
+                // Replaced elements always affect both the ascent and descent.
+                affectsAscent = true;
+                affectsDescent = true;
+            }
         }
 
-        curr->setLogicalTop(verticalPositionForBox(curr, m_firstLine));
         if (curr->logicalTop() == PositionTop) {
             if (maxPositionTop < lineHeight)
                 maxPositionTop = lineHeight;
@@ -467,16 +518,26 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             if (maxPositionBottom < lineHeight)
                 maxPositionBottom = lineHeight;
         } else if ((!isInlineFlow || static_cast<InlineFlowBox*>(curr)->hasTextChildren()) || curr->boxModelObject()->hasInlineDirectionBordersOrPadding() || strictMode) {
+            // Note that these values can be negative.  Even though we only affect the maxAscent and maxDescent values
+            // if our box (excluding line-height) was above (for ascent) or below (for descent) the root baseline, once you factor in line-height
+            // the final box can end up being fully above or fully below the root box's baseline!  This is ok, but what it
+            // means is that ascent and descent (including leading), can end up being negative.  The setMaxAscent and
+            // setMaxDescent booleans are used to ensure that we're willing to initially set maxAscent/Descent to negative
+            // values.
             int ascent = baseline - curr->logicalTop();
             int descent = lineHeight - ascent;
-            if (maxAscent < ascent)
+            if (affectsAscent && (maxAscent < ascent || !setMaxAscent)) {
                 maxAscent = ascent;
-            if (maxDescent < descent)
+                setMaxAscent = true;
+            }
+            if (affectsDescent && (maxDescent < descent || !setMaxDescent)) {
                 maxDescent = descent;
+                setMaxDescent = true;
+            }
         }
 
         if (curr->isInlineFlowBox())
-            static_cast<InlineFlowBox*>(curr)->computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode, textBoxDataMap);
+            static_cast<InlineFlowBox*>(curr)->computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, setMaxAscent, setMaxDescent, strictMode, textBoxDataMap);
     }
 }
 

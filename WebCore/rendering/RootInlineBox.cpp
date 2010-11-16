@@ -226,11 +226,13 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     int maxPositionBottom = 0;
     int maxAscent = 0;
     int maxDescent = 0;
+    bool setMaxAscent = false;
+    bool setMaxDescent = false;
 
     // Figure out if we're in no-quirks mode.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
 
-    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, noQuirksMode, textBoxDataMap);
+    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, setMaxAscent, setMaxDescent, noQuirksMode, textBoxDataMap);
 
     if (maxAscent + maxDescent < max(maxPositionTop, maxPositionBottom))
         adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);

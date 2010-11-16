@@ -140,7 +140,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
-    FontPlatformData alternateFont(substituteFont, 
+    FontPlatformData alternateFont(substituteFont, platformData.size(),
         !font.isPlatformFont() && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
         !font.isPlatformFont() && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
@@ -211,7 +211,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     bool syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
     bool syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
-    return new FontPlatformData(platformFont, syntheticBold, syntheticOblique, fontDescription.orientation());
+    return new FontPlatformData(platformFont, size, syntheticBold, syntheticOblique, fontDescription.orientation());
 }
 
 } // namespace WebCore

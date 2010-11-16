@@ -73,7 +73,7 @@ class FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont *nsFont, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal);
+    FontPlatformData(NSFont *nsFont, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal);
     
     FontPlatformData(CGFontRef cgFont, ATSUFontID fontID, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
         : m_syntheticBold(syntheticBold)

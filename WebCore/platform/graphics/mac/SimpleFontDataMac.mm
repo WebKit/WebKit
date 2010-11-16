@@ -382,8 +382,8 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
             m_smallCapsFontData = new SimpleFontData(smallCapsFontData, true, false);
         } else {
             BEGIN_BLOCK_OBJC_EXCEPTIONS;
-            float size = [m_platformData.font() pointSize] * smallCapsFontSizeMultiplier;
-            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size]);
+            float size = m_platformData.size() * smallCapsFontSizeMultiplier;
+            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size);
             
             // AppKit resets the type information (screen/printer) when you convert a font to a different size.
             // We have to fix up the font that we're handed back.

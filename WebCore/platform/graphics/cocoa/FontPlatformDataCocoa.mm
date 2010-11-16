@@ -44,9 +44,10 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 }
 #endif  // PLATFORM(MAC)
 
-FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
+FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
+    , m_size(size)
     , m_font(nsFont)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
@@ -58,10 +59,8 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool synt
 {
     ASSERT_ARG(nsFont, nsFont);
 
-    m_size = [nsFont pointSize];
-    
     CGFontRef cgFont = 0;
-    loadFont(nsFont, m_size, m_font, cgFont, m_atsuFontID);
+    loadFont(nsFont, size, m_font, cgFont, m_atsuFontID);
 
     m_orientation = orientation;
 

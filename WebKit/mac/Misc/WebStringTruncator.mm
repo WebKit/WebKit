@@ -58,7 +58,7 @@ static Font& fontFromNSFont(NSFont *font)
         CFRelease(currentFont);
     currentFont = font;
     CFRetain(currentFont);
-    FontPlatformData f(font);
+    FontPlatformData f(font, [font pointSize]);
     currentRenderer = Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     return currentRenderer;
 }
