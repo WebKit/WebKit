@@ -80,7 +80,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
         , rootGraphicsLayer(0)
 #endif
-        , zoomTextOnly(false)
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
     void setPage(QWebPage*);
@@ -115,7 +114,6 @@ public:
     WebCore::TextureMapperContentLayer* rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> textureMapper;
 #endif
-    bool zoomTextOnly;
 };
 
 class QWebHitTestResultPrivate {

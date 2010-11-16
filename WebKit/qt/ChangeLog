@@ -1,3 +1,19 @@
+2010-11-15  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] ZoomTextOnly doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=49568
+
+        Check QWebSettings::ZoomTextOnly attribute before applying zoom
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::textSizeMultiplier):
+        (QWebFrame::setZoomFactor):
+        (QWebFrame::zoomFactor):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+
 2010-11-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antonio Gomes.
