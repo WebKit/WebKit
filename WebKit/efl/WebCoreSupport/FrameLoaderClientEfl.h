@@ -36,6 +36,7 @@
 #include "EWebKit.h"
 #include "FrameLoaderClient.h"
 #include "PluginView.h"
+#include "ResourceError.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {

@@ -1,3 +1,10 @@
+2010-11-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix.
+
+        * WebCoreSupport/FrameLoaderClientEfl.h: Also include
+        ResourceError.h.
+
 2010-11-16  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
