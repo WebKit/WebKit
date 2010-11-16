@@ -182,8 +182,8 @@ def _configure_logging(stream, verbose):
     log_datefmt = '%y%m%d %H:%M:%S'
     log_level = logging.INFO
     if verbose:
-        log_fmt = ('%(asctime)s %(filename)s:%(lineno)-4d %(levelname)s '
-                '%(message)s')
+        log_fmt = ('%(asctime)s %(process)d %(filename)s:%(lineno)-4d %(levelname)s'
+                   '%(message)s')
         log_level = logging.DEBUG
 
     root = logging.getLogger()

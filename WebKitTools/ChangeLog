@@ -1,3 +1,16 @@
+2010-11-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: log the process id in --verbose mode
+
+        As part of the switch to multi-process mode, we should log the
+        process id when running w/ --verbose.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49571
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
 2010-11-16  Adam Roben  <aroben@apple.com>
 
         Only trigger Windows builds when files that we actually use on Windows
