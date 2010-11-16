@@ -1,3 +1,19 @@
+2010-11-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/8624267> Leak creating offscreen webview running fast/dom tests
+
+        Use shared DeviceOrientationProviderMock. The old allocation method created a new WebDeviceOrientationProviderMock 
+        for every WebView, and the WebKit API doesn't support that ownership model.
+
+        I also fixed a leak in setMockDeviceOrientation by adding a missing release.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockDeviceOrientation):
+
 2010-11-16  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

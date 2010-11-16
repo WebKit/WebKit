@@ -1,3 +1,16 @@
+2010-11-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/8624267> Leak creating offscreen webview running fast/dom tests
+
+        Make a static provider for WebDeviceOrientationProviderMock.  The old code allocated a new WebDeviceOrientationProviderMock for 
+        every WebView, and the WebKit API doesn't support that ownership model.
+
+        * WebView/WebDeviceOrientationProviderMock.h:
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (+[WebDeviceOrientationProviderMock shared]):
+
 2010-11-16  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

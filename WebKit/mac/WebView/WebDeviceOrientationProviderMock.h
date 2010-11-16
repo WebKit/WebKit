@@ -32,6 +32,8 @@
     WebDeviceOrientationProviderMockInternal* m_internal;
 }
 
++ (WebDeviceOrientationProviderMock *)shared;
+
 - (id)init;
 - (void)setOrientation:(WebDeviceOrientation*)orientation;
 

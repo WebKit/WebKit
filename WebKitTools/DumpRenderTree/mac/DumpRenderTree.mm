@@ -295,7 +295,7 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setEditingDelegate:editingDelegate];
     [webView setResourceLoadDelegate:resourceLoadDelegate];
     [webView _setGeolocationProvider:[MockGeolocationProvider shared]];
-    [webView _setDeviceOrientationProvider:[[WebDeviceOrientationProviderMock alloc] init]];
+    [webView _setDeviceOrientationProvider:[WebDeviceOrientationProviderMock shared]];
 
     // Register the same schemes that Safari does
     [WebView registerURLSchemeAsLocal:@"feed"];

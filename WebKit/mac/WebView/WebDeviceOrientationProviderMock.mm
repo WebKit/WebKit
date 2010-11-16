@@ -78,6 +78,12 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientationProviderMock
 
++ (WebDeviceOrientationProviderMock *)shared
+{
+    static WebDeviceOrientationProviderMock *provider = [[WebDeviceOrientationProviderMock alloc] init];
+    return provider;
+}
+
 - (id)init
 {
     self = [super init];

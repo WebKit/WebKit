@@ -348,6 +348,7 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
     WebDeviceOrientationProviderMock* mockProvider = static_cast<WebDeviceOrientationProviderMock*>(provider);
     WebDeviceOrientation* orientation = [[WebDeviceOrientation alloc] initWithCanProvideAlpha:canProvideAlpha alpha:alpha canProvideBeta:canProvideBeta beta:beta canProvideGamma:canProvideGamma gamma:gamma];
     [mockProvider setOrientation:orientation];
+    [orientation release];
 }
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
