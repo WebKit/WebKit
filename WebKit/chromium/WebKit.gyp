@@ -705,7 +705,7 @@
             'actions': [{
                 'action_name': 'devtools_html',
                 'inputs': [
-                    'Build/generate_devtools_html.py',
+                    'scripts/generate_devtools_html.py',
                     # See issue 29695: WebKit.gypi is a source file for devtools.html.
                     'WebKit.gypi',
                     '../../WebCore/inspector/front-end/inspector.html',
@@ -724,7 +724,7 @@
             'sources': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
             'actions': [{
                 'action_name': 'concatenate_devtools_js',
-                'script_name': 'Build/concatenate_js_files.py',
+                'script_name': 'scripts/concatenate_js_files.py',
                 'input_page': '../../WebCore/inspector/front-end/inspector.html',
                 'inputs': [
                     '<@(_script_name)',
@@ -751,7 +751,7 @@
             'sources': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
             'actions': [{
                 'action_name': 'concatenate_devtools_css',
-                'script_name': 'Build/concatenate_css_files.py',
+                'script_name': 'scripts/concatenate_css_files.py',
                 'input_page': '../../WebCore/inspector/front-end/inspector.html',
                 'inputs': [
                     '<@(_script_name)',

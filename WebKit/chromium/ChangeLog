@@ -1,5 +1,14 @@
 2010-11-16  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Chromium build fix.
+
+        * WebKit.gyp:
+        * scripts/concatenate_css_files.py: Renamed from WebKit/chromium/Build/concatenate_css_files.py.
+        * scripts/concatenate_js_files.py: Renamed from WebKit/chromium/Build/concatenate_js_files.py.
+        * scripts/generate_devtools_html.py: Renamed from WebKit/chromium/Build/generate_devtools_html.py.
+
+2010-11-16  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Chrome DevTools: concatenate CSS files, do not link
