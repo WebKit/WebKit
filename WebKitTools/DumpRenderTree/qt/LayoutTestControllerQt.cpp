@@ -69,6 +69,7 @@ void LayoutTestController::reset()
     m_desktopNotificationAllowedOrigins.clear();
     m_ignoreDesktopNotification = false;
     m_isGeolocationPermissionSet = false;
+    m_isPrinting = false;
     m_geolocationPermission = false;
 
     DumpRenderTreeSupportQt::dumpEditingCallbacks(false);

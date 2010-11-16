@@ -1,3 +1,15 @@
+2010-11-16  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Add isPrinting and setPrinting methods to DRT's LayoutTestController.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::isPrinting):
+        (LayoutTestController::setPrinting):
+
 2010-11-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
