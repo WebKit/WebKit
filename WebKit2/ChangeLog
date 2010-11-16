@@ -1,3 +1,35 @@
+2010-11-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Set the original URL for downloads
+        https://bugs.webkit.org/show_bug.cgi?id=49628
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * WebProcess/Downloads/DownloadManager.h:
+        startDownload now takes the originating web page.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::start):
+        start now takes the originating web page.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::originatingURL):
+        (WebKit::setOriginalURLForDownload):
+        Port code over from WebKit1 that sets the download URL.
+
+        (WebKit::Download::start):
+        Call setOriginalURLForDownload.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::start):
+        start now takes the originating web page.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        Pass the web page to DownloadManager::startDownload.
+
 2010-11-16  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

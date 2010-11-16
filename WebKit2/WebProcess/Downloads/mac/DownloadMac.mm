@@ -25,8 +25,16 @@
 
 #include "Download.h"
 
+#include <WebCore/BackForwardController.h>
+#include <WebCore/HistoryItem.h>
+#include <WebCore/Page.h>
 #include <WebCore/ResourceResponse.h>
 #include "NotImplemented.h"
+#include "WebPage.h"
+
+@interface NSURLDownload (WebNSURLDownloadDetails)
+- (void)_setOriginatingURL:(NSURL *)originatingURL;
+@end
 
 @interface WKDownloadAsDelegate : NSObject <NSURLConnectionDelegate> {
     WebKit::Download* _download;
@@ -35,12 +43,68 @@
 - (void)invalidate;
 @end
 
-
 using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start()
+static KURL originatingURLFromBackForwardList(WebPage *webPage)
+{
+    if (!webPage)
+        return KURL();
+
+    Page* page = webPage->corePage();
+    if (!page)
+        return KURL();
+
+    KURL originalURL;
+    int backCount = page->backForward()->backCount();
+    for (int backIndex = 0; backIndex <= backCount; backIndex++) {
+        // FIXME: At one point we had code here to check a "was user gesture" flag.
+        // Do we need to restore that logic?
+        originalURL = page->backForward()->itemAtIndex(-backIndex)->originalURL(); 
+        if (!originalURL.isNull()) 
+            return originalURL;
+    }
+
+    return KURL();
+}
+
+static void setOriginalURLForDownload(WebPage *webPage, NSURLDownload *download, const ResourceRequest& initialRequest)
+{
+    KURL originalURL;
+    
+    // If there was no referrer, don't traverse the back/forward history
+    // since this download was initiated directly. <rdar://problem/5294691>
+    if (!initialRequest.httpReferrer().isNull()) {
+        // find the first item in the history that was originated by the user
+        originalURL = originatingURLFromBackForwardList(webPage);
+    }
+
+    if (originalURL.isNull())
+        originalURL = initialRequest.url();
+
+    NSURL *originalNSURL = originalURL;
+
+    NSString *scheme = [originalNSURL scheme];
+    NSString *host = [originalNSURL host];
+    if (scheme && host && [scheme length] && [host length]) {
+        NSNumber *port = [originalNSURL port];
+        if (port && [port intValue] < 0)
+            port = nil;
+        RetainPtr<NSString> hostOnlyURLString;
+        if (port)
+            hostOnlyURLString.adoptNS([[NSString alloc] initWithFormat:@"%@://%@:%d", scheme, host, [port intValue]]);
+        else
+            hostOnlyURLString.adoptNS([[NSString alloc] initWithFormat:@"%@://%@", scheme, host]);
+
+        RetainPtr<NSURL> hostOnlyURL = [[NSURL alloc] initWithString:hostOnlyURLString.get()];
+
+        ASSERT([download respondsToSelector:@selector(_setOriginatingURL:)]);
+        [download _setOriginatingURL:hostOnlyURL.get()];
+    }
+}
+
+void Download::start(WebPage* initiatingPage)
 {
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
@@ -50,6 +114,8 @@ void Download::start()
 
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
+
+    setOriginalURLForDownload(initiatingPage, m_nsURLDownload.get(), m_request);
 }
 
 void Download::platformInvalidate()

@@ -36,6 +36,7 @@ namespace WebCore {
 namespace WebKit {
 
 class Download;
+class WebPage;
 
 class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
@@ -43,7 +44,7 @@ class DownloadManager {
 public:
     static DownloadManager& shared();
 
-    void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
+    void startDownload(uint64_t downloadID, WebPage* initiatingPage, const WebCore::ResourceRequest&);
 
 private:
     DownloadManager();
