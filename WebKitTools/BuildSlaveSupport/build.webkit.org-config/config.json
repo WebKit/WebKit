@@ -214,13 +214,15 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
-                                       "Windows Release (Build)", "Windows Debug (Build)",
                                        "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv5 Release", "Qt Linux ARMv7 Release", 
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)",
                                        "WinCairo Debug (Build)", "EFL Linux Release (Build)"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
                       "builderNames": ["Leopard Intel Release (Tests)"]

@@ -1,3 +1,51 @@
+2010-11-16  Adam Roben  <aroben@apple.com>
+
+        Only trigger Windows builds when files that we actually use on Windows
+        are changed
+
+        A new Scheduler subclass, PlatformSpecificScheduler, has been added.
+        It uses the new webkitpy.common.config.build module to determine
+        whether a particular change should trigger a build on a particular
+        platform. The Windows builders have been switched to use a
+        PlatformSpecificScheduler.
+
+        The logic to determine whether or not a particular change should
+        trigger a build on a given platform has only been implemented/tested
+        for Windows. I tried to make it easy to add more platforms in the
+        future, but I don't have enough familiarity with all platforms to be
+        able to implement it for them.
+
+        Fixes <http://webkit.org/b/49407> Windows builders kick off builds for
+        lots irrelevant changes (e.g., rebaselining Chromium test results)
+
+        Reviewed by Eric Seidel.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Use a
+        PlatformSpecificScheduler for the Windows builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (PlatformSpecificScheduler.__init__): Added. Stores our platform, sets
+        up a ChangeFilter that filters to our branch and will call through to
+        our filter method, and calls up to our base class.
+        (PlatformSpecificScheduler.filter): Calls through to
+        build.should_build to find out whether we should trigger a build for
+        this change.
+
+        * Scripts/webkitpy/common/net/build.py: Added.
+        (_should_file_trigger_build): Uses a set of directories and regexp
+        patterns to determine whether the given file should trigger a build on
+        the given platform. As mentioned earlier, this has only been
+        implemented for Windows, though I did try to make some guesses about
+        other platforms.
+        (should_build): Returns true if any of the files should trigger a
+        build on the given platform.
+
+        * Scripts/webkitpy/common/net/build_unittest.py: Added.
+        (ShouldBuildTest.test_should_build): Does some basic testing to make
+        sure we're triggering builds for the right files. It only tests
+        Windows for now, though I tried to make some guesses about other
+        platforms.
+
 2010-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.
