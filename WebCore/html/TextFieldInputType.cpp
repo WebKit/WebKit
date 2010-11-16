@@ -31,7 +31,9 @@
 #include "config.h"
 #include "TextFieldInputType.h"
 
+#include "Frame.h"
 #include "HTMLInputElement.h"
+#include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include <wtf/text/WTFString.h>
 
@@ -45,6 +47,32 @@ bool TextFieldInputType::isTextField() const
 bool TextFieldInputType::valueMissing(const String& value) const
 {
     return value.isEmpty();
+}
+
+bool TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    if (!element()->focused())
+        return false;
+    Frame* frame = element()->document()->frame();
+    if (!frame || !frame->editor()->doTextFieldCommandFromEvent(element(), event))
+        return false;
+    event->setDefaultHandled();
+    return true;
+}
+
+bool TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
+{
+    const String& key = event->keyIdentifier();
+    int step = 0;
+    if (key == "Up")
+        step = 1;
+    else if (key == "Down")
+        step = -1;
+    else
+        return false;
+    element()->stepUpFromRenderer(step);
+    event->setDefaultHandled();
+    return true;
 }
 
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const

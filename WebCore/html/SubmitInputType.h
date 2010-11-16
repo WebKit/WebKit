@@ -44,6 +44,7 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsValidation() const;
+    virtual bool handleDOMActivateEvent(Event*);
 };
 
 } // namespace WebCore

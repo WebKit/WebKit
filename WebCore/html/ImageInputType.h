@@ -32,6 +32,7 @@
 #define ImageInputType_h
 
 #include "BaseButtonInputType.h"
+#include "IntPoint.h"
 
 namespace WebCore {
 
@@ -46,6 +47,10 @@ private:
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsValidation() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual bool handleDOMActivateEvent(Event*);
+
+    // This is valid only during HTMLFormElement::prepareSubmit().
+    IntPoint m_clickLocation;
 };
 
 } // namespace WebCore

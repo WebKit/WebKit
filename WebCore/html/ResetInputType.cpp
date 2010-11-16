@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ResetInputType.h"
 
+#include "Event.h"
+#include "HTMLInputElement.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -48,6 +50,15 @@ const AtomicString& ResetInputType::formControlType() const
 bool ResetInputType::supportsValidation() const
 {
     return false;
+}
+
+bool ResetInputType::handleDOMActivateEvent(Event* event)
+{
+    if (element()->disabled() || !element()->form())
+        return false;
+    element()->form()->reset();
+    event->setDefaultHandled();
+    return true;
 }
 
 } // namespace WebCore

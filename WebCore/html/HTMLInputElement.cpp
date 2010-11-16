@@ -88,8 +88,6 @@ static bool isNumberCharacter(UChar ch)
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLTextFormControlElement(tagName, document, form)
-    , m_xPos(0)
-    , m_yPos(0)
     , m_maxResults(-1)
     , m_deprecatedTypeNumber(TEXT)
     , m_checked(false)
@@ -1289,57 +1287,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (isTextField() && evt->type() == eventNames().textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
         implicitSubmission = true;
 
-    if (deprecatedInputType() == IMAGE && evt->isMouseEvent() && evt->type() == eventNames().clickEvent) {
-        // record the mouse position for when we get the DOMActivate event
-        MouseEvent* me = static_cast<MouseEvent*>(evt);
-        // FIXME: We could just call offsetX() and offsetY() on the event,
-        // but that's currently broken, so for now do the computation here.
-        if (me->isSimulated() || !renderer()) {
-            m_xPos = 0;
-            m_yPos = 0;
-        } else {
-            // FIXME: This doesn't work correctly with transforms.
-            // FIXME: pageX/pageY need adjusting for pageZoomFactor(). Use actualPageLocation()?
-            IntPoint absOffset = roundedIntPoint(renderer()->localToAbsolute());
-            m_xPos = me->pageX() - absOffset.x();
-            m_yPos = me->pageY() - absOffset.y();
-        }
-    }
-
-    if (hasSpinButton() && evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent()) {
-        const String& key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
-        int step = 0;
-        if (key == "Up")
-            step = 1;
-        else if (key == "Down")
-            step = -1;
-        if (step) {
-            stepUpFromRenderer(step);
-            evt->setDefaultHandled();
-            return;
-        }
-    }
-    if (deprecatedInputType() == RANGE && evt->isKeyboardEvent()) {
-        handleKeyEventForRange(static_cast<KeyboardEvent*>(evt));
-        if (evt->defaultHandled())
-            return;
-    }
- 
-   if (isTextField()
-            && evt->type() == eventNames().keydownEvent
-            && evt->isKeyboardEvent()
-            && focused()
-            && document()->frame()
-            && document()->frame()->editor()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
-        evt->setDefaultHandled();
+    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent && m_inputType->handleClickEvent(static_cast<MouseEvent*>(evt)))
         return;
-    }
 
-    if (deprecatedInputType() == RADIO && evt->type() == eventNames().clickEvent) {
-        evt->setDefaultHandled();
+    if (evt->isKeyboardEvent() && evt->type() == eventNames().keydownEvent && m_inputType->handleKeydownEvent(static_cast<KeyboardEvent*>(evt)))
         return;
-    }
-    
+
     // Call the base event handler before any of our own event handling for almost all events in text fields.
     // Makes editing keyboard handling take precedence over the keydown and keypress handling in this function.
     bool callBaseClassEarly = isTextField() && !implicitSubmission
@@ -1354,27 +1307,8 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
     // on the element, or presses enter while it is the active element. JavaScript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
-    if (evt->type() == eventNames().DOMActivateEvent && !disabled()) {
-        if (deprecatedInputType() == IMAGE || deprecatedInputType() == SUBMIT || deprecatedInputType() == RESET) {
-            if (!form())
-                return;
-            if (deprecatedInputType() == RESET)
-                form()->reset();
-            else {
-                m_activeSubmit = true;
-                // FIXME: Would be cleaner to get m_xPos and m_yPos out of the underlying mouse
-                // event (if any) here instead of relying on the variables set above when
-                // processing the click event. Even better, appendFormData could pass the
-                // event in, and then we could get rid of m_xPos and m_yPos altogether!
-                if (!form()->prepareSubmit(evt)) {
-                    m_xPos = 0;
-                    m_yPos = 0;
-                }
-                m_activeSubmit = false;
-            }
-        } else if (deprecatedInputType() == FILE && renderer())
-            toRenderFileUploadControl(renderer())->click();
-    }
+    if (evt->type() == eventNames().DOMActivateEvent && m_inputType->handleDOMActivateEvent(evt))
+        return;
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
@@ -1631,47 +1565,6 @@ void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
         }
     }
     InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
-}
-
-void HTMLInputElement::handleKeyEventForRange(KeyboardEvent* event)
-{
-    if (event->type() != eventNames().keydownEvent)
-        return;
-    const String& key = event->keyIdentifier();
-    if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
-        return;
-
-    ExceptionCode ec;
-    if (equalIgnoringCase(getAttribute(stepAttr), "any")) {
-        double min = m_inputType->minimum();
-        double max = m_inputType->maximum();
-        // FIXME: Is 1/100 reasonable?
-        double step = (max - min) / 100;
-        double current = m_inputType->parseToDouble(value(), numeric_limits<double>::quiet_NaN());
-        ASSERT(isfinite(current));
-        double newValue;
-        if (key == "Up" || key == "Right") {
-            newValue = current + step;
-            if (newValue > max)
-                newValue = max;
-        } else {
-            newValue = current - step;
-            if (newValue < min)
-                newValue = min;
-        }
-        if (newValue != current) {
-            setValueAsNumber(newValue, ec);
-            dispatchFormControlChangeEvent();
-        }
-    } else {
-        int stepMagnification = (key == "Up" || key == "Right") ? 1 : -1;
-        String lastStringValue = value();
-        stepUp(stepMagnification, ec);
-        if (lastStringValue != value())
-            dispatchFormControlChangeEvent();
-    }
-    event->setDefaultHandled();
-    return;
 }
 
 PassRefPtr<HTMLFormElement> HTMLInputElement::createTemporaryFormForIsIndex()

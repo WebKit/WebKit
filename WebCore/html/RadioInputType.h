@@ -43,6 +43,7 @@ private:
     RadioInputType(HTMLInputElement* element) : BaseCheckableInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual bool valueMissing(const String&) const;
+    virtual bool handleClickEvent(MouseEvent*);
 };
 
 } // namespace WebCore

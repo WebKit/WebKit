@@ -275,6 +275,21 @@ String InputType::typeMismatchText() const
     return validationMessageTypeMismatchText();
 }
 
+bool InputType::handleClickEvent(MouseEvent*)
+{
+    return false;
+}
+
+bool InputType::handleDOMActivateEvent(Event*)
+{
+    return false;
+}
+
+bool InputType::handleKeydownEvent(KeyboardEvent*)
+{
+    return false;
+}
+
 RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
 {
     return RenderObject::createObject(element(), style);

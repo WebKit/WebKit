@@ -108,6 +108,11 @@ double BaseDateAndTimeInputType::stepBase() const
     return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
 }
 
+bool BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    return handleKeydownEventForSpinButton(event) || TextFieldInputType::handleKeydownEvent(event);
+}
+
 double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const
 {
     DateComponents date;

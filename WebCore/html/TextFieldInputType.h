@@ -42,6 +42,8 @@ protected:
     TextFieldInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool isTextField() const;
     virtual bool valueMissing(const String&) const;
+    virtual bool handleKeydownEvent(KeyboardEvent*);
+    bool handleKeydownEventForSpinButton(KeyboardEvent*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
 };
 

@@ -155,6 +155,11 @@ double NumberInputType::stepScaleFactor() const
     return numberStepScaleFactor;
 }
 
+bool NumberInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    return handleKeydownEventForSpinButton(event) || TextFieldInputType::handleKeydownEventForSpinButton(event);
+}
+
 double NumberInputType::parseToDouble(const String& src, double defaultValue) const
 {
     double numberValue;

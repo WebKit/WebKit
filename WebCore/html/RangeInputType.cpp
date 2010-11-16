@@ -34,6 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "KeyboardEvent.h"
 #include "RenderSlider.h"
 #include <limits>
 #include <wtf/MathExtras.h>
@@ -125,6 +126,46 @@ double RangeInputType::defaultStep() const
 double RangeInputType::stepScaleFactor() const
 {
     return rangeStepScaleFactor;
+}
+
+bool RangeInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    const String& key = event->keyIdentifier();
+    if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
+        return false;
+
+    ExceptionCode ec;
+    if (equalIgnoringCase(element()->fastGetAttribute(stepAttr), "any")) {
+        double min = minimum();
+        double max = maximum();
+        // FIXME: We can't use stepUp() for the step value "any". So, we increase
+        // or decrease the value by 1/100 of the value range. Is it reasonable?
+        double step = (max - min) / 100;
+        double current = parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+        ASSERT(isfinite(current));
+        double newValue;
+        if (key == "Up" || key == "Right") {
+            newValue = current + step;
+            if (newValue > max)
+                newValue = max;
+        } else {
+            newValue = current - step;
+            if (newValue < min)
+                newValue = min;
+        }
+        if (newValue != current) {
+            setValueAsNumber(newValue, ec);
+            element()->dispatchFormControlChangeEvent();
+        }
+    } else {
+        int stepMagnification = (key == "Up" || key == "Right") ? 1 : -1;
+        String lastStringValue = element()->value();
+        element()->stepUp(stepMagnification, ec);
+        if (lastStringValue != element()->value())
+            element()->dispatchFormControlChangeEvent();
+    }
+    event->setDefaultHandled();
+    return true;
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

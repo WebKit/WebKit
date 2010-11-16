@@ -57,6 +57,7 @@ private:
     virtual bool rangeOverflow(const String&) const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
+    virtual bool handleKeydownEvent(KeyboardEvent*);
     virtual String serialize(double) const;
 };
 

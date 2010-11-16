@@ -38,8 +38,11 @@
 namespace WebCore {
 
 class DateComponents;
+class Event;
 class FormDataList;
 class HTMLInputElement;
+class KeyboardEvent;
+class MouseEvent;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
@@ -97,6 +100,15 @@ public:
     virtual bool scaledStepValeuShouldBeInteger() const;
     virtual double acceptableError(double) const;
     virtual String typeMismatchText() const;
+
+    // Event handlers
+    // If the return value is true, do no further default event handling in the
+    // default event handler. If an event handler calls Event::setDefaultHandled(),
+    // its return value must be true.
+
+    virtual bool handleClickEvent(MouseEvent*);
+    virtual bool handleDOMActivateEvent(Event*);
+    virtual bool handleKeydownEvent(KeyboardEvent*);
 
     // Miscellaneous functions
 

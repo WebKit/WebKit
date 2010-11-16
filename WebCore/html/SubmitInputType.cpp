@@ -31,6 +31,7 @@
 #include "config.h"
 #include "SubmitInputType.h"
 
+#include "Event.h"
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include <wtf/PassOwnPtr.h>
@@ -58,6 +59,18 @@ bool SubmitInputType::appendFormData(FormDataList& encoding, bool) const
 bool SubmitInputType::supportsValidation() const
 {
     return false;
+}
+
+bool SubmitInputType::handleDOMActivateEvent(Event* event)
+{
+    RefPtr<HTMLInputElement> element = this->element();
+    if (element->disabled() || !element->form())
+        return false;
+    element->setActivatedSubmit(true);
+    element->form()->prepareSubmit(event); // Event handlers can run.
+    element->setActivatedSubmit(false);
+    event->setDefaultHandled();
+    return true;
 }
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
+#include "MouseEvent.h"
 #include "RenderImage.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -49,8 +50,8 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
     if (!element()->isActivatedSubmit())
         return false;
     const AtomicString& name = element()->name();
-    encoding.appendData(name.isEmpty() ? "x" : (name + ".x"), element()->xPosition());
-    encoding.appendData(name.isEmpty() ? "y" : (name + ".y"), element()->yPosition());
+    encoding.appendData(name.isEmpty() ? "x" : (name + ".x"), m_clickLocation.x());
+    encoding.appendData(name.isEmpty() ? "y" : (name + ".y"), m_clickLocation.y());
     if (!name.isEmpty() && !element()->value().isEmpty())
         encoding.appendData(name, element()->value());
     return true;
@@ -59,6 +60,23 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
 bool ImageInputType::supportsValidation() const
 {
     return false;
+}
+
+bool ImageInputType::handleDOMActivateEvent(Event* event)
+{
+    RefPtr<HTMLInputElement> element = this->element();
+    if (element->disabled() || !element->form())
+        return false;
+    element->setActivatedSubmit(true);
+    if (event->underlyingEvent() && event->underlyingEvent()->isMouseEvent()) {
+        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event->underlyingEvent());
+        m_clickLocation = IntPoint(mouseEvent->offsetX(), mouseEvent->offsetY());
+    } else
+        m_clickLocation = IntPoint();
+    element->form()->prepareSubmit(event); // Event handlers can run.
+    element->setActivatedSubmit(false);
+    event->setDefaultHandled();
+    return true;
 }
 
 RenderObject* ImageInputType::createRenderer(RenderArena* arena, RenderStyle*) const
