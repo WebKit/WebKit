@@ -3,6 +3,8 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
+
 include($$PWD/../WebKit.pri)
 include($$PWD/../common.pri)
 include($$PWD/../WebCore/features.pri)
