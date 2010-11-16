@@ -96,6 +96,7 @@ private:
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
     void setInnerTextStyle(PassRefPtr<RenderStyle>);
+    virtual void paintObject(PaintInfo&, int tx, int ty);
     
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
@@ -108,6 +109,11 @@ private:
     bool hasVisibleTextArea() const;
     friend void setSelectionRange(Node*, int start, int end);
     bool isSelectableElement(Node*) const;
+    
+    virtual int textBlockInsetLeft() const = 0;
+    virtual int textBlockInsetRight() const = 0;
+
+    void paintPlaceholder(PaintInfo&, int tx, int ty);
 
     bool m_wasChangedSinceLastChangeEvent;
     bool m_lastChangeWasUserEdit;

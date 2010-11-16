@@ -51,22 +51,10 @@ public:
     RenderTextControlInnerBlock(Node* node, bool isMultiLine) : RenderBlock(node), m_multiLine(isMultiLine) { }
 
 private:
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
     bool m_multiLine;
 };
-
-bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
-{
-    RenderObject* renderer = node()->shadowAncestorNode()->renderer();
-
-    bool placeholderIsVisible = false;
-    if (renderer->isTextField())
-        placeholderIsVisible = toRenderTextControlSingleLine(renderer)->placeholderIsVisible();
-
-    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, placeholderIsVisible ? HitTestBlockBackground : hitTestAction);
-}
 
 VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& point)
 {

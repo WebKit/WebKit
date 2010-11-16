@@ -1125,8 +1125,8 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // File upload controls will always use setFileListFromRenderer.
     ASSERT(deprecatedInputType() != FILE);
     m_data.setSuggestedValue(String());
-    updatePlaceholderVisibility(false);
     InputElement::setValueFromRenderer(m_data, this, this, value);
+    updatePlaceholderVisibility(false);
     setNeedsValidityCheck();
 
     // Clear autofill flag (and yellow background) on user edit.

@@ -578,14 +578,52 @@ void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisi
 {
     bool oldPlaceholderVisible = m_placeholderVisible;
     m_placeholderVisible = placeholderShouldBeVisible;
-    if (oldPlaceholderVisible != m_placeholderVisible || placeholderValueChanged) {
-        // Sets the inner text style to the normal style or :placeholder style.
-        setInnerTextStyle(createInnerTextStyle(textBaseStyle()));
+    if (oldPlaceholderVisible != m_placeholderVisible || placeholderValueChanged)
+        repaint();
+}
 
-        // updateFromElement() of the subclasses updates the text content
-        // to the element's value(), placeholder(), or the empty string.
-        updateFromElement();
+void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (style()->visibility() != VISIBLE)
+        return;
+    
+    IntRect clipRect(tx + borderLeft(), ty + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
+    if (clipRect.isEmpty())
+        return;
+    
+    paintInfo.context->save();
+    
+    paintInfo.context->clip(clipRect);
+    
+    RefPtr<RenderStyle> placeholderStyle = getCachedPseudoStyle(INPUT_PLACEHOLDER);
+    if (!placeholderStyle)
+        placeholderStyle = style();
+    
+    paintInfo.context->setFillColor(placeholderStyle->visitedDependentColor(CSSPropertyColor), placeholderStyle->colorSpace());
+    
+    String placeholderText = static_cast<HTMLTextFormControlElement*>(node())->strippedPlaceholder();
+    TextRun textRun(placeholderText.characters(), placeholderText.length(), 0, 0, 0, !placeholderStyle->isLeftToRightDirection(), placeholderStyle->unicodeBidi() == Override, false, false);
+    
+    RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
+    if (textRenderer) {
+        IntPoint textPoint;
+        textPoint.setY(ty + borderTop() + paddingTop() + textRenderer->paddingTop() + placeholderStyle->font().ascent());
+        if (placeholderStyle->isLeftToRightDirection())
+            textPoint.setX(tx + textBlockInsetLeft());
+        else
+            textPoint.setX(tx + width() - textBlockInsetRight() - style()->font().width(textRun));
+        
+        paintInfo.context->drawBidiText(placeholderStyle->font(), textRun, textPoint);
     }
+    paintInfo.context->restore();    
+}
+
+void RenderTextControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
+{    
+    if (m_placeholderVisible && paintInfo.phase == PaintPhaseForeground)
+        paintPlaceholder(paintInfo, tx, ty);
+    
+    RenderBlock::paintObject(paintInfo, tx, ty);
 }
 
 } // namespace WebCore

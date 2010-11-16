@@ -143,6 +143,9 @@ private:
 
     InputElement* inputElement() const;
 
+    virtual int textBlockInsetLeft() const;
+    virtual int textBlockInsetRight() const;
+
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
 
