@@ -1,0 +1,299 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="resources/styles-new-API.css" -->
+
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        dumpArray(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runTest", callback);
+}
+
+
+// Frontend functions.
+
+function frontend_runTest(testController)
+{
+    testController.waitUntilDone();
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+
+        function tableStylesCallback(testController, styles)
+        {
+            testController.results.push("");
+            testController.results.push("=== Attribute styles for table ===");
+            for (var attr in styles.styleAttributes) {
+                testController.results.push("Attribute: " + attr);
+                frontend_dumpRuleOrStyle(testController, styles.styleAttributes[attr]);
+            }
+
+            frontend_testStyleSheets(testController);
+        }
+
+        function stylesCallback(testController, styles)
+        {
+            testController.results.push("");
+            testController.results.push("=== Computed style property count for body ===");
+            var propCount = styles.computedStyle.cssProperties.length;
+            testController.results.push(propCount > 200 ? "OK" : "FAIL (" + propCount + ")");
+
+            testController.results.push("");
+            testController.results.push("=== Matched rules for body ===");
+            frontend_dumpRulesArray(testController, styles.matchedCSSRules);
+
+            testController.results.push("");
+            testController.results.push("=== Pseudo rules for body ===");
+            for (var i = 0; i < styles.pseudoElements.length; ++i) {
+                testController.results.push("PseudoId=" + styles.pseudoElements[i].pseudoId);
+                frontend_dumpRulesArray(testController, styles.pseudoElements[i].rules);
+            }
+
+            testController.results.push("");
+            testController.results.push("=== Inherited styles for body ===");
+            for (var i = 0; i < styles.inherited.length; ++i) {
+                testController.results.push("Level=" + (i + 1));
+                frontend_dumpRuleOrStyle(testController, styles.inherited[i].inlineStyle);
+                frontend_dumpRulesArray(testController, styles.inherited[i].matchedCSSRules);
+            }
+
+            testController.results.push("");
+            testController.results.push("=== Inline style for body ===");
+            frontend_dumpRuleOrStyle(testController, styles.inlineStyle);
+
+            InspectorBackend.getStylesForNode2(frontend_nodeForId("thetable").id, tableStylesCallback.bind(null, testController));
+        }
+
+        InspectorBackend.getStylesForNode2(WebInspector.domAgent.document.body.id, stylesCallback.bind(null, testController));
+    });
+}
+
+function frontend_testStyleSheets(testController)
+{
+var newStyleSheetText =
+"body.mainpage {\
+    text-decoration: strikethrough;\
+    badproperty: 2badvalue2;\
+}\
+\
+body {\
+    text-align: justify;\
+}\
+";
+
+    function patchStyleSheet(testController, styleSheet)
+    {
+        testController.results.push("");
+        testController.results.push("=== Last stylesheet patched ===");
+        InspectorBackend.setStyleSheetText2(styleSheet.styleSheetId, newStyleSheetText,
+            frontend_loadAndDumpStyleSheet.bind(null, testController, styleSheet.styleSheetId, frontend_changeSelector.bind(null, testController)));
+    }
+
+    function styleSheetIdsLoaded(testController, ids)
+    {
+        testController.results.push("");
+        testController.results.push("=== All stylesheets ===");
+        for (var i = 0; i < ids.length; ++i)
+            frontend_loadAndDumpStyleSheet(testController, ids[i], (i < ids.length - 1) ? null : patchStyleSheet.bind(null, testController));
+    }
+    InspectorBackend.getAllStyles2(styleSheetIdsLoaded.bind(null, testController));
+}
+
+function frontend_changeSelector(testController, styleSheet)
+{
+    function didSetSelector(testController, rule)
+    {
+        testController.results.push("");
+        testController.results.push("=== After selector set ===");
+        frontend_loadAndDumpStyleSheet(testController, frontend_parentStyleSheetId(rule.ruleId), frontend_setStyleText.bind(null, testController));
+    }
+
+    InspectorBackend.setRuleSelector2(styleSheet.rules[0].ruleId, "html *, body[foo=\"bar\"]", didSetSelector.bind(null, testController));
+}
+
+function frontend_parentStyleSheetId(ruleOrStyleId)
+{
+    return ruleOrStyleId.substring(0, ruleOrStyleId.indexOf(':'));
+}
+
+
+function frontend_setStyleText(testController, styleSheet)
+{
+    function didSetStyleText(testController, style)
+    {
+        testController.results.push("");
+        testController.results.push("=== After style text set ===");
+        frontend_loadAndDumpStyleSheet(testController, frontend_parentStyleSheetId(style.styleId), frontend_addRule.bind(null, testController));
+    }
+
+    InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "", true);
+    InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "", true);
+    InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetStyleText.bind(null, testController));
+}
+
+function frontend_addRule(testController)
+{
+    function didGetStyles(testController, styles)
+    {
+        testController.results.push("");
+        testController.results.push("=== Matched rules after rule added ===");
+        frontend_dumpRulesArray(testController, styles.matchedCSSRules);
+        frontend_disableProperty(testController);
+    }
+
+    function didSetStyleText(testController, style)
+    {
+        InspectorBackend.getStylesForNode2(WebInspector.domAgent.document.body.id, didGetStyles.bind(null, testController));
+    }
+
+    function ruleAdded(testController, rule)
+    {
+        InspectorBackend.setPropertyText2(rule.style.styleId, 0, "font-family: serif;", false, didSetStyleText.bind(null, testController));
+    }
+
+    InspectorBackend.addRule2(WebInspector.domAgent.document.body.id, "body", ruleAdded.bind(null, testController));
+}
+
+function frontend_disableProperty(testController)
+{
+    function didDisableProperty(testController, style)
+    {
+        testController.results.push("");
+        testController.results.push("=== After two properties disabled, one property added, one property removed ===");
+        frontend_dumpRuleOrStyle(testController, style);
+        frontend_enableProperty(testController, style.styleId);
+    }
+
+    function stylesCallback(testController, styles)
+    {
+        // height : 100% ;
+        // border: 1px solid;
+        // border-width: 2px;
+        // background-color : #33FF33;
+        // googles: abra;
+        // foo: .bar;
+        // -moz-goog: 1***;
+        // border-width: 0px;
+
+        var style = styles.matchedCSSRules[1].style;
+        InspectorBackend.toggleProperty2(style.styleId, 0, true); // height: 100%
+        InspectorBackend.toggleProperty2(style.styleId, 7, true); // border-width: 0px
+        InspectorBackend.setPropertyText2(style.styleId, 7, "font-size: 12px;", false);
+        InspectorBackend.setPropertyText2(style.styleId, 9, "font-size: 14px;", false);
+        InspectorBackend.toggleProperty2(style.styleId, 9, true); // font-size: 14px
+        // height : 100% ; [d]
+        // border: 1px solid;
+        // border-width: 2px;
+        // background-color : #33FF33;
+        // googles: abra;
+        // foo: .bar;
+        // -moz-goog: 1***;
+        // font-size: 12px;
+        // border-width: 0px; [d]
+        // font-size: 14px; [d]
+
+        InspectorBackend.setPropertyText2(style.styleId, 3, "", true, didDisableProperty.bind(null, testController));
+    }
+
+    var toggleElement = frontend_nodeForId("toggle");
+    InspectorBackend.getStylesForNode2(toggleElement.id, stylesCallback.bind(null, testController));
+}
+
+function frontend_enableProperty(testController, styleId)
+{
+    function didEnableProperty(testController, style)
+    {
+        testController.results.push("");
+        testController.results.push("=== After property enabled ===");
+        frontend_dumpRuleOrStyle(testController, style);
+        testController.notifyDone(testController.results);
+    }
+
+    InspectorBackend.toggleProperty2(styleId, 6, false);
+    InspectorBackend.toggleProperty2(styleId, 8, false, didEnableProperty.bind(null, testController));
+}
+
+// Data dumping
+
+function frontend_dumpRulesArray(testController, rules)
+{
+    if (!rules)
+        return;
+    for (var i = 0; i < rules.length; ++i)
+        frontend_dumpRuleOrStyle(testController, rules[i]);
+}
+
+function frontend_dumpRuleOrStyle(testController, ruleOrStyle)
+{
+    if (!ruleOrStyle)
+        return;
+    var isRule = !!(ruleOrStyle.style);
+    var style = isRule ? ruleOrStyle.style : ruleOrStyle;
+    testController.results.push("");
+    testController.results.push(isRule ? "rule" : "style");
+    testController.results.push((isRule ? (ruleOrStyle.selectorText + ": [" + ruleOrStyle.origin + "]") : "raw style"));
+    for (var i = 0; i < style.cssProperties.length; ++i) {
+        var property = style.cssProperties[i];
+        if (property.status !== "disabled")
+            testController.results.push("['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (property.parsedOk ? "" : " non-parsed") +"] @[" + property.startOffset + "-" + property.endOffset + "] " + property.status);
+        else
+            testController.results.push("[text='" + property.text + "'] " + property.status);
+    }
+}
+
+
+function frontend_loadAndDumpStyleSheet(testController, styleSheetId, continuation)
+{
+    function styleSheetLoaded(testController, styleSheet)
+    {
+        testController.results.push("");
+        testController.results.push("StyleSheet: '" + styleSheet.text + "'");
+        for (var i = 0; i < styleSheet.rules.length; ++i)
+            frontend_dumpRuleOrStyle(testController, styleSheet.rules[i]);
+        if (continuation)
+            continuation(styleSheet);
+    }
+
+    InspectorBackend.getStyleSheet2(styleSheetId, styleSheetLoaded.bind(null, testController));
+}
+
+/*
+Covered API methods:
+ - getStylesForNode2
+ - getAllStyles2
+ - getStyleSheet2
+ - setStyleSheetText2
+ - setStyleData2
+ - setRuleSelector2
+ - addRule2
+*/
+
+</script>
+
+<style>
+
+/* An inline stylesheet */
+body.mainpage {
+    text-decoration: none; /* at least one valid property is necessary for WebCore to match a rule */
+    badproperty: 1badvalue1;
+}
+
+</style>
+</head>
+
+<body class="main1 main2 mainpage" onload="onload()" style="font-weight: normal; width: 85%">
+<p>
+Tests that InspectorCSSAgent API methods work as expected.
+</p>
+<table width=50% id="thetable">
+</table>
+<h1 id="toggle">H1</h1>
+</body>
+</html>

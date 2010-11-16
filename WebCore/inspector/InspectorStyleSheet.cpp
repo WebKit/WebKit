@@ -141,11 +141,16 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
 
     if (propertyText.stripWhiteSpace().length()) {
         RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
-        tempMutableStyle->parseDeclaration(propertyText);
-        CSSStyleDeclaration* tempStyle = static_cast<CSSStyleDeclaration*>(tempMutableStyle.get());
+        CSSParser p;
+        RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
+        p.parseDeclaration(tempMutableStyle.get(), propertyText + " -webkit-boguz-propertee: none", &sourceData);
+        Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
+        unsigned propertyCount = propertyData.size();
+        if (!propertyCount)
+            return false;
 
-        // Bail out early if the property text did not parse.
-        if (!tempStyle->length())
+        // Check for a proper propertyText termination (the parser could at least restore to the PROPERTY_NAME state).
+        if (propertyData.at(propertyCount - 1).name != "-webkit-boguz-propertee")
             return false;
     }
 

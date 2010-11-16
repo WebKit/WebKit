@@ -4222,6 +4222,7 @@ a.worker-item {
     cursor: pointer;
     text-decoration: none;
 }
+
 .styles-section {
     padding: 2px 2px 4px 4px;
     min-height: 18px;
@@ -4237,6 +4238,28 @@ a.worker-item {
 
 .styles-section.read-only {
     background-color: rgb(240, 240, 240);
+}
+
+.styles-section .properties li.not-parsed-ok {
+    margin-left: 0px;
+}
+
+.styles-section .properties li.not-parsed-ok::before {
+    content: url(Images/warningIcon.png);
+    opacity: 0.75;
+    float: left;
+    width: 8px;
+    height: 8px;
+    margin-top: 0;
+    padding-right: 5px;
+    vertical-align: sub;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.styles-section .properties .inactive {
+    opacity: 0.75;
+    background-color: rgb(212, 212, 212);
 }
 
 .styles-section .header {

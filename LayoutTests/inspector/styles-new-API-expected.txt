@@ -1,0 +1,341 @@
+Tests that InspectorCSSAgent API methods work as expected.
+
+H1
+
+
+=== Computed style property count for body ===
+OK
+
+=== Matched rules for body ===
+
+rule
+body: [user-agent]
+['display':'block'] @[undefined-undefined] style
+['margin-top':'8px'] @[undefined-undefined] style
+['margin-right':'8px'] @[undefined-undefined] style
+['margin-bottom':'8px'] @[undefined-undefined] style
+['margin-left':'8px'] @[undefined-undefined] style
+
+rule
+body: []
+['font-size':'12px'] @[5-21] active
+['foo':'bar !
+
+    important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
+['height':'100% !important' is-important] @[109-133] active
+['colorz':'"!important"' non-parsed] @[138-159] active
+['important':'!important' non-parsed] @[164-185] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+
+rule
+body.main1: []
+['color':'#F00BAA'] @[13-28] active
+['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+
+rule
+body.main2: []
+['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+['background-image':'initial' is-important] @[undefined-undefined] style
+['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+['background-attachment':'initial' is-important] @[undefined-undefined] style
+['background-position-x':'initial' is-important] @[undefined-undefined] style
+['background-position-y':'initial' is-important] @[undefined-undefined] style
+['background-origin':'initial' is-important] @[undefined-undefined] style
+['background-clip':'initial' is-important] @[undefined-undefined] style
+['background-color':'green' is-important] @[undefined-undefined] style
+
+rule
+body.mainpage: []
+['text-decoration':'none'] @[5-27] active
+['badproperty':'1badvalue1' non-parsed] @[107-131] active
+
+=== Pseudo rules for body ===
+PseudoId=4
+
+rule
+body::after: []
+['content':'"After body"'] @[5-27] active
+
+=== Inherited styles for body ===
+Level=1
+
+rule
+html: [user-agent]
+['display':'block'] @[undefined-undefined] style
+
+rule
+html: []
+['font-weight':'400'] @[5-22] active
+
+=== Inline style for body ===
+
+style
+raw style
+['font-weight':'normal'] @[0-20] active
+['width':'85%'] @[21-31] active
+
+=== Attribute styles for table ===
+Attribute: width
+
+style
+raw style
+['width':'50%'] @[undefined-undefined] style
+
+=== All stylesheets ===
+
+StyleSheet: 'html {
+    font-weight: 400;
+}
+
+body {
+    font-size: 12px;
+    foo: bar !
+
+    important /* !important property not recognized by WebCore */;
+    height: 100% !important;
+    colorz: "!important";
+    important:!important;
+    color: "badcolor" ! important /* good property with strange value */;
+}
+
+/* comment before selector */body.main1/* comment after selector */{/* comment */color: #F00BAA;zoo:moo /* not an !important unrecognized property */}/* comment */
+
+body.main2{background: green /* value !important comment */ !important /* no semicolon, very !important */}
+
+body::after  {
+    content: "After body";
+}
+
+h1 {
+    height : 100% ; border: 1px solid; border-width: 2px; background-color : #33FF33; googles: abra; foo: .bar; -moz-goog: 1***; border-width: 0px;
+}
+'
+
+rule
+html: []
+['font-weight':'400'] @[5-22] active
+
+rule
+body: []
+['font-size':'12px'] @[5-21] active
+['foo':'bar !
+
+    important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
+['height':'100% !important' is-important] @[109-133] active
+['colorz':'"!important"' non-parsed] @[138-159] active
+['important':'!important' non-parsed] @[164-185] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+
+rule
+body.main1: []
+['color':'#F00BAA'] @[13-28] active
+['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+
+rule
+body.main2: []
+['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+['background-image':'initial' is-important] @[undefined-undefined] style
+['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+['background-attachment':'initial' is-important] @[undefined-undefined] style
+['background-position-x':'initial' is-important] @[undefined-undefined] style
+['background-position-y':'initial' is-important] @[undefined-undefined] style
+['background-origin':'initial' is-important] @[undefined-undefined] style
+['background-clip':'initial' is-important] @[undefined-undefined] style
+['background-color':'green' is-important] @[undefined-undefined] style
+
+rule
+body::after: []
+['content':'"After body"'] @[5-27] active
+
+rule
+h1: []
+['height':'100%'] @[5-20] active
+['border':'1px solid'] @[21-39] active
+['border-width':'2px'] @[40-58] inactive
+['background-color':'#33FF33'] @[59-86] active
+['googles':'abra' non-parsed] @[87-101] active
+['foo':'.bar' non-parsed] @[102-112] active
+['-moz-goog':'1***' non-parsed] @[113-129] active
+['border-width':'0px'] @[130-148] active
+['border-top-style':'solid'] @[undefined-undefined] style
+['border-right-style':'solid'] @[undefined-undefined] style
+['border-bottom-style':'solid'] @[undefined-undefined] style
+['border-left-style':'solid'] @[undefined-undefined] style
+['border-color':'initial'] @[undefined-undefined] style
+['border-top-width':'0px'] @[undefined-undefined] style
+['border-right-width':'0px'] @[undefined-undefined] style
+['border-bottom-width':'0px'] @[undefined-undefined] style
+['border-left-width':'0px'] @[undefined-undefined] style
+
+StyleSheet: '
+
+/* An inline stylesheet */
+body.mainpage {
+    text-decoration: none; /* at least one valid property is necessary for WebCore to match a rule */
+    badproperty: 1badvalue1;
+}
+
+'
+
+rule
+body.mainpage: []
+['text-decoration':'none'] @[5-27] active
+['badproperty':'1badvalue1' non-parsed] @[107-131] active
+
+=== Last stylesheet patched ===
+
+StyleSheet: 'body.mainpage {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
+
+rule
+body.mainpage: []
+['text-decoration':'strikethrough'] @[4-35] active
+['badproperty':'2badvalue2' non-parsed] @[39-63] active
+
+rule
+body: []
+['text-align':'justify'] @[4-24] active
+
+=== After selector set ===
+
+StyleSheet: 'html *, body[foo="bar"] {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
+
+rule
+html *, body[foo="bar"]: []
+['text-decoration':'strikethrough'] @[4-35] active
+['badproperty':'2badvalue2' non-parsed] @[39-63] active
+
+rule
+body: []
+['text-align':'justify'] @[4-24] active
+
+=== After style text set ===
+
+StyleSheet: 'html *, body[foo="bar"] {        color: white; background: black;}body {    text-align: justify;}'
+
+rule
+html *, body[foo="bar"]: []
+['color':'white'] @[8-21] active
+['background':'black'] @[22-40] active
+['background-image':'initial'] @[undefined-undefined] style
+['background-repeat-x':'initial'] @[undefined-undefined] style
+['background-repeat-y':'initial'] @[undefined-undefined] style
+['background-attachment':'initial'] @[undefined-undefined] style
+['background-position-x':'initial'] @[undefined-undefined] style
+['background-position-y':'initial'] @[undefined-undefined] style
+['background-origin':'initial'] @[undefined-undefined] style
+['background-clip':'initial'] @[undefined-undefined] style
+['background-color':'black'] @[undefined-undefined] style
+
+rule
+body: []
+['text-align':'justify'] @[4-24] active
+
+=== Matched rules after rule added ===
+
+rule
+body: [user-agent]
+['display':'block'] @[undefined-undefined] style
+['margin-top':'8px'] @[undefined-undefined] style
+['margin-right':'8px'] @[undefined-undefined] style
+['margin-bottom':'8px'] @[undefined-undefined] style
+['margin-left':'8px'] @[undefined-undefined] style
+
+rule
+body: []
+['font-size':'12px'] @[5-21] active
+['foo':'bar !
+
+    important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
+['height':'100% !important' is-important] @[109-133] active
+['colorz':'"!important"' non-parsed] @[138-159] active
+['important':'!important' non-parsed] @[164-185] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+
+rule
+html *, body[foo="bar"]: []
+['color':'white'] @[8-21] active
+['background':'black'] @[22-40] active
+['background-image':'initial'] @[undefined-undefined] style
+['background-repeat-x':'initial'] @[undefined-undefined] style
+['background-repeat-y':'initial'] @[undefined-undefined] style
+['background-attachment':'initial'] @[undefined-undefined] style
+['background-position-x':'initial'] @[undefined-undefined] style
+['background-position-y':'initial'] @[undefined-undefined] style
+['background-origin':'initial'] @[undefined-undefined] style
+['background-clip':'initial'] @[undefined-undefined] style
+['background-color':'black'] @[undefined-undefined] style
+
+rule
+body: []
+['text-align':'justify'] @[4-24] active
+
+rule
+body: [inspector]
+['font-family':'serif'] @[0-19] active
+
+rule
+body.main1: []
+['color':'#F00BAA'] @[13-28] active
+['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+
+rule
+body.main2: []
+['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+['background-image':'initial' is-important] @[undefined-undefined] style
+['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+['background-attachment':'initial' is-important] @[undefined-undefined] style
+['background-position-x':'initial' is-important] @[undefined-undefined] style
+['background-position-y':'initial' is-important] @[undefined-undefined] style
+['background-origin':'initial' is-important] @[undefined-undefined] style
+['background-clip':'initial' is-important] @[undefined-undefined] style
+['background-color':'green' is-important] @[undefined-undefined] style
+
+=== After two properties disabled, one property added, one property removed ===
+
+style
+raw style
+[text='height : 100% ;'] disabled
+['border':'1px solid'] @[6-24] active
+['border-width':'2px'] @[25-43] active
+['googles':'abra' non-parsed] @[45-59] active
+['foo':'.bar' non-parsed] @[60-70] active
+['-moz-goog':'1***' non-parsed] @[71-87] active
+['font-size':'12px'] @[88-104] active
+[text='border-width: 0px;'] disabled
+[text='font-size: 14px;'] disabled
+['border-top-style':'solid'] @[undefined-undefined] style
+['border-right-style':'solid'] @[undefined-undefined] style
+['border-bottom-style':'solid'] @[undefined-undefined] style
+['border-left-style':'solid'] @[undefined-undefined] style
+['border-color':'initial'] @[undefined-undefined] style
+['border-top-width':'2px'] @[undefined-undefined] style
+['border-right-width':'2px'] @[undefined-undefined] style
+['border-bottom-width':'2px'] @[undefined-undefined] style
+['border-left-width':'2px'] @[undefined-undefined] style
+
+=== After property enabled ===
+
+style
+raw style
+[text='height : 100% ;'] disabled
+['border':'1px solid'] @[6-24] active
+['border-width':'2px'] @[25-43] active
+['googles':'abra' non-parsed] @[45-59] active
+['foo':'.bar' non-parsed] @[60-70] active
+['-moz-goog':'1***' non-parsed] @[71-87] active
+['font-size':'12px'] @[88-104] inactive
+[text='border-width: 0px;'] disabled
+['font-size':'14px'] @[105-121] active
+['border-top-style':'solid'] @[undefined-undefined] style
+['border-right-style':'solid'] @[undefined-undefined] style
+['border-bottom-style':'solid'] @[undefined-undefined] style
+['border-left-style':'solid'] @[undefined-undefined] style
+['border-color':'initial'] @[undefined-undefined] style
+['border-top-width':'2px'] @[undefined-undefined] style
+['border-right-width':'2px'] @[undefined-undefined] style
+['border-bottom-width':'2px'] @[undefined-undefined] style
+['border-left-width':'2px'] @[undefined-undefined] style
+

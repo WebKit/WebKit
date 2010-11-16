@@ -22,15 +22,15 @@ Tests audit rules.
       should be moved to the document head in 
       audits-panel-functional.html
     Remove unused CSS rules (4)
-     100% of CSS (estimated) is not used by the current page.
-      Inline block #1: 100% (estimated) is not used by the current page.
+     141B (100%) of CSS is not used by the current page.
+      Inline block #1: 29B (100%) is not used by the current page.
        .unused
        audits-style1.css
-      : 100% (estimated) is not used by the current page.
+      : 43B (100%) is not used by the current page.
        .some-style
-      Inline block #2: 100% (estimated) is not used by the current page.
+      Inline block #2: 26B (100%) is not used by the current page.
        .violation
        audits-style1.css
-      : 100% (estimated) is not used by the current page.
+      : 43B (100%) is not used by the current page.
        .some-style
 

@@ -277,6 +277,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
     doRun: function(resources, result, callback)
     {
         var self = this;
+
         function evalCallback(styleSheets) {
             if (!styleSheets.length)
                 return callback(null);
@@ -287,11 +288,11 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             for (var i = 0; i < styleSheets.length; ++i) {
                 var styleSheet = styleSheets[i];
                 for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
-                    var rule = styleSheet.rules[curRule];
-                    if (rule.selectorText.match(pseudoSelectorRegexp))
+                    var selectorText = styleSheet.rules[curRule].selectorText;
+                    if (selectorText.match(pseudoSelectorRegexp) || testedSelectors[selectorText])
                         continue;
-                    selectors.push(rule.selectorText);
-                    testedSelectors[rule.selectorText] = 1;
+                    selectors.push(selectorText);
+                    testedSelectors[selectorText] = 1;
                 }
             }
 
@@ -309,8 +310,10 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var unusedRules = [];
                     for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
                         var rule = styleSheet.rules[curRule];
-                        // FIXME: replace this by an exact computation once source ranges are available
-                        var textLength = rule.style.cssText ? rule.style.cssText.length + rule.selectorText.length : 0;
+                        // Exact computation whenever source ranges are available.
+                        var textLength = (rule.selectorRange && rule.style.properties.endOffset) ? rule.style.properties.endOffset - rule.selectorRange.start + 1 : 0;
+                        if (!textLength && rule.style.cssText)
+                            textLength = rule.style.cssText.length + rule.selectorText.length;
                         stylesheetSize += textLength;
                         if (!testedSelectors[rule.selectorText] || foundSelectors[rule.selectorText])
                             continue;
@@ -327,7 +330,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
-                    var entry = summary.addChild(String.sprintf("%s: %d%% (estimated) is not used by the current page.", url, pctUnused));
+                    var entry = summary.addChild(String.sprintf("%s: %s (%d%%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused));
 
                     for (var j = 0; j < unusedRules.length; ++j)
                         entry.addSnippet(unusedRules[j]);
@@ -339,7 +342,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     return callback(null);
 
                 var totalUnusedPercent = Math.round(100 * totalUnusedStylesheetSize / totalStylesheetSize);
-                summary.value = String.sprintf("%d%% of CSS (estimated) is not used by the current page.", totalUnusedPercent);
+                summary.value = String.sprintf("%s (%d%%) of CSS is not used by the current page.", Number.bytesToString(totalUnusedStylesheetSize), totalUnusedPercent);
 
                 callback(result);
             }
@@ -349,11 +352,10 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                 var result = {};
                 for (var i = 0; i < selectorArray.length; ++i) {
                     try {
-                        var nodes = document.querySelectorAll(selectorArray[i]);
-                        if (nodes && nodes.length)
+                        if (document.querySelector(selectorArray[i]))
                             result[selectorArray[i]] = true;
                     } catch(e) {
-                        // ignore and mark as unused
+                        // Ignore and mark as unused.
                     }
                 }
                 return result;
@@ -362,16 +364,24 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             WebInspector.AuditRules.evaluateInTargetWindow(routine, [selectors], selectorsCallback.bind(null, callback, styleSheets, testedSelectors));
         }
 
-        function routine()
+        function styleSheetCallback(styleSheets, continuation, styleSheet)
         {
-            var styleSheets = document.styleSheets;
-            if (!styleSheets)
-                return false;
-
-            return routineResult;
+            if (styleSheet)
+                styleSheets.push(styleSheet);
+            if (continuation)
+                continuation(styleSheets);
         }
 
-        InspectorBackend.getAllStyles(evalCallback);
+        function allStylesCallback(styleSheetIds)
+        {
+            if (!styleSheetIds || !styleSheetIds.length)
+                return evalCallback([]);
+            var styleSheets = [];
+            for (var i = 0; i < styleSheetIds.length; ++i)
+                WebInspector.CSSStyleSheet.createForId(styleSheetIds[i], styleSheetCallback.bind(null, styleSheets, i == styleSheetIds.length - 1 ? evalCallback : null));
+        }
+
+        InspectorBackend.getAllStyles2(allStylesCallback);
     }
 }
 
@@ -658,7 +668,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             if (completeSrc)
                 src = completeSrc;
 
-            const computedStyle = WebInspector.CSSStyleDeclaration.parsePayload(styles.computedStyle);
+            const computedStyle = styles.computedStyle;
             if (computedStyle.getPropertyValue("position") === "absolute") {
                 if (!context.imagesLeft)
                     doneCallback(context);
@@ -669,7 +679,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             var heightFound = "height" in styles.styleAttributes;
 
             for (var i = styles.matchedCSSRules.length - 1; i >= 0 && !(widthFound && heightFound); --i) {
-                var style = WebInspector.CSSRule.parsePayload(styles.matchedCSSRules[i]).style;
+                var style = styles.matchedCSSRules[i].style;
                 if (style.getPropertyValue("width") !== "")
                     widthFound = true;
                 if (style.getPropertyValue("height") !== "")
@@ -693,7 +703,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 return callback(null);
             var context = {imagesLeft: imageIds.length, urlToNoDimensionCount: {}};
             for (var i = imageIds.length - 1; i >= 0; --i)
-                InspectorBackend.getStyles(imageIds[i], true, imageStylesReady.bind(this, imageIds[i], context));
+                WebInspector.cssModel.getStylesAsync(imageIds[i], imageStylesReady.bind(this, imageIds[i], context));
         }
 
         function pushImageNodes()

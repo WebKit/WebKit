@@ -28,12 +28,12 @@ display: none;
 [expanded] .foo { (elements-panel-styles.css:33)
 
 [expanded] .foo, .foo::before { (elements-panel-styles.css:15)
+content: "[before Foo]";
 color: blue;
-content: '[before Foo]';
 
 [expanded] .foo { (elements-panel-styles.css:10)
 /-- overloaded --/ color: black;
-margin: 10px 0px 2px;
+margin: 10px 0 2px;
     margin-top: 10px;
     margin-right: 0px;
     margin-bottom: 2px;
@@ -59,18 +59,18 @@ font-size: 14px;
 color: red;
 
 [expanded] .foo, .foo::before { (elements-panel-styles.css:15)
+content: "[before Foo]";
 /-- overloaded --/ color: blue;
-content: '[before Foo]';
 
 
 ======== Pseudo ::after element ========
 [expanded] .foo::after { (elements-panel-styles.css:28)
-content: '[after Foo 2]';
 font-family: courier;
+content: "[after Foo 2]";
 
 [expanded] .foo::after { (elements-panel-styles.css:24)
+/-- overloaded --/ content: "[after Foo]";
 color: green;
-/-- overloaded --/ content: '[after Foo]';
 
 
 
