@@ -1,5 +1,12 @@
 2010-11-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix clang++ build.
+
+        * Scripts/webkit2/messages.py:
+        * WebProcess/WebPage/WebInspector.h:
+
+2010-11-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add WKPageCanShowMIMEType

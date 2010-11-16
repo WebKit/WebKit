@@ -253,6 +253,7 @@ def struct_or_class(namespace, type):
         'WebCore::PluginInfo',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
+        'WebKit::PlatformPopupMenuData',
         'WebKit::PluginProcessCreationParameters',
         'WebKit::WebNavigationDataStore',
         'WebKit::WebPageCreationParameters',

@@ -33,7 +33,7 @@
 namespace WebKit {
 
 class WebPage;
-class WebPageCreationParameters;
+struct WebPageCreationParameters;
 
 class WebInspector {
     WTF_MAKE_NONCOPYABLE(WebInspector);
