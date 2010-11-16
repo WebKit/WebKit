@@ -16,16 +16,12 @@ layer at (0,0) size 800x271
         RenderBR {BR} at (184,92) size 0x21
         RenderText {#text} at (0,0) size 0x0
 layer at (12,99) size 162x21
-  RenderBlock {DIV} at (2,2) size 162x21 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 133x21
-      text run at (1,0) width 133: "first line second line"
+  RenderBlock {DIV} at (2,2) size 162x21
 layer at (12,128) size 162x21
   RenderBlock {DIV} at (2,2) size 162x21
 layer at (10,155) size 180x46
   RenderTextControl {TEXTAREA} at (2,60) size 180x46
-    RenderBlock {DIV} at (2,2) size 176x21 [color=#A9A9A9]
-      RenderText {#text} at (0,0) size 133x21
-        text run at (0,0) width 133: "first line second line"
+    RenderBlock {DIV} at (2,2) size 176x21
 layer at (10,210) size 180x46
   RenderTextControl {TEXTAREA} at (2,115) size 180x46
     RenderBlock {DIV} at (2,2) size 176x21
