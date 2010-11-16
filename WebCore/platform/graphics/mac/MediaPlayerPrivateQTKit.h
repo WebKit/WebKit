@@ -55,7 +55,7 @@ class WebCoreMovieObserver;
 
 namespace WebCore {
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
 public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -67,8 +67,8 @@ public:
     void didEnd();
 
 private:
-    MediaPlayerPrivate(MediaPlayer*);
-    ~MediaPlayerPrivate();
+    MediaPlayerPrivateQTKit(MediaPlayer*);
+    ~MediaPlayerPrivateQTKit();
 
     // engine support
     static MediaPlayerPrivateInterface* create(MediaPlayer* player);
@@ -163,7 +163,7 @@ private:
     void updateStates();
     void doSeek();
     void cancelSeek();
-    void seekTimerFired(Timer<MediaPlayerPrivate>*);
+    void seekTimerFired(Timer<MediaPlayerPrivateQTKit>*);
     float maxTimeLoaded() const;
     void disableUnsupportedTracks();
     
@@ -184,7 +184,7 @@ private:
     RetainPtr<WebCoreMovieObserver> m_objcObserver;
     String m_movieURL;
     float m_seekTo;
-    Timer<MediaPlayerPrivate> m_seekTimer;
+    Timer<MediaPlayerPrivateQTKit> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     IntRect m_rect;
