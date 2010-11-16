@@ -32,13 +32,14 @@
 #define PLATFORM(x) 0
 
 #include "BrowserView.h"
+#include <qgraphicswkview.h>
 #include <QtGui>
 
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow();
+    BrowserWindow(QGraphicsWKView::BackingStoreType);
     ~BrowserWindow();
     void load(const QString& url);
 
@@ -56,6 +57,7 @@ private:
     BrowserView* m_browser;
     QMenuBar* m_menu;
     QLineEdit* m_addressBar;
+    QGraphicsWKView::BackingStoreType m_backingStoreType;
 };
 
 #endif

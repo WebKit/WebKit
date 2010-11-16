@@ -30,12 +30,13 @@
 
 #include "WKPageNamespace.h"
 
-BrowserWindow::BrowserWindow()
+BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
+    : m_backingStoreType(type)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
     m_menu = new QMenuBar();
-    m_browser = new BrowserView();
+    m_browser = new BrowserView(m_backingStoreType);
     m_addressBar = new QLineEdit();
 
     m_menu->addAction("New Window", this, SLOT(newWindow()));
@@ -75,7 +76,7 @@ void BrowserWindow::load(const QString& url)
 
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
-    BrowserWindow* window = new BrowserWindow();
+    BrowserWindow* window = new BrowserWindow(m_backingStoreType);
     window->load(url);
     return window;
 }

@@ -36,14 +36,14 @@ static QWKPage* createNewPage(QWKPage* page)
     return page;
 }
 
-BrowserView::BrowserView(QWidget* parent)
+BrowserView::BrowserView(QGraphicsWKView::BackingStoreType backingStoreType, QWidget* parent)
     : QGraphicsView(parent)
     , m_item(0)
     , m_context(WKContextGetSharedProcessContext())
 {
     WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(m_context.get()));
 
-    m_item = new QGraphicsWKView(pageNamespace.get(), QGraphicsWKView::Simple, 0);
+    m_item = new QGraphicsWKView(pageNamespace.get(), backingStoreType, 0);
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 
