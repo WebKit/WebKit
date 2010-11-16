@@ -287,16 +287,6 @@ bool WebGraphicsContext3DDefaultImpl::isGLES2Compliant()
     return m_isGLES2;
 }
 
-bool WebGraphicsContext3DDefaultImpl::isGLES2NPOTStrict()
-{
-    return false;
-}
-
-bool WebGraphicsContext3DDefaultImpl::isErrorGeneratedOnOutOfBoundsAccesses()
-{
-    return false;
-}
-
 unsigned int WebGraphicsContext3DDefaultImpl::getPlatformTextureId()
 {
     return m_texture;

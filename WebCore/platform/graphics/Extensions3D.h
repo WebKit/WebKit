@@ -47,6 +47,7 @@ public:
     //   GL_EXT_texture_format_BGRA8888
     //   GL_EXT_read_format_bgra
     //   GL_ARB_robustness
+    //   GL_ARB_texture_non_power_of_two / GL_OES_texture_npot
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
 

@@ -296,6 +296,7 @@ public:
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>);
     void initializeNewContext();
+    void setupFlags();
 
     void addObject(WebGLObject*);
     void detachAndRemoveAllObjects();
@@ -311,9 +312,16 @@ public:
             markContextChanged();
     }
 
-    bool isGLES2Compliant();
-    bool isGLES2NPOTStrict();
-    bool isErrorGeneratedOnOutOfBoundsAccesses();
+    // Query whether it is built on top of compliant GLES2 implementation.
+    bool isGLES2Compliant() { return m_isGLES2Compliant; }
+    // Query if the GL implementation is NPOT strict.
+    bool isGLES2NPOTStrict() { return m_isGLES2NPOTStrict; }
+    // Query if the GL implementation generates errors on out-of-bounds buffer accesses.
+    bool isErrorGeneratedOnOutOfBoundsAccesses() { return m_isErrorGeneratedOnOutOfBoundsAccesses; }
+    // Query if the GL implementation initializes textures/renderbuffers to 0.
+    bool isResourceSafe() { return m_isResourceSafe; }
+    // Query if depth_stencil buffer is supported.
+    bool isDepthStencilSupported() { return m_isDepthStencilSupported; }
 
     // Helper to return the size in bytes of OpenGL data types
     // like GL_FLOAT, GL_INT, etc.
@@ -429,6 +437,10 @@ public:
     long m_stencilFuncRef; // Note that this is the user specified value, not the internal clamped value.
     unsigned long m_stencilFuncMask;
 
+    bool m_isGLES2Compliant;
+    bool m_isGLES2NPOTStrict;
+    bool m_isErrorGeneratedOnOutOfBoundsAccesses;
+    bool m_isResourceSafe;
     bool m_isDepthStencilSupported;
 
     // Helpers for getParameter and others

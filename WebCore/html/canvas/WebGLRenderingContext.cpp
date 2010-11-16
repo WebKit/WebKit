@@ -107,6 +107,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_contextLost(false)
 {
     ASSERT(m_context);
+    setupFlags();
     initializeNewContext();
 }
 
@@ -151,13 +152,24 @@ void WebGLRenderingContext::initializeNewContext()
     if (!isGLES2Compliant())
         initVertexAttrib0();
 
-    if (isGLES2Compliant())
-        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_OES_packed_depth_stencil");
-    else
-        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_EXT_packed_depth_stencil");
-
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
+}
+
+void WebGLRenderingContext::setupFlags()
+{
+    ASSERT(m_context);
+
+    m_isGLES2Compliant = m_context->isGLES2Compliant();
+    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->supports("GL_CHROMIUM_strict_attribs");
+    m_isResourceSafe = m_context->getExtensions()->supports("GL_CHROMIUM_resource_safe");
+    if (m_isGLES2Compliant) {
+        m_isGLES2NPOTStrict = !m_context->getExtensions()->supports("GL_OES_texture_npot");
+        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_OES_packed_depth_stencil");
+    } else {
+        m_isGLES2NPOTStrict = !m_context->getExtensions()->supports("GL_ARB_texture_non_power_of_two");
+        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_EXT_packed_depth_stencil");
+    }
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()
@@ -1715,7 +1727,7 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(unsigned long targe
 
     if (m_renderbufferBinding->getInternalFormat() == GraphicsContext3D::DEPTH_STENCIL
         && !m_renderbufferBinding->isValid()) {
-        ASSERT(!m_isDepthStencilSupported);
+        ASSERT(!isDepthStencilSupported());
         long value = 0;
         switch (pname) {
         case GraphicsContext3D::RENDERBUFFER_WIDTH:
@@ -2304,12 +2316,12 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
         cleanupAfterGraphicsCall(false);
         break;
     case GraphicsContext3D::DEPTH_STENCIL:
-        if (m_isDepthStencilSupported) {
+        if (isDepthStencilSupported()) {
             m_context->renderbufferStorage(target, Extensions3D::DEPTH24_STENCIL8, width, height);
             cleanupAfterGraphicsCall(false);
         } else
             m_renderbufferBinding->setSize(width, height);
-        m_renderbufferBinding->setIsValid(m_isDepthStencilSupported);
+        m_renderbufferBinding->setIsValid(isDepthStencilSupported());
         m_renderbufferBinding->setInternalFormat(internalformat);
         break;
     default:
@@ -3404,21 +3416,6 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(unsigned long pnam
         notImplemented();
     }
     return WebGLGetInfo(Int32Array::create(value, length));
-}
-
-bool WebGLRenderingContext::isGLES2Compliant()
-{
-    return m_context->isGLES2Compliant();
-}
-
-bool WebGLRenderingContext::isGLES2NPOTStrict()
-{
-    return m_context->isGLES2NPOTStrict();
-}
-
-bool WebGLRenderingContext::isErrorGeneratedOnOutOfBoundsAccesses()
-{
-    return m_context->isErrorGeneratedOnOutOfBoundsAccesses();
 }
 
 void WebGLRenderingContext::handleNPOTTextures(bool prepareToDraw)

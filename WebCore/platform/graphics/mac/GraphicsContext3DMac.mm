@@ -251,17 +251,6 @@ bool GraphicsContext3D::isGLES2Compliant() const
     return false;
 }
 
-bool GraphicsContext3D::isGLES2NPOTStrict() const
-{
-    return false;
-}
-
-bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
-{
-    return false;
-}
-    
-
 }
 
 #endif // ENABLE(3D_CANVAS)

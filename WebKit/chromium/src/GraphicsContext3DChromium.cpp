@@ -365,16 +365,6 @@ bool GraphicsContext3DInternal::isGLES2Compliant() const
     return m_impl->isGLES2Compliant();
 }
 
-bool GraphicsContext3DInternal::isGLES2NPOTStrict() const
-{
-    return m_impl->isGLES2NPOTStrict();
-}
-
-bool GraphicsContext3DInternal::isErrorGeneratedOnOutOfBoundsAccesses() const
-{
-    return m_impl->isErrorGeneratedOnOutOfBoundsAccesses();
-}
-
 DELEGATE_TO_IMPL_1(activeTexture, unsigned long)
 DELEGATE_TO_IMPL_2(attachShader, Platform3DObject, Platform3DObject)
 
@@ -1049,16 +1039,6 @@ DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
 bool GraphicsContext3D::isGLES2Compliant() const
 {
     return m_internal->isGLES2Compliant();
-}
-
-bool GraphicsContext3D::isGLES2NPOTStrict() const
-{
-    return m_internal->isGLES2NPOTStrict();
-}
-
-bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
-{
-    return m_internal->isErrorGeneratedOnOutOfBoundsAccesses();
 }
 
 } // namespace WebCore

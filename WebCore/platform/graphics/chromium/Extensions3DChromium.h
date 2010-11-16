@@ -36,6 +36,10 @@ class Extensions3DChromium : public Extensions3D {
 public:
     virtual ~Extensions3DChromium();
 
+    // Supported extensions:
+    //   GL_CHROMIUM_resource_safe  : indicating that textures/renderbuffers are always initialized before read/write.
+    //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
+
     // Extensions3D methods.
     virtual bool supports(const String&);
     virtual int getGraphicsResetStatusARB();
