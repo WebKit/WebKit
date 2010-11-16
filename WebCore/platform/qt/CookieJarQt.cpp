@@ -39,6 +39,7 @@
 #include "FrameLoaderClientQt.h"
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
+#include <QStringList>
 
 namespace WebCore {
 
