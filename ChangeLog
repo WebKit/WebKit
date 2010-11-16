@@ -2,6 +2,20 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt][Scratchbox] Use gold linker explicitly when available
+
+        gold is faster at linking QtWebKit than binutils ld, but it cannot be
+        enabled by default on a system that compiles other Qt projects.
+        This is due to gold not supporting the --add-needed flag.
+
+        Original patch by Kimmo Kinnunen.
+
+        * common.pri:
+
+2010-11-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt] Add 'valgrind' build mode
 
         Passing CONFIG+=valgrind to qmake will now build WebKit in a way
