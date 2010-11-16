@@ -1,3 +1,9 @@
+2010-11-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Rest of the Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-11-16  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix pt 1.
