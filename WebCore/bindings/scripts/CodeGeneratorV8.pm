@@ -909,27 +909,15 @@ sub GenerateNormalAttrSetter
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
     push(@implContentDecls, "    INC_STATS(\"DOM.$implClassName.$attrName._set\");\n");
 
-    # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
-    # a TypeError is thrown instead of casting to null.
+    # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
+    # interface type, then if the incoming value does not implement that interface, a TypeError is
+    # thrown rather than silently passing NULL to the C++ code.
+    # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to both
+    # strings and numbers, so do not throw TypeError if the attribute is of these types.
     if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
         my $argType = GetTypeFromSignature($attribute->signature);
         if (IsWrapperType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-            push(@implContentDecls, "        return;\n");
-            push(@implContentDecls, "    }\n");
-        } elsif ($codeGenerator->IsStringType($argType)) {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsString() && !value->IsObject()) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-            push(@implContentDecls, "        return;\n");
-            push(@implContentDecls, "    }\n");
-        } elsif ($codeGenerator->IsNumericType($argType)) {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsNumber() && !value->IsBoolean()) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-            push(@implContentDecls, "        return;\n");
-            push(@implContentDecls, "    }\n");
-        } elsif ($argType eq "boolean") {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsBoolean()) {\n");
             push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
@@ -1359,23 +1347,17 @@ END
             push(@implContentDecls, "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n");
         } else {
             $implIncludes{"V8BindingMacros.h"} = 1;
-            # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
-            # a TypeError is thrown instead of casting to null.
+            # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
+            # interface type, then if the incoming value does not implement that interface, a TypeError
+            # is thrown rather than silently passing NULL to the C++ code.
+            # Per the Web IDL and ECMAScript specifications, incoming values can always be converted
+            # to both strings and numbers, so do not throw TypeError if the argument is of these
+            # types.
             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
                 my $argValue = "args[$paramIndex]";
                 my $argType = GetTypeFromSignature($parameter);
                 if (IsWrapperType($argType)) {
                     push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n");
-                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
-                    push(@implContentDecls, "    }\n");
-                } elsif ($codeGenerator->IsStringType($argType)) {
-                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsString() && !${argValue}->IsObject()) {\n");
-                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
-                    push(@implContentDecls, "    }\n");
-                } elsif ($codeGenerator->IsNumericType($argType)) {
-                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsNumber() && !${argValue}->IsBoolean()) {\n");
                     push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
                     push(@implContentDecls, "        return notHandledByInterceptor();\n");
                     push(@implContentDecls, "    }\n");

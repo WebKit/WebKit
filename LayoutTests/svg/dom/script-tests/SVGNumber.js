@@ -22,11 +22,11 @@ shouldBe("numRef", "1000");
 shouldBe("num.value", "-12345678");
 
 debug("");
-debug("Check assigning invalid number, number should be null afterwards");
-shouldThrow("num.value = num");
-shouldThrow("num.value = 'aString'");
-shouldThrow("num.value = svgElement");
-shouldBe("num.value", "-12345678");
+debug("Check assigning invalid number, number should be 0 afterwards");
+shouldBe("num.value = num", "num");
+shouldBe("num.value = 'aString'", "'aString'");
+shouldBe("num.value = svgElement", "svgElement");
+shouldBe("num.value", "NaN");
 shouldBeNull("num.value = null");
 
 debug("");

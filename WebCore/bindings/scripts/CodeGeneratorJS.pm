@@ -1751,29 +1751,17 @@ sub GenerateImplementation
                             push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
                             push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
 
-                            # For setters with "StrictTypeChecking", if an input parameter's type does not match the signature,
-                            # a TypeError is thrown instead of casting to null.
+                            # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
+                            # interface type, then if the incoming value does not implement that interface, a TypeError
+                            # is thrown rather than silently passing NULL to the C++ code.
+                            # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to
+                            # both strings and numbers, so do not throw TypeError if the attribute is of these types.
                             if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
                                 $implIncludes{"<runtime/Error.h>"} = 1;
 
                                 my $argType = $attribute->signature->type;
                                 if (!IsNativeType($argType)) {
                                     push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(&JS${argType}::s_info)) {\n");
-                                    push(@implContent, "        throwVMTypeError(exec);\n");
-                                    push(@implContent, "        return;\n");
-                                    push(@implContent, "    };\n");
-                                } elsif ($codeGenerator->IsStringType($argType)) {
-                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isString() && !value.isObject()) {\n");
-                                    push(@implContent, "        throwVMTypeError(exec);\n");
-                                    push(@implContent, "        return;\n");
-                                    push(@implContent, "    };\n");
-                                } elsif ($codeGenerator->IsNumericType($argType)) {
-                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isNumber() && !value.isBoolean()) {\n");
-                                    push(@implContent, "        throwVMTypeError(exec);\n");
-                                    push(@implContent, "        return;\n");
-                                    push(@implContent, "    };\n");
-                                } elsif ($argType eq "boolean") {
-                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isBoolean()) {\n");
                                     push(@implContent, "        throwVMTypeError(exec);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
@@ -2006,20 +1994,17 @@ sub GenerateImplementation
                                 push(@implContent, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
                             }
                         } else {
-                            # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
-                            # a TypeError is thrown instead of casting to null.
+                            # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
+                            # interface type, then if the incoming value does not implement that interface, a TypeError
+                            # is thrown rather than silently passing NULL to the C++ code.
+                            # Per the Web IDL and ECMAScript semantics, incoming values can always be converted to both
+                            # strings and numbers, so do not throw TypeError if the argument is of these types.
                             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
                                 $implIncludes{"<runtime/Error.h>"} = 1;
 
                                 my $argValue = "exec->argument($argsIndex)";
                                 if (!IsNativeType($argType)) {
                                     push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
-                                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                                } elsif ($codeGenerator->IsStringType($argType)) {
-                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isString() && !${argValue}.isObject())\n");
-                                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                                } elsif ($codeGenerator->IsNumericType($argType)) {
-                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isNumber() && !${argValue}.isBoolean())\n");
                                     push(@implContent, "        return throwVMTypeError(exec);\n");
                                 }
                             }

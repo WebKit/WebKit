@@ -19,11 +19,15 @@ debug("");
 debug("Check assigning various valid and invalid values");
 shouldBe("filterElement.filterResX.baseVal = -1", "-1"); // Negative values are allowed from SVG DOM, but should lead to an error when rendering (disable the filter)
 shouldBe("filterElement.filterResX.baseVal = 300", "300");
-shouldThrow("filterElement.filterResX.baseVal = 'aString'");
-shouldThrow("filterElement.filterResX.baseVal = filterElement");
+// ECMA-262, 9.5, "ToInt32"
+shouldBe("filterElement.filterResX.baseVal = 'aString'", "'aString'");
+shouldBe("filterElement.filterResX.baseVal", "0");
+shouldBe("filterElement.filterResX.baseVal = filterElement", "filterElement");
+shouldBe("filterElement.filterResX.baseVal", "0");
+shouldBe("filterElement.filterResX.baseVal = 300", "300");
 
 debug("");
 debug("Check that the filterResX value remained 300");
-shouldBe("filterElement.filterResX.baseVal = 300", "300");
+shouldBe("filterElement.filterResX.baseVal", "300");
 
 successfullyParsed = true;

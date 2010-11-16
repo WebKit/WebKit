@@ -24,14 +24,16 @@ shouldBe("baseVal", "false");
 shouldBe("rectElement.externalResourcesRequired.baseVal", "true");
 
 debug("");
-debug("Check assigning invalid values");
-shouldThrow("rectElement.externalResourcesRequired.baseVal = rectElement.externalResourcesRequired");
+debug("Check assigning values of various types");
+// ECMA-262, 9.2, "ToBoolean"
+shouldBe("rectElement.externalResourcesRequired.baseVal = rectElement.externalResourcesRequired", "rectElement.externalResourcesRequired");
+shouldBe("rectElement.externalResourcesRequired.baseVal", "true");
 shouldBeNull("rectElement.externalResourcesRequired.baseVal = null");
-shouldThrow("rectElement.externalResourcesRequired.baseVal = 'aString'");
-shouldThrow("rectElement.externalResourcesRequired.baseVal = rectElement");
-
-debug("");
-debug("Check that the value is now false");
 shouldBe("rectElement.externalResourcesRequired.baseVal", "false");
+shouldBe("rectElement.externalResourcesRequired.baseVal = 'aString'", "'aString'");
+shouldBe("rectElement.externalResourcesRequired.baseVal", "true");
+rectElement.externalResourcesRequired.baseVal = false;
+shouldBe("rectElement.externalResourcesRequired.baseVal = rectElement", "rectElement");
+shouldBe("rectElement.externalResourcesRequired.baseVal", "true");
 
 successfullyParsed = true;

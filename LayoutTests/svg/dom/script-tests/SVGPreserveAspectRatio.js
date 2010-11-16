@@ -15,6 +15,10 @@ shouldBe("preserveAspectRatio.meetOrSlice = SVGPreserveAspectRatio.SVG_MEETORSLI
 
 debug("");
 debug("Check assigning invalid align values");
+// The following four assignments fail because the various arguments
+// translate via ECMA-262 rules to 0, which is the same as
+// SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_UNKNOWN and which is
+// not allowed.
 shouldThrow("preserveAspectRatio.align = preserveAspectRatio");
 shouldThrow("preserveAspectRatio.align = null");
 shouldThrow("preserveAspectRatio.align = 'aString'");
@@ -25,6 +29,10 @@ shouldThrow("preserveAspectRatio.align = 11"); // SVG_PRESERVEASPECTRATIO_XMAXYM
 
 debug("");
 debug("Check assigning invalid meetOrSlice values");
+// The following four assignments fail because the various arguments
+// translate via ECMA-262 rules to 0, which is the same as
+// SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_UNKNOWN and which is
+// not allowed.
 shouldThrow("preserveAspectRatio.meetOrSlice = preserveAspectRatio");
 shouldThrow("preserveAspectRatio.meetOrSlice = null");
 shouldThrow("preserveAspectRatio.meetOrSlice = 'aString'");

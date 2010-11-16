@@ -17,11 +17,15 @@ Check assigning various valid and invalid values
 FAIL clipPathElement.clipPathUnits.baseVal = 3 should throw an exception. Was 3.
 PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
 FAIL clipPathElement.clipPathUnits.baseVal = -1 should throw an exception. Was -1.
-PASS clipPathElement.clipPathUnits.baseVal = 'aString' threw exception TypeError: Type error.
-PASS clipPathElement.clipPathUnits.baseVal = clipPathElement threw exception TypeError: Type error.
+PASS clipPathElement.clipPathUnits.baseVal = 'aString' is 'aString'
+PASS clipPathElement.clipPathUnits.baseVal is 0
+PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS clipPathElement.clipPathUnits.baseVal = clipPathElement is clipPathElement
+PASS clipPathElement.clipPathUnits.baseVal is 0
+PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
 
 Check that the clipPathUnits value remained objectBBox
-PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS clipPathElement.clipPathUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
 PASS successfullyParsed is true
 
 TEST COMPLETE

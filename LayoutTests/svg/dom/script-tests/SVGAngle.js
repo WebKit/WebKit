@@ -16,8 +16,12 @@ debug("Check invalid arguments for 'convertToSpecifiedUnits'");
 shouldThrow("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN)");
 shouldThrow("angle.convertToSpecifiedUnits(-1)");
 shouldThrow("angle.convertToSpecifiedUnits(5)");
+// 'aString' converts to short 0 (through NaN) according to ECMA-262, ToUint16.
+// Therefore this throws NOT_SUPPORTED_ERR.
 shouldThrow("angle.convertToSpecifiedUnits('aString')");
+// Same here, via ToString conversion of object.
 shouldThrow("angle.convertToSpecifiedUnits(angle)");
+// Same here, via ToString conversion of object.
 shouldThrow("angle.convertToSpecifiedUnits(svgElement)");
 shouldThrow("angle.convertToSpecifiedUnits()");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
@@ -55,10 +59,15 @@ shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(-1, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(5, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
-shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString')");
-shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle)");
-shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement)");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString')");
+shouldBe("angle.value", "NaN");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0)");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle)");
+shouldBe("angle.value", "NaN");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement)");
+shouldBe("angle.value", "NaN");
 shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
+// All of the following unitType arguments convert to 0 (SVG_ANGLETYPE_UNKNOWN).
 shouldThrow("angle.newValueSpecifiedUnits('aString', 4)");
 shouldThrow("angle.newValueSpecifiedUnits(angle, 4)");
 shouldThrow("angle.newValueSpecifiedUnits(svgElement, 4)");
@@ -66,7 +75,7 @@ shouldThrow("angle.newValueSpecifiedUnits('aString', 'aString')");
 shouldThrow("angle.newValueSpecifiedUnits(angle, angle)");
 shouldThrow("angle.newValueSpecifiedUnits(svgElement, svgElement)");
 shouldThrow("angle.newValueSpecifiedUnits()");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
 
 debug("");
 debug("Check valid arguments for 'newValueSpecifiedUnits', that should only modify the 'valueAsString'");
@@ -134,30 +143,29 @@ shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");
 debug("Check setting invalid 'valueInSpecifiedUnits' arguments");
-shouldThrow("angle.valueInSpecifiedUnits = 'test'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.value", "0");
-shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.valueInSpecifiedUnits = 'test'", "'test'");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("angle.valueInSpecifiedUnits = 0", "0");
 
-shouldThrow("angle.valueInSpecifiedUnits = angle");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.value", "0");
-shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.valueInSpecifiedUnits = angle", "angle");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");
 debug("Check setting invalid 'value' arguments");
-shouldThrow("angle.value = 'test'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.value", "0");
-shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.value = 0", "0");
+shouldBe("angle.value = 'test'", "'test'");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
-shouldThrow("angle.value = angle");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.value", "0");
-shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.value = 0", "0");
+shouldBe("angle.value = angle", "angle");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");

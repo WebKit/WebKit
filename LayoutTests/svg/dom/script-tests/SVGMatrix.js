@@ -19,29 +19,71 @@ shouldBe("matrix.f = 200", "200");
 
 debug("");
 debug("Check assigning invalid matrices");
-shouldThrow("matrix.a = matrix");
-shouldThrow("matrix.a = svgElement");
-shouldThrow("matrix.a = 'aString'");
+shouldBe("matrix.a = matrix", "matrix");
+shouldBe("matrix.a", "NaN");
+shouldBe("matrix.a = 0", "0");
+shouldBe("matrix.a = svgElement", "svgElement");
+shouldBe("matrix.a", "NaN");
+shouldBe("matrix.a = 0", "0");
+shouldBe("matrix.a = 'aString'", "'aString'");
+shouldBe("matrix.a", "NaN");
+// Reset to previous value.
+shouldBe("matrix.a = 2", "2");
 
-shouldThrow("matrix.b = matrix");
-shouldThrow("matrix.b = svgElement");
-shouldThrow("matrix.b = 'aString'");
+shouldBe("matrix.b = matrix", "matrix");
+shouldBe("matrix.b", "NaN");
+shouldBe("matrix.b = 0", "0");
+shouldBe("matrix.b = svgElement", "svgElement");
+shouldBe("matrix.b", "NaN");
+shouldBe("matrix.b = 0", "0");
+shouldBe("matrix.b = 'aString'", "'aString'");
+shouldBe("matrix.b", "NaN");
+// Reset to previous value.
+shouldBe("matrix.b = 0", "0");
 
-shouldThrow("matrix.c = matrix");
-shouldThrow("matrix.c = svgElement");
-shouldThrow("matrix.c = 'aString'");
+shouldBe("matrix.c = matrix", "matrix");
+shouldBe("matrix.c", "NaN");
+shouldBe("matrix.c = 0", "0");
+shouldBe("matrix.c = svgElement", "svgElement");
+shouldBe("matrix.c", "NaN");
+shouldBe("matrix.c = 0", "0");
+shouldBe("matrix.c = 'aString'", "'aString'");
+shouldBe("matrix.c", "NaN");
+// Reset to previous value.
+shouldBe("matrix.c = 0", "0");
 
-shouldThrow("matrix.d = matrix");
-shouldThrow("matrix.d = svgElement");
-shouldThrow("matrix.d = 'aString'");
+shouldBe("matrix.d = matrix", "matrix");
+shouldBe("matrix.d", "NaN");
+shouldBe("matrix.d = 0", "0");
+shouldBe("matrix.d = svgElement", "svgElement");
+shouldBe("matrix.d", "NaN");
+shouldBe("matrix.d = 0", "0");
+shouldBe("matrix.d = 'aString'", "'aString'");
+shouldBe("matrix.d", "NaN");
+// Reset to previous value.
+shouldBe("matrix.d = 1", "1");
 
-shouldThrow("matrix.e = matrix");
-shouldThrow("matrix.e = svgElement");
-shouldThrow("matrix.e = 'aString'");
+shouldBe("matrix.e = matrix", "matrix");
+shouldBe("matrix.e", "NaN");
+shouldBe("matrix.e = 0", "0");
+shouldBe("matrix.e = svgElement", "svgElement");
+shouldBe("matrix.e", "NaN");
+shouldBe("matrix.e = 0", "0");
+shouldBe("matrix.e = 'aString'", "'aString'");
+shouldBe("matrix.e", "NaN");
+// Reset to previous value.
+shouldBe("matrix.e = 0", "0");
 
-shouldThrow("matrix.f = matrix");
-shouldThrow("matrix.f = svgElement");
-shouldThrow("matrix.f = 'aString'");
+shouldBe("matrix.f = matrix", "matrix");
+shouldBe("matrix.f", "NaN");
+shouldBe("matrix.f = 0", "0");
+shouldBe("matrix.f = svgElement", "svgElement");
+shouldBe("matrix.f", "NaN");
+shouldBe("matrix.f = 0", "0");
+shouldBe("matrix.f = 'aString'", "'aString'");
+shouldBe("matrix.f", "NaN");
+// Reset to previous value.
+shouldBe("matrix.f = 200", "200");
 
 debug("");
 debug("Check that the matrix is still containing the correct values");
@@ -77,18 +119,20 @@ shouldThrow("matrix.translate(true)");
 shouldThrow("matrix.translate(2)");
 shouldThrow("matrix.translate('aString')");
 shouldThrow("matrix.translate(svgElement)");
-shouldThrow("matrix.translate('aString', 'aString')");
-shouldThrow("matrix.translate(svgElement, svgElement)");
-shouldThrow("matrix.translate(2, 'aString')");
-shouldThrow("matrix.translate(2, svgElement)");
-shouldThrow("matrix.translate('aString', 2)");
-shouldThrow("matrix.translate(svgElement, 2)");
+// The following string and object arguments convert to NaN
+// per ECMA-262, 9.3, "ToNumber".
+shouldBeNonNull("matrix.translate('aString', 'aString')");
+shouldBeNonNull("matrix.translate(svgElement, svgElement)");
+shouldBeNonNull("matrix.translate(2, 'aString')");
+shouldBeNonNull("matrix.translate(2, svgElement)");
+shouldBeNonNull("matrix.translate('aString', 2)");
+shouldBeNonNull("matrix.translate(svgElement, 2)");
 
 debug("");
 debug("Check calling 'scale' with invalid arguments");
 shouldThrow("matrix.scale()");
-shouldThrow("matrix.scale('aString')");
-shouldThrow("matrix.scale(svgElement)");
+shouldBeNonNull("matrix.scale('aString')");
+shouldBeNonNull("matrix.scale(svgElement)");
 
 
 debug("");
@@ -98,18 +142,18 @@ shouldThrow("matrix.scaleNonUniform(true)");
 shouldThrow("matrix.scaleNonUniform(2)");
 shouldThrow("matrix.scaleNonUniform('aString')");
 shouldThrow("matrix.scaleNonUniform(svgElement)");
-shouldThrow("matrix.scaleNonUniform('aString', 'aString')");
-shouldThrow("matrix.scaleNonUniform(svgElement, svgElement)");
-shouldThrow("matrix.scaleNonUniform(2, 'aString')");
-shouldThrow("matrix.scaleNonUniform(2, svgElement)");
-shouldThrow("matrix.scaleNonUniform('aString', 2)");
-shouldThrow("matrix.scaleNonUniform(svgElement, 2)");
+shouldBeNonNull("matrix.scaleNonUniform('aString', 'aString')");
+shouldBeNonNull("matrix.scaleNonUniform(svgElement, svgElement)");
+shouldBeNonNull("matrix.scaleNonUniform(2, 'aString')");
+shouldBeNonNull("matrix.scaleNonUniform(2, svgElement)");
+shouldBeNonNull("matrix.scaleNonUniform('aString', 2)");
+shouldBeNonNull("matrix.scaleNonUniform(svgElement, 2)");
 
 debug("");
 debug("Check calling 'rotate' with invalid arguments");
 shouldThrow("matrix.rotate()");
-shouldThrow("matrix.rotate('aString')");
-shouldThrow("matrix.rotate(svgElement)");
+shouldBeNonNull("matrix.rotate('aString')");
+shouldBeNonNull("matrix.rotate(svgElement)");
 
 debug("");
 debug("Check calling 'rotateFromVector' with invalid arguments");
@@ -118,23 +162,23 @@ shouldThrow("matrix.rotateFromVector(true)");
 shouldThrow("matrix.rotateFromVector(2)");
 shouldThrow("matrix.rotateFromVector('aString')");
 shouldThrow("matrix.rotateFromVector(svgElement)");
-shouldThrow("matrix.rotateFromVector('aString', 'aString')");
-shouldThrow("matrix.rotateFromVector(svgElement, svgElement)");
-shouldThrow("matrix.rotateFromVector(2, 'aString')");
-shouldThrow("matrix.rotateFromVector(2, svgElement)");
-shouldThrow("matrix.rotateFromVector('aString', 2)");
-shouldThrow("matrix.rotateFromVector(svgElement, 2)");
+shouldBeNonNull("matrix.rotateFromVector('aString', 'aString')");
+shouldBeNonNull("matrix.rotateFromVector(svgElement, svgElement)");
+shouldBeNonNull("matrix.rotateFromVector(2, 'aString')");
+shouldBeNonNull("matrix.rotateFromVector(2, svgElement)");
+shouldBeNonNull("matrix.rotateFromVector('aString', 2)");
+shouldBeNonNull("matrix.rotateFromVector(svgElement, 2)");
 
 debug("");
 debug("Check calling 'skewX' with invalid arguments");
 shouldThrow("matrix.skewX()");
-shouldThrow("matrix.skewX('aString')");
-shouldThrow("matrix.skewX(svgElement)");
+shouldBeNonNull("matrix.skewX('aString')");
+shouldBeNonNull("matrix.skewX(svgElement)");
 
 debug("");
 debug("Check calling 'skewY' with invalid arguments");
 shouldThrow("matrix.skewY()");
-shouldThrow("matrix.skewY('aString')");
-shouldThrow("matrix.skewY(svgElement)");
+shouldBeNonNull("matrix.skewY('aString')");
+shouldBeNonNull("matrix.skewY(svgElement)");
 
 successfullyParsed = true;

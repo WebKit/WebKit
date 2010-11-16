@@ -37,10 +37,18 @@ debug("Check invalid arguments for 'newValueSpecifiedUnits'");
 shouldThrow("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_UNKNOWN, 4)");
 shouldThrow("length.newValueSpecifiedUnits(-1, 4)");
 shouldThrow("length.newValueSpecifiedUnits(11, 4)");
-shouldThrow("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString')");
-shouldThrow("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, length)");
-shouldThrow("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement)");
+// ECMA-262, 9.3, "ToNumber"
+shouldBeUndefined("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString')");
+shouldBe("length.value", "NaN");
+shouldBeUndefined("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0)");
+shouldBeUndefined("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, length)");
+shouldBe("length.value", "NaN");
+shouldBeUndefined("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0)");
+shouldBeUndefined("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement)");
+shouldBe("length.value", "NaN");
 shouldThrow("length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX)");
+// Reset to original value above.
+length.valueAsString = "2px";
 shouldThrow("length.newValueSpecifiedUnits('aString', 4)");
 shouldThrow("length.newValueSpecifiedUnits(length, 4)");
 shouldThrow("length.newValueSpecifiedUnits(svgElement, 4)");

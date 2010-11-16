@@ -33,16 +33,21 @@ Check invalid arguments for 'newValueSpecifiedUnits'
 PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_UNKNOWN, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.newValueSpecifiedUnits(-1, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.newValueSpecifiedUnits(11, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString') threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, length) threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement) threw exception TypeError: Type error.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString') is undefined.
+PASS length.value is NaN
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0) is undefined.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, length) is undefined.
+PASS length.value is NaN
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0) is undefined.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement) is undefined.
+PASS length.value is NaN
 PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX) threw exception SyntaxError: Not enough arguments.
-PASS length.newValueSpecifiedUnits('aString', 4) threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(length, 4) threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(svgElement, 4) threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits('aString', 'aString') threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(length, length) threw exception TypeError: Type error.
-PASS length.newValueSpecifiedUnits(svgElement, svgElement) threw exception TypeError: Type error.
+PASS length.newValueSpecifiedUnits('aString', 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(length, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(svgElement, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS length.newValueSpecifiedUnits('aString', 'aString') threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(length, length) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(svgElement, svgElement) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
 PASS length.value is 2
 PASS length.valueInSpecifiedUnits is 2

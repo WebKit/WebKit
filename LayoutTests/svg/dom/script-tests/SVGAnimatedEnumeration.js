@@ -20,11 +20,16 @@ debug("Check assigning various valid and invalid values");
 shouldThrow("clipPathElement.clipPathUnits.baseVal = 3"); // FIXME: Doesn't throw in WebKit, we're not clamping to the allowed range.
 shouldBe("clipPathElement.clipPathUnits.baseVal = 2", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 shouldThrow("clipPathElement.clipPathUnits.baseVal = -1"); // FIXME: Doesn't throw in WebKit, we're not clamping to the allowed range.
-shouldThrow("clipPathElement.clipPathUnits.baseVal = 'aString'");
-shouldThrow("clipPathElement.clipPathUnits.baseVal = clipPathElement");
+// ECMA-262, 9.7, "ToUint16"
+shouldBe("clipPathElement.clipPathUnits.baseVal = 'aString'", "'aString'");
+shouldBe("clipPathElement.clipPathUnits.baseVal", "0");
+shouldBe("clipPathElement.clipPathUnits.baseVal = 2", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
+shouldBe("clipPathElement.clipPathUnits.baseVal = clipPathElement", "clipPathElement");
+shouldBe("clipPathElement.clipPathUnits.baseVal", "0");
+shouldBe("clipPathElement.clipPathUnits.baseVal = 2", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 
 debug("");
 debug("Check that the clipPathUnits value remained objectBBox");
-shouldBe("clipPathElement.clipPathUnits.baseVal = 2", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
+shouldBe("clipPathElement.clipPathUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 
 successfullyParsed = true;

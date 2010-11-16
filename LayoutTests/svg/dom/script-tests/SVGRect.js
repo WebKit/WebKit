@@ -16,19 +16,24 @@ shouldBe("rect.x = 100", "100");
 shouldBe("rect.y = 200", "200");
 shouldBe("rect.width = 300", "300");
 shouldBe("rect.height = 400", "400");
+debug("Check that the rect contains the correct values");
+shouldBe("rect.x", "100");
+shouldBe("rect.y", "200");
+shouldBe("rect.width", "300");
+shouldBe("rect.height", "400");
 
 debug("");
 debug("Check assigning invalid rects");
-shouldThrow("rect.x = rect");
+shouldBe("rect.x = rect", "rect");
 shouldBeNull("rect.y = null");
-shouldThrow("rect.width = 'aString'");
-shouldThrow("rect.height = svgElement");
+shouldBe("rect.width = 'aString'", "'aString'");
+shouldBe("rect.height = svgElement", "svgElement");
 
 debug("");
-debug("Check that the rect is still containing the correct values");
-shouldBe("rect.x", "100");
+debug("Check that the rect contains the correct values");
+shouldBe("rect.x", "NaN");
 shouldBe("rect.y", "0");
-shouldBe("rect.width", "300");
-shouldBe("rect.height", "400");
+shouldBe("rect.width", "NaN");
+shouldBe("rect.height", "NaN");
 
 successfullyParsed = true;

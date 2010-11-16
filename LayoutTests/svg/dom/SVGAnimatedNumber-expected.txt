@@ -16,11 +16,15 @@ PASS feSpecularLightingElement.surfaceScale.baseVal is 1
 Check assigning various valid and invalid values
 PASS feSpecularLightingElement.surfaceScale.baseVal = -1 is -1
 PASS feSpecularLightingElement.surfaceScale.baseVal = 300 is 300
-PASS feSpecularLightingElement.surfaceScale.baseVal = 'aString' threw exception TypeError: Type error.
-PASS feSpecularLightingElement.surfaceScale.baseVal = feSpecularLightingElement threw exception TypeError: Type error.
+PASS feSpecularLightingElement.surfaceScale.baseVal = 'aString' is 'aString'
+PASS feSpecularLightingElement.surfaceScale.baseVal is NaN
+PASS feSpecularLightingElement.surfaceScale.baseVal = 0 is 0
+PASS feSpecularLightingElement.surfaceScale.baseVal = feSpecularLightingElement is feSpecularLightingElement
+PASS feSpecularLightingElement.surfaceScale.baseVal is NaN
+PASS feSpecularLightingElement.surfaceScale.baseVal = 300 is 300
 
 Check that the surfaceScale value remained 300
-PASS feSpecularLightingElement.surfaceScale.baseVal = 300 is 300
+PASS feSpecularLightingElement.surfaceScale.baseVal is 300
 PASS successfullyParsed is true
 
 TEST COMPLETE

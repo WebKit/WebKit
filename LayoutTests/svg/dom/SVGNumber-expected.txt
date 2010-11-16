@@ -17,11 +17,11 @@ Check that numbers are static, caching value in a local variable and modifying i
 PASS numRef is 1000
 PASS num.value is -12345678
 
-Check assigning invalid number, number should be null afterwards
-PASS num.value = num threw exception TypeError: Type error.
-PASS num.value = 'aString' threw exception TypeError: Type error.
-PASS num.value = svgElement threw exception TypeError: Type error.
-PASS num.value is -12345678
+Check assigning invalid number, number should be 0 afterwards
+PASS num.value = num is num
+PASS num.value = 'aString' is 'aString'
+PASS num.value = svgElement is svgElement
+PASS num.value is NaN
 PASS num.value = null is null
 
 Check that the number is now null

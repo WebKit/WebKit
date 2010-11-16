@@ -15,12 +15,12 @@ shouldBe("point.y = 200", "200");
 
 debug("");
 debug("Check assigning invalid points");
-shouldThrow("point.x = point");
+shouldBe("point.x = point", "point");
 shouldBeNull("point.y = null");
 
 debug("");
-debug("Check that the point is still containing the correct values");
-shouldBe("point.x", "100");
+debug("Check that the point contains the correct values");
+shouldBe("point.x", "NaN");
 shouldBe("point.y", "0");
 
 debug("");
