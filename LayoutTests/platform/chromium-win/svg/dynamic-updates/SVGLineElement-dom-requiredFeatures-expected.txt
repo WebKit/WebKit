@@ -1,0 +1,1 @@
+SVG 1.1 dynamic update tests

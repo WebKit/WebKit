@@ -3201,36 +3201,6 @@ BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
 
-// Added in WK r71969
-BUGWK40887 MAC : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 MAC : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 WIN LINUX : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html = TIMEOUT
-BUGWK40887 WIN LINUX : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = TIMEOUT
-BUGWK40887 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGEllipseElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGForeignObjectElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGForeignObjectElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGGElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGGElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGImageElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPathElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPathElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPolygonElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPolygonElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPolylineElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGPolylineElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGRectElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGRectElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGSVGElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGTextElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGTextElement-svgdom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html = MISSING
-BUGWK40887 : svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html = MISSING
-
 // Fails on upstream mac port too, will be rebaselined there
 BUGWK49521 : svg/W3C-SVG-1.1/fonts-desc-02-t.svg  = IMAGE
 
