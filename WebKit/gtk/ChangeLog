@@ -2,6 +2,26 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Some key-press events can't be handled by WebView
+        https://bugs.webkit.org/show_bug.cgi?id=48986
+
+        The problem is that "popup-menu" and "show-help" signals are
+        handled by GtkTextView, as they are added to the key bindings set
+        of every widget in gtk_widget_class_init(). For all other bindings
+        handled by GtkTextView we are stopping the signal emission in
+        their callbacks, so we only need to do the same for "popup-menu"
+        and "show-help" signals.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::toggleOverwriteCallback):
+        (WebKit::popupMenuCallback):
+        (WebKit::showHelpCallback):
+        (WebKit::EditorClient::EditorClient):
+
+2010-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Show default context menu for the currently focused element when activated with keyboard
         https://bugs.webkit.org/show_bug.cgi?id=49376
 

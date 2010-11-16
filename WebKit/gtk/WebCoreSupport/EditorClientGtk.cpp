@@ -122,11 +122,23 @@ static void pasteClipboardCallback(GtkWidget* widget, EditorClient* client)
     client->addPendingEditorCommand("Paste");
 }
 
-static void toggleOverwriteCallback(GtkWidget* widget, EditorClient* client)
+static void toggleOverwriteCallback(GtkWidget* widget, EditorClient*)
 {
     // We don't support toggling the overwrite mode, but the default callback expects
     // the GtkTextView to have a layout, so we handle this signal just to stop it.
     g_signal_stop_emission_by_name(widget, "toggle-overwrite");
+}
+
+// GTK+ will still send these signals to the web view. So we can safely stop signal
+// emission without breaking accessibility.
+static void popupMenuCallback(GtkWidget* widget, EditorClient*)
+{
+    g_signal_stop_emission_by_name(widget, "popup-menu");
+}
+
+static void showHelpCallback(GtkWidget* widget, EditorClient*)
+{
+    g_signal_stop_emission_by_name(widget, "show-help");
 }
 
 static const char* const gtkDeleteCommands[][2] = {
@@ -789,6 +801,8 @@ EditorClient::EditorClient(WebKitWebView* webView)
     g_signal_connect(m_nativeWidget.get(), "move-cursor", G_CALLBACK(moveCursorCallback), this);
     g_signal_connect(m_nativeWidget.get(), "delete-from-cursor", G_CALLBACK(deleteFromCursorCallback), this);
     g_signal_connect(m_nativeWidget.get(), "toggle-overwrite", G_CALLBACK(toggleOverwriteCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "popup-menu", G_CALLBACK(popupMenuCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "show-help", G_CALLBACK(showHelpCallback), this);
 }
 
 EditorClient::~EditorClient()
