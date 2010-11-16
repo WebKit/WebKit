@@ -345,17 +345,34 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
 
 String MIMETypeRegistry::getMediaMIMETypeForExtension(const String& ext)
 {
-    if (mediaMIMETypeMap().contains(ext))
-        return (*mediaMIMETypeMap().get(ext))[0];
+    // Look in the system-specific registry first.
+    String type = getMIMETypeForExtension(ext);
+    if (!type.isEmpty())
+        return type;
+
+    Vector<String>* typeList = mediaMIMETypeMap().get(ext);
+    if (typeList)
+        return (*typeList)[0];
     
     return String();
 }
     
 Vector<String> MIMETypeRegistry::getMediaMIMETypesForExtension(const String& ext)
 {
-    if (mediaMIMETypeMap().contains(ext))
-        return *mediaMIMETypeMap().get(ext);
+    Vector<String>* typeList = mediaMIMETypeMap().get(ext);
+    if (typeList)
+        return *typeList;
 
+    // Only need to look in the system-specific registry if mediaMIMETypeMap() doesn't contain
+    // the extension at all, because it always contains the system-specific type if the
+    // extension is in the static mapping table.
+    String type = getMIMETypeForExtension(ext);
+    if (!type.isEmpty()) {
+        Vector<String> typeList;
+        typeList.append(type);
+        return typeList;
+    }
+    
     return Vector<String>();
 }
 
