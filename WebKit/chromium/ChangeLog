@@ -1,3 +1,16 @@
+2010-11-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chrome DevTools: concatenate CSS files, do not link
+        missing JS files in release mode.
+        https://bugs.webkit.org/show_bug.cgi?id=49586
+
+        * Build/concatenate_css_files.py: Added.
+        * Build/concatenate_js_files.py: Added.
+        * Build/generate_devtools_html.py: Added.
+        * WebKit.gyp:
+
 2010-11-15  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Darin Fisher.
