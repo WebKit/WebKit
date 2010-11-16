@@ -1767,7 +1767,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                 loadManually:NO
                 element:element] autorelease];
             if (view)
-                return adoptRef(new NetscapePluginWidget(view));
+                return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
         } else {
             ASSERT_NOT_REACHED();
         }
