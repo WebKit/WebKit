@@ -1,3 +1,20 @@
+2010-11-15  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make WebWidget actively notify client when compositing enables.
+        https://bugs.webkit.org/show_bug.cgi?id=49396
+
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::didAcceleratedCompositingEnable):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2010-11-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
