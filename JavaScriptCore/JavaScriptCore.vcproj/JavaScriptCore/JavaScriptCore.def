@@ -88,7 +88,6 @@ EXPORTS
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
-    ?createInterruptedExecutionException@JSC@@YA?AVJSValue@1@PAVJSGlobalData@1@@Z
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
