@@ -30,8 +30,11 @@
 #include <wtf/Threading.h>
 
 #include <QApplication>
+#include <QList>
+#include <QNetworkProxyFactory>
 #include <QString>
 #include <QStringList>
+#include <QUrl>
 #include <QtGlobal>
 
 #if USE(MEEGOTOUCH)
@@ -61,6 +64,71 @@ static void sleep(unsigned seconds)
 #endif
 #endif
 
+class EnvHttpProxyFactory : public QNetworkProxyFactory
+{
+public:
+    EnvHttpProxyFactory() { }
+
+    bool initializeFromEnvironment();
+
+    QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& query = QNetworkProxyQuery());
+
+private:
+    QList<QNetworkProxy> m_httpProxy;
+    QList<QNetworkProxy> m_httpsProxy;
+};
+
+bool EnvHttpProxyFactory::initializeFromEnvironment()
+{
+    bool wasSetByEnvironment = false;
+
+    QUrl proxyUrl = QUrl::fromUserInput(qgetenv("http_proxy"));
+    if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
+        int proxyPort = (proxyUrl.port() > 0) ? proxyUrl.port() : 8080;
+        m_httpProxy << QNetworkProxy(QNetworkProxy::HttpProxy, proxyUrl.host(), proxyPort);
+        wasSetByEnvironment = true;
+    } else
+        m_httpProxy << QNetworkProxy::NoProxy;
+
+    proxyUrl = QUrl::fromUserInput(qgetenv("https_proxy"));
+    if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
+        int proxyPort = (proxyUrl.port() > 0) ? proxyUrl.port() : 8080;
+        m_httpsProxy << QNetworkProxy(QNetworkProxy::HttpProxy, proxyUrl.host(), proxyPort);
+        wasSetByEnvironment = true;
+    } else
+        m_httpsProxy << QNetworkProxy::NoProxy;
+
+    return wasSetByEnvironment;
+}
+
+QList<QNetworkProxy> EnvHttpProxyFactory::queryProxy(const QNetworkProxyQuery& query)
+{
+    QString protocol = query.protocolTag().toLower();
+    if (protocol == QLatin1String("http"))
+        return m_httpProxy;
+    else if (protocol == QLatin1String("https"))
+        return m_httpsProxy;
+
+    QList<QNetworkProxy> proxies;
+    proxies << QNetworkProxy::NoProxy;
+    return proxies;
+}
+
+static void initializeProxy()
+{
+    QList<QNetworkProxy> proxylist = QNetworkProxyFactory::systemProxyForQuery();
+    if (proxylist.count() == 1) {
+        QNetworkProxy proxy = proxylist.first();
+        if (proxy == QNetworkProxy::NoProxy || proxy == QNetworkProxy::DefaultProxy) {
+            EnvHttpProxyFactory* proxyFactory = new EnvHttpProxyFactory();
+            if (proxyFactory->initializeFromEnvironment()) {
+                QNetworkProxyFactory::setApplicationProxyFactory(proxyFactory);
+                return;
+            }
+        }
+    }
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+}
 
 QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv)
 {
@@ -76,6 +144,8 @@ QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv)
 #if USE(MEEGOTOUCH)
     new MComponentData(argc, argv);
 #endif
+
+    initializeProxy();
 
     srandom(time(0));
 

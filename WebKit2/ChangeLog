@@ -2,6 +2,22 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt][WK2] Get proxy settings from environment (http[s]_proxy)
+
+        If http_proxy and/or https_proxy are set in the environment,
+        pass those in to QNetworkAccessManager.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::EnvHttpProxyFactory::EnvHttpProxyFactory):
+        (WebKit::EnvHttpProxyFactory::initializeFromEnvironment):
+        (WebKit::EnvHttpProxyFactory::queryProxy):
+        (WebKit::initializeProxy):
+        (WebKit::WebProcessMainQt):
+
+2010-11-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt][WK2] Emit windowCloseRequested signal on window.close()
 
         Original patch by Zalan Bujtas.
