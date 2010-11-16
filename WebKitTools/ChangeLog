@@ -1,3 +1,27 @@
+2010-11-16  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Move DeviceOrientationClientMock from LayoutTestController to WebViewHost.
+        https://bugs.webkit.org/show_bug.cgi?id=48506
+
+        This ensures that there is one mock per page WebView / WebViewHost. This is a
+        design constraint of the DeviceOrientationClientMock because the m_controller
+        field can only store a pointer to a single instance of the corresponding
+        DeviceOrientationController.
+
+        Test: fast/dom/DeviceOrientation/no-page-cache.html
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setMockDeviceOrientation):
+        (LayoutTestController::deviceOrientationClientMock):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::deviceOrientationClientMock):
+        (WebViewHost::deviceOrientationClient):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-11-15  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.

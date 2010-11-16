@@ -47,6 +47,7 @@ class TestShell;
 namespace WebKit {
 class WebFrame;
 class WebDeviceOrientationClient;
+class WebDeviceOrientationClientMock;
 class WebGeolocationServiceMock;
 class WebSpeechInputController;
 class WebSpeechInputListener;
@@ -199,6 +200,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual bool allowScript(WebKit::WebFrame*, bool enabledPerSettings);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
 
+    WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
+
 private:
     LayoutTestController* layoutTestController() const;
 
@@ -304,6 +307,8 @@ private:
     // Geolocation
     OwnPtr<WebKit::WebGeolocationServiceMock> m_geolocationServiceMock;
 #endif
+
+    OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
 
     OwnPtr<TestNavigationController*> m_navigationController;
 };

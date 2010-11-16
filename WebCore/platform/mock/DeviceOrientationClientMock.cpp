@@ -39,6 +39,7 @@ DeviceOrientationClientMock::DeviceOrientationClientMock()
 
 void DeviceOrientationClientMock::setController(DeviceOrientationController* controller)
 {
+    ASSERT(!m_controller);
     m_controller = controller;
     ASSERT(m_controller);
 }

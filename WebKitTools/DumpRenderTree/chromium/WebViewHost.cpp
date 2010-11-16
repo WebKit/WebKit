@@ -39,6 +39,7 @@
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDataSource.h"
+#include "WebDeviceOrientationClientMock.h"
 #include "WebDragData.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -583,9 +584,16 @@ WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechIn
     return m_shell->layoutTestController()->speechInputController(listener);
 }
 
-WebKit::WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
+WebDeviceOrientationClientMock* WebViewHost::deviceOrientationClientMock()
 {
-    return m_shell->layoutTestController()->deviceOrientationClient();
+    if (!m_deviceOrientationClientMock.get())
+        m_deviceOrientationClientMock.set(WebDeviceOrientationClientMock::create());
+    return m_deviceOrientationClientMock.get();
+}
+
+WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
+{
+    return deviceOrientationClientMock();
 }
 
 // WebWidgetClient -----------------------------------------------------------
