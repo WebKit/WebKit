@@ -3199,3 +3199,9 @@ BUGWK49600 WIN LINUX : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.h
 BUGWK49600 WIN LINUX : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = TIMEOUT
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
+
+BUGWK49620 : fast/dom/frame-loading-via-document-write.html = TEXT
+BUGWK49620 : fast/dom/HTMLHeadElement/head-check.html = TIMEOUT
+BUGWK49620 : fast/dom/Window/open-existing-pop-up-blocking.html = TIMEOUT
+BUGWK49620 : fast/frames/iframe-no-src-set-location.html = TIMEOUT
+BUGWK49620 : fast/frames/location-change.html = TIMEOUT
