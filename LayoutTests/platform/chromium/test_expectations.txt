@@ -1747,7 +1747,6 @@ BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
 // baselines, others have more problems.
 BUG10473 LINUX : fast/forms/placeholder-set-value.html = FAIL
 BUG10473 LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
-BUG10473 LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
 BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 
 // This test isn't just slow -- sometimes it times out indefinitely.
@@ -1839,9 +1838,6 @@ BUG11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 // Regressions from WebKit merge 43242:43321.  These just need to re-baselining:
 BUG24229 LINUX : fast/forms/select-dirty-parent-pref-widths.html = FAIL
 BUG24229 LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = FAIL
-
-// Already baselined for chromium-win, may need to be done for mac/linux as well.
-BUG11796 LINUX : fast/forms/search-styled.html = FAIL
 
 // Details for all of these are in the bugs.
 BUG12361 WIN : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
@@ -3200,8 +3196,5 @@ BUG62515 : printing/page-format-data-display-none.html = TEXT
 BUG60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUG61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
-
-// Fails on upstream mac port too, will be rebaselined there
-BUGWK49521 : svg/W3C-SVG-1.1/fonts-desc-02-t.svg  = IMAGE
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
