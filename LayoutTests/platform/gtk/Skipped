@@ -5656,3 +5656,9 @@ animations/stop-animation-on-suspend.html
 # https://bugs.webkit.org/show_bug.cgi?id=49529
 svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.html
 svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html
+
+# computedStyleIncludingVisitedInfo is not implemented
+# https://bugs.webkit.org/show_bug.cgi?id=37336
+fast/history/nested-visited-test.html
+fast/history/self-is-visited.html
+fast/history/sibling-visited-test.html
