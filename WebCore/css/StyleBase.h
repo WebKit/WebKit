@@ -53,7 +53,6 @@ namespace WebCore {
         virtual bool isKeyframeRule() { return false; }
         virtual bool isKeyframesRule() { return false; }
         virtual bool isMediaRule() { return false; }
-        virtual bool isVariablesRule() { return false; }
         virtual bool isPageRule() { return false; }
         
         virtual bool isRule() { return false; }

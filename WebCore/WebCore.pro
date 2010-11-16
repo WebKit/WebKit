@@ -644,9 +644,6 @@ SOURCES += \
     css/CSSTimingFunctionValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
-    css/CSSVariableDependentValue.cpp \
-    css/CSSVariablesDeclaration.cpp \
-    css/CSSVariablesRule.cpp \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
@@ -1563,9 +1560,6 @@ HEADERS += \
     css/CSSTimingFunctionValue.h \
     css/CSSUnicodeRangeValue.h \
     css/CSSValueList.h \
-    css/CSSVariableDependentValue.h \
-    css/CSSVariablesDeclaration.h \
-    css/CSSVariablesRule.h \
     css/FontFamilyValue.h \
     css/FontValue.h \
     css/MediaFeatureNames.h \

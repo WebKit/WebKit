@@ -182,10 +182,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSValue.h \
 	DerivedSources/WebCore/JSCSSValueList.cpp \
 	DerivedSources/WebCore/JSCSSValueList.h \
-	DerivedSources/WebCore/JSCSSVariablesDeclaration.cpp \
-	DerivedSources/WebCore/JSCSSVariablesDeclaration.h \
-	DerivedSources/WebCore/JSCSSVariablesRule.cpp \
-	DerivedSources/WebCore/JSCSSVariablesRule.h \
 	DerivedSources/WebCore/JSCustomEvent.cpp \
 	DerivedSources/WebCore/JSCustomEvent.h \
 	DerivedSources/WebCore/JSDataGridColumn.cpp \
@@ -987,12 +983,6 @@ webcore_sources += \
 	WebCore/css/CSSValue.h \
 	WebCore/css/CSSValueList.cpp \
 	WebCore/css/CSSValueList.h \
-	WebCore/css/CSSVariableDependentValue.cpp \
-	WebCore/css/CSSVariableDependentValue.h \
-	WebCore/css/CSSVariablesDeclaration.cpp \
-	WebCore/css/CSSVariablesDeclaration.h \
-	WebCore/css/CSSVariablesRule.cpp \
-	WebCore/css/CSSVariablesRule.h \
 	WebCore/css/DashboardRegion.h \
 	WebCore/css/FontFamilyValue.cpp \
 	WebCore/css/FontFamilyValue.h \

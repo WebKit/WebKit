@@ -148,16 +148,12 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(
 {
     Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);
-    unsigned variableDependentValueCount = 0;
     for (unsigned i = 0; i < length; i++) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
-        if (value) {
-            if (value->isVariableDependentValue())
-                variableDependentValueCount++;
+        if (value)
             list.append(CSSProperty(set[i], value.release(), false));
-        }
     }
-    return CSSMutableStyleDeclaration::create(list, variableDependentValueCount);
+    return CSSMutableStyleDeclaration::create(list);
 }
 
 } // namespace WebCore

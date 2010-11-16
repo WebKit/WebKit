@@ -72,7 +72,6 @@ public:
     virtual bool isSVGPaint() const { return false; }
 #endif
 
-    virtual bool isVariableDependentValue() const { return false; }
     virtual CSSParserValue parserValue() const { ASSERT_NOT_REACHED(); return CSSParserValue(); }
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }

@@ -37,7 +37,6 @@
 #include "V8CSSMediaRule.h"
 #include "V8CSSPageRule.h"
 #include "V8CSSStyleRule.h"
-#include "V8CSSVariablesRule.h"
 #include "V8WebKitCSSKeyframeRule.h"
 #include "V8WebKitCSSKeyframesRule.h"
 
@@ -60,8 +59,6 @@ v8::Handle<v8::Value> toV8(CSSRule* impl)
         return toV8(static_cast<CSSFontFaceRule*>(impl));
     case CSSRule::PAGE_RULE:
         return toV8(static_cast<CSSPageRule*>(impl));
-    case CSSRule::VARIABLES_RULE:
-        return toV8(static_cast<CSSVariablesRule*>(impl));
     case CSSRule::WEBKIT_KEYFRAME_RULE:
         return toV8(static_cast<WebKitCSSKeyframeRule*>(impl));
     case CSSRule::WEBKIT_KEYFRAMES_RULE:

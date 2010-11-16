@@ -128,8 +128,6 @@ SET(WebCore_IDL_FILES
     css/CSSStyleSheet.idl
     css/CSSValue.idl
     css/CSSValueList.idl
-    css/CSSVariablesDeclaration.idl
-    css/CSSVariablesRule.idl
     css/MediaList.idl
     css/Rect.idl
     css/RGBColor.idl
@@ -758,9 +756,6 @@ SET(WebCore_SOURCES
     css/CSSTimingFunctionValue.cpp
     css/CSSUnicodeRangeValue.cpp
     css/CSSValueList.cpp
-    css/CSSVariableDependentValue.cpp
-    css/CSSVariablesDeclaration.cpp
-    css/CSSVariablesRule.cpp
     css/FontFamilyValue.cpp
     css/FontValue.cpp
     css/MediaFeatureNames.cpp

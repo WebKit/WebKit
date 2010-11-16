@@ -99,7 +99,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 56
+%expect 51
 
 %nonassoc LOWEST_PREC
 
@@ -140,10 +140,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
-%token WEBKIT_VARIABLES_SYM
-%token WEBKIT_DEFINE_SYM
-%token VARIABLES_FOR
-%token WEBKIT_VARIABLES_DECLS_SYM
 %token <marginBox> TOPLEFTCORNER_SYM
 %token <marginBox> TOPLEFT_SYM
 %token <marginBox> TOPCENTER_SYM
@@ -197,8 +193,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %token <string> UNICODERANGE
 
-%token <string> VARCALL
-
 %type <relation> combinator
 
 %type <rule> charset
@@ -219,8 +213,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <ruleList> block_rule_list 
 %type <rule> block_rule
 %type <rule> block_valid_rule
-%type <rule> variables_rule
-%type <mediaList> variables_media_list
 
 %type <string> maybe_ns_prefix
 
@@ -282,12 +274,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <string> element_name
 %type <string> attr_name
 
-%type <string> variable_name
-%type <boolean> variables_declaration_list
-%type <boolean> variables_decl_list
-%type <boolean> variables_declaration
-%type <value> variable_reference
-
 %%
 
 stylesheet:
@@ -297,7 +283,6 @@ stylesheet:
   | webkit_value maybe_space
   | webkit_mediaquery maybe_space
   | webkit_selector maybe_space
-  | webkit_variables_decls maybe_space
   | webkit_keyframe_rule maybe_space
   ;
 
@@ -315,12 +300,6 @@ webkit_keyframe_rule:
 
 webkit_decls:
     WEBKIT_DECLS_SYM '{' maybe_space_before_declaration declaration_list '}' {
-        /* can be empty */
-    }
-;
-
-webkit_variables_decls:
-    WEBKIT_VARIABLES_DECLS_SYM '{' maybe_space variables_declaration_list '}' {
         /* can be empty */
     }
 ;
@@ -417,7 +396,6 @@ valid_rule:
   | keyframes
   | namespace
   | import
-  | variables_rule
   ;
 
 rule:
@@ -454,7 +432,6 @@ block_rule:
   | invalid_at
   | namespace
   | import
-  | variables_rule
   | media
   ;
 
@@ -473,109 +450,6 @@ import:
         $$ = 0;
     }
   ;
-
-variables_rule:
-    WEBKIT_VARIABLES_SYM maybe_space maybe_media_list '{' maybe_space variables_declaration_list '}' {
-        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3, true);
-    }
-    |
-    WEBKIT_DEFINE_SYM maybe_space variables_media_list '{' maybe_space variables_declaration_list '}' {
-        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3, false);
-    }
-    ;
-
-variables_media_list:
-    /* empty */ {
-        $$ = static_cast<CSSParser*>(parser)->createMediaList();
-    }
-    |
-    VARIABLES_FOR WHITESPACE media_list {
-        $$ = $3;
-    }
-    ;
-
-variables_declaration_list:
-    variables_declaration {
-        $$ = $1;
-    }
-    | variables_decl_list variables_declaration {
-        $$ = $1;
-        if ($2)
-            $$ = $2;
-    }
-    | variables_decl_list {
-        $$ = $1;
-    }
-    | error invalid_block_list error {
-        $$ = false;
-    }
-    | error {
-        $$ = false;
-    }
-    | variables_decl_list error {
-        $$ = $1;
-    }
-    ;
-
-variables_decl_list:
-    variables_declaration ';' maybe_space {
-        $$ = $1;
-    }
-    | variables_declaration invalid_block_list ';' maybe_space {
-        $$ = false;
-    }
-    | error ';' maybe_space {
-        $$ = false;
-    }
-    | error invalid_block_list error ';' maybe_space {
-        $$ = false;
-    }
-    | variables_decl_list variables_declaration ';' maybe_space {
-        $$ = $1;
-        if ($2)
-            $$ = $2;
-    }
-    | variables_decl_list error ';' maybe_space {
-        $$ = $1;
-    }
-    | variables_decl_list error invalid_block_list error ';' maybe_space {
-        $$ = $1;
-    }
-    ;
-
-variables_declaration:
-    variable_name ':' maybe_space expr {
-        $$ = static_cast<CSSParser*>(parser)->addVariable($1, $4);
-    }
-    |
-    variable_name maybe_space '{' maybe_space declaration_list '}' maybe_space {
-        $$ = static_cast<CSSParser*>(parser)->addVariableDeclarationBlock($1);
-    }
-    |
-    variable_name error {
-        $$ = false;
-    }
-    |
-    variable_name ':' maybe_space error expr {
-        $$ = false;
-    }
-    |
-    variable_name ':' maybe_space {
-        /* @variables { varname: } Just reduce away this variable with no value. */
-        $$ = false;
-    }
-    |
-    variable_name ':' maybe_space error {
-        /* if we come across rules with invalid values like this case: @variables { varname: *; }, just discard the property/value pair */
-        $$ = false;
-    }
-    ;
-
-variable_name:
-    IDENT maybe_space {
-        $$ = $1;
-    }
-    ;
 
 namespace:
 NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
@@ -1432,18 +1306,6 @@ declaration:
         p->markPropertyEnd($5, isPropertyParsed);
     }
     |
-    variable_reference maybe_space {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        p->m_valueList = new CSSParserValueList;
-        p->m_valueList->addValue(p->sinkFloatingValue($1));
-        int oldParsedProperties = p->m_numParsedProperties;
-        $$ = p->parseValue(CSSPropertyWebkitVariableDeclarationBlock, false);
-        if (!$$)
-            p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
-        delete p->m_valueList;
-        p->m_valueList = 0;
-    }
-    |
     property error {
         $$ = false;
     }
@@ -1563,9 +1425,6 @@ term:
   | function {
       $$ = $1;
   }
-  | variable_reference maybe_space {
-      $$ = $1;
-  }
   | '%' maybe_space { /* Handle width: %; */
       $$.id = 0; $$.unit = 0;
   }
@@ -1599,14 +1458,6 @@ unary_term:
       CSSParser* p = static_cast<CSSParser*>(parser);
       if (Document* doc = p->document())
           doc->setUsesRemUnits(true);
-  }
-  ;
-
-variable_reference:
-  VARCALL {
-      $$.id = 0;
-      $$.string = $1;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
   }
   ;
 

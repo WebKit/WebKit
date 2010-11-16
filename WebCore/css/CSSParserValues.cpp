@@ -26,11 +26,6 @@
 
 namespace WebCore {
 
-bool CSSParserValue::isVariable() const
-{
-    return unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
-}
-
 CSSParserValueList::~CSSParserValueList()
 {
     size_t numValues = m_values.size();
@@ -42,15 +37,11 @@ CSSParserValueList::~CSSParserValueList()
 
 void CSSParserValueList::addValue(const CSSParserValue& v)
 {
-    if (v.unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX) // isVariable() is not inlined. This is hot.
-        m_variablesCount++;
     m_values.append(v);
 }
     
 void CSSParserValueList::deleteValueAt(unsigned i)
 { 
-    if (m_values[i].isVariable())
-        m_variablesCount--;
     m_values.remove(i);
 }
 
@@ -69,7 +60,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
         parsedValue = primitiveValue;
     } else if (unit == CSSParserValue::Function)
         parsedValue = CSSFunctionValue::create(function);
-    else if (unit == CSSPrimitiveValue::CSS_STRING || unit == CSSPrimitiveValue::CSS_URI || unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR || isVariable())
+    else if (unit == CSSPrimitiveValue::CSS_STRING || unit == CSSPrimitiveValue::CSS_URI || unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR)
         parsedValue = CSSPrimitiveValue::create(string, (CSSPrimitiveValue::UnitTypes)unit);
     else if (unit >= CSSPrimitiveValue::CSS_NUMBER && unit <= CSSPrimitiveValue::CSS_KHZ)
         parsedValue = CSSPrimitiveValue::create(fValue, (CSSPrimitiveValue::UnitTypes)unit);

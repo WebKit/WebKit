@@ -42,7 +42,6 @@
 #import "DOMCSSUnknownRule.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCSSValueList.h"
-#import "DOMCSSVariablesRule.h"
 #import "DOMInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMWebKitCSSKeyframeRule.h"
@@ -83,8 +82,6 @@ Class kitClass(WebCore::CSSRule* impl)
             return [DOMCSSFontFaceRule class];
         case DOM_PAGE_RULE:
             return [DOMCSSPageRule class];
-        case DOM_VARIABLES_RULE:
-            return [DOMCSSVariablesRule class];
         case DOM_WEBKIT_KEYFRAMES_RULE:
             return [DOMWebKitCSSKeyframesRule class];
         case DOM_WEBKIT_KEYFRAME_RULE:

@@ -83,15 +83,14 @@ public:
         // These next types are just used internally to allow us to translate back and forth from CSSPrimitiveValues to CSSParserValues.
         CSS_PARSER_OPERATOR = 103,
         CSS_PARSER_INTEGER = 104,
-        CSS_PARSER_VARIABLE_FUNCTION_SYNTAX = 105,
-        CSS_PARSER_HEXCOLOR = 106,
+        CSS_PARSER_HEXCOLOR = 105,
         
         // This is used internally for unknown identifiers 
-        CSS_PARSER_IDENTIFIER = 107,
+        CSS_PARSER_IDENTIFIER = 106,
         
         // These are from CSS3 Values and Units, but that isn't a finished standard yet
-        CSS_TURN = 108,
-        CSS_REMS = 109
+        CSS_TURN = 107,
+        CSS_REMS = 108
     };
     
     static bool isUnitTypeLength(int type) { return (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) ||
@@ -112,8 +111,6 @@ public:
     void cleanup();
 
     unsigned short primitiveType() const { return m_type; }
-
-    bool isVariable() const { return m_type == CSS_PARSER_VARIABLE_FUNCTION_SYNTAX; }
 
     /*
      * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get

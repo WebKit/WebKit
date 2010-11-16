@@ -362,9 +362,6 @@ module window {
         attribute CSSPageRuleConstructor CSSPageRule;
         attribute CSSStyleRuleConstructor CSSStyleRule;
         
-        attribute CSSVariablesRuleConstructor CSSVariablesRule;
-        attribute CSSVariablesDeclarationConstructor CSSVariablesDeclaration;
-
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute MediaListConstructor MediaList;
         attribute CounterConstructor Counter;

@@ -44,9 +44,6 @@
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
-#include "CSSVariableDependentValue.h"
-#include "CSSVariablesDeclaration.h"
-#include "CSSVariablesRule.h"
 #include "CachedImage.h"
 #include "Counter.h"
 #include "FocusController.h"
@@ -571,87 +568,7 @@ static void loadViewSourceStyle()
 
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
 {
-    if (!decl->hasVariableDependentValue()) {
-        m_matchedDecls.append(decl);
-        return;
-    }
-
-    // See if we have already resolved the variables in this declaration.
-    CSSMutableStyleDeclaration* resolvedDecl = m_resolvedVariablesDeclarations.get(decl).get();
-    if (resolvedDecl) {
-        m_matchedDecls.append(resolvedDecl);
-        return;
-    }
-
-    // If this declaration has any variables in it, then we need to make a cloned
-    // declaration with as many variables resolved as possible for this style selector's media.
-    RefPtr<CSSMutableStyleDeclaration> newDecl = CSSMutableStyleDeclaration::create(decl->parentRule());
-    m_matchedDecls.append(newDecl.get());
-    m_resolvedVariablesDeclarations.set(decl, newDecl);
-
-    HashSet<String> usedBlockVariables;
-    resolveVariablesForDeclaration(decl, newDecl.get(), usedBlockVariables);
-}
-
-void CSSStyleSelector::resolveVariablesForDeclaration(CSSMutableStyleDeclaration* decl, CSSMutableStyleDeclaration* newDecl, HashSet<String>& usedBlockVariables)
-{
-    // Now iterate over the properties in the original declaration.  As we resolve variables we'll end up
-    // mutating the new declaration (possibly expanding shorthands).  The new declaration has no m_node
-    // though, so it can't mistakenly call setChanged on anything.
-    CSSMutableStyleDeclaration::const_iterator end = decl->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = decl->begin(); it != end; ++it) {
-        const CSSProperty& current = *it;
-        if (!current.value()->isVariableDependentValue()) {
-            // We can just add the parsed property directly.
-            newDecl->addParsedProperty(current);
-            continue;
-        }
-        CSSValueList* valueList = static_cast<CSSVariableDependentValue*>(current.value())->valueList();
-        if (!valueList)
-            continue;
-        CSSParserValueList resolvedValueList;
-        unsigned s = valueList->length();
-        bool fullyResolved = true;
-        for (unsigned i = 0; i < s; ++i) {
-            CSSValue* transformValue = valueList->item(i);
-            CSSPrimitiveValue* primitiveValue = transformValue->isPrimitiveValue() ? static_cast<CSSPrimitiveValue*>(transformValue) : 0;
-            if (primitiveValue && primitiveValue->isVariable()) {
-                CSSVariablesRule* rule = m_variablesMap.get(primitiveValue->getStringValue());
-                if (!rule || !rule->variables()) {
-                    fullyResolved = false;
-                    break;
-                }
-                
-                if (current.id() == CSSPropertyWebkitVariableDeclarationBlock && s == 1) {
-                    fullyResolved = false;
-                    if (!usedBlockVariables.contains(primitiveValue->getStringValue())) {
-                        CSSMutableStyleDeclaration* declBlock = rule->variables()->getParsedVariableDeclarationBlock(primitiveValue->getStringValue());
-                        if (declBlock) {
-                            usedBlockVariables.add(primitiveValue->getStringValue());
-                            resolveVariablesForDeclaration(declBlock, newDecl, usedBlockVariables);
-                        }
-                    }
-                }
-
-                CSSValueList* resolvedVariable = rule->variables()->getParsedVariable(primitiveValue->getStringValue());
-                if (!resolvedVariable) {
-                    fullyResolved = false;
-                    break;
-                }
-                unsigned valueSize = resolvedVariable->length();
-                for (unsigned j = 0; j < valueSize; ++j)
-                    resolvedValueList.addValue(resolvedVariable->item(j)->parserValue());
-            } else
-                resolvedValueList.addValue(transformValue->parserValue());
-        }
-        
-        if (!fullyResolved)
-            continue;
-
-        // We now have a fully resolved new value list.  We want the parser to use this value list
-        // and parse our new declaration.
-        CSSParser(m_checker.m_strictParsing).parsePropertyWithResolvedVariables(current.id(), current.isImportant(), newDecl, &resolvedValueList);
-    }
+    m_matchedDecls.append(decl);
 }
 
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
@@ -2785,23 +2702,6 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
     }
 }
 
-void CSSStyleSelector::addVariables(CSSVariablesRule* variables)
-{
-    CSSVariablesDeclaration* decl = variables->variables();
-    if (!decl)
-        return;
-    unsigned size = decl->length();
-    for (unsigned i = 0; i < size; ++i) {
-        String name = decl->item(i);
-        m_variablesMap.set(name, variables);
-    }
-}
-
-CSSValue* CSSStyleSelector::resolveVariableDependentValue(CSSVariableDependentValue*)
-{
-    return 0;
-}
-
 // -----------------------------------------------------------------
 
 CSSRuleSet::CSSRuleSet()
@@ -2908,11 +2808,6 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
             // Add this font face to our set.
             const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
-        } else if (item->isVariablesRule()) {
-            // Evaluate the media query and make sure it matches.
-            CSSVariablesRule* variables = static_cast<CSSVariablesRule*>(item);
-            if (!variables->media() || medium.eval(variables->media(), styleSelector))
-                styleSelector->addVariables(variables);
         } else if (item->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(item));
     }
@@ -5611,7 +5506,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextStroke:
-    case CSSPropertyWebkitVariableDeclarationBlock:
         return;
 #if ENABLE(WCSS)
     case CSSPropertyWapInputFormat:

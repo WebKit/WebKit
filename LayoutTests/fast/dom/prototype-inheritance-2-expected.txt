@@ -220,8 +220,6 @@ Never found BlobBuilder
 Never found Blob
 Never found CDATASection
 Never found CSSRule
-Never found CSSVariablesDeclaration
-Never found CSSVariablesRule
 Never found CanvasGradient
 Never found CharacterData
 Never found Clipboard

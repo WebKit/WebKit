@@ -83,8 +83,6 @@ IDL_BINDINGS += \
     css/CSSStyleSheet.idl \
     css/CSSValue.idl \
     css/CSSValueList.idl \
-    css/CSSVariablesDeclaration.idl \
-    css/CSSVariablesRule.idl \
     css/MediaList.idl \
     css/Rect.idl \
     css/RGBColor.idl \

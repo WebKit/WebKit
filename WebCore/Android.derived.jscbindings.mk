@@ -68,8 +68,6 @@ GEN := \
     $(intermediates)/css/JSCSSUnknownRule.h \
     $(intermediates)/css/JSCSSValue.h \
     $(intermediates)/css/JSCSSValueList.h \
-    $(intermediates)/css/JSCSSVariablesDeclaration.h \
-    $(intermediates)/css/JSCSSVariablesRule.h \
     $(intermediates)/css/JSCounter.h \
     $(intermediates)/css/JSMediaList.h \
     $(intermediates)/css/JSRGBColor.h \

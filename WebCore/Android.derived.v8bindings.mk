@@ -49,8 +49,6 @@ GEN := \
     $(intermediates)/bindings/V8CSSUnknownRule.h \
     $(intermediates)/bindings/V8CSSValue.h \
     $(intermediates)/bindings/V8CSSValueList.h \
-    $(intermediates)/bindings/V8CSSVariablesDeclaration.h \
-    $(intermediates)/bindings/V8CSSVariablesRule.h \
     $(intermediates)/bindings/V8Counter.h \
     $(intermediates)/bindings/V8MediaList.h \
     $(intermediates)/bindings/V8Rect.h \

@@ -55,7 +55,6 @@ struct CSSParserValue {
     };
     int unit;
     
-    bool isVariable() const;
     
     PassRefPtr<CSSValue> createCSSValue();
 };
@@ -64,7 +63,6 @@ class CSSParserValueList : public FastAllocBase {
 public:
     CSSParserValueList()
         : m_current(0)
-        , m_variablesCount(0)
     {
     }
     ~CSSParserValueList();
@@ -80,11 +78,8 @@ public:
         
     void clear() { m_values.clear(); }
 
-    bool containsVariables() const { return m_variablesCount; }
-
 private:
     unsigned m_current;
-    unsigned m_variablesCount;
     Vector<CSSParserValue, 4> m_values;
 };
 
