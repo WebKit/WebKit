@@ -147,7 +147,6 @@ namespace JSC {
         RefPtr<Structure> staticScopeStructure;
         RefPtr<Structure> strictEvalActivationStructure;
         RefPtr<Structure> stringStructure;
-        RefPtr<Structure> notAnObjectErrorStubStructure;
         RefPtr<Structure> notAnObjectStructure;
         RefPtr<Structure> propertyNameIteratorStructure;
         RefPtr<Structure> getterSetterStructure;

@@ -62,10 +62,10 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec) const
         return constructNumber(exec, asValue());
     if (isTrue() || isFalse())
         return constructBooleanFromImmediateBoolean(exec, asValue());
+
     ASSERT(isUndefinedOrNull());
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, isNull());
-    throwError(exec, exception);
-    return new (exec) JSNotAnObject(exec, exception);
+    throwError(exec, createNotAnObjectError(exec, *this));
+    return new (exec) JSNotAnObject(exec);
 }
 
 JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
@@ -87,10 +87,10 @@ JSObject* JSValue::synthesizeObject(ExecState* exec) const
         return constructNumber(exec, asValue());
     if (isBoolean())
         return constructBooleanFromImmediateBoolean(exec, asValue());
-    
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, isNull());
-    throwError(exec, exception);
-    return new (exec) JSNotAnObject(exec, exception);
+
+    ASSERT(isUndefinedOrNull());
+    throwError(exec, createNotAnObjectError(exec, *this));
+    return new (exec) JSNotAnObject(exec);
 }
 
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
@@ -101,9 +101,9 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
     if (isBoolean())
         return exec->lexicalGlobalObject()->booleanPrototype();
 
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, isNull());
-    throwError(exec, exception);
-    return new (exec) JSNotAnObject(exec, exception);
+    ASSERT(isUndefinedOrNull());
+    throwError(exec, createNotAnObjectError(exec, *this));
+    return new (exec) JSNotAnObject(exec);
 }
 
 #ifndef NDEBUG

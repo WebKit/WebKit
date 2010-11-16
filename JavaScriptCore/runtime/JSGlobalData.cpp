@@ -127,7 +127,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , staticScopeStructure(JSStaticScopeObject::createStructure(jsNull()))
     , strictEvalActivationStructure(StrictEvalActivation::createStructure(jsNull()))
     , stringStructure(JSString::createStructure(jsNull()))
-    , notAnObjectErrorStubStructure(JSNotAnObjectErrorStub::createStructure(jsNull()))
     , notAnObjectStructure(JSNotAnObject::createStructure(jsNull()))
     , propertyNameIteratorStructure(JSPropertyNameIterator::createStructure(jsNull()))
     , getterSetterStructure(GetterSetter::createStructure(jsNull()))

@@ -512,6 +512,20 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
     JITStubCall(this, cti_op_new_object).call(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
+{
+    unsigned baseVal = currentInstruction[1].u.operand;
+
+    emitLoadPayload(baseVal, regT0);
+
+    // Check that baseVal is a cell.
+    emitJumpSlowCaseIfNotJSCell(baseVal);
+    
+    // Check that baseVal 'ImplementsHasInstance'.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
+    addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsHasInstance)));
+}
+
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
@@ -525,15 +539,15 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitLoadPayload(baseVal, regT0);
     emitLoadPayload(proto, regT1);
 
-    // Check that value, baseVal, and proto are cells.
+    // Check that proto are cells.  baseVal must be a cell - this is checked by op_check_has_instance.
     emitJumpSlowCaseIfNotJSCell(value);
-    emitJumpSlowCaseIfNotJSCell(baseVal);
     emitJumpSlowCaseIfNotJSCell(proto);
     
     // Check that prototype is an object
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT3);
     addSlowCase(branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
-    
+
+    // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
     addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
@@ -559,6 +573,18 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
+void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned baseVal = currentInstruction[1].u.operand;
+
+    linkSlowCaseIfNotJSCell(iter, baseVal);
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, cti_op_check_has_instance);
+    stubCall.addArgument(baseVal);
+    stubCall.call();
+}
+
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
@@ -567,7 +593,6 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     unsigned proto = currentInstruction[4].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, value);
-    linkSlowCaseIfNotJSCell(iter, baseVal);
     linkSlowCaseIfNotJSCell(iter, proto);
     linkSlowCase(iter);
     linkSlowCase(iter);

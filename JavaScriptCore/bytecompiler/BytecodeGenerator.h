@@ -268,17 +268,6 @@ namespace JSC {
             m_codeBlock->addExpressionInfo(info);
         }
 
-        void emitGetByIdExceptionInfo(OpcodeID opcodeID)
-        {
-            // Only op_construct and op_instanceof need exception info for
-            // a preceding op_get_by_id.
-            ASSERT(opcodeID == op_create_this || opcodeID == op_instanceof);
-            GetByIdExceptionInfo info;
-            info.bytecodeOffset = instructions().size();
-            info.isOpCreateThis = (opcodeID == op_create_this);
-            m_codeBlock->addGetByIdExceptionInfo(info);
-        }
-        
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
             return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain() || rightHasAssignments) && !rightIsPure;
@@ -322,6 +311,7 @@ namespace JSC {
         RegisterID* emitPostInc(RegisterID* dst, RegisterID* srcDst);
         RegisterID* emitPostDec(RegisterID* dst, RegisterID* srcDst);
 
+        void emitCheckHasInstance(RegisterID* base);
         RegisterID* emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base, RegisterID* basePrototype);
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }

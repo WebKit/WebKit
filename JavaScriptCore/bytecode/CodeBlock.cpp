@@ -663,6 +663,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printUnaryOp(exec, location, it, "bitnot");
             break;
         }
+        case op_check_has_instance: {
+            int base = (++it)->u.operand;
+            printf("[%4d] check_has_instance\t\t %s\n", location, registerName(exec, base).data());
+            break;
+        }
         case op_instanceof: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1657,30 +1662,6 @@ void CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned 
     return;
 }
 
-bool CodeBlock::getByIdExceptionInfoForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset, OpcodeID& opcodeID)
-{
-    ASSERT(bytecodeOffset < m_instructionCount);
-
-    if (!reparseForExceptionInfoIfNecessary(callFrame) || !m_exceptionInfo->m_getByIdExceptionInfo.size())
-        return false;
-
-    int low = 0;
-    int high = m_exceptionInfo->m_getByIdExceptionInfo.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (m_exceptionInfo->m_getByIdExceptionInfo[mid].bytecodeOffset <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low || m_exceptionInfo->m_getByIdExceptionInfo[low - 1].bytecodeOffset != bytecodeOffset)
-        return false;
-
-    opcodeID = m_exceptionInfo->m_getByIdExceptionInfo[low - 1].isOpCreateThis ? op_create_this : op_instanceof;
-    return true;
-}
-
 #if ENABLE(JIT)
 bool CodeBlock::functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex)
 {
@@ -1773,7 +1754,6 @@ void CodeBlock::shrinkToFit()
     if (m_exceptionInfo) {
         m_exceptionInfo->m_expressionInfo.shrinkToFit();
         m_exceptionInfo->m_lineInfo.shrinkToFit();
-        m_exceptionInfo->m_getByIdExceptionInfo.shrinkToFit();
     }
 
     if (m_rareData) {

@@ -43,18 +43,16 @@ namespace JSC {
     class Node;
     struct Instruction;
     
-    JSValue createInterruptedExecutionException(JSGlobalData*);
-    JSValue createTerminatedExecutionException(JSGlobalData*);
+    JSObject* createInterruptedExecutionException(JSGlobalData*);
+    JSObject* createTerminatedExecutionException(JSGlobalData*);
     JSObject* createStackOverflowError(ExecState*);
     JSObject* createStackOverflowError(JSGlobalObject*);
-    JSValue createUndefinedVariableError(ExecState*, const Identifier&);
-    JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
+    JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
+    JSObject* createNotAnObjectError(ExecState*, JSValue);
     JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);
     JSObject* createNotAConstructorError(ExecState*, JSValue);
-    JSValue createNotAFunctionError(ExecState*, JSValue);
+    JSObject* createNotAFunctionError(ExecState*, JSValue);
     JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const UString&);
-
-    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
 
     JSObject* throwOutOfMemoryError(ExecState*);
     JSObject* throwStackOverflowError(ExecState*);

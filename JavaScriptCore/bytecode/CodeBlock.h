@@ -93,14 +93,6 @@ namespace JSC {
         int32_t lineNumber;
     };
 
-    // Both op_construct and op_instanceof require a use of op_get_by_id to get
-    // the prototype property from an object. The exception messages for exceptions
-    // thrown by these instances op_get_by_id need to reflect this.
-    struct GetByIdExceptionInfo {
-        unsigned bytecodeOffset : 31;
-        bool isOpCreateThis : 1;
-    };
-
 #if ENABLE(JIT)
     struct CallLinkInfo {
         CallLinkInfo()
@@ -265,7 +257,6 @@ namespace JSC {
     struct ExceptionInfo : FastAllocBase {
         Vector<ExpressionRangeInfo> m_expressionInfo;
         Vector<LineInfo> m_lineInfo;
-        Vector<GetByIdExceptionInfo> m_getByIdExceptionInfo;
 
 #if ENABLE(JIT)
         Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
@@ -318,7 +309,6 @@ namespace JSC {
         HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
         int lineNumberForBytecodeOffset(CallFrame*, unsigned bytecodeOffset);
         void expressionRangeForBytecodeOffset(CallFrame*, unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
-        bool getByIdExceptionInfoForBytecodeOffset(CallFrame*, unsigned bytecodeOffset, OpcodeID&);
 
 #if ENABLE(JIT)
         void addCaller(CallLinkInfo* caller)
@@ -468,7 +458,6 @@ namespace JSC {
         PassOwnPtr<ExceptionInfo> extractExceptionInfo();
 
         void addExpressionInfo(const ExpressionRangeInfo& expressionInfo) { ASSERT(m_exceptionInfo); m_exceptionInfo->m_expressionInfo.append(expressionInfo); }
-        void addGetByIdExceptionInfo(const GetByIdExceptionInfo& info) { ASSERT(m_exceptionInfo); m_exceptionInfo->m_getByIdExceptionInfo.append(info); }
 
         size_t numberOfLineInfos() const { ASSERT(m_exceptionInfo); return m_exceptionInfo->m_lineInfo.size(); }
         void addLineInfo(const LineInfo& lineInfo) { ASSERT(m_exceptionInfo); m_exceptionInfo->m_lineInfo.append(lineInfo); }

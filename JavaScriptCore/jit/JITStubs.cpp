@@ -1841,6 +1841,23 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_string_fail)
 
 #endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
+DEFINE_STUB_FUNCTION(void, op_check_has_instance)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSValue baseVal = stackFrame.args[0].jsValue();
+
+    // ECMA-262 15.3.5.3:
+    // Throw an exception either if baseVal is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
+#ifndef NDEBUG
+    TypeInfo typeInfo(UnspecifiedType);
+    ASSERT(!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance());
+#endif
+    stackFrame.globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal);
+    VM_THROW_EXCEPTION_AT_END();
+}
+
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

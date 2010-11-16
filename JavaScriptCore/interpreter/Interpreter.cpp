@@ -662,15 +662,10 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (exceptionValue.isObject()) {
         JSObject* exception = asObject(exceptionValue);
-        if (exception->isNotAnObjectErrorStub()) {
-            exception = createNotAnObjectError(callFrame, static_cast<JSNotAnObjectErrorStub*>(exception), bytecodeOffset, codeBlock);
-            exceptionValue = exception;
-        }
-
         if (!explicitThrow && exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->appendSourceToMessage())
             appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), bytecodeOffset);
 
-        // FIXME: should only really be adding these properties to VM generated exceptions, (!explicitThrow),
+        // FIXME: should only really be adding these properties to VM generated exceptions,
         // but the inspector currently requires these for all thrown objects.
         if (!hasErrorInfo(callFrame, exception))
             addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), codeBlock->ownerExecutable()->source());
@@ -2145,6 +2140,23 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_not);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_check_has_instance) {
+        /* check_has_instance constructor(r)
+
+           Check 'constructor' is an object with the internal property
+           [HasInstance] (i.e. is a function ... *shakes head sadly at
+           JSC API*). Raises an exception if register constructor is not
+           an valid parameter for instanceof.
+        */
+        int base = vPC[1].u.operand;
+        JSValue baseVal = callFrame->r(base).jsValue();
+
+        if (isInvalidParamForInstanceOf(callFrame, baseVal, exceptionValue))
+            goto vm_throw;
+
+        vPC += OPCODE_LENGTH(op_check_has_instance);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_instanceof) {
         /* instanceof dst(r) value(r) constructor(r) constructorProto(r)
 
@@ -2165,8 +2177,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         JSValue baseVal = callFrame->r(base).jsValue();
 
-        if (isInvalidParamForInstanceOf(callFrame, baseVal, exceptionValue))
-            goto vm_throw;
+        ASSERT(!isInvalidParamForInstanceOf(callFrame, baseVal, exceptionValue));
 
         bool result = asObject(baseVal)->hasInstance(callFrame, callFrame->r(value).jsValue(), callFrame->r(baseProto).jsValue());
         CHECK_FOR_EXCEPTION();

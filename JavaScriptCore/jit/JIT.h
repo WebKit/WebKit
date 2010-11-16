@@ -755,6 +755,7 @@ namespace JSC {
         void emit_op_get_global_var(Instruction*);
         void emit_op_get_scoped_var(Instruction*);
         void emit_op_init_lazy_reg(Instruction*);
+        void emit_op_check_has_instance(Instruction*);
         void emit_op_instanceof(Instruction*);
         void emit_op_jeq_null(Instruction*);
         void emit_op_jfalse(Instruction*);
@@ -855,6 +856,7 @@ namespace JSC {
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_pname(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_has_instance(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);

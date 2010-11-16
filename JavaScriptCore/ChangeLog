@@ -1,3 +1,80 @@
+2010-11-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49606
+
+        The bug here is that we read the prototype from the RHS argument using a regular
+        op_get_by_id before op_instanceof has checked that this is an object implementing
+        HasInstance. This incorrect behaviour gives rise to further unnecessary complexity
+        in the code base, since we have additional logic (implemented using the
+        GetByIdExceptionInfo data structures on CodeBlock) to convert not an object errors
+        from the get_by_id into invalid parameter errors. Having fixed this bug this code
+        is all redundant, since in these cases the get_by_id will never have been reached.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addExpressionInfo):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCheckHasInstance):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInterruptedExecutionException):
+        (JSC::createTerminatedExecutionException):
+        (JSC::createUndefinedVariableError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::toPrimitive):
+        (JSC::JSNotAnObject::getPrimitiveNumber):
+        (JSC::JSNotAnObject::toBoolean):
+        (JSC::JSNotAnObject::toNumber):
+        (JSC::JSNotAnObject::toString):
+        (JSC::JSNotAnObject::toObject):
+        (JSC::JSNotAnObject::getOwnPropertySlot):
+        (JSC::JSNotAnObject::getOwnPropertyDescriptor):
+        (JSC::JSNotAnObject::put):
+        (JSC::JSNotAnObject::deleteProperty):
+        (JSC::JSNotAnObject::getOwnPropertyNames):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::JSNotAnObject):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isActivationObject):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::synthesizeObject):
+        (JSC::JSValue::synthesizePrototype):
+
 2010-11-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

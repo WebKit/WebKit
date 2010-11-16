@@ -372,6 +372,7 @@ extern "C" {
     int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_end(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_jmp_scopes(STUB_ARGS_DECLARATION);
