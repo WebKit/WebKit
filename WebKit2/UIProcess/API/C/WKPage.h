@@ -238,6 +238,8 @@ WK_EXPORT bool WKPageCanGoBack(WKPageRef page);
 WK_EXPORT void WKPageGoToBackForwardListItem(WKPageRef page, WKBackForwardListItemRef item);
 WK_EXPORT WKBackForwardListRef WKPageGetBackForwardList(WKPageRef page);
 
+WK_EXPORT bool WKPageCanShowMIMEType(WKPageRef page, WKStringRef mimeType);
+
 WK_EXPORT WKStringRef WKPageCopyTitle(WKPageRef page);
 
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);

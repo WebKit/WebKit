@@ -152,6 +152,8 @@ public:
     void goToBackForwardItem(WebBackForwardListItem*);
     void didChangeBackForwardList();
 
+    bool canShowMIMEType(const String& mimeType) const;
+
     void setFocused(bool isFocused);
     void setActive(bool active);
     void setIsInWindow(bool isInWindow);

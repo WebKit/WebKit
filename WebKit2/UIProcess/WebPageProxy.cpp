@@ -55,6 +55,7 @@
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
 #include <WebCore/FloatRect.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
@@ -354,6 +355,23 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 void WebPageProxy::didChangeBackForwardList()
 {
     m_loaderClient.didChangeBackForwardList(this);
+}
+
+    
+bool WebPageProxy::canShowMIMEType(const String& mimeType) const
+{
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
+        return true;
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return true;
+    
+    String newMimeType = mimeType;
+    PluginInfoStore::Plugin plugin = pageNamespace()->context()->pluginInfoStore()->findPlugin(newMimeType, KURL());
+    if (!plugin.path.isNull())
+        return true;
+
+    return false;
 }
 
 void WebPageProxy::setFocused(bool isFocused)

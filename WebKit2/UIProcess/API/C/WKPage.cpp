@@ -132,6 +132,11 @@ WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->backForwardList());
 }
 
+bool WKPageCanShowMIMEType(WKPageRef pageRef, WKStringRef mimeTypeRef)
+{
+    return toImpl(pageRef)->canShowMIMEType(toWTFString(mimeTypeRef));
+}
+
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->pageTitle());
