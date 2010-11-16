@@ -47,38 +47,38 @@ length: 0
 Document.querySelector
 
 [object HTMLDivElement]
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 
 Element.querySelector
 
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 
 DocumentFragment.querySelector
 
 [object HTMLDivElement]
 [object HTMLDivElement]
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SYNTAX_ERR: DOM Exception 12
 Error: SYNTAX_ERR: DOM Exception 12
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
-TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
 

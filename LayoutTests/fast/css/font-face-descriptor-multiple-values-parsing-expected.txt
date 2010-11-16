@@ -8,23 +8,23 @@ PASS test("font-weight", "all") is "all"
 PASS test("font-weight", "100, 200") is "100, 200"
 PASS test("font-weight", "bold, normal") is "bold, normal"
 PASS test("font-weight", "100, 200, 300, 400, 500, 600, 700, 100") is "100, 200, 300, 400, 500, 600, 700, 100"
-PASS test("font-weight", "all, 100") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-weight", "bold, normal, all") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-weight", "") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
+PASS test("font-weight", "all, 100") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-weight", "bold, normal, all") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-weight", "") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
 PASS test("font-style", "normal") is "normal"
 PASS test("font-style", "italic") is "italic"
 PASS test("font-style", "normal, oblique") is "normal, oblique"
 PASS test("font-style", "all") is "all"
-PASS test("font-style", "all, normal") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-style", "italic, all") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-style", "") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
+PASS test("font-style", "all, normal") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-style", "italic, all") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-style", "") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
 PASS test("font-variant", "normal") is "normal"
 PASS test("font-variant", "small-caps") is "small-caps"
 PASS test("font-variant", "normal, small-caps") is "normal, small-caps"
 PASS test("font-variant", "all") is "all"
-PASS test("font-variant", "all, normal") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-variant", "small-caps, all") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
-PASS test("font-variant", "") threw exception TypeError: Result of expression 'style.sheet.rules[0].style.getPropertyCSSValue(property)' [null] is not an object..
+PASS test("font-variant", "all, normal") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-variant", "small-caps, all") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
+PASS test("font-variant", "") threw exception TypeError: 'null' is not an object (evaluating 'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText').
 PASS successfullyParsed is true
 
 TEST COMPLETE

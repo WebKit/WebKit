@@ -28,7 +28,7 @@ if (window.layoutTestController)
         var f;
         new f;
     } catch(e1) {
-        shouldBe(e1, "e1", "TypeError: Result of expression 'f' [undefined] is not a constructor.");
+        shouldBe(e1, "e1", "TypeError: 'undefined' is not a constructor (evaluating 'new f')");
     }
 })();
 
@@ -38,7 +38,7 @@ if (window.layoutTestController)
         var g;
         new f(g());
     } catch(e2) {
-        shouldBe(e2, "e2", "TypeError: Result of expression 'g' [undefined] is not a function.");
+        shouldBe(e2, "e2", "TypeError: 'undefined' is not a function (evaluating 'g()')");
     }
 })();
 </script>

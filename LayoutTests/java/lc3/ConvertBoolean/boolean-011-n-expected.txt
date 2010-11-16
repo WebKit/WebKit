@@ -1,6 +1,6 @@
 LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
 
-PASS TEST_CLASS["ambiguous(byte)"](true) threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(byte)"]' [undefined] is not a function..
+PASS TEST_CLASS["ambiguous(byte)"](true) threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(byte)"](true)').
 PASS successfullyParsed is true
 
 TEST COMPLETE

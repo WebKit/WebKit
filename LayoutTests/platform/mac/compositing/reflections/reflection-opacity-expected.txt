@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 26: TypeError: Result of expression 'document.getElementById('inner')' [null] is not an object.
+CONSOLE MESSAGE: line 26: TypeError: 'null' is not an object (evaluating 'document.getElementById('inner').className = 'inner moved box'')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x176

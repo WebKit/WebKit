@@ -1620,7 +1620,7 @@ int CodeBlock::lineNumberForBytecodeOffset(CallFrame* callFrame, unsigned byteco
     return m_exceptionInfo->m_lineInfo[low - 1].lineNumber;
 }
 
-int CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
+void CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
 {
     ASSERT(bytecodeOffset < m_instructionCount);
 
@@ -1630,7 +1630,7 @@ int CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned b
         startOffset = 0;
         endOffset = 0;
         divot = 0;
-        return lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
+        return;
     }
 
     int low = 0;
@@ -1648,13 +1648,13 @@ int CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned b
         startOffset = 0;
         endOffset = 0;
         divot = 0;
-        return lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
+        return;
     }
 
     startOffset = m_exceptionInfo->m_expressionInfo[low - 1].startOffset;
     endOffset = m_exceptionInfo->m_expressionInfo[low - 1].endOffset;
     divot = m_exceptionInfo->m_expressionInfo[low - 1].divotPoint + m_sourceOffset;
-    return lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
+    return;
 }
 
 bool CodeBlock::getByIdExceptionInfoForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset, OpcodeID& opcodeID)

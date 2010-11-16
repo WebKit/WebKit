@@ -1,6 +1,6 @@
 S15.2.4_A3
 
-TypeError: Result of expression 'Object.prototype' [[object Object]] is not a function.
+TypeError: '[object Object]' is not a function (evaluating 'Object.prototype()')
 PASS 
 
 TEST COMPLETE

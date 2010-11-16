@@ -31,7 +31,7 @@ FAIL dt.setObject(array); dt.PUB_OBJECT should be 1,2,3. Was null.
 FAIL dt.setObject(array); dt.getObject() should be 1,2,3 (of type object). Was undefined (of type undefined).
 FAIL dt.getObject().constructor should be function Array() {
     [native code]
-}. Threw exception TypeError: Result of expression 'dt.getObject()' [undefined] is not an object.
+}. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getObject().constructor')
 FAIL dt.setObject( MyObject ); dt.PUB_OBJECT should be function MyObject(stringValue) {
   this.stringValue = String(stringValue);
   this.toString = new Function( "return this.stringValue" );

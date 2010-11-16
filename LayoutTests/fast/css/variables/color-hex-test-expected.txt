@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 27: TypeError: Result of expression 'declaration' [undefined] is not an object.
+CONSOLE MESSAGE: line 27: TypeError: 'undefined' is not an object (evaluating 'declaration.getVariableValue')
 FAILED

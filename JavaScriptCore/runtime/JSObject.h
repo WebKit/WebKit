@@ -210,6 +210,7 @@ namespace JSC {
         virtual bool isActivationObject() const { return false; }
         virtual bool isNotAnObjectErrorStub() const { return false; }
         virtual bool isStrictModeFunction() const { return false; }
+        virtual bool isErrorInstance() const { return false; }
 
         virtual ComplType exceptionType() const { return Throw; }
 

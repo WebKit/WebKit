@@ -38,9 +38,6 @@ namespace JSC {
 static const char* linePropertyName = "line";
 static const char* sourceIdPropertyName = "sourceId";
 static const char* sourceURLPropertyName = "sourceURL";
-static const char* expressionBeginOffsetPropertyName = "expressionBeginOffset";
-static const char* expressionCaretOffsetPropertyName = "expressionCaretOffset";
-static const char* expressionEndOffsetPropertyName = "expressionEndOffset";
 
 JSObject* createError(JSGlobalObject* globalObject, const UString& message)
 {
@@ -119,7 +116,7 @@ JSObject* createURIError(ExecState* exec, const UString& message)
     return createURIError(exec->lexicalGlobalObject(), message);
 }
 
-static void addErrorSourceInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)
+JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)
 {
     intptr_t sourceID = source.provider()->asID();
     const UString& sourceURL = source.provider()->url();
@@ -130,26 +127,7 @@ static void addErrorSourceInfo(JSGlobalData* globalData, JSObject* error, int li
         error->putWithAttributes(globalData, Identifier(globalData, sourceIdPropertyName), jsNumber((double)sourceID), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putWithAttributes(globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
-}
 
-static void addErrorDivotInfo(JSGlobalData* globalData, JSObject* error, int divotPoint, int startOffset, int endOffset, bool withCaret)
-{
-    error->putWithAttributes(globalData, Identifier(globalData, expressionBeginOffsetPropertyName), jsNumber(divotPoint - startOffset), ReadOnly | DontDelete);
-    error->putWithAttributes(globalData, Identifier(globalData, expressionEndOffsetPropertyName), jsNumber(divotPoint + endOffset), ReadOnly | DontDelete);
-    if (withCaret)
-        error->putWithAttributes(globalData, Identifier(globalData, expressionCaretOffsetPropertyName), jsNumber(divotPoint), ReadOnly | DontDelete);
-}
-
-JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)
-{
-    addErrorSourceInfo(globalData, error, line, source);
-    return error;
-}
-
-JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source, int divotPoint, int startOffset, int endOffset, bool withCaret)
-{
-    addErrorSourceInfo(globalData, error, line, source);
-    addErrorDivotInfo(globalData, error, divotPoint, startOffset, endOffset, withCaret);
     return error;
 }
 
@@ -158,19 +136,11 @@ JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceC
     return addErrorInfo(&exec->globalData(), error, line, source);
 }
 
-JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source, int divotPoint, int startOffset, int endOffset, bool withCaret)
-{
-    return addErrorInfo(&exec->globalData(), error, line, source, divotPoint, startOffset, endOffset, withCaret);
-}
-
 bool hasErrorInfo(ExecState* exec, JSObject* error)
 {
     return error->hasProperty(exec, Identifier(exec, linePropertyName))
         || error->hasProperty(exec, Identifier(exec, sourceIdPropertyName))
-        || error->hasProperty(exec, Identifier(exec, sourceURLPropertyName))
-        || error->hasProperty(exec, Identifier(exec, expressionBeginOffsetPropertyName))
-        || error->hasProperty(exec, Identifier(exec, expressionCaretOffsetPropertyName))
-        || error->hasProperty(exec, Identifier(exec, expressionEndOffsetPropertyName));
+        || error->hasProperty(exec, Identifier(exec, sourceURLPropertyName));
 }
 
 JSValue throwError(ExecState* exec, JSValue error)

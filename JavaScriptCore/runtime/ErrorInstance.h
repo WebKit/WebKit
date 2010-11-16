@@ -34,9 +34,18 @@ namespace JSC {
         static ErrorInstance* create(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
         static ErrorInstance* create(ExecState* exec, NonNullPassRefPtr<Structure>, JSValue message);
 
+
+        bool appendSourceToMessage() { return m_appendSourceToMessage; }
+        void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
+        void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
+
+        virtual bool isErrorInstance() const { return true; }
+
     protected:
         explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>);
         explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
+
+        bool m_appendSourceToMessage;
     };
 
 } // namespace JSC

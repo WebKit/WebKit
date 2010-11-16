@@ -4,5 +4,5 @@ FOUND ITEM: 2
 FOUND ITEM: 1
 FOUND ITEM: 1
 FOUND ITEM: 1
-ERROR: Result of expression 'item' [null] is not an object.
+ERROR: 'null' is not an object (evaluating 'item.innerHTML')
 

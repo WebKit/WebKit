@@ -188,10 +188,10 @@ PASS rects[3].width is 212
 PASS rects[3].height is 247
 Test 9
 FAIL rects.length should be 1. Was 0.
-FAIL rects[0].left should be 8. Threw exception TypeError: Result of expression 'rects[0]' [undefined] is not an object.
-FAIL rects[0].top should be 1903. Threw exception TypeError: Result of expression 'rects[0]' [undefined] is not an object.
-FAIL rects[0].width should be 0. Threw exception TypeError: Result of expression 'rects[0]' [undefined] is not an object.
-FAIL rects[0].height should be 18. Threw exception TypeError: Result of expression 'rects[0]' [undefined] is not an object.
+FAIL rects[0].left should be 8. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].left')
+FAIL rects[0].top should be 1903. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].top')
+FAIL rects[0].width should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].width')
+FAIL rects[0].height should be 18. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].height')
 Test 9b
 PASS rects.length is 1
 PASS rects[0].left is 8

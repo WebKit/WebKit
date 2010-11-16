@@ -1,6 +1,6 @@
 S15.1_A2_T1
 
-PASS TypeError: Result of expression 'this' [[object DOMWindow]] is not a function.
+PASS TypeError: '[object DOMWindow]' is not a function (evaluating 'this()')
 
 TEST COMPLETE
 

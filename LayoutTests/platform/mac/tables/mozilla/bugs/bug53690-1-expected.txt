@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: TypeError: Result of expression 'document.forms[1]' [undefined] is not an object.
+CONSOLE MESSAGE: line 4: TypeError: 'undefined' is not an object (evaluating 'document.forms[1].action')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

@@ -27,12 +27,14 @@ const ClassInfo ErrorInstance::info = { "Error", 0, 0, 0 };
 
 ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure)
     : JSObject(structure)
+    , m_appendSourceToMessage(false)
 {
     putDirect(globalData->propertyNames->message, jsString(globalData, ""));
 }
 
 ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure, const UString& message)
     : JSObject(structure)
+    , m_appendSourceToMessage(false)
 {
     putDirect(globalData->propertyNames->message, jsString(globalData, message));
 }

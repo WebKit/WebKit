@@ -5,14 +5,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS path.pathSegList.initialize(); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS path.getPathSegAtLength(0) is 0
-PASS path.insertItemBefore(null, 0) threw exception TypeError: Result of expression 'path.insertItemBefore' [undefined] is not a function..
-PASS path.replaceItem(null, 0) threw exception TypeError: Result of expression 'path.replaceItem' [undefined] is not a function..
-PASS path.appendItem(null) threw exception TypeError: Result of expression 'path.appendItem' [undefined] is not a function..
+PASS path.insertItemBefore(null, 0) threw exception TypeError: 'undefined' is not a function (evaluating 'path.insertItemBefore(null, 0)').
+PASS path.replaceItem(null, 0) threw exception TypeError: 'undefined' is not a function (evaluating 'path.replaceItem(null, 0)').
+PASS path.appendItem(null) threw exception TypeError: 'undefined' is not a function (evaluating 'path.appendItem(null)').
 List correctly initialised.
 PASS path.getPathSegAtLength(0) is 0
-PASS path.insertItemBefore(null, 0) threw exception TypeError: Result of expression 'path.insertItemBefore' [undefined] is not a function..
-PASS path.replaceItem(null, 0) threw exception TypeError: Result of expression 'path.replaceItem' [undefined] is not a function..
-PASS path.appendItem(null) threw exception TypeError: Result of expression 'path.appendItem' [undefined] is not a function..
+PASS path.insertItemBefore(null, 0) threw exception TypeError: 'undefined' is not a function (evaluating 'path.insertItemBefore(null, 0)').
+PASS path.replaceItem(null, 0) threw exception TypeError: 'undefined' is not a function (evaluating 'path.replaceItem(null, 0)').
+PASS path.appendItem(null) threw exception TypeError: 'undefined' is not a function (evaluating 'path.appendItem(null)').
 PASS successfullyParsed is true
 
 TEST COMPLETE

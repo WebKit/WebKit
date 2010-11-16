@@ -1,3 +1,104 @@
+2010-11-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 49488 - Only add source specific information to exceptions in Interpreter::throwException
+
+        Three types of source location information are added to errors.
+
+        (1) Divot information.
+
+        This was added with the intention of using it to provide better source highlighting in the inspector.
+        We may still want to do so, but we probably should not be exposing these values in a manner visible to
+        user scripts – only through an internal C++ interface. The code adding divot properties to objects has
+        been removed.
+
+        (2) Line number information.
+
+        Line number information is presently sometimes added at the point the exception is created, and sometimes
+        added at the point the exception passes through throwException. Change this so that throwException has
+        the sole responsibility for adding line number and source file information.
+
+        (3) Source snippets in the message of certain type errors (e.g. 'doc' in `Result of expression 'doc' [undefined] is not an object.`).
+
+        These messages are currently created at the point the exceptions is raised. Instead reformat the message
+        such that the source snippet is located at the end (`Result of expression 'b1' [undefined] is not an object.`
+        becomes `'undefined' is not an object (evaluating 'b1.property')`), and append these to the message at
+        the in throw Exception. This presents a number of advantages:
+          * we no longer need to have source location information to create these TypeErrors.
+          * we can chose to append source location information in other error messages, including those where
+            passing source location to the point of construction would be inconvenient.
+          * we can chose in future to omit to append source location information when running in a non-debug mode.
+
+        This also cleans up some error output, e.g. removing double brackets ('[[]]') around objects in output,
+        removing double periods (..) at end of lines, and adding slightly more context to some errors.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+            - Separated called to access line and range information.
+
+        * bytecode/CodeBlock.h:
+            - Separated called to access line and range information.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::isInvalidParamForIn):
+        (JSC::isInvalidParamForInstanceOf):
+            - Update parameters passed to error constructors.
+        (JSC::appendSourceToError):
+            - Update message property to add location information (previously added in createErrorMessage, in ExceptionHelpers)
+        (JSC::Interpreter::throwException):
+            - Updated to call appendSourceToError. 
+        (JSC::Interpreter::privateExecute):
+            - Update parameters passed to error constructors.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Update parameters passed to error constructors.
+
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::hasErrorInfo):
+            - Removed divot properties.
+
+        * runtime/Error.h:
+            - Removed divot properties.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+            - Initialize new property.
+
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::appendSourceToMessage):
+        (JSC::ErrorInstance::setAppendSourceToMessage):
+        (JSC::ErrorInstance::clearAppendSourceToMessage):
+            - Added flag to check for errors needing location information appending.
+        (JSC::ErrorInstance::isErrorInstance):
+            - Added virtual method to check for ErrorInstances.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+            - Update parameters passed to error constructors, stopped adding line number information early, changed TypeError messages.
+
+        * runtime/ExceptionHelpers.h:
+            - Updated function signatures.
+
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+            - Update parameters passed to error constructors.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::isErrorInstance):
+            - Added virtual method to check for ErrorInstances.
+
 2010-11-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

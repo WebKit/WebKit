@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 14: TypeError: Result of expression 'document.styleSheets[1]' [undefined] is not an object.
+CONSOLE MESSAGE: line 14: TypeError: 'undefined' is not an object (evaluating 'document.styleSheets[1].disabled = false')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x76

@@ -31,6 +31,7 @@
 
 #include "CodeBlock.h"
 #include "CallFrame.h"
+#include "ErrorInstance.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSObject.h"
 #include "JSNotAnObject.h"
@@ -84,79 +85,36 @@ JSObject* createStackOverflowError(JSGlobalObject* globalObject)
     return createRangeError(globalObject, "Maximum call stack size exceeded.");
 }
 
-JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
     UString message(makeUString("Can't find variable: ", ident.ustring()));
-    JSObject* exception = addErrorInfo(exec, createReferenceError(exec, message), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
-    return exception;
+    return createReferenceError(exec, message);
 }
     
-static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValue value, UString error)
+JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value)
 {
-    if (!expressionStop || expressionStart > codeBlock->source()->length())
-        return makeUString(value.toString(exec), " is ", error);
-    if (expressionStart < expressionStop)
-        return makeUString("Result of expression '", codeBlock->source()->getRange(expressionStart, expressionStop), "' [", value.toString(exec), "] is ", error, ".");
-
-    // No range information, so give a few characters of context
-    const UChar* data = codeBlock->source()->data();
-    int dataLength = codeBlock->source()->length();
-    int start = expressionStart;
-    int stop = expressionStart;
-    // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
-    // then strip whitespace.
-    while (start > 0 && (expressionStart - start < 20) && data[start - 1] != '\n')
-        start--;
-    while (start < (expressionStart - 1) && isStrWhiteSpace(data[start]))
-        start++;
-    while (stop < dataLength && (stop - expressionStart < 20) && data[stop] != '\n')
-        stop++;
-    while (stop > expressionStart && isStrWhiteSpace(data[stop]))
-        stop--;
-    return makeUString("Result of expression near '...", codeBlock->source()->getRange(start, stop), "...' [", value.toString(exec), "] is ", error, ".");
-}
-
-JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
-{
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-    UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint, divotPoint + endOffset, value, makeUString("not a valid argument for '", op, "'"));
-    JSObject* exception = addErrorInfo(exec, createTypeError(exec, errorMessage), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
+    UString errorMessage = makeUString("'", value.toString(exec), "' is not a valid argument for '", op, "'");
+    JSObject* exception = createTypeError(exec, errorMessage);
+    ASSERT(exception->isErrorInstance());
+    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
     return exception;
 }
 
-JSObject* createNotAConstructorError(ExecState* exec, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSObject* createNotAConstructorError(ExecState* exec, JSValue value)
 {
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-
-    // We're in a "new" expression, so we need to skip over the "new.." part
-    int startPoint = divotPoint - (startOffset ? startOffset - 4 : 0); // -4 for "new "
-    const UChar* data = codeBlock->source()->data();
-    while (startPoint < divotPoint && isStrWhiteSpace(data[startPoint]))
-        startPoint++;
-    
-    UString errorMessage = createErrorMessage(exec, codeBlock, line, startPoint, divotPoint, value, "not a constructor");
-    JSObject* exception = addErrorInfo(exec, createTypeError(exec, errorMessage), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
+    UString errorMessage = makeUString("'", value.toString(exec), "' is not a constructor");
+    JSObject* exception = createTypeError(exec, errorMessage);
+    ASSERT(exception->isErrorInstance());
+    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
     return exception;
 }
 
-JSValue createNotAFunctionError(ExecState* exec, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValue createNotAFunctionError(ExecState* exec, JSValue value)
 {
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-    UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, value, "not a function");
-    JSObject* exception = addErrorInfo(exec, createTypeError(exec, errorMessage), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
+    UString errorMessage = makeUString("'", value.toString(exec), "' is not a function");
+    JSObject* exception = createTypeError(exec, errorMessage);
+    ASSERT(exception->isErrorInstance());
+    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
     return exception;
 }
 
@@ -174,16 +132,15 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     if (codeBlock->getByIdExceptionInfoForBytecodeOffset(exec, bytecodeOffset, followingOpcodeID)) {
         ASSERT(followingOpcodeID == op_create_this || followingOpcodeID == op_instanceof);
         if (followingOpcodeID == op_create_this)
-            return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), bytecodeOffset, codeBlock);
-        return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), bytecodeOffset, codeBlock);
+            return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined());
+        return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined());
     }
 
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-    UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, error->isNull() ? jsNull() : jsUndefined(), "not an object");
-    JSObject* exception = addErrorInfo(exec, createTypeError(exec, errorMessage), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
+    JSValue value = error->isNull() ? jsNull() : jsUndefined();
+    UString errorMessage = makeUString("'", value.toString(exec), "' is not an object");
+    JSObject* exception = createTypeError(exec, errorMessage);
+    ASSERT(exception->isErrorInstance());
+    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
     return exception;
 }
 

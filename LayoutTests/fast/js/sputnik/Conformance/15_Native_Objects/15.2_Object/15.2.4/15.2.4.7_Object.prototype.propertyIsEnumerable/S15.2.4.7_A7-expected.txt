@@ -1,6 +1,6 @@
 S15.2.4.7_A7
 
-TypeError: Result of expression 'FACTORY' [function propertyIsEnumerable() { [native code] }] is not a constructor.
+TypeError: 'function propertyIsEnumerable() { [native code] }' is not a constructor (evaluating 'new FACTORY')
 PASS 
 
 TEST COMPLETE

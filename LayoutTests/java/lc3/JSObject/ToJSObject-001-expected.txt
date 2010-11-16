@@ -4,7 +4,7 @@ FAIL jsoc.setJSObject(array); jsoc.PUB_JSOBJECT should be 1,2,3. Was null.
 FAIL jsoc.setJSObject(array); jsoc.getJSObject() should be 1,2,3 (of type object). Was undefined (of type undefined).
 FAIL jsoc.getJSObject().constructor should be function Array() {
     [native code]
-}. Threw exception TypeError: Result of expression 'jsoc.getJSObject()' [undefined] is not an object.
+}. Threw exception TypeError: 'undefined' is not an object (evaluating 'jsoc.getJSObject().constructor')
 FAIL jsoc.setJSObject( MyObject ); jsoc.PUB_JSOBJECT should be function MyObject(stringValue) {
   this.stringValue = String(stringValue);
   this.toString = new Function( "return this.stringValue" );

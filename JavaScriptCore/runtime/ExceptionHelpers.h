@@ -47,13 +47,14 @@ namespace JSC {
     JSValue createTerminatedExecutionException(JSGlobalData*);
     JSObject* createStackOverflowError(ExecState*);
     JSObject* createStackOverflowError(JSGlobalObject*);
-    JSValue createUndefinedVariableError(ExecState*, const Identifier&, unsigned bytecodeOffset, CodeBlock*);
+    JSValue createUndefinedVariableError(ExecState*, const Identifier&);
     JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
-    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSObject* createNotAConstructorError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSValue createNotAFunctionError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
+    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);
+    JSObject* createNotAConstructorError(ExecState*, JSValue);
+    JSValue createNotAFunctionError(ExecState*, JSValue);
     JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const UString&);
+
+    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
 
     JSObject* throwOutOfMemoryError(ExecState*);
     JSObject* throwStackOverflowError(ExecState*);

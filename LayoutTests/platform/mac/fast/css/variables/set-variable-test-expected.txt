@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 19: TypeError: Result of expression 'document.styleSheets[0].cssRules[0].variables' [undefined] is not an object.
+CONSOLE MESSAGE: line 19: TypeError: 'undefined' is not an object (evaluating 'document.styleSheets[0].cssRules[0].variables.setVariable')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x34

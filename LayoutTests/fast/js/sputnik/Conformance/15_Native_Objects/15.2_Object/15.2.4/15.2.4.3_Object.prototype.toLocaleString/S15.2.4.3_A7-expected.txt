@@ -1,6 +1,6 @@
 S15.2.4.3_A7
 
-TypeError: Result of expression 'FACTORY' [function toLocaleString() { [native code] }] is not a constructor.
+TypeError: 'function toLocaleString() { [native code] }' is not a constructor (evaluating 'new FACTORY')
 PASS 
 
 TEST COMPLETE

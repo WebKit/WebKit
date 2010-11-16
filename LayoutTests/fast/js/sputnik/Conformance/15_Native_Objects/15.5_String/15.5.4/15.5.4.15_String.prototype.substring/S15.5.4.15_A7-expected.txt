@@ -1,6 +1,6 @@
 S15.5.4.15_A7
 
-TypeError: Result of expression '__FACTORY' [function substring() { [native code] }] is not a constructor.
+TypeError: 'function substring() { [native code] }' is not a constructor (evaluating 'new __FACTORY')
 PASS 
 
 TEST COMPLETE

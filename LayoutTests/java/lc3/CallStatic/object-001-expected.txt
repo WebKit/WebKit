@@ -1,8 +1,8 @@
 LiveConnect 3.0 Call static methods from an instance
 
-FAIL dt.staticSetDoubleObject( 99 ); dt.PUB_STATIC_DOUBLE_OBJECT.doubleValue() should be 99. Threw exception TypeError: Result of expression 'dt.PUB_STATIC_DOUBLE_OBJECT' [null] is not an object.
-FAIL dt.staticSetDoubleObject( 99 ); dt.staticGetDoubleObject().doubleValue() should be 99. Threw exception TypeError: Result of expression 'dt.staticGetDoubleObject()' [undefined] is not an object.
-FAIL dt.staticGetDoubleObject().getClass().getName() +'' should be java.lang.Double. Threw exception TypeError: Result of expression 'dt.staticGetDoubleObject()' [undefined] is not an object.
+FAIL dt.staticSetDoubleObject( 99 ); dt.PUB_STATIC_DOUBLE_OBJECT.doubleValue() should be 99. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_STATIC_DOUBLE_OBJECT.doubleValue')
+FAIL dt.staticSetDoubleObject( 99 ); dt.staticGetDoubleObject().doubleValue() should be 99. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.staticGetDoubleObject().doubleValue')
+FAIL dt.staticGetDoubleObject().getClass().getName() +'' should be java.lang.Double. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.staticGetDoubleObject().getClass')
 FAIL dt.staticSetShortObject( new java.lang.Short(32109) ); dt.PUB_STATIC_SHORT_OBJECT.doubleValue() should be 32109. Threw exception ReferenceError: Can't find variable: java
 FAIL dt.staticSetShortObject( new java.lang.Short(32109) ); dt.staticGetShortObject().doubleValue() should be 32109. Threw exception ReferenceError: Can't find variable: java
 PASS dt.staticGetShortObject().getClass().getName() +'' is "java.lang.Short"
