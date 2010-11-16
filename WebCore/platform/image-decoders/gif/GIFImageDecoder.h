@@ -36,7 +36,7 @@ namespace WebCore {
     // This class decodes the GIF image format.
     class GIFImageDecoder : public ImageDecoder {
     public:
-        GIFImageDecoder(bool premultiplyAlpha);
+        GIFImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
         virtual ~GIFImageDecoder();
 
         enum GIFQuery { GIFFullQuery, GIFSizeQuery, GIFFrameCountQuery };

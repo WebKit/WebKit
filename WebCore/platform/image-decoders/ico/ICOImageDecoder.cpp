@@ -44,8 +44,8 @@ namespace WebCore {
 static const size_t sizeOfDirectory = 6;
 static const size_t sizeOfDirEntry = 16;
 
-ICOImageDecoder::ICOImageDecoder(bool premultiplyAlpha)
-    : ImageDecoder(premultiplyAlpha)
+ICOImageDecoder::ICOImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+    : ImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile)
     , m_decodedOffset(0)
 {
 }
@@ -201,7 +201,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
 
     if (!m_pngDecoders[index]) {
-        m_pngDecoders[index].set(new PNGImageDecoder(m_premultiplyAlpha));
+        m_pngDecoders[index].set(new PNGImageDecoder(m_premultiplyAlpha, m_ignoreGammaAndColorProfile));
         setDataForPNGDecoderAtIndex(index);
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size

@@ -97,11 +97,12 @@ bool GraphicsContext3D::extractImageData(Image* image,
                                          unsigned int type,
                                          bool flipY,
                                          bool premultiplyAlpha,
+                                         bool ignoreGammaAndColorProfile,
                                          Vector<uint8_t>& data)
 {
     if (!image)
         return false;
-    if (!getImageData(image, format, type, premultiplyAlpha, data))
+    if (!getImageData(image, format, type, premultiplyAlpha, ignoreGammaAndColorProfile, data))
         return false;
     if (flipY) {
         unsigned long componentsPerPixel, bytesPerComponent;

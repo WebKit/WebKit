@@ -41,9 +41,10 @@ namespace WebCore {
 unsigned ImageSource::s_maxPixelsPerDecodedImage = 1024 * 1024;
 #endif
 
-ImageSource::ImageSource(bool premultiplyAlpha)
+ImageSource::ImageSource(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
     : m_decoder(0)
     , m_premultiplyAlpha(premultiplyAlpha)
+    , m_ignoreGammaAndColorProfile(ignoreGammaAndColorProfile)
 {
 }
 
@@ -78,7 +79,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
     if (!m_decoder) {
-        m_decoder = static_cast<NativeImageSourcePtr>(ImageDecoder::create(*data, m_premultiplyAlpha));
+        m_decoder = static_cast<NativeImageSourcePtr>(ImageDecoder::create(*data, m_premultiplyAlpha, m_ignoreGammaAndColorProfile));
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
         if (m_decoder && s_maxPixelsPerDecodedImage)
             m_decoder->setMaxNumPixels(s_maxPixelsPerDecodedImage);

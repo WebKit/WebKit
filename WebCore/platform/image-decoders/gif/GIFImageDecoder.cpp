@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-GIFImageDecoder::GIFImageDecoder(bool premultiplyAlpha)
-    : ImageDecoder(premultiplyAlpha)
+GIFImageDecoder::GIFImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+    : ImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile)
     , m_alreadyScannedThisDataForFrameCount(true)
     , m_repetitionCount(cAnimationLoopOnce)
     , m_readOffset(0)

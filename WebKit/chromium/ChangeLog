@@ -1,3 +1,13 @@
+2010-11-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement UNPACK_COLORSPACE_CONVERSION_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=47196
+
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::init): Add ignoreGammaAndColorProfile parameter.
+
 2010-11-12  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

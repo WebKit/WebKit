@@ -63,10 +63,11 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageSource::ImageSource(bool premultiplyAlpha)
+ImageSource::ImageSource(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
     : m_decoder(0)
     // FIXME: m_premultiplyAlpha is ignored in cg at the moment.
     , m_premultiplyAlpha(premultiplyAlpha)
+    , m_ignoreGammaAndColorProfile(ignoreGammaAndColorProfile)
 {
 }
 

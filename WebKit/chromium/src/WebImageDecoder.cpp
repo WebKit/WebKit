@@ -56,10 +56,10 @@ void WebImageDecoder::init(Type type)
 {
     switch (type) {
     case TypeBMP:
-        m_private = new BMPImageDecoder(true);
+        m_private = new BMPImageDecoder(true, false);
         break;
     case TypeICO:
-        m_private = new ICOImageDecoder(true);
+        m_private = new ICOImageDecoder(true, false);
         break;
     }
 }

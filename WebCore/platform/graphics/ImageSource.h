@@ -119,7 +119,7 @@ const int cAnimationNone = -2;
 
 class ImageSource : public Noncopyable {
 public:
-    ImageSource(bool premultiplyAlpha = true);
+    ImageSource(bool premultiplyAlpha = true, bool ignoreGammaAndColorProfile = false);
     ~ImageSource();
 
     // Tells the ImageSource that the Image no longer cares about decoded frame
@@ -178,6 +178,7 @@ public:
 private:
     NativeImageSourcePtr m_decoder;
     bool m_premultiplyAlpha;
+    bool m_ignoreGammaAndColorProfile;
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static unsigned s_maxPixelsPerDecodedImage;
 #endif

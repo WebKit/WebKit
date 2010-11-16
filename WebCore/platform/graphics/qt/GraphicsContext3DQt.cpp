@@ -1646,8 +1646,10 @@ bool GraphicsContext3D::getImageData(Image* image,
                                      unsigned int format,
                                      unsigned int type,
                                      bool premultiplyAlpha,
+                                     bool ignoreGammaAndColorProfile,
                                      Vector<uint8_t>& outputVector)
 {
+    UNUSED_PARAM(ignoreGammaAndColorProfile);
     if (!image)
         return false;
     QPixmap* nativePixmap = image->nativeImageForCurrentFrame();

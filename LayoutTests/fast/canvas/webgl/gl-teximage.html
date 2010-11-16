@@ -162,10 +162,9 @@ function runTests(imgs) {
     }
   }
 
-// FIXME(zmo): fix the gamma correction and add back the commented out tests below.
-/*
   debug("");
   debug("Check that gamma settings don't effect 8bit pngs");
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
                 imgs['resources/gray-ramp-default-gamma.png']);
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
@@ -193,7 +192,6 @@ function runTests(imgs) {
     }
     assertMsg(same, "pixels should be same regardless of gamma settings.");
   }
-*/
 
   debug("");
   debug("check pixels are UN pre-multiplied");

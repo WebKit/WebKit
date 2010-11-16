@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-WEBPImageDecoder::WEBPImageDecoder(bool premultiplyAlpha)
-    : ImageDecoder(premultiplyAlpha)
+WEBPImageDecoder::WEBPImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+    : ImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile)
 {
 }
 
