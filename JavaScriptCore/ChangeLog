@@ -1,3 +1,27 @@
+2010-11-16  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        The number of recursive match calls isn't limited in YARR Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=47906
+
+        Check the number of the matchDisjunction recursive calls to avoid unbounded
+        recursion.
+        Now the matchDisjunction function returns JSRegExpResult instead of bool.
+        The JSRegExpResult enum contains the result of matching or the error code
+        of the failure (like HitLimit) which terminates the matching.
+        The error codes are based on pcre's jsRegExpExecute error codes.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::parenthesesDoBacktrack):
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::matchNonZeroDisjunction):
+        (JSC::Yarr::Interpreter::interpret):
+        (JSC::Yarr::Interpreter::Interpreter):
+        * yarr/RegexInterpreter.h:
+
 2010-11-16  Brian Weinstein  <bweinstein@apple.com>
 
         Rest of the Windows build fix.

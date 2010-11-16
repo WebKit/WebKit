@@ -40,6 +40,21 @@ using WTF::BumpPointerAllocator;
 
 namespace JSC { namespace Yarr {
 
+// TODO move the matchLimit constant and the JSRegExpResult enum to the JSRegExp.h when pcre is removed.
+
+// The below limit restricts the number of "recursive" match calls in order to
+// avoid spending exponential time on complex regular expressions.
+static const unsigned matchLimit = 1000000;
+
+enum JSRegExpResult {
+    JSRegExpMatch = 1,
+    JSRegExpNoMatch = 0,
+    JSRegExpErrorNoMatch = -1,
+    JSRegExpErrorHitLimit = -2,
+    JSRegExpErrorNoMemory = -3,
+    JSRegExpErrorInternal = -4
+};
+
 class ByteDisjunction;
 
 struct ByteTerm {
