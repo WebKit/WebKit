@@ -42,7 +42,7 @@ public:
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
 
-    static bool handleAttributeChange(SVGElement*, const QualifiedName&);
+    static bool handleAttributeChange(const SVGElement*, const QualifiedName&);
 
 protected:
     SVGTests();

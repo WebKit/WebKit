@@ -66,7 +66,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (SVGTests::handleAttributeChange(const_cast<SVGPolyElement*>(this), attrName))
+    if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());

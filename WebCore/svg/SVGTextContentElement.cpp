@@ -205,7 +205,7 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (SVGTests::handleAttributeChange(const_cast<SVGTextContentElement*>(this), attrName))
+    if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
     // FIXME: also handle attribute changes for lengthAdjust and textLength

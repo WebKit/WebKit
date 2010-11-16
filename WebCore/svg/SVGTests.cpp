@@ -95,17 +95,20 @@ bool SVGTests::isKnownAttribute(const QualifiedName& attrName)
     return knownAttribute(attrName);
 }
 
-bool SVGTests::handleAttributeChange(SVGElement* element, const QualifiedName& attrName)
+bool SVGTests::handleAttributeChange(const SVGElement* targetElement, const QualifiedName& attrName)
 {
-    if (knownAttribute(attrName)) {
-        bool valid = element->isValid();
-        if (valid && !element->attached() && element->inDocument())
-            element->attach();
-        if (!valid && element->attached())
-            element->detach();
-        return true;
-    }
-    return false;
+    if (!knownAttribute(attrName))
+        return false;
+    if (!targetElement->inDocument())
+        return false;
+    SVGElement* svgElement = const_cast<SVGElement*>(targetElement);
+    ASSERT(svgElement);
+    bool valid = svgElement->isValid();
+    if (valid && !svgElement->attached())
+        svgElement->attach();
+    if (!valid && svgElement->attached())
+        svgElement->detach();
+    return true;
 }
 
 }

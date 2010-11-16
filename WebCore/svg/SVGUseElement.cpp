@@ -143,7 +143,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     if (isXYAttribute || isWidthHeightAttribute)
         updateRelativeLengthsInformation();
 
-    if (SVGTests::handleAttributeChange(const_cast<SVGUseElement*>(this), attrName))
+    if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
     RenderObject* object = renderer();
