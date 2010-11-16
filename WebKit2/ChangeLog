@@ -1,3 +1,25 @@
+2010-11-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make WebPageProxy::decidePolicyForMIMEType a tad synchronous
+        https://bugs.webkit.org/show_bug.cgi?id=49605
+
+        Change the DecidePolicyForMIMEType message to be synchronous, and if the policy listener is
+        invoked from within the decidePolicyForMIMEType callback return the policy information as out
+        parameters. This is needed in order to convert a loading connection to a download.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForMIMEType):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+
 2010-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Andreas Kling.
