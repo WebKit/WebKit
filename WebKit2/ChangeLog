@@ -1,3 +1,20 @@
+2010-11-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Kill the web process if the UI process dies
+
+        Connect UI (parent) process death signal to SIGKILL of the web
+        process (child). This ensures that there's no stale web processes
+        after the UI process has crashed.
+
+        Original patch by Kimmo Kinnunen.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::QtWebProcess):
+        (WebKit::QtWebProcess::setupChildProcess):
+        (WebKit::ProcessLauncherHelper::launch):
+
 2010-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Andreas Kling.

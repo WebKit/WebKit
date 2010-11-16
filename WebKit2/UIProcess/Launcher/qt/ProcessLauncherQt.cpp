@@ -47,6 +47,10 @@
 
 #include <sys/resource.h>
 #include <unistd.h>
+#if defined Q_OS_UNIX
+#include <sys/prctl.h>
+#include <signal.h>
+#endif
 
 using namespace WebCore;
 
@@ -67,6 +71,25 @@ private:
     Q_SLOT void newConnection();
 };
 
+class QtWebProcess : public QProcess
+{
+    Q_OBJECT
+public:
+    QtWebProcess(QObject* parent = 0)
+        : QProcess(parent)
+    {}
+
+protected:
+    virtual void setupChildProcess();
+};
+
+void QtWebProcess::setupChildProcess()
+{
+#if defined Q_OS_UNIX
+    prctl(PR_SET_PDEATHSIG, SIGKILL);
+#endif
+}
+
 void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
 {
     QString applicationPath = "%1 %2";
@@ -79,7 +102,7 @@ void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
 
     QString program(applicationPath.arg(m_server.serverName()));
 
-    QProcess* webProcess = new QProcess();
+    QProcess* webProcess = new QtWebProcess();
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
     webProcess->start(program);
 
