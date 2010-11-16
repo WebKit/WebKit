@@ -1,5 +1,28 @@
 2010-11-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 49577 - Function.prototype should be non-configurable
+
+        JSC lazily allocates the prototype property of Function objects.
+
+        We check the prototype exists on 'get', but not on 'put'.
+        If you 'put' without having first done a 'get' you can end up with a configurable
+        prototype (prototype should only ever be non-configurable).
+
+        This is visible in a couple of ways:
+          * 'delete' on the property may succeed. (the next access will result in a new,
+          reset prototype object).
+          * the prototype may be set to a getter.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyNames):
+            Reify the prototype property before allowing an enumerate including don't enum properties.
+        (JSC::JSFunction::put):
+            Reify the prototype property before any put to it.
+
+2010-11-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Bug 49488 - Only add source specific information to exceptions in Interpreter::throwException
