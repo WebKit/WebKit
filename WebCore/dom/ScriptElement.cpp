@@ -51,58 +51,78 @@
 
 namespace WebCore {
 
-void ScriptElement::insertedIntoDocument(ScriptElementData& data, const String& sourceUrl)
+String ScriptElement::scriptCharset() const
 {
-    if (data.createdByParser() && !data.isAsynchronous())
+    return m_data.scriptCharset();
+}
+
+String ScriptElement::scriptContent() const
+{
+    return m_data.scriptContent();
+}
+
+bool ScriptElement::shouldExecuteAsJavaScript() const
+{
+    return m_data.shouldExecuteAsJavaScript();
+}
+
+void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
+{
+    m_data.executeScript(sourceCode);
+}
+
+void ScriptElement::insertedIntoDocument(const String& sourceUrl)
+{
+    if (m_data.createdByParser() && !m_data.isAsynchronous())
         return;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script
 
     if (!sourceUrl.isEmpty()) {
-        data.requestScript(sourceUrl);
+        m_data.requestScript(sourceUrl);
         return;
     }
 
     // If there's an empty script node, we shouldn't evaluate the script
     // because if a script is inserted afterwards (by setting text or innerText)
     // it should be evaluated, and evaluateScript only evaluates a script once.
-    data.evaluateScript(ScriptSourceCode(data.scriptContent(), data.element()->document()->url())); // FIXME: Provide a real starting line number here.
+    m_data.evaluateScript(ScriptSourceCode(m_data.scriptContent(), m_data.element()->document()->url())); // FIXME: Provide a real starting line number here.
 }
 
-void ScriptElement::removedFromDocument(ScriptElementData& data)
+void ScriptElement::removedFromDocument()
 {
     // Eventually stop loading any not-yet-finished content
-    data.stopLoadRequest();
+    m_data.stopLoadRequest();
 }
 
-void ScriptElement::childrenChanged(ScriptElementData& data)
+void ScriptElement::childrenChanged()
 {
-    if (data.createdByParser())
+    if (m_data.createdByParser())
         return;
 
-    Element* element = data.element();
+    Element* element = m_data.element();
 
     // If a node is inserted as a child of the script element
     // and the script element has been inserted in the document
     // we evaluate the script.
     if (element->inDocument() && element->firstChild())
-        data.evaluateScript(ScriptSourceCode(data.scriptContent(), element->document()->url())); // FIXME: Provide a real starting line number here
+        m_data.evaluateScript(ScriptSourceCode(m_data.scriptContent(), element->document()->url())); // FIXME: Provide a real starting line number here
 }
 
-void ScriptElement::finishParsingChildren(ScriptElementData& data, const String& sourceUrl)
+void ScriptElement::finishParsingChildren(const String& sourceUrl)
 {
     // The parser just reached </script>. If we have no src and no text,
     // allow dynamic loading later.
-    if (sourceUrl.isEmpty() && data.scriptContent().isEmpty())
-        data.setCreatedByParser(false);
+    if (sourceUrl.isEmpty() && m_data.scriptContent().isEmpty())
+        m_data.setCreatedByParser(false);
 }
 
-void ScriptElement::handleSourceAttribute(ScriptElementData& data, const String& sourceUrl)
+void ScriptElement::handleSourceAttribute(const String& sourceUrl)
 {
-    if (data.ignoresLoadRequest() || sourceUrl.isEmpty())
+    if (m_data.ignoresLoadRequest() || sourceUrl.isEmpty())
         return;
 
-    data.requestScript(sourceUrl);
+    m_data.requestScript(sourceUrl);
 }
 
 // Helper function

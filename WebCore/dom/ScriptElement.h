@@ -28,42 +28,8 @@ namespace WebCore {
 
 class CachedScript;
 class Element;
-class ScriptElementData;
+class ScriptElement;
 class ScriptSourceCode;
-
-class ScriptElement {
-public:
-    ScriptElement() { }
-    virtual ~ScriptElement() { }
-
-    virtual String scriptContent() const = 0;
-
-    virtual String sourceAttributeValue() const = 0;
-    virtual String charsetAttributeValue() const = 0;
-    virtual String typeAttributeValue() const = 0;
-    virtual String languageAttributeValue() const = 0;
-    virtual String forAttributeValue() const = 0;
-    virtual String eventAttributeValue() const = 0;
-    virtual bool asyncAttributeValue() const = 0;
-    virtual bool deferAttributeValue() const = 0;
-
-    virtual void dispatchLoadEvent() = 0;
-    virtual void dispatchErrorEvent() = 0;
-
-    // A charset for loading the script (may be overridden by HTTP headers or a BOM).
-    virtual String scriptCharset() const = 0;
-
-    virtual bool shouldExecuteAsJavaScript() const = 0;
-    virtual void executeScript(const ScriptSourceCode&) = 0;
-
-protected:
-    // Helper functions used by our parent classes.
-    static void insertedIntoDocument(ScriptElementData&, const String& sourceUrl);
-    static void removedFromDocument(ScriptElementData&);
-    static void childrenChanged(ScriptElementData&);
-    static void finishParsingChildren(ScriptElementData&, const String& sourceUrl);
-    static void handleSourceAttribute(ScriptElementData&, const String& sourceUrl);
-};
 
 // HTML/SVGScriptElement hold this struct as member variable
 // and pass it to the static helper functions in ScriptElement
@@ -105,6 +71,44 @@ private:
     bool m_requested;
     bool m_isEvaluated; // HTML5: "already started"
     bool m_firedLoad;
+};
+
+class ScriptElement {
+public:
+    ScriptElement(Element* element, bool createdByParser, bool isEvaluated)
+        : m_data(this, element, isEvaluated)
+    {
+        m_data.setCreatedByParser(createdByParser);
+    }
+    virtual ~ScriptElement() { }
+
+    // A charset for loading the script (may be overridden by HTTP headers or a BOM).
+    String scriptCharset() const;
+    String scriptContent() const;
+    bool shouldExecuteAsJavaScript() const;
+    void executeScript(const ScriptSourceCode&);
+    
+    virtual String sourceAttributeValue() const = 0;
+    virtual String charsetAttributeValue() const = 0;
+    virtual String typeAttributeValue() const = 0;
+    virtual String languageAttributeValue() const = 0;
+    virtual String forAttributeValue() const = 0;
+    virtual String eventAttributeValue() const = 0;
+    virtual bool asyncAttributeValue() const = 0;
+    virtual bool deferAttributeValue() const = 0;
+
+    virtual void dispatchLoadEvent() = 0;
+    virtual void dispatchErrorEvent() = 0;
+
+protected:
+    // Helper functions used by our parent classes.
+    void insertedIntoDocument(const String& sourceUrl);
+    void removedFromDocument();
+    void childrenChanged();
+    void finishParsingChildren(const String& sourceUrl);
+    void handleSourceAttribute(const String& sourceUrl);
+
+    ScriptElementData m_data;
 };
 
 ScriptElement* toScriptElement(Element*);
