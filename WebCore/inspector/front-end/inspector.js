@@ -223,9 +223,8 @@ var WebInspector = {
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
         if (hiddenPanels.indexOf("elements") === -1)
             this.panels.elements = new WebInspector.ElementsPanel();
-
-        if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
-            this.panels.storage = new WebInspector.StoragePanel();
+        if (hiddenPanels.indexOf("resources") === -1)
+            this.panels.resources = new WebInspector.ResourcesPanel();
         if (hiddenPanels.indexOf("network") === -1)
             this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
@@ -546,10 +545,6 @@ WebInspector.doLoadedDone = function()
     for (var panelName in this.panels)
         previousToolbarItem = WebInspector.addPanelToolbarIcon(toolbarElement, this.panels[panelName], previousToolbarItem);
 
-    // FIXME: fix this once renamed StoragePanel.js to ResourcesPanel.js
-    this.panels.storage._toolbarItem.removeStyleClass("storage");
-    this.panels.storage._toolbarItem.addStyleClass("resources");
-
     this.Tips = {
         ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
     };
@@ -810,8 +805,8 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
 {
     var resource = WebInspector.resourceForURL(resourceURL);
     if (inResourcesPanel && resource) {
-        WebInspector.panels.storage.showResource(resource);
-        WebInspector.showPanel("storage");
+        WebInspector.panels.resources.showResource(resource);
+        WebInspector.showPanel("resources");
     } else
         InspectorBackend.openInInspectedWindow(resource ? resource.url : resourceURL);
 }
@@ -1206,10 +1201,6 @@ WebInspector.showChanges = function()
 
 WebInspector.showPanel = function(panel)
 {
-    // FIXME: fix this once renamed StoragePanel.js to ResourcesPanel.js
-    if (panel === "resources")
-        panel = "storage";
-
     if (!(panel in this.panels))
         panel = "elements";
     this.currentPanel = this.panels[panel];
@@ -1217,8 +1208,8 @@ WebInspector.showPanel = function(panel)
 
 WebInspector.selectDatabase = function(o)
 {
-    WebInspector.showPanel("storage");
-    WebInspector.panels.storage.selectDatabase(o);
+    WebInspector.showPanel("resources");
+    WebInspector.panels.resources.selectDatabase(o);
 }
 
 WebInspector.consoleMessagesCleared = function()
@@ -1228,8 +1219,8 @@ WebInspector.consoleMessagesCleared = function()
 
 WebInspector.selectDOMStorage = function(o)
 {
-    WebInspector.showPanel("storage");
-    WebInspector.panels.storage.selectDOMStorage(o);
+    WebInspector.showPanel("resources");
+    WebInspector.panels.resources.selectDOMStorage(o);
 }
 
 WebInspector.domContentEventFired = function(time)
@@ -1250,55 +1241,55 @@ WebInspector.loadEventFired = function(time)
 
 WebInspector.addDatabase = function(payload)
 {
-    if (!this.panels.storage)
+    if (!this.panels.resources)
         return;
     var database = new WebInspector.Database(
         payload.id,
         payload.domain,
         payload.name,
         payload.version);
-    this.panels.storage.addDatabase(database);
+    this.panels.resources.addDatabase(database);
 }
 
 WebInspector.addDOMStorage = function(payload)
 {
-    if (!this.panels.storage)
+    if (!this.panels.resources)
         return;
     var domStorage = new WebInspector.DOMStorage(
         payload.id,
         payload.host,
         payload.isLocalStorage);
-    this.panels.storage.addDOMStorage(domStorage);
+    this.panels.resources.addDOMStorage(domStorage);
 }
 
 WebInspector.updateDOMStorage = function(storageId)
 {
-    this.panels.storage.updateDOMStorage(storageId);
+    this.panels.resources.updateDOMStorage(storageId);
 }
 
 WebInspector.updateApplicationCacheStatus = function(status)
 {
-    this.panels.storage.updateApplicationCacheStatus(status);
+    this.panels.resources.updateApplicationCacheStatus(status);
 }
 
 WebInspector.didGetFileSystemPath = function(root, type, origin)
 {
-    this.panels.storage.updateFileSystemPath(root, type, origin);
+    this.panels.resources.updateFileSystemPath(root, type, origin);
 }
 
 WebInspector.didGetFileSystemError = function(type, origin)
 {
-    this.panels.storage.updateFileSystemError(type, origin);
+    this.panels.resources.updateFileSystemError(type, origin);
 }
 
 WebInspector.didGetFileSystemDisabled = function()
 {
-    this.panels.storage.setFileSystemDisabled();
+    this.panels.resources.setFileSystemDisabled();
 }
 
 WebInspector.updateNetworkState = function(isNowOnline)
 {
-    this.panels.storage.updateNetworkState(isNowOnline);
+    this.panels.resources.updateNetworkState(isNowOnline);
 }
 
 WebInspector.searchingForNodeWasEnabled = function()
@@ -1612,14 +1603,11 @@ WebInspector.displayNameForURL = function(url)
 WebInspector._choosePanelToShowSourceLine = function(url, line, preferredPanel)
 {
     preferredPanel = preferredPanel || "resources";
-    // FIXME: remove this once StoragePanel renamed to ResourcesPanel
-    if (preferredPanel === "resources")
-        preferredPanel = "storage";
 
     var panel = this.panels[preferredPanel];
     if (panel && panel.canShowSourceLine(url, line))
         return panel;
-    panel = this.panels.storage;
+    panel = this.panels.resources;
     return panel.canShowSourceLine(url, line) ? panel : null;
 }
 

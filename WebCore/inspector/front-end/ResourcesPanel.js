@@ -27,9 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StoragePanel = function(database)
+WebInspector.ResourcesPanel = function(database)
 {
-    WebInspector.Panel.call(this, "storage");
+    WebInspector.Panel.call(this, "resources");
 
     WebInspector.settings.installApplicationSetting("resourcesLastSelectedItem", {});
 
@@ -79,7 +79,7 @@ WebInspector.StoragePanel = function(database)
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 }
 
-WebInspector.StoragePanel.prototype = {
+WebInspector.ResourcesPanel.prototype = {
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Resources");
@@ -193,7 +193,7 @@ WebInspector.StoragePanel.prototype = {
                 parentTreeElement.insertChild(frameTreeElement, i);
                 return;
             }
-            if (child.nameForSorting.localeCompare(frameTreeElement.nameForSorting) > 0) {
+            if (child.displayName.localeCompare(frameTreeElement.displayName) > 0) {
                 parentTreeElement.insertChild(frameTreeElement, i);
                 return;
             }
@@ -762,7 +762,7 @@ WebInspector.StoragePanel.prototype = {
     }
 }
 
-WebInspector.StoragePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.BaseStorageTreeElement = function(storagePanel, representedObject, title, iconClass, hasChildren)
 {
@@ -900,21 +900,24 @@ WebInspector.FrameTreeElement.prototype = {
         InspectorBackend.hideFrameHighlight();
     },
 
-    get nameForSorting()
+    get displayName()
     {
-        return this._nameForSorting;
+        return this._displayName;
     },
 
     setTitles: function(title, subtitle)
     {
-        this._nameForSorting = (title ? title : "") + (subtitle ? subtitle : "");
+        this._displayName = "";
         if (this.parent) {
-            if (title)
+            if (title) {
                 this.titleElement.textContent = title;
+                this._displayName = title;
+            }
             if (subtitle) {
                 var subtitleElement = document.createElement("span");
                 subtitleElement.className = "base-storage-tree-element-subtitle";
                 subtitleElement.textContent = "(" + subtitle + ")";
+                this._displayName += " (" + subtitle + ")";
                 this.titleElement.appendChild(subtitleElement);
             }
         } else {

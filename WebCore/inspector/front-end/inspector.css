@@ -219,10 +219,6 @@ body.attached #search-results-matches {
     background-image: url(Images/timelineIcon.png);
 }
 
-.toolbar-item.storage .toolbar-icon {
-    background-image: url(Images/storageIcon.png);
-}
-
 .toolbar-item.profiles .toolbar-icon {
     background-image: url(Images/profilesIcon.png);
 }
@@ -1916,52 +1912,52 @@ body.inactive .sidebar {
     bottom: 0;
 }
 
-.storage.panel .sidebar {
+.resources.panel .sidebar {
     padding-left: 0;
     z-index: 10;
 }
 
-.storage.panel .sidebar li {
+.resources.panel .sidebar li {
     height: 17px;
     white-space: nowrap;
     text-indent: 0;
     margin-left: -2px;
 }
 
-.storage.panel .sidebar li.parent {
+.resources.panel .sidebar li.parent {
     text-indent: 0;
     margin-left: -12px;
 }
 
-.storage.panel .sidebar li.selected {
+.resources.panel .sidebar li.selected {
     color: white;
     text-shadow: rgba(0, 0, 0, 0.33) 0 1px 0;
     font-weight: bold;
 }
 
-.storage.panel .sidebar li.selected .selection {
+.resources.panel .sidebar li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
     border-top: 1px solid #979797;
     height: 17px;
 }
 
-.storage.panel .sidebar :focus li.selected .selection {
+.resources.panel .sidebar :focus li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
     border-top: 1px solid rgb(68, 128, 200);
 }
 
-body.inactive .storage.panel .sidebar li.selected .selection {
+body.inactive .resources.panel .sidebar li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(180, 180, 180)), to(rgb(138, 138, 138)));
     border-top: 1px solid rgb(151, 151, 151);
 }
 
-.storage.panel .sidebar .icon {
+.resources.panel .sidebar .icon {
     width: 16px;
     height: 16px;
     float: left;
 }
 
-.storage.panel .base-storage-tree-element-title {
+.resources.panel .base-storage-tree-element-title {
     overflow: hidden;
     position: relative;
     text-overflow: ellipsis;
@@ -1979,7 +1975,7 @@ li.selected .base-storage-tree-element-subtitle {
     text-shadow: none;
 }
 
-.storage.panel .status {
+.resources.panel .status {
     float: right;
     height: 16px;
     margin-top: 1px;
@@ -1987,7 +1983,7 @@ li.selected .base-storage-tree-element-subtitle {
     line-height: 1em;
 }
 
-.storage.panel li .status .bubble {
+.resources.panel li .status .bubble {
     height: 13px;
     padding-top: 0;
 }

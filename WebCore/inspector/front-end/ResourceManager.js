@@ -250,7 +250,7 @@ WebInspector.ResourceManager.prototype = {
 
         resource.type = WebInspector.Resource.Type[type];
         resource.content = sourceString;
-        WebInspector.panels.storage.refreshResource(resource);
+        WebInspector.panels.resources.refreshResource(resource);
         WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -489,7 +489,7 @@ WebInspector.ResourceTreeModel.prototype = {
     addOrUpdateFrame: function(frame)
     {
         var tmpResource = new WebInspector.Resource(null, frame.url);
-        WebInspector.panels.storage.addOrUpdateFrame(frame.parentId, frame.id, frame.name, tmpResource.displayName);
+        WebInspector.panels.resources.addOrUpdateFrame(frame.parentId, frame.id, frame.name, tmpResource.displayName);
         var subframes = this._subframes[frame.parentId];
         if (!subframes) {
             subframes = {};
@@ -508,19 +508,19 @@ WebInspector.ResourceTreeModel.prototype = {
         var resourcesForFrame = this._resourcesByFrameId[frame.id];
         for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i) {
             WebInspector.resourceManager._bindResourceURL(resourcesForFrame[i]);
-            WebInspector.panels.storage.addResourceToFrame(frame.id, resourcesForFrame[i]);
+            WebInspector.panels.resources.addResourceToFrame(frame.id, resourcesForFrame[i]);
         }
     },
 
     frameDetachedFromParent: function(frameId)
     {
         this._clearChildFramesAndResources(frameId, 0);
-        WebInspector.panels.storage.removeFrame(frameId);
+        WebInspector.panels.resources.removeFrame(frameId);
     },
 
     _clearChildFramesAndResources: function(frameId, loaderId)
     {
-        WebInspector.panels.storage.removeResourcesFromFrame(frameId);
+        WebInspector.panels.resources.removeResourcesFromFrame(frameId);
 
         this._clearResources(frameId, loaderId);
         var subframes = this._subframes[frameId];
@@ -528,7 +528,7 @@ WebInspector.ResourceTreeModel.prototype = {
             return;
 
         for (var childFrameId in subframes) {
-            WebInspector.panels.storage.removeFrame(childFrameId);
+            WebInspector.panels.resources.removeFrame(childFrameId);
             this._clearChildFramesAndResources(childFrameId, loaderId);
         }
         delete this._subframes[frameId];
@@ -543,7 +543,7 @@ WebInspector.ResourceTreeModel.prototype = {
         }
         resourcesForFrame.push(resource);
 
-        WebInspector.panels.storage.addResourceToFrame(frameId, resource);
+        WebInspector.panels.resources.addResourceToFrame(frameId, resource);
     },
 
     _clearResources: function(frameId, loaderToPreserveId)

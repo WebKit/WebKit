@@ -72,6 +72,7 @@
     <file>ResourceCategory.js</file>
     <file>ResourceManager.js</file>
     <file>ResourceView.js</file>
+    <file>ResourcesPanel.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>
     <file>ScriptsPanel.js</file>
@@ -88,7 +89,6 @@
     <file>SourceTokenizer.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
-    <file>StoragePanel.js</file>
     <file>StylesSidebarPane.js</file>
     <file>SummaryBar.js</file>
     <file>TabbedPane.js</file>
@@ -222,7 +222,6 @@
     <file>Images/statusbarMenuButtonSelected.png</file>
     <file>Images/statusbarResizerHorizontal.png</file>
     <file>Images/statusbarResizerVertical.png</file>
-    <file>Images/storageIcon.png</file>
     <file>Images/successGreenDot.png</file>
     <file>Images/thumbActiveHoriz.png</file>
     <file>Images/thumbActiveVert.png</file>

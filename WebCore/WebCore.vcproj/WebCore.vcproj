@@ -64535,6 +64535,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourcesPanel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScopeChainSidebarPane.js"
 					>
 				</File>
@@ -64596,10 +64600,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\StatusBarButton.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\StoragePanel.js"
 					>
 				</File>
 				<File
