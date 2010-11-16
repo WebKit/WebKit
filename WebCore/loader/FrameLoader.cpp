@@ -1256,7 +1256,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
     ASSERT(frame()->document());
     // FIXME: Should we move the isFeedWithNestedProtocolInHTTPFamily logic inside SecurityOrigin::canDisplay?
     if (!isFeedWithNestedProtocolInHTTPFamily(url)) {
-        if (!frame()->document()->securityOrigin()->canDisplay(url) && !SecurityOrigin::deprecatedCanDisplay(referrer, url)) {
+        if (!(frame()->document()->securityOrigin()->canDisplay(url) && SecurityOrigin::deprecatedCanDisplay(referrer, url))) {
             reportLocalLoadFailed(m_frame, url.string());
             return;
         }
