@@ -333,7 +333,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 m_locallyInstalledFontFaces.set(familyName, familyLocallyInstalledFaces);
 
                 for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
-                    RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]));
+                    RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), true);
                     locallyInstalledFontFace->addSource(new CSSFontFaceSource(familyName));
                     ASSERT(locallyInstalledFontFace->isValid());
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
@@ -401,7 +401,7 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     if (firstHasDesiredVariant != secondHasDesiredVariant)
         return firstHasDesiredVariant;
 
-    if (desiredTraitsMaskForComparison & FontVariantSmallCapsMask) {
+    if ((desiredTraitsMaskForComparison & FontVariantSmallCapsMask) && !first->isLocalFallback() && !second->isLocalFallback()) {
         // Prefer a font that has indicated that it can only support small-caps to a font that claims to support
         // all variants.  The specialized font is more likely to be true small-caps and not require synthesis.
         bool firstRequiresSmallCaps = (firstTraitsMask & FontVariantSmallCapsMask) && !(firstTraitsMask & FontVariantNormalMask);
@@ -415,6 +415,15 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
 
     if (firstHasDesiredStyle != secondHasDesiredStyle)
         return firstHasDesiredStyle;
+
+    if ((desiredTraitsMaskForComparison & FontStyleItalicMask) && !first->isLocalFallback() && !second->isLocalFallback()) {
+        // Prefer a font that has indicated that it can only support italics to a font that claims to support
+        // all styles.  The specialized font is more likely to be the one the author wants used.
+        bool firstRequiresItalics = (firstTraitsMask & FontStyleItalicMask) && !(firstTraitsMask & FontStyleNormalMask);
+        bool secondRequiresItalics = (secondTraitsMask & FontStyleItalicMask) && !(secondTraitsMask & FontStyleNormalMask);
+        if (firstRequiresItalics != secondRequiresItalics)
+            return firstRequiresItalics;
+    }
 
     if (secondTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
         return false;
