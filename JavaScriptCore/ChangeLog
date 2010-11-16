@@ -1,3 +1,19 @@
+2010-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Harden additional string functions against large lengths
+        https://bugs.webkit.org/show_bug.cgi?id=49574
+
+        * wtf/text/CString.cpp:
+        (WTF::CString::init): Check for length that is too large for CString.
+        (WTF::CString::newUninitialized): Ditto.
+        (WTF::CString::copyBufferIfNeeded): Fix types so the length stays
+        in a size_t.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append): Check for length that is too large.
+
 2010-11-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
