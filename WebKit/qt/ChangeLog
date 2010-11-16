@@ -1,3 +1,11 @@
+2010-11-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY build fix.
+
+        Fix test broken by earlier patch.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-11-15  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
