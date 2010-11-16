@@ -1192,14 +1192,6 @@
 			Name="API"
 			>
 			<File
-				RelativePath=".\WebKit.def"
-				>
-			</File>
-			<File
-				RelativePath=".\WebKit_debug.def"
-				>
-			</File>
-			<File
 				RelativePath="..\WebKitCOMAPI.cpp"
 				>
 			</File>

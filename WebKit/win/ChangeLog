@@ -1,3 +1,12 @@
+2010-11-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Adam Roben.
+
+        Remove unnecessary def file, remove outdated def files from vcproj.
+
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKit_debug.def: Removed.
+
 2010-11-12  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
