@@ -150,7 +150,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     // Set image dimensions, taking into account the size of the alt text.
     if (m_imageResource->errorOccurred()) {
-        if (!m_altText.isEmpty()) {
+        if (!m_altText.isEmpty() && document()->isPendingStyleRecalc()) {
             ASSERT(node());
             if (node()) {
                 m_needsToSetSizeForAltText = true;
@@ -158,11 +158,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
             }
             return;
         }
-        IntSize errorImageSize = imageSizeForError(m_imageResource->cachedImage());
-        if (errorImageSize != intrinsicSize()) {
-            setIntrinsicSize(errorImageSize);
-            imageSizeChanged = true;
-        }
+        imageSizeChanged = setImageSizeForAltText(m_imageResource->cachedImage());
     }
 
     imageDimensionsChanged(imageSizeChanged, rect);
