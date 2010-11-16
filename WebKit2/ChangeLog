@@ -1,5 +1,19 @@
 2010-11-16  Andreas Kling  <kling@webkit.org>
 
+        Rubber-stamped by Simon Hausmann.
+
+        Revert !ENABLE(INSPECTOR) fix- we don't need it right now,
+        and it was less maintainable than I had though.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        * WebProcess/WebPage/WebInspector.cpp:
+
+2010-11-16  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Simon Hausmann.
 
         Fix compilation with !ENABLE(INSPECTOR)
