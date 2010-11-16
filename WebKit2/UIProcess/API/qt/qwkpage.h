@@ -84,6 +84,8 @@ public:
 
     void setActualVisibleContentsRect(const QRect& rect) const;
 
+    void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
+
     QAction* action(WebAction action) const;
     void triggerAction(WebAction action, bool checked = false);
 

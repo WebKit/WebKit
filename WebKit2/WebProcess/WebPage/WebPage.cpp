@@ -391,6 +391,12 @@ void WebPage::layoutIfNeeded()
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
+#if ENABLE(TILED_BACKING_STORE)
+    // If we are resizing to content ignore external attempts.
+    if (!m_resizesToContentsLayoutSize.isEmpty())
+        return;
+#endif
+
     if (m_viewSize == viewSize)
         return;
 
@@ -409,6 +415,38 @@ void WebPage::setActualVisibleContentRect(const IntRect& rect)
     Frame* frame = m_page->mainFrame();
 
     frame->view()->setActualVisibleContentRect(rect);
+}
+
+void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
+{
+    m_resizesToContentsLayoutSize = targetLayoutSize;
+
+    Frame* frame = m_page->mainFrame();
+    if (m_resizesToContentsLayoutSize.isEmpty()) {
+        m_page->settings()->setShouldDelegateScrolling(false);
+        frame->view()->setUseFixedLayout(false);
+    } else {
+        m_page->settings()->setShouldDelegateScrolling(true);
+        frame->view()->setUseFixedLayout(true);
+        frame->view()->setFixedLayoutSize(m_resizesToContentsLayoutSize);
+    }
+    frame->view()->forceLayout();
+}
+
+void WebPage::resizeToContentsIfNeeded()
+{
+    if (m_resizesToContentsLayoutSize.isEmpty())
+        return;
+
+    Frame* frame = m_page->mainFrame();
+
+    IntSize contentSize = frame->view()->contentsSize();
+    if (contentSize == m_viewSize)
+        return;
+
+    m_viewSize = contentSize;
+    frame->view()->resize(m_viewSize);
+    frame->view()->setNeedsLayout();
 }
 #endif
 

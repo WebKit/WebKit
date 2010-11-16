@@ -244,6 +244,10 @@ public:
 
     void getStatistics(WKContextStatistics*);
 
+#if ENABLE(TILED_BACKING_STORE)
+    void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
+#endif
+
     void contextMenuItemSelected(const WebContextMenuItemData&);
 
     WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;

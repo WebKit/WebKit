@@ -368,6 +368,11 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
 #if PLATFORM(QT)
+#if ENABLE(TILED_BACKING_STORE)
+    if (frame->page()->mainFrame() == frame)
+        m_page->resizeToContentsIfNeeded();
+#endif
+
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     if (!m_page->mainFrame() || m_page->mainFrame() != webFrame)

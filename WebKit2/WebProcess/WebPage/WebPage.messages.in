@@ -58,6 +58,7 @@ messages -> WebPage {
 
 #if ENABLE(TILED_BACKING_STORE)
     SetActualVisibleContentRect(WebCore::IntRect rect)
+    SetResizesToContentsUsingLayoutSize(WebCore::IntSize size)
 #endif
 
     Close()

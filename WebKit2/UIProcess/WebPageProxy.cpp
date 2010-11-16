@@ -618,6 +618,13 @@ void WebPageProxy::preferencesDidChange()
     process()->send(Messages::WebPage::PreferencesDidChange(pageNamespace()->context()->preferences()->store()), m_pageID);
 }
 
+#if ENABLE(TILED_BACKING_STORE)
+void WebPageProxy::setResizesToContentsUsingLayoutSize(const WebCore::IntSize& targetLayoutSize)
+{
+    process()->send(Messages::WebPage::SetResizesToContentsUsingLayoutSize(targetLayoutSize), m_pageID);
+}
+#endif
+
 void WebPageProxy::getStatistics(WKContextStatistics* statistics)
 {
     statistics->numberOfWKFrames += process()->frameCountInPage(this);

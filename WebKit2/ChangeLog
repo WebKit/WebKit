@@ -1,3 +1,32 @@
+2010-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WK2][Qt] Expose resizes-to-contents mode in WebKit2
+
+        Only available with ENABLE(TILED_BACKING_STORE)
+
+        Based on a patch by Antti Koivisto.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::setResizesToContentsUsingLayoutSize):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setResizesToContentsUsingLayoutSize):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize):
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+        (WebKit::WebPage::resizeToContentsIfNeeded):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::resizesToContentsEnabled):
+        (WebKit::WebPage::resizesToContentsLayoutSize):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-16  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

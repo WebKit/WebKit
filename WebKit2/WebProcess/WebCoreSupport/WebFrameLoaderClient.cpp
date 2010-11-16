@@ -942,7 +942,17 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
+#if ENABLE(TILED_BACKING_STORE)
+    WebPage* webPage = m_frame->page();
+    bool isMainFrame = webPage->mainFrame() == m_frame;
+
+    m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
+
+    if (isMainFrame && webPage->resizesToContentsEnabled())
+        m_frame->coreFrame()->view()->setProhibitsScrolling(true);
+#else
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, IntSize(), false);
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)

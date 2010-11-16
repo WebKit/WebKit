@@ -531,6 +531,13 @@ QWKHistory* QWKPage::history() const
     return d->history;
 }
 
+void QWKPage::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
+{
+#if ENABLE(TILED_BACKING_STORE)
+    d->page->setResizesToContentsUsingLayoutSize(targetLayoutSize);
+#endif
+}
+
 #ifndef QT_NO_ACTION
 void QWKPage::triggerAction(WebAction action, bool)
 {
