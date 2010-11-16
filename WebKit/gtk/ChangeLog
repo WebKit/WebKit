@@ -1,3 +1,13 @@
+2010-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Show default context menu for the currently focused element when activated with keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=49376
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_popup_menu_handler):
+
 2010-11-11  Joone Hur  <joone@kldp.org>
 
         Reviewed by Antonio Gomes.
