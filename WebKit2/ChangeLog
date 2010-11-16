@@ -1,3 +1,12 @@
+2010-11-16  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Use SIGINT instead of SIGKILL to let the web process clean up after itself.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::setupChildProcess):
+
 2010-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
