@@ -1,3 +1,16 @@
+2010-11-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with !ENABLE(INSPECTOR)
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        * WebProcess/WebPage/WebInspector.cpp:
+
 2010-11-16  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.
