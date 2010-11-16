@@ -10,14 +10,12 @@ PASS attributes.item(0).name is 'a'
 PASS attributes.item(0).specified is true
 PASS attributes.item(0).value is 'b'
 PASS attributes.item(0).ownerElement.tagName is 'P'
-PASS attributes.item(0).style is null
 PASS attributes.item(0).value is 'c'
 PASS attributes.length is 0
 PASS attr.name is 'a'
 PASS attr.specified is true
 PASS attr.value is 'b'
 PASS attr.ownerElement.tagName is 'P'
-PASS attr.style is null
 PASS attr.value is 'c'
 PASS successfullyParsed is true
 
