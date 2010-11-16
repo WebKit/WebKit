@@ -1,9 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
 <body>
-<div id='d' style="font-size: 10pt"></div>
-10pt = 
+<p id="description"></p>
+<div id="test-div" style="font-size: 10pt; -webkit-transform: rotate(100grad); -webkit-animation-delay: 0.2s;"></div>
+<div id="console"></div>
 <script>
-//CSSPrimitiveValue.CSS_MM
-document.write(document.defaultView.getComputedStyle(document.getElementById('d'), '').getPropertyCSSValue('font-size').getFloatValue(7));
-document.write("mm (should be 3.4395833015441895)");
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var invalidAccessError = "Error: INVALID_ACCESS_ERR: DOM Exception 15";
+
+description("Testing whether CSSPrimitiveValue.getFloatValue() converts units correctly.");
+
+function getFloatValue(propertyName, unit)
+{
+    var result = document.getElementById("test-div").style.getPropertyCSSValue(propertyName).getFloatValue(unit);
+    return Number(result.toFixed(6));
+}
+
+function getFirstFloatValueInList(propertyName, unit)
+{
+    var result = document.getElementById("test-div").style.getPropertyCSSValue(propertyName)[0][0].getFloatValue(unit);
+    return Number(result.toFixed(6));
+}
+
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PT)", "10");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_MM)", "3.527778");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_CM)", "0.352778");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_IN)", "0.138889");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PC)", "0.833333");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PX)", "13.333333");
+shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_DEG)", "90");
+shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RAD)", "1.570796");
+shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_GRAD)", "100");
+shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_MS)", "200");
+shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_S)", "0.2");
+
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_NUMBER)", "invalidAccessError");
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_PERCENTAGE)", "invalidAccessError");
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_MS)", "invalidAccessError");
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_HZ)", "invalidAccessError");
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_DEG)", "invalidAccessError");
+shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_RGBCOLOR)", "invalidAccessError");
+
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_NUMBER)", "invalidAccessError");
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PERCENTAGE)", "invalidAccessError");
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PX)", "invalidAccessError");
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_MS)", "invalidAccessError");
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_HZ)", "invalidAccessError");
+shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RGBCOLOR)", "invalidAccessError");
+
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_NUMBER)", "invalidAccessError");
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PERCENTAGE)", "invalidAccessError");
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PX)", "invalidAccessError");
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_DEG)", "invalidAccessError");
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_HZ)", "invalidAccessError");
+shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_RGBCOLOR)", "invalidAccessError");
+
+var successfullyParsed = true;
 </script>
+<script src="../js/resources/js-test-post.js"></script>
 </body>
