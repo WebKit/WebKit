@@ -977,7 +977,8 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                     var value = property.value;
                     var title = "<span style='color: gray'>" + selectorText + "</span> - " + value;
                     var subtitle = " <span style='float:right'>" + section.subtitleElement.innerHTML + "</span>";
-                    var childElement = new TreeElement(title + subtitle, null, false);
+                    var childElement = new TreeElement(null, null, false);
+                    childElement.titleHTML = title + subtitle;
                     treeElement.appendChild(childElement);
                     if (section.isPropertyOverloaded(property.name))
                         childElement.listItemElement.addStyleClass("overloaded");

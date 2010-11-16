@@ -175,7 +175,7 @@ WebInspector.ResourceView.prototype = {
 
     _refreshURL: function()
     {
-        this.urlTreeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request URL") + ":</div>" +
+        this.urlTreeElement.titleHTML = "<div class=\"header-name\">" + WebInspector.UIString("Request URL") + ":</div>" +
             "<div class=\"header-value source-code\">" + this.resource.url.escapeHTML() + "</div>";
     },
 
@@ -211,7 +211,8 @@ WebInspector.ResourceView.prototype = {
         this.requestPayloadTreeElement.removeChildren();
 
         var title = "<div class=\"raw-form-data header-value source-code\">" + formData.escapeHTML() + "</div>";
-        var parmTreeElement = new TreeElement(title, null, false);
+        var parmTreeElement = new TreeElement(null, null, false);
+        parmTreeElement.titleHTML = title;
         parmTreeElement.selectable = false;
         this.requestPayloadTreeElement.appendChild(parmTreeElement);
     },
@@ -220,7 +221,7 @@ WebInspector.ResourceView.prototype = {
     {
         parmsTreeElement.removeChildren();
 
-        parmsTreeElement.title = title + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", parms.length) + "</span>";
+        parmsTreeElement.titleHTML = title + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", parms.length) + "</span>";
 
         for (var i = 0; i < parms.length; ++i) {
             var name = parms[i].name;
@@ -246,7 +247,8 @@ WebInspector.ResourceView.prototype = {
             var title = "<div class=\"header-name\">" + name.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + valueEscaped + "</div>";
 
-            var parmTreeElement = new TreeElement(title, null, false);
+            var parmTreeElement = new TreeElement(null, null, false);
+            parmTreeElement.titleHTML = title;
             parmTreeElement.selectable = false;
             parmTreeElement.tooltip = this._decodeHover;
             parmTreeElement.ondblclick = this._toggleURLdecoding.bind(this);
@@ -309,10 +311,10 @@ WebInspector.ResourceView.prototype = {
             var statusTextEscaped = this.resource.statusCode + " " + this.resource.statusText.escapeHTML();
             statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + statusTextEscaped + "\">";
     
-            requestMethodElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
+            requestMethodElement.titleHTML = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
                 "<div class=\"header-value source-code\">" + this.resource.requestMethod + "</div>";
 
-            statusCodeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
+            statusCodeElement.titleHTML = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
                 statusCodeImage + "<div class=\"header-value source-code\">" + statusTextEscaped + "</div>";
         }
     },
@@ -322,7 +324,7 @@ WebInspector.ResourceView.prototype = {
         headersTreeElement.removeChildren();
 
         var length = headers.length;
-        headersTreeElement.title = title.escapeHTML() + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", length) + "</span>";
+        headersTreeElement.titleHTML = title.escapeHTML() + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", length) + "</span>";
         headersTreeElement.hidden = !length;
 
         var length = headers.length;
@@ -330,7 +332,8 @@ WebInspector.ResourceView.prototype = {
             var title = "<div class=\"header-name\">" + headers[i].header.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + headers[i].value.escapeHTML() + "</div>"
 
-            var headerTreeElement = new TreeElement(title, null, false);
+            var headerTreeElement = new TreeElement(null, null, false);
+            headerTreeElement.titleHTML = title;
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }
@@ -339,7 +342,8 @@ WebInspector.ResourceView.prototype = {
             var title = "<div class=\"header-name\">" + additionalRow.header.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + additionalRow.value.escapeHTML() + "</div>"
 
-            var headerTreeElement = new TreeElement(title, null, false);
+            var headerTreeElement = new TreeElement(null, null, false);
+            headerTreeElement.titleHTML = title;
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }

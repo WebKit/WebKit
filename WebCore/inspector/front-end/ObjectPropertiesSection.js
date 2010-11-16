@@ -76,7 +76,8 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
         if (!this.propertiesTreeOutline.children.length) {
             var title = "<div class=\"info\">" + this.emptyPlaceholder + "</div>";
-            var infoElement = new TreeElement(title, null, false);
+            var infoElement = new TreeElement(null, null, false);
+            infoElement.titleHTML = title;
             this.propertiesTreeOutline.appendChild(infoElement);
         }
         this.propertiesForTest = properties;
