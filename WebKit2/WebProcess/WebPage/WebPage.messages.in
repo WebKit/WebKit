@@ -94,4 +94,8 @@ messages -> WebPage {
     SetWindowIsVisible(bool windowIsVisible)
     SetWindowFrame(WebCore::IntRect windowFrame)
 #endif
+
+#if PLATFORM(QT)
+    FindZoomableAreaForPoint(WebCore::IntPoint point)
+#endif
 }

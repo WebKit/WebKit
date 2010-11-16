@@ -52,6 +52,7 @@ public:
     virtual void processDidCrash() { }
     virtual void didRelaunchProcess() { }
     virtual void didChangeContentsSize(const WebCore::IntSize&);
+    virtual void didFindZoomableArea(const WebCore::IntRect&);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void takeFocus(bool direction) { }

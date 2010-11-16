@@ -252,6 +252,10 @@ public:
 
     WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
 
+#if PLATFORM(QT)
+    void findZoomableAreaForPoint(const WebCore::IntPoint&);
+#endif
+
 private:
     WebPageProxy(WebPageNamespace*, uint64_t pageID);
 
@@ -316,6 +320,7 @@ private:
 #endif
 #if PLATFORM(QT)
     void didChangeContentsSize(const WebCore::IntSize&);
+    void didFindZoomableArea(const WebCore::IntRect&);
 #endif
 
     // Back/Forward list management

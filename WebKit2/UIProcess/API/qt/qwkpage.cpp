@@ -613,4 +613,14 @@ QAction* QWKPage::action(WebAction action) const
 }
 #endif // QT_NO_ACTION
 
+void QWKPage::findZoomableAreaForPoint(const QPoint& point)
+{
+    d->page->findZoomableAreaForPoint(point);
+}
+
+void QWKPagePrivate::didFindZoomableArea(const IntRect& area)
+{
+    emit q->zoomableAreaFound(QRect(area));
+}
+
 #include "moc_qwkpage.cpp"

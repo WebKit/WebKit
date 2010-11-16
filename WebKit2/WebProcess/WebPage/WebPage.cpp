@@ -27,6 +27,9 @@
 
 #include "Arguments.h"
 #include "DrawingArea.h"
+#if PLATFORM(QT)
+#include "HitTestResult.h"
+#endif
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "MessageID.h"
@@ -1070,5 +1073,25 @@ InjectedBundleBackForwardList* WebPage::backForwardList()
         m_backForwardList = InjectedBundleBackForwardList::create(this);
     return m_backForwardList.get();
 }
+
+#if PLATFORM(QT)
+void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
+{
+    const int minimumZoomTargetWidth = 100;
+
+    Frame* mainframe = m_mainFrame->coreFrame();
+    HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
+
+    Node* node = result.innerNode();
+    while (node && node->getRect().width() < minimumZoomTargetWidth)
+        node = node->parent();
+
+    IntRect zoomableArea;
+    if (node)
+        zoomableArea = node->getRect();
+    send(Messages::WebPageProxy::DidFindZoomableArea(zoomableArea));
+}
+
+#endif
 
 } // namespace WebKit

@@ -55,6 +55,7 @@ messages -> WebPageProxy {
 #endif
 #if PLATFORM(QT)
     DidChangeContentsSize(WebCore::IntSize newSize)
+    DidFindZoomableArea(WebCore::IntRect area)
 #endif
 
     # Policy messages.

@@ -1,3 +1,29 @@
+2010-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [WK2][Qt] Add API for finding a zoomable area for a given point
+
+        This is useful for implementing e.g "double tap zoom"
+
+        Only enabled for Qt.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::findZoomableAreaForPoint):
+        (QWKPagePrivate::didFindZoomableArea):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        (WebKit::WebPageProxy::findZoomableAreaForPoint):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-16  Andreas Kling  <kling@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

@@ -102,6 +102,8 @@ public:
 
     QWKHistory* history() const;
 
+    void findZoomableAreaForPoint(const QPoint&);
+
 public:
     Q_SIGNAL void statusBarMessage(const QString&);
     Q_SIGNAL void titleChanged(const QString&);
@@ -115,6 +117,7 @@ public:
     Q_SIGNAL void cursorChanged(const QCursor&);
     Q_SIGNAL void viewportChangeRequested();
     Q_SIGNAL void windowCloseRequested();
+    Q_SIGNAL void zoomableAreaFound(const QRect&);
 
 protected:
     void timerEvent(QTimerEvent*);

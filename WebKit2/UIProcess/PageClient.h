@@ -59,6 +59,7 @@ public:
 #endif
 #if PLATFORM(QT)
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
+    virtual void didFindZoomableArea(const WebCore::IntRect&) = 0;
 #endif
 
     virtual void setCursor(const WebCore::Cursor&) = 0;

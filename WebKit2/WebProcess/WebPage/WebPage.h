@@ -268,6 +268,10 @@ private:
     void hideFindUI();
     void countStringMatches(const String&, bool caseInsensitive, uint32_t maxMatchCount);
 
+#if PLATFORM(QT)
+    void findZoomableAreaForPoint(const WebCore::IntPoint&);
+#endif
+
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
 
 #if ENABLE(CONTEXT_MENUS)
