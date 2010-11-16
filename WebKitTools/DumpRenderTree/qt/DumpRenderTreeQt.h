@@ -199,7 +199,6 @@ public:
 public slots:
     bool shouldInterruptJavaScript() { return false; }
     void requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
-    void checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy);
     void cancelPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
 
 protected:

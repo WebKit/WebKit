@@ -159,7 +159,6 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     setPluginFactory(new TestPlugin(this));
 
     connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(requestPermission(QWebFrame*, QWebPage::PermissionDomain)));
-    connect(this, SIGNAL(checkPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)), this, SLOT(checkPermission(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)));
     connect(this, SIGNAL(cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(cancelPermission(QWebFrame*, QWebPage::PermissionDomain)));
 }
 
@@ -236,20 +235,6 @@ void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain dom
         else
             m_pendingGeolocationRequests.append(frame);
         break;
-    default:
-        break;
-    }
-}
-
-void WebPage::checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy)
-{
-    switch (domain) {
-    case NotificationsPermissionDomain:
-        {
-        QUrl url = frame->url();
-        policy = m_drt->layoutTestController()->checkDesktopNotificationPermission(url.scheme() + "://" + url.host()) ? PermissionGranted : PermissionDenied;
-        break;
-        }
     default:
         break;
     }

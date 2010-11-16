@@ -51,7 +51,6 @@ WebPage::WebPage(QObject* parent)
     connect(networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
             this, SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
     connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(requestPermission(QWebFrame*, QWebPage::PermissionDomain)));
-    connect(this, SIGNAL(checkPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)), this, SLOT(checkPermission(QWebFrame*, QWebPage::PermissionDomain, QWebPage::PermissionPolicy&)));
     connect(this, SIGNAL(cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)));
 }
 
@@ -171,17 +170,6 @@ void WebPage::authenticationRequired(QNetworkReply* reply, QAuthenticator* authe
 void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain)
 {
     setUserPermission(frame, domain, PermissionGranted);
-}
-
-void WebPage::checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domain, QWebPage::PermissionPolicy& policy)
-{
-    switch (domain) {
-    case NotificationsPermissionDomain:
-        policy = PermissionGranted;
-        break;
-    default:
-        break;
-    }
 }
 
 void WebPage::cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)

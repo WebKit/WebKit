@@ -335,24 +335,13 @@ void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* co
 
 NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission(ScriptExecutionContext* context)
 {
-    QWebPage::PermissionPolicy policy = QWebPage::PermissionUnknown;
-    if (toPage(context) && toFrame(context))
-        emit toPage(context)->checkPermissionFromUser(toFrame(context), QWebPage::NotificationsPermissionDomain, policy);
-
-    switch (policy) {
-    case QWebPage::PermissionGranted:
-        return NotificationPresenter::PermissionAllowed;
-    case QWebPage::PermissionUnknown:
-        return NotificationPresenter::PermissionNotAllowed;
-    case QWebPage::PermissionDenied:
-        return NotificationPresenter::PermissionDenied;
-    }
-    ASSERT_NOT_REACHED();
-    return NotificationPresenter::PermissionNotAllowed;
+    return m_cachedPermissions.value(context, NotificationPresenter::PermissionNotAllowed);
 }
 
 void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
+    m_cachedPermissions.remove(context);
+
     QHash<ScriptExecutionContext*, CallbacksInfo >::iterator iter = m_pendingPermissionRequests.find(context);
     if (iter == m_pendingPermissionRequests.end())
         return;
@@ -372,11 +361,13 @@ void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionC
     emit page->cancelRequestsForPermission(frame, QWebPage::NotificationsPermissionDomain);
 }
 
-void NotificationPresenterClientQt::allowNotificationForFrame(QWebFrame* frame)
+void NotificationPresenterClientQt::allowNotificationForFrame(Frame* frame)
 {
+    m_cachedPermissions.insert(frame->document(), NotificationPresenter::PermissionAllowed);
+
     QHash<ScriptExecutionContext*,  CallbacksInfo>::iterator iter = m_pendingPermissionRequests.begin();
     while (iter != m_pendingPermissionRequests.end()) {
-        if (toFrame(iter.key()) == frame)
+        if (iter.key() == frame->document())
             break;
     }
 

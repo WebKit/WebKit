@@ -1,3 +1,20 @@
+2010-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove synchronous QWebPage::checkPermissions signal
+        https://bugs.webkit.org/show_bug.cgi?id=46810
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::grantDesktopNotificationPermission): When granting
+        permission, grant it directly on the QWebPage/Frame, that will remember it.
+        * QtTestBrowser/webpage.cpp:
+        (WebPage::WebPage):
+        * QtTestBrowser/webpage.h:
+
+
 2010-11-16  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

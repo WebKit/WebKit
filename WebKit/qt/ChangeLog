@@ -1,3 +1,26 @@
+2010-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove synchronous QWebPage::checkPermissions signal
+        https://bugs.webkit.org/show_bug.cgi?id=46810
+
+        As decided in the API review, we remove this signal and replace its only use currently
+        with cached credentials.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setUserPermission): Pass the WebCore frame instead of the QWebFrame.
+        * Api/qwebpage.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::checkPermission): Replaced explicit
+        signal emission with hash lookup of previously granted permission (or not).
+        (WebCore::NotificationPresenterClientQt::cancelRequestsForPermission): Remove
+        any previously cached/granted permission for the given script execution context.
+        (WebCore::NotificationPresenterClientQt::allowNotificationForFrame): Do not
+        only serve pending permission requests but before calling the JS callbacks, remember
+        the permission for subsequent synchronous checkPermission() calls.
+        * WebCoreSupport/NotificationPresenterClientQt.h: Add cache for permissions.
+
 2010-11-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY build fix.
