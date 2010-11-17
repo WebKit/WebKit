@@ -1,3 +1,14 @@
+2010-11-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Don't prohibit scrolling in tiled backing store mode.
+
+        We delegate scrolling instead.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2010-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Christiansen.
