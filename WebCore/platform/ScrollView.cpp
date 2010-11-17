@@ -845,10 +845,12 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->translate(x(), y());
     documentDirtyRect.move(-x(), -y());
 
-    context->translate(-scrollX(), -scrollY());
-    documentDirtyRect.move(scrollX(), scrollY());
+    if (!paintsEntireContents()) {
+        context->translate(-scrollX(), -scrollY());
+        documentDirtyRect.move(scrollX(), scrollY());
 
-    context->clip(visibleContentRect());
+        context->clip(visibleContentRect());
+    }
 
     paintContents(context, documentDirtyRect);
 
