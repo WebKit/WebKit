@@ -5056,6 +5056,7 @@
 		BCB773610C17853D00132BA4 /* JSNodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */; };
 		BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */; };
 		BCB773630C17853D00132BA4 /* JSNodeFilterCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */; };
+		BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB92D4E1293550B00C8387F /* FontBaseline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBCAE370FF19385000762AE /* DataGridDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCAE360FF19385000762AE /* DataGridDataSource.h */; };
 		BCBCAE3C0FF19399000762AE /* JSDataGridDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCAE3A0FF19399000762AE /* JSDataGridDataSource.cpp */; };
 		BCBCAE3D0FF19399000762AE /* JSDataGridDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCAE3B0FF19399000762AE /* JSDataGridDataSource.h */; };
@@ -11090,6 +11091,7 @@
 		BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCondition.cpp; sourceTree = "<group>"; };
 		BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilterCondition.h; sourceTree = "<group>"; };
 		BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
+		BCB92D4E1293550B00C8387F /* FontBaseline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontBaseline.h; sourceTree = "<group>"; };
 		BCBCAE360FF19385000762AE /* DataGridDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataGridDataSource.h; sourceTree = "<group>"; };
 		BCBCAE3A0FF19399000762AE /* JSDataGridDataSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataGridDataSource.cpp; sourceTree = "<group>"; };
 		BCBCAE3B0FF19399000762AE /* JSDataGridDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataGridDataSource.h; sourceTree = "<group>"; };
@@ -16683,6 +16685,7 @@
 				B2C3DA580D006CD600EF6F26 /* FontFamily.cpp */,
 				B2C3DA590D006CD600EF6F26 /* FontFamily.h */,
 				72626E010EF022FE00A07E20 /* FontFastPath.cpp */,
+				BCB92D4E1293550B00C8387F /* FontBaseline.h */,
 				F7A034C3126BF6BE007DC19E /* FontOrientation.h */,
 				37ACCE410DA2980F0089E602 /* FontRenderingMode.h */,
 				B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */,
@@ -21326,6 +21329,7 @@
 				499B3C59128C641E00E726C2 /* GraphicsLayerMac.h in Headers */,
 				08250939128BD4D800E2ED8E /* SVGAnimatedTransformList.h in Headers */,
 				3888F6EF128C9889000CA8E0 /* InspectorFileSystemAgent.h in Headers */,
+				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

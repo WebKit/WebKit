@@ -24,6 +24,7 @@
 #ifndef SimpleFontData_h
 #define SimpleFontData_h
 
+#include "FontBaseline.h"
 #include "FontData.h"
 #include "FontPlatformData.h"
 #include "FloatRect.h"
@@ -80,8 +81,9 @@ public:
     SimpleFontData* brokenIdeographFontData() const;
     
     // vertical metrics
-    int ascent() const { return m_ascent; }
-    int descent() const { return m_descent; }
+    int ascent(FontBaseline baselineType = AlphabeticBaseline) const { return baselineType == AlphabeticBaseline ? m_ascent : height() - height() / 2; }
+    int descent(FontBaseline baselineType = AlphabeticBaseline) const { return baselineType == AlphabeticBaseline ? m_descent : height() / 2; }
+    int height() const { return m_ascent + m_descent; }
     int lineSpacing() const { return m_lineSpacing; }
     int lineGap() const { return m_lineGap; }
     float maxCharWidth() const { return m_maxCharWidth; }

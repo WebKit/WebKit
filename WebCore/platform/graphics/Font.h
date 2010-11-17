@@ -127,8 +127,8 @@ public:
     bool isPlatformFont() const { return m_isPlatformFont; }
 
     // Metrics that we query the FontFallbackList for.
-    int ascent() const { return primaryFont()->ascent(); }
-    int descent() const { return primaryFont()->descent(); }
+    int ascent(FontBaseline baselineType = AlphabeticBaseline) const { return primaryFont()->ascent(baselineType); }
+    int descent(FontBaseline baselineType = AlphabeticBaseline) const { return primaryFont()->descent(baselineType); }
     int height() const { return ascent() + descent(); }
     int lineSpacing() const { return primaryFont()->lineSpacing(); }
     int lineGap() const { return primaryFont()->lineGap(); }
