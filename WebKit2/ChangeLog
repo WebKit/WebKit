@@ -1,3 +1,11 @@
+2010-11-17  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed buildfix.
+
+        [Qt] D'oh! I screwed up the dependencies.
+
+        * DerivedSources.pro:
+
 2010-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.

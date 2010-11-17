@@ -111,14 +111,14 @@ SCRIPTS = \
     $$PWD/Scripts/webkit2/messages.py
 
 ualist_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
-ualist_copier.depends = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
+ualist_copier.depends = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt
 ualist_copier.input = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt
 ualist_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
 generated_files.depends += ualist_copier
 QMAKE_EXTRA_TARGETS += ualist_copier
 
 qrc_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
-qrc_copier.depends = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
+qrc_copier.depends = ualist_copier $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
 qrc_copier.input = $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
 qrc_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
 generated_files.depends += qrc_copier
