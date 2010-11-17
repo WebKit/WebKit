@@ -1,3 +1,9 @@
+2010-11-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, specify IRC nickname in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-11-17  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Tony Chang.
