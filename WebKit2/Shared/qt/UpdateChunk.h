@@ -54,7 +54,7 @@ public:
     QImage createImage() const;
 
 private:
-    size_t size() const { return m_rect.width() * 4 * m_rect.height(); }
+    size_t size() const;
 
     WebCore::IntRect m_rect;
 

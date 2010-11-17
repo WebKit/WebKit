@@ -1,3 +1,19 @@
+2010-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Improve painting performance on 16-bit displays
+
+        When the default pixmap depth is 16-bit, then use RGB16 instead of
+        RGB32 for the chunks, to avoid unnecessary conversions and reduce
+        chunk size. The conversions happen as images as QPixmaps have 16-bit
+        depth and the tiles on the ui process are also backed by QPixmaps.
+
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::size):
+        (WebKit::UpdateChunk::createImage):
+        * Shared/qt/UpdateChunk.h:
+
 2010-11-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

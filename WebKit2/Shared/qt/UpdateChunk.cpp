@@ -33,6 +33,7 @@
 #include "WebCoreArgumentCoders.h"
 #include <QIODevice>
 #include <QImage>
+#include <QPixmap>
 #include <WebCore/FloatRect.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +41,6 @@ using namespace WebCore;
 using namespace std;
 
 namespace WebKit {
-
 
 UpdateChunk::UpdateChunk()
     : m_mappedMemory(0)
@@ -87,10 +87,32 @@ bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
     return true;
 }
 
+size_t UpdateChunk::size() const
+{
+    int bpp;
+    if (QPixmap::defaultDepth() == 16)
+        bpp = 2;
+    else
+        bpp = 4;
+
+    return ((m_rect.width() * bpp + 3) & ~0x3)
+           * m_rect.height();
+}
+
 QImage UpdateChunk::createImage() const
 {
     ASSERT(m_mappedMemory);
-    return QImage(m_mappedMemory->data(), m_rect.width(), m_rect.height(), m_rect.width() * 4, QImage::Format_RGB32);
+    QImage::Format format;
+    int bpp;
+    if (QPixmap::defaultDepth() == 16) {
+        format = QImage::Format_RGB16;
+        bpp = 2;
+    } else {
+        format = QImage::Format_RGB32;
+        bpp = 4;
+    }
+
+    return QImage(m_mappedMemory->data(), m_rect.width(), m_rect.height(), (m_rect.width() * bpp + 3) & ~0x3, format);
 }
 
 } // namespace WebKit
