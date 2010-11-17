@@ -36,6 +36,7 @@
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 
@@ -47,6 +48,38 @@ using namespace WTF;
 
 namespace WebCore {
 
+static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
+{
+    // Here we violate the spec (http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSPrimitiveValue) and allow conversions
+    // between CSS_PX and relative lengths (see cssPixelsPerInch comment in CSSHelper.h for the topic treatment).
+    switch (type) {
+    case CSSPrimitiveValue::CSS_NUMBER:
+        return CSSPrimitiveValue::UNumber;
+    case CSSPrimitiveValue::CSS_PERCENTAGE:
+        return CSSPrimitiveValue::UPercent;
+    case CSSPrimitiveValue::CSS_PX:
+    case CSSPrimitiveValue::CSS_CM:
+    case CSSPrimitiveValue::CSS_MM:
+    case CSSPrimitiveValue::CSS_IN:
+    case CSSPrimitiveValue::CSS_PT:
+    case CSSPrimitiveValue::CSS_PC:
+        return CSSPrimitiveValue::ULength;
+    case CSSPrimitiveValue::CSS_MS:
+    case CSSPrimitiveValue::CSS_S:
+        return CSSPrimitiveValue::UTime;
+    case CSSPrimitiveValue::CSS_DEG:
+    case CSSPrimitiveValue::CSS_RAD:
+    case CSSPrimitiveValue::CSS_GRAD:
+    case CSSPrimitiveValue::CSS_TURN:
+        return CSSPrimitiveValue::UAngle;
+    case CSSPrimitiveValue::CSS_HZ:
+    case CSSPrimitiveValue::CSS_KHZ:
+        return CSSPrimitiveValue::UFrequency;
+    default:
+        return CSSPrimitiveValue::UOther;
+    }
+}
+
 typedef HashMap<const CSSPrimitiveValue*, String> CSSTextCache;
 static CSSTextCache& cssTextCache()
 {
@@ -55,7 +88,7 @@ static CSSTextCache& cssTextCache()
 }
 
 // A more stylish solution than sharing would be to turn CSSPrimitiveValue (or CSSValues in general) into non-virtual,
-// non-refcounted simple type with value semantics. In practice these sharing tricks get similar memory benefits 
+// non-refcounted simple type with value semantics. In practice these sharing tricks get similar memory benefits
 // with less need for refactoring.
 
 inline PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::createUncachedIdentifier(int identifier)
@@ -415,11 +448,16 @@ void CSSPrimitiveValue::setFloatValue(unsigned short, double, ExceptionCode& ec)
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-static double scaleFactorForConversion(unsigned short unitType)
+static double conversionToCanonicalUnitsScaleFactor(unsigned short unitType)
 {
     double factor = 1.0;
+    // FIXME: the switch can be replaced by an array of scale factors.
     switch (unitType) {
+        // These are "canonical" units in their respective categories.
         case CSSPrimitiveValue::CSS_PX:
+        case CSSPrimitiveValue::CSS_DEG:
+        case CSSPrimitiveValue::CSS_MS:
+        case CSSPrimitiveValue::CSS_HZ:
             break;
         case CSSPrimitiveValue::CSS_CM:
             factor = cssPixelsPerInch / 2.54; // (2.54 cm/in)
@@ -436,6 +474,19 @@ static double scaleFactorForConversion(unsigned short unitType)
         case CSSPrimitiveValue::CSS_PC:
             factor = cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
             break;
+        case CSSPrimitiveValue::CSS_RAD:
+            factor = 180 / piDouble;
+            break;
+        case CSSPrimitiveValue::CSS_GRAD:
+            factor = 0.9;
+            break;
+        case CSSPrimitiveValue::CSS_TURN:
+            factor = 360;
+            break;
+        case CSSPrimitiveValue::CSS_S:
+        case CSSPrimitiveValue::CSS_KHZ:
+            factor = 1000;
+            break;
         default:
             break;
     }
@@ -443,51 +494,96 @@ static double scaleFactorForConversion(unsigned short unitType)
     return factor;
 }
 
-double CSSPrimitiveValue::getDoubleValue(unsigned short unitType, ExceptionCode& ec)
+double CSSPrimitiveValue::getDoubleValue(unsigned short unitType, ExceptionCode& ec) const
 {
-    ec = 0;
-    if (m_type < CSS_NUMBER || m_type > CSS_DIMENSION || unitType < CSS_NUMBER || unitType > CSS_DIMENSION) {
+    double result;
+    bool success = getDoubleValueInternal(static_cast<UnitTypes>(unitType), &result);
+    if (!success) {
         ec = INVALID_ACCESS_ERR;
         return 0.0;
     }
 
-    if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
-        return m_value.num;
-
-    double convertedValue = m_value.num;
-
-    // First convert the value from m_type into CSSPixels
-    double factor = scaleFactorForConversion(m_type);
-    convertedValue *= factor;
-
-    // Now convert from CSSPixels to the specified unitType
-    factor = scaleFactorForConversion(unitType);
-    convertedValue /= factor;
-
-    return convertedValue;
+    ec = 0;
+    return result;
 }
 
-double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
+double CSSPrimitiveValue::getDoubleValue(unsigned short unitType) const
 {
-    if (m_type < CSS_NUMBER || m_type > CSS_DIMENSION || unitType < CSS_NUMBER || unitType > CSS_DIMENSION)
-        return 0;
+    double result;
+    getDoubleValueInternal(static_cast<UnitTypes>(unitType), &result);
+    return result;
+}
 
-    if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
-        return m_value.num;
+CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(UnitCategory category)
+{
+    // The canonical unit type is chosen according to the way CSSParser::validUnit() chooses the default unit
+    // in each category (based on unitflags).
+    switch (category) {
+    case UNumber:
+        return CSS_NUMBER;
+    case ULength:
+        return CSS_PX;
+    case UPercent:
+        return CSS_UNKNOWN; // Cannot convert between numbers and percent.
+    case UTime:
+        return CSS_MS;
+    case UAngle:
+        return CSS_DEG;
+    case UFrequency:
+        return CSS_HZ;
+    default:
+        return CSS_UNKNOWN;
+    }
+}
+
+bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, double* result) const
+{
+    if (m_type < CSS_NUMBER || (m_type > CSS_DIMENSION && m_type < CSS_TURN) || requestedUnitType < CSS_NUMBER || (requestedUnitType > CSS_DIMENSION && requestedUnitType < CSS_TURN))
+        return false;
+    if (requestedUnitType == m_type || requestedUnitType == CSS_DIMENSION) {
+        *result = m_value.num;
+        return true;
+    }
+
+    UnitTypes sourceUnitType = static_cast<UnitTypes>(m_type);
+    UnitCategory sourceCategory = unitCategory(sourceUnitType);
+    ASSERT(sourceCategory != UOther);
+
+    UnitTypes targetUnitType = requestedUnitType;
+    UnitCategory targetCategory = unitCategory(targetUnitType);
+    ASSERT(targetCategory != UOther);
+
+    // Cannot convert between unrelated unit categories if one of them is not UNumber.
+    if (sourceCategory != targetCategory && sourceCategory != UNumber && targetCategory != UNumber)
+        return false;
+
+    if (targetCategory == UNumber) {
+        // We interpret conversion to CSS_NUMBER as conversion to a canonical unit in this value's category.
+        targetUnitType = canonicalUnitTypeForCategory(sourceCategory);
+        if (targetUnitType == CSS_UNKNOWN)
+            return false;
+    }
+
+    if (sourceUnitType == CSS_NUMBER) {
+        // We interpret conversion from CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
+        sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
+        if (sourceUnitType == CSS_UNKNOWN)
+            return false;
+    }
 
     double convertedValue = m_value.num;
 
-    // First convert the value from m_type into CSSPixels
-    double factor = scaleFactorForConversion(m_type);
+    // First convert the value from m_type to canonical type.
+    double factor = conversionToCanonicalUnitsScaleFactor(sourceUnitType);
     convertedValue *= factor;
 
-    // Now convert from CSSPixels to the specified unitType
-    factor = scaleFactorForConversion(unitType);
+    // Now convert from canonical type to the target unitType.
+    factor = conversionToCanonicalUnitsScaleFactor(targetUnitType);
     convertedValue /= factor;
 
-    return convertedValue;
+    *result = convertedValue;
+    return true;
 }
-
 
 void CSSPrimitiveValue::setStringValue(unsigned short, const String&, ExceptionCode& ec)
 {
@@ -587,7 +683,7 @@ bool CSSPrimitiveValue::parseString(const String& /*string*/, bool /*strict*/)
     return false;
 }
 
-int CSSPrimitiveValue::getIdent()
+int CSSPrimitiveValue::getIdent() const
 {
     if (m_type != CSS_IDENT)
         return 0;
