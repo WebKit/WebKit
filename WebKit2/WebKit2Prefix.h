@@ -109,4 +109,3 @@ static const type& name() \
 #endif
 
 #endif /* defined(WIN32) || defined(_WIN32) */
-
