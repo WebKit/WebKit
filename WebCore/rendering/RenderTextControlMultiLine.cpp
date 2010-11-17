@@ -94,9 +94,9 @@ void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(int lineHe
     setHeight(height() + lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows());
 }
 
-int RenderTextControlMultiLine::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
+    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 void RenderTextControlMultiLine::updateFromElement()

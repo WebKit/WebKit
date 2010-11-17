@@ -98,7 +98,7 @@ public:
 
     void paintBackgroundsBehindCell(PaintInfo&, int tx, int ty, RenderObject* backgroundObject);
 
-    virtual int baselinePosition(bool firstLine = false, LineDirectionMode = HorizontalLine, LinePositionMode = PositionOnContainingLine) const;
+    int baselinePosition() const;
 
     void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
     void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }

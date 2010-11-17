@@ -173,7 +173,7 @@ void RenderMathMLSubSup::layout()
     }    
 }
 
-int RenderMathMLSubSup::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     RenderObject* base = firstChild();
     if (!base) 
@@ -194,13 +194,13 @@ int RenderMathMLSubSup::baselinePosition(bool firstLine, LineDirectionMode direc
             // FIXME: The last bit of this calculation should be more exact.  Why is the 2-3px scaled for zoom necessary?
             // The baseline is top spacing of the base + the baseline of the base + adjusted space for zoom
             float zoomFactor = style()->effectiveZoom();
-            return topAdjust + box->baselinePosition(firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
+            return topAdjust + box->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
         }
         break;
     case Sup: 
     case Sub:
         RenderBoxModelObject* box = toRenderBoxModelObject(base);
-        baseline = box->baselinePosition(firstLine, direction, linePositionMode);
+        baseline = box->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
         break;
     }
     

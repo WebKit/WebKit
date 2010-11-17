@@ -167,7 +167,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     info.context->restore();
 }
 
-int RenderMathMLFraction::baselinePosition(bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
+int RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
 {
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
@@ -177,7 +177,7 @@ int RenderMathMLFraction::baselinePosition(bool firstLine, LineDirectionMode lin
         // a good guess.
         return numerator->offsetHeight() + style()->fontSize() / 3;
     }
-    return RenderBlock::baselinePosition(firstLine, lineDirection, linePositionMode);
+    return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
 }
 
 }

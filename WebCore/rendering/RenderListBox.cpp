@@ -238,9 +238,9 @@ void RenderListBox::computeLogicalHeight()
     }
 }
 
-int RenderListBox::baselinePosition(bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
+int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
 {
-    return RenderBox::baselinePosition(firstLine, lineDirection, linePositionMode) - baselineAdjustment;
+    return RenderBox::baselinePosition(baselineType, firstLine, lineDirection, linePositionMode) - baselineAdjustment;
 }
 
 IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)

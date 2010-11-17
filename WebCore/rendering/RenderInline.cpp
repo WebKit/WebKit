@@ -48,7 +48,6 @@ RenderInline::RenderInline(Node* node)
     : RenderBoxModelObject(node)
     , m_continuation(0)
     , m_lineHeight(-1)
-    , m_verticalPosition(PositionUndefined)
 {
     setChildrenInline(true);
 }
@@ -903,23 +902,10 @@ int RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, Li
     return m_lineHeight;
 }
 
-int RenderInline::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const Font& f = style(firstLine)->font();
-    return f.ascent() + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
-}
-
-int RenderInline::verticalPositionFromCache(bool firstLine) const
-{
-    if (firstLine) // We're only really a first-line style if the document actually uses first-line rules.
-        firstLine = document()->usesFirstLineRules();
-    int vpos = m_verticalPosition;
-    if (m_verticalPosition == PositionUndefined || firstLine) {
-        vpos = verticalPosition(firstLine);
-        if (!firstLine)
-            m_verticalPosition = vpos;
-    }
-    return vpos;
+    return f.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
 }
 
 IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const

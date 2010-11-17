@@ -119,15 +119,15 @@ void RenderMathMLRow::layout()
     
 }    
 
-int RenderMathMLRow::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderMathMLRow::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(firstChild());
         if (block->isRenderMathMLOperator())
-            return block->y() + block->baselinePosition(firstLine, direction, linePositionMode);
+            return block->y() + block->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
     }
     
-    return RenderBlock::baselinePosition(firstLine, direction, linePositionMode);
+    return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
 }
     
 }

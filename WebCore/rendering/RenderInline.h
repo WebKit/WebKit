@@ -77,9 +77,6 @@ public:
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
     void paintOutline(GraphicsContext*, int tx, int ty);
 
-    int verticalPositionFromCache(bool firstLine) const;
-    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
-
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -134,7 +131,7 @@ private:
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     
     virtual void childBecameNonInline(RenderObject* child);
 
@@ -159,7 +156,6 @@ private:
     RenderBoxModelObject* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
                                           // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
-    mutable int m_verticalPosition;
 };
 
 inline RenderInline* toRenderInline(RenderObject* object)

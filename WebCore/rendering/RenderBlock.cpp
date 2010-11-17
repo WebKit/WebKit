@@ -5257,7 +5257,7 @@ int RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, LinePos
     return m_lineHeight;
 }
 
-int RenderBlock::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // Inline blocks are replaced elements. Otherwise, just pass off to
     // the base class.  If we're being queried as though we're the root line
@@ -5286,11 +5286,11 @@ int RenderBlock::baselinePosition(bool firstLine, LineDirectionMode direction, L
         if (baselinePos != -1 && baselinePos <= bottomOfContent)
             return direction == HorizontalLine ? marginTop() + baselinePos : marginRight() + baselinePos;
             
-        return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
+        return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
     }
 
     const Font& f = style(firstLine)->font();
-    return f.ascent() + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
+    return f.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
 }
 
 int RenderBlock::firstLineBoxBaseline() const
@@ -5300,7 +5300,7 @@ int RenderBlock::firstLineBoxBaseline() const
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->logicalTop() + style(true)->font().ascent();
+            return firstLineBox()->logicalTop() + style(true)->font().ascent(firstRootBox()->baselineType());
         else
             return -1;
     }
@@ -5330,7 +5330,7 @@ int RenderBlock::lastLineBoxBaseline() const
             return f.ascent() + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - f.height()) / 2 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
         }
         if (lastLineBox())
-            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->font().ascent();
+            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->font().ascent(lastRootBox()->baselineType());
         return -1;
     } else {
         bool haveNormalFlowChild = false;

@@ -588,7 +588,7 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
     RenderStyle* style = textRenderer->style();
     ASSERT(style);
 
-    int baseline = baselinePosition();
+    int baseline = baselinePosition(AlphabeticBaseline);
     int heightDifference = baseline - style->font().ascent();
 
     unsigned textFragmentsSize = m_textFragments.size();

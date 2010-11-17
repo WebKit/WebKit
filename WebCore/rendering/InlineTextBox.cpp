@@ -43,11 +43,11 @@ using namespace std;
 
 namespace WebCore {
 
-int InlineTextBox::baselinePosition() const
+int InlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
     if (!isText() || !parent())
         return 0;
-    return parent()->baselinePosition();
+    return parent()->baselinePosition(baselineType);
 }
     
 int InlineTextBox::lineHeight() const

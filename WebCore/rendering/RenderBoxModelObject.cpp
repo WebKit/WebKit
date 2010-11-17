@@ -845,53 +845,6 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     destRect.intersect(IntRect(tx, ty, w, h));
 }
 
-int RenderBoxModelObject::verticalPosition(bool firstLine) const
-{
-    // This method determines the vertical position for inline elements.
-    ASSERT(isInline());
-    if (!isInline())
-        return 0;
-
-    int vpos = 0;
-    EVerticalAlign va = style()->verticalAlign();
-    if (va == TOP)
-        vpos = PositionTop;
-    else if (va == BOTTOM)
-        vpos = PositionBottom;
-    else {
-        bool checkParent = parent()->isRenderInline() && parent()->style()->verticalAlign() != TOP && parent()->style()->verticalAlign() != BOTTOM;
-        vpos = checkParent ? toRenderInline(parent())->verticalPositionFromCache(firstLine) : 0;
-        // don't allow elements nested inside text-top to have a different valignment.
-        if (va == BASELINE)
-            return vpos;
-
-        const Font& f = parent()->style(firstLine)->font();
-        int fontsize = f.pixelSize();
-
-        LineDirectionMode lineDirection = parent()->style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-
-        if (va == SUB)
-            vpos += fontsize / 5 + 1;
-        else if (va == SUPER)
-            vpos -= fontsize / 3 + 1;
-        else if (va == TEXT_TOP)
-            vpos += baselinePosition(firstLine, lineDirection) - f.ascent();
-        else if (va == MIDDLE)
-            vpos += -static_cast<int>(f.xHeight() / 2) - lineHeight(firstLine, lineDirection) / 2 + baselinePosition(firstLine, lineDirection);
-        else if (va == TEXT_BOTTOM) {
-            vpos += f.descent();
-            // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
-            if (!isReplaced() || style()->display() == INLINE_BLOCK)
-                vpos -= (lineHeight(firstLine, lineDirection) - baselinePosition(firstLine, lineDirection));
-        } else if (va == BASELINE_MIDDLE)
-            vpos += -lineHeight(firstLine, lineDirection) / 2 + baselinePosition(firstLine, lineDirection);
-        else if (va == LENGTH)
-            vpos -= style()->verticalAlignLength().calcValue(lineHeight(firstLine, lineDirection));
-    }
-
-    return vpos;
-}
-
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, int tx, int ty, int w, int h, const RenderStyle* style,
                                                const NinePieceImage& ninePieceImage, CompositeOperator op)
 {

@@ -1530,11 +1530,11 @@ int RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, Li
     return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 }
 
-int RenderListMarker::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderListMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem->baselinePosition(firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
+        return m_listItem->baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
+    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 String RenderListMarker::suffix() const
