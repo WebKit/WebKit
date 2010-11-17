@@ -88,6 +88,7 @@ QGraphicsWKView::QGraphicsWKView(WKPageNamespaceRef pageNamespaceRef, BackingSto
     connect(d->page, SIGNAL(initialLayoutCompleted()), this, SIGNAL(initialLayoutCompleted()));
     connect(d->page, SIGNAL(urlChanged(const QUrl&)), this, SIGNAL(urlChanged(const QUrl&)));
     connect(d->page, SIGNAL(cursorChanged(const QCursor&)), this, SLOT(updateCursor(const QCursor&)));
+    connect(d->page, SIGNAL(focusNextPrevChild(bool)), this, SLOT(focusNextPrevChildCallback(bool)));
 }
 
 QGraphicsWKView::~QGraphicsWKView()
@@ -166,6 +167,43 @@ void QGraphicsWKView::stop()
 void QGraphicsWKView::updateCursor(const QCursor& cursor)
 {
     setCursor(cursor);
+}
+
+class FriendlyWidget : public QWidget
+{
+public:
+    bool focusNextPrevChild(bool next);
+};
+
+void QGraphicsWKView::focusNextPrevChildCallback(bool next)
+{
+    if (hasFocus()) {
+        // find the view which has the focus:
+        QList<QGraphicsView*> views = scene()->views();
+        const int viewCount = views.count();
+        QGraphicsView* focusedView = 0;
+        for (int i = 0; i < viewCount; ++i) {
+            if (views[i]->hasFocus()) {
+                focusedView = views[i];
+                break;
+            }
+        }
+
+        if (focusedView) {
+            QWidget* window = focusedView->window();
+            FriendlyWidget* friendlyWindow = static_cast<FriendlyWidget*>(window);
+            friendlyWindow->focusNextPrevChild(next);
+        }
+    }
+}
+
+/*! \reimp
+*/
+bool QGraphicsWKView::focusNextPrevChild(bool next)
+{
+    QKeyEvent ev(QEvent::KeyPress, Qt::Key_Tab, Qt::KeyboardModifiers(next ? Qt::NoModifier : Qt::ShiftModifier));
+    page()->d->keyPressEvent(&ev);
+    return true;
 }
 
 /*! \reimp

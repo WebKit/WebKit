@@ -118,6 +118,7 @@ public:
     Q_SIGNAL void viewportChangeRequested();
     Q_SIGNAL void windowCloseRequested();
     Q_SIGNAL void zoomableAreaFound(const QRect&);
+    Q_SIGNAL void focusNextPrevChild(bool);
 
 protected:
     void timerEvent(QTimerEvent*);

@@ -98,6 +98,11 @@ void QWKPagePrivate::setViewportArguments(const ViewportArguments& args)
     emit q->viewportChangeRequested();
 }
 
+void QWKPagePrivate::takeFocus(bool direction)
+{
+    emit q->focusNextPrevChild(direction);
+}
+
 void QWKPagePrivate::pageDidRequestScroll(const IntSize& delta)
 {
     emit q->scrollRequested(delta.width(), delta.height());

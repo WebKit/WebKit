@@ -55,7 +55,7 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntRect&);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
-    virtual void takeFocus(bool direction) { }
+    virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
