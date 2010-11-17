@@ -31,60 +31,20 @@ class Element;
 class ScriptElement;
 class ScriptSourceCode;
 
-class ScriptElementData : private CachedResourceClient {
+class ScriptElement : private CachedResourceClient {
 public:
-    ScriptElementData(ScriptElement*, Element*, bool isEvaluated);
-    virtual ~ScriptElementData();
-
-    bool ignoresLoadRequest() const;
-    bool shouldExecuteAsJavaScript() const;
-
-    String scriptContent() const;
-    String scriptCharset() const;
-    bool isAsynchronous() const;
-    bool isDeferred() const;
-    bool isEvaluated() const { return m_isEvaluated; }
-
+    ScriptElement(Element*, bool createdByParser, bool isEvaluated);
+    virtual ~ScriptElement();
+    
     Element* element() const { return m_element; }
-    bool createdByParser() const { return m_createdByParser; }
-    void setCreatedByParser(bool value) { m_createdByParser = value; }
-    bool haveFiredLoadEvent() const { return m_firedLoad; }
-    void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
-
-    void requestScript(const String& sourceUrl);
-    void evaluateScript(const ScriptSourceCode&);
-    void executeScript(const ScriptSourceCode&);
-    void stopLoadRequest();
-
-    void execute(CachedScript*);
-
-private:
-    virtual void notifyFinished(CachedResource*);
-
-private:
-    ScriptElement* m_scriptElement;
-    Element* m_element;
-    CachedResourceHandle<CachedScript> m_cachedScript;
-    bool m_createdByParser; // HTML5: "parser-inserted"
-    bool m_requested;
-    bool m_isEvaluated; // HTML5: "already started"
-    bool m_firedLoad;
-};
-
-class ScriptElement {
-public:
-    ScriptElement(Element* element, bool createdByParser, bool isEvaluated)
-        : m_data(this, element, isEvaluated)
-    {
-        m_data.setCreatedByParser(createdByParser);
-    }
-    virtual ~ScriptElement() { }
 
     // A charset for loading the script (may be overridden by HTTP headers or a BOM).
     String scriptCharset() const;
+
     String scriptContent() const;
     bool shouldExecuteAsJavaScript() const;
     void executeScript(const ScriptSourceCode&);
+    void execute(CachedScript*);
 
     // XML parser calls these
     virtual String sourceAttributeValue() const = 0;
@@ -92,10 +52,10 @@ public:
     virtual void dispatchErrorEvent() = 0;
 
 protected:
-    bool haveFiredLoadEvent() const { return m_data.haveFiredLoadEvent(); }
-    void setHaveFiredLoadEvent(bool firedLoad) { return m_data.setHaveFiredLoadEvent(firedLoad); }
-    bool createdByParser() const { return m_data.createdByParser(); }
-    bool isEvaluated() const { return m_data.isEvaluated(); }
+    bool haveFiredLoadEvent() const { return m_firedLoad; }
+    void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
+    bool createdByParser() const { return m_createdByParser; }
+    bool isEvaluated() const { return m_isEvaluated; }
 
     // Helper functions used by our parent classes.
     void insertedIntoDocument(const String& sourceUrl);
@@ -105,6 +65,16 @@ protected:
     void handleSourceAttribute(const String& sourceUrl);
 
 private:
+    bool ignoresLoadRequest() const;
+    bool isAsynchronous() const;
+    bool isDeferred() const;
+
+    void requestScript(const String& sourceUrl);
+    void evaluateScript(const ScriptSourceCode&);
+    void stopLoadRequest();
+
+    virtual void notifyFinished(CachedResource*);
+
     virtual String charsetAttributeValue() const = 0;
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
@@ -113,9 +83,12 @@ private:
     virtual bool asyncAttributeValue() const = 0;
     virtual bool deferAttributeValue() const = 0;
 
-    friend class ScriptElementData;
-
-    ScriptElementData m_data;
+    Element* m_element;
+    CachedResourceHandle<CachedScript> m_cachedScript;
+    bool m_createdByParser; // HTML5: "parser-inserted"
+    bool m_requested;
+    bool m_isEvaluated; // HTML5: "already started"
+    bool m_firedLoad;
 };
 
 ScriptElement* toScriptElement(Element*);

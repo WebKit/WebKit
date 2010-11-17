@@ -51,78 +51,72 @@
 
 namespace WebCore {
 
-String ScriptElement::scriptCharset() const
+ScriptElement::ScriptElement(Element* element, bool createdByParser, bool isEvaluated)
+    : m_element(element)
+    , m_cachedScript(0)
+    , m_createdByParser(createdByParser)
+    , m_requested(false)
+    , m_isEvaluated(isEvaluated)
+    , m_firedLoad(false)
 {
-    return m_data.scriptCharset();
+    ASSERT(m_element);
 }
 
-String ScriptElement::scriptContent() const
+ScriptElement::~ScriptElement()
 {
-    return m_data.scriptContent();
-}
-
-bool ScriptElement::shouldExecuteAsJavaScript() const
-{
-    return m_data.shouldExecuteAsJavaScript();
-}
-
-void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
-{
-    m_data.executeScript(sourceCode);
+    stopLoadRequest();
 }
 
 void ScriptElement::insertedIntoDocument(const String& sourceUrl)
 {
-    if (m_data.createdByParser() && !m_data.isAsynchronous())
+    if (createdByParser() && !isAsynchronous())
         return;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script
 
     if (!sourceUrl.isEmpty()) {
-        m_data.requestScript(sourceUrl);
+        requestScript(sourceUrl);
         return;
     }
 
     // If there's an empty script node, we shouldn't evaluate the script
     // because if a script is inserted afterwards (by setting text or innerText)
     // it should be evaluated, and evaluateScript only evaluates a script once.
-    m_data.evaluateScript(ScriptSourceCode(m_data.scriptContent(), m_data.element()->document()->url())); // FIXME: Provide a real starting line number here.
+    evaluateScript(ScriptSourceCode(scriptContent(), element()->document()->url())); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::removedFromDocument()
 {
     // Eventually stop loading any not-yet-finished content
-    m_data.stopLoadRequest();
+    stopLoadRequest();
 }
 
 void ScriptElement::childrenChanged()
 {
-    if (m_data.createdByParser())
+    if (createdByParser())
         return;
-
-    Element* element = m_data.element();
 
     // If a node is inserted as a child of the script element
     // and the script element has been inserted in the document
     // we evaluate the script.
-    if (element->inDocument() && element->firstChild())
-        m_data.evaluateScript(ScriptSourceCode(m_data.scriptContent(), element->document()->url())); // FIXME: Provide a real starting line number here
+    if (m_element->inDocument() && m_element->firstChild())
+        evaluateScript(ScriptSourceCode(scriptContent(), m_element->document()->url())); // FIXME: Provide a real starting line number here
 }
 
 void ScriptElement::finishParsingChildren(const String& sourceUrl)
 {
     // The parser just reached </script>. If we have no src and no text,
     // allow dynamic loading later.
-    if (sourceUrl.isEmpty() && m_data.scriptContent().isEmpty())
-        m_data.setCreatedByParser(false);
+    if (sourceUrl.isEmpty() && scriptContent().isEmpty())
+        m_createdByParser = false;
 }
 
 void ScriptElement::handleSourceAttribute(const String& sourceUrl)
 {
-    if (m_data.ignoresLoadRequest() || sourceUrl.isEmpty())
+    if (ignoresLoadRequest() || sourceUrl.isEmpty())
         return;
 
-    m_data.requestScript(sourceUrl);
+    requestScript(sourceUrl);
 }
 
 // Helper function
@@ -149,26 +143,7 @@ static bool isSupportedJavaScriptLanguage(const String& language)
     return languages.contains(language);
 }
 
-// ScriptElementData
-ScriptElementData::ScriptElementData(ScriptElement* scriptElement, Element* element, bool isEvaluated)
-    : m_scriptElement(scriptElement)
-    , m_element(element)
-    , m_cachedScript(0)
-    , m_createdByParser(false)
-    , m_requested(false)
-    , m_isEvaluated(isEvaluated)
-    , m_firedLoad(false)
-{
-    ASSERT(m_scriptElement);
-    ASSERT(m_element);
-}
-
-ScriptElementData::~ScriptElementData()
-{
-    stopLoadRequest();
-}
-
-void ScriptElementData::requestScript(const String& sourceUrl)
+void ScriptElement::requestScript(const String& sourceUrl)
 {
     Document* document = m_element->document();
 
@@ -195,10 +170,10 @@ void ScriptElementData::requestScript(const String& sourceUrl)
         return;
     }
 
-    m_scriptElement->dispatchErrorEvent();
+    dispatchErrorEvent();
 }
 
-void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
+void ScriptElement::evaluateScript(const ScriptSourceCode& sourceCode)
 {
     if (m_isEvaluated || sourceCode.isEmpty() || !shouldExecuteAsJavaScript())
         return;
@@ -225,7 +200,7 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
     }
 }
 
-void ScriptElementData::executeScript(const ScriptSourceCode& sourceCode)
+void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
 {
     if (m_isEvaluated || sourceCode.isEmpty())
         return;
@@ -240,7 +215,7 @@ void ScriptElementData::executeScript(const ScriptSourceCode& sourceCode)
     frame->script()->executeScript(sourceCode);
 }
 
-void ScriptElementData::stopLoadRequest()
+void ScriptElement::stopLoadRequest()
 {
     if (m_cachedScript) {
         m_cachedScript->removeClient(this);
@@ -248,31 +223,31 @@ void ScriptElementData::stopLoadRequest()
     }
 }
 
-void ScriptElementData::execute(CachedScript* cachedScript)
+void ScriptElement::execute(CachedScript* cachedScript)
 {
     ASSERT(cachedScript);
     if (cachedScript->errorOccurred())
-        m_scriptElement->dispatchErrorEvent();
+        dispatchErrorEvent();
     else {
         evaluateScript(ScriptSourceCode(cachedScript));
-        m_scriptElement->dispatchLoadEvent();
+        dispatchLoadEvent();
     }
     cachedScript->removeClient(this);
 }
 
-void ScriptElementData::notifyFinished(CachedResource* o)
+void ScriptElement::notifyFinished(CachedResource* o)
 {
     ASSERT_UNUSED(o, o == m_cachedScript);
     m_element->document()->asyncScriptRunner()->executeScriptSoon(this, m_cachedScript);
     m_cachedScript = 0;
 }
 
-bool ScriptElementData::ignoresLoadRequest() const
+bool ScriptElement::ignoresLoadRequest() const
 {
     return m_isEvaluated || m_requested || m_createdByParser || !m_element->inDocument();
 }
 
-bool ScriptElementData::shouldExecuteAsJavaScript() const
+bool ScriptElement::shouldExecuteAsJavaScript() const
 {
     /*
          Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
@@ -283,20 +258,20 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
      
          FIXME: Is this HTML5 compliant?
      */
-    String type = m_scriptElement->typeAttributeValue();
+    String type = typeAttributeValue();
     if (!type.isEmpty()) {
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace().lower()))
             return false;
     } else {
-        String language = m_scriptElement->languageAttributeValue();
+        String language = languageAttributeValue();
         if (!language.isEmpty() && !isSupportedJavaScriptLanguage(language))
             return false;
     }    
 
     // No type or language is specified, so we assume the script to be JavaScript.
 
-    String forAttribute = m_scriptElement->forAttributeValue();
-    String eventAttribute = m_scriptElement->eventAttributeValue();
+    String forAttribute = forAttributeValue();
+    String eventAttribute = eventAttributeValue();
     if (!forAttribute.isEmpty() && !eventAttribute.isEmpty()) {
         forAttribute = forAttribute.stripWhiteSpace();
         if (!equalIgnoringCase(forAttribute, "window"))
@@ -310,10 +285,10 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
     return true;
 }
 
-String ScriptElementData::scriptCharset() const
+String ScriptElement::scriptCharset() const
 {
     // First we try to get encoding from charset attribute.
-    String charset = m_scriptElement->charsetAttributeValue().stripWhiteSpace();
+    String charset = charsetAttributeValue().stripWhiteSpace();
 
     // If charset has not been declared in script tag, fall back to frame encoding.
     if (charset.isEmpty()) {
@@ -324,7 +299,7 @@ String ScriptElementData::scriptCharset() const
     return charset;
 }
 
-String ScriptElementData::scriptContent() const
+String ScriptElement::scriptContent() const
 {
     Vector<UChar> val;
     Text* firstTextNode = 0;
@@ -351,18 +326,18 @@ String ScriptElementData::scriptContent() const
     return String::adopt(val);
 }
 
-bool ScriptElementData::isAsynchronous() const
+bool ScriptElement::isAsynchronous() const
 {
     // Only external scripts may be asynchronous.
     // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-async
-    return !m_scriptElement->sourceAttributeValue().isEmpty() && m_scriptElement->asyncAttributeValue();
+    return !sourceAttributeValue().isEmpty() && asyncAttributeValue();
 }
 
-bool ScriptElementData::isDeferred() const
+bool ScriptElement::isDeferred() const
 {
     // Only external scripts may be deferred and async trumps defer to allow for backward compatibility.
     // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-defer
-    return !m_scriptElement->sourceAttributeValue().isEmpty() && !m_scriptElement->asyncAttributeValue() && m_scriptElement->deferAttributeValue();
+    return !sourceAttributeValue().isEmpty() && !asyncAttributeValue() && deferAttributeValue();
 }
 
 ScriptElement* toScriptElement(Element* element)

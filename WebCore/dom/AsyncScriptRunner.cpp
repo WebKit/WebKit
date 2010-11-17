@@ -48,7 +48,7 @@ AsyncScriptRunner::~AsyncScriptRunner()
     }
 }
 
-void AsyncScriptRunner::executeScriptSoon(ScriptElementData* data, CachedResourceHandle<CachedScript> cachedScript)
+void AsyncScriptRunner::executeScriptSoon(ScriptElement* data, CachedResourceHandle<CachedScript> cachedScript)
 {
     ASSERT_ARG(data, data);
 
@@ -80,7 +80,7 @@ void AsyncScriptRunner::timerFired(Timer<AsyncScriptRunner>* timer)
 
     RefPtr<Document> protect(m_document);
     
-    Vector<pair<ScriptElementData*, CachedResourceHandle<CachedScript> > > scripts;
+    Vector<pair<ScriptElement*, CachedResourceHandle<CachedScript> > > scripts;
     scripts.swap(m_scriptsToExecuteSoon);
     size_t size = scripts.size();
     for (size_t i = 0; i < size; ++i) {

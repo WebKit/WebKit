@@ -36,14 +36,14 @@ namespace WebCore {
 
 class CachedScript;
 class Document;
-class ScriptElementData;
+class ScriptElement;
     
 class AsyncScriptRunner : public Noncopyable {
 public:
     static PassOwnPtr<AsyncScriptRunner> create(Document* document) { return new AsyncScriptRunner(document); }
     ~AsyncScriptRunner();
 
-    void executeScriptSoon(ScriptElementData*, CachedResourceHandle<CachedScript>);
+    void executeScriptSoon(ScriptElement*, CachedResourceHandle<CachedScript>);
     bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty(); }
     void suspend();
     void resume();
@@ -54,7 +54,7 @@ private:
     void timerFired(Timer<AsyncScriptRunner>*);
 
     Document* m_document;
-    Vector<std::pair<ScriptElementData*, CachedResourceHandle<CachedScript> > > m_scriptsToExecuteSoon;
+    Vector<std::pair<ScriptElement*, CachedResourceHandle<CachedScript> > > m_scriptsToExecuteSoon;
     Timer<AsyncScriptRunner> m_timer;
 };
 
