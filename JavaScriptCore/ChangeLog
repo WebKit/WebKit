@@ -1,3 +1,24 @@
+2010-11-17  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Extend YARR Interpreter with beginning character look-up optimization
+        https://bugs.webkit.org/show_bug.cgi?id=45751
+
+        Add beginning character look-up optimization which sets the start
+        index to the first possible successful pattern match.
+        Extend YARR Interpreter with lookupForBeginChars function which
+        implements the beginning character look-up optimization.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::InputStream::readPair):
+        (JSC::Yarr::Interpreter::InputStream::isNotAvailableInput):
+        (JSC::Yarr::Interpreter::lookupForBeginChars):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::interpret):
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+
 2010-11-17  Alexis Menard  <alexis.menard@nokia.com>, Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Christiansen, Tor Arne Vestbø.
