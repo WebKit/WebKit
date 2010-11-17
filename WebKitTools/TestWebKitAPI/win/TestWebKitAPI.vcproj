@@ -260,8 +260,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_CFLite|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;..\Configurations\TestWebKitAPICommon.vsprops;..\Configurations\TestWebKitAPICFLite.vsprops"
 			CharacterSet="1"
@@ -323,8 +321,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release_CFLite|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;..\Configurations\TestWebKitAPICommon.vsprops;..\Configurations\TestWebKitAPICFLite.vsprops"
 			CharacterSet="1"
@@ -387,8 +383,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release_LTCG|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;..\Configurations\TestWebKitAPICommon.vsprops;..\Configurations\TestWebKitAPICoreFoundation.vsprops"
 			CharacterSet="1"
