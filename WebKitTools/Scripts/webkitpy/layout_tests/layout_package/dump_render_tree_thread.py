@@ -74,7 +74,7 @@ def log_stack(stack):
             _log.error('  %s' % line.strip())
 
 
-def _process_output(port, options, test_info, test_types, test_args,
+def _process_output(port, options, test_input, test_types, test_args,
                     crash, timeout, test_run_time, actual_checksum,
                     output, error):
     """Receives the output from a DumpRenderTree process, subjects it to a
@@ -84,7 +84,7 @@ def _process_output(port, options, test_info, test_types, test_args,
       port: port-specific hooks
       options: command line options argument from optparse
       proc: an active DumpRenderTree process
-      test_info: Object containing the test filename, uri and timeout
+      test_input: Object containing the test filename, uri and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
 
@@ -104,12 +104,12 @@ def _process_output(port, options, test_info, test_types, test_args,
         failures.append(test_failures.FailureTimeout())
 
     if crash:
-        _log.debug("Stacktrace for %s:\n%s" % (test_info.filename, error))
+        _log.debug("Stacktrace for %s:\n%s" % (test_input.filename, error))
         # Strip off "file://" since RelativeTestFilename expects
         # filesystem paths.
         filename = os.path.join(options.results_directory,
                                 port.relative_test_filename(
-                                test_info.filename))
+                                test_input.filename))
         filename = os.path.splitext(filename)[0] + "-stack.txt"
         port.maybe_make_directory(os.path.split(filename)[0])
         with codecs.open(filename, "wb", "utf-8") as file:
@@ -122,7 +122,7 @@ def _process_output(port, options, test_info, test_types, test_args,
     time_for_diffs = {}
     for test_type in test_types:
         start_diff_time = time.time()
-        new_failures = test_type.compare_output(port, test_info.filename,
+        new_failures = test_type.compare_output(port, test_input.filename,
                                                 output, local_test_args,
                                                 options.configuration)
         # Don't add any more failures if we already have a crash, so we don't
@@ -134,7 +134,7 @@ def _process_output(port, options, test_info, test_types, test_args,
             time.time() - start_diff_time)
 
     total_time_for_all_diffs = time.time() - start_diff_time
-    return test_results.TestResult(test_info.filename, failures, test_run_time,
+    return test_results.TestResult(test_input.filename, failures, test_run_time,
                                    total_time_for_all_diffs, time_for_diffs)
 
 
@@ -153,22 +153,19 @@ def _milliseconds_to_seconds(msecs):
     return float(msecs) / 1000.0
 
 
-def _image_hash(test_info, test_args, options):
-    """Returns the image hash of the test if it's needed, otherwise None."""
-    if (test_args.new_baseline or test_args.reset_results or not options.pixel_tests):
-        return None
-    return test_info.image_hash()
+def _should_fetch_expected_checksum(options):
+    return options.pixel_tests and not (options.new_baseline or options.reset_results)
 
 
 class SingleTestThread(threading.Thread):
     """Thread wrapper for running a single test file."""
 
-    def __init__(self, port, options, test_info, test_types, test_args):
+    def __init__(self, port, options, test_input, test_types, test_args):
         """
         Args:
           port: object implementing port-specific hooks
           options: command line argument object from optparse
-          test_info: Object containing the test filename, uri and timeout
+          test_input: Object containing the test filename, uri and timeout
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
@@ -177,7 +174,7 @@ class SingleTestThread(threading.Thread):
         threading.Thread.__init__(self)
         self._port = port
         self._options = options
-        self._test_info = test_info
+        self._test_input = test_input
         self._test_types = test_types
         self._test_args = test_args
         self._driver = None
@@ -188,18 +185,23 @@ class SingleTestThread(threading.Thread):
     def _covered_run(self):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
-        test_info = self._test_info
+
+        # FIXME: Pull this into TestShellThread._run().
+        test_input = self._test_input
+        test_input.uri = self._port.filename_to_uri(test_input.filename)
+        if _should_fetch_expected_checksum(self._options):
+            test_input.image_checksum = self._port.expected_checksum(test_input.filename)
+
+        start = time.time()
         self._driver = self._port.create_driver(self._test_args.png_path,
                                                 self._options)
         self._driver.start()
-        image_hash = _image_hash(test_info, self._test_args, self._options)
-        start = time.time()
         crash, timeout, actual_checksum, output, error = \
-            self._driver.run_test(test_info.uri.strip(), test_info.timeout,
-                                  image_hash)
+            self._driver.run_test(test_input.uri, test_input.timeout,
+                                  test_input.image_checksum)
         end = time.time()
         self._test_result = _process_output(self._port, self._options,
-            test_info, self._test_types, self._test_args,
+            test_input, self._test_types, self._test_args,
             crash, timeout, end - start,
             actual_checksum, output, error)
         self._driver.stop()
@@ -258,7 +260,6 @@ class TestShellThread(WatchableThread):
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
-
         """
         WatchableThread.__init__(self)
         self._port = port
@@ -402,17 +403,17 @@ class TestShellThread(WatchableThread):
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
 
-            test_info = self._filename_list.pop()
+            test_input = self._filename_list.pop()
 
             # We have a url, run tests.
             batch_count += 1
             self._num_tests += 1
             if self._options.run_singly:
-                result = self._run_test_singly(test_info)
+                result = self._run_test_singly(test_input)
             else:
-                result = self._run_test(test_info)
+                result = self._run_test(test_input)
 
-            filename = test_info.filename
+            filename = test_input.filename
             tests_run_file.write(filename + "\n")
             if result.failures:
                 # Check and kill DumpRenderTree if we need to.
@@ -440,7 +441,7 @@ class TestShellThread(WatchableThread):
             if test_runner:
                 test_runner.update_summary(result_summary)
 
-    def _run_test_singly(self, test_info):
+    def _run_test_singly(self, test_input):
         """Run a test in a separate thread, enforcing a hard time limit.
 
         Since we can only detect the termination of a thread, not any internal
@@ -448,7 +449,7 @@ class TestShellThread(WatchableThread):
         files singly.
 
         Args:
-          test_info: Object containing the test filename, uri and timeout
+          test_input: Object containing the test filename, uri and timeout
 
         Returns:
           A TestResult
@@ -456,14 +457,14 @@ class TestShellThread(WatchableThread):
         """
         worker = SingleTestThread(self._port,
                                   self._options,
-                                  test_info,
+                                  test_input,
                                   self._test_types,
                                   self._test_args)
 
         worker.start()
 
         thread_timeout = _milliseconds_to_seconds(
-            _pad_timeout(int(test_info.timeout)))
+            _pad_timeout(int(test_input.timeout)))
         thread._next_timeout = time.time() + thread_timeout
         worker.join(thread_timeout)
         if worker.isAlive():
@@ -485,17 +486,17 @@ class TestShellThread(WatchableThread):
             # This gets raised if the worker thread has already exited.
             failures = []
             _log.error('Cannot get results of test: %s' %
-                       test_info.filename)
-            result = test_results.TestResult(test_info.filename, failures=[],
+                       test_input.filename)
+            result = test_results.TestResult(test_input.filename, failures=[],
                 test_run_time=0, total_time_for_all_diffs=0, time_for_diffs=0)
 
         return result
 
-    def _run_test(self, test_info):
+    def _run_test(self, test_input):
         """Run a single test file using a shared DumpRenderTree process.
 
         Args:
-          test_info: Object containing the test filename, uri and timeout
+          test_input: Object containing the test filename, uri and timeout
 
         Returns: a TestResult object.
         """
@@ -504,19 +505,23 @@ class TestShellThread(WatchableThread):
         # checksums match, so it should be set to a blank value if we
         # are generating a new baseline.  (Otherwise, an image from a
         # previous run will be copied into the baseline.)
-        image_hash = _image_hash(test_info, self._test_args, self._options)
+
+        # FIXME: Pull this into TestShellThread._run().
+        test_input.uri = self._port.filename_to_uri(test_input.filename)
+        if _should_fetch_expected_checksum(self._options):
+            test_input.image_checksum = self._port.expected_checksum(test_input.filename)
         start = time.time()
 
         thread_timeout = _milliseconds_to_seconds(
-             _pad_timeout(int(test_info.timeout)))
+             _pad_timeout(int(test_input.timeout)))
         self._next_timeout = start + thread_timeout
 
         crash, timeout, actual_checksum, output, error = \
-           self._driver.run_test(test_info.uri, test_info.timeout, image_hash)
+           self._driver.run_test(test_input.uri, test_input.timeout, test_input.image_checksum)
         end = time.time()
 
         result = _process_output(self._port, self._options,
-                                 test_info, self._test_types,
+                                 test_input, self._test_types,
                                  self._test_args, crash,
                                  timeout, end - start, actual_checksum,
                                  output, error)

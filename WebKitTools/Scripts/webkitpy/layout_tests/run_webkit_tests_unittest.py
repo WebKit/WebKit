@@ -380,6 +380,9 @@ class RebaselineTest(unittest.TestCase):
             baseline = file + "-expected" + ext
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
 
+    # FIXME: Add tests to ensure that we're *not* writing baselines when we're not
+    # supposed to be.
+
     def disabled_test_reset_results(self):
         # FIXME: This test is disabled until we can rewrite it to use a
         # mock filesystem.
@@ -426,7 +429,7 @@ class RebaselineTest(unittest.TestCase):
 
 
 class TestRunnerWrapper(run_webkit_tests.TestRunner):
-    def _get_test_info_for_file(self, test_file):
+    def _get_test_input_for_file(self, test_file):
         return test_file
 
 

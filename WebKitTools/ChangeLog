@@ -1,3 +1,19 @@
+2010-11-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: rename TestInfo to TestInput, move image hash to work thread
+
+        Rename the TestInfo class to TestInput to be clearer about its
+        function, and move the checksum-reading code into dump_render_tree_thread
+        to avoid cross-thread access.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49573
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-11-16  Dave Hyatt  <hyatt@apple.com>
 
         Fix bustage. Remove the minimum font size pref setting in DumpRenderTree.
