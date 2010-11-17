@@ -50,13 +50,15 @@ namespace JSC {
         unsigned profileGroup() const { return m_profileGroup; }
 
         // Collecting
-        void willExecute(const CallIdentifier&);
-        void didExecute(const CallIdentifier&);
+        void willExecute(ExecState* exec, const CallIdentifier&);
+        void didExecute(ExecState* exec, const CallIdentifier&);
+
+        void exceptionUnwind(ExecState* exec, const CallIdentifier&);
 
         // Stopping Profiling
         void stopProfiling();
 
-        typedef void (ProfileGenerator::*ProfileFunction)(const CallIdentifier& callIdentifier);
+        typedef void (ProfileGenerator::*ProfileFunction)(ExecState* exec, const CallIdentifier& callIdentifier);
 
     private:
         ProfileGenerator(const UString& title, ExecState* originatingExec, unsigned uid);

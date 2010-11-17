@@ -326,8 +326,6 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
     : m_argumentsNode(argumentsNode)
 {
-    if (generator.shouldEmitProfileHooks())
-        m_profileHookRegister = generator.newTemporary();
     m_argv.append(generator.newTemporary());
     if (argumentsNode) {
         for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next) {

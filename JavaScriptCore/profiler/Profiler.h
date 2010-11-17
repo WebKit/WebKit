@@ -57,10 +57,14 @@ namespace JSC {
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
 
-        void willExecute(ExecState*, JSValue function);
-        void willExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
-        void didExecute(ExecState*, JSValue function);
-        void didExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
+        // Called for program code and eval.
+        void willEvaluate(ExecState*, const UString& sourceURL, int startingLineNumber);
+        void didEvaluate(ExecState*, const UString& sourceURL, int startingLineNumber);
+
+        void hasCalled(ExecState*);
+        void willReturn(ExecState*);
+
+        void exceptionUnwind(ExecState*);
 
         const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };
 

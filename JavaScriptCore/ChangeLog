@@ -1,3 +1,93 @@
+2010-11-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 49635 - Profiler implementation is fragile
+
+        The profile presently requires the exception handling mechanism to explicitly
+        remove all stack frames that are exited during the exception unwind mechanism.
+        This is fragile in a number of ways:
+          * We have to change bytecode register allocation when compiling code to run
+            when profiling, to preserve the callee function (this is also required to
+            call did_call after the call has returned).
+          * In the JIT we have to maintain additional data structures
+            (CodeBlock::RareData::m_functionRegisterInfos) to map back to the register
+            containing the callee.
+          * In the interpreter we use 'magic values' to offset into the instruction
+            stream to rediscover the register containing the function.
+
+        Instead, move profiling into the head and tail of functions.
+          * This correctly accounts the cost of the call itself to the caller.
+          * This allows us to access the callee function object from the callframe.
+          * This means that at the point a call is made we can track the stack depth
+            on the ProfileNode.
+          * When unwinding we can simply report the depth at which the exception is
+            being handled - all call frames above this level are freed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::methodCallLinkInfo):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::count):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        * interpreter/Interpreter.cpp:
+        (JSC::ProfileHostCall::ProfileHostCall):
+        (JSC::ProfileHostCall::~ProfileHostCall):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_has_called):
+        (JSC::JIT::emit_op_profile_will_return):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_has_called):
+        (JSC::JIT::emit_op_profile_will_return):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * profiler/Profile.cpp:
+        (JSC::Profile::Profile):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        (JSC::ProfileGenerator::exceptionUnwind):
+        (JSC::ProfileGenerator::stopProfiling):
+        * profiler/ProfileGenerator.h:
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::ProfileNode):
+        (JSC::ProfileNode::willExecute):
+        * profiler/ProfileNode.h:
+        (JSC::ProfileNode::create):
+        (JSC::ProfileNode::operator==):
+        (JSC::ProfileNode::exec):
+        * profiler/Profiler.cpp:
+        (JSC::dispatchFunctionToProfiles):
+        (JSC::Profiler::hasCalled):
+        (JSC::Profiler::willEvaluate):
+        (JSC::Profiler::willReturn):
+        (JSC::Profiler::didEvaluate):
+        (JSC::Profiler::exceptionUnwind):
+        * profiler/Profiler.h:
+
 2010-11-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben and Steve Falkenburg.

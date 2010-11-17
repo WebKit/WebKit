@@ -1635,24 +1635,22 @@ void JIT::emitSlow_op_convert_this_strict(Instruction* currentInstruction, Vecto
     stubCall.call(thisRegister);
 }
 
-void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
+void JIT::emit_op_profile_has_called(Instruction*)
 {
     peek(regT2, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT2));
 
-    JITStubCall stubCall(this, cti_op_profile_will_call);
-    stubCall.addArgument(currentInstruction[1].u.operand);
+    JITStubCall stubCall(this, cti_op_profile_has_called);
     stubCall.call();
     noProfiler.link(this);
 }
 
-void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
+void JIT::emit_op_profile_will_return(Instruction*)
 {
     peek(regT2, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT2));
 
-    JITStubCall stubCall(this, cti_op_profile_did_call);
-    stubCall.addArgument(currentInstruction[1].u.operand);
+    JITStubCall stubCall(this, cti_op_profile_will_return);
     stubCall.call();
     noProfiler.link(this);
 }

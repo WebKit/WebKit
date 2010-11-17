@@ -37,6 +37,7 @@
 
 namespace JSC {
 
+    class ExecState;
     class ProfileNode;
 
     typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
@@ -44,23 +45,24 @@ namespace JSC {
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
+        static PassRefPtr<ProfileNode> create(ExecState* exec, const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
         {
-            return adoptRef(new ProfileNode(callIdentifier, headNode, parentNode));
+            return adoptRef(new ProfileNode(exec, callIdentifier, headNode, parentNode));
         }
-        static PassRefPtr<ProfileNode> create(ProfileNode* headNode, ProfileNode* node)
+        static PassRefPtr<ProfileNode> create(ExecState* exec, ProfileNode* headNode, ProfileNode* node)
         {
-            return adoptRef(new ProfileNode(headNode, node));
+            return adoptRef(new ProfileNode(exec, headNode, node));
         }
 
-        bool operator==(ProfileNode* node) { return m_callIdentifier == node->callIdentifier(); }
+        bool operator==(ProfileNode* node) { return m_exec == node->m_exec && m_callIdentifier == node->callIdentifier(); }
 
-        ProfileNode* willExecute(const CallIdentifier&);
+        ProfileNode* willExecute(ExecState* exec, const CallIdentifier&);
         ProfileNode* didExecute();
 
         void stopProfiling();
 
         // CallIdentifier members
+        const ExecState* exec() const { return m_exec; }
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
         const UString& functionName() const { return m_callIdentifier.m_name; }
         const UString& url() const { return m_callIdentifier.m_url; }
@@ -128,8 +130,8 @@ namespace JSC {
 #endif
 
     private:
-        ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
-        ProfileNode(ProfileNode* headNode, ProfileNode* nodeToCopy);
+        ProfileNode(ExecState* exec, const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
+        ProfileNode(ExecState* exec, ProfileNode* headNode, ProfileNode* nodeToCopy);
 
         void startTimer();
         void resetChildrensSiblings();
@@ -147,6 +149,7 @@ namespace JSC {
         static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() > b->functionName(); }
         static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() < b->functionName(); }
 
+        ExecState* m_exec;
         CallIdentifier m_callIdentifier;
         ProfileNode* m_head;
         ProfileNode* m_parent;

@@ -76,6 +76,27 @@ using namespace std;
 
 namespace JSC {
 
+class ProfileHostCall {
+public:
+    ProfileHostCall(ExecState* exec)
+        : m_profiler(Profiler::enabledProfilerReference())
+        , m_exec(exec)
+    {
+        if (*m_profiler)
+            (*m_profiler)->hasCalled(exec);
+    }
+
+    ~ProfileHostCall()
+    {
+        if (*m_profiler)
+            (*m_profiler)->willReturn(m_exec);
+    }
+
+private:
+    Profiler** m_profiler;
+    ExecState* m_exec;
+};
+
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChain& sc)
 {
@@ -558,13 +579,6 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->lastLine());
     }
 
-    if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-        if (callFrame->callee())
-            profiler->didExecute(callFrame, callFrame->callee());
-        else
-            profiler->didExecute(callFrame, codeBlock->ownerExecutable()->sourceURL(), codeBlock->ownerExecutable()->lineNo());
-    }
-
     // If this call frame created an activation or an 'arguments' object, tear it off.
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
         if (!callFrame->r(oldCodeBlock->activationRegister()).jsValue()) {
@@ -657,9 +671,10 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset, bool explicitThrow)
 {
-    // Set up the exception object
-
     CodeBlock* codeBlock = callFrame->codeBlock();
+    bool isInterrupt = false;
+
+    // Set up the exception object
     if (exceptionValue.isObject()) {
         JSObject* exception = asObject(exceptionValue);
         if (!explicitThrow && exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->appendSourceToMessage())
@@ -671,12 +686,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
             addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), codeBlock->ownerExecutable()->source());
 
         ComplType exceptionType = exception->exceptionType();
-        if (exceptionType == Interrupted || exceptionType == Terminated) {
-            while (unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
-                // Don't need handler checks or anything, we just want to unroll all the JS callframes possible.
-            }
-            return 0;
-        }
+        isInterrupt = exceptionType == Interrupted || exceptionType == Terminated;
     }
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
@@ -685,38 +695,18 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         debugger->exception(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), hasHandler);
     }
 
-    // If we throw in the middle of a call instruction, we need to notify
-    // the profiler manually that the call instruction has returned, since
-    // we'll never reach the relevant op_profile_did_call.
-    if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-#if ENABLE(INTERPRETER)
-        if (!callFrame->globalData().canUseJIT()) {
-            // FIXME: Why 8? - work out what this magic value is, replace the constant with something more helpful.
-            if (isCallBytecode(codeBlock->instructions()[bytecodeOffset].u.opcode))
-                profiler->didExecute(callFrame, callFrame->r(codeBlock->instructions()[bytecodeOffset + 1].u.operand).jsValue());
-            else if (codeBlock->instructions().size() > (bytecodeOffset + 8) && codeBlock->instructions()[bytecodeOffset + 8].u.opcode == getOpcode(op_construct))
-                profiler->didExecute(callFrame, callFrame->r(codeBlock->instructions()[bytecodeOffset + 9].u.operand).jsValue());
-        }
-#if ENABLE(JIT)
-        else
-#endif
-#endif
-#if ENABLE(JIT)
-        {
-            int functionRegisterIndex;
-            if (codeBlock->functionRegisterForBytecodeOffset(bytecodeOffset, functionRegisterIndex))
-                profiler->didExecute(callFrame, callFrame->r(functionRegisterIndex).jsValue());
-        }
-#endif
-    }
-
     // Calculate an exception handler vPC, unwinding call frames as necessary.
-
     HandlerInfo* handler = 0;
-    while (!(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-        if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock))
+    while (isInterrupt || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+        if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
+            if (Profiler* profiler = *Profiler::enabledProfilerReference())
+                profiler->exceptionUnwind(callFrame);
             return 0;
+        }
     }
+
+    if (Profiler* profiler = *Profiler::enabledProfilerReference())
+        profiler->exceptionUnwind(callFrame);
 
     // Shrink the JS stack, in case stack overflow made it huge.
     Register* highWaterMark = 0;
@@ -789,7 +779,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, program->sourceURL(), program->lineNo());
+        (*profiler)->willEvaluate(newCallFrame, program->sourceURL(), program->lineNo());
 
     JSValue result;
     {
@@ -807,7 +797,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     }
 
     if (*profiler)
-        (*profiler)->didExecute(callFrame, program->sourceURL(), program->lineNo());
+        (*profiler)->didEvaluate(callFrame, program->sourceURL(), program->lineNo());
 
     if (m_reentryDepth && lastGlobalObject && globalObject != lastGlobalObject)
         lastGlobalObject->copyGlobalsTo(m_registerFile);
@@ -858,10 +848,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
         DynamicGlobalObjectScope globalObjectScope(newCallFrame, callDataScopeChain->globalObject);
 
-        Profiler** profiler = Profiler::enabledProfilerReference();
-        if (*profiler)
-            (*profiler)->willExecute(newCallFrame, function);
-
         JSValue result;
         {
             SamplingTool::CallRecord callRecord(m_sampler.get());
@@ -876,9 +862,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
             m_reentryDepth--;
         }
 
-        if (*profiler)
-            (*profiler)->didExecute(newCallFrame, function);
-
         m_registerFile.shrink(oldEnd);
         return checkedReturn(result);
     }
@@ -890,18 +873,12 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject);
 
-    Profiler** profiler = Profiler::enabledProfilerReference();
-    if (*profiler)
-        (*profiler)->willExecute(newCallFrame, function);
-
     JSValue result;
     {
+        ProfileHostCall profileHostCall(newCallFrame);
         SamplingTool::HostCallRecord callRecord(m_sampler.get());
         result = JSValue::decode(callData.native.function(newCallFrame));
     }
-
-    if (*profiler)
-        (*profiler)->didExecute(newCallFrame, function);
 
     m_registerFile.shrink(oldEnd);
     return checkedReturn(result);
@@ -947,10 +924,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
         DynamicGlobalObjectScope globalObjectScope(newCallFrame, constructDataScopeChain->globalObject);
 
-        Profiler** profiler = Profiler::enabledProfilerReference();
-        if (*profiler)
-            (*profiler)->willExecute(newCallFrame, constructor);
-
         JSValue result;
         {
             SamplingTool::CallRecord callRecord(m_sampler.get());
@@ -964,9 +937,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
                 result = privateExecute(Normal, &m_registerFile, newCallFrame);
             m_reentryDepth--;
         }
-
-        if (*profiler)
-            (*profiler)->didExecute(newCallFrame, constructor);
 
         m_registerFile.shrink(oldEnd);
         if (callFrame->hadException())
@@ -982,18 +952,12 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject);
 
-    Profiler** profiler = Profiler::enabledProfilerReference();
-    if (*profiler)
-        (*profiler)->willExecute(newCallFrame, constructor);
-
     JSValue result;
     {
+        ProfileHostCall profileHostCall(newCallFrame);
         SamplingTool::HostCallRecord callRecord(m_sampler.get());
         result = JSValue::decode(constructData.native.function(newCallFrame));
     }
-
-    if (*profiler)
-        (*profiler)->didExecute(newCallFrame, constructor);
 
     m_registerFile.shrink(oldEnd);
     if (callFrame->hadException())
@@ -1048,9 +1012,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
 JSValue Interpreter::execute(CallFrameClosure& closure) 
 {
     closure.resetCallFrame();
-    Profiler** profiler = Profiler::enabledProfilerReference();
-    if (*profiler)
-        (*profiler)->willExecute(closure.oldCallFrame, closure.function);
     
     JSValue result;
     {
@@ -1072,8 +1033,6 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
         m_reentryDepth--;
     }
     
-    if (*profiler)
-        (*profiler)->didExecute(closure.oldCallFrame, closure.function);
     return checkedReturn(result);
 }
 
@@ -1159,7 +1118,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, eval->sourceURL(), eval->lineNo());
+        (*profiler)->willEvaluate(newCallFrame, eval->sourceURL(), eval->lineNo());
 
     JSValue result;
     {
@@ -1183,7 +1142,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     }
 
     if (*profiler)
-        (*profiler)->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
+        (*profiler)->didEvaluate(callFrame, eval->sourceURL(), eval->lineNo());
 
     m_registerFile.shrink(oldEnd);
     if (pushedScope)
@@ -3930,6 +3889,7 @@ skip_id_custom_self:
 
             JSValue returnValue;
             {
+                ProfileHostCall profileHostCall(newCallFrame);
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(callData.native.function(newCallFrame));
             }
@@ -4088,6 +4048,7 @@ skip_id_custom_self:
             
             JSValue returnValue;
             {
+                ProfileHostCall profileHostCall(newCallFrame);
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(callData.native.function(newCallFrame));
             }
@@ -4433,6 +4394,7 @@ skip_id_custom_self:
 
             JSValue returnValue;
             {
+                ProfileHostCall profileHostCall(newCallFrame);
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(constructData.native.function(newCallFrame));
             }
@@ -4770,32 +4732,28 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_debug);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_profile_will_call) {
-        /* op_profile_will_call function(r)
+    DEFINE_OPCODE(op_profile_has_called) {
+        /* op_profile_has_called
 
          Notifies the profiler of the beginning of a function call. This opcode
          is only generated if developer tools are enabled.
         */
-        int function = vPC[1].u.operand;
-
         if (*enabledProfilerReference)
-            (*enabledProfilerReference)->willExecute(callFrame, callFrame->r(function).jsValue());
+            (*enabledProfilerReference)->hasCalled(callFrame);
 
-        vPC += OPCODE_LENGTH(op_profile_will_call);
+        vPC += OPCODE_LENGTH(op_profile_has_called);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_profile_did_call) {
-        /* op_profile_did_call function(r)
+    DEFINE_OPCODE(op_profile_will_return) {
+        /* op_profile_will_return
 
          Notifies the profiler of the end of a function call. This opcode
          is only generated if developer tools are enabled.
         */
-        int function = vPC[1].u.operand;
-
         if (*enabledProfilerReference)
-            (*enabledProfilerReference)->didExecute(callFrame, callFrame->r(function).jsValue());
+            (*enabledProfilerReference)->willReturn(callFrame);
 
-        vPC += OPCODE_LENGTH(op_profile_did_call);
+        vPC += OPCODE_LENGTH(op_profile_will_return);
         NEXT_INSTRUCTION();
     }
     vm_throw: {
