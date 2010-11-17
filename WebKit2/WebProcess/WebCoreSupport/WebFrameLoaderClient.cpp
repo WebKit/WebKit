@@ -955,6 +955,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool isMainFrame = webPage->mainFrame() == m_frame;
 
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
+
+    if (isMainFrame && webPage->resizesToContentsEnabled())
+        m_frame->coreFrame()->view()->setPaintsEntireContents(true);
 #else
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, IntSize(), false);
 #endif

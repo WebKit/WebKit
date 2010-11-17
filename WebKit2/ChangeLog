@@ -1,3 +1,16 @@
+2010-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WK2] Set paintsEntireContents for "resizes to contents" mode
+
+        Only relevant for the tiled backing store.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
 2010-11-17  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.
