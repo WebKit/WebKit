@@ -28,117 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body {
-  font-size: 12px;
-  font-family: Helvetica, Arial, sans-serif;
-  padding: 0;
-  margin: 0;
+var results;
+var testsByFailureType = {};
+var testsByDirectory = {};
+var selectedTests = [];
+
+function $(id)
+{
+    return document.getElementById(id);
 }
 
-.loading {
-  opacity: 0.5;
+function getSelectValue(id) 
+{
+    var select = $(id);
+    if (select.selectedIndex == -1) {
+        return null;
+    } else {
+        return select.options[select.selectedIndex].value;
+    }
 }
 
-div {
-  margin: 0;
-}
-
-a, .link {
-  color: #aaf;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.link.selected {
-  color: #fff;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-#header {
-  padding: .5em 1em;
-  background: #333;
-  color: #fff;
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  margin-bottom: 1em;
-}
-
-#header label {
-  padding-right: 1em;
-  color: #ccc;
-}
-
-#test-link {
-  margin-right: 1em;
-}
-
-#header label span {
-  color: #fff;
-  font-weight: bold;
-}
-
-#nav-buttons {
-  white-space: nowrap;
-}
-
-#nav-buttons button {
-  background: #fff;
-  border: 0;
-  border-radius: 10px;
-}
-
-#nav-buttons button:active {
-  -webkit-box-shadow: 0 0 5px #33f inset;
-  background: #aaa;
-}
-
-#nav-buttons button[disabled] {
-  opacity: .5;
-}
-
-#controls {
-  float: right;
-}
-
-#test-output {
-  border-spacing: 0;
-  border-collapse: collapse;
-  margin: 0 auto;
-  width: 100%;
-}
-
-#test-output td,
-#test-output th {
-  padding: 0;
-  vertical-align: top;
-}
-
-#image-outputs img {
-  width: 800px;
-  height: 600px;
-  border: solid 1px #ddd;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-}
-
-#image-outputs #actual-image {
-  margin: 0 1em;
-}
-
-#test-output #labels th {
-  text-align: center;
-  color: #666;
-}
-
-#text-outputs pre {
-  height: 600px;
-  width: 800px;
-  overflow: auto;
-}
-
-#test-output h2 {
-  border-bottom: solid 1px #ccc;
-  font-weight: bold;
-  margin: 0;
-  background: #eee;
+function loadText(url, callback)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.addEventListener('load', function() { callback(xhr.responseText); });
+    xhr.send();
 }

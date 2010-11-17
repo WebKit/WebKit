@@ -46,12 +46,13 @@ from optparse import make_option
 from wsgiref.handlers import format_date_time
 
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-
+import webkitpy.thirdparty.simplejson as simplejson
 
 class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
-    def __init__(self, httpd_port, results_directory):
+    def __init__(self, httpd_port, results_directory, results_json):
         BaseHTTPServer.HTTPServer.__init__(self, ("", httpd_port), RebaselineHTTPRequestHandler)
         self.results_directory = results_directory
+        self.results_json = results_json
 
 
 class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -59,6 +60,7 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         "index.html",
         "main.js",
         "main.css",
+        "util.js",
     ])
 
     STATIC_FILE_DIRECTORY = os.path.join(
@@ -111,6 +113,38 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # otherwise there's a deadlock
         threading.Thread(target=lambda: self.server.shutdown()).start()
 
+    def test_result(self):
+        test_name, _ = os.path.splitext(self.query['test'][0])
+        mode = self.query['mode'][0]
+        if mode == 'expected-image':
+            file_name = test_name + '-expected.png'
+        elif mode == 'actual-image':
+            file_name = test_name + '-actual.png'
+        if mode == 'expected-checksum':
+            file_name = test_name + '-expected.checksum'
+        elif mode == 'actual-checksum':
+            file_name = test_name + '-actual.checksum'
+        elif mode == 'diff-image':
+            file_name = test_name + '-diff.png'
+        if mode == 'expected-text':
+            file_name = test_name + '-expected.txt'
+        elif mode == 'actual-text':
+            file_name = test_name + '-actual.txt'
+        elif mode == 'diff-text':
+            file_name = test_name + '-diff.txt'
+
+        file_path = os.path.join(self.server.results_directory, file_name)
+
+        # Let results be cached for 60 seconds, so that they can be pre-fetched
+        # by the UI
+        self._serve_file(file_path, cacheable_seconds=60)
+
+    def results_json(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        simplejson.dump(self.server.results_json, self.wfile)
+
     def _serve_file(self, file_path, cacheable_seconds=0):
         if not os.path.exists(file_path):
             self.send_error(404, "File not found")
@@ -147,11 +181,19 @@ class RebaselineServer(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         results_directory = args[0]
 
+        print 'Parsing unexpected_results.json...'
+        results_json_path = os.path.join(
+            results_directory, 'unexpected_results.json')
+        with codecs.open(results_json_path, "r") as results_json_file:
+            results_json_file = file(results_json_path)
+            results_json = simplejson.load(results_json_file)
+
         print "Starting server at http://localhost:%d/" % options.httpd_port
         print ("Use the 'Exit' link in the UI, http://localhost:%d/"
             "quitquitquit or Ctrl-C to stop") % options.httpd_port
 
         httpd = RebaselineHTTPServer(
             httpd_port=options.httpd_port,
-            results_directory=results_directory)
+            results_directory=results_directory,
+            results_json=results_json)
         httpd.serve_forever()

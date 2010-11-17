@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <!--
   Copyright (c) 2010 Google Inc. All rights reserved.
-  
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are
   met:
-  
+
      * Redistributions of source code must retain the above copyright
   notice, this list of conditions and the following disclaimer.
      * Redistributions in binary form must reproduce the above
@@ -15,7 +15,7 @@
      * Neither the name of Google Inc. nor the names of its
   contributors may be used to endorse or promote products derived from
   this software without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,9 +32,73 @@
 <head>
   <title>Layout Test Rebaseline Server</title>
   <link rel="stylesheet" href="/main.css" type="text/css">
+  <script src="/util.js"></script>
   <script src="/main.js"></script>
 </head>
 <body class="loading">
+
+<div id="header">
+  <div id="controls">
+    <!-- Add a dummy <select> node so that this lines up with the text on the left -->
+    <select style="visibility: hidden"></select>
     <a href="/quitquitquit">Exit</a>
+  </div>
+
+  <span id="selectors">
+    <label>
+      Failure type:
+      <select id="failure-type-selector"></select>
+    </label>
+
+    <label>
+      Directory:
+      <select id="directory-selector"></select>
+    </label>
+
+    <label>
+      Test:
+      <select id="test-selector"></select>
+    </label>
+  </span>
+
+  <a id="test-link">View test</a>
+
+  <span id="nav-buttons">
+    <button id="previous-test">&laquo;</button>
+    <span id="test-index"></span> of <span id="test-count"></span>
+    <button id="next-test">&raquo;</button>
+  </span>
+</div>
+
+<table id="test-output">
+  <thead id="labels">
+    <tr>
+      <th>Expected</th>
+      <th>Actual</th>
+      <th>Diff</th>
+    </tr>
+  </thead>
+  <tbody id="image-outputs" style="display: none">
+    <tr>
+      <td colspan="3"><h2>Image</h2></td>
+    </tr>
+    <tr>
+      <td><img id="expected-image"></td>
+      <td><img id="actual-image"></td>
+      <td><img id="diff-image"></td>
+    </tr>
+  </tbody>
+  <tbody id="text-outputs" style="display: none">
+    <tr>
+      <td colspan="3"><h2>Text</h2></td>
+    </tr>
+    <tr>
+      <td><pre id="expected-text"></pre></td>
+      <td><pre id="actual-text"></pre></td>
+      <td><pre id="diff-text"><pre></td>
+    </tr>
+  </tbody>
+</table>
+
 </body>
 </html>

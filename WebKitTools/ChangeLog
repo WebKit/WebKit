@@ -1,3 +1,30 @@
+2010-11-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: display test results
+        https://bugs.webkit.org/show_bug.cgi?id=49626
+        
+        Adds basic result display to the rebaseline server. On the Python side
+        this involves:
+        - Parsing the unexpected_results.json into a dictionary.
+        - Serving it as JSON under /results.json.
+        (the JSON -> dict -> JSON transform isn't strictly necessary right now,
+        but I'll need to have access to the parsed results on the Python side
+        for follow-up changes).
+        
+        On the web UI side this adds:
+        - Markup for display image and text results (expected, actual, diff),
+          and JS for populating it.
+        - Markup for breaking down test results by failure type and directory,
+          and JS for populating it.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/util.js: Added.
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2010-11-16  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
