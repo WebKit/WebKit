@@ -188,6 +188,8 @@ function frontend_disableProperty(testController)
         InspectorBackend.setPropertyText2(style.styleId, 7, "font-size: 12px;", false);
         InspectorBackend.setPropertyText2(style.styleId, 9, "font-size: 14px;", false);
         InspectorBackend.toggleProperty2(style.styleId, 9, true); // font-size: 14px
+        InspectorBackend.setPropertyText2(style.styleId, 8, "border-width: 1px;", true);
+        InspectorBackend.toggleProperty2(style.styleId, 8, false); // border-width: 1px
         // height : 100% ; [d]
         // border: 1px solid;
         // border-width: 2px;
@@ -196,7 +198,7 @@ function frontend_disableProperty(testController)
         // foo: .bar;
         // -moz-goog: 1***;
         // font-size: 12px;
-        // border-width: 0px; [d]
+        // border-width: 1px;
         // font-size: 14px; [d]
 
         InspectorBackend.setPropertyText2(style.styleId, 3, "", true, didDisableProperty.bind(null, testController));

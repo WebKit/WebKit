@@ -299,22 +299,22 @@ style
 raw style
 [text='height : 100% ;'] disabled
 ['border':'1px solid'] @[6-24] active
-['border-width':'2px'] @[25-43] active
+['border-width':'2px'] @[25-43] inactive
 ['googles':'abra' non-parsed] @[45-59] active
 ['foo':'.bar' non-parsed] @[60-70] active
 ['-moz-goog':'1***' non-parsed] @[71-87] active
 ['font-size':'12px'] @[88-104] active
-[text='border-width: 0px;'] disabled
+['border-width':'1px'] @[104-122] active
 [text='font-size: 14px;'] disabled
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
 ['border-left-style':'solid'] @[undefined-undefined] style
 ['border-color':'initial'] @[undefined-undefined] style
-['border-top-width':'2px'] @[undefined-undefined] style
-['border-right-width':'2px'] @[undefined-undefined] style
-['border-bottom-width':'2px'] @[undefined-undefined] style
-['border-left-width':'2px'] @[undefined-undefined] style
+['border-top-width':'1px'] @[undefined-undefined] style
+['border-right-width':'1px'] @[undefined-undefined] style
+['border-bottom-width':'1px'] @[undefined-undefined] style
+['border-left-width':'1px'] @[undefined-undefined] style
 
 === After property enabled ===
 
@@ -322,20 +322,20 @@ style
 raw style
 [text='height : 100% ;'] disabled
 ['border':'1px solid'] @[6-24] active
-['border-width':'2px'] @[25-43] active
+['border-width':'2px'] @[25-43] inactive
 ['googles':'abra' non-parsed] @[45-59] active
 ['foo':'.bar' non-parsed] @[60-70] active
 ['-moz-goog':'1***' non-parsed] @[71-87] active
 ['font-size':'12px'] @[88-104] inactive
-[text='border-width: 0px;'] disabled
-['font-size':'14px'] @[105-121] active
+['border-width':'1px'] @[104-122] active
+['font-size':'14px'] @[123-139] active
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
 ['border-left-style':'solid'] @[undefined-undefined] style
 ['border-color':'initial'] @[undefined-undefined] style
-['border-top-width':'2px'] @[undefined-undefined] style
-['border-right-width':'2px'] @[undefined-undefined] style
-['border-bottom-width':'2px'] @[undefined-undefined] style
-['border-left-width':'2px'] @[undefined-undefined] style
+['border-top-width':'1px'] @[undefined-undefined] style
+['border-right-width':'1px'] @[undefined-undefined] style
+['border-bottom-width':'1px'] @[undefined-undefined] style
+['border-left-width':'1px'] @[undefined-undefined] style
 

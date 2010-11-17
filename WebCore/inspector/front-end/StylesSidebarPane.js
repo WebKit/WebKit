@@ -1124,21 +1124,39 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     get name()
     {
-        return this.property.name;
+        if (!this.disabled || !this.property.text)
+            return this.property.name;
+
+        var text = this.property.text;
+        var index = text.indexOf(":");
+        if (index < 1)
+            return this.property.name;
+
+        return text.substring(0, index).trim();
     },
 
     get priority()
     {
         if (this.disabled)
-            return this.property.priority;
-        return (this.shorthand ? this.style.getShorthandPriority(this.name) : this.property.priority);
+            return ""; // rely upon raw text to render it in the value field
+        return this.property.priority;
     },
 
     get value()
     {
-        if (this.disabled)
+        if (!this.disabled || !this.property.text)
             return this.property.value;
-        return (this.shorthand ? this.style.getShorthandValue(this.name) : this.property.value);
+
+        var match = this.property.text.match(/(.*);\s*/);
+        if (!match || !match[1])
+            return this.property.value;
+
+        var text = match[1];
+        var index = text.indexOf(":");
+        if (index < 1)
+            return this.property.value;
+
+        return text.substring(index + 1).trim();
     },
 
     get parsedOk()
