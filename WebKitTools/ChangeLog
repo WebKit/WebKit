@@ -1,5 +1,11 @@
 2010-11-17  Steve Falkenburg  <sfalken@apple.com>
 
+        Delete unused file unintentionally added in last change.
+
+        * DumpRenderTree/win/DumpRenderTreeCURL.vsprops: Removed.
+
+2010-11-17  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Adam Roben.
 
         DumpRenderTree on Windows should use a vsprops file for shared project settings
