@@ -29,9 +29,11 @@
 #if ENABLE(YARR_JIT)
 
 #include "MacroAssembler.h"
-#include "RegexInterpreter.h" // temporary, remove when fallback is removed.
 #include "RegexPattern.h"
 #include "UString.h"
+
+#include "pcre.h"
+struct JSRegExp; // temporary, remove when fallback is removed.
 
 #if CPU(X86) && !COMPILER(MSVC)
 #define YARR_CALL __attribute__ ((regparm (3)))
@@ -51,21 +53,18 @@ class RegexCodeBlock {
 
 public:
     RegexCodeBlock()
-        : m_needFallback(false)
+        : m_fallback(0)
     {
     }
 
     ~RegexCodeBlock()
     {
+        if (m_fallback)
+            jsRegExpFree(m_fallback);
     }
 
-    BytecodePattern* getFallback() { return m_fallback.get(); }
-    bool isFallback() { return m_needFallback; }
-    void setFallback(PassOwnPtr<BytecodePattern> fallback)
-    {
-        m_fallback = fallback;
-        m_needFallback = true;
-    }
+    JSRegExp* getFallback() { return m_fallback; }
+    void setFallback(JSRegExp* fallback) { m_fallback = fallback; }
 
     bool operator!() { return (!m_ref.m_code.executableAddress() && !m_fallback); }
     void set(MacroAssembler::CodeRef ref) { m_ref = ref; }
@@ -74,23 +73,22 @@ public:
     {
         return reinterpret_cast<RegexJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
     }
-
+    
 #if ENABLE(REGEXP_TRACING)
     void *getAddr() { return m_ref.m_code.executableAddress(); }
 #endif
 
 private:
     MacroAssembler::CodeRef m_ref;
-    OwnPtr<Yarr::BytecodePattern> m_fallback;
-    bool m_needFallback;
+    JSRegExp* m_fallback;
 };
 
-void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator* allocator, bool ignoreCase = false, bool multiline = false);
+void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase = false, bool multiline = false);
 
-inline int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
+inline int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output, int outputArraySize)
 {
-    if (jitObject.isFallback())
-        return (interpretRegex(jitObject.getFallback(), input, start, length, output));
+    if (JSRegExp* fallback = jitObject.getFallback())
+        return (jsRegExpExecute(fallback, input, length, start, output, outputArraySize) < 0) ? -1 : output[0];
 
     return jitObject.execute(input, start, length, output);
 }

@@ -43,6 +43,17 @@ for (var i = 0; i < 21; i++)
 
 shouldThrow('new RegExp(s);');
 
+shouldThrow('/(([ab]){30}){3360}/');
+shouldThrow('/(([ab]){30}){0,3360}/');
+shouldThrow('/(([ab]){30}){10,3360}/');
+shouldThrow('/(([ab]){0,30}){3360}/');
+shouldThrow('/(([ab]){0,30}){0,3360}/');
+shouldThrow('/(([ab]){0,30}){10,3360}/');
+shouldThrow('/(([ab]){10,30}){3360}/');
+shouldThrow('/(([ab]){10,30}){0,3360}/');
+shouldThrow('/(([ab]){10,30}){10,3360}/');
+shouldThrow('/(([ab]){12})(([ab]){65535}){1680}(([ab]){38}){722}([ab]){27}/');
+
 debug('');
 
 var successfullyParsed = true;

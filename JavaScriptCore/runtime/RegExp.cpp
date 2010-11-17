@@ -28,6 +28,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
+
+#if ENABLE(YARR)
+
 #include "yarr/RegexCompiler.h"
 #if ENABLE(YARR_JIT)
 #include "yarr/RegexJIT.h"
@@ -35,13 +38,28 @@
 #include "yarr/RegexInterpreter.h"
 #endif
 
+#else
+
+#include <pcre/pcre.h>
+
+#endif
+
 namespace JSC {
 
 struct RegExpRepresentation {
 #if ENABLE(YARR_JIT)
     Yarr::RegexCodeBlock m_regExpJITCode;
-#else
+#elif ENABLE(YARR)
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
+#else
+    JSRegExp* m_regExp;
+#endif
+
+#if !ENABLE(YARR)
+    ~RegExpRepresentation()
+    {
+        jsRegExpFree(m_regExp);
+    }
 #endif
 };
 
@@ -82,10 +100,12 @@ PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patte
     return res.release();
 }
 
+#if ENABLE(YARR)
+
 void RegExp::compile(JSGlobalData* globalData)
 {
 #if ENABLE(YARR_JIT)
-    Yarr::jitCompileRegex(globalData, m_representation->m_regExpJITCode, m_pattern, m_numSubpatterns, m_constructionError, &globalData->m_regexAllocator, ignoreCase(), multiline());
+    Yarr::jitCompileRegex(globalData, m_representation->m_regExpJITCode, m_pattern, m_numSubpatterns, m_constructionError, ignoreCase(), multiline());
 #else
     m_representation->m_regExpBytecode = Yarr::byteCompileRegex(m_pattern, m_numSubpatterns, m_constructionError, &globalData->m_regexAllocator, ignoreCase(), multiline());
 #endif
@@ -108,7 +128,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
 #else
     if (m_representation->m_regExpBytecode) {
 #endif
-        int offsetVectorSize = (m_numSubpatterns + 1) * 2;
+        int offsetVectorSize = (m_numSubpatterns + 1) * 3; // FIXME: should be 2 - but adding temporary fallback to pcre.
         int* offsetVector;
         Vector<int, 32> nonReturnedOvector;
         if (ovector) {
@@ -127,7 +147,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
             offsetVector[j] = -1;
 
 #if ENABLE(YARR_JIT)
-        int result = Yarr::executeRegex(m_representation->m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector);
+        int result = Yarr::executeRegex(m_representation->m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector, offsetVectorSize);
 #else
         int result = Yarr::interpretRegex(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), offsetVector);
 #endif
@@ -150,6 +170,69 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
 
     return -1;
 }
+
+#else
+
+void RegExp::compile(JSGlobalData*)
+{
+    m_representation->m_regExp = 0;
+    JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase() ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
+    JSRegExpMultilineOption multilineOption = multiline() ? JSRegExpMultiline : JSRegExpSingleLine;
+    m_representation->m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(m_pattern.characters()), m_pattern.length(), ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
+}
+
+int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
+{
+#if ENABLE(REGEXP_TRACING)
+    m_rtMatchCallCount++;
+#endif
+    
+    if (startOffset < 0)
+        startOffset = 0;
+    if (ovector)
+        ovector->clear();
+
+    if (static_cast<unsigned>(startOffset) > s.length() || s.isNull())
+        return -1;
+
+    if (m_representation->m_regExp) {
+        // Set up the offset vector for the result.
+        // First 2/3 used for result, the last third used by PCRE.
+        int* offsetVector;
+        int offsetVectorSize;
+        int fixedSizeOffsetVector[3];
+        if (!ovector) {
+            offsetVectorSize = 3;
+            offsetVector = fixedSizeOffsetVector;
+        } else {
+            offsetVectorSize = (m_numSubpatterns + 1) * 3;
+            ovector->resize(offsetVectorSize);
+            offsetVector = ovector->data();
+        }
+
+        int numMatches = jsRegExpExecute(m_representation->m_regExp, reinterpret_cast<const UChar*>(s.characters()), s.length(), startOffset, offsetVector, offsetVectorSize);
+    
+        if (numMatches < 0) {
+#ifndef NDEBUG
+            if (numMatches != JSRegExpErrorNoMatch)
+                fprintf(stderr, "jsRegExpExecute failed with result %d\n", numMatches);
+#endif
+            if (ovector)
+                ovector->clear();
+            return -1;
+        }
+
+#if ENABLE(REGEXP_TRACING)
+        m_rtMatchFoundCount++;
+#endif
+        
+        return offsetVector[0];
+    }
+
+    return -1;
+}
+    
+#endif
 
 #if ENABLE(REGEXP_TRACING)
     void RegExp::printTraceData()

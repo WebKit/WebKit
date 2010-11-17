@@ -1,6 +1,6 @@
 S15.10.6.2_A1_T6
 
-PASS 
+FAIL SputnikError: #4: __executed = /(z)((a+)?(b+)?(c))*/.exec((function(){return "zaacbbbcac"})()); __executed[4] === undefined. Actual: bbb
 
 TEST COMPLETE
 
