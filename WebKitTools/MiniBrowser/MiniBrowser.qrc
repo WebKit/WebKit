@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>useragentlist.txt</file>
+    </qresource>
+</RCC>

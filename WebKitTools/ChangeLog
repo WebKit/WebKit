@@ -1,5 +1,13 @@
 2010-11-17  Andras Becsi  <abecsi@webkit.org>
 
+        Unreviewed build fix.
+
+        [Qt] Add missing file I forgot in r72220.
+
+        * MiniBrowser/MiniBrowser.qrc: Added.
+
+2010-11-17  Andras Becsi  <abecsi@webkit.org>
+
         Reviewed by Andreas Kling.
 
         [Qt][WK2] Make it possible to set custom user agent strings in MiniBrowser.
