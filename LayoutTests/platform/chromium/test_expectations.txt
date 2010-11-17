@@ -2086,9 +2086,6 @@ BUG29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
 // New failures from WebKit merge 51581:51584
 BUG29167 MAC DEBUG : fast/dom/replaceChild.html = IMAGE PASS
 
-// Failure from WebKit merge 51607:51613 (51608 is the cause)
-BUG29239 LINUX WIN : fast/css/variables/misplaced-import-test.html = FAIL
-
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 
