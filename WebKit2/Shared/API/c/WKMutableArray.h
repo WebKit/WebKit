@@ -42,6 +42,8 @@ WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
 
 WK_EXPORT void WKArrayAppendItem(WKMutableArrayRef array, WKTypeRef item);
 
+WK_EXPORT void WKArrayRemoveItemAtIndex(WKMutableArrayRef array, size_t index);
+
 #ifdef __cplusplus
 }
 #endif

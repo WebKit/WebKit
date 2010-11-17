@@ -43,6 +43,7 @@ public:
 
     void append(APIObject*);
     void reserveCapacity(unsigned);
+    void removeItemAtIndex(unsigned);
 
     virtual bool isMutable() { return true; }
 

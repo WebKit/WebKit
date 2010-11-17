@@ -45,4 +45,9 @@ void MutableArray::reserveCapacity(unsigned capacity)
     m_entries.reserveCapacity(capacity);
 }
 
+void MutableArray::removeItemAtIndex(unsigned index)
+{
+    m_entries.remove(index);
+}
+
 } // namespace WebKit
