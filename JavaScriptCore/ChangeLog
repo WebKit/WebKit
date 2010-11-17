@@ -1,3 +1,11 @@
+2010-11-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben and Steve Falkenburg.
+
+        Touch Platform.h to force a rebuild for Windows.
+
+        * wtf/Platform.h:
+
 2010-11-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
