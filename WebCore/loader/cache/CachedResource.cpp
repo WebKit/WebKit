@@ -66,7 +66,6 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_inLiveDecodedResourcesList(false)
     , m_requestedFromNetworkingLayer(false)
     , m_sendResourceLoadCallbacks(true)
-    , m_errorOccurred(false)
     , m_inCache(false)
     , m_loading(false)
     , m_type(type)
@@ -454,7 +453,7 @@ void CachedResource::unregisterHandle(CachedResourceHandleBase* h)
 
 bool CachedResource::canUseCacheValidator() const
 {
-    if (m_loading || m_errorOccurred)
+    if (m_loading || errorOccurred())
         return false;
 
     if (m_response.cacheControlContainsNoStore())
@@ -467,7 +466,7 @@ bool CachedResource::canUseCacheValidator() const
     
 bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
 {
-    if (m_errorOccurred) {
+    if (errorOccurred()) {
         LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_errorOccurred\n", this);
         return true;
     }

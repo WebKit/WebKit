@@ -65,11 +65,11 @@ public:
     virtual void destroyDecodedData();
 
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-    virtual void error();
+    virtual void error(CachedResource::Status);
     
     virtual void httpStatusCodeError() { m_httpStatusCodeErrorOccurred = true; }
     bool httpStatusCodeErrorOccurred() const { return m_httpStatusCodeErrorOccurred; }
-    
+
     void checkNotify();
     
     virtual bool isImage() const { return true; }

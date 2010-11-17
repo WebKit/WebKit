@@ -139,7 +139,7 @@ void Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* re
         cachedResourceLoader->setLoadInProgress(true);
         if (resource->resourceToRevalidate()) 
             cache()->revalidationFailed(resource); 
-        resource->error();
+        resource->error(CachedResource::LoadError);
         cachedResourceLoader->setLoadInProgress(false);
         delete request;
     }
@@ -198,7 +198,8 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
     if (!resource->errorOccurred()) {
         cachedResourceLoader->setLoadInProgress(true);
         resource->data(loader->resourceData(), true);
-        resource->finish();
+        if (!resource->errorOccurred())
+            resource->finish();
     }
 
     delete request;
@@ -237,7 +238,7 @@ void Loader::didFail(SubresourceLoader* loader, bool cancelled)
 
     if (!cancelled) {
         cachedResourceLoader->setLoadInProgress(true);
-        resource->error();
+        resource->error(CachedResource::LoadError);
     }
     
     cachedResourceLoader->setLoadInProgress(false);
@@ -320,7 +321,7 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
     
     if (resource->errorOccurred())
         return;
-        
+
     if (resource->response().httpStatusCode() >= 400) {
         resource->httpStatusCodeError();
         return;
