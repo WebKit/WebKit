@@ -1,5 +1,16 @@
 2010-11-17  Timothy Hatcher  <timothy@apple.com>
 
+        Remove duplicate Web Inspector message handeling in WebPage::didReceiveMessage.
+
+        https://webkit.org/b/49689
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage): Remove duplicate code.
+
+2010-11-17  Timothy Hatcher  <timothy@apple.com>
+
         Fix a crash when closing the inspected page when the Web Inspector
         page was never created.
 
