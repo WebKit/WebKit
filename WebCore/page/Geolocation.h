@@ -109,6 +109,9 @@ private:
         GeoNotifier(Geolocation*, PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     };
 
+    typedef Vector<RefPtr<GeoNotifier> > GeoNotifierVector;
+    typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
+
     class Watchers {
     public:
         void set(int id, PassRefPtr<GeoNotifier>);
@@ -117,7 +120,7 @@ private:
         bool contains(GeoNotifier*) const;
         void clear();
         bool isEmpty() const;
-        void getNotifiersVector(Vector<RefPtr<GeoNotifier> >&) const;
+        void getNotifiersVector(GeoNotifierVector&) const;
     private:
         typedef HashMap<int, RefPtr<GeoNotifier> > IdToNotifierMap;
         typedef HashMap<RefPtr<GeoNotifier>, int> NotifierToIdMap;
@@ -127,15 +130,15 @@ private:
 
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
-    void sendError(Vector<RefPtr<GeoNotifier> >&, PositionError*);
-    void sendPosition(Vector<RefPtr<GeoNotifier> >&, Geoposition*);
+    void sendError(GeoNotifierVector&, PositionError*);
+    void sendPosition(GeoNotifierVector&, Geoposition*);
 
-    static void stopTimer(Vector<RefPtr<GeoNotifier> >&);
+    static void stopTimer(GeoNotifierVector&);
     void stopTimersForOneShots();
     void stopTimersForWatchers();
     void stopTimers();
 
-    void cancelRequests(Vector<RefPtr<GeoNotifier> >&);
+    void cancelRequests(GeoNotifierVector&);
     void cancelAllRequests();
 
     void positionChangedInternal();
@@ -165,8 +168,6 @@ private:
     bool haveSuitableCachedPosition(PositionOptions*);
     void makeCachedPositionCallbacks();
 
-    typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
-    
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     Frame* m_frame;
