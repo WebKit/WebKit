@@ -1,3 +1,13 @@
+2010-11-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Fix a typo that leads to emitting the wrong signal if it is done
+        by using the signals array.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
 2010-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

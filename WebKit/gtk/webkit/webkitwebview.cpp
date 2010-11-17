@@ -2069,7 +2069,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * When a #WebKitWebFrame receives an onload event this signal is emitted.
      */
-    webkit_web_view_signals[LOAD_STARTED] = g_signal_new("onload-event",
+    webkit_web_view_signals[ONLOAD_EVENT] = g_signal_new("onload-event",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
