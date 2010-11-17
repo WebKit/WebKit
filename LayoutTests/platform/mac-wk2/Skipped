@@ -61,6 +61,7 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+editing/inserting/insert-paste-bidi-control.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -2142,19 +2143,21 @@ fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-rendering-java-disabled.html
 
 # Unexplained failures
-http/tests/history/popstate-fires-with-pending-requests.html
-http/tests/media/reload-after-dialog.html
-svg/dom/fuzz-path-parser.html
-tables/mozilla_expected_failures/bugs/bug8499.html
 canvas/philip/tests/2d.text.draw.fontface.notinpage.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 fast/dom/css-cached-import-rule.html
 fast/dom/Document/open-with-pending-load.html
+fast/dom/StyleSheet/detached-style-2.html
+fast/dom/StyleSheet/detached-style-pi-2.xhtml
+fast/dom/StyleSheet/detached-style-pi.xhtml
+fast/dom/StyleSheet/detached-style.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
 fast/events/simulated-key-state.html
+fast/forms/paste-multiline-text-input.html
 fast/frames/frame-element-name.html
 fast/frames/iframe-onload-remove-self-no-crash.html
+fast/frames/iframe-reparenting-adopt-node.html
 fast/frames/location-put-after-removal.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/history/multiple-classes-visited.html
@@ -2170,6 +2173,7 @@ fast/loader/hashchange-event-async.html
 fast/loader/hashchange-event.html
 fast/loader/onhashchange-attribute-listeners.html
 fast/loader/stateobjects/popstate-fires-on-history-traversal.html
+fast/loader/subframe-navigate-during-main-frame-load.html
 fast/loader/submit-form-while-parsing-2.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
@@ -2193,6 +2197,9 @@ http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration.html
 http/tests/eventsource/eventsource-reconnect.html
 http/tests/eventsource/eventsource-status-code-states.html
+http/tests/history/back-during-onload-triggered-by-back.html
+http/tests/history/popstate-fires-with-pending-requests.html
+http/tests/media/reload-after-dialog.html
 http/tests/media/video-load-twice.html
 http/tests/misc/location-replace-crossdomain.html
 http/tests/misc/object-image-error-with-onload.html
@@ -2201,6 +2208,7 @@ http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/back-send-referrer.html
 http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
+http/tests/security/cross-frame-access-put.html
 http/tests/security/originHeader/origin-header-for-https.html
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
@@ -2216,12 +2224,13 @@ storage/multiple-databases-garbage-collection.html
 storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+svg/dom/fuzz-path-parser.html
 svg/hixie/cascade/002.xml
+tables/mozilla_expected_failures/bugs/bug8499.html
 transitions/color-transition-all.html 
 transitions/font-family-during-transition.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
-http/tests/security/cross-frame-access-put.html
 
 # Unexplained back/forward list failures
 fast/loader/frame-location-change-not-added-to-history.html
