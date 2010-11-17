@@ -4,17 +4,17 @@ layer at (0,0) size 785x614
   RenderBlock {html} at (0,0) size 785x614
     RenderBody {body} at (8,16) size 769x582
       RenderBlock {p} at (0,0) size 769x19
-        RenderBlock {math} at (0,0) size 27x19
+        RenderBlock {math} at (0,3) size 27x16
           RenderInline {mi} at (0,0) size 7x16
-            RenderText {#text} at (1,3) size 7x16
-              text run at (1,3) width 7: "x"
-          RenderBlock {mo} at (8,3) size 10x16 [bgcolor=#C8C8C8]
+            RenderText {#text} at (1,0) size 7x16
+              text run at (1,0) width 7: "x"
+          RenderBlock {mo} at (8,0) size 10x16 [bgcolor=#C8C8C8]
             RenderBlock {mo} at (0,0) size 9x16
               RenderText {mo} at (0,0) size 9x16
                 text run at (0,0) width 9: "+"
           RenderInline {mn} at (0,0) size 8x16
-            RenderText {#text} at (18,3) size 8x16
-              text run at (18,3) width 8: "1"
+            RenderText {#text} at (18,0) size 8x16
+              text run at (18,0) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,35) size 769x21
         RenderText {#text} at (0,2) size 40x18

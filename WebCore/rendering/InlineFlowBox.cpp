@@ -490,45 +490,26 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
         }
 
-        if (usedFonts) {
+        if (usedFonts && curr->renderer()->style(m_firstLine)->lineHeight().isNegative()) {
             usedFonts->append(curr->renderer()->style(m_firstLine)->font().primaryFont());
             Length parentLineHeight = curr->renderer()->parent()->style()->lineHeight();
-            if (parentLineHeight.isNegative()) {
-                int baselineToBottom = 0;
-                baseline = 0;
-                for (size_t i = 0; i < usedFonts->size(); ++i) {
-                    int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
-                    baselineToBottom = max(baselineToBottom, usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent() - halfLeading);
-                    if (!affectsAscent)
-                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
-                    if (!affectsDescent)
-                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
-                }
-                lineHeight = baseline + baselineToBottom;
-            } else if (parentLineHeight.isPercent()) {
-                lineHeight = parentLineHeight.calcMinValue(curr->renderer()->style()->fontSize());
-                baseline = 0;
-                for (size_t i = 0; i < usedFonts->size(); ++i) {
-                    int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
-                    if (!affectsAscent)
-                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
-                    if (!affectsDescent)
-                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
-                }
-            } else {
-                lineHeight = parentLineHeight.value();
-                baseline = 0;
-                for (size_t i = 0; i < usedFonts->size(); ++i) {
-                    int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
-                    if (!affectsAscent)
-                        affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
-                    if (!affectsDescent)
-                        affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
+            bool baselineSet = false;
+            baseline = 0;
+            int baselineToBottom = 0;
+            for (size_t i = 0; i < usedFonts->size(); ++i) {
+                int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
+                int usedFontAscent = halfLeading + usedFonts->at(i)->ascent();
+                int usedFontDescent = usedFonts->at(i)->lineSpacing() - usedFontAscent;
+                if (!baselineSet) {
+                    baselineSet = true;
+                    baseline = usedFontAscent;
+                    baselineToBottom = usedFontDescent;
+                } else {
+                    baseline = max(baseline, usedFontAscent);
+                    baselineToBottom = max(baselineToBottom, usedFontDescent);
                 }
             }
+            lineHeight = baseline + baselineToBottom;
         } else {
             lineHeight = curr->lineHeight();
             baseline = curr->baselinePosition();

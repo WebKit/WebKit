@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
           text run at (121,0) width 634: ": Two lines below have one character from CJK Ideograph, one from CJK Ext A (both in BMP) and"
           text run at (0,18) width 758: "three characters from CJK Ext B (plane 2). The last group of characters are covered by Japanese fonts on Mac as well as"
           text run at (0,36) width 331: "two Chinese fonts for Ext B shipped with Windows."
-      RenderBlock {DIV} at (0,70) size 784x88
-        RenderBlock {DIV} at (0,0) size 784x44
-          RenderText {#text} at (0,7) size 176x37
-            text run at (0,7) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
-        RenderBlock {DIV} at (0,44) size 784x44
-          RenderText {#text} at (0,7) size 176x37
-            text run at (0,7) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
+      RenderBlock {DIV} at (0,70) size 784x74
+        RenderBlock {DIV} at (0,0) size 784x37
+          RenderText {#text} at (0,0) size 176x37
+            text run at (0,0) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
+        RenderBlock {DIV} at (0,37) size 784x37
+          RenderText {#text} at (0,0) size 176x37
+            text run at (0,0) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"

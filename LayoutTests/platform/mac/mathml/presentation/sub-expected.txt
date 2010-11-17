@@ -6,15 +6,15 @@ layer at (0,0) size 800x134
       RenderBlock {p} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "text "
-        RenderBlock {math} at (27,0) size 15x22
-          RenderBlock {msub} at (1,0) size 13x22
-            RenderBlock {msub} at (0,0) size 7x19
+        RenderBlock {math} at (27,3) size 15x19
+          RenderBlock {msub} at (1,0) size 13x19
+            RenderBlock {msub} at (0,0) size 7x16
               RenderInline {mi} at (0,0) size 7x16
-                RenderText {#text} at (0,3) size 7x16
-                  text run at (0,3) width 7: "x"
+                RenderText {#text} at (0,0) size 7x16
+                  text run at (0,0) width 7: "x"
             RenderInline {mn} at (0,0) size 6x12
-              RenderText {#text} at (7,10) size 6x12
-                text run at (7,10) width 6: "1"
+              RenderText {#text} at (7,7) size 6x12
+                text run at (7,7) width 6: "1"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,38) size 784x22
         RenderText {#text} at (0,0) size 27x18
