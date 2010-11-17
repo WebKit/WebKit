@@ -36,6 +36,7 @@ using namespace std;
 namespace WTF {
 
 using namespace Unicode;
+using namespace std;
 
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
@@ -696,6 +697,8 @@ CString String::utf8(bool strict) const
     //  * We could allocate a CStringBuffer with an appropriate size to
     //    have a good chance of being able to write the string into the
     //    buffer without reallocing (say, 1.5 x length).
+    if (length > numeric_limits<unsigned>::max() / 3)
+        return CString();
     Vector<char, 1024> bufferVector(length * 3);
 
     char* buffer = bufferVector.data();

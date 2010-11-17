@@ -1,3 +1,15 @@
+2010-11-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/49634> Make overflow guards in WTF::String::utf8 explicit
+
+        Reviewed by Darin Adler.
+
+        Add an explicit overflow check prior to allocating our buffer,
+        rather than implicitly relying on the guard in convertUTF16ToUTF8.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::utf8):
+
 2010-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72197.
