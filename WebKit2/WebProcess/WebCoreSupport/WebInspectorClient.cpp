@@ -74,7 +74,9 @@ void WebInspectorClient::storeSetting(const String&, const String&)
 
 bool WebInspectorClient::sendMessageToFrontend(const String& message)
 {
-    return doDispatchMessageOnFrontendPage(m_page->inspector()->inspectorPage()->corePage(), message);
+    if (WebPage* inspectorPage = m_page->inspector()->inspectorPage())
+        return doDispatchMessageOnFrontendPage(inspectorPage->corePage(), message);
+    return false;
 }
 
 } // namespace WebKit
