@@ -512,7 +512,6 @@ void SelectElement::reset(SelectElementData& data, Element* element)
     element->setNeedsStyleRecalc();
 }
     
-#if !ARROW_KEYS_POP_MENU
 enum SkipDirection {
     SkipBackwards = -1,
     SkipForwards = 1
@@ -533,7 +532,6 @@ static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, Skip
     }
     return lastGoodIndex;
 }
-#endif
 
 void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
@@ -545,20 +543,24 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         bool handled = false;
 
 #if ARROW_KEYS_POP_MENU
-        if (keyIdentifier == "Down" || keyIdentifier == "Up") {
-            element->focus();
+        if (!isSpatialNavigationEnabled(element->document()->frame())) {
+            if (keyIdentifier == "Down" || keyIdentifier == "Up") {
+                element->focus();
 
-            if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
-                return;
+                if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
+                    return;
 
-            // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
-            // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
-            saveLastSelection(data, element);
-            if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
-                menuList->showPopup();
-            handled = true;
+                // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
+                // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
+                saveLastSelection(data, element);
+                if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
+                    menuList->showPopup();
+
+                event->setDefaultHandled();
+            }
+            return;
         }
-#else
+#endif
         // When using spatial navigation, we want to be able to navigate away from the select element
         // when the user hits any of the arrow keys, instead of changing the selection.
         if (isSpatialNavigationEnabled(element->document()->frame()))
@@ -591,7 +593,7 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         
         if (handled && listIndex >= 0 && (unsigned)listIndex < listItems.size())
             setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
-#endif
+
         if (handled)
             event->setDefaultHandled();
     }
