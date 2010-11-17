@@ -1,3 +1,15 @@
+2010-11-17  Jonathan Backer  <backer@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Resize initiated by renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=49617
+
+        To address synchronization issues with resizing, make resize work like DARWIN.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2010-11-17  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Dimitri Glazkov.
