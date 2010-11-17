@@ -1,3 +1,15 @@
+2010-11-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable LTCG for Windows Release builds. Add new Release_LTCG configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=49632
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+
 2010-11-16  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

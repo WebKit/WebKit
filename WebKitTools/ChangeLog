@@ -1,3 +1,21 @@
+2010-11-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable LTCG for Windows Release builds. Add new Release_LTCG configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=49632
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * MiniBrowser/MiniBrowser.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        * WinLauncher/WinLauncher.vcproj:
+        * record-memory-win/record-memory-win.vcproj:
+
 2010-11-16  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

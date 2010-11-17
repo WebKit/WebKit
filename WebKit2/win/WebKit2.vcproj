@@ -81,7 +81,6 @@
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -329,6 +328,68 @@
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_LTCG|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -668,6 +729,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKContextMenuItem.cpp"
 					>
 				</File>
@@ -677,14 +746,6 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKContextMenuItemTypes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.h"
 					>
 				</File>
 				<File
@@ -1050,6 +1111,14 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>
@@ -1344,14 +1413,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.h"
-					>
-				</File>
-				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardList.cpp"
 					>
 				</File>
@@ -1365,6 +1426,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardListItem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleClient.h"
 					>
 				</File>
 				<File
@@ -1506,15 +1575,15 @@
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h"
-							>
-						</File>
-						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageOverlay.cpp"
 							>
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageOverlay.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h"
 							>
 						</File>
 						<File
@@ -2147,10 +2216,10 @@
 					RelativePath="..\UIProcess\Downloads\DownloadProxy.h"
 					>
 				</File>
-    			<File
-    				RelativePath="..\UIProcess\Downloads\DownloadProxy.messages.in"
-    				>
-    			</File>
+				<File
+					RelativePath="..\UIProcess\Downloads\DownloadProxy.messages.in"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Launcher"
@@ -2663,6 +2732,15 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug_All|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+					PrecompiledHeaderThrough="WebKit2Prefix.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release_LTCG|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

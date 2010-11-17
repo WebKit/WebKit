@@ -1,3 +1,15 @@
+2010-11-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable LTCG for Windows Release builds. Add new Release_LTCG configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=49632
+
+        * win/WebKit2.make:
+        * win/WebKit2.submit.sln:
+        * win/WebKit2.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+
 2010-11-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
