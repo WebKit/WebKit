@@ -71,7 +71,8 @@ namespace WebCore {
 
     // Custom copy methods.
     template<typename T> struct CrossThreadCopierBase<false, true, T> {
-        typedef typename WTF::RemoveTemplate<T, RefPtr>::Type RefCountedType;
+        typedef typename WTF::RemoveTemplate<T, RefPtr>::Type TypeWithoutRefPtr;
+        typedef typename WTF::RemoveTemplate<TypeWithoutRefPtr, PassRefPtr>::Type RefCountedType;
         typedef PassRefPtr<RefCountedType> Type;
         static Type copy(const T& refPtr)
         {
@@ -113,7 +114,8 @@ namespace WebCore {
     };
 
     template<typename T> struct CrossThreadCopier : public CrossThreadCopierBase<WTF::IsConvertibleToInteger<T>::value,
-                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeShared>::value,
+                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeShared>::value
+                                                                                     || WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, PassRefPtr>::Type, ThreadSafeShared>::value,
                                                                                  T> {
     };
 

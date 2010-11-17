@@ -34,13 +34,16 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystemCallbacks.h"
+#include "FileMetadata.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
 #include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
+#include "WebFileWriter.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
 #include "WebWorkerBase.h"
+#include "WorkerAsyncFileWriterChromium.h"
 #include "WorkerContext.h"
 #include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerScriptController.h"
@@ -134,9 +137,76 @@ void WorkerAsyncFileSystemChromium::readDirectory(const String& path, PassOwnPtr
     createWorkerFileSystemCallbacksBridge(callbacks)->postReadDirectoryToMainThread(m_webFileSystem, path, m_modeForCurrentOperation);
 }
 
-void WorkerAsyncFileSystemChromium::createWriter(AsyncFileWriterClient*, const String&, PassOwnPtr<AsyncFileSystemCallbacks>)
+class WorkerFileWriterHelperCallbacks : public AsyncFileSystemCallbacks {
+public:
+    static PassOwnPtr<WorkerFileWriterHelperCallbacks> create(AsyncFileWriterClient* client, const String& path, WebKit::WebFileSystem* webFileSystem, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks, WorkerContext* workerContext)
+    {
+        return adoptPtr(new WorkerFileWriterHelperCallbacks(client, path, webFileSystem, callbacks, workerContext));
+    }
+
+    virtual void didSucceed()
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didReadMetadata(const FileMetadata& metadata)
+    {
+        ASSERT(m_callbacks);
+        if (metadata.type != FileMetadata::TypeFile || metadata.length < 0)
+            m_callbacks->didFail(WebKit::WebFileErrorInvalidState);
+        else {
+            OwnPtr<WorkerAsyncFileWriterChromium> asyncFileWriterChromium = WorkerAsyncFileWriterChromium::create(m_webFileSystem, m_path, m_workerContext, m_client, WorkerAsyncFileWriterChromium::Asynchronous);
+            m_callbacks->didCreateFileWriter(asyncFileWriterChromium.release(), metadata.length);
+        }
+    }
+
+    virtual void didReadDirectoryEntry(const String& name, bool isDirectory)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didReadDirectoryEntries(bool hasMore)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem>)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    // Called when an AsyncFileWrter has been created successfully.
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didFail(int code)
+    {
+        ASSERT(m_callbacks);
+        m_callbacks->didFail(code);
+    }
+
+private:
+    WorkerFileWriterHelperCallbacks(AsyncFileWriterClient* client, const String& path, WebKit::WebFileSystem* webFileSystem, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks, WorkerContext* workerContext)
+        : m_client(client)
+        , m_path(path)
+        , m_webFileSystem(webFileSystem)
+        , m_callbacks(callbacks)
+        , m_workerContext(workerContext)
+    {
+    }
+
+    AsyncFileWriterClient* m_client;
+    String m_path;
+    WebKit::WebFileSystem* m_webFileSystem;
+    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+    WorkerContext* m_workerContext;
+};
+
+void WorkerAsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    notImplemented();
+    createWorkerFileSystemCallbacksBridge(WorkerFileWriterHelperCallbacks::create(client, path, m_webFileSystem, callbacks, m_workerContext))->postReadMetadataToMainThread(m_webFileSystem, path, m_modeForCurrentOperation);
 }
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

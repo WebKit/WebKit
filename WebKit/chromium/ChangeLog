@@ -1,3 +1,23 @@
+2010-11-17  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] implementation of async FileWriter for workers
+        https://bugs.webkit.org/show_bug.cgi?id=47681
+
+        Tests are in a separate changelist.
+
+        Added new files.
+        * WebKit.gyp:
+
+        * src/WorkerAsyncFileSystemChromium.cpp: Added WorkerAsyncFileWriterChromium construction.
+        * src/WorkerAsyncFileWriterChromium.cpp: Added.
+        * src/WorkerAsyncFileWriterChromium.h: Added.
+
+        This class bridges between the context and main threads for the WorkerAsyncFileWriterChromium.
+        * src/WorkerFileWriterCallbacksBridge.cpp: Added.
+        * src/WorkerFileWriterCallbacksBridge.h: Added.
+
 2010-11-17  John Mellor  <johnme@chromium.org>
 
         Reviewed by Darin Fisher.
