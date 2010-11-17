@@ -165,7 +165,7 @@ public:
     ~TextRunWalker();
 
     bool isWordBreak(unsigned);
-    unsigned determineWordBreakSpacing(unsigned);
+    int determineWordBreakSpacing(unsigned);
     // setPadding sets a number of pixels to be distributed across the TextRun.
     // WebKit uses this to justify text.
     void setPadding(int);
@@ -255,7 +255,7 @@ private:
                       // Since we only add a whole number of padding pixels at
                       // each word break we accumulate error. This is the
                       // number of pixels that we are behind so far.
-    unsigned m_letterSpacing; // pixels to be added after each glyph.
+    int m_letterSpacing; // pixels to be added after each glyph.
 };
 
 
@@ -305,9 +305,9 @@ bool TextRunWalker::isWordBreak(unsigned index)
     return index && isCodepointSpace(m_item.string[index]) && !isCodepointSpace(m_item.string[index - 1]);
 }
 
-unsigned TextRunWalker::determineWordBreakSpacing(unsigned logClustersIndex)
+int TextRunWalker::determineWordBreakSpacing(unsigned logClustersIndex)
 {
-    unsigned wordBreakSpacing = 0;
+    int wordBreakSpacing = 0;
     // The first half of the conjunction works around the case where
     // output glyphs aren't associated with any codepoints by the
     // clusters log.
@@ -316,7 +316,7 @@ unsigned TextRunWalker::determineWordBreakSpacing(unsigned logClustersIndex)
         wordBreakSpacing = m_wordSpacingAdjustment;
 
         if (m_padding > 0) {
-            unsigned toPad = roundf(m_padPerWordBreak + m_padError);
+            int toPad = roundf(m_padPerWordBreak + m_padError);
             m_padError += m_padPerWordBreak - toPad;
 
             if (m_padding < toPad)
@@ -554,8 +554,7 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
             position += advance;
         }
     }
-
-    m_pixelWidth = position;
+    m_pixelWidth = std::max(position, 0.0);
     m_offsetX += m_pixelWidth;
 }
 

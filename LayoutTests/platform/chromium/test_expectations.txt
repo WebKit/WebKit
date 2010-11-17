@@ -3207,3 +3207,6 @@ BUGWK49653 WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html 
 
 // Regression after http://trac.webkit.org/changeset/72189
 BUGWK49653 WIN LINUX MAC : fast/css/getFloatValueForUnit.html = TEXT
+
+// Newly added. Will be rebaselined once bots collect expected results.
+BUGWK49563 WIN : fast/text/atsui-negative-spacing-features.html = IMAGE+TEXT
