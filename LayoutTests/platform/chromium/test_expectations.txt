@@ -3204,3 +3204,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 BUGWK49653 WIN LINUX MAC : fast/dom/setPrimitiveValue-exceptions.html = TEXT CRASH IMAGE
 BUGWK49653 WIN LINUX MAC : fast/dom/setPrimitiveValue.html = TEXT CRASH IMAGE
 BUGWK49653 WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE+TEXT
+
+// Regression after http://trac.webkit.org/changeset/72189
+BUGWK49653 WIN LINUX MAC : fast/css/getFloatValueForUnit.html = TEXT
