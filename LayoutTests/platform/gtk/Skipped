@@ -2519,6 +2519,7 @@ fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/atsui-rtl-override-selection.html
 fast/text/atsui-small-caps-punctuation-size.html
 fast/text/atsui-spacing-features.html
+fast/text/atsui-negative-spacing-features.html
 fast/text/bidi-embedding-pop-and-push-same.html
 fast/text/break-word.html
 fast/text/capitalize-boundaries.html
