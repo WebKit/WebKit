@@ -1,3 +1,13 @@
+2010-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure the pref for minimum font size is just explicitly set to 0 every time,
+        since the bots have 1 stuck in their plist otherwise.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2010-11-16  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

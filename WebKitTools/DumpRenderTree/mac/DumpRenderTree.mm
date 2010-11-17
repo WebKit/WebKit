@@ -427,6 +427,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setFantasyFontFamily:@"Papyrus"];
     [preferences setDefaultFontSize:16];
     [preferences setDefaultFixedFontSize:13];
+    [preferences setMinimumFontSize:0];
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
