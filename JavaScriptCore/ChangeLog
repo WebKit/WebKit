@@ -1,3 +1,32 @@
+2010-11-17  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Collect the beginning characters in a RegExp pattern for look-up
+        optimization
+        https://bugs.webkit.org/show_bug.cgi?id=45748
+
+        Extend the YARR's parser with an algorithm which collects the potential
+        beginning characters from a RegExp pattern for later look-up optimization.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::BeginCharHelper::BeginCharHelper):
+        (JSC::Yarr::BeginCharHelper::addBeginChar):
+        (JSC::Yarr::BeginCharHelper::merge):
+        (JSC::Yarr::BeginCharHelper::addCharacter):
+        (JSC::Yarr::BeginCharHelper::linkHotTerms):
+        (JSC::Yarr::RegexPatternConstructor::RegexPatternConstructor):
+        (JSC::Yarr::RegexPatternConstructor::addBeginTerm):
+        (JSC::Yarr::RegexPatternConstructor::setupDisjunctionBeginTerms):
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeBeginTerms):
+        (JSC::Yarr::RegexPatternConstructor::setupBeginChars):
+        (JSC::Yarr::compileRegex):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::TermChain::TermChain):
+        (JSC::Yarr::BeginChar::BeginChar):
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+
 2010-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72160.
