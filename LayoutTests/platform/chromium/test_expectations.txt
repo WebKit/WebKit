@@ -3199,3 +3199,8 @@ BUGWK49600 WIN LINUX : svg/dynamic-updates/SVGLineElement-dom-requiredFeatures.h
 BUGWK49600 WIN LINUX : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = TIMEOUT
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
+
+// Regression after http://trac.webkit.org/changeset/72163
+BUGWK49653 WIN LINUX MAC : fast/dom/setPrimitiveValue-exceptions.html = TEXT CRASH IMAGE
+BUGWK49653 WIN LINUX MAC : fast/dom/setPrimitiveValue.html = TEXT CRASH IMAGE
+BUGWK49653 WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html = TEXT CRASH IMAGE
