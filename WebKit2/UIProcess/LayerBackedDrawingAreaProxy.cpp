@@ -55,9 +55,11 @@ LayerBackedDrawingAreaProxy::~LayerBackedDrawingAreaProxy()
 {
 }
 
+#if !PLATFORM(WIN)
 void LayerBackedDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
 {
 }
+#endif
 
 void LayerBackedDrawingAreaProxy::setSize(const IntSize& viewSize)
 {
@@ -82,7 +84,7 @@ void LayerBackedDrawingAreaProxy::setSize(const IntSize& viewSize)
     page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().id, viewSize));
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 void LayerBackedDrawingAreaProxy::platformSetSize()
 {
 }

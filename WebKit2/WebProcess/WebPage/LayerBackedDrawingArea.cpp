@@ -197,7 +197,7 @@ bool LayerBackedDrawingArea::showRepaintCounter() const
     return false;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 void LayerBackedDrawingArea::attachCompositingContext(GraphicsLayer*)
 {
 }

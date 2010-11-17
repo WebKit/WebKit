@@ -1,3 +1,37 @@
+2010-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45567
+        Add stubbed-out layer-backed drawing area for Windows.
+
+        Add implementations of LayerBackedDrawingArea and
+        LayerBackedDrawingAreaProxy for Windows, and add them
+        to the vcproj.
+
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        * UIProcess/win/LayerBackedDrawingAreaProxyWin.cpp: Added.
+        (WebKit::LayerBackedDrawingAreaProxy::page):
+        (WebKit::LayerBackedDrawingAreaProxy::platformSetSize):
+        (WebKit::LayerBackedDrawingAreaProxy::attachCompositingContext):
+        (WebKit::LayerBackedDrawingAreaProxy::detachCompositingContext):
+        (WebKit::LayerBackedDrawingAreaProxy::paint):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::pageDidEnterAcceleratedCompositing):
+        (WebKit::WebView::pageDidLeaveAcceleratedCompositing):
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        * WebProcess/WebPage/win/LayerBackedDrawingAreaWin.cpp: Added.
+        (WebKit::LayerBackedDrawingArea::platformInit):
+        (WebKit::LayerBackedDrawingArea::platformClear):
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::detachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::setRootCompositingLayer):
+        (WebKit::LayerBackedDrawingArea::scheduleCompositingLayerSync):
+        (WebKit::LayerBackedDrawingArea::syncCompositingLayers):
+        * win/WebKit2.vcproj:
+
 2010-11-17  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

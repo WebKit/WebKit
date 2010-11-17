@@ -1281,6 +1281,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\LayerBackedDrawingArea.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\LayerBackedDrawingArea.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\PageOverlay.cpp"
 					>
 				</File>
@@ -1349,6 +1357,10 @@
 					>
 					<File
 						RelativePath="..\WebProcess\WebPage\win\ChunkedUpdateDrawingAreaWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\WebPage\win\LayerBackedDrawingAreaWin.cpp"
 						>
 					</File>
 					<File
@@ -1775,6 +1787,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\GenericCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\LayerBackedDrawingAreaProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\LayerBackedDrawingAreaProxy.h"
 				>
 			</File>
 			<File
@@ -2254,6 +2274,10 @@
 				>
 				<File
 					RelativePath="..\UIProcess\win\ChunkedUpdateDrawingAreaProxyWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\LayerBackedDrawingAreaProxyWin.cpp"
 					>
 				</File>
 				<File
