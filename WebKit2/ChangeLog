@@ -1,3 +1,15 @@
+2010-11-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Don't crash when invalidating a page overlay that hasn't been installed yet
+        https://bugs.webkit.org/show_bug.cgi?id=49685
+
+        Null check the web page.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+
 2010-11-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

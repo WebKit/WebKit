@@ -72,7 +72,8 @@ void PageOverlay::setPage(WebPage* webPage)
 
 void PageOverlay::setNeedsDisplay(const WebCore::IntRect& dirtyRect)
 {
-    m_webPage->drawingArea()->setNeedsDisplay(dirtyRect);
+    if (m_webPage)
+        m_webPage->drawingArea()->setNeedsDisplay(dirtyRect);
 }
 
 void PageOverlay::setNeedsDisplay()
