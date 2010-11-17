@@ -1,3 +1,17 @@
+2010-11-17  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        [chromium] Set minimum font size to 0 for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=49677
+
+        Followup for http://trac.webkit.org/changeset/72141.
+
+        Test: http/tests/misc/acid3.html
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+
 2010-11-17  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix.

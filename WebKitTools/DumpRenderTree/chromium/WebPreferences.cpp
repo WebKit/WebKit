@@ -65,7 +65,7 @@ void WebPreferences::reset()
 
     defaultFontSize = 16;
     defaultFixedFontSize = 13;
-    minimumFontSize = 1;
+    minimumFontSize = 0;
     minimumLogicalFontSize = 9;
 
     DOMPasteAllowed = true;
