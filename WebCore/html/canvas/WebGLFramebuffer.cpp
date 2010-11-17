@@ -180,11 +180,13 @@ bool WebGLFramebuffer::isIncomplete(bool checkInternalFormat) const
     return false;
 }
 
-bool WebGLFramebuffer::onAccess()
+bool WebGLFramebuffer::onAccess(bool needToInitializeRenderbuffers)
 {
     if (isIncomplete(true))
         return false;
-    return initializeRenderbuffers();
+    if (needToInitializeRenderbuffers)
+        return initializeRenderbuffers();
+    return true;
 }
 
 void WebGLFramebuffer::deleteObjectImpl(Platform3DObject object)
@@ -200,8 +202,6 @@ void WebGLFramebuffer::deleteObjectImpl(Platform3DObject object)
 bool WebGLFramebuffer::initializeRenderbuffers()
 {
     ASSERT(object());
-    if (!isColorAttached())
-        return false;
     bool initColor = false, initDepth = false, initStencil = false;
     unsigned long mask = 0;
     if (isUninitialized(m_colorAttachment.get())) {

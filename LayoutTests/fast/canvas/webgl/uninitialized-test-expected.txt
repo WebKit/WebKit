@@ -1,0 +1,13 @@
+Tests to check user code cannot access uninitialized data from GL resources.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Context created.
+Reading an uninitialized texture should succeed with all bytes set to 0.
+PASS All data initialized
+PASS getError was expected value: NO_ERROR : 
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

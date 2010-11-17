@@ -1241,70 +1241,7 @@ DELEGATE_TO_GL_2(sampleCoverage, SampleCoverage, double, bool)
 
 DELEGATE_TO_GL_4(scissor, Scissor, long, long, unsigned long, unsigned long)
 
-unsigned bytesPerComponent(unsigned type)
-{
-    switch (type) {
-    case GL_BYTE:
-    case GL_UNSIGNED_BYTE:
-        return 1;
-    case GL_SHORT:
-    case GL_UNSIGNED_SHORT:
-    case GL_UNSIGNED_SHORT_5_6_5:
-    case GL_UNSIGNED_SHORT_4_4_4_4:
-    case GL_UNSIGNED_SHORT_5_5_5_1:
-        return 2;
-    case GL_FLOAT:
-        return 4;
-    default:
-        return 4;
-    }
-}
-
-unsigned componentsPerPixel(unsigned format, unsigned type)
-{
-    switch (type) {
-    case GL_UNSIGNED_SHORT_5_6_5:
-    case GL_UNSIGNED_SHORT_4_4_4_4:
-    case GL_UNSIGNED_SHORT_5_5_5_1:
-        return 1;
-    default:
-        break;
-    }
-    switch (format) {
-    case GL_LUMINANCE:
-        return 1;
-    case GL_LUMINANCE_ALPHA:
-        return 2;
-    case GL_RGB:
-        return 3;
-    case GL_RGBA:
-    case GL_BGRA_EXT:
-        return 4;
-    default:
-        return 4;
-    }
-}
-
-// N.B.:  This code does not protect against integer overflow (as the command
-// buffer implementation does), so it should not be considered robust enough
-// for use in the browser.  Since this implementation is only used for layout
-// tests, this should be ok for now.
-size_t imageSizeInBytes(unsigned width, unsigned height, unsigned format, unsigned type)
-{
-    return width * height * bytesPerComponent(type) * componentsPerPixel(format, type);
-}
-
-void WebGraphicsContext3DDefaultImpl::texImage2D(unsigned target, unsigned level, unsigned internalFormat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, const void* pixels)
-{
-    OwnArrayPtr<uint8> zero;
-    if (!pixels) {
-        size_t size = imageSizeInBytes(width, height, format, type);
-        zero.set(new uint8[size]);
-        memset(zero.get(), 0, size);
-        pixels = zero.get();
-    }
-    glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
-}
+DELEGATE_TO_GL_9(texImage2D, TexImage2D, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, const void*)
 
 void WebGraphicsContext3DDefaultImpl::shaderSource(WebGLId shader, const char* string)
 {

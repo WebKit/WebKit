@@ -1,3 +1,12 @@
+2010-11-16  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGLRenderingContext needs to zero textures and renderbuffers
+        https://bugs.webkit.org/show_bug.cgi?id=49355
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Don't deal with texture initialization at this level.
+
 2010-11-17  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
