@@ -8,6 +8,8 @@ SOURCES += \
     wtf/dtoa.cpp \
     wtf/DecimalNumber.cpp \
     wtf/FastMalloc.cpp \
+    wtf/gobject/GOwnPtr.cpp \
+    wtf/gobject/GRefPtr.cpp \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
@@ -30,6 +32,12 @@ SOURCES += \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp
+
+contains(DEFINES, USE_GSTREAMER=1) {
+    DEFINES += ENABLE_GLIB_SUPPORT=1
+    PKGCONFIG += glib-2.0 gio-2.0
+    CONFIG += link_pkgconfig
+}
 
 !contains(DEFINES, USE_SYSTEM_MALLOC) {
     SOURCES += wtf/TCSystemAlloc.cpp

@@ -1,3 +1,14 @@
+2010-11-17  Alexis Menard  <alexis.menard@nokia.com>, Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Christiansen, Tor Arne Vestbø.
+
+        [Qt] Add support for use GStreamer with the Qt build
+
+        Enable the build/inclusion of the wtf/QObject convenience classes.
+
+        * JavaScriptCore.pri:
+        * wtf/wtf.pri:
+
 2010-11-17  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

@@ -3155,31 +3155,58 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             bindings/js/JSAudioConstructor.cpp
     }
 
-         contains(MOBILITY_CONFIG, multimedia) {
-            HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
-            SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
+    contains(DEFINES, USE_GSTREAMER=1) {
+        HEADERS += \
+            platform/graphics/gstreamer/DataSourceGStreamer.h \
+            platform/graphics/gstreamer/GOwnPtrGStreamer.h \
+            platform/graphics/gstreamer/GStreamerGWorld.h \
+            platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
+            platform/graphics/gstreamer/VideoSinkGStreamer.h \
+            platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
+            platform/graphics/gstreamer/PlatformVideoWindow.h \
+            platform/graphics/gstreamer/PlatformVideoWindowPrivate.h \
+            platform/graphics/gstreamer/ImageGStreamer.h
+        SOURCES += \
+            platform/graphics/gstreamer/DataSourceGStreamer.cpp \
+            platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
+            platform/graphics/gstreamer/GStreamerGWorld.cpp \
+            platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp \
+            platform/graphics/gstreamer/VideoSinkGStreamer.cpp \
+            platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
+            platform/graphics/gstreamer/PlatformVideoWindowQt.cpp \
+            platform/graphics/gstreamer/ImageGStreamerQt.cpp
 
-            CONFIG *= mobility
-            MOBILITY += multimedia
-            DEFINES += WTF_USE_QT_MULTIMEDIA
-         } else:contains(QT_CONFIG, phonon) {
-            HEADERS += \
-                platform/graphics/qt/MediaPlayerPrivatePhonon.h
+        DEFINES += WTF_USE_GSTREAMER=1
+        DEFINES += ENABLE_GLIB_SUPPORT=1
 
-            SOURCES += \
-                platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
+        INCLUDEPATH += $$PWD/platform/graphics/gstreamer
 
-            # Add phonon manually to prevent it from coming first in
-            # the include paths, as Phonon's path.h conflicts with
-            # WebCore's Path.h on case-insensitive filesystems.
-            qtAddLibrary(phonon)
-            INCLUDEPATH -= $$QMAKE_INCDIR_QT/phonon
-            INCLUDEPATH += $$QMAKE_INCDIR_QT/phonon
-            mac {
-                INCLUDEPATH -= $$QMAKE_LIBDIR_QT/phonon.framework/Headers
-                INCLUDEPATH += $$QMAKE_LIBDIR_QT/phonon.framework/Headers
-            }
+        PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
+     } else:contains(MOBILITY_CONFIG, multimedia) {
+        HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
+        SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
+
+        CONFIG *= mobility
+        MOBILITY += multimedia
+        DEFINES += WTF_USE_QT_MULTIMEDIA
+     } else:contains(QT_CONFIG, phonon) {
+        HEADERS += \
+            platform/graphics/qt/MediaPlayerPrivatePhonon.h
+
+        SOURCES += \
+            platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
+
+        # Add phonon manually to prevent it from coming first in
+        # the include paths, as Phonon's path.h conflicts with
+        # WebCore's Path.h on case-insensitive filesystems.
+        qtAddLibrary(phonon)
+        INCLUDEPATH -= $$QMAKE_INCDIR_QT/phonon
+        INCLUDEPATH += $$QMAKE_INCDIR_QT/phonon
+        mac {
+            INCLUDEPATH -= $$QMAKE_LIBDIR_QT/phonon.framework/Headers
+            INCLUDEPATH += $$QMAKE_LIBDIR_QT/phonon.framework/Headers
         }
+    }
 }
 
 contains(DEFINES, ENABLE_XPATH=1) {

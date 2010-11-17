@@ -42,6 +42,7 @@ INCLUDEPATH = \
     $$PWD/profiler \
     $$PWD/runtime \
     $$PWD/wtf \
+    $$PWD/wtf/gobject \
     $$PWD/wtf/symbian \
     $$PWD/wtf/unicode \
     $$PWD/yarr \

@@ -55,10 +55,10 @@
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQuickTimeVisualContext
 #elif PLATFORM(QT)
-#if USE(QT_MULTIMEDIA)
+#if USE(QT_MULTIMEDIA) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateQt.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQt
-#else
+#elif !USE(GSTREAMER)
 #include "MediaPlayerPrivatePhonon.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivatePhonon
 #endif
@@ -175,7 +175,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
 #endif
 
-#if !PLATFORM(GTK) && !PLATFORM(EFL)
+#if !PLATFORM(GTK) && !PLATFORM(EFL) && !(PLATFORM(QT) && USE(GSTREAMER))
         PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
     }
