@@ -101,3 +101,8 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* wkCl
 
     return toAPI(PageOverlay::create(clientImpl.leakPtr()).leakRef());
 }
+
+void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlayRef, WKRect rect)
+{
+    toImpl(bundlePageOverlayRef)->setNeedsDisplay(enclosingIntRect(toImpl(rect)));
+}

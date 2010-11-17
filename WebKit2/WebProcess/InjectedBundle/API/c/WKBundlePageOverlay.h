@@ -56,6 +56,7 @@ typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 
 WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* client);
+WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
 
 #ifdef __cplusplus
 }

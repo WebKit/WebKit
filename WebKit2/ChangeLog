@@ -1,3 +1,18 @@
+2010-11-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need way to invalidate part of a WKOverlayRef so it will be redrawn
+        https://bugs.webkit.org/show_bug.cgi?id=49679
+        <rdar://problem/8679152>
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlaySetNeedsDisplay):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+        * WebProcess/WebPage/PageOverlay.h:
+
 2010-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Provide a way to create a WKView (WebPage) that is hidden from
