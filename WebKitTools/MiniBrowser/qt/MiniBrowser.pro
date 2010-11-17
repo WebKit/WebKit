@@ -51,3 +51,10 @@ contains(QT_CONFIG, opengl) {
     QT += opengl
     DEFINES += QT_CONFIGURED_WITH_OPENGL
 }
+
+# We have to copy the resource file to the build directory
+# to use the useragentlist.txt file of QtTestBrowser without
+# polluting the source tree.
+# The copier is defined in WebKit2/DerivedSources.pro.
+RESOURCES += \
+    $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc

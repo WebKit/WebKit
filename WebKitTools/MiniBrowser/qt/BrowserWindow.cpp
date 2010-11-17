@@ -40,6 +40,9 @@ BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
     m_addressBar = new QLineEdit();
 
     m_menu->addAction("New Window", this, SLOT(newWindow()));
+    m_menu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+
+    m_menu->addSeparator();
     m_menu->addAction("Quit", this, SLOT(close()));
 
     m_browser->setFocus(Qt::OtherFocusReason);
@@ -120,6 +123,53 @@ void BrowserWindow::titleChanged(const QString& title)
 void BrowserWindow::urlChanged(const QUrl& url)
 {
     m_addressBar->setText(url.toString());
+}
+
+void BrowserWindow::updateUserAgentList()
+{
+    QWKPage* page = m_browser->view()->page();
+
+    QFile file(":/useragentlist.txt");
+
+    if (file.open(QIODevice::ReadOnly)) {
+        while (!file.atEnd())
+            m_userAgentList << file.readLine().trimmed();
+        file.close();
+    }
+
+    Q_ASSERT(!m_userAgentList.isEmpty());
+
+    if (!(page->customUserAgent().isEmpty() || m_userAgentList.contains(page->customUserAgent())))
+        m_userAgentList << page->customUserAgent();
+}
+
+void BrowserWindow::showUserAgentDialog()
+{
+    updateUserAgentList();
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Change User Agent");
+    dialog.resize(size().width() * 0.7, dialog.size().height());
+    QVBoxLayout* layout = new QVBoxLayout(&dialog);
+    dialog.setLayout(layout);
+
+    QComboBox* combo = new QComboBox(&dialog);
+    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
+    combo->setEditable(true);
+    combo->insertItems(0, m_userAgentList);
+    layout->addWidget(combo);
+
+    int index = combo->findText(m_browser->view()->page()->customUserAgent());
+    combo->setCurrentIndex(index);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel
+                                                      , Qt::Horizontal, &dialog);
+    connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    layout->addWidget(buttonBox);
+
+    if (dialog.exec() && !combo->currentText().isEmpty())
+        m_browser->view()->page()->setCustomUserAgent(combo->currentText());
 }
 
 BrowserWindow::~BrowserWindow()

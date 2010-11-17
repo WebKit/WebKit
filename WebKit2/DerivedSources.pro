@@ -39,7 +39,8 @@ DIRS = \
     $$OUTPUT_DIR/include/JavaScriptCore \
     $$OUTPUT_DIR/include/WebCore \
     $$OUTPUT_DIR/include/WebKit2 \
-    $$OUTPUT_DIR/WebKit2/generated
+    $$OUTPUT_DIR/WebKit2/generated \
+    $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt
 
 for(DIR, DIRS) {
     !exists($$DIR): system($$QMAKE_MKDIR $$DIR)
@@ -108,6 +109,20 @@ SCRIPTS = \
     $$PWD/Scripts/generate-messages-header.py \
     $$PWD/Scripts/webkit2/__init__.py \
     $$PWD/Scripts/webkit2/messages.py
+
+ualist_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
+ualist_copier.depends = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
+ualist_copier.input = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt
+ualist_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
+generated_files.depends += ualist_copier
+QMAKE_EXTRA_TARGETS += ualist_copier
+
+qrc_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
+qrc_copier.depends = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
+qrc_copier.input = $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
+qrc_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
+generated_files.depends += qrc_copier
+QMAKE_EXTRA_TARGETS += qrc_copier
 
 message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_header_generator.input = MESSAGE_RECEIVERS

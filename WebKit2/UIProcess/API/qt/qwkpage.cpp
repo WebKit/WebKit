@@ -476,6 +476,11 @@ void QWKPage::setCustomUserAgent(const QString& userAgent)
     WKPageSetCustomUserAgent(pageRef(), wkUserAgent.get());
 }
 
+QString QWKPage::customUserAgent() const
+{
+    return WKStringCopyQString(WKPageCopyCustomUserAgent(pageRef()));
+}
+
 void QWKPage::load(const QUrl& url)
 {
     WKRetainPtr<WKURLRef> wkurl(WKURLCreateWithQUrl(url));

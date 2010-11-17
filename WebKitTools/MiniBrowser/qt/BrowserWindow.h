@@ -29,11 +29,10 @@
 #ifndef BrowserWindow_h
 #define BrowserWindow_h
 
-#define PLATFORM(x) 0
-
 #include "BrowserView.h"
-#include <qgraphicswkview.h>
+#include <QStringList>
 #include <QtGui>
+#include <qgraphicswkview.h>
 
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
@@ -52,11 +51,15 @@ protected slots:
     void loadProgress(int progress);
     void titleChanged(const QString&);
     void urlChanged(const QUrl&);
+    void showUserAgentDialog();
 
 private:
+    void updateUserAgentList();
+
     BrowserView* m_browser;
     QMenuBar* m_menu;
     QLineEdit* m_addressBar;
+    QStringList m_userAgentList;
     QGraphicsWKView::BackingStoreType m_backingStoreType;
 };
 
