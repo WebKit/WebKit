@@ -126,10 +126,12 @@ public:
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
     // and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
-    // included. In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to
-    // override the current visibleContentRect by using setActualVisibleContentRect, for instance when a pan ends.
+    // included.
+    // In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to use
+    // the actualVisibleContentRect instead, though this must be updated manually, e.g after panning ends.
     IntRect visibleContentRect(bool includeScrollbars = false) const;
-    void setActualVisibleContentRect(IntRect actualVisibleContentRect) { m_actualVisibleContentRect = actualVisibleContentRect; }
+    IntRect actualVisibleContentRect() const { return m_actualVisibleContentRect.isEmpty() ? visibleContentRect() : m_actualVisibleContentRect; }
+    void setActualVisibleContentRect(const IntRect& actualVisibleContentRect) { m_actualVisibleContentRect = actualVisibleContentRect; }
     int visibleWidth() const { return visibleContentRect().width(); }
     int visibleHeight() const { return visibleContentRect().height(); }
 
