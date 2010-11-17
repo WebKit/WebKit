@@ -91,6 +91,12 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
     return false;
 }
 
+void MockSpellCheck::fillSuggestionList(const WebString& word, Vector<WebString>* suggestions)
+{
+    if (word == WebString::fromUTF8("wellcome"))
+        suggestions->append(WebString::fromUTF8("welcome"));
+}
+
 bool MockSpellCheck::initializeIfNeeded()
 {
     // Exit if we have already initialized this object.
@@ -133,6 +139,7 @@ bool MockSpellCheck::initializeIfNeeded()
         "ifmmp",
         "qwertyuiopasd",
         "qwertyuiopasdf",
+        "wellcome"
     };
 
     m_misspelledWords.clear();

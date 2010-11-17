@@ -1,3 +1,27 @@
+2010-11-17  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium][DRT] EventSender.contextClick() should aware spellchecking
+        https://bugs.webkit.org/show_bug.cgi?id=49366
+
+        - EvenSender: Checked WebContextMenuData.misspelledWord and added extra context menu entries
+          according to the spellchecker suggestion
+        - MockSpellCheck: add fillSuggestionList to provide fake suggestions.
+
+        test_expectations.txt will be changed after this change is ported to test_shell.
+        
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (makeMenuItemStringsFor):
+        (EventSender::contextClick):
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        (MockSpellCheck::fillSuggestionList):
+        (MockSpellCheck::initializeIfNeeded):
+        * DumpRenderTree/chromium/MockSpellCheck.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::mockSpellCheck):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-11-16  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

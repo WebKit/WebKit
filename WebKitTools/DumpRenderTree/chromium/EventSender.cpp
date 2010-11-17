@@ -736,7 +736,7 @@ void EventSender::replaySavedEvents()
 //   also makes sense. This function is doing such for some flags.
 // - Some test even checks actual string content. So providing it would be also helpful.
 //
-static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu)
+static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu, MockSpellCheck* spellcheck)
 {
     // These constants are based on Safari's context menu because tests are made for it.
     static const char* nonEditableMenuStrings[] = { "Back", "Reload Page", "Open in Dashbaord", "<separator>", "View Source", "Save Page As", "Print Page", "Inspect Element", 0 };
@@ -751,6 +751,10 @@ static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu)
     if (contextMenu->isEditable) {
         for (const char** item = editableMenuStrings; *item; ++item) 
             strings.append(WebString::fromUTF8(*item));
+        Vector<WebString> suggestions;
+        spellcheck->fillSuggestionList(contextMenu->misspelledWord, &suggestions);
+        for (size_t i = 0; i < suggestions.size(); ++i) 
+            strings.append(suggestions[i]);
     } else {
         for (const char** item = nonEditableMenuStrings; *item; ++item) 
             strings.append(WebString::fromUTF8(*item));
@@ -782,7 +786,7 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
     pressedButton = WebMouseEvent::ButtonNone;
 
     WebContextMenuData* lastContextMenu = m_shell->webViewHost()->lastContextMenuData();
-    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu)));
+    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_shell->webViewHost()->mockSpellCheck())));
 }
 
 class MouseDownTask: public MethodTask<EventSender> {
