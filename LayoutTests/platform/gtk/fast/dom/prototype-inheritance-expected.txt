@@ -43,10 +43,6 @@ PASS inner.CSSValue.isInner is true
 PASS inner.CSSValue.constructor.isInner is true
 PASS inner.CSSValueList.isInner is true
 PASS inner.CSSValueList.constructor.isInner is true
-PASS inner.CSSVariablesDeclaration.isInner is true
-PASS inner.CSSVariablesDeclaration.constructor.isInner is true
-PASS inner.CSSVariablesRule.isInner is true
-PASS inner.CSSVariablesRule.constructor.isInner is true
 PASS inner.CanvasGradient.isInner is true
 PASS inner.CanvasGradient.constructor.isInner is true
 PASS inner.CanvasPattern.isInner is true
