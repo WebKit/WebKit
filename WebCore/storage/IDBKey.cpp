@@ -93,9 +93,9 @@ String IDBKey::whereSyntax(String qualifiedTableName) const
 {
     switch (m_type) {
     case IDBKey::StringType:
-        return qualifiedTableName + "keyString = ?  ";
+        return qualifiedTableName + "keyString = ?  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
     case IDBKey::NumberType:
-        return qualifiedTableName + "keyNumber = ?  ";
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber = ?  ";
     // FIXME: Implement date.
     case IDBKey::NullType:
         return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
