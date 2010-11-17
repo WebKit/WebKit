@@ -18,12 +18,11 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -39,9 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
-				DisableSpecificWarnings="4819"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -55,9 +52,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -82,18 +76,16 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -109,9 +101,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
-				DisableSpecificWarnings="4819"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -125,9 +115,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -152,18 +139,16 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -179,10 +164,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
-				RuntimeLibrary="3"
-				DisableSpecificWarnings="4819"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -196,9 +178,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -223,18 +202,16 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug_Cairo|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -250,9 +227,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
-				DisableSpecificWarnings="4819"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -266,9 +241,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -293,18 +265,16 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -320,10 +290,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
+				AdditionalIncludeDirectories=""
 				RuntimeLibrary="3"
-				DisableSpecificWarnings="4819"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -337,9 +305,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -364,21 +329,17 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release_LTCG|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\TestNetscapePluginCommon.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -394,9 +355,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
-				DisableSpecificWarnings="4819"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -410,9 +369,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Msimg32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -437,7 +393,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -515,60 +470,6 @@
 		<File
 			RelativePath="..\main.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_Internal|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_Cairo|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_All|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release_LTCG|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\PluginObject.cpp"

@@ -1,3 +1,21 @@
+2010-11-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        DumpRenderTree on Windows should use a vsprops file for shared project settings
+        https://bugs.webkit.org/show_bug.cgi?id=49690
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginCommon.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/DumpRenderTreeApple.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeCFLite.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeCURL.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeCairo.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops: Added.
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/ImageDiffCommon.vsprops: Added.
+
 2010-11-17  Hayato Ito  <hayato@chromium.org>
 
         Refactor TestTypeBase.compare_output().
