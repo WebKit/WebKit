@@ -69,10 +69,13 @@ def _set_gpu_options(options):
             options.accelerated_compositing = True
         if options.accelerated_2d_canvas is None:
             options.accelerated_2d_canvas = True
-        if options.builder_name is not None:
-            options.builder_name = options.builder_name + ' - GPU'
         if options.use_drt is None:
             options.use_drt = True
+
+        # FIXME: Remove this after http://codereview.chromium.org/5133001/ is enabled
+        # on the bots.
+        if options.builder_name is not None and not ' - GPU' in options.builder_name:
+            options.builder_name = options.builder_name + ' - GPU'
 
 
 def _gpu_overrides(port):

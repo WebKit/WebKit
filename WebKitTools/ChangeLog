@@ -1,3 +1,15 @@
+2010-11-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        See Chromium issue http://codereview.chromium.org/5133001/ - we
+        are modifying the build bots to pass in the builder name with
+        the "GPU" string appended instead of appending it in the code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49636
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2010-11-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
