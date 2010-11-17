@@ -61,7 +61,7 @@ static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
     RefPtr<Coordinates> coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
                                                           position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
                                                           position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
-    return Geoposition::create(coordinates.release(), position->timestamp());
+    return Geoposition::create(coordinates.release(), convertSecondsToDOMTimeStamp(position->timestamp()));
 }
 
 static PassRefPtr<PositionError> createPositionError(GeolocationError* error)

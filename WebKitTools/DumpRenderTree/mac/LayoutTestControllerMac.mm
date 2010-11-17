@@ -70,6 +70,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWorkersPrivate.h>
+#import <wtf/CurrentTime.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
@@ -353,7 +354,7 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    WebGeolocationPosition *position = [[WebGeolocationPosition alloc] initWithTimestamp:0 latitude:latitude longitude:longitude accuracy:accuracy];
+    WebGeolocationPosition *position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
     [[MockGeolocationProvider shared] setPosition:position];
     [position release];
 }
