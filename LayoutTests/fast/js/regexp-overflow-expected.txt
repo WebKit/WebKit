@@ -14,16 +14,6 @@ PASS /{([\D-\ca]]â€žÂ£Âµ+?)}|[[\B-\u00d4]âˆšÏ€- ]]]{0,3}/i.exec("B
 PASS /|[x\B-\u00b5]/i.exec("").toString() is ""
 PASS new RegExp(complexPattern).exec(complexInput)[0] is complexInput
 PASS new RegExp(s); threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){30}){3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){30}){0,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){30}){10,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){0,30}){3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){0,30}){0,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){0,30}){10,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){10,30}){3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){10,30}){0,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){10,30}){10,3360}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
-PASS /(([ab]){12})(([ab]){65535}){1680}(([ab]){38}){722}([ab]){27}/ threw exception SyntaxError: Invalid regular expression: regular expression too large.
 
 PASS successfullyParsed is true
 

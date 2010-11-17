@@ -1,6 +1,6 @@
 S15.10.2.5_A1_T4
 
-FAIL SputnikError: #4: __executed = /(z)((a+)?(b+)?(c))*/.exec("zaacbbbcac"); __executed[4] === undefined. Actual: bbb
+PASS 
 
 TEST COMPLETE
 

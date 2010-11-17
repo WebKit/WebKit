@@ -1021,14 +1021,8 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if ENABLE(JIT) && !defined(ENABLE_YARR) && !defined(ENABLE_YARR_JIT)
-#define ENABLE_YARR 1
+#if ENABLE(JIT) && !defined(ENABLE_YARR_JIT)
 #define ENABLE_YARR_JIT 1
-#endif
-
-/* Sanity Check */
-#if ENABLE(YARR_JIT) && !ENABLE(YARR)
-#error "YARR_JIT requires YARR"
 #endif
 
 #if ENABLE(JIT) || ENABLE(YARR_JIT)

@@ -220,9 +220,7 @@ namespace JSC {
 
         RegExpCache* m_regExpCache;
 
-#if ENABLE(YARR)
         BumpPointerAllocator m_regexAllocator;
-#endif
 
 #if ENABLE(REGEXP_TRACING)
         typedef ListHashSet<RefPtr<RegExp> > RTTraceList;

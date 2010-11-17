@@ -7,10 +7,10 @@ PASS /(?:(?=x))+/.exec("x") is [""]
 PASS /(?:a?)*/.exec("a") is ["a"]
 PASS /(a|ab)*/.exec("abab") is ["a","a"]
 PASS /(ab)+/.exec("abab") is ["abab","ab"]
-FAIL /(|ab)*/.exec("ab") should be ab,ab. Was ,.
-FAIL /(?:(|ab)*)/.exec("ab") should be ab,ab. Was ,.
-FAIL /(?:(|ab)+)/.exec("ab") should be ab,ab. Was ,.
-FAIL /(|ab)+/.exec("abab") should be abab,ab. Was ,.
+PASS /(|ab)*/.exec("ab") is ["ab","ab"]
+PASS /(?:(|ab)*)/.exec("ab") is ["ab","ab"]
+PASS /(?:(|ab)+)/.exec("ab") is ["ab","ab"]
+PASS /(|ab)+/.exec("abab") is ["abab","ab"]
 PASS successfullyParsed is true
 
 TEST COMPLETE
