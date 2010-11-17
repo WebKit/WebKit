@@ -191,8 +191,8 @@ namespace JSC {
         macro(op_sret, 2) \
         \
         macro(op_debug, 4) \
-        macro(op_profile_has_called, 1) \
-        macro(op_profile_will_return, 1) \
+        macro(op_profile_will_call, 2) \
+        macro(op_profile_did_call, 2) \
         \
         macro(op_end, 2) // end must be the last opcode in the list
 

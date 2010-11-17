@@ -2264,20 +2264,20 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
     asArguments(stackFrame.args[0].jsValue())->copyRegisters();
 }
 
-DEFINE_STUB_FUNCTION(void, op_profile_has_called)
+DEFINE_STUB_FUNCTION(void, op_profile_will_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(*stackFrame.enabledProfilerReference);
-    (*stackFrame.enabledProfilerReference)->hasCalled(stackFrame.callFrame);
+    (*stackFrame.enabledProfilerReference)->willExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
-DEFINE_STUB_FUNCTION(void, op_profile_will_return)
+DEFINE_STUB_FUNCTION(void, op_profile_did_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(*stackFrame.enabledProfilerReference);
-    (*stackFrame.enabledProfilerReference)->willReturn(stackFrame.callFrame);
+    (*stackFrame.enabledProfilerReference)->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(void, op_ret_scopeChain)

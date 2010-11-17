@@ -377,8 +377,8 @@ extern "C" {
     void JIT_STUB cti_op_end(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_jmp_scopes(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_pop_scope(STUB_ARGS_DECLARATION);
-    void JIT_STUB cti_op_profile_has_called(STUB_ARGS_DECLARATION);
-    void JIT_STUB cti_op_profile_will_return(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_profile_did_call(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_profile_will_call(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_id(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_id_fail(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_id_generic(STUB_ARGS_DECLARATION);

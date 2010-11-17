@@ -1306,23 +1306,25 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_profile_has_called(Instruction*)
+void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
     peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
-    JITStubCall stubCall(this, cti_op_profile_has_called);
+    JITStubCall stubCall(this, cti_op_profile_will_call);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT1);
     stubCall.call();
     noProfiler.link(this);
 
 }
 
-void JIT::emit_op_profile_will_return(Instruction*)
+void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 {
     peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
-    JITStubCall stubCall(this, cti_op_profile_will_return);
+    JITStubCall stubCall(this, cti_op_profile_did_call);
+    stubCall.addArgument(currentInstruction[1].u.operand, regT1);
     stubCall.call();
     noProfiler.link(this);
 }
