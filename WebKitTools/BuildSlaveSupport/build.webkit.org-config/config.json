@@ -95,9 +95,9 @@
                       "slavenames": ["apple-windows-2", "test-slave"]
                     },
                     {
-                      "name": "Windows Release (Tests)", "type": "Test", "builddir": "win-release-tests",
+                      "name": "Windows 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-5", "test-slave"]
+                      "slavenames": ["apple-windows-5", "apple-windows-6", "test-slave"]
                     },
                     {
                       "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
@@ -106,11 +106,11 @@
                       "slavenames": ["apple-windows-1", "test-slave"]
                     },
                     {
-                      "name": "Windows Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "name": "Windows XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-4", "apple-windows-6", "test-slave"]
+                      "slavenames": ["apple-windows-3", "apple-windows-4", "test-slave"]
                     },
-                    { "name": "Windows Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-release-tests-wk2",
+                    { "name": "Windows 7 Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-release-tests-wk2",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["apple-windows-7", "test-slave"]
                     },
@@ -237,13 +237,13 @@
                       "builderNames": ["SnowLeopard Intel Release (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
-                      "builderNames": ["Windows Release (Tests)"]
+                      "builderNames": ["Windows 7 Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
-                      "builderNames": ["Windows Debug (Tests)"]
+                      "builderNames": ["Windows XP Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests-wk2",
-                      "builderNames": ["Windows Release (WebKit2 Tests)"]
+                      "builderNames": ["Windows 7 Release (WebKit2 Tests)"]
                     }
                   ]
 }

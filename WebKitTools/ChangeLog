@@ -1,3 +1,24 @@
+2010-11-17  Adam Roben  <aroben@apple.com>
+
+        Make each Windows Test builder use the same OS for all its slaves
+
+        Currently each WebKit1 Windows Test builder has one Windows XP slave
+        and one Windows 7 slave. Having different OSes in a single builder
+        meant that the builders would alternate between red and green when
+        there were OS-specific failures.
+
+        Fixes <http://webkit.org/b/49688> Windows Test builders alternate
+        between red and green because of multiple OS versions
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Renamed
+        "Windows Release (Tests)" to "Windows 7 Release (Tests)", "Windows
+        Debug (Tests)" to "Windows XP Debug (Tests)", and "Windows Release
+        (WebKit2 Tests)" to "Windows 7 Release (WebKit2 Tests)". Updated the
+        builders for the two WebKit1 builders so that they would all use the
+        appropriate OS.
+
 2010-11-17  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dan Bernstein.
