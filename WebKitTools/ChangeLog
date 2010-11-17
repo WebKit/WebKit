@@ -1,3 +1,24 @@
+2010-11-17  Hayato Ito  <hayato@chromium.org>
+
+        Refactor TestTypeBase.compare_output().
+
+        Introduce a TestOutput class and update compare_output() of each test
+        types so that they can take both actual and expected TestOutput objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49431
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_output.py: Added.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2010-11-17  Adam Roben  <aroben@apple.com>
 
         Make each Windows Test builder use the same OS for all its slaves

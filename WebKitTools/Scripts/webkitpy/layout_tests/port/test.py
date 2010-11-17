@@ -36,6 +36,8 @@ import os
 import sys
 import time
 
+from webkitpy.layout_tests.layout_package import test_output
+
 import base
 
 
@@ -289,6 +291,7 @@ class TestDriver(base.Driver):
         return True
 
     def run_test(self, uri, timeoutms, image_hash):
+        start_time = time.time()
         test_name = self._port.uri_to_test_name(uri)
         test = self._port._tests[test_name]
         if test.keyboard:
@@ -297,13 +300,10 @@ class TestDriver(base.Driver):
             raise ValueError('exception from ' + test_name)
         if test.hang:
             time.sleep((float(timeoutms) * 4) / 1000.0)
-
-        if self._port.get_option('pixel_tests') and test.actual_image:
-            with open(self._image_path, 'w') as file:
-                file.write(test.actual_image)
-
-        return (test.crash, test.timeout, test.actual_checksum,
-                test.actual_text, test.error)
+        return test_output.TestOutput(test.actual_text, test.actual_image,
+                                      test.actual_checksum, test.crash,
+                                      time.time() - start_time, test.timeout,
+                                      test.error)
 
     def start(self):
         pass

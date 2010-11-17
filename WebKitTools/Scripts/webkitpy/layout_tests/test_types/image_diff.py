@@ -54,116 +54,93 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.image_diff")
 
 class ImageDiff(test_type_base.TestTypeBase):
 
-    def _copy_output_png(self, test_filename, source_image, extension):
-        """Copies result files into the output directory with appropriate
-        names.
-
-        Args:
-          test_filename: the test filename
-          source_file: path to the image file (either actual or expected)
-          extension: extension to indicate -actual.png or -expected.png
-        """
-        self._make_output_directory(test_filename)
-        dest_image = self.output_filename(test_filename, extension)
-
-        if os.path.exists(source_image):
-            shutil.copyfile(source_image, dest_image)
-
-    def _save_baseline_files(self, filename, png_path, checksum,
+    def _save_baseline_files(self, filename, image, image_hash,
                              generate_new_baseline):
         """Saves new baselines for the PNG and checksum.
 
         Args:
           filename: test filename
-          png_path: path to the actual PNG result file
-          checksum: value of the actual checksum result
+          image: a image output
+          image_hash: a checksum of the image
           generate_new_baseline: whether to generate a new, platform-specific
             baseline, or update the existing one
         """
-        with open(png_path, "rb") as png_file:
-            png_data = png_file.read()
-        self._save_baseline_data(filename, png_data, ".png", encoding=None,
+        self._save_baseline_data(filename, image, ".png", encoding=None,
                                  generate_new_baseline=generate_new_baseline)
-        self._save_baseline_data(filename, checksum, ".checksum",
+        self._save_baseline_data(filename, image_hash, ".checksum",
                                  encoding="ascii",
                                  generate_new_baseline=generate_new_baseline)
 
-    def _create_image_diff(self, port, filename, configuration):
+    def _copy_image(self, filename, actual_image, expected_image):
+        self.write_output_files(filename, '.png',
+                                output=actual_image, expected=expected_image,
+                                encoding=None, print_text_diffs=False)
+
+    def _copy_image_hash(self, filename, actual_image_hash, expected_image_hash):
+        self.write_output_files(filename, '.checksum',
+                                actual_image_hash, expected_image_hash,
+                                encoding="ascii", print_text_diffs=False)
+
+    def _create_diff_image(self, port, filename, actual_image, expected_image):
         """Creates the visual diff of the expected/actual PNGs.
 
-        Args:
-          filename: the name of the test
-          configuration: Debug or Release
-        Returns True if the files are different, False if they match
+        Returns True if the images are different.
         """
         diff_filename = self.output_filename(filename,
-          self.FILENAME_SUFFIX_COMPARE)
-        actual_filename = self.output_filename(filename,
-          self.FILENAME_SUFFIX_ACTUAL + '.png')
-        expected_filename = self.output_filename(filename,
-          self.FILENAME_SUFFIX_EXPECTED + '.png')
+                                             self.FILENAME_SUFFIX_COMPARE)
+        return port.diff_image(actual_image, expected_image, diff_filename)
 
-        expected_image = port.expected_image(filename)
-        with codecs.open(actual_filename, 'r+b', None) as file:
-            actual_image = file.read()
-
-        result = port.diff_image(expected_image, actual_image,
-                                 diff_filename)
-        return result
-
-    def compare_output(self, port, filename, output, test_args, configuration):
+    def compare_output(self, port, filename, test_args, actual_test_output,
+                       expected_test_output):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
         """
         failures = []
 
         # If we didn't produce a hash file, this test must be text-only.
-        if test_args.hash is None:
+        if actual_test_output.image_hash is None:
             return failures
 
         # If we're generating a new baseline, we pass.
         if test_args.new_baseline or test_args.reset_results:
-            self._save_baseline_files(filename, test_args.png_path,
-                                      test_args.hash, test_args.new_baseline)
+            self._save_baseline_files(filename, actual_test_output.image_hash,
+                                      actual_test_output.image,
+                                      test_args.new_baseline)
             return failures
 
-        # Compare hashes.
-        expected_hash = self._port.expected_checksum(filename)
-        expected_png = self._port.expected_image(filename)
-
-        if not expected_png:
+        if not expected_test_output.image:
             # Report a missing expected PNG file.
-            self.write_output_files(filename, '.checksum',
-                                    test_args.hash, expected_hash,
-                                    encoding="ascii",
-                                    print_text_diffs=False)
-            self._copy_output_png(filename, test_args.png_path, '-actual.png')
+            self._copy_image(filename, actual_test_output.image, expected_image=None)
+            self._copy_image_hash(filename, actual_test_output.image_hash,
+                                  expected_test_output.image_hash)
             failures.append(test_failures.FailureMissingImage())
             return failures
-        elif test_args.hash == expected_hash:
+        if not expected_test_output.image_hash:
+            # Report a missing expected checksum file.
+            self._copy_image(filename, actual_test_output.image,
+                             expected_test_output.image)
+            self._copy_image_hash(filename, actual_test_output.image_hash,
+                                  expected_image_hash=None)
+            failures.append(test_failures.FailureMissingImageHash())
+            return failures
+
+        if actual_test_output.image_hash == expected_test_output.image_hash:
             # Hash matched (no diff needed, okay to return).
             return failures
 
-        self.write_output_files(filename, '.checksum',
-                                test_args.hash, expected_hash,
-                                encoding="ascii",
-                                print_text_diffs=False)
-
-        # FIXME: combine next two lines
-        self._copy_output_png(filename, test_args.png_path, '-actual.png')
-        self.write_output_files(filename, '.png', output=None,
-                                expected=expected_png,
-                                encoding=None, print_text_diffs=False)
+        self._copy_image(filename, actual_test_output.image,
+                         expected_test_output.image)
+        self._copy_image_hash(filename, actual_test_output.image_hash,
+                              expected_test_output.image_hash)
 
         # Even though we only use the result in one codepath below but we
         # still need to call CreateImageDiff for other codepaths.
-        images_are_different = self._create_image_diff(port, filename, configuration)
-        if not expected_hash:
-            failures.append(test_failures.FailureMissingImageHash())
-        elif test_args.hash != expected_hash:
-            if images_are_different:
-                failures.append(test_failures.FailureImageHashMismatch())
-            else:
-                failures.append(test_failures.FailureImageHashIncorrect())
+        images_are_different = self._create_diff_image(port, filename,
+                                                       actual_test_output.image,
+                                                       expected_test_output.image)
+        if not images_are_different:
+            failures.append(test_failures.FailureImageHashIncorrect())
+        else:
+            failures.append(test_failures.FailureImageHashMismatch())
 
         return failures

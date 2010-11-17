@@ -101,9 +101,6 @@ class TestInput:
           """
         # FIXME: filename should really be test_name as a relative path.
         self.filename = filename
-        # The image checksum is passed to the driver so that the driver can optionally not have
-        # to output the image if the checksums match.
-        self.image_checksum = None
         self.timeout = timeout
 
         # FIXME: Maybe the URI shouldn't be part of the TestInput at all?

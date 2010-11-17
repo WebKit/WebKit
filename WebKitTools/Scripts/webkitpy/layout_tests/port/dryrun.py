@@ -48,6 +48,9 @@ from __future__ import with_statement
 
 import os
 import sys
+import time
+
+from webkitpy.layout_tests.layout_package import test_output
 
 import base
 import factory
@@ -109,19 +112,19 @@ class DryrunDriver(base.Driver):
         return None
 
     def run_test(self, uri, timeoutms, image_hash):
+        start_time = time.time()
         test_name = self._port.uri_to_test_name(uri)
         path = os.path.join(self._port.layout_tests_dir(), test_name)
         text_output = self._port.expected_text(path)
 
         if image_hash is not None:
             image = self._port.expected_image(path)
-            if image and self._image_path:
-                with open(self._image_path, 'w') as f:
-                    f.write(image)
             hash = self._port.expected_checksum(path)
         else:
+            image = None
             hash = None
-        return (False, False, hash, text_output, None)
+        return test_output.TestOutput(text_output, image, hash, False,
+                                      time.time() - start_time, False, None)
 
     def start(self):
         pass

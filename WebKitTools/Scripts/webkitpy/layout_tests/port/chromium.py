@@ -46,12 +46,10 @@ import webbrowser
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.layout_package import test_output
 
 import base
 import http_server
-
-from webkitpy.common.system.executive import Executive
-from webkitpy.layout_tests.layout_package import test_expectations
 
 # Chromium DRT on OSX uses WebKitDriver.
 if sys.platform == 'darwin':
@@ -447,6 +445,15 @@ class ChromiumDriver(base.Driver):
         cmd += "\n"
         return cmd
 
+    def _output_image(self):
+        """Returns the image output which driver generated."""
+        png_path = self._image_path
+        if png_path and os.path.isfile(png_path):
+            with open(png_path, 'rb') as image_file:
+                return image_file.read()
+        else:
+            return None
+
     def run_test(self, uri, timeoutms, checksum):
         output = []
         error = []
@@ -498,8 +505,9 @@ class ChromiumDriver(base.Driver):
 
             (line, crash) = self._write_command_and_read_line(input=None)
 
-        return (crash, timeout, actual_checksum, ''.join(output),
-                ''.join(error))
+        return test_output.TestOutput(
+            ''.join(output), self._output_image(), actual_checksum,
+            crash, time.time() - start_time, timeout, ''.join(error))
 
     def stop(self):
         if self._proc:

@@ -55,13 +55,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
              "\r\n", "\n")
         return norm + "\n"
 
-    def _get_normalized_expected_text(self, filename):
-        """Given the filename of the test, read the expected output from a file
-        and normalize the text.  Returns a string with the expected text, or ''
-        if the expected output file was not found."""
-        return self._port.expected_text(filename)
-
-    def compare_output(self, port, filename, output, test_args, configuration):
+    def compare_output(self, port, filename, test_args, actual_test_output,
+                        expected_test_output):
         """Implementation of CompareOutput that checks the output text against
         the expected text from the LayoutTest directory."""
         failures = []
@@ -76,17 +71,18 @@ class TestTextDiff(test_type_base.TestTypeBase):
             return failures
 
         # Normalize text to diff
-        output = self._get_normalized_output_text(output)
-        expected = self._get_normalized_expected_text(filename)
+        actual_text = self._get_normalized_output_text(actual_test_output.text)
+        # Assuming expected_text is already normalized.
+        expected_text = expected_test_output.text
 
         # Write output files for new tests, too.
-        if port.compare_text(output, expected):
+        if port.compare_text(actual_text, expected_text):
             # Text doesn't match, write output files.
-            self.write_output_files(filename, ".txt", output,
-                                    expected, encoding=None,
+            self.write_output_files(filename, ".txt", actual_text,
+                                    expected_text, encoding=None,
                                     print_text_diffs=True)
 
-            if expected == '':
+            if expected_text == '':
                 failures.append(test_failures.FailureMissingResult())
             else:
                 failures.append(test_failures.FailureTextMismatch())

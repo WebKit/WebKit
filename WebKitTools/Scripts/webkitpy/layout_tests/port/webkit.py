@@ -49,6 +49,7 @@ import shutil
 from webkitpy.common.system.executive import Executive
 
 import webkitpy.common.system.ospath as ospath
+import webkitpy.layout_tests.layout_package.test_output as test_output
 import webkitpy.layout_tests.port.base as base
 import webkitpy.layout_tests.port.server_process as server_process
 
@@ -442,6 +443,7 @@ class WebKitDriver(base.Driver):
             command += "'" + image_hash
         command += "\n"
 
+        start_time = time.time()
         self._server_process.write(command)
 
         have_seen_content_type = False
@@ -486,10 +488,6 @@ class WebKitDriver(base.Driver):
             timeout = deadline - time.time()
             line = self._server_process.read_line(timeout)
 
-        if self._image_path and len(self._image_path):
-            with open(self._image_path, "wb") as image_file:
-                image_file.write(image)
-
         error_lines = self._server_process.error.splitlines()
         # FIXME: This is a hack.  It is unclear why sometimes
         # we do not get any error lines from the server_process
@@ -500,11 +498,11 @@ class WebKitDriver(base.Driver):
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
         self._server_process.error = ""
-        return (self._server_process.crashed,
-                self._server_process.timed_out,
-                actual_image_hash,
-                output,
-                error)
+        return test_output.TestOutput(output, image, actual_image_hash,
+                                      self._server_process.crashed,
+                                      time.time() - start_time,
+                                      self._server_process.timed_out,
+                                      error)
 
     def stop(self):
         if self._server_process:

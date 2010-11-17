@@ -832,16 +832,8 @@ class Driver:
         checksum - if present, the expected checksum for the image for this
             test
 
-        Returns a tuple of the following:
-            crash - a boolean indicating whether the driver crashed on the test
-            timeout - a boolean indicating whehter the test timed out
-            checksum - a string containing the checksum of the image, if
-                present
-            output - any text output
-            error - any unexpected or additional (or error) text output
-
-        Note that the image itself should be written to the path that was
-        specified in the __init__() call."""
+        Returns a TestOutput object.
+        """
         raise NotImplementedError('Driver.run_test')
 
     # FIXME: This is static so we can test it w/o creating a Base instance.
