@@ -863,6 +863,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setFrameFlatteningEnabled(store.frameFlatteningEnabled);
     settings->setPrivateBrowsingEnabled(store.privateBrowsingEnabled);
     settings->setDeveloperExtrasEnabled(store.developerExtrasEnabled);
+    settings->setNeedsSiteSpecificQuirks(store.needsSiteSpecificQuirks);
     settings->setMinimumFontSize(store.minimumFontSize);
     settings->setMinimumLogicalFontSize(store.minimumLogicalFontSize);
     settings->setDefaultFontSize(store.defaultFontSize);

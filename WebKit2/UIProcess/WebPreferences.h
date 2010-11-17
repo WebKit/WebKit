@@ -122,6 +122,9 @@ public:
     void setDeveloperExtrasEnabled(bool);
     bool developerExtrasEnabled() const;
 
+    void setNeedsSiteSpecificQuirks(bool);
+    bool needsSiteSpecificQuirks() const;
+
 private:
     WebPreferences();
     WebPreferences(WebPreferences*);

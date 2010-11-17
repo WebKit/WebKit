@@ -50,17 +50,13 @@ struct WebPreferencesStore {
     bool localStorageEnabled;
     bool xssAuditorEnabled;
     bool frameFlatteningEnabled;
-
+    bool developerExtrasEnabled;
+    bool privateBrowsingEnabled;
+    bool needsSiteSpecificQuirks;
     bool acceleratedCompositingEnabled;
     bool compositingBordersVisible;
     bool compositingRepaintCountersVisible;
-
-    bool privateBrowsingEnabled;
-
-    bool developerExtrasEnabled;
-
     uint32_t fontSmoothingLevel;
-
     uint32_t minimumFontSize;
     uint32_t minimumLogicalFontSize;
     uint32_t defaultFontSize;

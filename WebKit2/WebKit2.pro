@@ -442,7 +442,6 @@ SOURCES += \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
-    UIProcess/API/C/WKPreferencesPrivate.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/ClientImpl.cpp \

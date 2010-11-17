@@ -1,3 +1,55 @@
+2010-11-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Support enabling site-specific quirks
+        <rdar://problem/8451371>
+        https://bugs.webkit.org/show_bug.cgi?id=46076
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        Add needsSiteSpecificQuirks;
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toFontSmoothingLevel):
+        (WebKit::toAPI):
+        Move FontSmoothing conversion functions here.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetFontSmoothingLevel):
+        (WKPreferencesGetFontSmoothingLevel):
+        (WKPreferencesSetAcceleratedCompositingEnabled):
+        (WKPreferencesGetAcceleratedCompositingEnabled):
+        (WKPreferencesSetCompositingBordersVisible):
+        (WKPreferencesGetCompositingBordersVisible):
+        (WKPreferencesSetCompositingRepaintCountersVisible):
+        (WKPreferencesGetCompositingRepaintCountersVisible):
+        (WKPreferencesSetNeedsSiteSpecificQuirks):
+        (WKPreferencesGetNeedsSiteSpecificQuirks):
+        Add WKPreferencesSetNeedsSiteSpecificQuirks/WKPreferencesGetNeedsSiteSpecificQuirks
+        and move implementations from WKPreferencesPrivate.cpp here.
+
+        * UIProcess/API/C/WKPreferencesPrivate.cpp: Removed.
+
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        Add Add WKPreferencesSetNeedsSiteSpecificQuirks/WKPreferencesGetNeedsSiteSpecificQuirks.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setNeedsSiteSpecificQuirks):
+        (WebKit::WebPreferences::needsSiteSpecificQuirks):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pipe through needsSiteSpecificQuirks.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2.pro:
+        * win/WebKit2.vcproj:
+        Update for removed files.
+
 2010-11-16  Adam Roben  <aroben@apple.com>
 
         Fix horizontal scrolling via the mousewheel/trackpad on Windows

@@ -152,6 +152,17 @@ bool WebPreferences::developerExtrasEnabled() const
     return m_store.developerExtrasEnabled;
 }
 
+void WebPreferences::setNeedsSiteSpecificQuirks(bool b)
+{
+    m_store.needsSiteSpecificQuirks = b;
+    update();
+}
+
+bool WebPreferences::needsSiteSpecificQuirks() const
+{
+    return m_store.needsSiteSpecificQuirks;
+}
+
 void WebPreferences::setPluginsEnabled(bool b)
 {
     m_store.pluginsEnabled = b;

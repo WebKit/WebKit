@@ -59,6 +59,10 @@ WK_EXPORT bool WKPreferencesGetCompositingBordersVisible(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetCompositingRepaintCountersVisible(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

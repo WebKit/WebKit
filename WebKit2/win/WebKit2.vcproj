@@ -2148,10 +2148,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.h"
 						>
 					</File>
