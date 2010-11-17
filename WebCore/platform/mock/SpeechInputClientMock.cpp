@@ -89,6 +89,12 @@ void SpeechInputClientMock::setRecognitionResult(const String& result, const Ato
         m_recognitionResult.set(language, result);
 }
 
+void SpeechInputClientMock::clearResults()
+{
+    m_resultForEmptyLanguage = String();
+    m_recognitionResult.clear();
+}
+
 void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
 {
     if (m_recording) {

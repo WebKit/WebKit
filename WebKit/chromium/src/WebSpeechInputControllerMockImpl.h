@@ -63,6 +63,7 @@ public:
 
     // WebSpeechInputControllerMock methods.
     void setMockRecognitionResult(const WebString& result, const WebString& language);
+    void clearResults();
 
 private:
     OwnPtr<WebCore::SpeechInputClientMock> m_webcoreMock;

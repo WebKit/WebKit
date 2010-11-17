@@ -1,3 +1,15 @@
+2010-11-17  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Clear the speech input mock explicitly before each test.
+        https://bugs.webkit.org/show_bug.cgi?id=49660
+
+        * public/WebSpeechInputControllerMock.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::clearResults): Added method to clear results.
+        * src/WebSpeechInputControllerMockImpl.h:
+
 2010-11-17  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

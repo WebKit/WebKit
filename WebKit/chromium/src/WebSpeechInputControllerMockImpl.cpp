@@ -60,6 +60,11 @@ void WebSpeechInputControllerMockImpl::setMockRecognitionResult(const WebString&
     m_webcoreMock->setRecognitionResult(result, language);
 }
 
+void WebSpeechInputControllerMockImpl::clearResults()
+{
+    m_webcoreMock->clearResults();
+}
+
 void WebSpeechInputControllerMockImpl::didCompleteRecording(int requestId)
 {
     m_listener->didCompleteRecording(requestId);
