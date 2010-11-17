@@ -11,25 +11,25 @@ layer at (0,0) size 800x600
             text run at (141,0) width 68: "bug 26660"
         RenderText {#text} at (209,0) size 4x18
           text run at (209,0) width 4: "."
-      RenderBlock {P} at (0,540) size 784x0
-layer at (8,101) size 252x50
-  RenderBlock {DIV} at (0,93) size 252x50 [border: (1px solid #008000)]
-    RenderText {#text} at (1,7) size 248x42
-      text run at (1,7) width 248: "Straight \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E}"
-      text run at (1,31) width 77: "\x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
-layer at (8,226) size 252x50
-  RenderBlock {DIV} at (0,218) size 252x50 [border: (1px solid #008000)]
-    RenderText {#text} at (1,7) size 244x42
-      text run at (1,7) width 244: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947}"
-      text run at (1,31) width 111: "\x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
-layer at (8,351) size 252x56
-  RenderBlock {DIV} at (0,343) size 252x56 [border: (1px solid #008000)]
-    RenderText {#text} at (1,1) size 246x54
-      text run at (1,1) width 246: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939}"
-      text run at (1,28) width 162: "\x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
-layer at (8,482) size 252x50
-  RenderBlock {DIV} at (0,474) size 252x50 [border: (1px solid #008000)]
-    RenderText {#text} at (1,7) size 244x42
-      text run at (1,7) width 117: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} "
-      text run at (118,7) width 127: "\x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947}"
-      text run at (1,31) width 111: "\x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+      RenderBlock {P} at (0,504) size 784x0
+layer at (8,101) size 252x38
+  RenderBlock {DIV} at (0,93) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 248x36
+      text run at (1,1) width 248: "Straight \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E}"
+      text run at (1,19) width 77: "\x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,214) size 252x38
+  RenderBlock {DIV} at (0,206) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 244x36
+      text run at (1,1) width 244: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947}"
+      text run at (1,19) width 111: "\x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,327) size 252x56
+  RenderBlock {DIV} at (0,319) size 252x56 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 236x54
+      text run at (1,1) width 236: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939}"
+      text run at (1,28) width 156: "\x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,458) size 252x38
+  RenderBlock {DIV} at (0,450) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 244x36
+      text run at (1,1) width 117: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} "
+      text run at (118,1) width 127: "\x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947}"
+      text run at (1,19) width 111: "\x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
