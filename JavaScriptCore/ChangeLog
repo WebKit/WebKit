@@ -1,3 +1,13 @@
+2010-11-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add stubbed out ScrollAnimator for the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=49678
+
+        * wtf/Platform.h: Enable SMOOTH_SCROLLING on the Mac, this has no
+        change in behavior at the moment.
+
 2010-11-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/49634> Make overflow guards in WTF::String::utf8 explicit

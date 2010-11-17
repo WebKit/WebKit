@@ -5032,6 +5032,8 @@
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */; };
 		BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCAE1FA612939DB7004CB026 /* ScrollAnimatorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */; };
+		BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */; };
 		BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */; };
 		BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */; };
 		BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16BFF0979C3BD00467741 /* MemoryCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11067,6 +11069,8 @@
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Scrollbar.cpp; path = platform/Scrollbar.cpp; sourceTree = SOURCE_ROOT; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
+		BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimatorMac.cpp; sourceTree = "<group>"; };
+		BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMac.h; sourceTree = "<group>"; };
 		BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRGBColor.mm; sourceTree = "<group>"; };
 		BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCache.cpp; sourceTree = "<group>"; };
 		BCB16BFF0979C3BD00467741 /* MemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MemoryCache.h; sourceTree = "<group>"; };
@@ -13167,6 +13171,8 @@
 				447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */,
 				447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
+				BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */,
+				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
 				BCEF869E0E844E9D00A85CD5 /* ScrollbarThemeMac.mm */,
@@ -21330,6 +21336,7 @@
 				08250939128BD4D800E2ED8E /* SVGAnimatedTransformList.h in Headers */,
 				3888F6EF128C9889000CA8E0 /* InspectorFileSystemAgent.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
+				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23896,6 +23903,7 @@
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				499B3C5A128C641E00E726C2 /* GraphicsLayerMac.mm in Sources */,
 				3888F6EE128C9889000CA8E0 /* InspectorFileSystemAgent.cpp in Sources */,
+				BCAE1FA612939DB7004CB026 /* ScrollAnimatorMac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
