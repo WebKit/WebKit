@@ -1,3 +1,10 @@
+2010-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        Fix bustage. Remove the minimum font size pref setting in DumpRenderTree.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2010-11-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
