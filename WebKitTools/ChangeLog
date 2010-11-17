@@ -69,6 +69,21 @@
 
         Reviewed by Tony Chang.
 
+        Rebaseline server: compute diffs client-side
+        https://bugs.webkit.org/show_bug.cgi?id=49640
+        
+        The image diff output from the DRT is pretty bad on some ports (at
+        least the Mac one), so it's better to compute diffs on the client by
+        using <canvas>.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+
+2010-11-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Rebaseline server: display test results
         https://bugs.webkit.org/show_bug.cgi?id=49626
         

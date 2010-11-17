@@ -113,12 +113,18 @@ a, .link {
   vertical-align: top;
 }
 
-#image-outputs img {
+#image-outputs img,
+#image-outputs canvas {
   width: 800px;
   height: 600px;
   border: solid 1px #ddd;
   -webkit-user-select: none;
   -webkit-user-drag: none;
+}
+
+#image-outputs img.loading,
+#image-outputs canvas.loading {
+  opacity: .5;
 }
 
 #image-outputs #actual-image {

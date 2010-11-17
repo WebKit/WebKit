@@ -232,15 +232,115 @@ function getTestResultUrl(testName, mode)
     return '/test_result?test=' + testName + '&mode=' + mode;
 }
 
+var currentExpectedImageTest;
+var currentActualImageTest;
+
 function displayImageResults(testName)
 {
-    function displayImageResult(mode) {
-        $(mode).src = getTestResultUrl(testName, mode);
+    if (currentExpectedImageTest == currentActualImageTest
+        && currentExpectedImageTest == testName) {
+        return;
+    }
+    
+    function displayImageResult(mode, callback) {
+        var image = $(mode);
+        image.className = 'loading';
+        image.src = getTestResultUrl(testName, mode);
+        image.onload = function() {
+            image.className = '';
+            callback();
+            updateImageDiff();
+        };
     }
 
-    displayImageResult('expected-image');
-    displayImageResult('actual-image');
-    displayImageResult('diff-image');
+    displayImageResult(
+        'expected-image',
+        function() { currentExpectedImageTest = testName; });
+    displayImageResult(
+        'actual-image',
+        function() { currentActualImageTest = testName; });
+
+    $('diff-canvas').className = 'loading';
+    $('diff-canvas').style.display = '';
+}
+
+/**
+ * Computes a graphical a diff between the expected and actual images by
+ * rendering each to a canvas, getting the image data, and comparing the RGBA
+ * components of each pixel. The output is put into the diff canvas, with
+ * identical pixels appearing at 12.5% opacity and different pixels being
+ * highlighted in red.
+ */
+function updateImageDiff() {
+    if (currentExpectedImageTest != currentActualImageTest)
+        return;
+        
+    var expectedImage = $('expected-image');
+    var actualImage = $('actual-image');
+    
+    function getImageData(image) {
+        var imageCanvas = document.createElement('canvas');
+        imageCanvas.width = image.width;
+        imageCanvas.height = image.height;
+        imageCanvasContext = imageCanvas.getContext('2d');
+        
+        imageCanvasContext.fillStyle = 'rgba(255, 255, 255, 1)';
+        imageCanvasContext.fillRect(
+            0, 0, image.width, image.height);
+            
+        imageCanvasContext.drawImage(image, 0, 0);
+        return imageCanvasContext.getImageData(
+            0, 0, image.width, image.height);  
+    }
+    
+    var expectedImageData = getImageData(expectedImage);
+    var actualImageData = getImageData(actualImage);
+    
+    var diffCanvas = $('diff-canvas');
+    var diffCanvasContext = diffCanvas.getContext('2d');
+    var diffImageData =
+        diffCanvasContext.createImageData(diffCanvas.width, diffCanvas.height);
+  
+    // Avoiding property lookups for all these during the per-pixel loop below
+    // provides a significant performance benefit.
+    var expectedWidth = expectedImage.width;
+    var expectedHeight = expectedImage.height;
+    var expected = expectedImageData.data;
+    
+    var actualWidth = actualImage.width;
+    var actual = actualImageData.data;
+  
+    var diffWidth = diffImageData.width;
+    var diff = diffImageData.data;
+    
+    for (var x = 0; x < expectedWidth; x++) {
+        for (var y = 0; y < expectedHeight; y++) {
+            var expectedOffset = (y * expectedWidth + x) * 4;
+            var actualOffset = (y * actualWidth + x) * 4;
+            var diffOffset = (y * diffWidth + x) * 4;
+            if (expected[expectedOffset] != actual[actualOffset] ||
+                expected[expectedOffset + 1] != actual[actualOffset + 1] ||
+                expected[expectedOffset + 2] != actual[actualOffset + 2] ||
+                expected[expectedOffset + 3] != actual[actualOffset + 3]) {
+                diff[diffOffset] = 255;
+                diff[diffOffset + 1] = 0;
+                diff[diffOffset + 2] = 0;
+                diff[diffOffset + 3] = 255;
+            } else {
+                diff[diffOffset] = expected[expectedOffset];
+                diff[diffOffset + 1] = expected[expectedOffset + 1];
+                diff[diffOffset + 2] = expected[expectedOffset + 2];
+                diff[diffOffset + 3] = 32;
+            }
+        }
+    }
+    
+    diffCanvasContext.putImageData(
+        diffImageData,
+        0, 0,
+        0, 0,
+        diffImageData.width, diffImageData.height);
+    diffCanvas.className = '';
 }
 
 function displayTextResults(testName)
