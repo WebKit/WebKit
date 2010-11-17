@@ -319,8 +319,10 @@ public:
      *
      * @param centerX x reference for the rectangle in CSS pixels
      * @param centerY y reference for the rectangle in CSS pixels
-     * @param hPadding How much to expand the rectangle horizontally
-     * @param vPadding How much to expand the rectangle vertically
+     * @param topPadding How much to expand the top of the rectangle
+     * @param rightPadding How much to expand the right of the rectangle
+     * @param bottomPadding How much to expand the bottom of the rectangle
+     * @param leftPadding How much to expand the left of the rectangle
      * @param ignoreClipping whether or not to ignore the root scroll frame when retrieving the element.
      *        If false, this method returns null for coordinates outside of the viewport.
      */
