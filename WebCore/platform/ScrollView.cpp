@@ -207,6 +207,9 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (platformWidget())
         return platformVisibleContentRect(includeScrollbars);
 
+    if (paintsEntireContents())
+        return IntRect(IntPoint(0, 0), contentsSize());
+
     if (!m_actualVisibleContentRect.isEmpty())
         return m_actualVisibleContentRect;
 
