@@ -75,6 +75,7 @@ def _should_file_trigger_build(target_platform, file):
         ("mac", ["chromium-mac", "mac"]),
         ("mac-leopard", ["mac-leopard"]),
         ("mac-snowleopard", ["mac-snowleopard"]),
+        ("mac-wk2", ["mac-snowleopard", "win"]),
         ("objc", ["mac"]),
         ("qt", ["qt"]),
         ("skia", ["chromium"]),

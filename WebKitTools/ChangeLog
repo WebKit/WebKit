@@ -1,3 +1,21 @@
+2010-11-17  Adam Roben  <aroben@apple.com>
+
+        Make changes to the Mac WebKit2 Skipped file trigger Windows builds
+
+        We use that file on Windows!
+
+        Fixes <http://webkit.org/b/49643> Changes to
+        LayoutTests/platform/mac-wk2 should trigger a Windows build, but don't
+
+        Reviewed by Steve Falkenburg.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Added the mac-wk2 directory and make it
+        trigger builds on SnowLeopard and Windows.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest.test_should_build): Added a test.
+
 2010-11-17  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -36,6 +36,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
         (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-snowleopard", "win"]),
+        (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac/foo"], ["mac-leopard", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
