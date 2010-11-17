@@ -47,6 +47,7 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineBottom(0)
     , m_paginationStrut(0)
     , m_blockLogicalHeight(0)
+    , m_baselineType(AlphabeticBaseline)
 {
     setIsHorizontal(block->style()->isHorizontalWritingMode());
 }
@@ -231,6 +232,8 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
 
     // Figure out if we're in no-quirks mode.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
+
+    m_baselineType = requiresIdeographicBaseline(textBoxDataMap) ? IdeographicBaseline : AlphabeticBaseline;
 
     computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, setMaxAscent, setMaxDescent, noQuirksMode, textBoxDataMap);
 

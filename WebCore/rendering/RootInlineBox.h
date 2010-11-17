@@ -125,6 +125,8 @@ public:
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
     virtual void removeLineBoxFromRenderObject();
+    
+    FontBaseline baselineType() const { return m_baselineType; }
 
 private:
     bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
@@ -148,6 +150,9 @@ private:
     // The logical height of the block at the end of this line.  This is where the next line starts.
     int m_blockLogicalHeight;
 
+    // Whether or not this line uses alphabetic or ideographic baselines by default.
+    FontBaseline m_baselineType;
+    
     WTF::Unicode::Direction m_lineBreakBidiStatusEor : 5;
     WTF::Unicode::Direction m_lineBreakBidiStatusLastStrong : 5;
     WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
