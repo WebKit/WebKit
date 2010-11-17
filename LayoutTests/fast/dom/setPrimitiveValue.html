@@ -5,45 +5,54 @@ div.test {
     position: absolute;
     left: 250px;
     top: 100px;
-    background-image: url(stars.gif);Ê
+    background-image: url(stars.gif);
 }
 </style>
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function runTest() 
 {
-	var helloText = document.getElementById("hello");
-	var positionField = document.getElementById("style position"); 
-	var position = 50.0;
-	
-	var textRule = document.styleSheets[0].cssRules[0];
-	var s = textRule.style;
-	var leftValue = s.getPropertyCSSValue("left");
-	var bgImageValue = s.getPropertyCSSValue("background-image");
-	
-	try
-	{
-		leftValue.setFloatValue(leftValue.primitiveType, parseFloat(position));
-	}
-	catch (e)
-	{
-		alert("setFloatValue " + e.message);
-	}	
+    var helloText = document.getElementById("hello");
+    var positionField = document.getElementById("style position"); 
+    var position = 50.0;
 
-	try
-	{
-		bgImageValue.setStringValue(bgImageValue.primitiveType, "stripes.gif");
-	}
-	catch (e)
-	{
-		alert("setStringValue " + e.message);
-	}	
+    var textRule = document.styleSheets[0].cssRules[0];
+    var s = textRule.style;
+    var leftValue = s.getPropertyCSSValue("left");
+    var bgImageValue = s.getPropertyCSSValue("background-image");
+    var console = document.getElementById("console");
+
+    try
+    {
+        leftValue.setFloatValue(leftValue.primitiveType, parseFloat(position));
+    }
+    catch (e)
+    {
+        var line = document.createElement("div");
+        line.innerText = "setFloatValue " + e.message;
+        console.appendChild(line);
+    }
+
+    try
+    {
+        bgImageValue.setStringValue(bgImageValue.primitiveType, "stripes.gif");
+    }
+    catch (e)
+    {
+        var line = document.createElement("div");
+        line.innerText = "setStringValue " + e.message;
+        console.appendChild(line);
+    }
 }
 
 </script>
 </head>
 <body onload="runTest();">
-This test checks that a primitive CSS values can be set without generating an exception.
-<div class="test" id="hello">Hello world</div>
+Test CSSPrimitiveValue setters.
+<div class="test" id="hello"></div>
 <pre id="console"></pre>
 </body>
 </html>
