@@ -1,3 +1,14 @@
+2010-11-17  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Make http locking similar to perl implementation
+        https://bugs.webkit.org/show_bug.cgi?id=49187
+
+        * Scripts/webkitpy/common/system/file_lock.py: Added.
+        * Scripts/webkitpy/common/system/file_lock_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
 2010-11-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
