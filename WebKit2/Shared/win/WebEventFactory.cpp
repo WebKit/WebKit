@@ -36,7 +36,7 @@ namespace WebKit {
 static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
 static const unsigned short SPI_GETWHEELSCROLLCHARS = 0x006C;
 
-static const unsigned WM_VISTA_MOUSEHWHEEL = 0x30E;
+static const unsigned WM_VISTA_MOUSEHWHEEL = 0x20E;
 
 static inline LPARAM relativeCursorPosition(HWND hwnd)
 {

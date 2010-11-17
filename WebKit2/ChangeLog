@@ -1,3 +1,12 @@
+2010-11-16  Adam Roben  <aroben@apple.com>
+
+        Fix horizontal scrolling via the mousewheel/trackpad on Windows
+
+        Reviewed by Mark Rowe.
+
+        * Shared/win/WebEventFactory.cpp: Fixed typo in the
+        WM_VISTA_MOUSEHWHEEL constant.
+
 2010-11-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
