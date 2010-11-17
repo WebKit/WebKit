@@ -106,7 +106,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Priorit
 {
     ASSERT(resourceLoader);
 #if !REQUEST_MANAGEMENT_ENABLED
-    priority = High;
+    priority = HighestPriority;
 #endif
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
@@ -177,7 +177,7 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Priority
 {
     LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
 
-    for (int priority = High; priority >= minimumPriority; --priority) {
+    for (int priority = HighestPriority; priority >= minimumPriority; --priority) {
         HostInformation::RequestQueue& requestsPending = host->requestsPending((Priority) priority);
 
         while (!requestsPending.isEmpty()) {
@@ -235,7 +235,7 @@ ResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsi
 ResourceLoadScheduler::HostInformation::~HostInformation()
 {
     ASSERT(m_requestsLoading.isEmpty());
-    for (unsigned p = 0; p <= High; p++)
+    for (unsigned p = 0; p <= HighestPriority; p++)
         ASSERT(m_requestsPending[p].isEmpty());
 }
     
@@ -257,7 +257,7 @@ void ResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoad
         return;
     }
     
-    for (int priority = High; priority >= VeryLow; --priority) {  
+    for (int priority = HighestPriority; priority >= LowestPriority; --priority) {  
         RequestQueue::iterator end = m_requestsPending[priority].end();
         for (RequestQueue::iterator it = m_requestsPending[priority].begin(); it != end; ++it) {
             if (*it == resourceLoader) {
@@ -272,7 +272,7 @@ bool ResourceLoadScheduler::HostInformation::hasRequests() const
 {
     if (!m_requestsLoading.isEmpty())
         return true;
-    for (unsigned p = 0; p <= High; p++) {
+    for (unsigned p = 0; p <= HighestPriority; p++) {
         if (!m_requestsPending[p].isEmpty())
             return true;
     }
