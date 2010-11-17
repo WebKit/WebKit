@@ -1,5 +1,40 @@
 2010-11-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Handle converting a ResourceHandle to a download
+        https://bugs.webkit.org/show_bug.cgi?id=49631
+
+        * WebProcess/Downloads/Download.h:
+        Add startWithHandle.
+
+        * WebProcess/Downloads/DownloadManager.h:
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::convertHandleToDownload):
+        Create a new Download object and call startWithHandle on it.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::startWithHandle):
+        Add stub.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::startWithHandle):
+        Create an NSURLDownload object from passed in ResourceHandle.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::startWithHandle):
+        Add stub.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::download):
+        Call WebFrame::convertHandleToDownload.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::convertHandleToDownload):
+        Call DownloadManager::convertHandleToDownload.
+
+2010-11-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Set the original URL for downloads

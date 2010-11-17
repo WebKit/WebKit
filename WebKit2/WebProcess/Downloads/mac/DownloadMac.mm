@@ -28,11 +28,17 @@
 #include <WebCore/BackForwardController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/Page.h>
+#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceResponse.h>
 #include "NotImplemented.h"
 #include "WebPage.h"
 
 @interface NSURLDownload (WebNSURLDownloadDetails)
++(id)_downloadWithLoadingConnection:(NSURLConnection *)connection
+                            request:(NSURLRequest *)request
+                           response:(NSURLResponse *)r
+                           delegate:(id)delegate
+                              proxy:(id)proxy;
 - (void)_setOriginatingURL:(NSURL *)originatingURL;
 @end
 
@@ -116,6 +122,27 @@ void Download::start(WebPage* initiatingPage)
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
 
     setOriginalURLForDownload(initiatingPage, m_nsURLDownload.get(), m_request);
+}
+
+void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& response)
+{
+    ASSERT(!m_nsURLDownload);
+    ASSERT(!m_delegate);
+
+    id proxy = handle->releaseProxy();
+    ASSERT(proxy);
+
+    m_delegate.adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
+    m_nsURLDownload = [NSURLDownload _downloadWithLoadingConnection:handle->connection()
+                                                            request:m_request.nsURLRequest()
+                                                           response:response.nsURLResponse()
+                                                            delegate:m_delegate.get()
+                                                               proxy:proxy];
+
+    // FIXME: Allow this to be changed by the client.
+    [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
+                                                            
+    setOriginalURLForDownload(initiatingPage, m_nsURLDownload.get(), initialRequest);
 }
 
 void Download::platformInvalidate()
