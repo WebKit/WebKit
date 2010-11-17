@@ -92,11 +92,6 @@ void HTMLScriptElement::removedFromDocument()
     ScriptElement::removedFromDocument();
 }
 
-String HTMLScriptElement::text() const
-{
-    return m_data.scriptContent();
-}
-
 void HTMLScriptElement::setText(const String &value)
 {
     ExceptionCode ec = 0;
@@ -167,8 +162,8 @@ bool HTMLScriptElement::deferAttributeValue() const
 
 void HTMLScriptElement::dispatchLoadEvent()
 {
-    ASSERT(!m_data.haveFiredLoadEvent());
-    m_data.setHaveFiredLoadEvent(true);
+    ASSERT(!haveFiredLoadEvent());
+    setHaveFiredLoadEvent(true);
 
     dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
@@ -180,7 +175,7 @@ void HTMLScriptElement::dispatchErrorEvent()
 
 PassRefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren() const
 {
-    return adoptRef(new HTMLScriptElement(tagQName(), document(), false, m_data.isEvaluated()));
+    return adoptRef(new HTMLScriptElement(tagQName(), document(), false, isEvaluated()));
 }
 
 }

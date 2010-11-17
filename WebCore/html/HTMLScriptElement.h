@@ -33,12 +33,12 @@ class HTMLScriptElement : public HTMLElement, public ScriptElement {
 public:
     static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document*, bool createdByParser);
 
-    String text() const;
+    String text() const { return scriptContent(); }
     void setText(const String&);
 
     KURL src() const;
 
-    bool haveFiredLoadEvent() const { return m_data.haveFiredLoadEvent(); }
+    bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
 
 private:
     HTMLScriptElement(const QualifiedName&, Document*, bool createdByParser, bool isEvaluated);

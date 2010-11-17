@@ -31,8 +31,6 @@ class Element;
 class ScriptElement;
 class ScriptSourceCode;
 
-// HTML/SVGScriptElement hold this struct as member variable
-// and pass it to the static helper functions in ScriptElement
 class ScriptElementData : private CachedResourceClient {
 public:
     ScriptElementData(ScriptElement*, Element*, bool isEvaluated);
@@ -87,8 +85,26 @@ public:
     String scriptContent() const;
     bool shouldExecuteAsJavaScript() const;
     void executeScript(const ScriptSourceCode&);
-    
+
+    // XML parser calls these
     virtual String sourceAttributeValue() const = 0;
+    virtual void dispatchLoadEvent() = 0;
+    virtual void dispatchErrorEvent() = 0;
+
+protected:
+    bool haveFiredLoadEvent() const { return m_data.haveFiredLoadEvent(); }
+    void setHaveFiredLoadEvent(bool firedLoad) { return m_data.setHaveFiredLoadEvent(firedLoad); }
+    bool createdByParser() const { return m_data.createdByParser(); }
+    bool isEvaluated() const { return m_data.isEvaluated(); }
+
+    // Helper functions used by our parent classes.
+    void insertedIntoDocument(const String& sourceUrl);
+    void removedFromDocument();
+    void childrenChanged();
+    void finishParsingChildren(const String& sourceUrl);
+    void handleSourceAttribute(const String& sourceUrl);
+
+private:
     virtual String charsetAttributeValue() const = 0;
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
@@ -97,16 +113,7 @@ public:
     virtual bool asyncAttributeValue() const = 0;
     virtual bool deferAttributeValue() const = 0;
 
-    virtual void dispatchLoadEvent() = 0;
-    virtual void dispatchErrorEvent() = 0;
-
-protected:
-    // Helper functions used by our parent classes.
-    void insertedIntoDocument(const String& sourceUrl);
-    void removedFromDocument();
-    void childrenChanged();
-    void finishParsingChildren(const String& sourceUrl);
-    void handleSourceAttribute(const String& sourceUrl);
+    friend class ScriptElementData;
 
     ScriptElementData m_data;
 };
