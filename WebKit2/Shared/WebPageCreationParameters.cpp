@@ -34,6 +34,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(viewSize);
     encoder->encode(store);
     encoder->encode(drawingAreaInfo);
+    encoder->encode(visibleToInjectedBundle);
 
 #if PLATFORM(WIN)
     encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
@@ -47,6 +48,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.store))
         return false;
     if (!decoder->decode(parameters.drawingAreaInfo))
+        return false;
+    if (!decoder->decode(parameters.visibleToInjectedBundle))
         return false;
 
 #if PLATFORM(WIN)

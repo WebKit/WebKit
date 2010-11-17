@@ -100,7 +100,7 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 {
     RefPtr<WebPage> page = adoptRef(new WebPage(pageID, parameters));
 
-    if (WebProcess::shared().injectedBundle())
+    if (parameters.visibleToInjectedBundle && WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->didCreatePage(page.get());
 
     return page.release();
@@ -110,6 +110,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
     , m_isInRedo(false)
     , m_isClosed(false)
+    , m_isVisibleToInjectedBundle(parameters.visibleToInjectedBundle)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
 #elif PLATFORM(WIN)
@@ -132,7 +133,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     updatePreferences(parameters.store);
 
     m_page->setGroupName("WebKit2Group");
-    
+
     platformInitialize();
     Settings::setMinDOMTimerInterval(0.004);
 
@@ -291,7 +292,7 @@ void WebPage::close()
 
     m_isClosed = true;
 
-    if (WebProcess::shared().injectedBundle())
+    if (m_isVisibleToInjectedBundle && WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->willDestroyPage(this);
 
     m_inspector = 0;

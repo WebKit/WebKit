@@ -31,6 +31,8 @@ namespace WebKit {
 }
 
 @interface WKView (Internal)
+- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef hiddenFromInjectedBundle:(BOOL)hiddenFromInjectedBundle;
+
 - (void)_processDidCrash;
 - (void)_didRelaunchProcess;
 - (void)_takeFocus:(BOOL)direction;

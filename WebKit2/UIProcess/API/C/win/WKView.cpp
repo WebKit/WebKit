@@ -37,7 +37,7 @@ WKTypeID WKViewGetTypeID()
 
 WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND parentWindow)
 {
-    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), parentWindow);
+    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), parentWindow, VisibleToInjectedBundle);
     return toAPI(view.release().releaseRef());
 }
 

@@ -289,6 +289,7 @@ private:
 
     bool m_isInRedo;
     bool m_isClosed;
+    bool m_isVisibleToInjectedBundle;
 
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.

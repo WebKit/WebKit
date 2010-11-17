@@ -30,6 +30,12 @@
 
 using namespace WebKit;
 
+WKViewRef WKViewCreateForWebInspector(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND parentWindow)
+{
+    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), parentWindow, HiddenFromInjectedBundle);
+    return toAPI(view.release().releaseRef());
+}
+
 void WKViewSetOverrideCursor(WKViewRef viewRef, HCURSOR overrideCursor)
 {
     toImpl(viewRef)->setOverrideCursor(overrideCursor);

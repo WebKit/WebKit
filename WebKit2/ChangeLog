@@ -1,3 +1,46 @@
+2010-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Provide a way to create a WKView (WebPage) that is hidden from
+        the InjectedBundle. This is needed for the Web Inspector.
+
+        https://webkit.org/b/49670
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Added visibleToInjectedBundle.
+        (WebKit::WebPageCreationParameters::decode): Ditto.
+        * Shared/WebPageCreationParameters.h: Ditto.
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate): Pass VisibleToInjectedBundle to the WebView create function.
+        * UIProcess/API/C/win/WKViewPrivate.cpp:
+        (WKViewCreateForWebInspector): Added. Not used yet. Passes HiddenFromInjectedBundle
+        to the WebView create function.
+        * UIProcess/API/C/win/WKViewPrivate.h: Added WKViewCreateForWebInspector.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:hiddenFromInjectedBundle:]): Added hiddenFromInjectedBundle
+        parameter and calls WebPageProxy::setVisibleToInjectedBundle.
+        (-[WKView initWithFrame:pageNamespaceRef:]): Calls initWithFrame:pageNamespaceRef:hiddenFromInjectedBundle:
+        and passes NO for hiddenFromInjectedBundle.
+        (-[WKView initWithFrame:]): Cleaned up by removing the local assignment to self and just returns the result.
+        * UIProcess/API/mac/WKViewInternal.h: Added initWithFrame:pageNamespaceRef:hiddenFromInjectedBundle:.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_visibleToInjectedBundle from the creation parameters.
+        (WebKit::WebPageProxy::creationParameters): Set visibleToInjectedBundle using m_visibleToInjectedBundle.
+        * UIProcess/WebPageProxy.h: Added m_visibleToInjectedBundle.
+        (WebKit::WebPageProxy::visibleToInjectedBundle): Added. Return m_visibleToInjectedBundle.
+        (WebKit::WebPageProxy::setVisibleToInjectedBundle): Added. Set m_visibleToInjectedBundle.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Added InjectedBundleVisibility parameter and calls
+        WebPageProxy::setVisibleToInjectedBundle.
+        * UIProcess/win/WebView.h: Added InjectedBundleVisibility enum.
+        (WebKit::WebView::create): Added InjectedBundleVisibility parameter.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create): Checks visibleToInjectedBundle before talking to the injected bundle.
+        (WebKit::WebPage::WebPage): Initialize m_isVisibleToInjectedBundle from the creation parameters.
+        (WebKit::WebPage::close): Checks m_isVisibleToInjectedBundle before talking to the injected bundle.
+        * WebProcess/WebPage/WebPage.h: Added m_isVisibleToInjectedBundle.
+
 2010-11-17  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed buildfix.

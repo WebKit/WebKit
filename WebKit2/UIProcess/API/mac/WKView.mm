@@ -114,7 +114,7 @@ struct EditCommandState {
 
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef
+- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef hiddenFromInjectedBundle:(BOOL)hiddenFromInjectedBundle
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -136,27 +136,29 @@ struct EditCommandState {
     _data->_page = toImpl(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
+    _data->_page->setVisibleToInjectedBundle(!hiddenFromInjectedBundle);
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
-    
+
     _data->_menuEntriesCount = 0;
     _data->_isPerformingUpdate = false;
     _data->_isSelectionNone = YES;
     _data->_isSelectionEditable = NO;
     _data->_isSelectionInPasswordField = NO;
     _data->_hasMarkedText = NO;
-    
+
     return self;
+}
+
+- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef
+{
+    return [self initWithFrame:frame pageNamespaceRef:pageNamespaceRef hiddenFromInjectedBundle:NO];
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     WebContext* context = WebContext::sharedProcessContext();
-    self = [self initWithFrame:frame pageNamespaceRef:toAPI(context->createPageNamespace())];
-    if (!self)
-        return nil;
-
-    return self;
+    return [self initWithFrame:frame pageNamespaceRef:toAPI(context->createPageNamespace())];
 }
 
 - (void)dealloc
