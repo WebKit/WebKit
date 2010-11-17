@@ -1016,14 +1016,17 @@ WebMouseEvent WebInputEventFactory::mouseEvent(NSEvent* event, NSView* view)
         break;
     case NSLeftMouseUp:
         result.type = WebInputEvent::MouseUp;
+        result.clickCount = [event clickCount];
         result.button = WebMouseEvent::ButtonLeft;
         break;
     case NSOtherMouseUp:
         result.type = WebInputEvent::MouseUp;
+        result.clickCount = [event clickCount];
         result.button = WebMouseEvent::ButtonMiddle;
         break;
     case NSRightMouseUp:
         result.type = WebInputEvent::MouseUp;
+        result.clickCount = [event clickCount];
         result.button = WebMouseEvent::ButtonRight;
         break;
     case NSMouseMoved:

@@ -1,3 +1,19 @@
+2010-11-17  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix click count for mouse-up events.
+        - clickCount for mouse up was lost in conversion from NSEvent
+        - clickCount was also lost when disptaching events through the
+        plugin mouse capture event codepath.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49290
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::mouseEvent):
+
 2010-11-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
