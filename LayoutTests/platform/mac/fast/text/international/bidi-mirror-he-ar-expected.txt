@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (750,0) size 34x18
           text run at (750,0) width 34 RTL: "\x{5E9}(\x{5E9})"
       RenderBlock {DIV} at (0,86) size 784x18
-        RenderText {#text} at (750,0) size 34x18
-          text run at (750,0) width 34 RTL: "\x{5C6}(\x{5C6})"
+        RenderText {#text} at (762,0) size 22x18
+          text run at (762,0) width 22 RTL: "\x{5C6}(\x{5C6})"
       RenderBlock {DIV} at (0,104) size 784x18
         RenderText {#text} at (758,0) size 26x18
           text run at (758,0) width 26 RTL: "\x{644}(\x{644})"
