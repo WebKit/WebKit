@@ -1,3 +1,15 @@
+2010-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Changing any GNUmakefile.am in the source tree forces a rebuld of the DOM bindings and WebKit APi
+        https://bugs.webkit.org/show_bug.cgi?id=49400
+
+        Add GNUmakefile.am and include all WebKit API build rules. Make webkitenum.*
+        depend on this new file, instead of the generated GNUmakefile.am.
+
+        * GNUmakefile.am: Copied from GNUmakefile.am.
+
 2010-11-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Martin Robinson.

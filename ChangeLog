@@ -1,3 +1,15 @@
+2010-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Changing any GNUmakefile.am in the source tree forces a rebuld of the DOM bindings and WebKit APi
+        https://bugs.webkit.org/show_bug.cgi?id=49400
+
+        Move WebKit API build rules out of GNUmakefile.am. These are now in
+        WebKit/gtk/GNUmakefile.am.
+
+        * GNUmakefile.am: Remove WebKit API build rules.
+
 2010-11-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed.  Test commit for commit-queue@webkit.org.
