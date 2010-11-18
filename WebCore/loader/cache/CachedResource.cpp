@@ -252,8 +252,11 @@ void CachedResource::removeClient(CachedResourceClient* client)
         allClientsRemoved();
         if (response().cacheControlContainsNoStore()) {
             // RFC2616 14.9.2:
-            // "no-store: ...MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
-            cache()->remove(this);
+            // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
+            // "... History buffers MAY store such responses as part of their normal operation."
+            // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
+            if (protocolIs(url(), "https"))
+                cache()->remove(this);
         } else
             cache()->prune();
     }

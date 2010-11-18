@@ -2319,7 +2319,7 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
         return CachePolicyRevalidate;
 
     if (request.cachePolicy() == ReturnCacheDataElseLoad)
-        return CachePolicyAllowStale;
+        return CachePolicyHistoryBuffer;
 
     return CachePolicyVerify;
 }

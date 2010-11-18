@@ -109,7 +109,7 @@ public:
 
     // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
     // found in the cache.
-    CachedResource* requestResource(CachedResourceLoader*, CachedResource::Type, const KURL& url, const String& charset, bool isPreload = false);
+    CachedResource* requestResource(CachedResourceLoader*, CachedResource::Type, const KURL& url, const String& charset, bool isPreload = false, bool forHistory = false);
 
     CachedCSSStyleSheet* requestUserCSSStyleSheet(CachedResourceLoader*, const String& url, const String& charset);
     

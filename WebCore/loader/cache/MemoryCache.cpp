@@ -94,9 +94,9 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     return 0;
 }
 
-CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload)
+CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload, bool forHistory)
 {
-    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', preload=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload);
+    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', preload=%u, forHistory=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload, forHistory);
 
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
@@ -105,6 +105,15 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
 
     // Look up the resource in our map.
     CachedResource* resource = resourceForURL(url.string());
+
+    // Non https "no-store" resources are left in the cache to be used for back/forward navigation only.
+    // If this is not a request forHistory and the resource was served with "no-store" we should evict
+    // it here and make a fresh request.
+    if (!forHistory && resource && resource->response().cacheControlContainsNoStore()) {
+        LOG(ResourceLoading, "MemoryCache::requestResource cleared a for history only resource due to a non-history request for the resource");
+        evict(resource);
+        resource = 0;
+    }
 
     if (resource && requestIsPreload && !resource->isPreloaded()) {
         LOG(ResourceLoading, "MemoryCache::requestResource already has a preload request for this request, and it hasn't been preloaded yet");
