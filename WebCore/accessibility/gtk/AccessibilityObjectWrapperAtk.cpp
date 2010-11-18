@@ -1433,13 +1433,13 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     if (!coreObject->isAccessibilityRenderObject())
         return;
 
-    // Early return if the selection doesn't affect the selected node
+    // Early return if the selection doesn't affect the selected node.
     if (!selectionBelongsToObject(coreObject, selection))
         return;
 
     // We need to find the exact start and end positions in the
     // selected node that intersects the selection, to later on get
-    // the right values for the effective start and end offsets
+    // the right values for the effective start and end offsets.
     ExceptionCode ec = 0;
     Position nodeRangeStart;
     Position nodeRangeEnd;
@@ -1449,7 +1449,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // If the selection affects the selected node and its first
     // possible position is also in the selection, we must set
     // nodeRangeStart to that position, otherwise to the selection's
-    // start position (it would belong to the node anyway)
+    // start position (it would belong to the node anyway).
     Node* firstLeafNode = node->firstDescendant();
     if (selRange->isPointInRange(firstLeafNode, 0, ec))
         nodeRangeStart = firstPositionInNode(firstLeafNode);
@@ -1459,16 +1459,20 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // If the selection affects the selected node and its last
     // possible position is also in the selection, we must set
     // nodeRangeEnd to that position, otherwise to the selection's
-    // end position (it would belong to the node anyway)
+    // end position (it would belong to the node anyway).
     Node* lastLeafNode = node->lastDescendant();
     if (selRange->isPointInRange(lastLeafNode, lastOffsetInNode(lastLeafNode), ec))
         nodeRangeEnd = lastPositionInNode(lastLeafNode);
     else
         nodeRangeEnd = selRange->endPosition();
 
-    // Set values for start and end offsets
+    // Calculate position of the selected range inside the object.
+    Position parentFirstPosition = firstPositionInNode(node);
+    RefPtr<Range> rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
+
+    // Set values for start and end offsets.
+    startOffset = TextIterator::rangeLength(rangeInParent.get());
     RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
-    startOffset = nodeRangeStart.offsetInContainerNode();
     endOffset = startOffset + TextIterator::rangeLength(nodeRange.get());
 }
 

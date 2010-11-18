@@ -776,6 +776,16 @@ static void testWebkitAtkTextSelections()
     g_assert_cmpstr(selectedText, ==, "a li");
     g_free (selectedText);
 
+    /* Make a selection after the link and check selection for the whole paragraph. */
+    result = atk_text_set_selection(paragraph2, 0, 27, 37);
+    g_assert(result);
+    g_assert_cmpint(atk_text_get_n_selections(paragraph2), ==, 1);
+    selectedText = atk_text_get_selection(paragraph2, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 27);
+    g_assert_cmpint(endOffset, ==, 37);
+    g_assert_cmpstr(selectedText, ==, "the middle");
+    g_free (selectedText);
+
     /* Remove selections and text everything again. */
     result = atk_text_remove_selection(paragraph2, 0);
     g_assert(result);
