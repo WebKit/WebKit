@@ -241,7 +241,8 @@ public:
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
                 return false;
 
-            m_decoder->setColorProfile(readColorProfile(info()));              
+            if (!m_decoder->ignoresGammaAndColorProfile())
+                m_decoder->setColorProfile(readColorProfile(info()));
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available

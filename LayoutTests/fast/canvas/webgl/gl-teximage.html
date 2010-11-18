@@ -34,7 +34,14 @@ var imgURLs = [
   'resources/zero-alpha.png',
   'resources/3x3.png',
   'resources/blue-1x1.jpg',
-  'resources/green-2x2-16bit.png'];
+  'resources/green-2x2-16bit.png',
+  'resources/small-square-with-colorspin-profile.jpg',
+  'resources/small-square-with-colorspin-profile.png',
+  'resources/small-square-with-cie-rgb-profile.png',
+  'resources/small-square-with-colormatch-profile.png',
+  'resources/small-square-with-e-srgb-profile.png',
+  'resources/small-square-with-smpte-c-profile.png',
+  'resources/small-square-with-srgb-iec61966-2.1-profile.png'];
 
 wtu.loadImagesAsync(imgURLs, runTests);
 
@@ -282,9 +289,7 @@ function runTests(imgs) {
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
   wtu.drawQuad(gl);
   gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
-
   checkPixelRange(buf, middle, center, [   0,   0, 255, 255], 10);
-
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
 
   debug("");
@@ -296,10 +301,54 @@ function runTests(imgs) {
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
   wtu.drawQuad(gl);
   gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
-
   checkPixelRange(buf, middle, center, [   15, 121,   0, 255], 10);
-
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
+
+  debug("");
+  debug("check uploading of images with ICC profiles");
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
+                imgs['resources/small-square-with-colorspin-profile.jpg']);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
+  wtu.drawQuad(gl);
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  // The image is red.  However, if we ignore the color profile, it is blue.
+  checkPixelRange(buf, middle, center, [ 0, 0, 255, 255], 10);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
+                imgs['resources/small-square-with-colorspin-profile.png']);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
+  wtu.drawQuad(gl);
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  // The image is red.  However, if we ignore the color profile, it is blue.
+  checkPixelRange(buf, middle, center, [ 0, 0, 255, 255], 10);
+
+  var iccPNGs = [
+    'resources/small-square-with-cie-rgb-profile.png',
+    'resources/small-square-with-colormatch-profile.png',
+    'resources/small-square-with-e-srgb-profile.png',
+    'resources/small-square-with-smpte-c-profile.png',
+    'resources/small-square-with-srgb-iec61966-2.1-profile.png'];
+  for (var ii = 0; ii < iccPNGs.length; ++ii) {
+    var buf2 = new Uint8Array(width * height * 4);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
+                  imgs[iccPNGs[ii]]);
+    glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
+    wtu.drawQuad(gl);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf2);
+    glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
+    var same = true;
+    for (var jj = 0; jj < buf.length; ++jj) {
+      if (buf[jj] != buf2[jj]) {
+        same = false;
+        break;
+      }
+    }
+    assertMsg(same, "uploading PNGs with same data but various ICC profiles should generate the same results");
+  }
 
   debug("");
   successfullyParsed = true;

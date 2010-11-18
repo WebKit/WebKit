@@ -316,6 +316,9 @@ namespace WebCore {
         // transparency.
         virtual bool supportsAlpha() const { return true; }
 
+        // Whether or not the gamma and color profile are applied.
+        bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
+
         // Sets the "decode failure" flag.  For caller convenience (since so
         // many callers want to return false after calling this), returns false
         // to enable easy tailcalling.  Subclasses may override this to also
