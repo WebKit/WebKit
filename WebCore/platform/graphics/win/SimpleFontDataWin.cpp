@@ -65,6 +65,18 @@ bool SimpleFontData::shouldApplyMacAscentHack()
 
 void SimpleFontData::initGDIFont()
 {
+    if (!m_platformData.size()) {
+        m_ascent = 0;
+        m_descent = 0;
+        m_lineGap = 0;
+        m_lineSpacing = 0;
+        m_avgCharWidth = 0;
+        m_maxCharWidth = 0;
+        m_xHeight = 0;
+        m_unitsPerEm = 0;
+        return;
+    }
+
      HDC hdc = GetDC(0);
      HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
      OUTLINETEXTMETRIC metrics;
