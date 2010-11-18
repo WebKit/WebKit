@@ -4033,6 +4033,9 @@ fast/xsl/xslt-relative-path.xml
 fast/xsl/xslt-missing-namespace-in-xslt.xml
 fast/xsl/xslt_unicode.xml
 
+# https://bugs.webkit.org/show_bug.cgi?id=49743
+fast/xsl/import-non-document-node.xhtml
+
 fast/forms/drag-out-of-textarea.html
 fast/frames/frame-src-attribute.html
 fast/overflow/003.xml
