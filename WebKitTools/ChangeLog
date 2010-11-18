@@ -1,5 +1,16 @@
 2010-11-17  Adam Roben  <aroben@apple.com>
 
+        Move FindSafari's settings into a vsprops file
+
+        Fixes <http://webkit.org/b/49699> FindSafari should use a vsprops file
+
+        Reviewed by Steve Falkenburg.
+
+        * FindSafari/FindSafari.vcproj:
+        * FindSafari/FindSafariCommon.vsprops: Added.
+
+2010-11-17  Adam Roben  <aroben@apple.com>
+
         Use a minimum font size of 0 in DRT on Windows
 
         This is the Windows equivalent of r72164.

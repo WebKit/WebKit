@@ -17,7 +17,7 @@
 		<Configuration
 			Name="all|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\FindSafariCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -49,9 +49,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
-				OutputFile="$(OutDir)\$(ProjectName).exe"
-				SubSystem="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
