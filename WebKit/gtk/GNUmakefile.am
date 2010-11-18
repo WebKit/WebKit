@@ -40,7 +40,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
 	-DDATA_DIR=\"${datadir}\" \
 	-I$(WebCore)/bindings \
-	-I$(WebCore)//bindings/gobject \
+	-I$(WebCore)/bindings/gobject \
 	-I$(WebKit) \
 	-I$(WebKit)/WebCoreSupport \
 	-I$(WebKit)/webkit \
@@ -229,6 +229,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
+	     -I$(builddir)/WebKit/gtk \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(GENSOURCES_WEBKIT)/webkitenumtypes.h \

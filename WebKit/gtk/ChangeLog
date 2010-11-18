@@ -1,3 +1,11 @@
+2010-11-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix introspection build, we were missing a -I flag.
+
+        * GNUmakefile.am:
+
 2010-11-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
