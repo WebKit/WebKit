@@ -34,6 +34,8 @@
 
 from HTMLParser import HTMLParser
 from cStringIO import StringIO
+
+import jsmin
 import os.path
 import sys
 
@@ -101,7 +103,7 @@ def main(argv):
         input_file.close()
 
     output_file = open(output_file_name, 'w')
-    output_file.write(output.getvalue())
+    output_file.write(jsmin.jsmin(output.getvalue()))
     output_file.close()
     output.close()
 
