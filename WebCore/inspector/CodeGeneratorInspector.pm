@@ -92,7 +92,6 @@ $typeTransform{"Value"} = {
 $typeTransform{"String"} = {
     "param" => "const String&",
     "variable" => "String",
-    "return" => "String",
     "defaultValue" => "\"\"",
     "forwardHeader" => "wtf/Forward.h",
     "header" => "PlatformString.h",
@@ -267,16 +266,6 @@ sub generateFunctions
     push(@backendMethodsImpl, generateBackendDispatcher());
     push(@backendMethodsImpl, generateBackendReportProtocolError());
 
-    my @backendGettersDeclarations;
-    push(@backendGettersDeclarations, "");
-    push(@backendGettersDeclarations, "private:");
-    foreach my $type (keys %backendTypes) {
-        if ($typeTransform{$type}{"JSONType"}) {
-            push(@backendMethodsImpl, generateArgumentGetters($type, \@backendGettersDeclarations));
-        }
-    }
-    push(@backendConstantDeclarations, @backendGettersDeclarations);
-
     @backendStubJS = generateBackendStubJS($interface);
 }
 
@@ -343,30 +332,43 @@ sub generateBackendFunction
     push(@function, "        protocolErrors->pushString(\"Protocol Error: $domain handler is not available.\");");
     push(@function, "");
 
-    # declare local variables for out arguments.
-    push(@function, map("    " . $typeTransform{$_->type}->{"variable"} . " " . $_->name . " = " . $typeTransform{$_->type}->{"defaultValue"} . ";", @outArgs));
-
-    my $indent = "";
     if (scalar(@inArgs)) {
         # declare variables for all 'in' args;
-        push(@function, "    if (RefPtr<InspectorObject> argumentsContainer = getObject(requestMessageObject, \"arguments\", protocolErrors.get())) {");
+        push(@function, map("    " . $typeTransform{$_->type}->{"variable"} . " " . $_->name . " = " . $typeTransform{$_->type}->{"defaultValue"} . ";", @inArgs));
+
+        push(@function, "");
+        push(@function, "    RefPtr<InspectorObject> argumentsContainer;");
+        push(@function, "    if (!(argumentsContainer = requestMessageObject->getObject(\"arguments\"))) {");
+        push(@function, "        protocolErrors->pushString(\"Protocol Error: 'arguments' property with type 'object' was not found.\");");
+        push(@function, "    } else {");
+        push(@function, "        InspectorObject::const_iterator argumentsEndIterator = argumentsContainer->end();");
 
         foreach my $parameter (@inArgs) {
             my $name = $parameter->name;
             my $type = $parameter->type;
-            my $typeString = $parameter->type;
-            $typeString =~ s/\b(\w)/\U$1/g;
-            $typeString =~ s/ //g;
-            push(@function, "        " . $typeTransform{$type}->{"variable"} . " $name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
+            my $variableType = $typeTransform{$type}->{"variable"};
+            my $JSONType = $typeTransform{$type}->{"JSONType"};
+
+            push(@function, "");
+            push(@function, "        InspectorObject::const_iterator ${name}ValueIterator = argumentsContainer->find(\"$name\");");
+            push(@function, "        if (${name}ValueIterator == argumentsEndIterator) {");
+            push(@function, "            protocolErrors->pushString(\"Protocol Error: Argument '$name' with type '$JSONType' was not found.\");");
+            push(@function, "        } else {");
+            push(@function, "            if (!${name}ValueIterator->second->as$JSONType(&$name)) {");
+            push(@function, "                protocolErrors->pushString(\"Protocol Error: Argument '$name' has wrong type. It should be '$JSONType'.\");");
+            push(@function, "            }");
+            push(@function, "        }");
         }
-        push(@function, "");
-        $indent = "    ";
+        push(@function, "    }");
     }
 
+    # declare local variables for out arguments.
+    push(@function, map("    " . $typeTransform{$_->type}->{"variable"} . " " . $_->name . " = " . $typeTransform{$_->type}->{"defaultValue"} . ";", @outArgs));
+
     my $args = join(", ", (map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
-    push(@function, "$indent    if (!protocolErrors->length())");
-    push(@function, "$indent        $domainAccessor->$functionName($args);");
-    push(@function, scalar(@inArgs) ? "    }" : "");
+    push(@function, "    if (!protocolErrors->length())");
+    push(@function, "        $domainAccessor->$functionName($args);");
+    push(@function, "");
 
     push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
     push(@function, "    if ((callId || protocolErrors->length()) && m_inspectorController->hasFrontend()) {");
@@ -410,42 +412,6 @@ EOF
     return split("\n", $reportProtocolError);
 }
 
-sub generateArgumentGetters
-{
-    my $type = shift;
-    my $declarations = shift;
-    my $json = $typeTransform{$type}{"JSONType"};
-    my $variable = $typeTransform{$type}{"variable"};
-    my $return  = $typeTransform{$type}{"return"} ? $typeTransform{$type}{"return"} : $typeTransform{$type}{"param"};
-
-    my $typeString = $type;
-    $typeString =~ s/\b(\w)/\U$1/g;
-    $typeString =~ s/ //g;
-
-    push(@{$declarations}, "    static $return get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors);");
-    my $getterBody = << "EOF";
-
-$return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors)
-{
-    ASSERT(object);
-    ASSERT(protocolErrors);
-
-    $variable value;
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end)
-        protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' with type '$json' was not found.", name.utf8().data()));
-    else {
-        if (!valueIterator->second->as$json(&value))
-            protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' has wrong type. It should be '$json'.", name.utf8().data()));
-    }
-    return value;
-}
-EOF
-
-    return split("\n", $getterBody);
-}
 
 sub generateBackendDispatcher
 {
@@ -676,7 +642,7 @@ sub generateSource
     push(@sourceContent, "");
     push(@sourceContent, "namespace $namespace {");
     push(@sourceContent, "");
-    push(@sourceContent, join("\n", @{$constants}));
+    push (@sourceContent, join("\n", @{$constants}));
     push(@sourceContent, "");
     push(@sourceContent, @{$methods});
     push(@sourceContent, "");
