@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 107: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
+CONSOLE MESSAGE: line 107: TypeError: 'undefined' is not a function (evaluating 'eventSender.beginDragWithFiles(['get-file-upload.html'])')
 Tests that we clone object hierarchies
 PASS: (frames[0].tests[0]).eventData instanceof (frames[0]).Object is true of type boolean
 PASS: (frames[0].tests[0]).event.data instanceof (frames[0]).Object is true of type boolean
