@@ -202,8 +202,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Cairo|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;.\WebKitAPITestCommon.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops"
 			CharacterSet="1"

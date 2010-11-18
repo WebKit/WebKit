@@ -1,3 +1,12 @@
+2010-11-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Clean up vcproj errors
+        https://bugs.webkit.org/show_bug.cgi?id=49741
+
+        * win/WebKit2WebProcess.vcproj:
+
 2010-11-18  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Laszlo Gombos.

@@ -265,8 +265,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_CFLite|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
 			UseOfATL="1"
@@ -329,8 +327,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release_CFLite|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
 			UseOfATL="1"
