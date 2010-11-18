@@ -61,7 +61,7 @@
  * - https://bugs.webkit.org/show_bug.cgi?id=38045
  * - http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43976
  */
-#if CPU(ARM) && COMPILER(GCC)
+#if (CPU(ARM) || CPU(MIPS)) && COMPILER(GCC)
 template<typename Type>
 bool isPointerTypeAlignmentOkay(Type* ptr)
 {
