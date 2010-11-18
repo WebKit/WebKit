@@ -1,3 +1,17 @@
+2010-11-12  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Static platform plugin support
+        https://bugs.webkit.org/show_bug.cgi?id=49470
+
+        Adding support for statically linked platform plugins.
+
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::loadStaticallyLinkedPlugin):
+        (WebCore::QtPlatformPlugin::plugin):
+        * WebCoreSupport/QtPlatformPlugin.h:
+
 2010-11-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

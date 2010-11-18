@@ -69,11 +69,25 @@ QtPlatformPlugin::~QtPlatformPlugin()
     m_loader.unload();
 }
 
+bool QtPlatformPlugin::loadStaticallyLinkedPlugin()
+{
+    QObjectList objs = QPluginLoader::staticInstances();
+    for (int i = 0; i < objs.size(); ++i) {
+        m_plugin = qobject_cast<QWebKitPlatformPlugin*>(objs[i]);
+        if (m_plugin)
+            return true;
+    }
+    return false;
+}
+
 QWebKitPlatformPlugin* QtPlatformPlugin::plugin()
 {
     if (m_loaded)
         return m_plugin;
     m_loaded = true;
+
+    if (loadStaticallyLinkedPlugin())
+        return m_plugin;
 
     // Plugin path is stored in a static variable to avoid searching for the plugin
     // more then once.

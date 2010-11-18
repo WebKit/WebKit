@@ -50,6 +50,7 @@ private:
     QPluginLoader m_loader;
     bool load();
     bool load(const QString& file);
+    bool loadStaticallyLinkedPlugin();
 };
 
 }
