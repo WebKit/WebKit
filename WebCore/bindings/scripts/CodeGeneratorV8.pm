@@ -1515,11 +1515,6 @@ sub GenerateImplementationIndexer
     if ($interfaceName eq "HTMLOptionsCollection") {
         $hasGetter = 1;
     }
-    # FIXME: If the parent interface of $dataNode already has
-    # HasIndexGetter, we don't need to handle the getter here.
-    if ($interfaceName eq "WebKitCSSTransformValue") {
-        $hasGetter = 0;
-    }
 
     # FIXME: Investigate and remove this nastinesss. In V8, named property handling and indexer handling are apparently decoupled,
     # which means that object[X] where X is a number doesn't reach named property indexer. So we need to provide
@@ -1543,6 +1538,13 @@ sub GenerateImplementationIndexer
     # FIXME: Remove this once toV8 helper methods are implemented (see https://bugs.webkit.org/show_bug.cgi?id=32563).
     if ($interfaceName eq "WebKitCSSKeyframesRule") {
         $indexerType = "WebKitCSSKeyframeRule";
+    }
+
+    # FIXME: The item() getter is not inherited from CSSValueList, seemingly due to the way
+    # the CodeGenerator->AddMethodsConstantsAndAttributesFromParentClasses() method works,
+    # so we need to set the indexerType manually in this case.
+    if ($interfaceName eq "WebKitCSSTransformValue") {
+        $indexerType = "CSSValue";
     }
 
     if ($indexerType && !$hasCustomSetter) {

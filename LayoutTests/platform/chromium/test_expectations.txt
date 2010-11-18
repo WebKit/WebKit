@@ -3196,10 +3196,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 BUGWK49653 WIN LINUX MAC : fast/dom/setPrimitiveValue-exceptions.html = TEXT CRASH IMAGE
 BUGWK49653 WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE+TEXT IMAGE
 
-// Regression after http://trac.webkit.org/changeset/72189
-BUGWK49653 WIN LINUX MAC : fast/css/getFloatValueForUnit.html = TEXT
-
-
 // Due to WebKit r72141 (needs rebaseline upstream?).
 BUG_LEVIN : fast/compact/001.html = IMAGE+TEXT IMAGE
 BUG_LEVIN LINUX WIN : fast/parser/style-script-head-test.html = TEXT
