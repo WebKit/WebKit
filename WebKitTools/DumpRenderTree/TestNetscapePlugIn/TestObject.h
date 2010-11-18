@@ -26,4 +26,5 @@
 #include <WebKit/npapi.h>
 #include <WebKit/npruntime.h>
 
-NPClass *getTestClass(void);
+NPClass* getTestClass(void);
+int getTestObjectCount();

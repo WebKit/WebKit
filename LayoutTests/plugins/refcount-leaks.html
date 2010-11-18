@@ -3,10 +3,10 @@
   }
 
   function doGC() {
-    if (window.gc) {
+    if (window.GCController) {
       // GC twice to make sure everything is cleaned up.
       for (var i = 0; i < 2; i++) {
-        window.gc();
+        window.GCController.collect();
       }
     }
   }
@@ -30,9 +30,12 @@
     var countAfterGC = plug.testObjectCount;
 
     output.innerHTML += "--- num test objects:<br>";
-    output.innerHTML += "originally: " + countOrig + "<br>";
-    output.innerHTML += "after creation: " + countAfterCreate + "<br>";
-    output.innerHTML += "after GC: " + countAfterGC + "<br>";
+    output.innerHTML += "countAfterCreate == countOrig + 3? "
+        + ((countAfterCreate == countOrig + 3) ? "PASS" : "FAIL")
+        + "<br>";
+    output.innerHTML += "countOrig == countAfterGC? "
+        + ((countOrig == countAfterGC) ? "PASS" : "FAIL")
+        + "<br>";
     output.innerHTML += "<br>";
 
     // Test that the object refcount returns to normal after JS references
@@ -57,7 +60,6 @@
 
     output.innerHTML += "--- refcount on plug.testObject:<br>";
     output.innerHTML += "originally: " + refOrig + "<br>";
-    output.innerHTML += "after get: " + refAfterGet + "<br>";
     output.innerHTML += "after GC: " + refAfterGetGC + "<br>";
     output.innerHTML += "after passing: " + refAfterPass + "<br>";
 
