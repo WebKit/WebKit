@@ -1,5 +1,13 @@
 2010-11-18  Steve Falkenburg  <sfalken@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        Remove unused debug_internal vsprops file.
+
+        * win/tools/vsprops/debug_internal.vsprops: Removed.
+
+2010-11-18  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Adam Roben.
 
         Debug_Internal Windows configuration is unnecessary, should be removed
