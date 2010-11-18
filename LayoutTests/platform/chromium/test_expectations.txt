@@ -58,7 +58,7 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
-BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
+// BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
@@ -3220,3 +3220,12 @@ BUG_ANTONM MAC : fast/forms/select-visual-hebrew.html = IMAGE
 BUG_ANTONM MAC : fast/forms/visual-hebrew-text-field.html = IMAGE
 BUG_ANTONM MAC LINUX : fast/text/international/001.html = IMAGE+TEXT IMAGE
 BUG_ANTONM MAC : fast/text/international/hebrew-vowels.html = IMAGE+TEXT IMAGE
+BUG_ANTONM MAC : fast/repaint/repaint-across-writing-mode-boundary.html = TEXT
+
+// Just added with r72235. Needs investigation.
+BUG_LEVIN : fast/blockflow/vertical-align-table-baseline.html = IMAGE+TEXT IMAGE
+BUG_LEVIN SLOW : fast/blockflow/vertical-baseline-alignment.html = IMAGE+TEXT IMAGE
+
+// When this is removed, uncomment the line above that list this test (as slow).
+BUG_LEVIN SLOW : fast/js/regexp-overflow.html = TEXT
+BUG_LEVIN MAC : fast/text/atsui-negative-spacing-features.html = IMAGE
