@@ -130,7 +130,7 @@ String FontPlatformData::description() const
 
 void FontPlatformData::setupPaint(SkPaint* paint) const
 {
-    const float ts = m_textSize > 0 ? m_textSize : 12;
+    const float ts = m_textSize >= 0 ? m_textSize : 12;
 
     paint->setAntiAlias(m_style.useAntiAlias == FontRenderStyle::NoPreference ? isSkiaAntiAlias : m_style.useAntiAlias);
     switch (m_style.useHinting) {

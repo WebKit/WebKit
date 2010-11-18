@@ -1,0 +1,7 @@
+Tests that text with font-size:0 has zero height.
+
+PASS s.getBoundingClientRect().height is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
