@@ -1,3 +1,18 @@
+2010-11-18  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [WK2] WebKit 2 would not compile for Qt without ENABLE_TOUCH_EVENT
+        https://bugs.webkit.org/show_bug.cgi?id=49664
+
+        Move the ENABLE(TOUCH_EVENTS) to the code where internal WebKit touch
+        types are used.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::touchEvent):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::touchEvent):
+
 2010-11-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
