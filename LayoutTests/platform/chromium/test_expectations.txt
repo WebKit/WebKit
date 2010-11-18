@@ -58,7 +58,7 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
-BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
+// BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
@@ -3212,3 +3212,19 @@ BUG_LEVIN : fast/blockflow/vertical-align-table-baseline.html = IMAGE+TEXT IMAGE
 BUG_LEVIN SLOW : fast/blockflow/vertical-baseline-alignment.html = IMAGE+TEXT IMAGE
 BUG_LEVIN MAC : fast/blockflow/vertical-font-fallback.html = IMAGE
 
+
+BUG61655 MAC : security/block-test-no-port.html = TEXT
+
+BUG_ANTONM WIN : editing/selection/5354455-1.html = FAIL
+
+// Temporary, Anton's remember's seeing a single change dealing with context menus, will
+// clarify when found.
+BUG_ANTONM WIN : fast/events/context-no-deselect.html = PASS CRASH
+BUG_ANTONM WIN : fast/events/right-click-focus.html = PASS CRASH
+BUG_ANTONM WIN : fast/events/context-onmousedown-event.html = PASS CRASH
+
+BUG_LEVIN LINUX WIN : fast/parser/style-script-head-test.html = TEXT
+
+// Uncomment above when this is removed.
+BUG_LEVIN SLOW LINUX WIN : fast/js/regexp-overflow.html = TEXT
+BUG_LEVIN MAC SLOW : fast/js/regexp-overflow.html = PASS
