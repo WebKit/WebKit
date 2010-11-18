@@ -59,68 +59,8 @@
 
 #include <wtf/ByteArray.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 
 namespace WebCore {
-
-namespace {
-
-    unsigned bytesPerComponent(unsigned type)
-    {
-        switch (type) {
-        case GraphicsContext3D::UNSIGNED_BYTE:
-            return 1;
-        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
-        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
-        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-            return 2;
-        default:
-            ASSERT(false);
-            return 0;
-        }
-    }
-
-    unsigned componentsPerPixel(unsigned format, unsigned type)
-    {
-        switch (type) {
-        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
-        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
-        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-            return 1;
-        default:
-            break;
-        }
-        switch (format) {
-        case GraphicsContext3D::ALPHA:
-        case GraphicsContext3D::LUMINANCE:
-            return 1;
-        case GraphicsContext3D::LUMINANCE_ALPHA:
-            return 2;
-        case GraphicsContext3D::RGB:
-            return 3;
-        case GraphicsContext3D::RGBA:
-            return 4;
-        default:
-            ASSERT(false);
-            return 0;
-        }
-    }
-
-    // This function should only be called if width and height is non-zero and
-    // format/type are valid.  Return 0 if overflow happens.
-    size_t imageSizeInBytes(unsigned width, unsigned height, unsigned format, unsigned type)
-    {
-        ASSERT(width && height);
-        CheckedInt<uint32_t> checkedWidth(width);
-        CheckedInt<uint32_t> checkedHeight(height);
-        CheckedInt<uint32_t> checkedBytesPerPixel(bytesPerComponent(type) * componentsPerPixel(format, type));
-        CheckedInt<uint32_t> checkedSize = checkedWidth * checkedHeight * checkedBytesPerPixel;
-        if (checkedSize.valid())
-            return checkedSize.value();
-        return 0;
-    }
-
-} // anonymous namespace
 
 static inline Platform3DObject objectOrZero(WebGLObject* object)
 {
@@ -600,7 +540,7 @@ void WebGLRenderingContext::clear(unsigned long mask)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -678,7 +618,7 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -703,7 +643,7 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
             return;
         }
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -1134,7 +1074,7 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         }
     }
 
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -1198,7 +1138,7 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
         }
     }
 
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -2303,7 +2243,7 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -2502,17 +2442,6 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;
         }
-    }
-    OwnArrayPtr<unsigned char> zero;
-    if (!pixels && !isResourceSafe() && width && height) {
-        size_t size = imageSizeInBytes(width, height, format, type);
-        if (!size) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-        zero = adoptArrayPtr(new unsigned char[size]);
-        memset(zero.get(), 0, size);
-        pixels = zero.get();
     }
     m_context->texImage2D(target, level, internalformat, width, height,
                           border, format, type, pixels);

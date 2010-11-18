@@ -50,9 +50,8 @@ public:
     // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
     // currently bound.
     // Return false if the framebuffer is incomplete; otherwise initialize
-    // the buffers if they haven't been initialized and
-    // needToInitializeRenderbuffers is true.
-    bool onAccess(bool needToInitializeRenderbuffers);
+    // the buffers if they haven't been initialized.
+    bool onAccess();
 
     // Return false does not mean COMPLETE, might still be INCOMPLETE.
     bool isIncomplete(bool checkInternalFormat) const;
