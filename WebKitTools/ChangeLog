@@ -1,3 +1,18 @@
+2010-11-17  Adam Roben  <aroben@apple.com>
+
+        Don't trigger Windows builds when chromium-win test results change
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Changed the regular expression used to
+        search for directory names to only consider full directory names,
+        rather than matching directory names where the string we care about is
+        a suffix of the name.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest): Added a test.
+
 2010-11-17  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

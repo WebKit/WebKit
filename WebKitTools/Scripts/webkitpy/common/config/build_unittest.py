@@ -34,6 +34,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["JavaScriptGlue/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
+        (["LayoutTests/platform/chromium-win/fast/compact/001-expected.txt"], ["chromium-win"]),
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
         (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-snowleopard", "win"]),

@@ -111,7 +111,7 @@ def _should_file_trigger_build(target_platform, file):
 
     # See if the file is in one of the known directories.
     for directory, platforms in directories:
-        if re.search(r"/?\b%s\b/" % directory, file):
+        if re.search(r"(?:^|/)%s/" % directory, file):
             return target_platform in platforms or base_platform in platforms
 
     # See if the file matches a known pattern.
