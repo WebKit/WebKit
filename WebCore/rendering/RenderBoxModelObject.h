@@ -122,7 +122,7 @@ public:
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
 
-    bool shouldPaintAtLowQuality(GraphicsContext*, Image*, const IntSize&);
+    bool shouldPaintAtLowQuality(GraphicsContext*, Image*, const void*, const IntSize&);
 
 private:
     virtual bool isBoxModelObject() const { return true; }
