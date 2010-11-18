@@ -1,3 +1,12 @@
+2010-11-18  Adam Roben  <aroben@apple.com>
+
+        Add three new Windows XP build slaves
+
+        Reviewed by Steve Falkenburg.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added three
+        new slaves, and added them to the Windows XP Debug (Tests) builder.
+
 2010-11-18  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.

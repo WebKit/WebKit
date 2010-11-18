@@ -25,6 +25,9 @@
                     { "name": "apple-windows-5", "platform": "win"},
                     { "name": "apple-windows-6", "platform": "win"},
                     { "name": "apple-windows-7", "platform": "win"},
+                    { "name": "apple-windows-8", "platform": "win"},
+                    { "name": "apple-windows-9", "platform": "win"},
+                    { "name": "apple-windows-10", "platform": "win"},
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
@@ -108,7 +111,7 @@
                     {
                       "name": "Windows XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-4", "test-slave"]
+                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-8", "apple-windows-9", "apple-windows-10", "test-slave"]
                     },
                     { "name": "Windows 7 Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-release-tests-wk2",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
