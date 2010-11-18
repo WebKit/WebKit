@@ -150,7 +150,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
      // TODO: Place code here.
-    MSG msg;
+    MSG msg = {0};
     HACCEL hAccelTable;
 
     INITCOMMONCONTROLSEX InitCtrlEx;
@@ -337,10 +337,10 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     IWebFrame* frame = 0;
+    IWebFramePrivate* framePrivate = 0;
     if (FAILED(gWebView->mainFrame(&frame)))
         goto exit;
 
-    IWebFramePrivate* framePrivate = 0;
     if (FAILED(frame->QueryInterface(&framePrivate)))
         goto exit;
 
@@ -376,8 +376,6 @@ exit:
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
-    PAINTSTRUCT ps;
-    HDC hdc;
 
     switch (message) {
     case WM_COMMAND:
@@ -436,7 +434,6 @@ LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
              return (LRESULT)CallWindowProc((WNDPROC)DefEditProc,hDlg,message,wParam,lParam);
         break;
     }
-    return 0;
 }
 
 
