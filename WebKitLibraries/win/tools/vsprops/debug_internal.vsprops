@@ -4,22 +4,4 @@
 	Version="8.00"
 	Name="debug_internal"
 	>
-	<Tool
-		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="DEBUG_INTERNAL"
-	/>
-	<UserMacro
-		Name="WebKitConfigSuffix"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-	<UserMacro
-		Name="LibraryConfigSuffix"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-	<UserMacro
-		Name="WebKitDLLConfigSuffix"
-		Value=""
-	/>
 </VisualStudioPropertySheet>

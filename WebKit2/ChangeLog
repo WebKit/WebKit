@@ -55,6 +55,16 @@
 
         Reviewed by Adam Roben.
 
+        Debug_Internal Windows configuration is unnecessary, should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=49753
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        * WebKit2Prefix.h:
+
+2010-11-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Clean up vcproj errors
         https://bugs.webkit.org/show_bug.cgi?id=49741
 

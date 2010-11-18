@@ -30,7 +30,7 @@
 #include <shlwapi.h>
 #include <wtf/text/WTFString.h>
 
-#if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
+#ifdef DEBUG_ALL
 const LPCWSTR webProcessName = L"WebKit2WebProcess_debug.exe";
 #else
 const LPCWSTR webProcessName = L"WebKit2WebProcess.exe";

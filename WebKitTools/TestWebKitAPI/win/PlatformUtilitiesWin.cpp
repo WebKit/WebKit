@@ -32,7 +32,7 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-#if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
+#ifdef DEBUG_ALL
 const char* injectedBundleDLL = "\\InjectedBundle_debug.dll";
 #else
 const char* injectedBundleDLL = "\\InjectedBundle.dll";

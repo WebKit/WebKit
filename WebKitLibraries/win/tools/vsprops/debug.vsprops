@@ -20,7 +20,7 @@
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"
-		Value="_debug"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro

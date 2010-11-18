@@ -66,7 +66,7 @@
 
 using namespace std;
 
-#if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
+#ifdef DEBUG_ALL
 const LPWSTR TestPluginDir = L"TestNetscapePlugin_Debug";
 #else
 const LPWSTR TestPluginDir = L"TestNetscapePlugin";
