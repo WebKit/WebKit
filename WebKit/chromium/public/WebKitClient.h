@@ -31,6 +31,7 @@
 #ifndef WebKitClient_h
 #define WebKitClient_h
 
+#include "WebAudioBus.h"
 #include "WebCommon.h"
 #include "WebData.h"
 #include "WebLocalizedString.h"
@@ -219,6 +220,11 @@ public:
 
     // Returns a blob of data corresponding to the named resource.
     virtual WebData loadResource(const char* name) { return WebData(); }
+
+    // Decodes the in-memory audio file data and returns the linear PCM audio data in the destinationBus.
+    // A sample-rate conversion to sampleRate will occur if the file data is at a different sample-rate.
+    // Returns true on success.
+    virtual bool decodeAudioFileData(WebAudioBus* destinationBus, const char* audioFileData, size_t dataSize, double sampleRate) { return false; }
 
     // Returns a localized string resource (with an optional numeric
     // parameter value).

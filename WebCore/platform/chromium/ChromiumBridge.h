@@ -31,6 +31,10 @@
 #ifndef ChromiumBridge_h
 #define ChromiumBridge_h
 
+#if ENABLE(WEB_AUDIO)
+#include "AudioBus.h"
+#endif
+
 #include "FileSystem.h"
 #include "ImageSource.h"
 #include "LinkHash.h"
@@ -211,6 +215,11 @@ namespace WebCore {
 
         // Resources ----------------------------------------------------------
         static PassRefPtr<Image> loadPlatformImageResource(const char* name);
+
+#if ENABLE(WEB_AUDIO)
+        static PassOwnPtr<AudioBus> loadPlatformAudioResource(const char* name, double sampleRate);
+        static PassOwnPtr<AudioBus> decodeAudioFileData(const char* data, size_t size, double sampleRate);
+#endif
 
         // Sandbox ------------------------------------------------------------
         static bool sandboxEnabled();

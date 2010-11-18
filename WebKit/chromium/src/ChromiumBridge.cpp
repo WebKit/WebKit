@@ -35,6 +35,7 @@
 
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "WebAudioBus.h"
 #include "WebClipboard.h"
 #include "WebCookie.h"
 #include "WebCookieJar.h"
@@ -620,6 +621,27 @@ PassRefPtr<Image> ChromiumBridge::loadPlatformImageResource(const char* name)
     image->setData(resource, true);
     return image;
 }
+
+#if ENABLE(WEB_AUDIO)
+
+PassOwnPtr<AudioBus> ChromiumBridge::loadPlatformAudioResource(const char* name, double sampleRate)
+{
+    const WebData& resource = webKitClient()->loadResource(name);
+    if (resource.isEmpty())
+        return 0;
+    
+    return decodeAudioFileData(resource.data(), resource.size(), sampleRate);
+}
+
+PassOwnPtr<AudioBus> ChromiumBridge::decodeAudioFileData(const char* data, size_t size, double sampleRate)
+{
+    WebAudioBus webAudioBus;
+    if (webKitClient()->decodeAudioFileData(&webAudioBus, data, size, sampleRate))
+        return webAudioBus.release();
+    return 0;
+}
+
+#endif // ENABLE(WEB_AUDIO)
 
 // Sandbox --------------------------------------------------------------------
 

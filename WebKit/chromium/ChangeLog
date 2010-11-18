@@ -1,3 +1,27 @@
+2010-11-18  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add loadPlatformAudioResource() and decodeAudioFileData() to ChromiumBridge
+        https://bugs.webkit.org/show_bug.cgi?id=49557
+
+        * WebKit.gyp:
+        * public/WebAudioBus.h: Added.
+        (WebKit::WebAudioBus::WebAudioBus):
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::decodeAudioFileData):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::loadPlatformAudioResource):
+        (WebCore::ChromiumBridge::decodeAudioFileData):
+        * src/WebAudioBus.cpp: Added.
+        (WebKit::WebAudioBus::~WebAudioBus):
+        (WebKit::WebAudioBus::initialize):
+        (WebKit::WebAudioBus::numberOfChannels):
+        (WebKit::WebAudioBus::length):
+        (WebKit::WebAudioBus::sampleRate):
+        (WebKit::WebAudioBus::channelData):
+        (WebKit::WebAudioBus::release):
+
 2010-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72228.
