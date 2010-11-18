@@ -224,9 +224,12 @@ static void freeXsltParamArray(const char** params)
 static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
 {
     if (!cachedStylesheet && stylesheetRootNode) {
-        cachedStylesheet = XSLStyleSheet::create(stylesheetRootNode->parentNode() ? stylesheetRootNode->parentNode() : stylesheetRootNode,
+        cachedStylesheet = XSLStyleSheet::createForXSLTProcessor(stylesheetRootNode->parentNode() ? stylesheetRootNode->parentNode() : stylesheetRootNode,
             stylesheetRootNode->document()->url().string(),
             stylesheetRootNode->document()->url()); // FIXME: Should we use baseURL here?
+
+        // According to Mozilla documentation, the node must be a Document node, an xsl:stylesheet or xsl:transform element.
+        // But we just use text content regardless of node type.
         cachedStylesheet->parseString(createMarkup(stylesheetRootNode));
     }
 

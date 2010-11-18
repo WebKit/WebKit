@@ -119,9 +119,12 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String&, String& resultS
     RefPtr<XSLStyleSheet> stylesheet = m_stylesheet;
     if (!stylesheet && m_stylesheetRootNode) {
         Node* node = m_stylesheetRootNode.get();
-        stylesheet = XSLStyleSheet::create(node->parent() ? node->parent() : node,
+        stylesheet = XSLStyleSheet::createForXSLTProcessor(node->parent() ? node->parent() : node,
             node->document()->url().string(),
             node->document()->url()); // FIXME: Should we use baseURL here?
+
+        // According to Mozilla documentation, the node must be a Document node, an xsl:stylesheet or xsl:transform element.
+        // But we just use text content regardless of node type.
         stylesheet->parseString(createMarkup(node));
     }
 

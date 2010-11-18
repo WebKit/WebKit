@@ -143,7 +143,7 @@ void ProcessingInstruction::checkStyleSheet()
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
                 KURL finalURL(ParsedURLString, m_localHref);
-                m_sheet = XSLStyleSheet::createInline(this, finalURL);
+                m_sheet = XSLStyleSheet::createEmbedded(this, finalURL);
                 m_loading = false;
             }
 #endif

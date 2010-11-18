@@ -25,6 +25,7 @@
 
 #if ENABLE(XSLT)
 
+#include "ProcessingInstruction.h"
 #include "StyleSheet.h"
 
 #if !USE(QXMLQUERY)
@@ -36,8 +37,6 @@
 
 namespace WebCore {
 
-class CachedResourceLoader;
-class Document;
 class XSLImportRule;
     
 class XSLStyleSheet : public StyleSheet {
@@ -48,13 +47,20 @@ public:
         return adoptRef(new XSLStyleSheet(parentImport, originalURL, finalURL));
     }
 #endif
-    static PassRefPtr<XSLStyleSheet> create(Node* parentNode, const String& originalURL, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const KURL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
-    static PassRefPtr<XSLStyleSheet> createInline(Node* parentNode, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> createEmbedded(ProcessingInstruction* parentNode, const KURL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, finalURL.string(), finalURL, true));
+    }
+
+    // Taking an arbitrary node is unsafe, because owner node pointer can become stale.
+    // XSLTProcessor ensures that the stylesheet doesn't outlive its parent, in part by not exposing it to JavaScript.
+    static PassRefPtr<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const KURL& finalURL)
+    {
+        return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
 
     virtual ~XSLStyleSheet();
