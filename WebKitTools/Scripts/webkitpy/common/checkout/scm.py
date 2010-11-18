@@ -700,8 +700,7 @@ class Git(SCM):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"] + changed_files, decode_output=False)
+        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"] + changed_files, decode_output=False, cwd=self.checkout_root)
 
     def _run_git_svn_find_rev(self, arg):
         # git svn find-rev always exits 0, even when the revision or commit is not found.

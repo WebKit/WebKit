@@ -1,3 +1,12 @@
+2010-11-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        webkit-patch pretty-diff shouldn't need to be run from a checkout root in git
+        https://bugs.webkit.org/show_bug.cgi?id=49639
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-11-17  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
