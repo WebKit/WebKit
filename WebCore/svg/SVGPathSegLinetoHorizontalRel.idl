@@ -27,7 +27,8 @@
 module svg {
 
     interface [Conditional=SVG] SVGPathSegLinetoHorizontalRel : SVGPathSeg {
-        attribute [StrictTypeChecking] float x;
+                 attribute float   x
+                     /*setter raises(DOMException)*/;
     };
 
 }

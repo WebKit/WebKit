@@ -31,11 +31,12 @@
 
 namespace WebCore {
 
-SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegList& pathSegList)
+SVGPathSegListSource::SVGPathSegListSource(SVGPathSegList* pathSegList)
     : m_pathSegList(pathSegList)
 {
+    ASSERT(m_pathSegList);
     m_itemCurrent = 0;
-    m_itemEnd = m_pathSegList.size();
+    m_itemEnd = m_pathSegList->numberOfItems();
 }
 
 bool SVGPathSegListSource::hasMoreData() const
@@ -45,7 +46,11 @@ bool SVGPathSegListSource::hasMoreData() const
 
 bool SVGPathSegListSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
 {
-    m_segment = m_pathSegList.at(m_itemCurrent);
+    ASSERT(m_pathSegList);
+    ExceptionCode ec = 0;
+    m_segment = m_pathSegList->getItem(m_itemCurrent, ec);
+    if (ec)
+        return false;
     pathSegType = static_cast<SVGPathSegType>(m_segment->pathSegType());
     ++m_itemCurrent;
     return true;
@@ -53,7 +58,11 @@ bool SVGPathSegListSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
 
 SVGPathSegType SVGPathSegListSource::nextCommand(SVGPathSegType)
 {
-    m_segment = m_pathSegList.at(m_itemCurrent);
+    ASSERT(m_pathSegList);
+    ExceptionCode ec = 0;
+    m_segment = m_pathSegList->getItem(m_itemCurrent, ec);
+    if (ec)
+        return PathSegUnknown;
     SVGPathSegType pathSegType = static_cast<SVGPathSegType>(m_segment->pathSegType());
     ++m_itemCurrent;
     return pathSegType;
@@ -63,7 +72,7 @@ bool SVGPathSegListSource::parseMoveToSegment(FloatPoint& targetPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == PathSegMoveToAbs || m_segment->pathSegType() == PathSegMoveToRel);
-    SVGPathSegSingleCoordinate* moveTo = static_cast<SVGPathSegSingleCoordinate*>(m_segment.get());
+    SVGPathSegSingleCoord* moveTo = static_cast<SVGPathSegSingleCoord*>(m_segment.get());
     targetPoint = FloatPoint(moveTo->x(), moveTo->y());
     return true;
 }
@@ -72,7 +81,7 @@ bool SVGPathSegListSource::parseLineToSegment(FloatPoint& targetPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == PathSegLineToAbs || m_segment->pathSegType() == PathSegLineToRel);
-    SVGPathSegSingleCoordinate* lineTo = static_cast<SVGPathSegSingleCoordinate*>(m_segment.get());
+    SVGPathSegSingleCoord* lineTo = static_cast<SVGPathSegSingleCoord*>(m_segment.get());
     targetPoint = FloatPoint(lineTo->x(), lineTo->y());
     return true;
 }
@@ -130,7 +139,7 @@ bool SVGPathSegListSource::parseCurveToQuadraticSmoothSegment(FloatPoint& target
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == PathSegCurveToQuadraticSmoothAbs || m_segment->pathSegType() == PathSegCurveToQuadraticSmoothRel);
-    SVGPathSegSingleCoordinate* quadraticSmooth = static_cast<SVGPathSegSingleCoordinate*>(m_segment.get());
+    SVGPathSegSingleCoord* quadraticSmooth = static_cast<SVGPathSegSingleCoord*>(m_segment.get());
     targetPoint = FloatPoint(quadraticSmooth->x(), quadraticSmooth->y());
     return true;
 }

@@ -415,8 +415,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGPath& path)
     } else if (svgElement->hasTagName(SVGNames::pathTag)) {
         SVGPathElement* element = static_cast<SVGPathElement*>(svgElement);
         String pathString;
-        // FIXME: We should switch to UnalteredParsing here - this will affect the path dumping output of dozens of tests.
-        SVGPathParserFactory::self()->buildStringFromByteStream(element->pathByteStream(), pathString, NormalizedParsing);
+        SVGPathParserFactory::self()->buildStringFromSVGPathSegList(element->pathSegList(), pathString, UnalteredParsing);
         writeNameAndQuotedValue(ts, "data", pathString);
     } else
         ASSERT_NOT_REACHED();

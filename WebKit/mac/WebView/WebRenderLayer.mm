@@ -32,7 +32,6 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/StyledElement.h>
 
 using namespace WebCore;
 

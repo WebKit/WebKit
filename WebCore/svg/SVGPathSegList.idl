@@ -29,19 +29,19 @@ module svg {
     interface [Conditional=SVG] SVGPathSegList {
         readonly attribute unsigned long numberOfItems;
 
-        void clear()
+        [JSCCustom] void clear()
             raises(DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg initialize(in SVGPathSeg newItem)
+        [JSCCustom] SVGPathSeg initialize(in SVGPathSeg newItem)
             raises(DOMException, SVGException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg getItem(in unsigned long index)
+        [JSCCustom] SVGPathSeg getItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
+        [JSCCustom] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
+        [JSCCustom] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg removeItem(in unsigned long index)
+        [JSCCustom] SVGPathSeg removeItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPathSeg appendItem(in SVGPathSeg newItem)
+        [JSCCustom] SVGPathSeg appendItem(in SVGPathSeg newItem)
             raises(DOMException, SVGException);
     };
 

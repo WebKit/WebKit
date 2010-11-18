@@ -99,6 +99,7 @@ SET(WebCore_IDL_INCLUDES
 
 SET(WebCore_IDL_PURE_FILES
     svg/ElementTimeControl.idl
+    svg/SVGAnimatedPathData.idl
     svg/SVGExternalResourcesRequired.idl
     svg/SVGFilterPrimitiveStandardAttributes.idl
     svg/SVGFitToViewBox.idl
@@ -1713,6 +1714,7 @@ IF (ENABLE_SVG)
         bindings/js/JSSVGElementInstanceCustom.cpp
         bindings/js/JSSVGLengthCustom.cpp
         bindings/js/JSSVGPathSegCustom.cpp
+        bindings/js/JSSVGPathSegListCustom.cpp
         css/SVGCSSComputedStyleDeclaration.cpp
         css/SVGCSSParser.cpp
         css/SVGCSSStyleSelector.cpp
@@ -1776,6 +1778,7 @@ IF (ENABLE_SVG)
         svg/SVGAnimateElement.cpp
         svg/SVGAnimateMotionElement.cpp
         svg/SVGAnimateTransformElement.cpp
+        svg/SVGAnimatedPathData.cpp
         svg/SVGAnimationElement.cpp
         svg/SVGCircleElement.cpp
         svg/SVGClipPathElement.cpp
@@ -1855,9 +1858,20 @@ IF (ENABLE_SVG)
         svg/SVGPathElement.cpp
         svg/SVGPathParser.cpp
         svg/SVGPathParserFactory.cpp
+        svg/SVGPathSeg.cpp
+        svg/SVGPathSegArc.cpp
+        svg/SVGPathSegClosePath.cpp
+        svg/SVGPathSegCurvetoCubic.cpp
+        svg/SVGPathSegCurvetoCubicSmooth.cpp
+        svg/SVGPathSegCurvetoQuadratic.cpp
+        svg/SVGPathSegCurvetoQuadraticSmooth.cpp
+        svg/SVGPathSegLineto.cpp
+        svg/SVGPathSegLinetoHorizontal.cpp
+        svg/SVGPathSegLinetoVertical.cpp
         svg/SVGPathSegList.cpp
         svg/SVGPathSegListBuilder.cpp
         svg/SVGPathSegListSource.cpp
+        svg/SVGPathSegMoveto.cpp
         svg/SVGPathStringBuilder.cpp
         svg/SVGPathStringSource.cpp
         svg/SVGPathTraversalStateBuilder.cpp
@@ -1907,7 +1921,6 @@ IF (ENABLE_SVG)
         svg/graphics/filters/SVGFEImage.cpp
         svg/graphics/filters/SVGFilter.cpp
         svg/graphics/filters/SVGFilterBuilder.cpp
-        svg/properties/SVGPathSegListPropertyTearOff.cpp
     )
 ENDIF()
 

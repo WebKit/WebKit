@@ -25,6 +25,7 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 #include "DOMWrapperWorld.h"
+#include "JSSVGContextCache.h"
 #include "Document.h"
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
@@ -48,6 +49,10 @@ namespace WebCore {
     class ScriptCachedFrameData;
 
     typedef int ExceptionCode;
+
+#if ENABLE(SVG)
+    class SVGElement;
+#endif
 
     // FIXME: This class should collapse into DOMObject once all DOMObjects are
     // updated to store a globalObject pointer.
@@ -179,6 +184,28 @@ namespace WebCore {
             return wrapper;
         return createDOMObjectWrapper<WrapperClass>(exec, globalObject, object);
     }
+
+#if ENABLE(SVG)
+    #define CREATE_SVG_OBJECT_WRAPPER(exec, globalObject, className, object, context) createDOMObjectWrapper<JS##className>(exec, globalObject, static_cast<className*>(object), context)
+    template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object, SVGElement* context)
+    {
+        DOMObject* wrapper = createDOMObjectWrapper<WrapperClass, DOMClass>(exec, globalObject, object);
+        ASSERT(wrapper);
+        if (context)
+            JSSVGContextCache::addWrapper(wrapper, context);
+        return wrapper;
+    }
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue getDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object, SVGElement* context)
+    {
+        if (!object)
+            return JSC::jsNull();
+        if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, object)) {
+            ASSERT(JSSVGContextCache::svgContextForDOMObject(wrapper) == context);
+            return wrapper;
+        }
+        return createDOMObjectWrapper<WrapperClass, DOMClass>(exec, globalObject, object, context);
+    }
+#endif
 
     #define CREATE_DOM_NODE_WRAPPER(exec, globalObject, className, object) createDOMNodeWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
     template<class WrapperClass, class DOMClass> inline JSNode* createDOMNodeWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)

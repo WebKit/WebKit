@@ -75,7 +75,6 @@ my %svgTypeNeedingTearOff = (
     "SVGMatrix" => "SVGPropertyTearOff<SVGMatrix>",
     "SVGNumber" => "SVGPropertyTearOff<float>",
     "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
-    "SVGPathSegList" => "SVGPathSegListPropertyTearOff",
     "SVGPoint" => "SVGPropertyTearOff<FloatPoint>",
     "SVGPointList" => "SVGListPropertyTearOff<SVGPointList>",
     "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",

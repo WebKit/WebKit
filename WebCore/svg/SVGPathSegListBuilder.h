@@ -27,7 +27,6 @@
 #if ENABLE(SVG)
 #include "FloatPoint.h"
 #include "SVGPathConsumer.h"
-#include "SVGPathElement.h"
 #include "SVGPathSegList.h"
 
 namespace WebCore {
@@ -36,19 +35,12 @@ class SVGPathSegListBuilder : public SVGPathConsumer {
 public:
     SVGPathSegListBuilder();
 
-    void setCurrentSVGPathElement(SVGPathElement* pathElement) { m_pathElement = pathElement; }
-    void setCurrentSVGPathSegList(SVGPathSegList& pathSegList) { m_pathSegList = &pathSegList; }
-    void setCurrentSVGPathSegRole(SVGPathSegRole pathSegRole) { m_pathSegRole = pathSegRole; }
+    void setCurrentSVGPathSegList(SVGPathSegList* pathSegList) { m_pathSegList = pathSegList; }
 
 private:
     virtual void incrementPathSegmentCount() { }
     virtual bool continueConsuming() { return true; }
-    virtual void cleanup()
-    {
-        m_pathElement = 0;
-        m_pathSegList = 0;
-        m_pathSegRole = PathSegUndefinedRole;
-    }
+    virtual void cleanup() { m_pathSegList = 0; }
 
     // Used in UnalteredParisng/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
@@ -64,9 +56,7 @@ private:
     virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode);
     virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode);
 
-    SVGPathElement* m_pathElement;
     SVGPathSegList* m_pathSegList;
-    SVGPathSegRole m_pathSegRole;
 };
 
 } // namespace WebCore

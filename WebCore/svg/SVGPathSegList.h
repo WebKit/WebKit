@@ -21,36 +21,19 @@
 #define SVGPathSegList_h
 
 #if ENABLE(SVG)
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
+#include "SVGList.h"
 #include "SVGPathSeg.h"
-#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
 class SVGElement;
 
-class SVGPathSegList : public Vector<RefPtr<SVGPathSeg> > {
+class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
 public:
-    SVGPathSegList(SVGPathSegRole role)
-        : m_role(role)
-    {
-    }
-
-    String valueAsString() const;
-
-    // Only used by SVGPathSegListPropertyTearOff.
-    void commitChange(SVGElement* contextElement);
+    static PassRefPtr<SVGPathSegList> create(const QualifiedName& attributeName) { return adoptRef(new SVGPathSegList(attributeName)); }
 
 private:
-    SVGPathSegRole m_role;
-};
-
-template<>
-struct SVGPropertyTraits<SVGPathSegList> {
-    static SVGPathSegList initialValue() { return SVGPathSegList(PathSegUndefinedRole); }
-    typedef RefPtr<SVGPathSeg> ListItemType;
+    SVGPathSegList(const QualifiedName&);
 };
 
 } // namespace WebCore

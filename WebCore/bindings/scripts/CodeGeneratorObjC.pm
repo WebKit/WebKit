@@ -673,9 +673,6 @@ sub GetSVGPropertyTypes
     } elsif ($svgNativeType =~ /SVGTransformListPropertyTearOff/) {
         $svgListPropertyType = "WebCore::$svgWrappedNativeType";
         $svgListPropertyType =~ s/</\<WebCore::/;
-    } elsif ($svgNativeType =~ /SVGPathSegListPropertyTearOff/) {
-        $svgListPropertyType = "WebCore::$svgWrappedNativeType";
-        $svgListPropertyType =~ s/</\<WebCore::/;
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -1007,7 +1004,6 @@ sub GenerateHeader
         if ($svgListPropertyType) {
             push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n");
             push(@internalHeaderContent, "#import <WebCore/SVGTransformListPropertyTearOff.h>\n\n") if $svgListPropertyType =~ /SVGTransformList/;
-            push(@internalHeaderContent, "#import <WebCore/SVGPathSegListPropertyTearOff.h>\n\n") if $svgListPropertyType =~ /SVGPathSegList/;
         }
         push(@internalHeaderContent, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
@@ -1314,13 +1310,13 @@ sub GenerateImplementation
                         my $updateMethod = "&${implClassNameWithNamespace}::update" . $codeGenerator->WK_ucfirst($getter);
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create(IMPL, $getterContentHead$getterContentTail, $updateMethod";
                         $getterContentTail .= "))";
-                    } elsif ($idlTypeWithNamespace =~ /SVG(Point|PathSeg)List/) {
-                        $getterContentHead = "kit(WTF::getPtr($getterContentHead";
-                        $getterContentTail .= "))";
                     } elsif ($idlTypeWithNamespace =~ /SVGStaticListPropertyTearOff/) {
                         my $extraImp = "WebCore::GetOwnerElementForType<$implClassNameWithNamespace, WebCore::IsDerivedFromSVGElement<$implClassNameWithNamespace>::value>::ownerElement(IMPL), ";
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($extraImp$getterContentHead";
                         $getterContentTail .= ")))";
+                    } elsif ($idlTypeWithNamespace =~ /SVGPointList/) {
+                        $getterContentHead = "kit(WTF::getPtr($getterContentHead";
+                        $getterContentTail .= "))";
                     } else {
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";
                         $getterContentTail .= ")))";
