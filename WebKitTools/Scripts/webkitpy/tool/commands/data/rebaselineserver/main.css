@@ -120,6 +120,7 @@ a, .link {
   border: solid 1px #ddd;
   -webkit-user-select: none;
   -webkit-user-drag: none;
+  cursor: crosshair;  
 }
 
 #image-outputs img.loading,
@@ -147,4 +148,66 @@ a, .link {
   font-weight: bold;
   margin: 0;
   background: #eee;
+}
+
+#loupe {
+  -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .5);
+  position: absolute;
+  width: 634px;
+  top: 50%;
+  left: 50%;
+  margin-left: -151px;
+  margin-top: -50px;
+  background: #fff;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+#loupe td {
+  padding: 0;
+  border: solid 1px #ccc;     
+}
+
+#loupe label {
+  color: #999;
+  padding-right: 1em;
+}
+
+#loupe span {
+  color: #000;
+  font-weight: bold;
+}
+
+#loupe canvas {
+  cursor: crosshair;
+}
+
+#loupe #loupe-close {
+  float: right;
+}
+
+#loupe #loupe-info {
+  background: #eee;
+  padding: .3em .5em;
+}
+
+#loupe #loupe-colors td {
+  text-align: center;
+}
+
+#loupe .loupe-container {
+  position: relative;
+  width: 210px;
+  height: 210px;
+}
+
+#loupe .center-highlight {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -5px;
+  outline: solid 1px #999;
 }

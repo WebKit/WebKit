@@ -34,6 +34,7 @@ var results;
 var testsByFailureType = {};
 var testsByDirectory = {};
 var selectedTests = [];
+var loupe;
 
 function main()
 {
@@ -42,6 +43,8 @@ function main()
     $('test-selector').addEventListener('change', selectTest);
     $('next-test').addEventListener('click', nextTest);
     $('previous-test').addEventListener('click', previousTest);
+
+    loupe = new Loupe();
 
     document.addEventListener('keydown', function(event) {
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -210,6 +213,7 @@ function selectTest()
     }
 
     updateState();
+    loupe.hide();
 }
 
 function updateState()
@@ -241,7 +245,7 @@ function displayImageResults(testName)
         && currentExpectedImageTest == testName) {
         return;
     }
-    
+
     function displayImageResult(mode, callback) {
         var image = $(mode);
         image.className = 'loading';
@@ -274,45 +278,45 @@ function displayImageResults(testName)
 function updateImageDiff() {
     if (currentExpectedImageTest != currentActualImageTest)
         return;
-        
+
     var expectedImage = $('expected-image');
     var actualImage = $('actual-image');
-    
+
     function getImageData(image) {
         var imageCanvas = document.createElement('canvas');
         imageCanvas.width = image.width;
         imageCanvas.height = image.height;
         imageCanvasContext = imageCanvas.getContext('2d');
-        
+
         imageCanvasContext.fillStyle = 'rgba(255, 255, 255, 1)';
         imageCanvasContext.fillRect(
             0, 0, image.width, image.height);
-            
+
         imageCanvasContext.drawImage(image, 0, 0);
         return imageCanvasContext.getImageData(
-            0, 0, image.width, image.height);  
+            0, 0, image.width, image.height);
     }
-    
+
     var expectedImageData = getImageData(expectedImage);
     var actualImageData = getImageData(actualImage);
-    
+
     var diffCanvas = $('diff-canvas');
     var diffCanvasContext = diffCanvas.getContext('2d');
     var diffImageData =
         diffCanvasContext.createImageData(diffCanvas.width, diffCanvas.height);
-  
+
     // Avoiding property lookups for all these during the per-pixel loop below
     // provides a significant performance benefit.
     var expectedWidth = expectedImage.width;
     var expectedHeight = expectedImage.height;
     var expected = expectedImageData.data;
-    
+
     var actualWidth = actualImage.width;
     var actual = actualImageData.data;
-  
+
     var diffWidth = diffImageData.width;
     var diff = diffImageData.data;
-    
+
     for (var x = 0; x < expectedWidth; x++) {
         for (var y = 0; y < expectedHeight; y++) {
             var expectedOffset = (y * expectedWidth + x) * 4;
@@ -334,7 +338,7 @@ function updateImageDiff() {
             }
         }
     }
-    
+
     diffCanvasContext.putImageData(
         diffImageData,
         0, 0,

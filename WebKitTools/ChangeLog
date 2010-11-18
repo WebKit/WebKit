@@ -1,3 +1,18 @@
+2010-11-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: add loupe for image diffs
+        https://bugs.webkit.org/show_bug.cgi?id=49692
+        
+        Add a loupe (magnifiying glass) for inspecting image diffs. Shows an
+        enlarged area of the expected, actual and diff images side by side.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/loupe.js: Added.
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2010-11-17  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

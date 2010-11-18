@@ -33,6 +33,7 @@
   <title>Layout Test Rebaseline Server</title>
   <link rel="stylesheet" href="/main.css" type="text/css">
   <script src="/util.js"></script>
+  <script src="/loupe.js"></script>
   <script src="/main.js"></script>
 </head>
 <body class="loading">
@@ -98,6 +99,40 @@
       <td><pre id="diff-text"><pre></td>
     </tr>
   </tbody>
+</table>
+
+<table id="loupe" style="display: none">
+  <tr>
+    <td colspan="3" id="loupe-info">
+      <span id="loupe-close" class="link">Close</span>
+      <label>Coordinate: <span id="loupe-coordinate"></span></label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="loupe-container">
+        <canvas id="expected-loupe" width="210" height="210"></canvas>
+        <div class="center-highlight"></div>
+      </div>
+    </td>
+    <td>
+      <div class="loupe-container">
+        <canvas id="actual-loupe" width="210" height="210"></canvas>
+        <div class="center-highlight"></div>
+      </div>
+    </td>
+    <td>
+      <div class="loupe-container">
+        <canvas id="diff-loupe" width="210" height="210"></canvas>
+        <div class="center-highlight"></div>
+      </div>
+    </td>
+  </tr>
+  <tr id="loupe-colors">
+    <td><label>Exp. color: <span id="expected-loupe-color"></span></label></td>
+    <td><label>Actual color: <span id="actual-loupe-color"></span></label></td>
+    <td><label>Diff color: <span id="diff-loupe-color"></span></label></td>
+  </tr>
 </table>
 
 </body>

@@ -58,6 +58,7 @@ class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
 class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     STATIC_FILE_NAMES = frozenset([
         "index.html",
+        "loupe.js",
         "main.js",
         "main.css",
         "util.js",
