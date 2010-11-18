@@ -66,7 +66,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
             # Although all test_shell/DumpRenderTree output should be utf-8,
             # we do not ever decode it inside run-webkit-tests.  For some tests
             # DumpRenderTree may not output utf-8 text (e.g. webarchives).
-            self._save_baseline_data(filename, output, ".txt", encoding=None,
+            self._save_baseline_data(filename, actual_test_output.text,
+                                     ".txt", encoding=None,
                                      generate_new_baseline=test_args.new_baseline)
             return failures
 
