@@ -77,6 +77,9 @@ public:
         return 0;
     }
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
+
+protected:
+    WebIDBDatabase() { }
 };
 
 } // namespace WebKit

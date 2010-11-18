@@ -56,6 +56,9 @@ public:
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void remove(WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+protected:
+    WebIDBCursor() { }
 };
 
 } // namespace WebKit

@@ -60,6 +60,8 @@ public:
         return 0;
     }
 
+protected:
+    WebIDBTransaction() {}
 };
 
 } // namespace WebKit

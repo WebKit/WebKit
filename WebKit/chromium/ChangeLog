@@ -1,3 +1,26 @@
+2010-11-18  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] IndexedDB API cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=49733
+
+        Make it so that you can't directly instantiate our "interface"
+        classes.  Remove some code for 2 sided merges.
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::WebIDBCursor):
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::WebIDBDatabase):
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::WebIDBIndex):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::WebIDBObjectStore):
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::WebIDBTransaction):
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebCore::IDBTransactionBackendProxy::IDBTransactionBackendProxy):
+
 2010-11-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

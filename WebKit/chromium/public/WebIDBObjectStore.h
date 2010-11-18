@@ -75,6 +75,9 @@ public:
     }
     virtual void removeIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+protected:
+    WebIDBObjectStore() {}
 };
 
 } // namespace WebKit
