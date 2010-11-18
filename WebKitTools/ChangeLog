@@ -1,3 +1,17 @@
+2010-11-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitTools projects (WebKitTestRunner, record-memory-win) should use vsprops for common build settings
+        https://bugs.webkit.org/show_bug.cgi?id=49711
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCFLite.vsprops: Added.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops: Added.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreFoundation.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        * record-memory-win/record-memory-win-common.vsprops: Added.
+        * record-memory-win/record-memory-win.vcproj:
+
 2010-11-18  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
