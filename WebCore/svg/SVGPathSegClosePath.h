@@ -22,18 +22,22 @@
 #define SVGPathSegClosePath_h
 
 #if ENABLE(SVG)
-
-#include "PlatformString.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-class SVGPathSegClosePath : public SVGPathSeg {
+class SVGPathSegClosePath : public SVGPathSegWithContext {
 public:
-    static PassRefPtr<SVGPathSegClosePath> create() { return adoptRef(new SVGPathSegClosePath); }
+    static PassRefPtr<SVGPathSegClosePath> create(SVGPathElement* element, SVGPathSegRole role)
+    {
+        return adoptRef(new SVGPathSegClosePath(element, role));
+    }
 
 private:
-    SVGPathSegClosePath() { }
+    SVGPathSegClosePath(SVGPathElement* element, SVGPathSegRole role)
+        : SVGPathSegWithContext(element, role)
+    {
+    }
 
     virtual unsigned short pathSegType() const { return PATHSEG_CLOSEPATH; }
     virtual String pathSegTypeAsLetter() const { return "Z"; }

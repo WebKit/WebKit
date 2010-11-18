@@ -1,3 +1,12 @@
+2010-11-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Convert SVGPathSeg/SVGPathSegList to the new SVGPropertyTearOff concept
+        https://bugs.webkit.org/show_bug.cgi?id=49580
+
+        * WebView/WebRenderLayer.mm: Add missing StyledElement.h include.
+
 2010-11-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

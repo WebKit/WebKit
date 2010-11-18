@@ -69795,10 +69795,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimatedPathData.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimatedPreserveAspectRatio.h"
 				>
 			</File>
@@ -70898,6 +70894,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\svg\properties\SVGAnimatedPathSegListPropertyTearOff.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\properties\SVGAnimatedProperty.h"
 					>
 				</File>
@@ -70931,6 +70931,14 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGListPropertyTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGPathSegListPropertyTearOff.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGPathSegListPropertyTearOff.h"
 					>
 				</File>
 				<File

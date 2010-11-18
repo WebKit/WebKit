@@ -329,7 +329,6 @@ DOM_CLASSES = \
     SVGAnimatedLengthList \
     SVGAnimatedNumber \
     SVGAnimatedNumberList \
-    SVGAnimatedPathData \
     SVGAnimatedPreserveAspectRatio \
     SVGAnimatedRect \
     SVGAnimatedString \

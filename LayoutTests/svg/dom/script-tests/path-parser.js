@@ -4,21 +4,31 @@ var pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
 
 var pathProperties = {
     "M": [ "x", "y" ],
+    "m": [ "x", "y" ],
     "L": [ "x", "y" ],
+    "l": [ "x", "y" ],
     "H": [ "x" ],
+    "h": [ "x" ],
     "V": [ "y" ],
+    "v": [ "y" ],
     "Z": [ ],
+    "z": [ ],
     "C": [ "x1", "y1", "x2", "y2", "x", "y" ],
+    "c": [ "x1", "y1", "x2", "y2", "x", "y" ],
     "S": [ "x2", "y2", "x", "y" ],
+    "s": [ "x2", "y2", "x", "y" ],
     "Q": [ "x1", "y1", "x", "y" ],
+    "q": [ "x1", "y1", "x", "y" ],
     "T": [ "x", "y" ],
+    "t": [ "x", "y" ],
     "A": [ "r1", "r2", "angle", "largeArcFlag", "sweepFlag", "x", "y" ],
+    "a": [ "r1", "r2", "angle", "largeArcFlag", "sweepFlag", "x", "y" ]
 };
 
 function printSegment(segment)
 {
     var letter = segment.pathSegTypeAsLetter;
-    var names = pathProperties[letter.toUpperCase()];
+    var names = pathProperties[letter];
     if (!names)
         return letter + "?";
     var string = letter;
@@ -57,42 +67,45 @@ function parsePath(string)
 }
 
 shouldBe("parsePath('M1,2')", "'M1,2'");
-shouldBe("parsePath('m1,2')", "'M1,2'");
-shouldBe("parsePath('M100,200 m3,4')", "'M100,200 M103,204'");
+shouldBe("parsePath('m1,2')", "'m1,2'");
+shouldBe("parsePath('M100,200 m3,4')", "'M100,200 m3,4'");
 shouldBe("parsePath('M100,200 L3,4')", "'M100,200 L3,4'");
-shouldBe("parsePath('M100,200 l3,4')", "'M100,200 L103,204'");
-shouldBe("parsePath('M100,200 H3')", "'M100,200 L3,200'");
-shouldBe("parsePath('M100,200 h3')", "'M100,200 L103,200'");
-shouldBe("parsePath('M100,200 V3')", "'M100,200 L100,3'");
-shouldBe("parsePath('M100,200 v3')", "'M100,200 L100,203'");
+shouldBe("parsePath('M100,200 l3,4')", "'M100,200 l3,4'");
+shouldBe("parsePath('M100,200 H3')", "'M100,200 H3'");
+shouldBe("parsePath('M100,200 h3')", "'M100,200 h3'");
+shouldBe("parsePath('M100,200 V3')", "'M100,200 V3'");
+shouldBe("parsePath('M100,200 v3')", "'M100,200 v3'");
 shouldBe("parsePath('M100,200 Z')", "'M100,200 Z'");
 shouldBe("parsePath('M100,200 z')", "'M100,200 Z'");
 shouldBe("parsePath('M100,200 C3,4,5,6,7,8')", "'M100,200 C3,4,5,6,7,8'");
-shouldBe("parsePath('M100,200 c3,4,5,6,7,8')", "'M100,200 C103,204,105,206,107,208'");
-shouldBe("parsePath('M100,200 S3,4,5,6')", "'M100,200 C100,200,3,4,5,6'");
-shouldBe("parsePath('M100,200 s3,4,5,6')", "'M100,200 C100,200,103,204,105,206'");
-shouldBe("parsePath('M100,200 Q3,4,5,6')", "'M100,200 C35.3,69.3,3.7,4.7,5,6'");
-shouldBe("parsePath('M100,200 q3,4,5,6')", "'M100,200 C102,202.7,103.7,204.7,105,206'");
-shouldBe("parsePath('M100,200 T3,4')", "'M100,200 C100,200,67.7,134.7,3,4'");
-shouldBe("parsePath('M100,200 t3,4')", "'M100,200 C100,200,101,201.3,103,204'");
-shouldBe("parsePath('M100,200 A3,4,5,0,0,6,7')", "'M100,200 C141.5,162.8,154.1,89.5,128.2,36.2 C102.2,-17.1,47.5,-30.2,6,7'");
-shouldBe("parsePath('M100,200 A3,4,5,1,0,6,7')", "'M100,200 C141.5,162.8,154.2,89.4,128.2,36.1 C102.2,-17.2,47.5,-30.2,6,7'");
-shouldBe("parsePath('M100,200 A3,4,5,0,1,6,7')", "'M100,200 C58.5,237.2,3.8,224.1,-22.2,170.8 C-48.1,117.5,-35.5,44.2,6,7'");
-shouldBe("parsePath('M100,200 A3,4,5,1,1,6,7')", "'M100,200 C58.5,237.2,3.8,224.2,-22.2,170.9 C-48.2,117.6,-35.5,44.2,6,7'");
-shouldBe("parsePath('M100,200 a3,4,5,0,0,6,7')", "'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,0,1,6,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,1,0,6,7')", "'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,1,1,6,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,006,7')", "'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,016,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,106,7')", "'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,116,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
+shouldBe("parsePath('M100,200 c3,4,5,6,7,8')", "'M100,200 c3,4,5,6,7,8'");
+shouldBe("parsePath('M100,200 S3,4,5,6')", "'M100,200 S3,4,5,6'");
+shouldBe("parsePath('M100,200 s3,4,5,6')", "'M100,200 s3,4,5,6'");
+shouldBe("parsePath('M100,200 Q3,4,5,6')", "'M100,200 Q3,4,5,6'");
+shouldBe("parsePath('M100,200 q3,4,5,6')", "'M100,200 q3,4,5,6'");
+shouldBe("parsePath('M100,200 T3,4')", "'M100,200 T3,4'");
+shouldBe("parsePath('M100,200 t3,4')", "'M100,200 t3,4'");
+shouldBe("parsePath('M100,200 A3,4,5,0,0,6,7')", "'M100,200 A3,4,5,0,0,6,7'");
+shouldBe("parsePath('M100,200 A3,4,5,1,0,6,7')", "'M100,200 A3,4,5,1,0,6,7'");
+shouldBe("parsePath('M100,200 A3,4,5,0,1,6,7')", "'M100,200 A3,4,5,0,1,6,7'");
+shouldBe("parsePath('M100,200 A3,4,5,1,1,6,7')", "'M100,200 A3,4,5,1,1,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,0,0,6,7')", "'M100,200 a3,4,5,0,0,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,0,1,6,7')", "'M100,200 a3,4,5,0,1,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,1,0,6,7')", "'M100,200 a3,4,5,1,0,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,1,1,6,7')", "'M100,200 a3,4,5,1,1,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,006,7')", "'M100,200 a3,4,5,0,0,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,016,7')", "'M100,200 a3,4,5,0,1,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,106,7')", "'M100,200 a3,4,5,1,0,6,7'");
+shouldBe("parsePath('M100,200 a3,4,5,116,7')", "'M100,200 a3,4,5,1,1,6,7'");
 shouldBe("parsePath('M100,200 a3,4,5,2,1,6,7')", "'M100,200'");
 shouldBe("parsePath('M100,200 a3,4,5,1,2,6,7')", "'M100,200'");
-shouldBe("parsePath('M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 z')", "'M100,200 L110,200 L110,210 L100,210 Z'");
+
+// FIXME: This uses 'If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto") joining the endpoints.'
+// I think the SVG DOM should still show the arc segment, fix that!
+shouldBe("parsePath('M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 z')", "'M100,200 l10,0 l0,10 l-10,0 Z'");
 
 shouldBe("parsePath('M1,2,3,4')", "'M1,2 L3,4'");
-shouldBe("parsePath('m100,200,3,4')", "'M100,200 L103,204'");
+shouldBe("parsePath('m100,200,3,4')", "'m100,200 l3,4'");
 
 shouldBe("parsePath('M 100-200')", "'M100,-200'");
 shouldBe("parsePath('M 0.6.5')", "'M0.6,0.5'");

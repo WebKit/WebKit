@@ -679,18 +679,9 @@ sub GenerateNormalAttrGetter
     my $interfaceName = shift;
 
     my $attrExt = $attribute->signature->extendedAttributes;
-
     my $attrName = $attribute->signature->name;
-
     my $attrType = GetTypeFromSignature($attribute->signature);
-
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
-    my $skipContext = 0;
-
-    # Special case: SVGZoomEvent's attributes are all read-only
-    if ($implClassName eq "SVGZoomEvent") {
-        $skipContext = 1;
-    }
 
     my $getterStringUsesImp = $implClassName ne "SVGNumber";
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($implClassName);
@@ -834,14 +825,6 @@ END
         return;
     }
 
-    if (IsSVGTypeNeedingContextParameter($attrType) && !$skipContext) {
-        push(@implContentDecls, GenerateSVGContextRetrieval($implClassName, "    "));
-        # The templating associated with passing withSVGContext()'s return value directly into toV8 can get compilers confused,
-        # so just manually set the return value to a PassRefPtr of the expected type.
-        push(@implContentDecls, "    PassRefPtr<$attrType> resultAsPassRefPtr = V8Proxy::withSVGContext($result, context);\n");
-        $result = "resultAsPassRefPtr";
-    }
-
     if ($codeGenerator->IsSVGAnimatedType($implClassName) and $codeGenerator->IsSVGTypeNeedingTearOff($attrType)) {
         $implIncludes{"V8$attrType.h"} = 1;
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
@@ -879,7 +862,7 @@ END
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
             my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($extraImp$result)));\n");
-        } elsif ($tearOffType =~ /SVGPointList/) {
+        } elsif ($tearOffType =~ /SVG(Point|PathSeg)List/) {
             push(@implContentDecls, "    return toV8(WTF::getPtr($result));\n");
         } else {
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)));\n");
@@ -1036,10 +1019,6 @@ END
         } else {
             push(@implContentDecls, "    wrapper->commitChange();\n");
         }
-    } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-        $implIncludes{"SVGElement.h"} = 1;
-        push(@implContentDecls, "    if (SVGElement* context = V8Proxy::svgContext(imp))\n");
-        push(@implContentDecls, "        context->svgAttributeChanged(imp->associatedAttributeName());\n");
     }
 
     push(@implContentDecls, "    return;\n");
@@ -2720,23 +2699,6 @@ sub GenerateFunctionCallString()
         return $result;
     }
 
-    my $generatedSVGContextRetrieval = 0;
-    # If the return type needs an SVG context, output it
-    if (IsSVGTypeNeedingContextParameter($returnType)) {
-        $result .= GenerateSVGContextAssignment($implClassName, $return . ".get()", $indent);
-        $generatedSVGContextRetrieval = 1;
-    }
-
-    if (IsSVGTypeNeedingContextParameter($implClassName) && $implClassName =~ /List$/ && IsSVGListMutator($name)) {
-        if (!$generatedSVGContextRetrieval) {
-            $result .= GenerateSVGContextRetrieval($implClassName, $indent);
-            $generatedSVGContextRetrieval = 1;
-        }
-
-        $result .= $indent . "context->svgAttributeChanged(imp->associatedAttributeName());\n";
-        $implIncludes{"SVGElement.h"} = 1;
-    }
-
     # If the implementing class is a POD type, commit changes
     if ($codeGenerator->IsSVGTypeNeedingTearOff($implClassName) and not $implClassName =~ /List$/) {
         $result .= $indent . "wrapper->commitChange();\n";
@@ -3204,64 +3166,6 @@ sub WriteData
 
         @headerContent = ();
     }
-}
-
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub IsSVGTypeNeedingContextParameter
-{
-    my $implClassName = shift;
-
-    return 0 unless $implClassName =~ /SVG/;
-    return 0 if $implClassName =~ /Element/;
-    return 0 if $codeGenerator->IsSVGAnimatedType($implClassName);
-    return 0 if $codeGenerator->IsSVGTypeNeedingTearOff($implClassName);
-
-    my @noContextNeeded = ("SVGColor", "SVGDocument", "SVGPaintType", "SVGPaint", "SVGZoomEvent");
-    foreach (@noContextNeeded) {
-        return 0 if $implClassName eq $_;
-    }
-    return 1;
-}
-
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub GenerateSVGContextAssignment
-{
-    my $srcType = shift;
-    my $value = shift;
-    my $indent = shift;
-
-    $result = GenerateSVGContextRetrieval($srcType, $indent);
-    $result .= $indent . "V8Proxy::setSVGContext($value, context);\n";
-
-    return $result;
-}
-
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub GenerateSVGContextRetrieval
-{
-    my $srcType = shift;
-    my $indent = shift;
-
-    my $contextDecl = "imp";
-    if (IsSVGTypeNeedingContextParameter($srcType)) {
-        $contextDecl = "V8Proxy::svgContext($contextDecl)";
-    }
-
-    return $indent . "SVGElement* context = $contextDecl;\n";
-}
-
-sub IsSVGListMutator
-{
-    my $functionName = shift;
-
-    return 1 if $functionName eq "clear";
-    return 1 if $functionName eq "initialize";
-    return 1 if $functionName eq "insertItemBefore";
-    return 1 if $functionName eq "replaceItem";
-    return 1 if $functionName eq "removeItem";
-    return 1 if $functionName eq "appendItem";
-
-    return 0;
 }
 
 sub GetVisibleInterfaceName

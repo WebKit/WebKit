@@ -197,10 +197,8 @@
       # Bindings with custom Objective-C implementations.
       '../page/AbstractView.idl',
 
-      # FIXME: I don't know why all of these are excluded.
-      # Extra SVG bindings to exclude.
+      # These bindings are excluded, as they're only used through inheritance and don't define constants that would need a constructor.
       '../svg/ElementTimeControl.idl',
-      '../svg/SVGAnimatedPathData.idl',
       '../svg/SVGExternalResourcesRequired.idl',
       '../svg/SVGFilterPrimitiveStandardAttributes.idl',
       '../svg/SVGFitToViewBox.idl',

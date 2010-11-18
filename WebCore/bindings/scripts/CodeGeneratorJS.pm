@@ -316,25 +316,6 @@ sub AddClassForwardIfNeeded
     }
 }
 
-# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
-sub IsSVGTypeNeedingContextParameter
-{
-    # FIXME: This function will be removed, as soon the PODType concept is gone, and all SVG datatypes use the new style JS bindings.
-
-    my $implClassName = shift;
-
-    return 0 unless $implClassName =~ /SVG/;
-    return 0 if $implClassName =~ /Element/;
-    return 0 if $codeGenerator->IsSVGAnimatedType($implClassName);
-    return 0 if $codeGenerator->IsSVGTypeNeedingTearOff($implClassName);
-
-    my @noContextNeeded = ("SVGColor", "SVGDocument", "SVGPaint", "SVGZoomEvent");
-    foreach (@noContextNeeded) {
-        return 0 if $implClassName eq $_;
-    }
-    return 1;
-}
-
 sub HashValueForClassAndName
 {
     my $class = shift;
@@ -937,8 +918,6 @@ sub GenerateHeader
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"} || $dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($svgPropertyType) {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
-        } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*, SVGElement* context);\n");
         } else {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         }
@@ -1461,8 +1440,6 @@ sub GenerateImplementation
             } else {
                 push(@implContent, "    forgetDOMObject(this, impl());\n");
             }
-
-            push(@implContent, "    JSSVGContextCache::forgetWrapper(this);\n") if IsSVGTypeNeedingContextParameter($implClassName);
         }
 
         push(@implContent, "}\n\n");
@@ -1793,9 +1770,6 @@ sub GenerateImplementation
                                 push(@implContent, ", ec") if @{$attribute->setterExceptions};
                                 push(@implContent, ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
-                                if (IsSVGTypeNeedingContextParameter($implClassName)) {
-                                    push(@implContent, "    JSSVGContextCache::propagateSVGDOMChange(castedThis, imp->associatedAttributeName());\n");
-                                }
                             }
                         }
                         
@@ -2115,16 +2089,12 @@ sub GenerateImplementation
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($svgPropertyType) {
             push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
-        } elsif ($podType or IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object, SVGElement* context)\n");
         } else {
             push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
         }
         push(@implContent, "{\n");
         if ($svgPropertyType) {
             push(@implContent, "    return getDOMObjectWrapper<$className, $implType>(exec, globalObject, object);\n");
-        } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, globalObject, object, context);\n");
         } else {
             push(@implContent, "    return getDOMObjectWrapper<$className>(exec, globalObject, object);\n");
         }
@@ -2425,6 +2395,11 @@ sub GetSVGPropertyTypes
         $headerIncludes{"$svgWrappedNativeType.h"} = 1;
         $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
         $headerIncludes{"SVGTransformListPropertyTearOff.h"} = 1;
+    } elsif ($svgNativeType =~ /SVGPathSegListPropertyTearOff/) {
+        $svgListPropertyType = $svgWrappedNativeType;
+        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
+        $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
+        $headerIncludes{"SVGPathSegListPropertyTearOff.h"} = 1;
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -2553,11 +2528,6 @@ sub NativeToJSValue
 
     return $value if $codeGenerator->IsSVGAnimatedType($type);
 
-    if (IsSVGTypeNeedingContextParameter($type)) {
-        my $contextPtr = IsSVGTypeNeedingContextParameter($implClassName) ? "JSSVGContextCache::svgContextForDOMObject(castedThis)" : "imp";
-        return "toJS(exec, $globalObject, WTF::getPtr($value), $contextPtr)";
-    }
-
     if ($signature->extendedAttributes->{"ReturnsNew"}) {        
         return "toJSNewlyCreated(exec, $globalObject, WTF::getPtr($value))";
     }
@@ -2594,7 +2564,7 @@ sub NativeToJSValue
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
             my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
             $value = "${tearOffType}::create($extraImp$value)";
-        } elsif (not $tearOffType =~ /SVGPointList/) {
+        } elsif (not $tearOffType =~ /SVG(Point|PathSeg)List/) {
             $value = "${tearOffType}::create($value)";
         }
     }

@@ -795,7 +795,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
-	WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
 	WebCore/bindings/js/JSSVGPODListCustom.h \
 	WebCore/bindings/js/JSSVGPODTypeWrapper.h \
 	WebCore/bindings/js/JSTextCustom.cpp \
@@ -3047,6 +3046,7 @@ webcore_sources += \
 	WebCore/svg/LinearGradientAttributes.h \
 	WebCore/svg/PatternAttributes.h \
 	WebCore/svg/properties/SVGAnimatedListPropertyTearOff.h \
+	WebCore/svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
 	WebCore/svg/properties/SVGAnimatedProperty.h \
 	WebCore/svg/properties/SVGAnimatedPropertyDescription.h \
 	WebCore/svg/properties/SVGAnimatedPropertyMacros.h \
@@ -3056,6 +3056,8 @@ webcore_sources += \
 	WebCore/svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
 	WebCore/svg/properties/SVGListProperty.h \
 	WebCore/svg/properties/SVGListPropertyTearOff.h \
+	WebCore/svg/properties/SVGPathSegListPropertyTearOff.cpp \
+	WebCore/svg/properties/SVGPathSegListPropertyTearOff.h \
 	WebCore/svg/properties/SVGProperty.h \
 	WebCore/svg/properties/SVGPropertyTearOff.h \
 	WebCore/svg/properties/SVGPropertyTraits.h \
@@ -3080,8 +3082,6 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedLengthList.h \
 	WebCore/svg/SVGAnimatedNumber.h \
 	WebCore/svg/SVGAnimatedNumberList.h \
-	WebCore/svg/SVGAnimatedPathData.cpp \
-	WebCore/svg/SVGAnimatedPathData.h \
 	WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	WebCore/svg/SVGAnimatedRect.h \
 	WebCore/svg/SVGAnimatedString.h \
@@ -3257,25 +3257,15 @@ webcore_sources += \
 	WebCore/svg/SVGPathParserFactory.cpp \
 	WebCore/svg/SVGPathParserFactory.h \
 	WebCore/svg/SVGPathParser.h \
-	WebCore/svg/SVGPathSegArc.cpp \
 	WebCore/svg/SVGPathSegArc.h \
-	WebCore/svg/SVGPathSegClosePath.cpp \
 	WebCore/svg/SVGPathSegClosePath.h \
-	WebCore/svg/SVGPathSeg.cpp \
-	WebCore/svg/SVGPathSegCurvetoCubic.cpp \
 	WebCore/svg/SVGPathSegCurvetoCubic.h \
-	WebCore/svg/SVGPathSegCurvetoCubicSmooth.cpp \
 	WebCore/svg/SVGPathSegCurvetoCubicSmooth.h \
-	WebCore/svg/SVGPathSegCurvetoQuadratic.cpp \
 	WebCore/svg/SVGPathSegCurvetoQuadratic.h \
-	WebCore/svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
 	WebCore/svg/SVGPathSegCurvetoQuadraticSmooth.h \
 	WebCore/svg/SVGPathSeg.h \
-	WebCore/svg/SVGPathSegLineto.cpp \
 	WebCore/svg/SVGPathSegLineto.h \
-	WebCore/svg/SVGPathSegLinetoHorizontal.cpp \
 	WebCore/svg/SVGPathSegLinetoHorizontal.h \
-	WebCore/svg/SVGPathSegLinetoVertical.cpp \
 	WebCore/svg/SVGPathSegLinetoVertical.h \
 	WebCore/svg/SVGPathSegListBuilder.cpp \
 	WebCore/svg/SVGPathSegListBuilder.h \
@@ -3283,8 +3273,8 @@ webcore_sources += \
 	WebCore/svg/SVGPathSegList.h \
 	WebCore/svg/SVGPathSegListSource.cpp \
 	WebCore/svg/SVGPathSegListSource.h \
-	WebCore/svg/SVGPathSegMoveto.cpp \
 	WebCore/svg/SVGPathSegMoveto.h \
+	WebCore/svg/SVGPathSegWithContext.h \
 	WebCore/svg/SVGPathSource.h \
 	WebCore/svg/SVGPathStringBuilder.cpp \
 	WebCore/svg/SVGPathStringBuilder.h \
@@ -4207,7 +4197,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGAnimatedNumber.h \
 	DerivedSources/WebCore/JSSVGAnimatedNumberList.cpp \
 	DerivedSources/WebCore/JSSVGAnimatedNumberList.h \
-	DerivedSources/WebCore/JSSVGAnimatedPathData.h \
 	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.cpp \
 	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.h \
 	DerivedSources/WebCore/JSSVGAnimatedRect.cpp \

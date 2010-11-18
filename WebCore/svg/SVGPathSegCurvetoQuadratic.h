@@ -22,66 +22,91 @@
 #define SVGPathSegCurvetoQuadratic_h
 
 #if ENABLE(SVG)
-
-#include "PlatformString.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-    class SVGPathSegCurvetoQuadratic : public SVGPathSeg { 
-    public:
-        SVGPathSegCurvetoQuadratic(float x, float y, float x1, float y1)
-            : m_x(x)
-            , m_y(y)
-            , m_x1(x1)
-            , m_y1(y1)
-        {
-        }
+class SVGPathSegCurvetoQuadratic : public SVGPathSegWithContext { 
+public:
+    SVGPathSegCurvetoQuadratic(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+        : SVGPathSegWithContext(element, role)
+        , m_x(x)
+        , m_y(y)
+        , m_x1(x1)
+        , m_y1(y1)
+    {
+    }
 
-        void setX(float x) { m_x = x; }
-        float x() const { return m_x; }
+    float x() const { return m_x; }
+    void setX(float x)
+    {
+        m_x = x;
+        commitChange();
+    }
 
-        void setY(float y) { m_y = y; }
-        float y() const { return m_y; }
+    float y() const { return m_y; }
+    void setY(float y)
+    {
+        m_y = y;
+        commitChange();
+    }
 
-        void setX1(float x1) { m_x1 = x1; }
-        float x1() const { return m_x1; }
+    float x1() const { return m_x1; }
+    void setX1(float x1)
+    {
+        m_x1 = x1;
+        commitChange();
+    }
 
-        void setY1(float y1) { m_y1 = y1; }
-        float y1() const { return m_y1; }
+    float y1() const { return m_y1; }
+    void setY1(float y1)
+    {
+        m_y1 = y1;
+        commitChange();
+    }
 
-    private:
-        float m_x;
-        float m_y;
-        float m_x1;
-        float m_y1;
-    };
+private:
+    float m_x;
+    float m_y;
+    float m_x1;
+    float m_y1;
+};
 
-    class SVGPathSegCurvetoQuadraticAbs : public SVGPathSegCurvetoQuadratic {
-    public:
-        static PassRefPtr<SVGPathSegCurvetoQuadraticAbs> create(float x, float y, float x1, float y1) { return adoptRef(new SVGPathSegCurvetoQuadraticAbs(x, y, x1, y1)); }
+class SVGPathSegCurvetoQuadraticAbs : public SVGPathSegCurvetoQuadratic {
+public:
+    static PassRefPtr<SVGPathSegCurvetoQuadraticAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    {
+        return adoptRef(new SVGPathSegCurvetoQuadraticAbs(element, role, x, y, x1, y1));
+    }
 
-    private:
-        SVGPathSegCurvetoQuadraticAbs(float x, float y, float x1, float y1);
+private:
+    SVGPathSegCurvetoQuadraticAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+        : SVGPathSegCurvetoQuadratic(element, role, x, y, x1, y1)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "Q"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
+    virtual String pathSegTypeAsLetter() const { return "Q"; }
+};
 
-    class SVGPathSegCurvetoQuadraticRel : public SVGPathSegCurvetoQuadratic {
-    public:
-        static PassRefPtr<SVGPathSegCurvetoQuadraticRel> create(float x, float y, float x1, float y1) { return adoptRef(new SVGPathSegCurvetoQuadraticRel(x, y, x1, y1)); }
+class SVGPathSegCurvetoQuadraticRel : public SVGPathSegCurvetoQuadratic {
+public:
+    static PassRefPtr<SVGPathSegCurvetoQuadraticRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    {
+        return adoptRef(new SVGPathSegCurvetoQuadraticRel(element, role, x, y, x1, y1));
+    }
 
-    private:
-        SVGPathSegCurvetoQuadraticRel(float x, float y, float x1, float y1);
+private:
+    SVGPathSegCurvetoQuadraticRel(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+        : SVGPathSegCurvetoQuadratic(element, role, x, y, x1, y1)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }
-        virtual String pathSegTypeAsLetter() const { return "q"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }
+    virtual String pathSegTypeAsLetter() const { return "q"; }
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet
