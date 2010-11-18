@@ -96,8 +96,6 @@ private:
     RefPtr<HistoryItem> m_currentItem;
     RefPtr<HistoryItem> m_previousItem;
     RefPtr<HistoryItem> m_provisionalItem;
-
-    bool m_frameLoadComplete;
 };
 
 } // namespace WebCore
