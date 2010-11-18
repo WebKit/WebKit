@@ -1,3 +1,12 @@
+2010-11-18  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Update chromium DEPS to r66658 to pick up skia roll
+        https://bugs.webkit.org/show_bug.cgi?id=49754
+
+        * DEPS:
+
 2010-11-18  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
