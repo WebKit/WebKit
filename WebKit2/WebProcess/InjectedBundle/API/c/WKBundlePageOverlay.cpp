@@ -79,9 +79,39 @@ private:
         m_client.drawRect(toAPI(pageOverlay), graphicsContext.platformContext(), toAPI(dirtyRect), m_client.clientInfo);
     }
     
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&)
+    virtual bool mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& event)
     {
-        return false;
+        switch (event.type()) {
+        case WebEvent::MouseDown: {
+            if (!m_client.mouseDown)
+                return false;
+
+            return m_client.mouseDown(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+        }
+        case WebEvent::MouseUp: {
+            if (!m_client.mouseUp)
+                return false;
+
+            return m_client.mouseUp(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+        }
+        case WebEvent::MouseMove: {
+            if (event.button() == WebMouseEvent::NoButton) {
+                if (!m_client.mouseMoved)
+                    return false;
+
+                return m_client.mouseMoved(toAPI(pageOverlay), toAPI(event.position()), m_client.clientInfo);
+            }
+
+            // This is a MouseMove event with a mouse button pressed. Call mouseDragged.
+            if (!m_client.mouseDragged)
+                return false;
+
+            return m_client.mouseDragged(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+        }
+
+        default:
+            return false;
+        }
     }
     
     WKBundlePageOverlayClient m_client;

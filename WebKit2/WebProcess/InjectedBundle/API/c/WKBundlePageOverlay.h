@@ -27,6 +27,7 @@
 #define WKBundlePageOverlay_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKEvent.h>
 #include <WebKit2/WKGeometry.h>
 
 #ifndef __cplusplus
@@ -40,9 +41,13 @@ extern "C" {
 #endif
 
 // Page overlay client.
-typedef void (*WKBundlePageOverlayWillMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundlePageOverlayDidMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundlePageOverlayDrawRectCallback)(WKBundlePageOverlayRef pageOverlay, void* graphicsContext, WKRect dirtyRect, const void *clientInfo);
+typedef void (*WKBundlePageOverlayWillMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void* clientInfo);
+typedef void (*WKBundlePageOverlayDidMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void* clientInfo);
+typedef void (*WKBundlePageOverlayDrawRectCallback)(WKBundlePageOverlayRef pageOverlay, void* graphicsContext, WKRect dirtyRect, const void* clientInfo);
+typedef bool (*WKBundlePageOverlayMouseDownCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
+typedef bool (*WKBundlePageOverlayMouseUpCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
+typedef bool (*WKBundlePageOverlayMouseMovedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
+typedef bool (*WKBundlePageOverlayMouseDraggedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
 
 struct WKBundlePageOverlayClient {
     int                                                                 version;
@@ -50,6 +55,10 @@ struct WKBundlePageOverlayClient {
     WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
     WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
     WKBundlePageOverlayDrawRectCallback                                 drawRect;
+    WKBundlePageOverlayMouseDownCallback                                mouseDown;
+    WKBundlePageOverlayMouseUpCallback                                  mouseUp;
+    WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
+    WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
 };
 typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
     

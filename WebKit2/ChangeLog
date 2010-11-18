@@ -1,5 +1,23 @@
 2010-11-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Page overlays should be able to handle mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=49756
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        Add API cast function for converting an IntPoint to a WKPoint.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (PageOverlayClientImpl::mouseEvent):
+        Call the appropriate callbacks.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        Add new callbacks.
+
+2010-11-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Keep the web process alive if there are active downloads

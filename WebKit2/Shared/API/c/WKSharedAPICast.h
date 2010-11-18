@@ -195,6 +195,14 @@ inline WKRect toAPI(const WebCore::IntRect& rect)
     return wkRect;
 }
 
+inline WKPoint toAPI(const WebCore::IntPoint& point)
+{
+    WKPoint wkPoint;
+    wkPoint.x = point.x();
+    wkPoint.y = point.y();
+    return wkPoint;
+}
+
 /* Enum conversions */
 
 inline WKTypeID toAPI(APIObject::Type type)
