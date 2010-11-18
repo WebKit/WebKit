@@ -66,6 +66,7 @@ import traceback
 
 from layout_package import dump_render_tree_thread
 from layout_package import json_layout_results_generator
+from layout_package import message_broker
 from layout_package import printing
 from layout_package import test_expectations
 from layout_package import test_failures
@@ -664,7 +665,7 @@ class TestRunner:
                         some_thread_is_alive = True
                         next_timeout = thread.next_timeout()
                         if (next_timeout and t > next_timeout):
-                            _log_wedged_thread(thread)
+                            message_broker.log_wedged_thread(thread.id())
                             thread.clear_next_timeout()
 
                 self.update_summary(result_summary)
@@ -1666,16 +1667,6 @@ def parse_args(args=None):
 
     return options, args
 
-
-def _log_wedged_thread(thread):
-    """Log information about the given thread state."""
-    id = thread.id()
-    stack = dump_render_tree_thread.find_thread_stack(id)
-    assert(stack is not None)
-    _log.error("")
-    _log.error("thread %s (%d) is wedged" % (thread.getName(), id))
-    dump_render_tree_thread.log_stack(stack)
-    _log.error("")
 
 
 def main():

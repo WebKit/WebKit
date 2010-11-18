@@ -48,7 +48,6 @@ import sys
 import thread
 import threading
 import time
-import traceback
 
 import test_failures
 import test_output
@@ -56,23 +55,6 @@ import test_results
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "dump_render_tree_thread")
-
-
-def find_thread_stack(id):
-    """Returns a stack object that can be used to dump a stack trace for
-    the given thread id (or None if the id is not found)."""
-    for thread_id, stack in sys._current_frames().items():
-        if thread_id == id:
-            return stack
-    return None
-
-
-def log_stack(stack):
-    """Log a stack trace to log.error()."""
-    for filename, lineno, name, line in traceback.extract_stack(stack):
-        _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
-        if line:
-            _log.error('  %s' % line.strip())
 
 
 def _expected_test_output(port, filename):
