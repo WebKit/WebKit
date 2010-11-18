@@ -274,6 +274,8 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     bool hLock = hScrollbar != ScrollbarAuto;
     bool vLock = vScrollbar != ScrollbarAuto;
 
+    IntSize currentVisibleContentSize = m_frame->view() ? m_frame->view()->actualVisibleContentRect().size() : IntSize();
+
     m_frame->createView(m_webFrame->page()->viewportSize(),
                         backgroundColor, !backgroundColor.alpha(),
                         preferredLayoutSize.isValid() ? IntSize(preferredLayoutSize) : IntSize(),
@@ -284,6 +286,9 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     bool isMainFrame = m_frame == m_frame->page()->mainFrame();
     if (isMainFrame && page->d->client)
         m_frame->view()->setPaintsEntireContents(page->d->client->viewResizesToContentsEnabled());
+
+    // The HistoryController will update the scroll position later if needed.
+    m_frame->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 }
 
 void FrameLoaderClientQt::dispatchDidBecomeFrameset(bool)

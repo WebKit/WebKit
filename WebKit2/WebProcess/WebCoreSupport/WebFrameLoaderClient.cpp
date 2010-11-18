@@ -954,10 +954,15 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebPage* webPage = m_frame->page();
     bool isMainFrame = webPage->mainFrame() == m_frame;
 
+    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->actualVisibleContentRect().size() : IntSize();
+
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
 
     if (isMainFrame && webPage->resizesToContentsEnabled())
         m_frame->coreFrame()->view()->setPaintsEntireContents(true);
+
+    // The HistoryController will update the scroll position later if needed.
+    m_frame->coreFrame()->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 #else
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, IntSize(), false);
 #endif

@@ -1,3 +1,13 @@
+2010-11-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reuse the size of the actualVisibleContentRect when loading a new page
+        or navigating session history.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2010-11-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
