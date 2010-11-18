@@ -5332,3 +5332,7 @@ editing/pasteboard/paste-4039777-fix.html
 # [Qt] wrong ref count of npobject
 # https://bugs.webkit.org/show_bug.cgi?id=49749
 plugins/refcount-leaks.html
+
+# [Qt] Zero-sized font does not yet work
+# https://bugs.webkit.org/show_bug.cgi?id=49759
+fast/text/font-size-zero.html
