@@ -87,6 +87,8 @@ deps = {
     Var('chromium_svn')+'/app@'+Var('chromium_rev'), # needed by appcache
   'gpu':
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
+  'ipc':
+    Var('chromium_svn')+'/ipc@'+Var('chromium_rev'),
   'media':
     Var('chromium_svn')+'/media@'+Var('chromium_rev'),
   'printing':
@@ -141,6 +143,8 @@ deps_os = {
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
     'third_party/yasm/source/patched-yasm':
       From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
+    'third_party/openssl':
+      From('chromium_deps', 'src/third_party/openssl'),
   },
 }
 
