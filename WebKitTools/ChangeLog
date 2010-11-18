@@ -1,3 +1,14 @@
+2010-11-18  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [NRWT] Fix a break of '--new-baseline' feature in pixel_test
+        which is caused by r72249.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49751
+
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+
 2010-11-18  Adam Roben  <aroben@apple.com>
 
         Implement layoutTestController.waitForPolicyDelegate on Windows
