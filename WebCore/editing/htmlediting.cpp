@@ -843,7 +843,7 @@ bool isEmptyTableCell(const Node* node)
 
     // Find rendered node
     while (node && !node->renderer())
-        node = node->parent();
+        node = node->parentNode();
     if (!node)
         return false;
 

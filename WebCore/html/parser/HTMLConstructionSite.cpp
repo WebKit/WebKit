@@ -91,7 +91,7 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* parent, PassRe
     // doesn't.  It feels like we're missing a concept somehow.
     if (shouldFosterParent()) {
         fosterParent(child.get());
-        ASSERT(child->attached() || !child->parent() || !child->parent()->attached());
+        ASSERT(child->attached() || !child->parentNode() || !child->parentNode()->attached());
         return child.release();
     }
 
@@ -434,7 +434,7 @@ void HTMLConstructionSite::findFosterSite(AttachmentSite& site)
     HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
     if (lastTableElementRecord) {
         Element* lastTableElement = lastTableElementRecord->element();
-        if (ContainerNode* parent = lastTableElement->parent()) {
+        if (ContainerNode* parent = lastTableElement->parentNode()) {
             site.parent = parent;
             site.nextChild = lastTableElement;
             return;

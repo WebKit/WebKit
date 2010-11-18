@@ -362,14 +362,14 @@ void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths,
     }
 
     // Find first styled parent node, and notify it that we've changed our relative length state.
-    Node* node = parent();
+    ContainerNode* node = parentNode();
     while (node) {
         if (!node->isSVGElement())
             break;
 
         SVGElement* element = static_cast<SVGElement*>(node);
         if (!element->isStyled()) {
-            node = node->parent();
+            node = node->parentNode();
             continue;
         }
 

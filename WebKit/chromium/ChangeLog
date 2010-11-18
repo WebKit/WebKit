@@ -1,3 +1,14 @@
+2010-11-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Converge means of querying a parent node into one way, which is Node::parentNode.
+        https://bugs.webkit.org/show_bug.cgi?id=49686
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::insertStyleText): Changed to use parentNode.
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection): Ditto.
+
 2010-11-16  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

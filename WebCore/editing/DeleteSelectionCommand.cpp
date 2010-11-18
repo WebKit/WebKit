@@ -314,7 +314,7 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
 {
     if (position.isNull())
         return;
-    if (node->parent() == position.node() && node->nodeIndex() < (unsigned)position.deprecatedEditingOffset())
+    if (node->parentNode() == position.node() && node->nodeIndex() < (unsigned)position.deprecatedEditingOffset())
         position = Position(position.node(), position.deprecatedEditingOffset() - 1);
     if (position.node() == node || position.node()->isDescendantOf(node))
         position = positionInParentBeforeNode(node);

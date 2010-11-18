@@ -407,7 +407,7 @@ static int blockquoteLevel(RenderObject* renderer)
         return 0;
     
     int result = 0;
-    for (Node* node = renderer->node(); node; node = node->parent()) {
+    for (Node* node = renderer->node(); node; node = node->parentNode()) {
         if (node->hasTagName(blockquoteTag))
             result += 1;
     }

@@ -59,9 +59,9 @@ PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
 void DocumentType::insertedIntoDocument()
 {
     // Our document node can be null if we were created by a DOMImplementation.  We use the parent() instead.
-    ASSERT(parent() && parent()->isDocumentNode());
-    if (parent() && parent()->isDocumentNode()) {
-        Document* doc = static_cast<Document*>(parent());
+    ASSERT(parentNode() && parentNode()->isDocumentNode());
+    if (parentNode() && parentNode()->isDocumentNode()) {
+        Document* doc = static_cast<Document*>(parentNode());
         if (!doc->doctype())
             doc->setDocType(this);
     }

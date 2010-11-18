@@ -745,7 +745,7 @@ void SVGUseElement::removeDisallowedElementsFromSubtree(Node* subtree)
         if (isDisallowedElement(node)) {
             Node* next = node->traverseNextSibling(subtree);
             // The subtree is not in document so this won't generate events that could mutate the tree.
-            node->parent()->removeChild(node, ec);
+            node->parentNode()->removeChild(node, ec);
             node = next;
         } else
             node = node->traverseNextNode(subtree);

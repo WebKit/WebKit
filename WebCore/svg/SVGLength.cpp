@@ -347,7 +347,7 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
     }
     
     // Resolve value against enclosing non-SVG RenderBox
-    if (!context->parent() || context->parent()->isSVGElement())
+    if (!context->parentNode() || context->parentNode()->isSVGElement())
         return false;
 
     RenderObject* renderer = context->renderer();

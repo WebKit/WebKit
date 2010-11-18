@@ -165,7 +165,7 @@ Path HTMLAreaElement::getRegion(const IntSize& size) const
 
 HTMLImageElement* HTMLAreaElement::imageElement() const
 {
-    Node* mapElement = parent();
+    Node* mapElement = parentNode();
     if (!mapElement->hasTagName(mapTag))
         return 0;
     

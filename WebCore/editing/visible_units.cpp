@@ -610,7 +610,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
-            return Position(node->parent(), node->nodeIndex());
+            return Position(node->parentNode(), node->nodeIndex());
         return renderer->positionForPoint(IntPoint(x - absPos.x(), root->lineTop()));
     }
     
@@ -715,7 +715,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
-            return Position(node->parent(), node->nodeIndex());
+            return Position(node->parentNode(), node->nodeIndex());
         return renderer->positionForPoint(IntPoint(x - absPos.x(), root->lineTop()));
     }    
 

@@ -863,7 +863,7 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     
     // check if our parent is a mouse button listener
     while (node && !node->isElementNode())
-        node = node->parent();
+        node = node->parentNode();
 
     if (!node)
         return 0;
@@ -895,7 +895,7 @@ void AccessibilityRenderObject::decrement()
 
 static Element* siblingWithAriaRole(String role, Node* node)
 {
-    Node* sibling = node->parent()->firstChild();
+    Node* sibling = node->parentNode()->firstChild();
     while (sibling) {
         if (sibling->isElementNode()) {
             const AtomicString& siblingAriaRole = static_cast<Element*>(sibling)->getAttribute(roleAttr);
@@ -2332,7 +2332,7 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
             if (!axobj->accessibilityIsIgnored() && axobj->isLink())
                 result.append(axobj);
         } else {
-            Node* parent = curr->parent();
+            Node* parent = curr->parentNode();
             if (parent && curr->hasTagName(areaTag) && parent->hasTagName(mapTag)) {
                 AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
                 areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(curr));
@@ -2700,7 +2700,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     if (!area)
         return 0;
     
-    HTMLMapElement* map = static_cast<HTMLMapElement*>(area->parent());
+    HTMLMapElement* map = static_cast<HTMLMapElement*>(area->parentNode());
     AccessibilityObject* parent = accessibilityParentForImageMap(map);
     if (!parent)
         return 0;

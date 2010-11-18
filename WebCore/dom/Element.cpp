@@ -1507,7 +1507,7 @@ AtomicString Element::computeInheritedLanguage() const
             value = static_cast<const Document*>(n)->contentLanguage();
         }
 
-        n = n->parent();
+        n = n->parentNode();
     }
 
     return value;

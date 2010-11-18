@@ -464,25 +464,25 @@ void FocusController::findFocusableNodeInDirection(Node* outer, Node* focusedNod
                 candidate.enclosingScrollableBox = candidateParent.node;
 
             } else if (!isInRootDocument(outer)) {
-                if (Document* document = static_cast<Document*>(outer->parent()))
+                if (Document* document = static_cast<Document*>(outer->parentNode()))
                     candidate.enclosingScrollableBox = static_cast<Node*>(document->ownerElement());
 
-            } else if (isScrollableContainerNode(outer->parent()))
-                candidate.enclosingScrollableBox = outer->parent();
+            } else if (isScrollableContainerNode(outer->parentNode()))
+                candidate.enclosingScrollableBox = outer->parentNode();
 
             // Get distance and alignment from current candidate.
             distanceDataForNode(direction, focusedNode, candidate);
 
             // Bail out if distance is maximum.
             if (candidate.distance == maxDistance()) {
-                node = node->traverseNextNode(outer->parent());
+                node = node->traverseNextNode(outer->parentNode());
                 continue;
             }
 
             updateFocusCandidateIfCloser(focusedNode, candidate, closest);
         }
 
-        node = node->traverseNextNode(outer->parent());
+        node = node->traverseNextNode(outer->parentNode());
     }
 }
 

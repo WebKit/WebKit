@@ -101,7 +101,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parent());
+    ASSERT(refCount() || parentNode());
 
     ec = 0;
 
@@ -165,7 +165,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         notifyChildInserted(child);
 
         // Add child to the rendering tree.
-        if (attached() && !child->attached() && child->parent() == this) {
+        if (attached() && !child->attached() && child->parentNode() == this) {
             if (shouldLazyAttach)
                 child->lazyAttach();
             else
@@ -184,7 +184,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
 {
     ASSERT(newChild);
-    ASSERT(!newChild->parent()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(!newChild->parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild->nextSibling());
     ASSERT(!newChild->previousSibling());
 
@@ -240,7 +240,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parent());
+    ASSERT(refCount() || parentNode());
 
     ec = 0;
 
@@ -334,7 +334,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         notifyChildInserted(child.get());
                 
         // Add child to the rendering tree
-        if (attached() && !child->attached() && child->parent() == this) {
+        if (attached() && !child->attached() && child->parentNode() == this) {
             if (shouldLazyAttach)
                 child->lazyAttach();
             else
@@ -391,7 +391,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parent());
+    ASSERT(refCount() || parentNode());
 
     ec = 0;
 
@@ -550,7 +550,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parent());
+    ASSERT(refCount() || parentNode());
 
     ec = 0;
 
@@ -604,7 +604,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         notifyChildInserted(child);
 
         // Add child to the rendering tree
-        if (attached() && !child->attached() && child->parent() == this) {
+        if (attached() && !child->attached() && child->parentNode() == this) {
             if (shouldLazyAttach)
                 child->lazyAttach();
             else
@@ -624,7 +624,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
-    ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
 
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::willInsertDOMNode(document(), newChild.get(), this);

@@ -168,7 +168,7 @@ void MouseRelatedEvent::receivedTarget()
     // we should test and fix this.
     Node* n = targ;
     while (n && !n->renderer())
-        n = n->parent();
+        n = n->parentNode();
     if (n) {
         RenderLayer* layer = n->renderer()->enclosingLayer();
         layer->updateLayerPosition();

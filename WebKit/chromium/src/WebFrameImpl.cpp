@@ -848,7 +848,7 @@ bool WebFrameImpl::insertStyleText(
     if (!id.isEmpty()) {
         Element* oldElement = document->getElementById(id);
         if (oldElement) {
-            Node* parent = oldElement->parent();
+            Node* parent = oldElement->parentNode();
             if (!parent)
                 return false;
             parent->removeChild(oldElement, err);
@@ -2006,7 +2006,7 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         // example, focus links if we have found text within the link.
         Node* node = m_activeMatch->firstNode();
         while (node && !node->isFocusable() && node != frame()->document())
-            node = node->parent();
+            node = node->parentNode();
 
         if (node && node != frame()->document()) {
             // Found a focusable parent node. Set focus to it.

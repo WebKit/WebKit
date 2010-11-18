@@ -267,8 +267,8 @@ public:
                 if (!root)
                     return;
             } else {
-                while (root->parent())
-                    root = root->parent();
+                while (root->parentNode())
+                    root = root->parentNode();
 
                 // If the node is alone in its DOM tree (doesn't have a parent or any
                 // children) then the group will be filtered out later anyway.

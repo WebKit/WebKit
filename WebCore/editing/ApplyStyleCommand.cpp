@@ -744,9 +744,9 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
 static Node* dummySpanAncestorForNode(const Node* node)
 {
     while (node && !isStyleSpan(node))
-        node = node->parent();
+        node = node->parentNode();
     
-    return node ? node->parent() : 0;
+    return node ? node->parentNode() : 0;
 }
 
 void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor)
@@ -778,7 +778,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     Node* highestAncestorWithUnicodeBidi = 0;
     Node* nextHighestAncestorWithUnicodeBidi = 0;
     int highestAncestorUnicodeBidi = 0;
-    for (Node* n = node->parent(); n != block; n = n->parent()) {
+    for (Node* n = node->parentNode(); n != block; n = n->parentNode()) {
         int unicodeBidi = getIdentifierValue(computedStyle(n).get(), CSSPropertyUnicodeBidi);
         if (unicodeBidi && unicodeBidi != CSSValueNormal) {
             highestAncestorUnicodeBidi = unicodeBidi;
@@ -805,12 +805,12 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     // Split every ancestor through highest ancestor with embedding.
     Node* n = node;
     while (true) {
-        Element* parent = static_cast<Element*>(n->parent());
+        Element* parent = static_cast<Element*>(n->parentNode());
         if (before ? n->previousSibling() : n->nextSibling())
             splitElement(parent, before ? n : n->nextSibling());
         if (parent == highestAncestorWithUnicodeBidi)
             break;
-        n = n->parent();
+        n = n->parentNode();
     }
     return unsplitAncestor;
 }
@@ -822,8 +822,8 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         return;
 
     Node* parent = 0;
-    for (Node* n = node->parent(); n != block && n != unsplitAncestor; n = parent) {
-        parent = n->parent();
+    for (Node* n = node->parentNode(); n != block && n != unsplitAncestor; n = parent) {
+        parent = n->parentNode();
         if (!n->isStyledElement())
             continue;
 
@@ -854,7 +854,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 
 static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
-    for (Node* n = startNode; n && n != enclosingNode; n = n->parent()) {
+    for (Node* n = startNode; n && n != enclosingNode; n = n->parentNode()) {
         if (n->isHTMLElement() && getIdentifierValue(computedStyle(n).get(), CSSPropertyUnicodeBidi) == CSSValueEmbed)
             return n;
     }
@@ -1620,11 +1620,11 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
     Text* text = static_cast<Text*>(end.node());
     splitTextNodeContainingElement(text, end.deprecatedEditingOffset());
 
-    Node* prevNode = text->parent()->previousSibling()->lastChild();
+    Node* prevNode = text->parentNode()->previousSibling()->lastChild();
     ASSERT(prevNode);
     Node* startNode = start.node() == end.node() ? prevNode : start.node();
     ASSERT(startNode);
-    updateStartEnd(Position(startNode, start.deprecatedEditingOffset()), Position(prevNode->parent(), prevNode->nodeIndex() + 1));
+    updateStartEnd(Position(startNode, start.deprecatedEditingOffset()), Position(prevNode->parentNode(), prevNode->nodeIndex() + 1));
 }
 
 bool ApplyStyleCommand::shouldSplitTextElement(Element* element, CSSMutableStyleDeclaration* style)
@@ -1693,7 +1693,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
         if (start.node()->previousSibling())
             return false;
 
-        startNode = start.node()->parent();
+        startNode = start.node()->parentNode();
         startOffset = 0;
     }
 
@@ -1730,11 +1730,11 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
         if (endOffset < caretMaxOffset(endNode))
             return false;
 
-        unsigned parentLastOffset = end.node()->parent()->childNodes()->length() - 1;
+        unsigned parentLastOffset = end.node()->parentNode()->childNodes()->length() - 1;
         if (end.node()->nextSibling())
             return false;
 
-        endNode = end.node()->parent();
+        endNode = end.node()->parentNode();
         endOffset = parentLastOffset;
     }
 

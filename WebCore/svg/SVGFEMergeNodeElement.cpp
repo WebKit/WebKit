@@ -55,11 +55,11 @@ void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName != SVGNames::inAttr)
         return;
 
-    ContainerNode* parentNode = parent();
-    if (!parentNode)
+    ContainerNode* parent = parentNode();
+    if (!parent)
         return;
 
-    RenderObject* renderer = parentNode->renderer();
+    RenderObject* renderer = parent->renderer();
     if (!renderer || !renderer->isSVGResourceFilterPrimitive())
         return;
     

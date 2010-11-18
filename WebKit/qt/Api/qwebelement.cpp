@@ -1092,11 +1092,11 @@ void QWebElement::prependOutside(const QWebElement &element)
     if (!m_element || element.isNull())
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     ExceptionCode exception = 0;
-    m_element->parent()->insertBefore(element.m_element, m_element, exception);
+    m_element->parentNode()->insertBefore(element.m_element, m_element, exception);
 }
 
 /*!
@@ -1111,7 +1111,7 @@ void QWebElement::prependOutside(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     if (!m_element->isHTMLElement())
@@ -1121,7 +1121,7 @@ void QWebElement::prependOutside(const QString &markup)
     RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     ExceptionCode exception = 0;
-    m_element->parent()->insertBefore(fragment, m_element, exception);
+    m_element->parentNode()->insertBefore(fragment, m_element, exception);
 }
 
 /*!
@@ -1139,14 +1139,14 @@ void QWebElement::appendOutside(const QWebElement &element)
     if (!m_element || element.isNull())
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     ExceptionCode exception = 0;
     if (!m_element->nextSibling())
-        m_element->parent()->appendChild(element.m_element, exception);
+        m_element->parentNode()->appendChild(element.m_element, exception);
     else
-        m_element->parent()->insertBefore(element.m_element, m_element->nextSibling(), exception);
+        m_element->parentNode()->insertBefore(element.m_element, m_element->nextSibling(), exception);
 }
 
 /*!
@@ -1161,7 +1161,7 @@ void QWebElement::appendOutside(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     if (!m_element->isHTMLElement())
@@ -1172,9 +1172,9 @@ void QWebElement::appendOutside(const QString &markup)
 
     ExceptionCode exception = 0;
     if (!m_element->nextSibling())
-        m_element->parent()->appendChild(fragment, exception);
+        m_element->parentNode()->appendChild(fragment, exception);
     else
-        m_element->parent()->insertBefore(fragment, m_element->nextSibling(), exception);
+        m_element->parentNode()->insertBefore(fragment, m_element->nextSibling(), exception);
 }
 
 /*!
@@ -1308,7 +1308,7 @@ void QWebElement::encloseContentsWith(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     if (!m_element->isHTMLElement())
@@ -1360,16 +1360,16 @@ void QWebElement::encloseWith(const QWebElement &element)
     // wrapping it in the fragment. The reason for doing it in this order is
     // that once the fragment has been added to the document it is empty, so
     // we no longer have access to the nodes it contained.
-    Node* parentNode = m_element->parent();
+    Node* parent = m_element->parentNode();
     Node* siblingNode = m_element->nextSibling();
 
     ExceptionCode exception = 0;
     insertionPoint->appendChild(m_element, exception);
 
     if (!siblingNode)
-        parentNode->appendChild(element.m_element, exception);
+        parent->appendChild(element.m_element, exception);
     else
-        parentNode->insertBefore(element.m_element, siblingNode, exception);
+        parent->insertBefore(element.m_element, siblingNode, exception);
 }
 
 /*!
@@ -1383,7 +1383,7 @@ void QWebElement::encloseWith(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parent())
+    if (!m_element->parentNode())
         return;
 
     if (!m_element->isHTMLElement())
@@ -1404,16 +1404,16 @@ void QWebElement::encloseWith(const QString &markup)
     // wrapping it in the fragment. The reason for doing it in this order is
     // that once the fragment has been added to the document it is empty, so
     // we no longer have access to the nodes it contained.
-    Node* parentNode = m_element->parent();
+    Node* parent = m_element->parentNode();
     Node* siblingNode = m_element->nextSibling();
 
     ExceptionCode exception = 0;
     insertionPoint->appendChild(m_element, exception);
 
     if (!siblingNode)
-        parentNode->appendChild(fragment, exception);
+        parent->appendChild(fragment, exception);
     else
-        parentNode->insertBefore(fragment, siblingNode, exception);
+        parent->insertBefore(fragment, siblingNode, exception);
 }
 
 /*!

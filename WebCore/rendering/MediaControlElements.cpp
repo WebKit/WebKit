@@ -166,7 +166,7 @@ bool MediaControlElement::rendererIsNeeded(RenderStyle* style)
 {
     ASSERT(document()->page());
 
-    return HTMLDivElement::rendererIsNeeded(style) && parent() && parent()->renderer()
+    return HTMLDivElement::rendererIsNeeded(style) && parentNode() && parentNode()->renderer()
         && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement));
 }
     
@@ -183,12 +183,12 @@ void MediaControlElement::attach()
         return;
     renderer->setStyle(style.get());
     setRenderer(renderer);
-    if (parent() && parent()->renderer()) {
+    if (parentNode() && parentNode()->renderer()) {
         // Find next sibling with a renderer to determine where to insert.
         Node* sibling = nextSibling();
         while (sibling && !sibling->renderer())
             sibling = sibling->nextSibling();
-        parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
+        parentNode()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
     }
     ContainerNode::attach();
 }
@@ -202,7 +202,7 @@ void MediaControlElement::updateStyle()
     if (!style)
         return;
 
-    bool needsRenderer = rendererIsNeeded(style.get()) && parent() && parent()->renderer();
+    bool needsRenderer = rendererIsNeeded(style.get()) && parentNode() && parentNode()->renderer();
     if (renderer() && !needsRenderer)
         detach();
     else if (!renderer() && needsRenderer)
@@ -416,7 +416,7 @@ bool MediaControlInputElement::rendererIsNeeded(RenderStyle* style)
 {
     ASSERT(document()->page());
 
-    return HTMLInputElement::rendererIsNeeded(style) && parent() && parent()->renderer()
+    return HTMLInputElement::rendererIsNeeded(style) && parentNode() && parentNode()->renderer()
         && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), mediaElement()));
 }
 
@@ -434,12 +434,12 @@ void MediaControlInputElement::attach()
         return;
     renderer->setStyle(style.get());
     setRenderer(renderer);
-    if (parent() && parent()->renderer()) {
+    if (parentNode() && parentNode()->renderer()) {
         // Find next sibling with a renderer to determine where to insert.
         Node* sibling = nextSibling();
         while (sibling && !sibling->renderer())
             sibling = sibling->nextSibling();
-        parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
+        parentNode()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
     }  
     ContainerNode::attach();
 }
@@ -453,7 +453,7 @@ void MediaControlInputElement::updateStyle()
     if (!style)
         return;
     
-    bool needsRenderer = rendererIsNeeded(style.get()) && parent() && parent()->renderer();
+    bool needsRenderer = rendererIsNeeded(style.get()) && parentNode() && parentNode()->renderer();
     if (renderer() && !needsRenderer)
         detach();
     else if (!renderer() && needsRenderer)

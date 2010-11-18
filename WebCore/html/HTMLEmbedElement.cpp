@@ -220,9 +220,9 @@ void HTMLEmbedElement::insertedIntoDocument()
     String width = getAttribute(widthAttr);
     String height = getAttribute(heightAttr);
     if (!width.isEmpty() || !height.isEmpty()) {
-        Node* n = parent();
+        Node* n = parentNode();
         while (n && !n->hasTagName(objectTag))
-            n = n->parent();
+            n = n->parentNode();
         if (n) {
             if (!width.isEmpty())
                 static_cast<HTMLObjectElement*>(n)->setAttribute(widthAttr, width);
@@ -247,9 +247,9 @@ void HTMLEmbedElement::attributeChanged(Attribute* attr, bool preserveDecls)
     HTMLPlugInImageElement::attributeChanged(attr, preserveDecls);
 
     if ((attr->name() == widthAttr || attr->name() == heightAttr) && !attr->isEmpty()) {
-        Node* n = parent();
+        ContainerNode* n = parentNode();
         while (n && !n->hasTagName(objectTag))
-            n = n->parent();
+            n = n->parentNode();
         if (n)
             static_cast<HTMLObjectElement*>(n)->setAttribute(attr->name(), attr->value());
     }

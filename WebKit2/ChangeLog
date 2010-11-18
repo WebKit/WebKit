@@ -1,3 +1,13 @@
+2010-11-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Converge means of querying a parent node into one way, which is Node::parentNode.
+        https://bugs.webkit.org/show_bug.cgi?id=49686
+
+        * WebProcess/WebPage/WebPage.cpp: Changed to use parentNode.
+        (WebKit::WebPage::findZoomableAreaForPoint): Ditto.
+
 2010-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Remove duplicate Web Inspector message handeling in WebPage::didReceiveMessage.

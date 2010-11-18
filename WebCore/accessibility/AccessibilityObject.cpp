@@ -401,7 +401,7 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
 // Finds a RenderListItem parent give a node.
 static RenderListItem* renderListItemContainerForNode(Node* node)
 {
-    for (; node; node = node->parent()) {
+    for (; node; node = node->parentNode()) {
         RenderBoxModelObject* renderer = node->renderBoxModelObject();
         if (renderer && renderer->isListItem())
             return toRenderListItem(renderer);

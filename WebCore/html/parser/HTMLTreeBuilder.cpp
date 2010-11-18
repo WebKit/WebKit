@@ -230,7 +230,7 @@ HTMLFormElement* closestFormAncestor(Element* element)
     while (element) {
         if (element->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(element);
-        Node* parent = element->parent();
+        ContainerNode* parent = element->parentNode();
         if (!parent || !parent->isElementNode())
             return 0;
         element = static_cast<Element*>(parent);

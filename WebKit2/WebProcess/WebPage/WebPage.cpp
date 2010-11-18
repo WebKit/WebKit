@@ -1082,7 +1082,7 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
 
     Node* node = result.innerNode();
     while (node && node->getRect().width() < minimumZoomTargetWidth)
-        node = node->parent();
+        node = node->parentNode();
 
     IntRect zoomableArea;
     if (node)
