@@ -792,7 +792,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setAutosaves(FALSE);
     preferences->setDefaultFontSize(16);
     preferences->setDefaultFixedFontSize(13);
-    preferences->setMinimumFontSize(1);
+    preferences->setMinimumFontSize(0);
     preferences->setJavaEnabled(FALSE);
     preferences->setPlugInsEnabled(TRUE);
     preferences->setDOMPasteAllowed(TRUE);

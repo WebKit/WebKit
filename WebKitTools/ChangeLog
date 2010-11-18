@@ -1,3 +1,14 @@
+2010-11-17  Adam Roben  <aroben@apple.com>
+
+        Use a minimum font size of 0 in DRT on Windows
+
+        This is the Windows equivalent of r72164.
+
+        Rubber-stamped by Dave Hyatt.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2010-11-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Andreas Kling.
