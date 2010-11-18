@@ -1,3 +1,24 @@
+2010-11-18  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        update-webkit-support-libs should fall back to existing
+        WebKitSupportLibrary version if there is no internet connectivity
+        https://bugs.webkit.org/show_bug.cgi?id=49503
+
+        Fall back to existing support libraries (if present) when there is
+        no internet connection.
+
+        Currently, update-webkit-support-libs dies with an "out-of-date"
+        error when there is no internet connection because it cannot
+        retrieve versioning information from developer.apple.com. Because
+        update-webkit-support-libs fails, build-webkit fails. Instead,
+        if there is no internet connection and the support libraries are
+        present then we should warn the user and exit() with success so
+        that build-webkit can work without an internet connection.
+
+        * Scripts/update-webkit-support-libs:
+
 2010-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
