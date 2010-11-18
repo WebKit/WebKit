@@ -1,3 +1,15 @@
+2010-11-18  Adam Roben  <aroben@apple.com>
+
+        Implement layoutTestController.waitForPolicyDelegate on Windows
+
+        Fixes <http://webkit.org/b/25038> <rdar://problem/6790213>.
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::waitForPolicyDelegate): Implemented by porting
+        code from LayoutTestControllerMac.mm.
+
 2010-11-18  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

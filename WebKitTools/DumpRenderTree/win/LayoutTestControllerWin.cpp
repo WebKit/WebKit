@@ -229,7 +229,13 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
 
 void LayoutTestController::waitForPolicyDelegate()
 {
-    // FIXME: Implement this.
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    setWaitToDump(true);
+    policyDelegate->setControllerToNotifyDone(this);
+    webView->setPolicyDelegate(policyDelegate);
 }
 
 size_t LayoutTestController::webHistoryItemCount()
