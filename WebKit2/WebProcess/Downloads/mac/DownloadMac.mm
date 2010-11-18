@@ -262,8 +262,8 @@ void Download::platformInvalidate()
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didFail(error);
 }
 
 @end

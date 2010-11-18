@@ -119,5 +119,10 @@ void DownloadProxy::didFinish()
     m_webContext->downloadClient().didFinish(m_webContext, this);
 }
 
+void DownloadProxy::didFail(const ResourceError&)
+{
+    // FIXME: Implement.
+}
+
 } // namespace WebKit
 

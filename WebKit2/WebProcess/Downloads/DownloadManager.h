@@ -49,6 +49,9 @@ public:
     void startDownload(uint64_t downloadID, WebPage* initiatingPage, const WebCore::ResourceRequest&);
     void convertHandleToDownload(uint64_t downloadID, WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest& initialRequest, const WebCore::ResourceResponse&);
 
+    void downloadFinished(Download*);
+    bool isDownloading() const { return !m_downloads.isEmpty(); }
+
 private:
     DownloadManager();
 

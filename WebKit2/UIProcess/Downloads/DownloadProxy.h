@@ -33,6 +33,7 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
+    class ResourceError;
     class ResourceResponse;
 }
 
@@ -68,6 +69,7 @@ private:
     void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite);
     void didCreateDestination(const String& path);
     void didFinish();
+    void didFail(const WebCore::ResourceError&);
 
     WebContext* m_webContext;
     uint64_t m_downloadID;

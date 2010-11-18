@@ -43,6 +43,7 @@ class WKDownloadAsDelegate;
 #endif
 
 namespace WebCore {
+    class ResourceError;
     class ResourceHandle;
     class ResourceResponse;
 }
@@ -60,10 +61,12 @@ public:
 
     // Used by MessageSender.
     CoreIPC::Connection* connection() const;
-    uint64_t destinationID() const { return m_downloadID; }
+    uint64_t destinationID() const { return downloadID(); }
 
     void start(WebPage* initiatingWebPage);
     void startWithHandle(WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceRequest& initialRequest, const WebCore::ResourceResponse&);
+
+    uint64_t downloadID() const { return m_downloadID; }
 
     void didStart();
     void didReceiveResponse(const WebCore::ResourceResponse&);
@@ -72,6 +75,7 @@ public:
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
     void didCreateDestination(const String& path);
     void didFinish();
+    void didFail(const WebCore::ResourceError&);
 
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);

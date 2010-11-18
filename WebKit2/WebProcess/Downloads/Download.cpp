@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "DownloadProxyMessages.h"
+#include "DownloadManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 
@@ -97,6 +98,15 @@ void Download::didCreateDestination(const String& path)
 void Download::didFinish()
 {
     send(Messages::DownloadProxy::DidFinish());
+
+    DownloadManager::shared().downloadFinished(this);
+}
+
+void Download::didFail(const WebCore::ResourceError& error)
+{
+    send(Messages::DownloadProxy::DidFail(error));
+
+    DownloadManager::shared().downloadFinished(this);
 }
 
 } // namespace WebKit

@@ -83,9 +83,11 @@ public:
 
     static WebCore::PageGroup* sharedPageGroup();
 
+    // Will shut down the web process if there are no live pages or downloads.
+    void shutdownIfPossible();
+
 private:
     WebProcess();
-    void shutdown();
 
     void initializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*);
     void setShouldTrackVisitedLinks(bool);

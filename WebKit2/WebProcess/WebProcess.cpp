@@ -25,6 +25,7 @@
 
 #include "WebProcess.h"
 
+#include "DownloadManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
@@ -410,9 +411,7 @@ void WebProcess::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
 
-    // If we don't have any pages left, shut down.
-    if (m_pageMap.isEmpty() && !m_inDidClose)
-        shutdown();
+    shutdownIfPossible();
 }
 
 bool WebProcess::isSeparateProcess() const
@@ -421,11 +420,22 @@ bool WebProcess::isSeparateProcess() const
     return m_runLoop == RunLoop::main();
 }
  
-void WebProcess::shutdown()
+void WebProcess::shutdownIfPossible()
 {
+    if (!m_pageMap.isEmpty())
+        return;
+
+    if (m_inDidClose)
+        return;
+
+    if (DownloadManager::shared().isDownloading())
+        return;
+
     // Keep running forever if we're running in the same process.
     if (!isSeparateProcess())
         return;
+
+    // Actually shut down the process.
 
 #ifndef NDEBUG
     gcController().garbageCollectNow();

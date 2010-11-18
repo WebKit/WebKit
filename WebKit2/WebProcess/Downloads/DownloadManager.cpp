@@ -26,7 +26,7 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
-#include "NotImplemented.h"
+#include "WebProcess.h"
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -59,6 +59,16 @@ void DownloadManager::convertHandleToDownload(uint64_t downloadID, WebPage* init
     download->startWithHandle(initiatingPage, handle, initialRequest, response);
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.set(downloadID, download.leakPtr());
+}
+
+void DownloadManager::downloadFinished(Download* download)
+{
+    ASSERT(m_downloads.contains(download->downloadID()));
+    m_downloads.remove(download->downloadID());
+
+    delete download;
+
+    WebProcess::shared().shutdownIfPossible();
 }
 
 } // namespace WebKit

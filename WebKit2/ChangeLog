@@ -1,3 +1,56 @@
+2010-11-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Keep the web process alive if there are active downloads
+        https://bugs.webkit.org/show_bug.cgi?id=49755
+
+        Make sure that Download objects are destroyed when the download finishes or fails.
+        Don't close the web process if there are live Download objects.
+        
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didFail):
+        Add stub.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add DidFail message.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didFinish):
+        Call DownloadManager::downloadFinished.
+
+        (WebKit::Download::didFail):
+        Send DidFail message and call DownloadManager::downloadFinished.
+        
+        * WebProcess/Downloads/Download.h:
+        (WebKit::Download::destinationID):
+        Call downloadID().
+
+        (WebKit::Download::downloadID):
+        Return the download ID.
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadFinished):
+        Delete the Download object and call WebProcess::shutdownIfPossible.
+
+        * WebProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::isDownloading):
+        Return whether the download manager has any active downloads.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:didFailWithError:]):
+        Call Download::didFail.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::removeWebPage):
+        Call shutdownIfPossible.
+
+        (WebKit::WebProcess::shutdownIfPossible):
+        New function. Don't shutdown if there are live pages or active downloads.
+
+        * WebProcess/WebProcess.h:
+
 2010-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

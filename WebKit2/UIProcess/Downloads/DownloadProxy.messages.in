@@ -28,4 +28,5 @@ messages -> DownloadProxy {
     DecideDestinationWithSuggestedFilename(String filename) -> (String destination, bool allowOverwrite)
     DidCreateDestination(WTF::String path)
     DidFinish()
+    DidFail(WebCore::ResourceError error)
 }
