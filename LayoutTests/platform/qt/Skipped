@@ -5328,3 +5328,7 @@ editing/selection/after-line-break.html
 # https://bugs.webkit.org/show_bug.cgi?id=49243
 editing/deleting/delete-line-011.html
 editing/pasteboard/paste-4039777-fix.html
+
+# [Qt] wrong ref count of npobject
+# https://bugs.webkit.org/show_bug.cgi?id=49749
+plugins/refcount-leaks.html
