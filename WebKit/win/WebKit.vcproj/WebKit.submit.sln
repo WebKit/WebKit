@@ -17,7 +17,6 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_All|Win32 = Debug_All|Win32
-		Debug_Internal|Win32 = Debug_Internal|Win32
 		Debug|Win32 = Debug|Win32
 		Release_LTCG|Win32 = Release_LTCG|Win32
 		Release|Win32 = Release|Win32
@@ -25,8 +24,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug_All|Win32.Build.0 = Debug_All|Win32
-		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
-		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Debug|Win32.Build.0 = Debug|Win32
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Release_LTCG|Win32.ActiveCfg = Release_LTCG|Win32
@@ -35,8 +32,6 @@ Global
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9}.Release|Win32.Build.0 = Release|Win32
 		{B8437A41-67BC-4769-9452-45203827F821}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
 		{B8437A41-67BC-4769-9452-45203827F821}.Debug_All|Win32.Build.0 = Debug_All|Win32
-		{B8437A41-67BC-4769-9452-45203827F821}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
-		{B8437A41-67BC-4769-9452-45203827F821}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{B8437A41-67BC-4769-9452-45203827F821}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B8437A41-67BC-4769-9452-45203827F821}.Debug|Win32.Build.0 = Debug|Win32
 		{B8437A41-67BC-4769-9452-45203827F821}.Release_LTCG|Win32.ActiveCfg = Release_LTCG|Win32
@@ -45,8 +40,6 @@ Global
 		{B8437A41-67BC-4769-9452-45203827F821}.Release|Win32.Build.0 = Release|Win32
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug_All|Win32.ActiveCfg = Debug|Win32
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug_All|Win32.Build.0 = Debug|Win32
-		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
-		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug_Internal|Win32.Build.0 = Debug|Win32
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug|Win32.ActiveCfg = Debug|Win32
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Debug|Win32.Build.0 = Debug|Win32
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406}.Release_LTCG|Win32.ActiveCfg = Release_LTCG|Win32

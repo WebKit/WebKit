@@ -139,7 +139,7 @@ sub runTest($$)
         }
     } elsif (isAppleWinWebKit()) {
         my $apiTesterNameSuffix;
-        if (configurationForVisualStudio() =~ /^Release|Debug_Internal$/) {
+        if (configurationForVisualStudio() ne "Debug_All") {
             $apiTesterNameSuffix = "";
         } else {
             $apiTesterNameSuffix = "_debug";
@@ -187,7 +187,7 @@ sub populateTests()
         }
     } elsif (isAppleWinWebKit()) {
         my $apiTesterNameSuffix;
-        if (configurationForVisualStudio() =~ /^Release|Debug_Internal$/) {
+        if (configurationForVisualStudio() ne "Debug_All") {
             $apiTesterNameSuffix = "";
         } else {
             $apiTesterNameSuffix = "_debug";

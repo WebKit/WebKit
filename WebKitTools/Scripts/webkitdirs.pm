@@ -283,11 +283,7 @@ sub determineConfigurationForVisualStudio
     return if defined $configurationForVisualStudio;
     determineConfiguration();
     $configurationForVisualStudio = $configuration;
-    return unless $configuration eq "Debug";
     setupCygwinEnv();
-    my $dir = $ENV{WEBKITLIBRARIESDIR};
-    chomp($dir = `cygpath -ua '$dir'`) if isCygwin();
-    $configurationForVisualStudio = "Debug_Internal" if -f File::Spec->catfile($dir, "bin", "CoreFoundation_debug.dll");
 }
 
 sub determineConfigurationProductDir
