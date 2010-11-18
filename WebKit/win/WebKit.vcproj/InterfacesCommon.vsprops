@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="InterfacesCommon"
+	OutputDirectory="$(WebKitOutputDir)\include\WebKit"
+	>
+	<Tool
+		Name="VCMIDLTool"
+		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
+		TypeLibraryName="$(WebKitOutputDir)\lib\WebKit.tlb"
+		OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\obj\WebKit\$(ProjectName)&quot;&#x0D;&#x0A;bash &quot;$(WebKitLibrariesDir)\tools\scripts\auto-version.sh&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
+	/>
+</VisualStudioPropertySheet>

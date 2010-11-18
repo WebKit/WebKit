@@ -1,3 +1,13 @@
+2010-11-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit Interfaces project should use vsprops file for common build settings
+        https://bugs.webkit.org/show_bug.cgi?id=49713
+        
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/InterfacesCommon.vsprops: Added.
+
 2010-11-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
