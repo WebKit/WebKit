@@ -1,3 +1,14 @@
+2010-11-17  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Remove a uri member from TestInput class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49691
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-11-17  Adam Roben  <aroben@apple.com>
 
         Move FindSafari's settings into a vsprops file

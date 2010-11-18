@@ -103,9 +103,6 @@ class TestInput:
         self.filename = filename
         self.timeout = timeout
 
-        # FIXME: Maybe the URI shouldn't be part of the TestInput at all?
-        self.uri = None
-
 
 class ResultSummary(object):
     """A class for partitioning the test results we get into buckets.

@@ -90,7 +90,7 @@ def _process_output(port, options, test_input, test_types, test_args,
       port: port-specific hooks
       options: command line options argument from optparse
       proc: an active DumpRenderTree process
-      test_input: Object containing the test filename, uri and timeout
+      test_input: Object containing the test filename and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
       test_output: a TestOutput object containing the output of the test
@@ -172,8 +172,8 @@ def _run_single_test(port, options, test_input, test_types, test_args, driver):
         image_hash_to_driver = port.expected_checksum(test_input.filename)
     else:
         image_hash_to_driver = None
-    test_input.uri = port.filename_to_uri(test_input.filename).strip()
-    test_output = driver.run_test(test_input.uri, test_input.timeout, image_hash_to_driver)
+    uri = port.filename_to_uri(test_input.filename)
+    test_output = driver.run_test(uri, test_input.timeout, image_hash_to_driver)
     return _process_output(port, options, test_input, test_types, test_args,
                            test_output)
 
@@ -186,7 +186,7 @@ class SingleTestThread(threading.Thread):
         Args:
           port: object implementing port-specific hooks
           options: command line argument object from optparse
-          test_input: Object containing the test filename, uri and timeout
+          test_input: Object containing the test filename and timeout
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
@@ -457,7 +457,7 @@ class TestShellThread(WatchableThread):
         files singly.
 
         Args:
-          test_input: Object containing the test filename, uri and timeout
+          test_input: Object containing the test filename and timeout
 
         Returns:
           A TestResult
