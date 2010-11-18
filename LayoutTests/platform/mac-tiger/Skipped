@@ -129,7 +129,7 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 
 # Intermittently times out on Tiger bot.
 # https://bugs.webkit.org/show_bug.cgi?id=36039
-http/tests/local/send-sliced-dragged-file.html
+http/tests/local/fileapi/send-sliced-dragged-file.html
 
 # Times out on Tiger bot.
 # https://bugs.webkit.org/show_bug.cgi?id=36382

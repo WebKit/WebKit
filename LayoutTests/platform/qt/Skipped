@@ -188,8 +188,7 @@ http/tests/loading/text-content-type-with-binary-extension.html
 
 # drag n drop support again
 http/tests/local/drag-over-remote-content.html
-http/tests/local/send-dragged-file.html
-http/tests/local/send-sliced-dragged-file.html
+http/tests/local/fileapi
 
 # CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
 http/tests/local/blob/send-hybrid-blob.html

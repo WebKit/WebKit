@@ -507,8 +507,7 @@ http/tests/local/drag-over-remote-content.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/upload-events.html
-http/tests/local/send-dragged-file.html
-http/tests/local/send-sliced-dragged-file.html
+http/tests/local/fileapi
 http/tests/misc/bubble-drag-events.html
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 http/tests/misc/isindex-with-no-form.html
