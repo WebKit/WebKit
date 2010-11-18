@@ -1,3 +1,12 @@
+2010-11-18  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Only add user agent strings to the list which aren't listed yet.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateUserAgentList):
+
 2010-11-17  Adam Roben  <aroben@apple.com>
 
         Don't trigger Windows builds when chromium-win test results change

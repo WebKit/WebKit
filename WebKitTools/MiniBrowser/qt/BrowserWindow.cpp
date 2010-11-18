@@ -132,8 +132,11 @@ void BrowserWindow::updateUserAgentList()
     QFile file(":/useragentlist.txt");
 
     if (file.open(QIODevice::ReadOnly)) {
-        while (!file.atEnd())
-            m_userAgentList << file.readLine().trimmed();
+        while (!file.atEnd()) {
+            QString agent = file.readLine().trimmed();
+            if (!m_userAgentList.contains(agent))
+                m_userAgentList << agent;
+        }
         file.close();
     }
 
