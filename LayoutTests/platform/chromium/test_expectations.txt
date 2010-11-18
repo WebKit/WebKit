@@ -3219,3 +3219,6 @@ BUG_LEVIN SLOW : fast/blockflow/vertical-baseline-alignment.html = IMAGE+TEXT IM
 
 // When this is removed, uncomment the line above that list this test (as slow).
 BUG_LEVIN SLOW : fast/js/regexp-overflow.html = TEXT
+
+// Apparent regression after r72282
+BUG_SENORBLANCO : fast/backgrounds/size/contain-and-cover.html = IMAGE
