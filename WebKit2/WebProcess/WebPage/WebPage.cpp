@@ -27,7 +27,6 @@
 
 #include "Arguments.h"
 #include "DrawingArea.h"
-#include "HitTestResult.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "MessageID.h"
@@ -79,6 +78,10 @@
 #if ENABLE(PLUGIN_PROCESS)
 // FIXME: This is currently Mac-specific!
 #include "MachPort.h"
+#endif
+
+#if PLATFORM(QT)
+#include "HitTestResult.h"
 #endif
 
 #ifndef NDEBUG

@@ -1,5 +1,9 @@
 2010-11-18  Darin Adler  <darin@apple.com>
 
+        * WebProcess/WebPage/WebPage.cpp: Fix build by rolling out a change.
+
+2010-11-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin Decker.
 
         REGRESSION (WebKit2): Plug-ins and <video> start playing immediately in background tabs
