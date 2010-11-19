@@ -15,22 +15,39 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="all|Win32"
+			Name="Debug|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\TestWebKitAPIGeneratedCommon.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="copy-resources.cmd"
-				ReBuildCommandLine="copy-resources.cmd rebuild"
-				CleanCommandLine="copy-resources.cmd clean"
-				Output=""
-				PreprocessorDefinitions=""
-				IncludeSearchPath=""
-				ForcedIncludes=""
-				AssemblySearchPath=""
-				ForcedUsingAssemblies=""
-				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\TestWebKitAPIGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_All|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\TestWebKitAPIGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_LTCG|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\TestWebKitAPIGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
 			/>
 		</Configuration>
 	</Configurations>

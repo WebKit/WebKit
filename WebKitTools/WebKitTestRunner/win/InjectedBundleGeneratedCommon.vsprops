@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="InjectedBundleGeneratedCommon"
+	OutputDirectory="$(WebKitOutputDir)\lib"
+	IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+	>
+	<Tool
+		Name="VCNMakeTool"
+		BuildCommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+		ReBuildCommandLine="echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\InjectedBundle\DerivedSources&quot;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+		CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\InjectedBundle\DerivedSources&quot;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+	/>
+</VisualStudioPropertySheet>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebCoreGeneratedCommon"
+	OutputDirectory="$(WebKitOutputDir)\lib"
+	IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+	>
+	<Tool
+		Name="VCNMakeTool"
+		BuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot; windows&#x0D;&#x0A;bash migrate-scripts.sh &quot;$(WebKitOutputDir)/obj/WebCore/scripts&quot;&#x0D;&#x0A;cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+		ReBuildCommandLine="echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\scripts&quot;&#x0D;&#x0A;%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot; windows&#x0D;&#x0A;bash migrate-scripts.sh &quot;$(WebKitOutputDir)/obj/WebCore/scripts&quot;&#x0D;&#x0A;cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+		CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\scripts&quot;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
+	/>
+</VisualStudioPropertySheet>

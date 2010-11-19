@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="TestWebKitAPIGeneratedCommon"
+	>
+	<Tool
+		Name="VCNMakeTool"
+		BuildCommandLine="copy-resources.cmd"
+		ReBuildCommandLine="copy-resources.cmd rebuild"
+		CleanCommandLine="copy-resources.cmd clean"
+	/>
+</VisualStudioPropertySheet>
