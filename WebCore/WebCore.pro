@@ -2369,7 +2369,6 @@ HEADERS += \
     svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
     svg/properties/SVGListProperty.h \
     svg/properties/SVGListPropertyTearOff.h \
-    svg/properties/SVGPathSegListPropertyTearOff.cpp \
     svg/properties/SVGPathSegListPropertyTearOff.h \
     svg/properties/SVGProperty.h \
     svg/properties/SVGPropertyTearOff.h \
@@ -3564,6 +3563,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilter.cpp \
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/SVGImage.cpp \
+        svg/properties/SVGPathSegListPropertyTearOff.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderSVGBlock.cpp \
         rendering/RenderSVGContainer.cpp \
