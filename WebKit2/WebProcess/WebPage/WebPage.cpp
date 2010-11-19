@@ -27,9 +27,7 @@
 
 #include "Arguments.h"
 #include "DrawingArea.h"
-#if PLATFORM(QT)
 #include "HitTestResult.h"
-#endif
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "MessageID.h"
@@ -79,7 +77,7 @@
 #include <runtime/JSValue.h>
 
 #if ENABLE(PLUGIN_PROCESS)
-// FIXME: This is currently mac specific!
+// FIXME: This is currently Mac-specific!
 #include "MachPort.h"
 #endif
 
@@ -129,6 +127,14 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.inspectorClient = new WebInspectorClient(this);
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
     m_page = adoptPtr(new Page(pageClients));
+
+    // Windows and Qt do not yet call setIsInWindow. Until they do, just leave
+    // this line out so plug-ins and video will work. Eventually all platforms
+    // should call setIsInWindow and this comment and #if should be removed,
+    // leaving behind the setCanStartMedia call.
+#if !PLATFORM(WIN) && !PLATFORM(QT)
+    m_page->setCanStartMedia(false);
+#endif
 
     updatePreferences(parameters.store);
 
@@ -1009,6 +1015,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 }
 
 #if PLATFORM(MAC)
+
 void WebPage::addPluginView(PluginView* pluginView)
 {
     ASSERT(!m_pluginViews.contains(pluginView));

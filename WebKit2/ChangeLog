@@ -1,3 +1,16 @@
+2010-11-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        REGRESSION (WebKit2): Plug-ins and <video> start playing immediately in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=49766
+
+        Test: manual-tests/resources/video-tab.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Call setCanStartMedia(false) since the rest of the code
+        starts out treating the page as "not in a window".
+
 2010-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
