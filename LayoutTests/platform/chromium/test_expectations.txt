@@ -3226,6 +3226,7 @@ BUG_ANTONM : svg/dom/path-parser.html = IMAGE+TEXT IMAGE TEXT
 BUG_ANTONM : svg/dom/svglist-exception-on-out-bounds-error.html = IMAGE+TEXT IMAGE
 BUG_ANTONM : svg/custom/svg-curve-with-relative-cordinates.html = TEXT
 BUG_ANTONM : svg/dom/svgpath-out-of-bounds-getPathSeg.html = TEXT
+BUG_ANTONM : svg/filters/filter-rounding-issues.svg = IMAGE IMAGE+TEXT
 
 // Seems like it started failing with r72364.
 BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
