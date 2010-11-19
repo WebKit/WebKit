@@ -1,3 +1,24 @@
+2010-11-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+         WebKit2: Safari shouldn't auto-activate plug-ins in background tabs.
+         https://bugs.webkit.org/show_bug.cgi?id=49770
+         <rdar://problem/8482424>
+         
+         Add an API on Windows to call setIsInWindow, which calls through to WebPage::setIsInWindow.
+         Remove the !PLATFORM(WIN) check in WebPage, so we don't automatically start plugins that are
+         loaded in background tabs.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetIsInWindow): Call through to WebView::setIsInWindow.
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setIsInWindow): Call through to WebPage::setIsInWindow.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Remove the !PLATFORM(WIN) check and update the comment.
+
 2010-11-18  Darin Adler  <darin@apple.com>
 
         * WebProcess/WebPage/WebPage.cpp: Fix build by rolling out a change.

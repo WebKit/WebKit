@@ -43,6 +43,7 @@ WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
 WK_EXPORT void WKViewSetParentWindow(WKViewRef view, HWND parentWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
+WK_EXPORT void WKViewSetIsInWindow(WKViewRef view, bool isInWindow);
 
 #ifdef __cplusplus
 }

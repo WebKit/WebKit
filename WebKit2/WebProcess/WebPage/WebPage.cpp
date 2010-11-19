@@ -131,11 +131,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
     m_page = adoptPtr(new Page(pageClients));
 
-    // Windows and Qt do not yet call setIsInWindow. Until they do, just leave
+    // Qt does not yet call setIsInWindow. Until it does, just leave
     // this line out so plug-ins and video will work. Eventually all platforms
     // should call setIsInWindow and this comment and #if should be removed,
     // leaving behind the setCanStartMedia call.
-#if !PLATFORM(WIN) && !PLATFORM(QT)
+#if !PLATFORM(QT)
     m_page->setCanStartMedia(false);
 #endif
 

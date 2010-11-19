@@ -643,7 +643,13 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
     // FIXME: Implement.
 }
 
+void WebView::setIsInWindow(bool isInWindow)
+{
+    m_page->setIsInWindow(isInWindow);
+}
+
 #if USE(ACCELERATED_COMPOSITING)
+
 void WebView::pageDidEnterAcceleratedCompositing()
 {
     switchToDrawingAreaTypeIfNecessary(DrawingAreaProxy::LayerBackedDrawingAreaType);

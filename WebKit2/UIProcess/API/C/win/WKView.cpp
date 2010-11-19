@@ -60,3 +60,8 @@ void WKViewWindowAncestryDidChange(WKViewRef viewRef)
 {
     toImpl(viewRef)->windowAncestryDidChange();
 }
+
+void WKViewSetIsInWindow(WKViewRef viewRef, bool isInWindow)
+{
+    toImpl(viewRef)->setIsInWindow(isInWindow);
+}
