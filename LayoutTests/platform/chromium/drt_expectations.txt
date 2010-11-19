@@ -76,21 +76,23 @@ BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Tests differences from switching to webkit.org's test netscape plugin rather
 // than chromium's old forked copy.
-BUG_DRT MAC : plugins/document-open.html = PASS
+BUG_DRT : plugins/document-open.html = PASS
+BUG_DRT LINUX : plugins/reentrant-update-widget-positions.html = PASS
 BUG_DRT MAC : plugins/geturlnotify-during-document-teardown.html = TEXT
-BUG_DRT MAC : plugins/npruntime/get-int-identifier-special-values.html = TEXT
-BUG_DRT MAC : plugins/npruntime/round-trip-npobject.html = PASS
+BUGWK48655 : plugins/js-from-destroy.html = CRASH
+BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT
+BUG_DRT : plugins/npruntime/round-trip-npobject.html = PASS
 BUG_DRT MAC : plugins/open-and-close-window-with-plugin.html = TEXT
-BUG_DRT MAC : plugins/override-node-method.html = PASS
-BUG_DRT MAC : plugins/reloadplugins-no-pages.html = PASS
-BUG_DRT MAC : plugins/reloadplugins-and-pages.html = PASS
-BUG_DRT MAC : plugins/update-widgets-crash.html = PASS
+BUG_DRT : plugins/override-node-method.html = PASS
+BUG_DRT : plugins/reloadplugins-no-pages.html = PASS
+BUG_DRT : plugins/reloadplugins-and-pages.html = PASS
+BUG_DRT : plugins/update-widgets-crash.html = PASS
 
 // This test is failing because the plugin is currently named
 // WebKitTestNetscapePlugin because the fork in the Chromium repo is named
 // TestNetscapePlugin.  Once the internal plugin is removed, this will be
 // fixed.
-BUG_DRT MAC : plugins/plugin-javascript-access.html = TEXT
+BUG_DRT : plugins/plugin-javascript-access.html = TEXT
 
 // Not investigated.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT

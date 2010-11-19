@@ -869,6 +869,7 @@
                 'ImageDiff',
                 'inspector_resources',
                 'TestNetscapePlugIn',
+                'copy_TestNetscapePlugIn',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
@@ -976,19 +977,10 @@
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
-                    # Workaround for http://code.google.com/p/gyp/issues/detail?id=160
-                    'copies': [{
-                        'destination': '<(PRODUCT_DIR)/plugins/',
-                        'files': ['<(PRODUCT_DIR)/WebKitTestNetscapePlugIn.plugin/'],
-                    }],
                 },{ # OS!="mac"
                     'sources/': [
                         # .mm is already excluded by common.gypi
                         ['exclude', 'Mac\\.cpp$'],
-                    ],
-                    'dependencies': [
-                        # FIXME: Switch to webkit.org's plugin.
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:copy_npapi_layout_test_plugin',
                     ],
                 }],
                 ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
@@ -1077,6 +1069,33 @@
                     # The .rc file requires that the name of the dll is npTestNetscapePlugin.dll.
                     # This adds the 'np' to the dll name.
                     'product_prefix': 'np',
+                }],
+            ],
+        },
+        {
+            'target_name': 'copy_TestNetscapePlugIn',
+            'type': 'none',
+            'dependencies': [
+                'TestNetscapePlugIn',
+            ],
+            'conditions': [
+                ['OS=="win"', {
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/plugins',
+                        'files': ['<(PRODUCT_DIR)/npTestNetscapePlugIn.dll'],
+                    }],
+                }],
+                ['OS=="mac"', {
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/plugins/',
+                        'files': ['<(PRODUCT_DIR)/WebKitTestNetscapePlugIn.plugin/'],
+                    }],
+                }],
+                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/plugins',
+                        'files': ['<(PRODUCT_DIR)/libTestNetscapePlugIn.so'],
+                    }],
                 }],
             ],
         },

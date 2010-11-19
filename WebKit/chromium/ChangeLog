@@ -1,3 +1,16 @@
+2010-11-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Enable webkit's TestNetscapePlugIn for DRT on win and linux
+        https://bugs.webkit.org/show_bug.cgi?id=49706
+
+        It is enabled simply by copying the plugin into
+        {Debug,Release}/plugins.  This change also rolls in a version of
+        Chromium that disables the old plugin.
+
+        * WebKit.gyp:
+
 2010-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72399.
