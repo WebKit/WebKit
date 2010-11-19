@@ -6,9 +6,9 @@ function test(func)
 {
     // test function.prototype has the correct attributes - writable, enumerable, non-configurable.
     descriptor = Object.getOwnPropertyDescriptor(func, 'prototype');
-    shouldBe("descriptor['writable']", "true")
-    shouldBe("descriptor['enumerable']", "true")
-    shouldBe("descriptor['configurable']", "false")
+    shouldBeTrue("descriptor['writable']");
+    shouldBeFalse("descriptor['enumerable']");
+    shouldBeFalse("descriptor['configurable']");
 }
 
 // Test prototype's attributes are correct.

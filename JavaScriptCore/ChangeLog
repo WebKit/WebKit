@@ -1,5 +1,16 @@
 2010-11-18  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoff Garen.
+
+        Bug 49577 - Function.prototype should be non-configurable
+
+        Ooops, Function.prototype should not be enumerable!
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+
+2010-11-18  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 49708 - Stop recompiling functions to regenerate exception info.
