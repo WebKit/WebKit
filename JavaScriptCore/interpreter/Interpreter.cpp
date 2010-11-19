@@ -558,13 +558,6 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->lastLine());
     }
 
-    if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-        if (callFrame->callee())
-            profiler->didExecute(callFrame, callFrame->callee());
-        else
-            profiler->didExecute(callFrame, codeBlock->ownerExecutable()->sourceURL(), codeBlock->ownerExecutable()->lineNo());
-    }
-
     // If this call frame created an activation or an 'arguments' object, tear it off.
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
         if (!callFrame->r(oldCodeBlock->activationRegister()).jsValue()) {
@@ -657,9 +650,10 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset, bool explicitThrow)
 {
-    // Set up the exception object
-
     CodeBlock* codeBlock = callFrame->codeBlock();
+    bool isInterrupt = false;
+
+    // Set up the exception object
     if (exceptionValue.isObject()) {
         JSObject* exception = asObject(exceptionValue);
         if (!explicitThrow && exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->appendSourceToMessage())
@@ -671,12 +665,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
             addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), codeBlock->ownerExecutable()->source());
 
         ComplType exceptionType = exception->exceptionType();
-        if (exceptionType == Interrupted || exceptionType == Terminated) {
-            while (unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
-                // Don't need handler checks or anything, we just want to unroll all the JS callframes possible.
-            }
-            return 0;
-        }
+        isInterrupt = exceptionType == Interrupted || exceptionType == Terminated;
     }
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
@@ -685,38 +674,18 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         debugger->exception(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset), hasHandler);
     }
 
-    // If we throw in the middle of a call instruction, we need to notify
-    // the profiler manually that the call instruction has returned, since
-    // we'll never reach the relevant op_profile_did_call.
-    if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-#if ENABLE(INTERPRETER)
-        if (!callFrame->globalData().canUseJIT()) {
-            // FIXME: Why 8? - work out what this magic value is, replace the constant with something more helpful.
-            if (isCallBytecode(codeBlock->instructions()[bytecodeOffset].u.opcode))
-                profiler->didExecute(callFrame, callFrame->r(codeBlock->instructions()[bytecodeOffset + 1].u.operand).jsValue());
-            else if (codeBlock->instructions().size() > (bytecodeOffset + 8) && codeBlock->instructions()[bytecodeOffset + 8].u.opcode == getOpcode(op_construct))
-                profiler->didExecute(callFrame, callFrame->r(codeBlock->instructions()[bytecodeOffset + 9].u.operand).jsValue());
-        }
-#if ENABLE(JIT)
-        else
-#endif
-#endif
-#if ENABLE(JIT)
-        {
-            int functionRegisterIndex;
-            if (codeBlock->functionRegisterForBytecodeOffset(bytecodeOffset, functionRegisterIndex))
-                profiler->didExecute(callFrame, callFrame->r(functionRegisterIndex).jsValue());
-        }
-#endif
-    }
-
     // Calculate an exception handler vPC, unwinding call frames as necessary.
-
     HandlerInfo* handler = 0;
-    while (!(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-        if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock))
+    while (isInterrupt || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+        if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
+            if (Profiler* profiler = *Profiler::enabledProfilerReference())
+                profiler->exceptionUnwind(callFrame);
             return 0;
+        }
     }
+
+    if (Profiler* profiler = *Profiler::enabledProfilerReference())
+        profiler->exceptionUnwind(callFrame);
 
     // Shrink the JS stack, in case stack overflow made it huge.
     Register* highWaterMark = 0;
@@ -789,7 +758,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, program->sourceURL(), program->lineNo());
+        (*profiler)->willExecute(callFrame, program->sourceURL(), program->lineNo());
 
     JSValue result;
     {
@@ -860,7 +829,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
-            (*profiler)->willExecute(newCallFrame, function);
+            (*profiler)->willExecute(callFrame, function);
 
         JSValue result;
         {
@@ -877,7 +846,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         }
 
         if (*profiler)
-            (*profiler)->didExecute(newCallFrame, function);
+            (*profiler)->didExecute(callFrame, function);
 
         m_registerFile.shrink(oldEnd);
         return checkedReturn(result);
@@ -892,7 +861,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, function);
+        (*profiler)->willExecute(callFrame, function);
 
     JSValue result;
     {
@@ -901,7 +870,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     }
 
     if (*profiler)
-        (*profiler)->didExecute(newCallFrame, function);
+        (*profiler)->didExecute(callFrame, function);
 
     m_registerFile.shrink(oldEnd);
     return checkedReturn(result);
@@ -949,7 +918,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
-            (*profiler)->willExecute(newCallFrame, constructor);
+            (*profiler)->willExecute(callFrame, constructor);
 
         JSValue result;
         {
@@ -966,7 +935,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         }
 
         if (*profiler)
-            (*profiler)->didExecute(newCallFrame, constructor);
+            (*profiler)->didExecute(callFrame, constructor);
 
         m_registerFile.shrink(oldEnd);
         if (callFrame->hadException())
@@ -984,7 +953,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, constructor);
+        (*profiler)->willExecute(callFrame, constructor);
 
     JSValue result;
     {
@@ -993,7 +962,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     }
 
     if (*profiler)
-        (*profiler)->didExecute(newCallFrame, constructor);
+        (*profiler)->didExecute(callFrame, constructor);
 
     m_registerFile.shrink(oldEnd);
     if (callFrame->hadException())
@@ -1159,7 +1128,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, eval->sourceURL(), eval->lineNo());
+        (*profiler)->willExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     JSValue result;
     {
