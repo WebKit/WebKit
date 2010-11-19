@@ -3222,10 +3222,9 @@ BUG_ANTONM : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT IMAGE
 BUG_ANTONM : svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml = IMAGE+TEXT IMAGE
 BUG_ANTONM : svg/dom/SVGPathSegList-xml-dom-synchronization2.xhtml = IMAGE+TEXT IMAGE
 BUG_ANTONM : svg/dom/fuzz-path-parser.html = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/path-parser.html = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/path-parser.html = IMAGE+TEXT IMAGE TEXT
 BUG_ANTONM : svg/dom/svglist-exception-on-out-bounds-error.html = IMAGE+TEXT IMAGE
 BUG_ANTONM : svg/custom/svg-curve-with-relative-cordinates.html = TEXT
-BUG_ANTONM : svg/dom/path-parser.html = TEXT
 BUG_ANTONM : svg/dom/svgpath-out-of-bounds-getPathSeg.html = TEXT
 
 // Seems like it started failing with r72364.
