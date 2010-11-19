@@ -93,9 +93,9 @@ namespace JSC {
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
-        BytecodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, ProgramCodeBlock*);
-        BytecodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
-        BytecodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
+        BytecodeGenerator(ProgramNode*, const ScopeChain&, SymbolTable*, ProgramCodeBlock*);
+        BytecodeGenerator(FunctionBodyNode*, const ScopeChain&, SymbolTable*, CodeBlock*);
+        BytecodeGenerator(EvalNode*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
 
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
@@ -207,10 +207,8 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (!m_codeBlock->numberOfLineInfos() || m_codeBlock->lastLineInfo().lineNumber != n->lineNo()) {
-                LineInfo info = { instructions().size(), n->lineNo() };
-                m_codeBlock->addLineInfo(info);
-            }
+            addLineInfo(n->lineNo());
+
             if (m_emitNodeDepth >= s_maxEmitNodeDepth)
                 return emitThrowExpressionTooDeepException();
             ++m_emitNodeDepth;
@@ -226,10 +224,7 @@ namespace JSC {
 
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue)
         {
-            if (!m_codeBlock->numberOfLineInfos() || m_codeBlock->lastLineInfo().lineNumber != n->lineNo()) {
-                LineInfo info = { instructions().size(), n->lineNo() };
-                m_codeBlock->addLineInfo(info);
-            }
+            addLineInfo(n->lineNo());
             if (m_emitNodeDepth >= s_maxEmitNodeDepth) {
                 emitThrowExpressionTooDeepException();
                 return;
@@ -240,7 +235,10 @@ namespace JSC {
         }
 
         void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
-        { 
+        {
+            if (!m_shouldEmitRichSourceInfo)
+                return;
+
             divot -= m_codeBlock->sourceOffset();
             if (divot > ExpressionRangeInfo::MaxDivot) {
                 // Overflow has occurred, we can only give line number info for errors for this region
@@ -504,6 +502,14 @@ namespace JSC {
             return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
 
+        void addLineInfo(unsigned lineNo)
+        {
+#if !ENABLE(OPCODE_SAMPLING)
+            if (m_shouldEmitRichSourceInfo)
+#endif
+                m_codeBlock->addLineInfo(instructions().size(), lineNo);
+        }
+
         RegisterID* emitInitLazyRegister(RegisterID*);
 
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
@@ -520,6 +526,7 @@ namespace JSC {
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
+        bool m_shouldEmitRichSourceInfo;
 
         const ScopeChain* m_scopeChain;
         SymbolTable* m_symbolTable;

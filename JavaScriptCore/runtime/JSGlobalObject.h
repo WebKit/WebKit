@@ -254,9 +254,10 @@ namespace JSC {
 
         Debugger* debugger() const { return d()->debugger; }
         void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
-        
+
         virtual bool supportsProfiling() const { return false; }
-        
+        virtual bool supportsRichSourceInfo() const { return true; }
+
         ScopeChain& globalScopeChain() { return d()->globalScopeChain; }
 
         virtual bool isGlobalObject() const { return true; }
@@ -276,7 +277,7 @@ namespace JSC {
         
         void resetPrototype(JSValue prototype);
 
-        JSGlobalData& globalData() { return *d()->globalData.get(); }
+        JSGlobalData& globalData() const { return *d()->globalData.get(); }
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)

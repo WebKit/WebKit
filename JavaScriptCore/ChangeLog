@@ -1,3 +1,65 @@
+2010-11-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 49708 - Stop recompiling functions to regenerate exception info.
+
+        Instead only hold info as necessary – keep divot info is the inspector
+        is enabled, line number info is debugging or profiling, and handler
+        info for functions with try/catch.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpStatistics):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::addExpressionInfo):
+        (JSC::CodeBlock::addLineInfo):
+        (JSC::CodeBlock::hasExpressionInfo):
+        (JSC::CodeBlock::hasLineInfo):
+        (JSC::CodeBlock::needsCallReturnIndices):
+        (JSC::CodeBlock::callReturnIndexVector):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        (JSC::BytecodeGenerator::addLineInfo):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::appendSourceToError):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::jitThrow):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Collector.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::usingAPI):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::supportsRichSourceInfo):
+        (JSC::JSGlobalObject::globalData):
+
 2010-11-18  Adam Roben  <aroben@apple.com>
 
         Add a script to delete manifest-related files when they are older than

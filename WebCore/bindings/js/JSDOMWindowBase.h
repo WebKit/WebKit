@@ -60,6 +60,7 @@ namespace WebCore {
 
         virtual JSC::ExecState* globalExec();
         virtual bool supportsProfiling() const;
+        virtual bool supportsRichSourceInfo() const;
         virtual bool shouldInterruptScript() const;
 
         bool allowsAccessFrom(JSC::ExecState*) const;

@@ -337,7 +337,7 @@ void SamplingTool::dump(ExecState* exec)
 
         if (blockPercent >= 1) {
             //Instruction* code = codeBlock->instructions().begin();
-            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(exec, 0), record->m_sampleCount, m_sampleCount, blockPercent);
+            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
@@ -347,7 +347,7 @@ void SamplingTool::dump(ExecState* exec)
                     int count = record->m_samples[op];
                     if (count) {
                         printf("    [% 4d] has sample count: % 4d\n", op, count);
-                        unsigned line = codeBlock->lineNumberForBytecodeOffset(exec, op);
+                        unsigned line = codeBlock->lineNumberForBytecodeOffset(op);
                         lineCounts.set(line, (lineCounts.contains(line) ? lineCounts.get(line) : 0) + count);
                     }
                 }

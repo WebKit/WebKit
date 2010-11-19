@@ -177,8 +177,6 @@ namespace JSC {
         bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*) = 0;
-
     protected:
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
         {
@@ -229,8 +227,6 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
-
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
 
@@ -271,8 +267,6 @@ namespace JSC {
         ProgramExecutable(ExecState*, const SourceCode&);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
-
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -364,8 +358,6 @@ namespace JSC {
 
         JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
-
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
 
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;

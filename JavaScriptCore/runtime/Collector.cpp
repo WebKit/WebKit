@@ -1051,8 +1051,6 @@ void Heap::markRoots()
         MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
     if (m_globalData->exception)
         markStack.append(m_globalData->exception);
-    if (m_globalData->functionCodeBlockBeingReparsed)
-        m_globalData->functionCodeBlockBeingReparsed->markAggregate(markStack);
     if (m_globalData->firstStringifierToMark)
         JSONObject::markStringifiers(markStack, m_globalData->firstStringifierToMark);
 

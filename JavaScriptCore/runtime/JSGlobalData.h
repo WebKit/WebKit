@@ -116,6 +116,7 @@ namespace JSC {
         };
 
         bool isSharedInstance() { return globalDataType == APIShared; }
+        bool usingAPI() { return globalDataType != Default; }
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
@@ -205,7 +206,6 @@ namespace JSC {
 
         HashSet<JSObject*> arrayVisitedElements;
 
-        CodeBlock* functionCodeBlockBeingReparsed;
         Stringifier* firstStringifierToMark;
 
         MarkStack markStack;

@@ -1,3 +1,18 @@
+2010-11-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 49708 - Stop recompiling functions to regenerate exception info.
+
+        Instead only hold info as necessary – keep divot info is the inspector
+        is enabled, line number info is debugging or profiling, and handler
+        info for functions with try/catch.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldEnableDeveloperExtras):
+            - always enable the developer tools from DRT, to ensure we
+              produce rich error messages on JavaScript exceptions.
+
 2010-11-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.

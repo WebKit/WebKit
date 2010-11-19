@@ -1261,13 +1261,10 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(immediateSwitchJumpTables) \
     macro(characterSwitchJumpTables) \
     macro(stringSwitchJumpTables) \
-    macro(functionRegisterInfos)
-
-#define FOR_EACH_MEMBER_VECTOR_EXCEPTION_INFO(macro) \
+    macro(evalCodeCache) \
     macro(expressionInfo) \
     macro(lineInfo) \
-    macro(getByIdExceptionInfo) \
-    macro(pcVector)
+    macro(callReturnIndexVector)
 
 template<typename T>
 static size_t sizeInBytes(const Vector<T>& vector)
@@ -1281,7 +1278,6 @@ void CodeBlock::dumpStatistics()
     #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0; size_t name##TotalSize = 0;
         FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
         FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS)
-        FOR_EACH_MEMBER_VECTOR_EXCEPTION_INFO(DEFINE_VARS)
     #undef DEFINE_VARS
 
     // Non-vector data members
@@ -1290,7 +1286,6 @@ void CodeBlock::dumpStatistics()
     size_t symbolTableIsNotEmpty = 0;
     size_t symbolTableTotalSize = 0;
 
-    size_t hasExceptionInfo = 0;
     size_t hasRareData = 0;
 
     size_t isFunctionCode = 0;
@@ -1308,13 +1303,6 @@ void CodeBlock::dumpStatistics()
         if (!codeBlock->m_symbolTable.isEmpty()) {
             symbolTableIsNotEmpty++;
             symbolTableTotalSize += (codeBlock->m_symbolTable.capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
-        }
-
-        if (codeBlock->m_exceptionInfo) {
-            hasExceptionInfo++;
-            #define GET_STATS(name) if (!codeBlock->m_exceptionInfo->m_##name.isEmpty()) { name##IsNotEmpty++; name##TotalSize += sizeInBytes(codeBlock->m_exceptionInfo->m_##name); }
-                FOR_EACH_MEMBER_VECTOR_EXCEPTION_INFO(GET_STATS)
-            #undef GET_STATS
         }
 
         if (codeBlock->m_rareData) {
@@ -1345,7 +1333,6 @@ void CodeBlock::dumpStatistics()
     #define GET_TOTAL_SIZE(name) totalSize += name##TotalSize;
         FOR_EACH_MEMBER_VECTOR(GET_TOTAL_SIZE)
         FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_TOTAL_SIZE)
-        FOR_EACH_MEMBER_VECTOR_EXCEPTION_INFO(GET_TOTAL_SIZE)
     #undef GET_TOTAL_SIZE
 
     totalSize += symbolTableTotalSize;
@@ -1360,13 +1347,11 @@ void CodeBlock::dumpStatistics()
     printf("Number of GlobalCode CodeBlocks: %zu (%.3f%%)\n", isGlobalCode, static_cast<double>(isGlobalCode) * 100.0 / liveCodeBlockSet.size());
     printf("Number of EvalCode CodeBlocks: %zu (%.3f%%)\n", isEvalCode, static_cast<double>(isEvalCode) * 100.0 / liveCodeBlockSet.size());
 
-    printf("Number of CodeBlocks with exception info: %zu (%.3f%%)\n", hasExceptionInfo, static_cast<double>(hasExceptionInfo) * 100.0 / liveCodeBlockSet.size());
     printf("Number of CodeBlocks with rare data: %zu (%.3f%%)\n", hasRareData, static_cast<double>(hasRareData) * 100.0 / liveCodeBlockSet.size());
 
     #define PRINT_STATS(name) printf("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty); printf("Size of all " #name ": %zu\n", name##TotalSize); 
         FOR_EACH_MEMBER_VECTOR(PRINT_STATS)
         FOR_EACH_MEMBER_VECTOR_RARE_DATA(PRINT_STATS)
-        FOR_EACH_MEMBER_VECTOR_EXCEPTION_INFO(PRINT_STATS)
     #undef PRINT_STATS
 
     printf("Number of CodeBlocks with evalCodeCache: %zu\n", evalCodeCacheIsNotEmpty);
@@ -1399,7 +1384,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_symbolTable(symTab)
-    , m_exceptionInfo(adoptPtr(new ExceptionInfo))
 {
     ASSERT(m_source);
 
@@ -1558,33 +1542,6 @@ void CodeBlock::markAggregate(MarkStack& markStack)
     markStack.append(m_globalObject);
 }
 
-bool CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
-{
-    if (m_exceptionInfo)
-        return true;
-
-    ASSERT(!m_rareData || !m_rareData->m_exceptionHandlers.size());
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    if (m_needsFullScopeChain) {
-        if (codeType() == FunctionCode && !callFrame->r(activationRegister()).jsValue()) {
-            createActivation(callFrame);
-            scopeChain = callFrame->scopeChain();
-        }
-        ScopeChain sc(scopeChain);
-        int scopeDelta = sc.localDepth();
-        if (m_codeType == EvalCode)
-            scopeDelta -= static_cast<EvalCodeBlock*>(this)->baseScopeDepth();
-        else if (m_codeType == FunctionCode)
-            scopeDelta++; // Compilation of function code assumes activation is not on the scope chain yet.
-        ASSERT(scopeDelta >= 0);
-        while (scopeDelta--)
-            scopeChain = scopeChain->next;
-    }
-
-    m_exceptionInfo = m_ownerExecutable->reparseExceptionInfo(scopeChain, this);
-    return m_exceptionInfo;
-}
-
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < m_instructionCount);
@@ -1603,46 +1560,48 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
     return 0;
 }
 
-int CodeBlock::lineNumberForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset)
+int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < m_instructionCount);
 
-    if (!reparseForExceptionInfoIfNecessary(callFrame) || !m_exceptionInfo->m_lineInfo.size())
-        return m_ownerExecutable->source().firstLine(); // Empty function or unable to reparse
+    if (!m_rareData)
+        return m_ownerExecutable->source().firstLine();
+
+    Vector<LineInfo>& lineInfo = m_rareData->m_lineInfo;
 
     int low = 0;
-    int high = m_exceptionInfo->m_lineInfo.size();
+    int high = lineInfo.size();
     while (low < high) {
         int mid = low + (high - low) / 2;
-        if (m_exceptionInfo->m_lineInfo[mid].instructionOffset <= bytecodeOffset)
+        if (lineInfo[mid].instructionOffset <= bytecodeOffset)
             low = mid + 1;
         else
             high = mid;
     }
-    
+
     if (!low)
         return m_ownerExecutable->source().firstLine();
-    return m_exceptionInfo->m_lineInfo[low - 1].lineNumber;
+    return lineInfo[low - 1].lineNumber;
 }
 
-void CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
+void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
 {
     ASSERT(bytecodeOffset < m_instructionCount);
 
-    if (!reparseForExceptionInfoIfNecessary(callFrame) || !m_exceptionInfo->m_expressionInfo.size()) {
-        // We didn't think anything could throw.  Apparently we were wrong.
-        // Alternatively something went wrong when trying to reparse
+    if (!m_rareData) {
         startOffset = 0;
         endOffset = 0;
         divot = 0;
         return;
     }
 
+    Vector<ExpressionRangeInfo>& expressionInfo = m_rareData->m_expressionInfo;
+
     int low = 0;
-    int high = m_exceptionInfo->m_expressionInfo.size();
+    int high = expressionInfo.size();
     while (low < high) {
         int mid = low + (high - low) / 2;
-        if (m_exceptionInfo->m_expressionInfo[mid].instructionOffset <= bytecodeOffset)
+        if (expressionInfo[mid].instructionOffset <= bytecodeOffset)
             low = mid + 1;
         else
             high = mid;
@@ -1656,9 +1615,9 @@ void CodeBlock::expressionRangeForBytecodeOffset(CallFrame* callFrame, unsigned 
         return;
     }
 
-    startOffset = m_exceptionInfo->m_expressionInfo[low - 1].startOffset;
-    endOffset = m_exceptionInfo->m_expressionInfo[low - 1].endOffset;
-    divot = m_exceptionInfo->m_expressionInfo[low - 1].divotPoint + m_sourceOffset;
+    startOffset = expressionInfo[low - 1].startOffset;
+    endOffset = expressionInfo[low - 1].endOffset;
+    divot = expressionInfo[low - 1].divotPoint + m_sourceOffset;
     return;
 }
 
@@ -1725,17 +1684,14 @@ void CodeBlock::shrinkToFit()
     m_functionExprs.shrinkToFit();
     m_constantRegisters.shrinkToFit();
 
-    if (m_exceptionInfo) {
-        m_exceptionInfo->m_expressionInfo.shrinkToFit();
-        m_exceptionInfo->m_lineInfo.shrinkToFit();
-    }
-
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
         m_rareData->m_regexps.shrinkToFit();
         m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+        m_rareData->m_expressionInfo.shrinkToFit();
+        m_rareData->m_lineInfo.shrinkToFit();
     }
 }
 

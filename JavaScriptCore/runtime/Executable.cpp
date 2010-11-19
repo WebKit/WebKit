@@ -108,7 +108,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 
     ASSERT(!m_evalCodeBlock);
     m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), globalObject->debugger(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get())));
     generator->generate();
     
     evalNode->destroyData();
@@ -156,7 +156,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     JSGlobalObject* globalObject = scopeChain.globalObject();
     
     m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock.get())));
     generator->generate();
 
     programNode->destroyData();
@@ -193,7 +193,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
     ASSERT(!m_codeBlockForCall);
     m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), false));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), globalObject->debugger(), scopeChain, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
     generator->generate();
     m_numParametersForCall = m_codeBlockForCall->m_numParameters;
     ASSERT(m_numParametersForCall);
@@ -234,7 +234,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 
     ASSERT(!m_codeBlockForConstruct);
     m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), true));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), globalObject->debugger(), scopeChain, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
     generator->generate();
     m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
     ASSERT(m_numParametersForConstruct);
@@ -262,72 +262,6 @@ void FunctionExecutable::markAggregate(MarkStack& markStack)
         m_codeBlockForCall->markAggregate(markStack);
     if (m_codeBlockForConstruct)
         m_codeBlockForConstruct->markAggregate(markStack);
-}
-
-PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
-{
-    JSObject* exception = 0;
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(scopeChainNode->globalObject, 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
-    if (!newFunctionBody)
-        return PassOwnPtr<ExceptionInfo>();
-    ASSERT(newFunctionBody->isStrictMode() == isStrictMode());
-    if (m_forceUsesArguments)
-        newFunctionBody->setUsesArguments();
-    newFunctionBody->finishParsing(m_parameters, m_name);
-
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    OwnPtr<CodeBlock> newCodeBlock(adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), codeBlock->m_isConstructor)));
-    globalData->functionCodeBlockBeingReparsed = newCodeBlock.get();
-
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(newFunctionBody.get(), globalObject->debugger(), scopeChain, newCodeBlock->symbolTable(), newCodeBlock.get())));
-    generator->setRegeneratingForExceptionInfo(static_cast<FunctionCodeBlock*>(codeBlock));
-    generator->generate();
-
-    ASSERT(newCodeBlock->instructionCount() == codeBlock->instructionCount());
-
-#if ENABLE(JIT)
-    if (globalData->canUseJIT()) {
-        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get(), 0, codeBlock->m_isConstructor ? generatedJITCodeForConstruct().start() : generatedJITCodeForCall().start());
-        ASSERT(codeBlock->m_isConstructor ? newJITCode.size() == generatedJITCodeForConstruct().size() : newJITCode.size() == generatedJITCodeForCall().size());
-    }
-#endif
-
-    globalData->functionCodeBlockBeingReparsed = 0;
-
-    return newCodeBlock->extractExceptionInfo();
-}
-
-PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
-{
-    JSObject* exception = 0;
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<EvalNode> newEvalBody = globalData->parser->parse<EvalNode>(scopeChainNode->globalObject, 0, 0, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
-    ASSERT(newEvalBody->isStrictMode() == isStrictMode());
-    if (!newEvalBody)
-        return PassOwnPtr<ExceptionInfo>();
-
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    OwnPtr<EvalCodeBlock> newCodeBlock(adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth())));
-
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(newEvalBody.get(), globalObject->debugger(), scopeChain, newCodeBlock->symbolTable(), newCodeBlock.get())));
-    generator->setRegeneratingForExceptionInfo(static_cast<EvalCodeBlock*>(codeBlock));
-    generator->generate();
-
-    ASSERT(newCodeBlock->instructionCount() == codeBlock->instructionCount());
-
-#if ENABLE(JIT)
-    if (globalData->canUseJIT()) {
-        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get(), 0, generatedJITCodeForCall().start());
-        ASSERT(newJITCode.size() == generatedJITCodeForCall().size());
-    }
-#endif
-
-    return newCodeBlock->extractExceptionInfo();
 }
 
 void FunctionExecutable::recompile(ExecState*)
@@ -374,12 +308,6 @@ UString FunctionExecutable::paramString() const
         builder.append(parameters[pos].ustring());
     }
     return builder.toUString();
-}
-
-PassOwnPtr<ExceptionInfo> ProgramExecutable::reparseExceptionInfo(ScopeChainNode*, CodeBlock*)
-{
-    // CodeBlocks for program code are transient and therefore do not gain from from throwing out their exception information.
-    return PassOwnPtr<ExceptionInfo>();
 }
 
 }

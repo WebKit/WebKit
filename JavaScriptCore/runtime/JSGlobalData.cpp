@@ -141,7 +141,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , heap(this)
     , head(0)
     , dynamicGlobalObject(0)
-    , functionCodeBlockBeingReparsed(0)
     , firstStringifierToMark(0)
     , markStack(jsArrayVPtr)
     , cachedUTCOffset(NaN)
