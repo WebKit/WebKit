@@ -227,8 +227,12 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     absoluteDrawingRegion.scale(scale.width(), scale.height());
 
     OwnPtr<ImageBuffer> sourceGraphic;
-    if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, ColorSpaceLinearRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, ColorSpaceLinearRGB)) {
+        ASSERT(!m_filter.contains(object));
+        filterData->savedContext = context;
+        m_filter.set(object, filterData.leakPtr());
         return false;
+    }
     
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
     ASSERT(sourceGraphicContext);
