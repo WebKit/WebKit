@@ -30,11 +30,22 @@
 
 var ALL_DIRECTORY_PATH = '[all]';
 
+var STATE_NEEDS_REBASELINE = 'needs_rebaseline';
+var STATE_REBASELINE_FAILED = 'rebaseline_failed';
+var STATE_REBASELINE_SUCCEEDED = 'rebaseline_succeeded';
+var STATE_IN_QUEUE = 'in_queue';
+var STATE_TO_DISPLAY_STATE = {};
+STATE_TO_DISPLAY_STATE[STATE_NEEDS_REBASELINE] = 'Needs rebaseline';
+STATE_TO_DISPLAY_STATE[STATE_REBASELINE_FAILED] = 'Rebaseline failed';
+STATE_TO_DISPLAY_STATE[STATE_REBASELINE_SUCCEEDED] = 'Rebaseline succeeded';
+STATE_TO_DISPLAY_STATE[STATE_IN_QUEUE] = 'In queue';
+
 var results;
 var testsByFailureType = {};
 var testsByDirectory = {};
 var selectedTests = [];
 var loupe;
+var queue;
 
 function main()
 {
@@ -44,7 +55,10 @@ function main()
     $('next-test').addEventListener('click', nextTest);
     $('previous-test').addEventListener('click', previousTest);
 
+    $('toggle-log').addEventListener('click', function() { toggle('log'); });
+
     loupe = new Loupe();
+    queue = new RebaselineQueue();
 
     document.addEventListener('keydown', function(event) {
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -59,6 +73,15 @@ function main()
         case 'Right':
             event.preventDefault();
             nextTest();
+            break;
+        case 'U+0051': // q
+            queue.addCurrentTest();
+            break;
+        case 'U+0058': // x
+            queue.removeCurrentTest();
+            break;
+        case 'U+0052': // r
+            queue.rebaseline();
             break;
         }
     });
@@ -229,6 +252,12 @@ function updateState()
 
     $('test-link').href =
         'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
+
+    var state = results.tests[testName].state;
+    $('state').className = state;
+    $('state').innerHTML = STATE_TO_DISPLAY_STATE[state];
+
+    queue.updateState();
 }
 
 function getTestResultUrl(testName, mode)

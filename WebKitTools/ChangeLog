@@ -1,3 +1,25 @@
+2010-11-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: add rebaseline queue
+        https://bugs.webkit.org/show_bug.cgi?id=49763
+        
+        Add a UI queue (a multi-item <select>) where tests to be baselined
+        can be enqueued (also supports basic removal). A queue is used instead
+        of immediately doing rebaselines since SCM operations can take a while.
+        It's better to go through lots of tests quickly to mark them as
+        needing rebaselining and then batch the SCM operations.
+        
+        Also adds a simple log where results can be displayed.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/queue.js: Added.
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/util.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2010-11-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

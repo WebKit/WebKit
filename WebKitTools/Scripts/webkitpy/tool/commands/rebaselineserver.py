@@ -48,6 +48,10 @@ from wsgiref.handlers import format_date_time
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 import webkitpy.thirdparty.simplejson as simplejson
 
+STATE_NEEDS_REBASELINE = 'needs_rebaseline'
+STATE_REBASELINE_FAILED = 'rebaseline_failed'
+STATE_REBASELINE_SUCCEEDED = 'rebaseline_succeeded'
+
 class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
     def __init__(self, httpd_port, results_directory, results_json):
         BaseHTTPServer.HTTPServer.__init__(self, ("", httpd_port), RebaselineHTTPRequestHandler)
@@ -61,6 +65,7 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         "loupe.js",
         "main.js",
         "main.css",
+        "queue.js",
         "util.js",
     ])
 
@@ -188,6 +193,9 @@ class RebaselineServer(AbstractDeclarativeCommand):
         with codecs.open(results_json_path, "r") as results_json_file:
             results_json_file = file(results_json_path)
             results_json = simplejson.load(results_json_file)
+
+        for test_file, test_json in results_json['tests'].items():
+            test_json['state'] = STATE_NEEDS_REBASELINE
 
         print "Starting server at http://localhost:%d/" % options.httpd_port
         print ("Use the 'Exit' link in the UI, http://localhost:%d/"
