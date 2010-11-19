@@ -1687,6 +1687,314 @@ void tst_QWebPage::inputMethods()
     QCOMPARE(inputValue, QString("QtWebKit2"));
     //END - Test for sending empty QInputMethodEvent
 
+    page->mainFrame()->setHtml("<html><body>" \
+                                            "<input type='text' id='input4' value='QtWebKit inputMethod'/>" \
+                                            "</body></html>");
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input4'); inputEle.focus(); inputEle.select();");
+
+    // Clear the selection, also cancel the ongoing composition if there is one.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent::Attribute newSelection(QInputMethodEvent::Selection, 0, 0, QVariant());
+        attributes.append(newSelection);
+        QInputMethodEvent event("", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    QString surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("QtWebKit inputMethod"));
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 0);
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 0);
+
+    // 1. Insert a character to the begining of the line.
+    // Send temporary text, which makes the editor has composition 'm'.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("m", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("QtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 0);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 0);
+
+    // Send temporary text, which makes the editor has composition 'n'.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("n", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("QtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 0);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 0);
+
+    // Send commit text, which makes the editor conforms composition.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("", attributes);
+        event.setCommitString("o");
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oQtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 1);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 1);
+
+    // 2. insert a character to the middle of the line.
+    // Send temporary text, which makes the editor has composition 'd'.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("d", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oQtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 1);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 1);
+
+    // Send commit text, which makes the editor conforms composition.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("", attributes);
+        event.setCommitString("e");
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 2);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 2);
+
+    // 3. Insert a character to the end of the line.
+    page->triggerAction(QWebPage::MoveToEndOfLine);
+    
+    // Send temporary text, which makes the editor has composition 't'.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("t", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit inputMethod"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 22);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 22);
+
+    // Send commit text, which makes the editor conforms composition.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("", attributes);
+        event.setCommitString("t");
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit inputMethodt"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 23);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 23);
+
+    // 4. Replace the selection.
+    page->triggerAction(QWebPage::SelectPreviousWord);
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString("inputMethodt"));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit inputMethodt"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 11);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 23);
+
+    // Send temporary text, which makes the editor has composition 'w'.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("w", attributes);
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit "));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 11);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 11);
+
+    // Send commit text, which makes the editor conforms composition.
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        QInputMethodEvent event("", attributes);
+        event.setCommitString("2");
+        page->event(&event);
+    }
+
+    // ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString(""));
+
+    // ImSurroundingText
+    variant = page->inputMethodQuery(Qt::ImSurroundingText);
+    surroundingValue = variant.value<QString>();
+    QCOMPARE(surroundingValue, QString("oeQtWebKit 2"));
+
+    // ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 12);
+
+    // ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 12);
+
     delete container;
 }
 

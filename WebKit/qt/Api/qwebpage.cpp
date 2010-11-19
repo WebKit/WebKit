@@ -1067,11 +1067,9 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
             if (node)
                 setSelectionRange(node, qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
 
-            if (!ev->preeditString().isEmpty()) {
-                editor->setComposition(ev->preeditString(), underlines,
-                                      (a.length < 0) ? a.start + a.length : a.start,
-                                      (a.length < 0) ? a.start : a.start + a.length);
-            } else {
+            if (!ev->preeditString().isEmpty())
+                editor->setComposition(ev->preeditString(), underlines, qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
+            else {
                 // If we are in the middle of a composition, an empty pre-edit string and a selection of zero
                 // cancels the current composition
                 if (editor->hasComposition() && (a.start + a.length == 0))
@@ -1085,7 +1083,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
     if (!ev->commitString().isEmpty())
         editor->confirmComposition(ev->commitString());
     else if (!hasSelection && !ev->preeditString().isEmpty())
-        editor->setComposition(ev->preeditString(), underlines, 0, ev->preeditString().length());
+        editor->setComposition(ev->preeditString(), underlines, 0, 0);
 
     ev->accept();
 }
@@ -1370,10 +1368,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant(QFont());
         }
         case Qt::ImCursorPosition: {
-            if (editor->hasComposition()) {
-                RefPtr<Range> range = editor->compositionRange();
-                return QVariant(frame->selection()->end().offsetInContainerNode() - TextIterator::rangeLength(range.get()));
-            }
+            if (editor->hasComposition())
+                return QVariant(frame->selection()->end().offsetInContainerNode());
             return QVariant(frame->selection()->extent().offsetInContainerNode());
         }
         case Qt::ImSurroundingText: {
@@ -1387,7 +1383,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant();
         }
         case Qt::ImCurrentSelection: {
-            if (renderTextControl) {
+            if (!editor->hasComposition() && renderTextControl) {
                 int start = frame->selection()->start().offsetInContainerNode();
                 int end = frame->selection()->end().offsetInContainerNode();
                 if (end > start)
@@ -1397,10 +1393,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 
         }
         case Qt::ImAnchorPosition: {
-            if (editor->hasComposition()) {
-                RefPtr<Range> range = editor->compositionRange();
-                return QVariant(frame->selection()->start().offsetInContainerNode() - TextIterator::rangeLength(range.get()));
-            }
+            if (editor->hasComposition())
+                return QVariant(frame->selection()->start().offsetInContainerNode());
             return QVariant(frame->selection()->base().offsetInContainerNode());
         }
         case Qt::ImMaximumTextLength: {
