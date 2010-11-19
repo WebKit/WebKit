@@ -77,8 +77,10 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 
 bool Pasteboard::canSmartReplace()
 {
+#ifndef QT_NO_CLIPBOARD
     if (QApplication::clipboard()->mimeData()->hasFormat((QLatin1String("application/vnd.qtwebkit.smartpaste"))))
         return true;
+#endif
     return false;
 }
 
