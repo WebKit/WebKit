@@ -129,10 +129,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         return self.PASS_RESULT
 
     # override
-    def _get_result_char(self, test_name):
-        return self._get_modifier_char(test_name)
-
-    # override
     def _convert_json_to_current_version(self, results_json):
         archive_version = None
         if self.VERSION_KEY in results_json:
