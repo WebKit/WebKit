@@ -815,13 +815,43 @@ void GraphicsContext::clipPath(WindRule clipRule)
 
 void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
 {
-    // FIXME: implement
+    if (paintingDisabled() || !color.isValid())
+        return;
+
+    unsigned pathCount = paths.size();
+
+    if (!pathCount)
+        return;
+
+    QPainter* p = m_data->p();
+    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
+
+    const QPen oldPen = p->pen();
+    const QBrush oldBrush = p->brush();
+
+    QPen nPen = p->pen();
+    nPen.setColor(color);
+    p->setBrush(Qt::NoBrush);
+    nPen.setStyle(Qt::DotLine);
+    p->setPen(nPen);
+
+    QPainterPath path;
+    for (int i = 0; i < pathCount; ++i)
+        path.addPath(paths[i].platformPath());
+    QPainterPathStroker stroker;
+    QPainterPath newPath = stroker.createStroke(path);
+    p->strokePath(newPath, nPen);
+    p->setPen(oldPen);
+    p->setBrush(oldBrush);
+
+    p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
 
 /**
- * Focus ring handling is not handled here. Qt style in 
+ * Focus ring handling for form controls is not handled here. Qt style in
  * RenderTheme handles drawing focus on widgets which 
- * need it.
+ * need it. It is still handled here for links.
  */
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
 {
