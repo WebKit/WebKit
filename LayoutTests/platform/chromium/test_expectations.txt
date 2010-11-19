@@ -3228,3 +3228,6 @@ BUG_ANTONM : fast/images/imagemap-focus-ring-zoom.html = IMAGE IMAGE+TEXT
 BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
 
 BUG_LEVIN LINUX MAC : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE
+
+// Debug only timeout, so no coverage from canaries, somewhere in r72395:72417.
+BUG_JPARENT WIN DEBUG : inspector/styles-disable-then-delete.html = PASS TIMEOUT
