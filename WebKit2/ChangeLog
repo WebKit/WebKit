@@ -1,3 +1,11 @@
+2010-11-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        <rdar://problem/8602509&8602717&8602724> Enable compaction support.
+
+        * Configurations/WebKit2.xcconfig:
+
 2010-11-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
