@@ -1,3 +1,9 @@
+2010-11-19  Mihai Parparita  <mihaip@chromium.org>
+
+        Add recent upstream Chromium dependencies to .gitignore.
+
+        * .gitignore:
+
 2010-11-17  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

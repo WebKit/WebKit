@@ -40,7 +40,9 @@ WebKit/chromium/.gclient_entries
 WebKit/chromium/base/
 WebKit/chromium/gfx/
 WebKit/chromium/googleurl/
+WebKit/chromium/ipc/
 WebKit/chromium/net/
+WebKit/chromium/ppapi/
 WebKit/chromium/sdch/
 WebKit/chromium/skia/
 WebKit/chromium/testing/
