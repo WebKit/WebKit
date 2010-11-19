@@ -905,8 +905,6 @@ BUG10295 MAC : fast/dom/prototype-chain.html = FAIL
 
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
 BUG10296 MAC : fast/text/international/bidi-menulist.html = FAIL
-BUG10296 LINUX : fast/transforms/transform-on-inline.html = FAIL
-BUG10296 LINUX : fast/transforms/transform-table-row.html = FAIL
 BUG10296 LINUX : svg/batik/paints/patternPreserveAspectRatioA.svg = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
 BUG10296 LINUX : svg/custom/foreign-object-skew.svg = FAIL
@@ -1671,9 +1669,6 @@ BUG5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
 // The (x) in type=search inputs appears to be slightly broken.  This test will also need a rebaseline.
 BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
-
-// Linux's rotated text output looks terrible.
-BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
 
 // New test. We should fix it, but it doesn't need to block the current release
 BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
