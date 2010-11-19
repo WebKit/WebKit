@@ -52,8 +52,8 @@ gpointer kit(WebCore::TestMediaQueryListListener* obj)
 void
 webkit_dom_test_media_query_list_listener_method(WebKitDOMTestMediaQueryListListener* self, WebKitDOMMediaQueryListListener* listener)
 {
-    WebCore::JSMainThreadNullState state;
     g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
     WebCore::TestMediaQueryListListener * item = WebKit::core(self);
     g_return_if_fail(listener);
     WebCore::MediaQueryListListener * converted_listener = NULL;

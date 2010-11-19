@@ -54,11 +54,13 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestObj);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjTableValues[34] =
+static const HashTableValue JSTestObjTableValues[36] =
 {
     { "readOnlyIntAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyIntAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyTestObjAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyTestObjAttr), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "shortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjShortAttr), (intptr_t)setJSTestObjShortAttr THUNK_GENERATOR(0) },
+    { "unsignedShortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedShortAttr), (intptr_t)setJSTestObjUnsignedShortAttr THUNK_GENERATOR(0) },
     { "intAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjIntAttr), (intptr_t)setJSTestObjIntAttr THUNK_GENERATOR(0) },
     { "longLongAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongLongAttr), (intptr_t)setJSTestObjLongLongAttr THUNK_GENERATOR(0) },
     { "unsignedLongLongAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedLongLongAttr), (intptr_t)setJSTestObjUnsignedLongLongAttr THUNK_GENERATOR(0) },
@@ -99,7 +101,7 @@ static const HashTableValue JSTestObjTableValues[34] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 132, 127, JSTestObjTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 133, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -282,7 +284,7 @@ JSValue jsTestObjReadOnlyIntAttr(ExecState* exec, JSValue slotBase, const Identi
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->readOnlyIntAttr());
+    JSValue result = jsNumber(imp->readOnlyIntAttr());
     return result;
 }
 
@@ -304,12 +306,30 @@ JSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSValue slotBase, const Id
     return result;
 }
 
+JSValue jsTestObjShortAttr(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(imp->shortAttr());
+    return result;
+}
+
+JSValue jsTestObjUnsignedShortAttr(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(imp->unsignedShortAttr());
+    return result;
+}
+
 JSValue jsTestObjIntAttr(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->intAttr());
+    JSValue result = jsNumber(imp->intAttr());
     return result;
 }
 
@@ -318,7 +338,7 @@ JSValue jsTestObjLongLongAttr(ExecState* exec, JSValue slotBase, const Identifie
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->longLongAttr());
+    JSValue result = jsNumber(imp->longLongAttr());
     return result;
 }
 
@@ -327,7 +347,7 @@ JSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, const I
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->unsignedLongLongAttr());
+    JSValue result = jsNumber(imp->unsignedLongLongAttr());
     return result;
 }
 
@@ -381,7 +401,7 @@ JSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSValue slotBase, const 
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+    JSValue result = jsNumber(imp->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
     return result;
 }
 
@@ -426,7 +446,7 @@ JSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSValue slotBase, 
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+    JSValue result = jsNumber(imp->getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
     return result;
 }
 
@@ -462,7 +482,7 @@ JSValue jsTestObjAttrWithGetterException(ExecState* exec, JSValue slotBase, cons
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSC::JSValue result = jsNumber(exec, imp->attrWithGetterException(ec));
+    JSC::JSValue result = jsNumber(imp->attrWithGetterException(ec));
     setDOMException(exec, ec);
     return result;
 }
@@ -472,7 +492,7 @@ JSValue jsTestObjAttrWithSetterException(ExecState* exec, JSValue slotBase, cons
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->attrWithSetterException());
+    JSValue result = jsNumber(imp->attrWithSetterException());
     return result;
 }
 
@@ -516,7 +536,7 @@ JSValue jsTestObjConditionalAttr1(ExecState* exec, JSValue slotBase, const Ident
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->conditionalAttr1());
+    JSValue result = jsNumber(imp->conditionalAttr1());
     return result;
 }
 #endif
@@ -527,7 +547,7 @@ JSValue jsTestObjConditionalAttr2(ExecState* exec, JSValue slotBase, const Ident
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->conditionalAttr2());
+    JSValue result = jsNumber(imp->conditionalAttr2());
     return result;
 }
 #endif
@@ -538,7 +558,7 @@ JSValue jsTestObjConditionalAttr3(ExecState* exec, JSValue slotBase, const Ident
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->conditionalAttr3());
+    JSValue result = jsNumber(imp->conditionalAttr3());
     return result;
 }
 #endif
@@ -548,7 +568,7 @@ JSValue jsTestObjDescription(ExecState* exec, JSValue slotBase, const Identifier
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->description());
+    JSValue result = jsNumber(imp->description());
     return result;
 }
 
@@ -557,7 +577,7 @@ JSValue jsTestObjId(ExecState* exec, JSValue slotBase, const Identifier&)
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsNumber(exec, imp->id());
+    JSValue result = jsNumber(imp->id());
     return result;
 }
 
@@ -578,6 +598,20 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
 void JSTestObj::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, this, slot);
+}
+
+void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    imp->setShortAttr(value.toInt32(exec));
+}
+
+void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    imp->setUnsignedShortAttr(value.toUInt32(exec));
 }
 
 void setJSTestObjIntAttr(ExecState* exec, JSObject* thisObject, JSValue value)
@@ -821,7 +855,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethod(ExecState* exec
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
 
 
-    JSC::JSValue result = jsNumber(exec, imp->intMethod());
+    JSC::JSValue result = jsNumber(imp->intMethod());
     return JSValue::encode(result);
 }
 
@@ -843,7 +877,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(ExecSta
         return JSValue::encode(jsUndefined());
 
 
-    JSC::JSValue result = jsNumber(exec, imp->intMethodWithArgs(intArg, strArg, objArg));
+    JSC::JSValue result = jsNumber(imp->intMethodWithArgs(intArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -1476,7 +1510,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
     int argsCount = exec->argumentCount();
     if (argsCount <= 0) {
 
-        JSC::JSValue result = jsNumber(exec, imp->classMethodWithOptional());
+        JSC::JSValue result = jsNumber(imp->classMethodWithOptional());
         return JSValue::encode(result);
     }
 
@@ -1485,7 +1519,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
         return JSValue::encode(jsUndefined());
 
 
-    JSC::JSValue result = jsNumber(exec, imp->classMethodWithOptional(arg));
+    JSC::JSValue result = jsNumber(imp->classMethodWithOptional(arg));
     return JSValue::encode(result);
 }
 
@@ -1493,32 +1527,38 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
 
 JSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(0));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0));
 }
 
 JSValue jsTestObjCONST_VALUE_1(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(1));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(1));
 }
 
 JSValue jsTestObjCONST_VALUE_2(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(2));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(2));
 }
 
 JSValue jsTestObjCONST_VALUE_4(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(4));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(4));
 }
 
 JSValue jsTestObjCONST_VALUE_8(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(8));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(8));
 }
 
 JSValue jsTestObjCONST_VALUE_9(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(-1));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(-1));
 }
 
 JSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSValue, const Identifier&)
@@ -1528,22 +1568,26 @@ JSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSValue, const Identifier&)
 
 JSValue jsTestObjCONST_VALUE_11(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(0xffffffff));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0xffffffff));
 }
 
 JSValue jsTestObjCONST_VALUE_12(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(0x01));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0x01));
 }
 
 JSValue jsTestObjCONST_VALUE_13(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(0X20));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0X20));
 }
 
 JSValue jsTestObjCONST_VALUE_14(ExecState* exec, JSValue, const Identifier&)
 {
-    return jsNumber(exec, static_cast<int>(0x1abc));
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0x1abc));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* object)

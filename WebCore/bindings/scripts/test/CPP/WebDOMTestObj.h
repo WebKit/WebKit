@@ -60,6 +60,10 @@ public:
     int readOnlyIntAttr() const;
     WebDOMString readOnlyStringAttr() const;
     WebDOMTestObj readOnlyTestObjAttr() const;
+    short shortAttr() const;
+    void setShortAttr(short);
+    unsigned short unsignedShortAttr() const;
+    void setUnsignedShortAttr(unsigned short);
     int intAttr() const;
     void setIntAttr(int);
     long long longLongAttr() const;

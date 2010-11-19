@@ -2901,7 +2901,7 @@ sub JSValueToNative
     return "$value->BooleanValue()" if $type eq "boolean";
     return "static_cast<$type>($value->NumberValue())" if $type eq "float" or $type eq "double";
 
-    return "toInt32($value)" if $type eq "long";
+    return "toInt32($value)" if $type eq "long" or $type eq "short";
     return "toUInt32($value)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";

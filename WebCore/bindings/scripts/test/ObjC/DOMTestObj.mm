@@ -92,6 +92,30 @@
     return kit(WTF::getPtr(IMPL->readOnlyTestObjAttr()));
 }
 
+- (short)shortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->shortAttr();
+}
+
+- (void)setShortAttr:(short)newShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setShortAttr(newShortAttr);
+}
+
+- (unsigned short)unsignedShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->unsignedShortAttr();
+}
+
+- (void)setUnsignedShortAttr:(unsigned short)newUnsignedShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setUnsignedShortAttr(newUnsignedShortAttr);
+}
+
 - (int)intAttr
 {
     WebCore::JSMainThreadNullState state;

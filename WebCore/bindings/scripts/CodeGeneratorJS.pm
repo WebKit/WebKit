@@ -2077,7 +2077,7 @@ sub GenerateImplementation
             if ($constant->type eq "DOMString") {
                 push(@implContent, "    return jsStringOrNull(exec, String(" . $constant->value . "));\n");
             } else {
-                push(@implContent, "    UNUSED_PARAM(exec);");
+                push(@implContent, "    UNUSED_PARAM(exec);\n");
                 push(@implContent, "    return jsNumber(static_cast<int>(" . $constant->value . "));\n");
             }
             push(@implContent, "}\n\n");
@@ -2376,6 +2376,7 @@ my %nativeType = (
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
+    "short" => "short",
     "long" => "int",
     "unsigned long" => "unsigned",
     "unsigned short" => "unsigned short",
@@ -2446,7 +2447,7 @@ sub JSValueToNative
     return "$value.toBoolean(exec)" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float";
-    return "$value.toInt32(exec)" if $type eq "long";
+    return "$value.toInt32(exec)" if $type eq "long" or $type eq "short";
     return "$value.toUInt32(exec)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "static_cast<$type>($value.toInteger(exec))" if $type eq "long long" or $type eq "unsigned long long";
 

@@ -52,6 +52,10 @@ enum {
 - (int)readOnlyIntAttr;
 - (NSString *)readOnlyStringAttr;
 - (DOMTestObj *)readOnlyTestObjAttr;
+- (short)shortAttr;
+- (void)setShortAttr:(short)newShortAttr;
+- (unsigned short)unsignedShortAttr;
+- (void)setUnsignedShortAttr:(unsigned short)newUnsignedShortAttr;
 - (int)intAttr;
 - (void)setIntAttr:(int)newIntAttr;
 - (long long)longLongAttr;

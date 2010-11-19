@@ -139,6 +139,18 @@ webkit_dom_test_obj_get_read_only_string_attr(WebKitDOMTestObj* self);
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_read_only_test_obj_attr(WebKitDOMTestObj* self);
 
+WEBKIT_API gshort
+webkit_dom_test_obj_get_short_attr(WebKitDOMTestObj* self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_short_attr(WebKitDOMTestObj* self, gshort value);
+
+WEBKIT_API gushort
+webkit_dom_test_obj_get_unsigned_short_attr(WebKitDOMTestObj* self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_unsigned_short_attr(WebKitDOMTestObj* self, gushort value);
+
 WEBKIT_API glong
 webkit_dom_test_obj_get_int_attr(WebKitDOMTestObj* self);
 
@@ -268,35 +280,23 @@ webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj* self
 WEBKIT_API gchar*
 webkit_dom_test_obj_get_script_string_attr(WebKitDOMTestObj* self);
 
-#if ENABLE(Condition1)
 WEBKIT_API glong
 webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self);
-#endif /* ENABLE(Condition1) */
 
-#if ENABLE(Condition1)
 WEBKIT_API void
 webkit_dom_test_obj_set_conditional_attr1(WebKitDOMTestObj* self, glong value);
-#endif /* ENABLE(Condition1) */
 
-#if ENABLE(Condition1) && ENABLE(Condition2)
 WEBKIT_API glong
 webkit_dom_test_obj_get_conditional_attr2(WebKitDOMTestObj* self);
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
 
-#if ENABLE(Condition1) && ENABLE(Condition2)
 WEBKIT_API void
 webkit_dom_test_obj_set_conditional_attr2(WebKitDOMTestObj* self, glong value);
-#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
 WEBKIT_API glong
 webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self);
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
 WEBKIT_API void
 webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value);
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 
 WEBKIT_API glong
 webkit_dom_test_obj_get_description(WebKitDOMTestObj* self);
