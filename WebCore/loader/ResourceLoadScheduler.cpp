@@ -191,10 +191,9 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Priority
             if (shouldLimitRequests && host->limitRequests())
                 return;
 
-            resourceLoader->start();
-            if (!resourceLoader->reachedTerminalState())
-                host->addLoadInProgress(resourceLoader.get());
             requestsPending.removeFirst();
+            host->addLoadInProgress(resourceLoader.get());
+            resourceLoader->start();
         }
     }
 }
