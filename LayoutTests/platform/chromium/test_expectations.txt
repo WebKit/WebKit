@@ -3203,10 +3203,6 @@ BUG_ANTONM MAC : fast/text/international/001.html = IMAGE
 BUG_ANTONM MAC : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_ANTONM WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE+TEXT IMAGE
 
-// Just added with r72235. Needs investigation.
-BUG_LEVIN : fast/blockflow/vertical-align-table-baseline.html = IMAGE+TEXT IMAGE
-BUG_LEVIN SLOW : fast/blockflow/vertical-baseline-alignment.html = IMAGE+TEXT IMAGE
-
 BUG61655 MAC : security/block-test-no-port.html = TEXT
 
 BUG_ANTONM WIN : editing/selection/5354455-1.html = FAIL
