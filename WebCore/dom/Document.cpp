@@ -4868,4 +4868,34 @@ PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
 }
 #endif
 
+static bool hasHeadSibling(const Document* document)
+{
+    Node* de = document->documentElement();
+    if (!de)
+        return false;
+
+    for (Node* i = de->firstChild(); i; i = i->nextSibling()) {
+        // A child of the document element which is rather than <head> is
+        // typically visible and FOUC safe. So we return true here.
+        if (!i->hasTagName(headTag))
+            return true;
+    }
+
+    return false;
+}
+
+bool Document::mayCauseFlashOfUnstyledContent() const
+{
+    // Some kind of FOUC is caused by a repaint request before page's <body> arrival
+    // because page authors often give background styles to <body>, not to <html>.
+    // (And these styles are unavailable before <style> or <link> is given.)
+    // This functions is used for checking such possibility of FOUCs.
+    // Note that the implementation considers only empty or <head> only contents as a FOUC cause
+    // rather than missing <body>, because non-HTML document like SVG and arbitrary XML from foreign namespace 
+    // should be painted even if there is no <body>.
+    if (didLayoutWithPendingStylesheets())
+        return true;
+    return !hasHeadSibling(this);
+}
+
 } // namespace WebCore

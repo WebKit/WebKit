@@ -2356,7 +2356,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Avoid painting layers when stylesheets haven't loaded.  This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
     // will do a full repaint().
-    if (renderer()->document()->didLayoutWithPendingStylesheets() && !renderer()->isRenderView() && !renderer()->isRoot())
+    if (renderer()->document()->mayCauseFlashOfUnstyledContent() && !renderer()->isRenderView() && !renderer()->isRoot())
         return;
     
     // If this layer is totally invisible then there is nothing to paint.

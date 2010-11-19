@@ -303,7 +303,7 @@ bool FrameView::didFirstLayout() const
 void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
-        if (hostWindow())
+        if (hostWindow() && shouldUpdate())
             hostWindow()->invalidateContentsAndWindow(rect, false /*immediate*/);
         return;
     }
@@ -1322,7 +1322,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
         return;
     }
     
-    if (!immediate && isOffscreen() && !shouldUpdateWhileOffscreen())
+    if (!shouldUpdate(immediate))
         return;
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -1396,7 +1396,7 @@ void FrameView::checkStopDelayingDeferredRepaints()
 void FrameView::doDeferredRepaints()
 {
     ASSERT(!m_deferringRepaints);
-    if (isOffscreen() && !shouldUpdateWhileOffscreen()) {
+    if (!shouldUpdate()) {
         m_repaintRects.clear();
         m_repaintCount = 0;
         return;
@@ -1633,6 +1633,15 @@ bool FrameView::shouldUpdateWhileOffscreen() const
 void FrameView::setShouldUpdateWhileOffscreen(bool shouldUpdateWhileOffscreen)
 {
     m_shouldUpdateWhileOffscreen = shouldUpdateWhileOffscreen;
+}
+
+bool FrameView::shouldUpdate(bool immediateRequested) const
+{
+    if (!immediateRequested && isOffscreen() && !shouldUpdateWhileOffscreen())
+        return false;
+    if (!m_frame || !m_frame->document() || m_frame->document()->mayCauseFlashOfUnstyledContent())
+        return false;
+    return true;
 }
 
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<Node> eventTarget)
