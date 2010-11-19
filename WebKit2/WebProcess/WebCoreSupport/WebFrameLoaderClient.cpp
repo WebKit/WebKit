@@ -291,7 +291,6 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
-
     webPage->findController().hideFindUI();
     
     DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
@@ -301,8 +300,9 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(webPage, m_frame, userData);
 
-
     bool loadingSubstituteDataForUnreachableURL = !provisionalLoader->unreachableURL().isNull();
+
+    webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, loadingSubstituteDataForUnreachableURL, InjectedBundleUserMessageEncoder(userData.get())));
@@ -340,6 +340,8 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didCommitLoadForFrame(webPage, m_frame, userData);
 
+    webPage->sandboxExtensionTracker().didCommitProvisionalLoad(m_frame);
+
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 }
@@ -354,6 +356,8 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame, error, userData);
+
+    webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())));

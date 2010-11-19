@@ -1,5 +1,63 @@
 2010-11-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement support for loading local files
+        https://bugs.webkit.org/show_bug.cgi?id=49828
+        <rdar://problem/8447121>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::initializeSandboxExtensionHandle):
+        Given an URL, create a sandbox extension if it's a local file URL.
+
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        Pass along sandbox extension handles to the LoadURL and LoadURLRequest messages.
+        
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        Call SandboxExtensionTracker::didStartProvisionalLoad.
+
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Call SandboxExtensionTracker::didCommitProvisionalLoad.
+
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        Call SandboxExtensionTracker::didFailProvisionalLoad.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        Invalidate the sandbox extension tracker.
+
+        (WebKit::WebPage::close):
+        Invalidate the sandbox extension tracker.
+
+        (WebKit::WebPage::loadURL):
+        (WebKit::WebPage::loadURLRequest):
+        Pass the sandbox extension handle to the sandbox extension tracker.
+
+        (WebKit::WebPage::SandboxExtensionTracker::~SandboxExtensionTracker):
+        Invalidate the sandbox extension tracker.
+
+        (WebKit::WebPage::SandboxExtensionTracker::invalidate):
+        invalidate ell the sandbox extensions.
+        
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+        Create a sandbox extension and store it as the "pending provisional extension".
+
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad):
+        Consume the pending provisional extension and make it the provisional extension.
+
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad):
+        Invalidate the committed extension and make the provisional extension the committed extension.
+
+        (WebKit::WebPage::SandboxExtensionTracker::didFailProvisionalLoad):
+        Invalidate the provisional extension.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add SandboxExtension::Handle parameters to LoadURL and LoadURLRequest.
+
+2010-11-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Make it possible to encode null SandboxExtension handles

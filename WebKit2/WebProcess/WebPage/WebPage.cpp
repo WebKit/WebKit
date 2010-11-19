@@ -162,6 +162,8 @@ WebPage::~WebPage()
 
     ASSERT(!m_page);
 
+    m_sandboxExtensionTracker.invalidate();
+
 #if PLATFORM(MAC)
     ASSERT(m_pluginViews.isEmpty());
 #endif
@@ -311,6 +313,8 @@ void WebPage::close()
         m_activePopupMenu = 0;
     }
 
+    m_sandboxExtensionTracker.invalidate();
+
     m_mainFrame->coreFrame()->loader()->detachFromParent();
     m_page.clear();
 
@@ -330,13 +334,14 @@ void WebPage::sendClose()
     send(Messages::WebPageProxy::ClosePage());
 }
 
-void WebPage::loadURL(const String& url)
+void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    loadURLRequest(ResourceRequest(KURL(KURL(), url)));
+    loadURLRequest(ResourceRequest(KURL(KURL(), url)), sandboxExtensionHandle);
 }
 
-void WebPage::loadURLRequest(const ResourceRequest& request)
+void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_mainFrame->coreFrame()->loader()->load(request, false);
 }
 
@@ -1099,7 +1104,79 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
         zoomableArea = node->getRect();
     send(Messages::WebPageProxy::DidFindZoomableArea(zoomableArea));
 }
-
 #endif
+
+WebPage::SandboxExtensionTracker::~SandboxExtensionTracker()
+{
+    invalidate();
+}
+
+void WebPage::SandboxExtensionTracker::invalidate()
+{
+    if (m_pendingProvisionalSandboxExtension) {
+        m_pendingProvisionalSandboxExtension->invalidate();
+        m_pendingProvisionalSandboxExtension = 0;
+    }
+
+    if (m_provisionalSandboxExtension) {
+        m_provisionalSandboxExtension->invalidate();
+        m_provisionalSandboxExtension = 0;
+    }
+
+    if (m_committedSandboxExtension) {
+        m_committedSandboxExtension->invalidate();
+        m_committedSandboxExtension = 0;
+    }
+}
+
+void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, const SandboxExtension::Handle& handle)
+{
+    ASSERT(frame->isMainFrame());
+
+    ASSERT(!m_pendingProvisionalSandboxExtension);
+    m_pendingProvisionalSandboxExtension = SandboxExtension::create(handle);
+}
+
+void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
+{
+    if (!frame->isMainFrame())
+        return;
+
+    ASSERT(!m_provisionalSandboxExtension);
+
+    m_provisionalSandboxExtension = m_pendingProvisionalSandboxExtension.release();
+    if (!m_provisionalSandboxExtension)
+        return;
+
+    m_provisionalSandboxExtension->consume();
+}
+
+void WebPage::SandboxExtensionTracker::didCommitProvisionalLoad(WebFrame* frame)
+{
+    if (!frame->isMainFrame())
+        return;
+    
+    ASSERT(!m_pendingProvisionalSandboxExtension);
+
+    // The provisional load has been committed. Invalidate the currently committed sandbox
+    // extension and make the provisional sandbox extension the committed sandbox extension.
+    if (m_committedSandboxExtension)
+        m_committedSandboxExtension->invalidate();
+
+    m_committedSandboxExtension = m_provisionalSandboxExtension.release();
+}
+
+void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
+{
+    if (!frame->isMainFrame())
+        return;
+
+    ASSERT(!m_pendingProvisionalSandboxExtension);
+    if (!m_provisionalSandboxExtension)
+        return;
+
+    m_provisionalSandboxExtension->invalidate();
+    m_provisionalSandboxExtension = 0;
+}
 
 } // namespace WebKit

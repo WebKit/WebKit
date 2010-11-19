@@ -257,12 +257,22 @@ bool WebPageProxy::tryClose()
     return false;
 }
 
+static void initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    if (!url.isLocalFile())
+        return;
+
+    SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
+}
+
 void WebPageProxy::loadURL(const String& url)
 {
     if (!isValid())
         relaunch();
 
-    process()->send(Messages::WebPage::LoadURL(url), m_pageID);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle), m_pageID);
 }
 
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
@@ -270,7 +280,9 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
     if (!isValid())
         relaunch();
 
-    process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest()), m_pageID);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle), m_pageID);
 }
 
 void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL)
