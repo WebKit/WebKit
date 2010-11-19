@@ -53,7 +53,10 @@ SandboxExtension::Handle::~Handle()
 
 void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    ASSERT(m_sandboxExtension);
+    if (!m_sandboxExtension) {
+        encoder->encodeBytes(0, 0);
+        return;
+    }
 
     size_t length = 0;
     const char *serializedFormat = WKSandboxExtensionGetSerializedFormat(m_sandboxExtension, &length);
@@ -74,12 +77,18 @@ bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle&
     if (!decoder->decodeBytes(dataReference))
         return false;
 
+    if (dataReference.isEmpty())
+        return true;
+
     result.m_sandboxExtension = WKSandboxExtensionCreateFromSerializedFormat(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
     return true;
 }
 
 PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
 {
+    if (!handle.m_sandboxExtension)
+        return 0;
+
     return adoptRef(new SandboxExtension(handle));
 }
 
@@ -134,11 +143,7 @@ bool SandboxExtension::consume()
 {
     ASSERT(m_sandboxExtension);
 
-    bool result = WKSandboxExtensionConsume(m_sandboxExtension);
-    WKSandboxExtensionDestroy(m_sandboxExtension);
-    m_sandboxExtension = 0;
-
-    return result;
+    return WKSandboxExtensionConsume(m_sandboxExtension);
 }
 
 } // namespace WebKit

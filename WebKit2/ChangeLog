@@ -1,3 +1,23 @@
+2010-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make it possible to encode null SandboxExtension handles
+        https://bugs.webkit.org/show_bug.cgi?id=49825
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::encode):
+        If there's no underlying sandbox extension, just encode an empty byte array.
+
+        (WebKit::SandboxExtension::Handle::decode):
+        If the decoded byte array is empty, don't try to create a sandbox extension.
+
+        (WebKit::SandboxExtension::create):
+        If the handle is null, return null.
+
+        (WebKit::SandboxExtension::consume):
+        Consuming shuld not null out the underlying sandbox extension object.
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
