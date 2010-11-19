@@ -291,6 +291,10 @@ Frame* PluginView::frame()
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
 {
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_plugin)
+        return;
+
     // Compute the stream related data from the resource response.
     const KURL& responseURL = response.url();
     const String& mimeType = response.mimeType();
@@ -307,16 +311,28 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
 
 void PluginView::manualLoadDidReceiveData(const char* bytes, int length)
 {
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_plugin)
+        return;
+
     m_plugin->manualStreamDidReceiveData(bytes, length);
 }
 
 void PluginView::manualLoadDidFinishLoading()
 {
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_plugin)
+        return;
+
     m_plugin->manualStreamDidFinishLoading();
 }
 
 void PluginView::manualLoadDidFail(const ResourceError& error)
 {
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_plugin)
+        return;
+
     m_plugin->manualStreamDidFail(error.isCancellation());
 }
 
