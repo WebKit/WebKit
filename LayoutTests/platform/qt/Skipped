@@ -5335,3 +5335,13 @@ plugins/refcount-leaks.html
 # [Qt] Zero-sized font does not yet work
 # https://bugs.webkit.org/show_bug.cgi?id=49759
 fast/text/font-size-zero.html
+
+# [Qt] REGRESSION (r72351): fast/profiler/throw-exception-from-eval.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=49801
+fast/profiler/throw-exception-from-eval.html
+
+# [Qt] REGRESSION (r72360): http/tests/security/aboutBlank/xss-DENIED-* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=49802
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
