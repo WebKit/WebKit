@@ -1,3 +1,21 @@
+2010-11-19  Adam Roben  <aroben@apple.com>
+
+        Update scripts for .exe name changes after r72327
+
+        As of r72327, the "_debug" suffix is only used in Debug_All builds.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-javascriptcore-tests:
+        (testapiPath):
+
+        * Scripts/sunspider-compare-results:
+        (pathToBuiltJSC):
+
+        * Scripts/webkitdirs.pm:
+        (jscPath):
+        (safariPath):
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

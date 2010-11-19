@@ -253,7 +253,7 @@ sub jscPath($)
 {
     my ($productDir) = @_;
     my $jscName = "jsc";
-    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    $jscName .= "_debug"  if configurationForVisualStudio() eq "Debug_All";
     $jscName .= ".exe" if (isWindows() || isCygwin());
     return "$productDir/$jscName" if -e "$productDir/$jscName";
     return "$productDir/JavaScriptCore.framework/Resources/$jscName";
@@ -544,7 +544,7 @@ sub safariPath
             my $path = "$configurationProductDir/Safari.exe";
             my $debugPath = "$configurationProductDir/Safari_debug.exe";
 
-            if (configurationForVisualStudio() =~ /Debug/ && -x $debugPath) {
+            if (configurationForVisualStudio() eq "Debug_All" && -x $debugPath) {
                 $safariBundle = $debugPath;
             } elsif (-x $path) {
                 $safariBundle = $path;

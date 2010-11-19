@@ -108,7 +108,7 @@ sub testapiPath($)
 {
     my ($productDir) = @_;
     my $jscName = "testapi";
-    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    $jscName .= "_debug" if configurationForVisualStudio() eq "Debug_All";
     return "$productDir/$jscName";
 }
 
