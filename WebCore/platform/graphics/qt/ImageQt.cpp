@@ -182,6 +182,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
     startAnimation();
 
+    if (normalizedSrc.isEmpty() || normalizedDst.isEmpty())
+        return;
+
     QPixmap* image = nativeImageForCurrentFrame();
     if (!image)
         return;
