@@ -138,7 +138,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Cairo|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops"
 			CharacterSet="1"
@@ -200,7 +200,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Cairo|Win32"
+			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops"
 			CharacterSet="1"
@@ -833,7 +833,7 @@
 						RelativePath="..\Shared\API\c\cf\WKURLRequestCF.cpp"
 						>
 						<FileConfiguration
-							Name="Debug_Cairo|Win32"
+							Name="Debug_Cairo_CFLite|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -841,7 +841,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_Cairo|Win32"
+							Name="Release_Cairo_CFLite|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -857,7 +857,7 @@
 						RelativePath="..\Shared\API\c\cf\WKURLResponseCF.cpp"
 						>
 						<FileConfiguration
-							Name="Debug_Cairo|Win32"
+							Name="Debug_Cairo_CFLite|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -865,7 +865,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_Cairo|Win32"
+							Name="Release_Cairo_CFLite|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -950,7 +950,7 @@
 					RelativePath="..\Shared\win\WebURLRequestWin.cpp"
 					>
 					<FileConfiguration
-						Name="Debug_Cairo|Win32"
+						Name="Debug_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -958,7 +958,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Cairo|Win32"
+						Name="Release_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -970,7 +970,7 @@
 					RelativePath="..\Shared\win\WebURLResponseWin.cpp"
 					>
 					<FileConfiguration
-						Name="Debug_Cairo|Win32"
+						Name="Debug_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -978,7 +978,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Cairo|Win32"
+						Name="Release_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -994,7 +994,7 @@
 					RelativePath="..\Shared\cg\BackingStoreCG.cpp"
 					>
 					<FileConfiguration
-						Name="Debug_Cairo|Win32"
+						Name="Debug_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1002,7 +1002,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Cairo|Win32"
+						Name="Release_Cairo_CFLite|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -2654,7 +2654,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Debug_Cairo|Win32"
+				Name="Debug_Cairo_CFLite|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -2663,7 +2663,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_Cairo|Win32"
+				Name="Release_Cairo_CFLite|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

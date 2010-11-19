@@ -1,3 +1,22 @@
+2010-11-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Normalize Cairo/CFLite project/solution configuration names
+        https://bugs.webkit.org/show_bug.cgi?id=49818
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * MiniBrowser/MiniBrowser.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPI.sln:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * WebKitAPITest/WebKitAPITest.vcproj:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        * WinLauncher/WinLauncher.vcproj:
+        * Scripts/webkitdirs.pm: Updated cairo build configs.
+
 2010-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

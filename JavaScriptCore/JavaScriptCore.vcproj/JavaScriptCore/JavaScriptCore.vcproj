@@ -264,7 +264,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_CFLite|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
 			CharacterSet="1"
@@ -325,7 +325,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_CFLite|Win32"
+			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
 			CharacterSet="1"

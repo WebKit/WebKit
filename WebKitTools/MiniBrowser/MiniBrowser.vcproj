@@ -202,7 +202,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_CFLite|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
 			UseOfATL="1"
@@ -264,7 +264,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_CFLite|Win32"
+			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
 			UseOfATL="1"
@@ -442,7 +442,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_CFLite|Win32"
+					Name="Debug_Cairo_CFLite|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -450,7 +450,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_CFLite|Win32"
+					Name="Release_Cairo_CFLite|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

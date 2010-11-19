@@ -138,7 +138,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Cairo|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\WinLauncherCommon.vsprops"
 			CharacterSet="1"
@@ -354,7 +354,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Cairo|Win32"
+					Name="Debug_Cairo_CFLite|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

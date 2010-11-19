@@ -138,7 +138,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Cairo|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\cURL.vsprops;.\DumpRenderTreeCommon.vsprops;.\DumpRenderTreeCairo.vsprops;.\DumpRenderTreeCFLite.vsprops"
 			CharacterSet="1"
@@ -199,7 +199,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Cairo|Win32"
+			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\cURL.vsprops;.\DumpRenderTreeCommon.vsprops;.\DumpRenderTreeCairo.vsprops;.\DumpRenderTreeCFLite.vsprops"
 			CharacterSet="1"
@@ -539,7 +539,7 @@
 			RelativePath=".\MD5.cpp"
 			>
 			<FileConfiguration
-				Name="Debug_Cairo|Win32"
+				Name="Debug_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -547,7 +547,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_Cairo|Win32"
+				Name="Release_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -559,7 +559,7 @@
 			RelativePath=".\MD5.h"
 			>
 			<FileConfiguration
-				Name="Debug_Cairo|Win32"
+				Name="Debug_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -567,7 +567,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_Cairo|Win32"
+				Name="Release_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -659,7 +659,7 @@
 			RelativePath="..\cg\PixelDumpSupportCG.cpp"
 			>
 			<FileConfiguration
-				Name="Debug_Cairo|Win32"
+				Name="Debug_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -667,7 +667,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_Cairo|Win32"
+				Name="Release_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -679,7 +679,7 @@
 			RelativePath="..\cg\PixelDumpSupportCG.h"
 			>
 			<FileConfiguration
-				Name="Debug_Cairo|Win32"
+				Name="Debug_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -687,7 +687,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_Cairo|Win32"
+				Name="Release_Cairo_CFLite|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool

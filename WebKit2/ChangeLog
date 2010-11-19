@@ -1,3 +1,13 @@
+2010-11-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Normalize Cairo/CFLite project/solution configuration names
+        https://bugs.webkit.org/show_bug.cgi?id=49818
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+
 2010-11-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

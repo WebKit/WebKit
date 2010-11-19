@@ -201,7 +201,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_CFLite|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\WebKit2WebProcessCommon.vsprops"
 			CharacterSet="1"

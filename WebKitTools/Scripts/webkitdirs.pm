@@ -415,19 +415,19 @@ sub determinePassedConfiguration
         if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
-            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
             return;
         }
         if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
-            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
             return;
         }
         if ($opt =~ /^--profil(e|ing)$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Profiling";
-            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
             return;
         }
     }

@@ -23,16 +23,25 @@
 				Name="VCNMakeTool"
 			/>
 		</Configuration>
-		<Configuration
-			Name="cairo|Win32"
+    <Configuration
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="0"
 			InheritedPropertySheets=".\WebCoreGeneratedCommon.vsprops;.\WebCoreGeneratedCairo.vsprops"
 			>
-			<Tool
+      <Tool
 				Name="VCNMakeTool"
 			/>
-		</Configuration>
-		<Configuration
+    </Configuration>
+    <Configuration
+			Name="Debug_Cairo_CFLite|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets=".\WebCoreGeneratedCommon.vsprops;.\WebCoreGeneratedCairo.vsprops"
+			>
+      <Tool
+				Name="VCNMakeTool"
+			/>
+    </Configuration>
+    <Configuration
 			Name="Debug|Win32"
 			ConfigurationType="0"
 			InheritedPropertySheets=".\WebCoreGeneratedCommon.vsprops"

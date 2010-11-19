@@ -198,7 +198,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Cairo|Win32"
+			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\ImageDiffCommon.vsprops"
 			CharacterSet="2"
