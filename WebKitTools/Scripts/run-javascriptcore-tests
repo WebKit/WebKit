@@ -116,7 +116,10 @@ sub testapiPath($)
 if (isAppleMacWebKit() || isAppleWinWebKit()) {
     chdirWebKit();
     chdir($productDir) or die;
-    my $testapiResult = system testapiPath($productDir);
+    my $path = testapiPath($productDir);
+    # Use an "indirect object" so that system() won't get confused if the path
+    # contains spaces (see perldoc -f exec).
+    my $testapiResult = system { $path } $path;
     exit exitStatus($testapiResult)  if $testapiResult;
 }
 

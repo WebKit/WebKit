@@ -1,5 +1,15 @@
 2010-11-19  Adam Roben  <aroben@apple.com>
 
+        Fix run-javascriptcore-tests when there's a space in the path to
+        testapi
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-javascriptcore-tests: Use an indirect object when calling
+        system() to force it to interpret spaces in the path correctly.
+
+2010-11-19  Adam Roben  <aroben@apple.com>
+
         Update scripts for .exe name changes after r72327
 
         As of r72327, the "_debug" suffix is only used in Debug_All builds.
