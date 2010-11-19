@@ -30,7 +30,11 @@ class EditCommandQt
 #endif
 {
     public:
+#ifndef QT_NO_UNDOCOMMAND
         EditCommandQt(WTF::RefPtr<WebCore::EditCommand> cmd, QUndoCommand *parent = 0);
+#else
+        EditCommandQt(WTF::RefPtr<WebCore::EditCommand> cmd);
+#endif
         ~EditCommandQt();
 
         void redo();

@@ -1,3 +1,14 @@
+2010-11-19  Sam Magnuson  <smagnuso@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Compile with QT_NO_UNDOCOMMAND
+        https://bugs.webkit.org/show_bug.cgi?id=49752
+
+        * WebCoreSupport/EditCommandQt.cpp:
+        (EditCommandQt::EditCommandQt):
+        * WebCoreSupport/EditCommandQt.h:
+
 2010-11-19  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
