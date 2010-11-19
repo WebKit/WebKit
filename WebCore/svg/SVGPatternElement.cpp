@@ -83,7 +83,7 @@ void SVGPatternElement::parseMappedAttribute(Attribute* attr)
             newList.clear();
 
         detachAnimatedPatternTransformListWrappers(newList.size());
-        patternTransformBaseValue() = newList;
+        setPatternTransformBaseValue(newList);
     } else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)

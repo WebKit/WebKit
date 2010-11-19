@@ -59,7 +59,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedValuesListWrappers(newList.size());
-        valuesBaseValue() = newList;
+        setValuesBaseValue(newList);
     } else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

@@ -43,27 +43,27 @@ void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)
         SVGLengthList newList;
         newList.parse(attr->value(), LengthModeWidth);
         detachAnimatedXListWrappers(newList.size());
-        xBaseValue() = newList;
+        setXBaseValue(newList);
     } else if (attr->name() == SVGNames::yAttr) {
         SVGLengthList newList;
         newList.parse(attr->value(), LengthModeHeight);
         detachAnimatedYListWrappers(newList.size());
-        yBaseValue() = newList;
+        setYBaseValue(newList);
     } else if (attr->name() == SVGNames::dxAttr) {
         SVGLengthList newList;
         newList.parse(attr->value(), LengthModeWidth);
         detachAnimatedDxListWrappers(newList.size());
-        dxBaseValue() = newList;
+        setDxBaseValue(newList);
     } else if (attr->name() == SVGNames::dyAttr) {
         SVGLengthList newList;
         newList.parse(attr->value(), LengthModeHeight);
         detachAnimatedDyListWrappers(newList.size());
-        dyBaseValue() = newList;
+        setDyBaseValue(newList);
     } else if (attr->name() == SVGNames::rotateAttr) {
         SVGNumberList newList;
         newList.parse(attr->value());
         detachAnimatedRotateListWrappers(newList.size());
-        rotateBaseValue() = newList;
+        setRotateBaseValue(newList);
     } else
         SVGTextContentElement::parseMappedAttribute(attr);
 }

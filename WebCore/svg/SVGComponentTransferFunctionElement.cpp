@@ -57,7 +57,7 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedTableValuesListWrappers(newList.size());
-        tableValuesBaseValue() = newList;
+        setTableValuesBaseValue(newList);
     } else if (attr->name() == SVGNames::slopeAttr)
         setSlopeBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::interceptAttr)

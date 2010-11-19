@@ -57,7 +57,7 @@ void SVGGradientElement::parseMappedAttribute(Attribute* attr)
             newList.clear();
 
         detachAnimatedGradientTransformListWrappers(newList.size());
-        gradientTransformBaseValue() = newList;
+        setGradientTransformBaseValue(newList);
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if (attr->value() == "reflect")
             setSpreadMethodBaseValue(SpreadMethodReflect);

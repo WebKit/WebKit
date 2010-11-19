@@ -92,7 +92,7 @@ void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedKernelMatrixListWrappers(newList.size());
-        kernelMatrixBaseValue() = newList;
+        setKernelMatrixBaseValue(newList);
     } else if (attr->name() == SVGNames::divisorAttr)
         setDivisorBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::biasAttr)

@@ -72,7 +72,7 @@ void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
             newList.clear();
         detachAnimatedTransformListWrappers(newList.size());
-        transformBaseValue() = newList;
+        setTransformBaseValue(newList);
     } else 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
 }
