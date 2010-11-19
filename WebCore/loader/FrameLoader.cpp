@@ -381,15 +381,16 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
                         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache()) {
-                        m_frame->domWindow()->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), m_frame->domWindow()->document());
-
+                        RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
                         if (m_provisionalDocumentLoader) {
                             DocumentLoadTiming* timing = m_provisionalDocumentLoader->timing();
                             ASSERT(timing->navigationStart);
+                            ASSERT(!timing->unloadEventStart);
                             ASSERT(!timing->unloadEventEnd);
-                            timing->unloadEventEnd = currentTime();
-                            ASSERT(timing->unloadEventEnd >= timing->navigationStart);
-                        }
+                            m_frame->domWindow()->dispatchTimedEvent(unloadEvent, m_frame->domWindow()->document(), &timing->unloadEventStart, &timing->unloadEventEnd);
+                            ASSERT(timing->unloadEventStart >= timing->navigationStart);
+                        } else
+                            m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
                     }
                 }
                 m_pageDismissalEventBeingDispatched = false;

@@ -33,6 +33,7 @@ module window {
     // See: http://dev.w3.org/2006/webapi/WebTiming/
     interface [Conditional=WEB_TIMING, OmitConstructor] PerformanceTiming {
         readonly attribute unsigned long long navigationStart;
+        readonly attribute unsigned long long unloadEventStart;
         readonly attribute unsigned long long unloadEventEnd;
         readonly attribute unsigned long long redirectStart;
         readonly attribute unsigned long long redirectEnd;

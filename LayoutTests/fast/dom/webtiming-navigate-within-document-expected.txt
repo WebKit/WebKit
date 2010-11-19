@@ -22,6 +22,7 @@ PASS requestStart is unchanged.
 PASS responseEnd is unchanged.
 PASS responseStart is unchanged.
 PASS unloadEventEnd is unchanged.
+PASS unloadEventStart is unchanged.
 PASS successfullyParsed is true
 
 TEST COMPLETE

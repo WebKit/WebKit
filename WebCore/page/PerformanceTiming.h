@@ -52,6 +52,7 @@ public:
     void disconnectFrame();
 
     unsigned long long navigationStart() const;
+    unsigned long long unloadEventStart() const;
     unsigned long long unloadEventEnd() const;
     unsigned long long redirectStart() const;
     unsigned long long redirectEnd() const;

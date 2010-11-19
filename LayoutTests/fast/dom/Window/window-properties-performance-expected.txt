@@ -30,4 +30,5 @@ window.webkitPerformance.timing.requestStart [number]
 window.webkitPerformance.timing.responseEnd [number]
 window.webkitPerformance.timing.responseStart [number]
 window.webkitPerformance.timing.unloadEventEnd [number]
+window.webkitPerformance.timing.unloadEventStart [number]
 
