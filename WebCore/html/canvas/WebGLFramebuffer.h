@@ -56,6 +56,10 @@ public:
     // Return false does not mean COMPLETE, might still be INCOMPLETE.
     bool isIncomplete(bool checkInternalFormat) const;
 
+    bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
+
+    void setHasEverBeenBound() { m_hasEverBeenBound = true; }
+
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
 
@@ -76,6 +80,8 @@ private:
     RefPtr<WebGLObject> m_depthAttachment;
     RefPtr<WebGLObject> m_stencilAttachment;
     RefPtr<WebGLObject> m_depthStencilAttachment;
+
+    bool m_hasEverBeenBound;
 };
 
 } // namespace WebCore

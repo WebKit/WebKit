@@ -61,6 +61,8 @@ public:
     // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
     bool needToUseBlackTexture() const;
 
+    bool hasEverBeenBound() const { return object() && m_target; }
+
     static int computeLevelCount(int width, int height);
 
 protected:

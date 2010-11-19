@@ -75,6 +75,7 @@ PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx
 
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     : WebGLObject(ctx)
+    , m_hasEverBeenBound(false)
 {
     setObject(context()->graphicsContext3D()->createFramebuffer());
 }
