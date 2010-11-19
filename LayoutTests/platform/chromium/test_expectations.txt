@@ -3228,3 +3228,7 @@ BUG_ANTONM : svg/custom/svg-curve-with-relative-cordinates.html = TEXT
 BUG_ANTONM : svg/dom/path-parser.html = TEXT
 BUG_ANTONM : svg/dom/svgpath-out-of-bounds-getPathSeg.html = TEXT
 
+// Seems like it started failing with r72364.
+BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
+
+BUG_LEVIN LINUX MAC : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE
