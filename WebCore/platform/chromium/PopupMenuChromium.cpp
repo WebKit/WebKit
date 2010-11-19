@@ -371,7 +371,7 @@ void PopupContainer::showPopup(FrameView* view)
                     widgetRect.move(0, -(widgetRect.height() + selectHeight));
             }
         }
-        chromeClient->popupOpened(this, widgetRect);
+        chromeClient->popupOpened(this, widgetRect, false);
         m_popupOpen = true;
     }
 
@@ -385,6 +385,34 @@ void PopupContainer::showPopup(FrameView* view)
     m_listBox->scrollToRevealSelection();
 
     invalidate();
+}
+
+void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
+{
+    if (!listBox())
+        return;
+
+    listBox()->setBaseWidth(rect.width());
+    listBox()->updateFromElement();
+
+    if (listBox()->numItems() < 1) {
+        hidePopup();
+        return;
+    }
+
+    // Adjust the popup position to account for scrolling.
+    IntPoint location = v->contentsToWindow(rect.location());
+    IntRect popupRect(location, rect.size());
+
+    // Get the ChromeClient and pass it the popup menu's listbox data.
+    m_frameView = v;
+    chromeClientChromium()->popupOpened(this, popupRect, true);
+
+    // The popup sends its "closed" notification through its parent. Set the
+    // parent, even though external popups have no real on-screen widget but a
+    // native menu (see |PopupListBox::hidePopup()|);
+    if (!m_listBox->parent())
+        addChild(m_listBox.get());
 }
 
 void PopupContainer::hidePopup()
@@ -1268,14 +1296,27 @@ void PopupListBox::layout()
     // Calculate scroll bar width.
     int windowHeight = 0;
 
+#if OS(DARWIN)
+    // Set the popup's window to contain all available items on Mac only, which
+    // uses native controls that manage their own scrolling. This allows hit
+    // testing to work when selecting items in popups that have more menu entries
+    // than the maximum window size.
+    m_visibleRows = numItems();
+#else
     m_visibleRows = min(numItems(), kMaxVisibleRows);
+#endif
 
     for (int i = 0; i < m_visibleRows; ++i) {
         int rowHeight = getRowHeight(i);
+
+#if !OS(DARWIN)
+        // Only clip the window height for non-Mac platforms.
         if (windowHeight + rowHeight > m_maxHeight) {
             m_visibleRows = i;
             break;
         }
+#endif
+
         windowHeight += rowHeight;
     }
 
@@ -1342,13 +1383,19 @@ PopupMenuChromium::~PopupMenuChromium()
     hide();
 }
 
+// The Mac Chromium implementation relies on external control (a Cocoa control)
+// to display, handle the input tracking and menu item selection for the popup.
 // Windows and Linux Chromium let our WebKit port handle the display, while
 // another process manages the popup window and input handling.
 void PopupMenuChromium::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
         p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
+#if OS(DARWIN)
+    p.popup->showExternal(r, v, index);
+#else
     p.popup->show(r, v, index);
+#endif
 }
 
 void PopupMenuChromium::hide()

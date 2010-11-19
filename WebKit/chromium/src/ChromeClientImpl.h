@@ -162,7 +162,8 @@ public:
 
     // ChromeClientChromium methods:
     virtual void popupOpened(WebCore::PopupContainer* popupContainer,
-                             const WebCore::IntRect& bounds);
+                             const WebCore::IntRect& bounds,
+                             bool handleExternally);
     virtual void popupClosed(WebCore::PopupContainer* popupContainer);
     virtual void postAccessibilityNotification(WebCore::AccessibilityObject*, WebCore::AXObjectCache::AXNotification);
 

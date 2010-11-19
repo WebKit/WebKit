@@ -678,14 +678,25 @@ void ChromeClientImpl::chooseIconForFiles(const Vector<WTF::String>&, WebCore::F
 }
 
 void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
-                                   const IntRect& bounds)
+                                   const IntRect& bounds,
+                                   bool handleExternally)
 {
     if (!m_webView->client())
         return;
 
-    WebWidget* webwidget = m_webView->client()->createPopupMenu(
-        convertPopupType(popupContainer->popupType()));
-    m_webView->popupOpened(popupContainer);
+    WebWidget* webwidget;
+    if (handleExternally) {
+        WebPopupMenuInfo popupInfo;
+        getPopupMenuInfo(popupContainer, &popupInfo);
+        webwidget = m_webView->client()->createPopupMenu(popupInfo);
+    } else {
+        webwidget = m_webView->client()->createPopupMenu(
+            convertPopupType(popupContainer->popupType()));
+        // We only notify when the WebView has to handle the popup, as when
+        // the popup is handled externally, the fact that a popup is showing is
+        // transparent to the WebView.
+        m_webView->popupOpened(popupContainer);
+    }
     static_cast<WebPopupMenuImpl*>(webwidget)->Init(popupContainer, bounds);
 }
 
