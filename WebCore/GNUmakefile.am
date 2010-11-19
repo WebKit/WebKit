@@ -2434,12 +2434,12 @@ webcore_sources += \
 	WebCore/platform/network/ResourceHandle.cpp \
 	WebCore/platform/network/ResourceHandle.h \
 	WebCore/platform/network/ResourceHandleInternal.h \
+	WebCore/platform/network/ResourceLoadInfo.h \
 	WebCore/platform/network/ResourceLoadTiming.h \
 	WebCore/platform/network/ResourceRequestBase.cpp \
 	WebCore/platform/network/ResourceRequestBase.h \
 	WebCore/platform/network/ResourceResponseBase.cpp \
 	WebCore/platform/network/ResourceResponseBase.h \
-	WebCore/platform/network/ResourceRawHeaders.h \
 	WebCore/platform/network/SocketStreamErrorBase.cpp \
 	WebCore/platform/network/SocketStreamErrorBase.h \
 	WebCore/platform/network/SocketStreamHandleBase.cpp \

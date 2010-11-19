@@ -35,6 +35,7 @@
 #include "ResourceLoadTiming.h"
 
 #include "WebHTTPHeaderVisitor.h"
+#include "WebHTTPLoadInfo.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLLoadTiming.h"
@@ -129,14 +130,14 @@ void WebURLResponse::setLoadTiming(const WebURLLoadTiming& timing)
     m_private->m_resourceResponse->setResourceLoadTiming(loadTiming.release());
 }
 
-WebResourceRawHeaders WebURLResponse::resourceRawHeaders()
+WebHTTPLoadInfo WebURLResponse::httpLoadInfo()
 {
-    return WebResourceRawHeaders(m_private->m_resourceResponse->resourceRawHeaders());
+    return WebHTTPLoadInfo(m_private->m_resourceResponse->resourceLoadInfo());
 }
 
-void WebURLResponse::setResourceRawHeaders(const WebResourceRawHeaders& value)
+void WebURLResponse::setHTTPLoadInfo(const WebHTTPLoadInfo& value)
 {
-    m_private->m_resourceResponse->setResourceRawHeaders(value);
+    m_private->m_resourceResponse->setResourceLoadInfo(value);
 }
 
 double WebURLResponse::responseTime() const

@@ -24,14 +24,19 @@
  */
 
 
-#ifndef ResourceRawHeaders_h
-#define ResourceRawHeaders_h
+#ifndef ResourceLoadInfo_h
+#define ResourceLoadInfo_h
 
 #include "HTTPHeaderMap.h"
 
 namespace WebCore {
 
-struct ResourceRawHeaders : RefCounted<ResourceRawHeaders> {
+struct ResourceLoadInfo : RefCounted<ResourceLoadInfo> {
+    ResourceLoadInfo()
+        : httpStatusCode(0) { }
+
+    int httpStatusCode;
+    String httpStatusText;
     HTTPHeaderMap requestHeaders;
     HTTPHeaderMap responseHeaders;
 };

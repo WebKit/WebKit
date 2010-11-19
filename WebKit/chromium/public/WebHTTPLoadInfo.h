@@ -28,27 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebResourceRawHeaders_h
-#define WebResourceRawHeaders_h
+#ifndef WebHTTPLoadInfo_h
+#define WebHTTPLoadInfo_h
 
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
 namespace WebCore {
-struct ResourceRawHeaders;
+struct ResourceLoadInfo;
 }
 
 namespace WebKit {
-class WebHTTPHeaderVisitor;
-class WebResourceRawHeadersMapPrivate;
 class WebString;
 
-class WebResourceRawHeaders {
+class WebHTTPLoadInfo {
 public:
-    WebResourceRawHeaders() { initialize(); }
-    ~WebResourceRawHeaders() { reset(); }
-    WebResourceRawHeaders(const WebResourceRawHeaders& r) { assign(r); }
-    WebResourceRawHeaders& operator =(const WebResourceRawHeaders& r)
+    WebHTTPLoadInfo() { initialize(); }
+    ~WebHTTPLoadInfo() { reset(); }
+    WebHTTPLoadInfo(const WebHTTPLoadInfo& r) { assign(r); }
+    WebHTTPLoadInfo& operator =(const WebHTTPLoadInfo& r)
     { 
         assign(r);
         return *this;
@@ -56,17 +54,24 @@ public:
 
     WEBKIT_API void initialize();
     WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebResourceRawHeaders& r);
+    WEBKIT_API void assign(const WebHTTPLoadInfo& r);
+
+    WEBKIT_API int httpStatusCode() const;
+    WEBKIT_API void setHTTPStatusCode(int);
+
+    WEBKIT_API WebString httpStatusText() const;
+    WEBKIT_API void setHTTPStatusText(const WebString&);
+
     WEBKIT_API void addRequestHeader(const WebString& name, const WebString& value);
     WEBKIT_API void addResponseHeader(const WebString& name, const WebString& value);
 
 #if WEBKIT_IMPLEMENTATION
-    WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders>);
-    operator WTF::PassRefPtr<WebCore::ResourceRawHeaders>() const;
+    WebHTTPLoadInfo(WTF::PassRefPtr<WebCore::ResourceLoadInfo>);
+    operator WTF::PassRefPtr<WebCore::ResourceLoadInfo>() const;
 #endif
 
 private:
-    WebPrivatePtr<WebCore::ResourceRawHeaders> m_private;
+    WebPrivatePtr<WebCore::ResourceLoadInfo> m_private;
 };
 
 } // namespace WebKit

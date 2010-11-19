@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
-#include "WebResourceRawHeaders.h"
+#include "WebHTTPLoadInfo.h"
 
-#include "ResourceRawHeaders.h"
+#include "ResourceLoadInfo.h"
 #include "ResourceResponse.h"
 #include "WebHTTPHeaderVisitor.h"
 #include "WebString.h"
@@ -40,29 +40,53 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebResourceRawHeaders::initialize()
+void WebHTTPLoadInfo::initialize()
 {
-    m_private = adoptRef(new ResourceRawHeaders());
+    m_private = adoptRef(new ResourceLoadInfo());
 }
 
-void WebResourceRawHeaders::reset()
+void WebHTTPLoadInfo::reset()
 {
     m_private.reset();
 }
 
-void WebResourceRawHeaders::assign(const WebResourceRawHeaders& r)
+void WebHTTPLoadInfo::assign(const WebHTTPLoadInfo& r)
 {
     m_private = r.m_private;
 }
 
-WebResourceRawHeaders::WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders> value)
+WebHTTPLoadInfo::WebHTTPLoadInfo(WTF::PassRefPtr<WebCore::ResourceLoadInfo> value)
 {
     m_private = value;
 }
 
-WebResourceRawHeaders::operator WTF::PassRefPtr<WebCore::ResourceRawHeaders>() const
+WebHTTPLoadInfo::operator WTF::PassRefPtr<WebCore::ResourceLoadInfo>() const
 {
     return m_private.get();
+}
+
+int WebHTTPLoadInfo::httpStatusCode() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->httpStatusCode;
+}
+
+void WebHTTPLoadInfo::setHTTPStatusCode(int statusCode)
+{
+    ASSERT(!m_private.isNull());
+    m_private->httpStatusCode = statusCode;
+}
+
+WebString WebHTTPLoadInfo::httpStatusText() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->httpStatusText;
+}
+
+void WebHTTPLoadInfo::setHTTPStatusText(const WebString& statusText)
+{
+    ASSERT(!m_private.isNull());
+    m_private->httpStatusText = statusText;
 }
 
 static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString& value)
@@ -72,13 +96,13 @@ static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString
         result.first->second += String("\n") + value;
 }
 
-void WebResourceRawHeaders::addRequestHeader(const WebString& name, const WebString& value)
+void WebHTTPLoadInfo::addRequestHeader(const WebString& name, const WebString& value)
 {
     ASSERT(!m_private.isNull());
     addHeader(&m_private->requestHeaders, name, value);
 }
 
-void WebResourceRawHeaders::addResponseHeader(const WebString& name, const WebString& value)
+void WebHTTPLoadInfo::addResponseHeader(const WebString& name, const WebString& value)
 {
     ASSERT(!m_private.isNull());
     addHeader(&m_private->responseHeaders, name, value);

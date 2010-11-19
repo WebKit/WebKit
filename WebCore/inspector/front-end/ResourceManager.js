@@ -170,9 +170,13 @@ WebInspector.ResourceManager.prototype = {
         else
             resource.timing = response.timing;
 
-        if (response.rawHeaders) {
-            resource.requestHeaders = response.rawHeaders.requestHeaders;
-            resource.responseHeaders = response.rawHeaders.responseHeaders;
+        if (response.loadInfo) {
+            if (response.loadInfo.httpStatusCode)
+                resource.statusCode = response.loadInfo.httpStatusCode;
+            if (response.loadInfo.httpStatusText)
+                resource.statusText = response.loadInfo.httpStatusText;
+            resource.requestHeaders = response.loadInfo.requestHeaders;
+            resource.responseHeaders = response.loadInfo.responseHeaders;
         }
     },
 

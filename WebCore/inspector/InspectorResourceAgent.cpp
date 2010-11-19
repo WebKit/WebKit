@@ -193,11 +193,13 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
     responseObject->setBoolean("wasCached", response.wasCached());
     if (response.resourceLoadTiming())
         responseObject->setObject("timing", buildObjectForTiming(*response.resourceLoadTiming()));
-    if (response.resourceRawHeaders()) {
-        RefPtr<InspectorObject> rawHeadersObject = InspectorObject::create();
-        rawHeadersObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceRawHeaders()->requestHeaders));
-        rawHeadersObject->setObject("responseHeaders", buildObjectForHeaders(response.resourceRawHeaders()->responseHeaders));
-        responseObject->setObject("rawHeaders", rawHeadersObject);
+    if (response.resourceLoadInfo()) {
+        RefPtr<InspectorObject> loadInfoObject = InspectorObject::create();
+        loadInfoObject->setNumber("httpStatusCode", response.resourceLoadInfo()->httpStatusCode);
+        loadInfoObject->setString("httpStatusText", response.resourceLoadInfo()->httpStatusText);
+        loadInfoObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
+        loadInfoObject->setObject("responseHeaders", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
+        loadInfoObject->setObject("loadInfo", loadInfoObject);
     }
     return responseObject;
 }

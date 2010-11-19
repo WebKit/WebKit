@@ -27986,11 +27986,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceLoadTiming.h"
+					RelativePath="..\platform\network\ResourceLoadInfo.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceRawHeaders.h"
+					RelativePath="..\platform\network\ResourceLoadTiming.h"
 					>
 				</File>
 				<File

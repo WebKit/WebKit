@@ -520,18 +520,18 @@ void ResourceResponseBase::setResourceLoadTiming(PassRefPtr<ResourceLoadTiming> 
     m_resourceLoadTiming = resourceLoadTiming;
 }
 
-PassRefPtr<ResourceRawHeaders> ResourceResponseBase::resourceRawHeaders() const
+PassRefPtr<ResourceLoadInfo> ResourceResponseBase::resourceLoadInfo() const
 {
     lazyInit();
 
-    return m_resourceRawHeaders.get();
+    return m_resourceLoadInfo.get();
 }
 
-void ResourceResponseBase::setResourceRawHeaders(PassRefPtr<ResourceRawHeaders> headers)
+void ResourceResponseBase::setResourceLoadInfo(PassRefPtr<ResourceLoadInfo> loadInfo)
 {
     lazyInit();
 
-    m_resourceRawHeaders = headers;
+    m_resourceLoadInfo = loadInfo;
 }
 
 void ResourceResponseBase::lazyInit() const

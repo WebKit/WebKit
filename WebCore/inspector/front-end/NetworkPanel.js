@@ -1529,6 +1529,14 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._statusCell.removeChildren();
 
+        var fromCache = this._resource.cached;
+        if (fromCache) {
+            this._statusCell.textContent = WebInspector.UIString("(from cache)");
+            this._statusCell.addStyleClass("network-dim-cell");
+            return;
+        }
+
+        this._statusCell.removeStyleClass("network-dim-cell");
         if (this._resource.statusCode) {
             this._statusCell.appendChild(document.createTextNode(this._resource.statusCode));
             this._statusCell.removeStyleClass("network-dim-cell");
