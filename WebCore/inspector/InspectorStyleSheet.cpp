@@ -652,8 +652,11 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForRule(CSSStyleRule
     result->setString("origin", m_origin);
 
     result->setObject("style", buildObjectForStyle(rule->style()));
-    if (canBind())
-        result->setString("ruleId", ruleId(rule).asString());
+    if (canBind()) {
+        InspectorCSSId id(ruleId(rule));
+        if (!id.isEmpty())
+            result->setString("ruleId", id.asString());
+    }
 
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
@@ -674,7 +677,15 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     if (ensureParsedDataReady())
         sourceData = ruleSourceDataFor(style);
 
-    RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(ruleOrStyleId(style));
+    InspectorCSSId id = ruleOrStyleId(style);
+    if (id.isEmpty()) {
+        RefPtr<InspectorObject> bogusStyle = InspectorObject::create();
+        bogusStyle->setArray("cssProperties", InspectorArray::create());
+        bogusStyle->setObject("shorthandValues", InspectorObject::create());
+        bogusStyle->setObject("properties", InspectorObject::create());
+        return bogusStyle.release();
+    }
+    RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
     RefPtr<InspectorObject> result = inspectorStyle->buildObjectForStyle();
 
     // Style text cannot be retrieved without stylesheet, so set cssText here.
@@ -828,7 +839,7 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) c
 
 bool InspectorStyleSheet::ensureParsedDataReady()
 {
-    return ensureText() && ensureSourceData(pageStyleSheet()->ownerNode());
+    return ensureText() && ensureSourceData();
 }
 
 bool InspectorStyleSheet::text(String* result) const
@@ -854,7 +865,7 @@ bool InspectorStyleSheet::ensureText() const
     return success;
 }
 
-bool InspectorStyleSheet::ensureSourceData(Node* ownerNode)
+bool InspectorStyleSheet::ensureSourceData()
 {
     if (m_parsedStyleSheet->hasSourceData())
         return true;
@@ -862,7 +873,7 @@ bool InspectorStyleSheet::ensureSourceData(Node* ownerNode)
     if (!m_parsedStyleSheet->hasText())
         return false;
 
-    RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(ownerNode);
+    RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(pageStyleSheet() ? pageStyleSheet()->document() : 0);
     CSSParser p;
     StyleRuleRangeMap ruleRangeMap;
     p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, &ruleRangeMap);

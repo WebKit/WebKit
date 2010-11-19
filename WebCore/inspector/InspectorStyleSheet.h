@@ -188,7 +188,7 @@ protected:
 
 private:
     bool ensureText() const;
-    bool ensureSourceData(Node* ownerNode);
+    bool ensureSourceData();
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
     CSSStyleRule* findPageRuleWithStyle(CSSStyleDeclaration*);
     InspectorCSSId ruleId(CSSStyleRule* rule) const;

@@ -197,7 +197,7 @@ WebInspector.StylesSidebarPane.prototype = {
             // Add rules in reverse order to match the cascade order.
             for (var j = pseudoElementCSSRules.rules.length - 1; j >= 0; --j) {
                 var rule = pseudoElementCSSRules.rules[j];
-                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule });
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
             }
             usedProperties = {};
             disabledComputedProperties = {};
@@ -216,7 +216,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 continue;
             if (section.computedStyle)
                 section.styleRule.style = nodeComputedStyle;
-            var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle, rule: section.rule };
+            var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle, rule: section.rule, editable: !!(section.styleRule.style && section.styleRule.style.id) };
             styleRules.push(styleRule);
         }
         return styleRules;
@@ -252,7 +252,7 @@ WebInspector.StylesSidebarPane.prototype = {
             styleRules.push({ isStyleSeparator: true, text: WebInspector.UIString("Matched CSS Rules") });
         for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
             var rule = styles.matchedCSSRules[i];
-            styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule });
+            styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
         }
 
         // Walk the node structure and identify styles with inherited properties.
@@ -288,7 +288,7 @@ WebInspector.StylesSidebarPane.prototype = {
                     insertInheritedNodeSeparator(parentNode);
                     separatorInserted = true;
                 }
-                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, isInherited: true });
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, isInherited: true, editable: !!(rule.style && rule.style.id) });
             }
             parentNode = parentNode.parentNode;
         }
