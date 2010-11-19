@@ -576,7 +576,7 @@ static bool isWebInspectorTest(const QUrl& url)
 
 static bool shouldEnableDeveloperExtras(const QUrl& url)
 {
-    return isWebInspectorTest(url) || url.path().contains("inspector-enabled/");
+    return true;
 }
 
 void DumpRenderTree::open(const QUrl& url)

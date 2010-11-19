@@ -111,7 +111,7 @@ static bool shouldOpenWebInspector(const string& pathOrURL)
 
 static bool shouldEnableDeveloperExtras(const string& pathOrURL)
 {
-    return shouldOpenWebInspector(pathOrURL) || pathOrURL.find("inspector-enabled/") != string::npos;
+    return true;
 }
 
 void dumpFrameScrollPosition(WebKitWebFrame* frame)

@@ -763,7 +763,7 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
 
 static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 {
-    return shouldOpenWebInspector(pathOrURL) || strstr(pathOrURL, "/inspector-enabled/") || strstr(pathOrURL, "\\inspector-enabled\\");
+    return true;
 }
 
 static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
