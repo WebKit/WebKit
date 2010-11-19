@@ -98,6 +98,7 @@ Settings::Settings(Page* page)
     , m_sessionStorageQuota(StorageMap::noQuota)
 #endif
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
+    , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)
@@ -142,7 +143,6 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInNoQuirksMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
-    , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)

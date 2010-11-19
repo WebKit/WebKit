@@ -1,3 +1,15 @@
+2010-11-19  Avi Drissman  <avi@google.com>
+
+        Reviewed by Antonio Gomes.
+
+        Complete support for Unix editing mode
+        https://bugs.webkit.org/show_bug.cgi?id=49757
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setEditingBehaviorCallback):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setEditingBehavior):
+
 2010-11-19  Adam Roben  <aroben@apple.com>
 
         Fix run-javascriptcore-tests when there's a space in the path to
