@@ -183,6 +183,9 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         endX = size.width();
     int numColumns = endX - originX;
 
+    if (numColumns <= 0) 
+        return result;
+
     int originY = rect.y();
     int destY = 0;
     if (originY < 0) {
@@ -193,6 +196,9 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
     if (endY > size.height())
         endY = size.height();
     int numRows = endY - originY;
+
+    if (numRows <= 0) 
+        return result;
 
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
