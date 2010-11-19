@@ -884,6 +884,7 @@ fast/media/print-restores-previous-mediatype.html
 fast/multicol/hit-test-above-or-below.html
 
 # Needs progress element support
+# https://bugs.webkit.org/show_bug.cgi?id=49769
 fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
