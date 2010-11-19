@@ -702,6 +702,7 @@ webkit_soup_cache_entry_remove (WebKitSoupCache *cache, WebKitSoupCacheEntry *en
 		return FALSE;
 	}
 
+	g_assert (!entry->dirty);
 	g_assert (g_list_length (cache->priv->lru_start) == g_hash_table_size (cache->priv->cache));
 
 	/* Remove from cache */
@@ -965,16 +966,21 @@ msg_got_headers_cb (SoupMessage *msg, gpointer user_data)
 		entry = g_hash_table_lookup (cache->priv->cache, key);
 		g_free (key);
 
-		g_return_if_fail (entry);
+		/* It's possible to get a CACHE_VALIDATES with no
+		 * entry in the hash table. This could happen if for
+		 * example the soup client is the one creating the
+		 * conditional request.
+		 */
+		if (entry) {
+			entry->being_validated = FALSE;
 
-		entry->being_validated = FALSE;
-
-		/* We update the headers of the existing cache item,
-		   plus its age */
-		soup_message_headers_foreach (msg->response_headers,
-					      (SoupMessageHeadersForeachFunc)update_headers,
-					      entry->headers);
-		webkit_soup_cache_entry_set_freshness (entry, msg, cache);
+			/* We update the headers of the existing cache item,
+			   plus its age */
+			soup_message_headers_foreach (msg->response_headers,
+						      (SoupMessageHeadersForeachFunc)update_headers,
+						      entry->headers);
+			webkit_soup_cache_entry_set_freshness (entry, msg, cache);
+		}
 	}
 }
 
