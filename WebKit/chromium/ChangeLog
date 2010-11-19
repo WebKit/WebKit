@@ -1,3 +1,13 @@
+2010-11-19  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose default value of maxLength in Chromium API
+        https://bugs.webkit.org/show_bug.cgi?id=49723
+
+        * public/WebInputElement.h: Added constant defaultMaximumLength
+        * src/WebInputElement.cpp:
+
 2010-11-18  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
