@@ -303,6 +303,23 @@ class JSONResultsGeneratorBase(object):
 
         return JSONResultsGenerator.PASS_RESULT
 
+    def _get_result_char(self, test_name):
+        """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,
+        PASS_RESULT, NO_DATA_RESULT, etc) that indicates the test result
+        for the given test_name.
+        """
+        if test_name not in self._test_results_map:
+            return JSONResultsGenerator.NO_DATA_RESULT
+
+        test_result = self._test_results_map[test_name]
+        if test_result.modifier == TestResult.DISABLED:
+            return JSONResultsGenerator.SKIP_RESULT
+
+        if test_result.failed:
+            return JSONResultsGenerator.FAIL_RESULT
+
+        return JSONResultsGenerator.PASS_RESULT
+
     # FIXME: Callers should use scm.py instead.
     # FIXME: Identify and fix the run-time errors that were observed on Windows
     # chromium buildbot when we had updated this code to use scm.py once before.
@@ -484,7 +501,7 @@ class JSONResultsGeneratorBase(object):
           tests: Dictionary containing test result entries.
         """
 
-        result = self._get_modifier_char(test_name)
+        result = self._get_result_char(test_name)
         time = self._get_test_timing(test_name)
 
         if test_name not in tests:
