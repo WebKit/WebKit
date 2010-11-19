@@ -3210,3 +3210,18 @@ BUG_ANTONM WIN : editing/selection/5354455-1.html = FAIL
 BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
+// Next SVG change: http://trac.webkit.org/changeset/72381 .  Diffs should be fine, but let's suppress tests for now.
+BUG_ANTONM : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-appendItem.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-clear-and-initialize.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-cloning.html = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-insertItemBefore.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-removeItem.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-replaceItem.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/SVGPathSegList-xml-dom-synchronization2.xhtml = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/fuzz-path-parser.html = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/path-parser.html = IMAGE+TEXT IMAGE
+BUG_ANTONM : svg/dom/svglist-exception-on-out-bounds-error.html = IMAGE+TEXT IMAGE
+
