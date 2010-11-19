@@ -56,15 +56,6 @@ class JSONGeneratorTest(unittest.TestCase):
         self._FLAKY_tests = set([])
         self._FAILS_tests = set([])
 
-    def _get_test_modifier(self, test_name):
-        if test_name.startswith('DISABLED_'):
-            return json_results_generator.JSONResultsGenerator.SKIP_RESULT
-        elif test_name.startswith('FLAKY_'):
-            return json_results_generator.JSONResultsGenerator.FLAKY_RESULT
-        elif test_name.startswith('FAILS_'):
-            return json_results_generator.JSONResultsGenerator.FAIL_RESULT
-        return json_results_generator.JSONResultsGenerator.PASS_RESULT
-
     def _test_json_generation(self, passed_tests_list, failed_tests_list):
         tests_set = set(passed_tests_list) | set(failed_tests_list)
 
@@ -74,9 +65,9 @@ class JSONGeneratorTest(unittest.TestCase):
                            if t.startswith('FLAKY_')])
         FAILS_tests = set([t for t in tests_set
                            if t.startswith('FAILS_')])
-        PASS_tests = tests_set ^ (DISABLED_tests | FLAKY_tests | FAILS_tests)
+        PASS_tests = tests_set - (DISABLED_tests | FLAKY_tests | FAILS_tests)
 
-        passed_tests = set(passed_tests_list) ^ DISABLED_tests
+        passed_tests = set(passed_tests_list) - DISABLED_tests
         failed_tests = set(failed_tests_list)
 
         test_timings = {}
@@ -180,10 +171,10 @@ class JSONGeneratorTest(unittest.TestCase):
                 test = tests[test_name]
 
                 failed = 0
-                modifier = self._get_test_modifier(test_name)
                 for result in test[JRG.RESULTS]:
-                    if result[1] == modifier:
+                    if result[1] == JRG.FAIL_RESULT:
                         failed = result[0]
+
                 self.assertEqual(1, failed)
 
                 timing_count = 0
