@@ -34,3 +34,8 @@ WKTypeID WKURLRequestGetTypeID()
 {
     return toAPI(WebURLRequest::APIType);
 }
+
+WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
+{
+    return toAPI(WebURLRequest::create(toImpl(url)->string()).leakRef());
+}

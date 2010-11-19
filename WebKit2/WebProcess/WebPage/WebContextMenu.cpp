@@ -21,6 +21,7 @@
 
 #include "WebContextMenu.h"
 
+#include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -64,7 +65,8 @@ void WebContextMenu::show()
     Vector<WebContextMenuItemData> proposedMenu = kitItems(coreItems, menu);
     Vector<WebContextMenuItemData> newMenu;
     RefPtr<APIObject> userData;
-    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, 0, proposedMenu, newMenu, userData))
+    RefPtr<InjectedBundleHitTestResult> hitTestResult = InjectedBundleHitTestResult::create(menu->hitTestResult());
+    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, hitTestResult.get(), proposedMenu, newMenu, userData))
         proposedMenu = newMenu;
 
     // Notify the UIProcess.

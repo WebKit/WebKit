@@ -44,6 +44,8 @@ class WebURLRequest : public APIObject {
 public:
     static const Type APIType = TypeURLRequest;
 
+    static PassRefPtr<WebURLRequest> create(const WebCore::KURL&);
+
     static PassRefPtr<WebURLRequest> create(const WebCore::ResourceRequest& request)
     {
         return adoptRef(new WebURLRequest(request));

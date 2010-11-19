@@ -74,9 +74,29 @@ WebFrame* InjectedBundleHitTestResult::targetFrame() const
     return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 }
 
+String InjectedBundleHitTestResult::absoluteImageURL() const
+{
+    return m_hitTestResult.absoluteImageURL().string();
+}
+
 String InjectedBundleHitTestResult::absoluteLinkURL() const
 {
     return m_hitTestResult.absoluteLinkURL().string();
+}
+
+String InjectedBundleHitTestResult::absoluteMediaURL() const
+{
+    return m_hitTestResult.absoluteMediaURL().string();
+}
+
+WebCore::IntRect InjectedBundleHitTestResult::imageRect() const
+{
+    return m_hitTestResult.imageRect();
+}
+
+bool InjectedBundleHitTestResult::isSelected() const
+{
+    return m_hitTestResult.isSelected();
 }
 
 } // WebKit

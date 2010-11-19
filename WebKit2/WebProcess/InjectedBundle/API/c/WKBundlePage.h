@@ -206,6 +206,9 @@ WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePage
 WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
 WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
 
+WK_EXPORT bool WKBundlePageHasLocalDataForURL(WKBundlePageRef page, WKURLRef url);
+WK_EXPORT bool WKBundlePageCanHandleRequest(WKURLRequestRef request);
+
 #ifdef __cplusplus
 }
 #endif

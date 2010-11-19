@@ -29,6 +29,8 @@
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/ArchiveResource.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
@@ -189,6 +191,33 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     }
 
     return true;
+}
+
+bool WebPage::hasLocalDataForURL(const WebCore::KURL& url)
+{
+    if (url.isLocalFile())
+        return true;
+    
+    FrameLoader* frameLoader = m_page->mainFrame()->loader();
+    DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
+    if (documentLoader && documentLoader->subresource(url))
+        return true;
+
+    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
+    [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    [request release];
+    
+    return cachedResponse;
+}
+
+bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
+{
+    if ([NSURLConnection canHandleRequest:request.nsURLRequest()])
+        return YES;
+
+    // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
+    return request.url().protocolIs("applewebdata");
 }
 
 } // namespace WebKit

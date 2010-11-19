@@ -203,6 +203,10 @@ public:
 #endif
 
     WebContextMenu* contextMenu();
+    
+    bool hasLocalDataForURL(const WebCore::KURL&);
+    
+    static bool canHandleRequest(const WebCore::ResourceRequest&);
 
     class SandboxExtensionTracker {
     public:

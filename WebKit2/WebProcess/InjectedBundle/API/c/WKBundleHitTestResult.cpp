@@ -53,7 +53,28 @@ WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hi
     return toAPI(toImpl(hitTestResultRef)->targetFrame());
 }
 
+WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteImageURL());
+}
+
 WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteLinkURL());
+}
+
+WKURLRef WKBundleHitTestResultCopyAbsoluteMediaURL(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteMediaURL());
+}
+
+WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toAPI(toImpl(hitTestResultRef)->imageRect());
+}
+
+bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toImpl(hitTestResultRef)->isSelected();
+
 }

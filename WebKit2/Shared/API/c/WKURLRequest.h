@@ -34,6 +34,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKURLRequestGetTypeID();
 
+WK_EXPORT WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef);
+
 #ifdef __cplusplus
 }
 #endif

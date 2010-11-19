@@ -27,6 +27,7 @@
 #define WKBundleHitTestResult_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,9 +36,16 @@ extern "C" {
 WK_EXPORT WKTypeID WKBundleHitTestResultGetTypeID();
 
 WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultGetNodeHandle(WKBundleHitTestResultRef hitTestResult);
+
 WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResult);
+
+WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteMediaURL(WKBundleHitTestResultRef hitTestResult);
+
+WK_EXPORT WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResult);
 
 #ifdef __cplusplus
 }

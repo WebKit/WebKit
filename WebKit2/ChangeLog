@@ -1,3 +1,53 @@
+2010-11-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=49836
+        Add WebKit2 API relevant to customization of context menus
+
+        Most of this is just exposing already-existing concepts in API.
+
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestCreateWithWKURL):
+        * Shared/API/c/WKURLRequest.h:
+
+        * Shared/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::create):
+        * Shared/WebURLRequest.h:
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyAbsoluteImageURL):
+        (WKBundleHitTestResultCopyAbsoluteMediaURL):
+        (WKBundleHitTestResultGetImageRect):
+        (WKBundleHitTestResultGetIsSelected):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageHasLocalDataForURL):
+        (WKBundlePageCanHandleRequest):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::absoluteImageURL):
+        (WebKit::InjectedBundleHitTestResult::absoluteMediaURL):
+        (WebKit::InjectedBundleHitTestResult::imageRect):
+        (WebKit::InjectedBundleHitTestResult::isSelected):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::hasLocalDataForURL):
+        (WebKit::WebPage::canHandleRequest):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::hasLocalDataForURL): Stubbed for now.
+        (WebKit::WebPage::canHandleRequest): Ditto.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::hasLocalDataForURL): Ditto.
+        (WebKit::WebPage::canHandleRequest): Ditto.
+
 2010-11-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

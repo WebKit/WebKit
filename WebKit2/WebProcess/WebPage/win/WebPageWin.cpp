@@ -229,4 +229,16 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
+bool WebPage::hasLocalDataForURL(const WebCore::KURL&)
+{
+    // FIXME <rdar://problem/8608754>: Implement
+    return false;
+}
+
+bool WebPage::canHandleRequest(const WebCore::ResourceRequest&)
+{
+    // FIXME <rdar://problem/8608754>: Implement
+    return true;
+}
+
 } // namespace WebKit
