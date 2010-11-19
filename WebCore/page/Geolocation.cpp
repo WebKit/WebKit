@@ -522,6 +522,30 @@ void Geolocation::cancelAllRequests()
     cancelRequests(copy);
 }
 
+void Geolocation::extractNotifiersWithCachedPosition(GeoNotifierVector& notifiers, GeoNotifierVector* cached)
+{
+    GeoNotifierVector nonCached;
+    GeoNotifierVector::iterator end = notifiers.end();
+    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
+        GeoNotifier* notifier = it->get();
+        if (notifier->m_useCachedPosition) {
+            if (cached)
+                cached->append(notifier);
+        } else
+            nonCached.append(notifier);
+    }
+    notifiers.swap(nonCached);
+}
+
+void Geolocation::copyToSet(const GeoNotifierVector& src, GeoNotifierSet& dest)
+{
+     GeoNotifierVector::const_iterator end = src.end();
+     for (GeoNotifierVector::const_iterator it = src.begin(); it != end; ++it) {
+         GeoNotifier* notifier = it->get();
+         dest.add(notifier);
+     }
+}
+
 void Geolocation::handleError(PositionError* error)
 {
     ASSERT(error);
@@ -535,15 +559,27 @@ void Geolocation::handleError(PositionError* error)
     // Clear the lists before we make the callbacks, to avoid clearing notifiers
     // added by calls to Geolocation methods from the callbacks, and to prevent
     // further callbacks to these notifiers.
+    GeoNotifierVector oneShotsWithCachedPosition;
     m_oneShots.clear();
     if (error->isFatal())
         m_watchers.clear();
+    else {
+        // Don't send non-fatal errors to notifiers due to receive a cached position.
+        extractNotifiersWithCachedPosition(oneShotsCopy, &oneShotsWithCachedPosition);
+        extractNotifiersWithCachedPosition(watchersCopy, 0);
+    }
 
     sendError(oneShotsCopy, error);
     sendError(watchersCopy, error);
 
+    // hasListeners() doesn't distinguish between notifiers due to receive a
+    // cached position and those requiring a fresh position. Perform the check
+    // before restoring the notifiers below.
     if (!hasListeners())
         stopUpdating();
+
+    // Maintain a reference to the cached notifiers until their timer fires.
+    copyToSet(oneShotsWithCachedPosition, m_oneShots);
 }
 
 void Geolocation::requestPermission()
