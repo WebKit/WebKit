@@ -1,3 +1,11 @@
+2010-11-19  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Remove DOMSVGAnimatedPathData.h from all: target to fix build.
+
+        * MigrateHeaders.make:
+
 2010-11-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

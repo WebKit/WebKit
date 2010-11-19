@@ -221,7 +221,6 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAnimatedNumberInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAnimatedNumberList.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAnimatedNumberListInternal.h \
-    $(PRIVATE_HEADERS_DIR)/DOMSVGAnimatedPathData.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAnimatedPreserveAspectRatio.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAnimatedPreserveAspectRatioInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAnimatedRect.h \

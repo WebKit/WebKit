@@ -38,7 +38,6 @@
 #import <WebCore/DOMSVGAnimatedLengthList.h>
 #import <WebCore/DOMSVGAnimatedNumber.h>
 #import <WebCore/DOMSVGAnimatedNumberList.h>
-#import <WebCore/DOMSVGAnimatedPathData.h>
 #import <WebCore/DOMSVGAnimatedPreserveAspectRatio.h>
 #import <WebCore/DOMSVGAnimatedRect.h>
 #import <WebCore/DOMSVGAnimatedString.h>
