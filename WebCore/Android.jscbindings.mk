@@ -115,10 +115,12 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSHTMLFrameElementCustom.cpp \
 	bindings/js/JSHTMLFrameSetElementCustom.cpp \
 	bindings/js/JSHTMLInputElementCustom.cpp \
+	bindings/js/JSHTMLLinkElementCustom.cpp \
 	bindings/js/JSHTMLObjectElementCustom.cpp \
 	bindings/js/JSHTMLOptionsCollectionCustom.cpp \
 	bindings/js/JSHTMLOutputElementCustom.cpp \
 	bindings/js/JSHTMLSelectElementCustom.cpp \
+	bindings/js/JSHTMLStyleElementCustom.cpp \
 	bindings/js/JSHistoryCustom.cpp \
 	bindings/js/JSIDBAnyCustom.cpp \
 	bindings/js/JSIDBKeyCustom.cpp \
@@ -142,6 +144,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSPluginArrayCustom.cpp \
 	bindings/js/JSPluginCustom.cpp \
 	bindings/js/JSPluginElementFunctions.cpp \
+	bindings/js/JSProcessingInstructionCustom.cpp \
 	bindings/js/JSSQLResultSetRowListCustom.cpp \
 	bindings/js/JSSQLTransactionCustom.cpp \
 	bindings/js/JSSVGElementInstanceCustom.cpp \

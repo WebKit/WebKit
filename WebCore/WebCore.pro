@@ -531,10 +531,12 @@ v8 {
         bindings/js/JSHTMLFrameElementCustom.cpp \
         bindings/js/JSHTMLFrameSetElementCustom.cpp \
         bindings/js/JSHTMLInputElementCustom.cpp \
+        bindings/js/JSHTMLLinkElementCustom.cpp \
         bindings/js/JSHTMLObjectElementCustom.cpp \
         bindings/js/JSHTMLOptionsCollectionCustom.cpp \
         bindings/js/JSHTMLOutputElementCustom.cpp \
         bindings/js/JSHTMLSelectElementCustom.cpp \
+        bindings/js/JSHTMLStyleElementCustom.cpp \
         bindings/js/JSImageConstructor.cpp \
         bindings/js/JSImageDataCustom.cpp \
         bindings/js/JSInjectedScriptHostCustom.cpp \
@@ -572,6 +574,7 @@ v8 {
         bindings/js/JSMainThreadExecState.cpp \
         bindings/js/JSPluginElementFunctions.cpp \
         bindings/js/JSPopStateEventCustom.cpp \
+        bindings/js/JSProcessingInstructionCustom.cpp \
         bindings/js/JSWorkerContextErrorHandler.cpp \
         bindings/js/ScriptCachedFrameData.cpp \
         bindings/js/ScriptCallStackFactory.cpp \

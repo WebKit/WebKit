@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLStyleElement : HTMLElement {
+    interface [CustomMarkFunction] HTMLStyleElement : HTMLElement {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] DOMString media;
         attribute [Reflect] DOMString type;

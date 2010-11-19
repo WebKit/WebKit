@@ -632,10 +632,12 @@ SET(WebCore_SOURCES
     bindings/js/JSHTMLFrameElementCustom.cpp
     bindings/js/JSHTMLFrameSetElementCustom.cpp
     bindings/js/JSHTMLInputElementCustom.cpp
+    bindings/js/JSHTMLLinkElementCustom.cpp
     bindings/js/JSHTMLObjectElementCustom.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
     bindings/js/JSHTMLOutputElementCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp
+    bindings/js/JSHTMLStyleElementCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
@@ -660,6 +662,7 @@ SET(WebCore_SOURCES
     bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
+    bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp
     bindings/js/JSSharedWorkerCustom.cpp
     bindings/js/JSSQLResultSetRowListCustom.cpp

@@ -5395,6 +5395,13 @@
 		E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */; };
 		E1ACAF4C0E791AAF0087D12B /* DOMMessagePort.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */; };
 		E1ACAF4D0E791AAF0087D12B /* DOMMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */; };
+		E1AD12D61295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */; };
+		E1AD139B1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */; };
+		E1AD139E1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD139D1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp */; };
+		E1AD141E1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */; };
+		E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */; };
+		E1AD14231295EA7F00ACA989 /* JSHTMLInputElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14221295EA7F00ACA989 /* JSHTMLInputElementCustom.h */; };
+		E1AD14251295EA9500ACA989 /* JSHTMLObjectElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */; };
 		E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1ADECC00E76ACF1004A1A5E /* MessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */; };
 		E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */; };
@@ -11459,6 +11466,13 @@
 		E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptController.cpp; sourceTree = "<group>"; };
 		E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessagePort.mm; sourceTree = "<group>"; };
 		E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePort.h; sourceTree = "<group>"; };
+		E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProcessingInstructionCustom.cpp; sourceTree = "<group>"; };
+		E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLinkElementCustom.cpp; sourceTree = "<group>"; };
+		E1AD139D1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLStyleElementCustom.cpp; sourceTree = "<group>"; };
+		E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAppletElementCustom.h; sourceTree = "<group>"; };
+		E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLEmbedElementCustom.h; sourceTree = "<group>"; };
+		E1AD14221295EA7F00ACA989 /* JSHTMLInputElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElementCustom.h; sourceTree = "<group>"; };
+		E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLObjectElementCustom.h; sourceTree = "<group>"; };
 		E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = MessagePort.h; sourceTree = "<group>"; };
 		E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePort.cpp; sourceTree = "<group>"; };
 		E1ADECC60E76AD1F004A1A5E /* MessagePort.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessagePort.idl; sourceTree = "<group>"; };
@@ -17083,21 +17097,27 @@
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
+				E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */,
 				9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BCBCAE530FF1A29E000762AE /* JSHTMLDataGridElementCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */,
+				E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */,
 				A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */,
 				BC2ED7A40C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp */,
 				BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */,
 				BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */,
+				E1AD14221295EA7F00ACA989 /* JSHTMLInputElementCustom.h */,
+				E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */,
 				BC305CA30C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp */,
+				E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */,
 				448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */,
 				4AD00FFF127E63100015035F /* JSHTMLOutputElementCustom.cpp */,
 				BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */,
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
+				E1AD139D1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp */,
 				C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */,
 				C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
@@ -17120,6 +17140,7 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				5189F01710B3781300F3C739 /* JSPopStateEventCustom.cpp */,
+				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				9FA37EE61172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
@@ -21338,6 +21359,10 @@
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,
+				E1AD141E1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h in Headers */,
+				E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */,
+				E1AD14231295EA7F00ACA989 /* JSHTMLInputElementCustom.h in Headers */,
+				E1AD14251295EA9500ACA989 /* JSHTMLObjectElementCustom.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23904,6 +23929,9 @@
 				499B3C5A128C641E00E726C2 /* GraphicsLayerMac.mm in Sources */,
 				3888F6EE128C9889000CA8E0 /* InspectorFileSystemAgent.cpp in Sources */,
 				BCAE1FA612939DB7004CB026 /* ScrollAnimatorMac.cpp in Sources */,
+				E1AD12D61295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp in Sources */,
+				E1AD139B1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp in Sources */,
+				E1AD139E1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -746,12 +746,14 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLFrameSetElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLInputElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLInputElementCustom.h \
+	WebCore/bindings/js/JSHTMLLinkElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.h \
 	WebCore/bindings/js/JSHTMLOptionsCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLOutputElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.h \
+	WebCore/bindings/js/JSHTMLStyleElementCustom.cpp \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSImageConstructor.h \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
@@ -782,6 +784,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
+	WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
 	WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
 	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
