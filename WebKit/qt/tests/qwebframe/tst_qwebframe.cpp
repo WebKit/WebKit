@@ -1566,26 +1566,26 @@ void tst_QWebFrame::connectAndDisconnect()
         QString type;
         QString ret = evalJS("(function() { }).connect()", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function (evaluating '(function() { }).connect()')"));
+        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function"));
     }
     {
         QString type;
         QString ret = evalJS("var o = { }; o.connect = Function.prototype.connect;  o.connect()", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function (evaluating 'o.connect()')"));
+        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function"));
     }
 
     {
         QString type;
         QString ret = evalJS("(function() { }).connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function (evaluating '(function() { }).connect(123)')"));
+        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function"));
     }
     {
         QString type;
         QString ret = evalJS("var o = { }; o.connect = Function.prototype.connect;  o.connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function (evaluating 'o.connect(123)')"));
+        QCOMPARE(ret, QLatin1String("TypeError: 'undefined' is not a function"));
     }
 
     {

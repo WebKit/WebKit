@@ -1,3 +1,9 @@
+2010-11-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix - update error messages folllowing r72360.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-11-12  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
