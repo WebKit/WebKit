@@ -220,17 +220,65 @@ RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(parentRuby->style());
     newStyle->setDisplay(INLINE_BLOCK);
-    if (parentRuby->style()->isFlippedLinesWritingMode()) {
-        // Ruby text is always in the line direction, so invert our block flow relative to the parent to
-        // ensure that the Ruby ends up on the correct side.
-        if (parentRuby->style()->isHorizontalWritingMode())
-            newStyle->setWritingMode(TopToBottomWritingMode);
-        else
-            newStyle->setWritingMode(RightToLeftWritingMode);
-    }
-
     rr->setStyle(newStyle.release());
     return rr;
+}
+
+RenderObject* RenderRubyRun::layoutSpecialExcludedChild(bool relayoutChildren)
+{
+    // Don't bother positioning the RenderRubyRun yet.
+    RenderRubyText* rt = rubyText();
+    if (!rt)
+        return 0;
+    if (relayoutChildren)
+        rt->setChildNeedsLayout(true, false);
+    rt->layoutIfNeeded();
+    return rt;
+}
+
+void RenderRubyRun::layout()
+{
+    RenderBlock::layout();
+    
+    // Place the RenderRubyText such that its bottom is flush with the lineTop of the first line of the RenderRubyBase.
+    RenderRubyText* rt = rubyText();
+    if (!rt)
+        return;
+    
+    int lastLineRubyTextBottom = rt->logicalHeight();
+    int firstLineRubyTextTop = 0;
+    RootInlineBox* rootBox = rt->lastRootBox();
+    if (rootBox) {
+        // In order to align, we have to ignore negative leading.
+        firstLineRubyTextTop = rt->firstRootBox()->lineTop();
+        lastLineRubyTextBottom = rootBox->lineBottom();
+    }
+
+    if (!style()->isFlippedLinesWritingMode()) {
+        int firstLineTop = 0;
+        if (RenderRubyBase* rb = rubyBase()) {
+            RootInlineBox* rootBox = rb->firstRootBox();
+            if (rootBox)
+                firstLineTop = rootBox->lineTop();
+            firstLineTop += rb->logicalTop();
+        }
+        
+        rt->setLogicalTop(-lastLineRubyTextBottom + firstLineTop);
+    } else {
+        int lastLineBottom = logicalHeight();
+        if (RenderRubyBase* rb = rubyBase()) {
+            RootInlineBox* rootBox = rb->lastRootBox();
+            if (rootBox)
+                lastLineBottom = rootBox->lineBottom();
+            lastLineBottom += rb->logicalTop();
+        }
+
+        rt->setLogicalTop(-firstLineRubyTextTop + lastLineBottom);
+    }
+
+    // Update our overflow to account for the new RenderRubyText position.
+    m_overflow.clear();
+    addOverflowFromBlockChildren();
 }
 
 } // namespace WebCore

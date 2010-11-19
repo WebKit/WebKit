@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,13) size 155x18
           text run at (0,13) width 155: "<ruby> is defined in the "
         RenderRuby (inline) {RUBY} at (0,0) size 142x18
-          RenderRubyRun (anonymous) at (155,0) size 42x31
-            RenderRubyText {RT} at (0,0) size 42x13
+          RenderRubyRun (anonymous) at (155,13) size 42x18
+            RenderRubyText {RT} at (0,-13) size 42x13
               RenderText {#text} at (0,0) size 42x13
                 text run at (0,0) width 42: "Hyper-text"
-            RenderRubyBase (anonymous) at (0,13) size 42x18
+            RenderRubyBase (anonymous) at (0,0) size 42x18
               RenderInline {SPAN} at (0,0) size 22x18
                 RenderText {#text} at (10,0) size 22x18
                   text run at (10,0) width 22: "HT"
-          RenderRubyRun (anonymous) at (197,0) size 100x31
-            RenderRubyText {RT} at (0,0) size 100x13
+          RenderRubyRun (anonymous) at (197,13) size 100x18
+            RenderRubyText {RT} at (0,-13) size 100x13
               RenderText {#text} at (0,0) size 100x13
                 text run at (0,0) width 100: "Markup Language Lvl. 5"
-            RenderRubyBase (anonymous) at (0,13) size 100x18
+            RenderRubyBase (anonymous) at (0,0) size 100x18
               RenderInline {SPAN} at (0,0) size 14x18
                 RenderText {#text} at (34,0) size 14x18
                   text run at (34,0) width 14: "M"

@@ -38,7 +38,7 @@ private:
     virtual const char* renderName() const { return "RenderFieldSet"; }
     virtual bool isFieldset() const { return true; }
 
-    virtual RenderObject* layoutLegend(bool relayoutChildren);
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 
     virtual void computePreferredLogicalWidths();
     virtual bool avoidsFloats() const { return true; }

@@ -120,6 +120,13 @@ public:
         else
             adjustPosition(0, delta);
     }
+    void adjustBlockDirectionPosition(int delta)
+    {
+        if (isHorizontal())
+            adjustPosition(0, delta);
+        else
+            adjustPosition(delta, 0);
+    }
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);

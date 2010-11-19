@@ -908,8 +908,16 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
         }
     }
 
+    // Expand the last line to accommodate Ruby in flipped lines writing modes (the Ruby is on
+    // the after side in this case).
+    int lastLineRubyAdjustment = 0;
+    if (lastRootBox() && style()->isFlippedLinesWritingMode()) {
+        int lowestAllowedPosition = max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
+        lastLineRubyAdjustment = lastRootBox()->computeBlockDirectionRubyAdjustment(lowestAllowedPosition);
+    }
+    
     // Now add in the bottom border/padding.
-    setLogicalHeight(logicalHeight() + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
+    setLogicalHeight(logicalHeight() + lastLineRubyAdjustment + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
 
     if (!firstLineBox() && hasLineIfEmpty())
         setLogicalHeight(logicalHeight() + lineHeight(true, style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));

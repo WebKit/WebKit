@@ -160,10 +160,12 @@ public:
                                   bool strictMode, GlyphOverflowAndFallbackFontsMap&, FontBaseline, VerticalPositionCache&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
-    void placeBoxesInBlockDirection(int logicalTop, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop, FontBaseline);
+    void placeBoxesInBlockDirection(int logicalTop, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
+                                    int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& containsRuby, FontBaseline);
     void flipLinesInBlockDirection(int lineTop, int lineBottom);
     void computeBlockDirectionOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     bool requiresIdeographicBaseline(const GlyphOverflowAndFallbackFontsMap&) const;
+    int computeBlockDirectionRubyAdjustment(int allowedPosition) const;
     
     void removeChild(InlineBox* child);
 

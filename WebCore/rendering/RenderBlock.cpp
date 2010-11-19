@@ -1772,10 +1772,9 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatLogica
     MarginInfo marginInfo(this, beforeEdge, afterEdge);
 
     // Fieldsets need to find their legend and position it inside the border of the object.
-    // The legend then gets skipped during normal layout.
-    // FIXME: Make fieldsets work with block-flow.
-    // https://bugs.webkit.org/show_bug.cgi?id=46785
-    RenderObject* legend = layoutLegend(relayoutChildren);
+    // The legend then gets skipped during normal layout.  The same is true for ruby text.
+    // It doesn't get included in the normal layout process but is instead skipped.
+    RenderObject* childToExclude = layoutSpecialExcludedChild(relayoutChildren);
 
     int previousFloatLogicalBottom = 0;
     maxFloatLogicalBottom = 0;
@@ -1786,8 +1785,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatLogica
         RenderBox* child = next;
         next = child->nextSiblingBox();
 
-        if (legend == child)
-            continue; // Skip the legend, since it has already been positioned up in the fieldset's border.
+        if (childToExclude == child)
+            continue; // Skip this child, since it will be positioned by the specialized subclass (fieldsets and ruby runs).
 
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into

@@ -16,11 +16,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 155x18
           text run at (0,0) width 155: "<ruby> is defined in the "
         RenderRuby (inline) {RUBY} at (0,0) size 125x18
-          RenderRubyRun (anonymous) at (155,4) size 117x13
-            RenderRubyText {RT} at (0,0) size 117x13
+          RenderRubyRun (anonymous) at (155,17) size 117x0
+            RenderRubyText {RT} at (0,-13) size 117x13
               RenderText {#text} at (0,0) size 117x13
                 text run at (0,0) width 117: "Hyper-text Markup Language"
-            RenderRubyBase (anonymous) at (0,13) size 117x0
+            RenderRubyBase (anonymous) at (0,0) size 117x0
           RenderRubyRun (anonymous) at (272,0) size 8x18
             RenderRubyBase (anonymous) at (0,0) size 8x18
               RenderText {#text} at (0,0) size 8x18
@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 155x18
           text run at (0,0) width 155: "<ruby> is defined in the "
         RenderRuby (inline) {RUBY} at (0,0) size 125x18
-          RenderRubyRun (anonymous) at (155,4) size 117x13
-            RenderRubyText {RT} at (0,0) size 117x13
+          RenderRubyRun (anonymous) at (155,17) size 117x0
+            RenderRubyText {RT} at (0,-13) size 117x13
               RenderText {#text} at (0,0) size 117x13
                 text run at (0,0) width 117: "Hyper-text Markup Language"
           RenderRubyRun (anonymous) at (272,0) size 8x18

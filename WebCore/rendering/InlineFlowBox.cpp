@@ -32,6 +32,9 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
+#include "RenderRubyBase.h"
+#include "RenderRubyRun.h"
+#include "RenderRubyText.h"
 #include "RenderTableCell.h"
 #include "RootInlineBox.h"
 #include "Text.h"
@@ -620,7 +623,8 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
     }
 }
 
-void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop, FontBaseline baselineType)
+void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
+                                               int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& containsRuby, FontBaseline baselineType)
 {
     if (isRootInlineBox())
         setLogicalTop(top + maxAscent - baselinePosition(baselineType)); // Place our root box.
@@ -633,7 +637,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         // line-height).
         bool isInlineFlow = curr->isInlineFlowBox();
         if (isInlineFlow)
-            static_cast<InlineFlowBox*>(curr)->placeBoxesInBlockDirection(top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, baselineType);
+            static_cast<InlineFlowBox*>(curr)->placeBoxesInBlockDirection(top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop,
+                                                                          lineTopIncludingMargins, lineBottomIncludingMargins, containsRuby, baselineType);
 
         bool childAffectsTopBottomPos = true;
         if (curr->logicalTop() == PositionTop)
@@ -648,6 +653,10 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         }
         
         int newLogicalTop = curr->logicalTop();
+        int newLogicalTopIncludingMargins;
+        int boxHeight = curr->logicalHeight();
+        int boxHeightIncludingMargins = boxHeight;
+            
         if (curr->isText() || curr->isInlineFlowBox()) {
             const Font& font = curr->renderer()->style(m_firstLine)->font();
             newLogicalTop += curr->baselinePosition(baselineType) - font.ascent(baselineType);
@@ -656,21 +665,43 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
                 newLogicalTop -= boxObject->style(m_firstLine)->isHorizontalWritingMode() ? boxObject->borderTop() + boxObject->paddingTop() : 
                                  boxObject->borderRight() + boxObject->paddingRight();
             }
+            newLogicalTopIncludingMargins = newLogicalTop;
         } else if (!curr->renderer()->isBR()) {
             RenderBox* box = toRenderBox(curr->renderer());
-            newLogicalTop += box->style(m_firstLine)->isHorizontalWritingMode() ? box->marginTop() : box->marginRight();
+            newLogicalTopIncludingMargins = newLogicalTop;
+            int overSideMargin = curr->isHorizontal() ? box->marginTop() : box->marginRight();
+            int underSideMargin = curr->isHorizontal() ? box->marginBottom() : box->marginLeft();
+            newLogicalTop += overSideMargin;
+            boxHeightIncludingMargins += overSideMargin + underSideMargin;
         }
 
         curr->setLogicalTop(newLogicalTop);
 
         if (childAffectsTopBottomPos) {
-            int boxHeight = curr->logicalHeight();
+            if (curr->renderer()->isRubyRun()) {
+                // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
+                // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
+                // inline-block.
+                containsRuby = true;
+                RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
+                if (RenderRubyBase* rubyBase = rubyRun->rubyBase()) {
+                    int bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0);
+                    int topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0);
+                    newLogicalTop += !renderer()->style()->isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
+                    boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
+                }
+            }
+            
             if (!setLineTop) {
                 setLineTop = true;
                 lineTop = newLogicalTop;
-            } else
+                lineTopIncludingMargins = min(lineTop, newLogicalTopIncludingMargins);
+            } else {
                 lineTop = min(lineTop, newLogicalTop);
+                lineTopIncludingMargins = min(lineTop, min(lineTopIncludingMargins, newLogicalTopIncludingMargins));
+            }
             lineBottom = max(lineBottom, newLogicalTop + boxHeight);
+            lineBottomIncludingMargins = max(lineBottom, max(lineBottomIncludingMargins, newLogicalTopIncludingMargins + boxHeightIncludingMargins));
         }
     }
 
@@ -682,13 +713,17 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
             if (!setLineTop) {
                 setLineTop = true;
                 lineTop = logicalTop();
-            } else
+                lineTopIncludingMargins = lineTop;
+            } else {
                 lineTop = min(lineTop, logicalTop());
+                lineTopIncludingMargins = min(lineTop, lineTopIncludingMargins);
+            }
             lineBottom = max(lineBottom, logicalTop() + logicalHeight());
+            lineBottomIncludingMargins = max(lineBottom, lineBottomIncludingMargins);
         }
         
         if (renderer()->style()->isFlippedLinesWritingMode())
-            flipLinesInBlockDirection(lineTop, lineBottom);
+            flipLinesInBlockDirection(lineTopIncludingMargins, lineBottomIncludingMargins);
     }
 }
 
@@ -1168,6 +1203,40 @@ void InlineFlowBox::clearTruncation()
 {
     for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
         box->clearTruncation();
+}
+
+int InlineFlowBox::computeBlockDirectionRubyAdjustment(int allowedPosition) const
+{
+    int result = 0;
+    for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->renderer()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+        
+        if (curr->isInlineFlowBox())
+            result = max(result, static_cast<InlineFlowBox*>(curr)->computeBlockDirectionRubyAdjustment(allowedPosition));
+        
+        if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun()) {
+            RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
+            RenderRubyText* rubyText = rubyRun->rubyText();
+            if (!rubyText)
+                continue;
+            
+            if (!rubyRun->style()->isFlippedLinesWritingMode()) {
+                int topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : 0);
+                if (topOfFirstRubyTextLine >= 0)
+                    continue;
+                topOfFirstRubyTextLine += curr->logicalTop();
+                result = max(result, allowedPosition - topOfFirstRubyTextLine);
+            } else {
+                int bottomOfLastRubyTextLine = rubyText->logicalTop() + (rubyText->lastRootBox() ? rubyText->lastRootBox()->lineBottom() : rubyText->logicalHeight());
+                if (bottomOfLastRubyTextLine <= curr->logicalHeight())
+                    continue;
+                bottomOfLastRubyTextLine += curr->logicalTop();
+                result = max(result, bottomOfLastRubyTextLine - allowedPosition);
+            }
+        }
+    }
+    return result;
 }
 
 #ifndef NDEBUG
