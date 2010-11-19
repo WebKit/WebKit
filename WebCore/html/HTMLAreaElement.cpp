@@ -23,6 +23,7 @@
 #include "HTMLAreaElement.h"
 
 #include "Attribute.h"
+#include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
@@ -98,6 +99,13 @@ Path HTMLAreaElement::getPath(RenderObject* obj) const
         size = obj->absoluteOutlineBounds().size();
     
     Path p = getRegion(size);
+    float zoomFactor = document()->frame()->pageZoomFactor();
+    if (zoomFactor != 1.0f) {
+        AffineTransform zoomTransform;
+        zoomTransform.scale(zoomFactor);
+        p.transform(zoomTransform);
+    }
+
     p.translate(absPos - FloatPoint());
     return p;
 }
