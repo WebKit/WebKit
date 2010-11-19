@@ -27,6 +27,7 @@
 #define WebProcessCreationParameters_h
 
 #include "CacheModel.h"
+#include "SandboxExtension.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,9 +49,7 @@ struct WebProcessCreationParameters {
     static bool decode(CoreIPC::ArgumentDecoder*, WebProcessCreationParameters&);
 
     String injectedBundlePath;
-#if ENABLE(WEB_PROCESS_SANDBOX)
-    String injectedBundlePathToken;
-#endif
+    SandboxExtension::Handle injectedBundlePathExtensionHandle;
 
     String applicationCacheDirectory;
     Vector<String> urlSchemesRegistererdAsEmptyDocument;

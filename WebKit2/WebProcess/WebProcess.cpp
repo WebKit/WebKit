@@ -128,9 +128,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     if (!parameters.injectedBundlePath.isEmpty()) {
         m_injectedBundle = InjectedBundle::create(parameters.injectedBundlePath);
-#if ENABLE(WEB_PROCESS_SANDBOX)
-        m_injectedBundle->setSandboxToken(parameters.injectedBundlePathToken);
-#endif
+        m_injectedBundle->setSandboxExtension(SandboxExtension::create(parameters.injectedBundlePathExtensionHandle));
+
         if (!m_injectedBundle->load(injectedBundleInitializationUserData.get())) {
             // Don't keep around the InjectedBundle reference if the load fails.
             m_injectedBundle.clear();

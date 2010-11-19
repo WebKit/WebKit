@@ -40,9 +40,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(injectedBundlePath);
-#if ENABLE(WEB_PROCESS_SANDBOX)
-    encoder->encode(injectedBundlePathToken);
-#endif
+    encoder->encode(injectedBundlePathExtensionHandle);
 
     encoder->encode(applicationCacheDirectory);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
@@ -63,10 +61,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 {
     if (!decoder->decode(parameters.injectedBundlePath))
         return false;
-#if ENABLE(WEB_PROCESS_SANDBOX)
-    if (!decoder->decode(parameters.injectedBundlePathToken))
+    if (!decoder->decode(parameters.injectedBundlePathExtensionHandle))
         return false;
-#endif
 
     if (!decoder->decode(parameters.applicationCacheDirectory))
         return false;
