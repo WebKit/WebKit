@@ -43,7 +43,6 @@
 #include "Document.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
-#include "HTMLNames.h"
 #include "HighPass2FilterNode.h"
 #include "JavaScriptAudioNode.h"
 #include "LowPass2FilterNode.h"
