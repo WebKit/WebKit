@@ -228,7 +228,9 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
         return true;
     if (!m_pattern || !other.m_pattern)
         return false;
-    return FcPatternEqual(m_pattern.get(), other.m_pattern.get());
+    return FcPatternEqual(m_pattern.get(), other.m_pattern.get())
+        && m_scaledFont == other.m_scaledFont && m_size == other.m_size
+        && m_syntheticOblique == other.m_syntheticOblique && m_syntheticBold == other.m_syntheticBold; 
 }
 
 #ifndef NDEBUG
