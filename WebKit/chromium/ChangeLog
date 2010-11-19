@@ -1,5 +1,11 @@
 2010-11-19  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, updating Chromium DEPS to try and fix the chromium win build.
+
+        * DEPS: r66792
+
+2010-11-19  Tony Chang  <tony@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] Enable webkit's TestNetscapePlugIn for DRT on win and linux
