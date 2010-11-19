@@ -102,12 +102,13 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!framePixmap) // If it's too early we won't have an image yet.
         return;
 
+    // Qt interprets 0 width/height as full width/height so just short circuit.
     QRectF dr = QRectF(destRect).normalized();
-    if (!dr.width() || !dr.height()) // Qt interprets 0 width/height as full width/height so just short circuit.
+    QRect tr = QRectF(tileRect).toRect().normalized();
+    if (!dr.width() || !dr.height() || !tr.width() || !tr.height())
         return;
 
     QPixmap pixmap = *framePixmap;
-    QRect tr = QRectF(tileRect).toRect().normalized();
     if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
         pixmap = pixmap.copy(tr);
 
