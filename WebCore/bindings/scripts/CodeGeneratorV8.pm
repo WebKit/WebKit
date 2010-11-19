@@ -2533,8 +2533,6 @@ sub GetDomMapFunction
     my $type = shift;
     return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
     return "getDOMNodeMap()" if ($dataNode && IsNodeSubType($dataNode));
-    # Only use getDOMSVGObjectWithContextMap() for non-node svg objects
-    return "getDOMSVGObjectWithContextMap()" if $type =~ /SVG/ and not $codeGenerator->IsSVGTypeNeedingTearOff($type) and not $codeGenerator->IsSVGAnimatedType($type);
     return "" if $type eq "DOMImplementation";
     return "getActiveDOMObjectMap()" if IsActiveDomType($type);
     return "getDOMObjectMap()";

@@ -41,7 +41,6 @@ ScopedDOMDataStore::ScopedDOMDataStore(DOMData* domData)
     m_activeDomObjectMap = new DOMWrapperMap<void>(&DOMDataStore::weakActiveDOMObjectCallback);
 #if ENABLE(SVG)
     m_domSvgElementInstanceMap = new DOMWrapperMap<SVGElementInstance>(&DOMDataStore::weakSVGElementInstanceCallback);
-    m_domSvgObjectWithContextMap = new DOMWrapperMap<void>(&DOMDataStore::weakSVGObjectWithContextCallback);
 #endif
 }
 
@@ -52,7 +51,6 @@ ScopedDOMDataStore::~ScopedDOMDataStore()
     delete m_activeDomObjectMap;
 #if ENABLE(SVG)
     delete m_domSvgElementInstanceMap;
-    delete m_domSvgObjectWithContextMap;
 #endif
 }
 

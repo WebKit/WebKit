@@ -156,8 +156,7 @@ namespace WebCore {
             DOMObjectMap,
             ActiveDOMObjectMap,
 #if ENABLE(SVG)
-            DOMSVGElementInstanceMap,
-            DOMSVGObjectWithContextMap
+            DOMSVGElementInstanceMap
 #endif
         };
 
@@ -251,7 +250,6 @@ namespace WebCore {
         DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 #if ENABLE(SVG)
         DOMWrapperMap<SVGElementInstance>& domSvgElementInstanceMap() { return *m_domSvgElementInstanceMap; }
-        DOMWrapperMap<void>& domSvgObjectWithContextMap() { return *m_domSvgObjectWithContextMap; }
 #endif
 
         // Need by V8GCController.
@@ -262,8 +260,6 @@ namespace WebCore {
         static void weakDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #if ENABLE(SVG)
         static void weakSVGElementInstanceCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
-        // SVG non-node elements may have a reference to a context node which should be notified when the element is change.
-        static void weakSVGObjectWithContextCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #endif
         
         DOMNodeMapping* m_domNodeMap;
@@ -271,7 +267,6 @@ namespace WebCore {
         DOMWrapperMap<void>* m_activeDomObjectMap;
 #if ENABLE(SVG)
         DOMWrapperMap<SVGElementInstance>* m_domSvgElementInstanceMap;
-        DOMWrapperMap<void>* m_domSvgObjectWithContextMap;
 #endif
 
     private:

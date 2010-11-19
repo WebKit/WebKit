@@ -40,7 +40,6 @@ StaticDOMDataStore::StaticDOMDataStore(DOMData* domData)
     , m_staticActiveDomObjectMap(&DOMDataStore::weakActiveDOMObjectCallback)
 #if ENABLE(SVG)
     , m_staticDomSvgElementInstanceMap(&DOMDataStore::weakSVGElementInstanceCallback)
-    , m_staticDomSvgObjectWithContextMap(&DOMDataStore::weakSVGObjectWithContextCallback)
 #endif
 {
     m_domNodeMap = &m_staticDomNodeMap;
@@ -48,7 +47,6 @@ StaticDOMDataStore::StaticDOMDataStore(DOMData* domData)
     m_activeDomObjectMap = &m_staticActiveDomObjectMap;
 #if ENABLE(SVG)
     m_domSvgElementInstanceMap = &m_staticDomSvgElementInstanceMap;
-    m_domSvgObjectWithContextMap = &m_staticDomSvgObjectWithContextMap;
 #endif
 }
 

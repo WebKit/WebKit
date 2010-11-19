@@ -170,10 +170,6 @@ namespace WebCore {
     // A map for SVGElementInstances to its JS wrapper.
     DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap();
     void visitSVGElementInstancesInCurrentThread(DOMWrapperMap<SVGElementInstance>::Visitor*);
-
-    // Map of SVG objects with contexts to V8 objects.
-    DOMWrapperMap<void>& getDOMSVGObjectWithContextMap();
-    void visitDOMSVGObjectsInCurrentThread(DOMWrapperMap<void>::Visitor*);
 #endif
 
     void enableFasterDOMStoreAccess();
