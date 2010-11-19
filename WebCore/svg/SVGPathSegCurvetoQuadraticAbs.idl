@@ -27,14 +27,10 @@
 module svg {
 
     interface [Conditional=SVG] SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
-                 attribute float   x
-                     /*setter raises(DOMException)*/;
-                 attribute float   y
-                     /*setter raises(DOMException)*/;
-                 attribute float   x1
-                     /*setter raises(DOMException)*/;
-                 attribute float   y1
-                     /*setter raises(DOMException)*/;
+        attribute [StrictTypeChecking] float x;
+        attribute [StrictTypeChecking] float y;
+        attribute [StrictTypeChecking] float x1;
+        attribute [StrictTypeChecking] float y1;
     };
 
 }

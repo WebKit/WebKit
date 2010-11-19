@@ -13,14 +13,15 @@
     var svgList = path.pathSegList;
     var indicesToTest = [-Infinity, NaN, -1, 0, 1, Infinity];
     for (var i = 0; i < indicesToTest.length; i++) {
-         shouldThrow("svgList.getItem(i)");
-         shouldThrow("svgList.insertItemBefore(null, i)");
+         var index = indicesToTest[i];
+         shouldThrow("svgList.getItem(index)");
+         shouldThrow("svgList.insertItemBefore(null, index)");
          var seg = path.createSVGPathSegClosePath();
-         shouldBe("svgList.insertItemBefore(seg, i)", "seg");
+         shouldBe("svgList.insertItemBefore(seg, index)", "seg");
          svgList.removeItem(0);
-         shouldThrow("svgList.replaceItem(seg, i)");
-         shouldThrow("svgList.replaceItem(null, i)");
-         shouldThrow("svgList.removeItem(i)");
+         shouldThrow("svgList.replaceItem(seg, index)");
+         shouldThrow("svgList.replaceItem(null, index)");
+         shouldThrow("svgList.removeItem(index)");
     }
     successfullyParsed = true;
 </script>

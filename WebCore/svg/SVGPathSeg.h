@@ -22,8 +22,7 @@
 #define SVGPathSeg_h
 
 #if ENABLE(SVG)
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -50,10 +49,15 @@ enum SVGPathSegType {
     PathSegCurveToQuadraticSmoothRel = 19
 };
 
-class QualifiedName;
+enum SVGPathSegRole {
+    PathSegUnalteredRole = 0,
+    PathSegNormalizedRole = 1,
+    PathSegUndefinedRole = 2
+};
 
 class SVGPathSeg : public RefCounted<SVGPathSeg> {
 public:
+    SVGPathSeg() { }
     virtual ~SVGPathSeg() { }
 
     // Forward declare these enums in the w3c naming scheme, for IDL generation
@@ -80,31 +84,8 @@ public:
         PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = PathSegCurveToQuadraticSmoothRel
     };
 
-
     virtual unsigned short pathSegType() const = 0;
     virtual String pathSegTypeAsLetter() const = 0;
-
-    const QualifiedName& associatedAttributeName() const;
-};
-
-class SVGPathSegSingleCoord : public SVGPathSeg { 
-public:
-    void setX(float x) { m_x = x; }
-    float x() const { return m_x; }
-
-    void setY(float y) { m_y = y; }
-    float y() const { return m_y; }
-
-protected:
-    SVGPathSegSingleCoord(float x, float y)
-        : m_x(x)
-        , m_y(y)
-    {
-    }
-
-private:
-    float m_x;
-    float m_y;
 };
 
 } // namespace WebCore

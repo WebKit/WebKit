@@ -25,11 +25,23 @@
 #if ENABLE(SVG)
 #include "SVGPathSegList.h"
 
+#include "SVGPathElement.h"
+#include "SVGPathParserFactory.h"
+
 namespace WebCore {
 
-SVGPathSegList::SVGPathSegList(const QualifiedName& attributeName)
-    : SVGList<RefPtr<SVGPathSeg> >(attributeName)
+String SVGPathSegList::valueAsString() const
 {
+    String pathString;
+    SVGPathParserFactory::self()->buildStringFromSVGPathSegList(*this, pathString, UnalteredParsing);
+    return pathString;
+}
+
+void SVGPathSegList::commitChange(SVGElement* contextElement)
+{
+    ASSERT(contextElement);
+    ASSERT(contextElement->hasTagName(SVGNames::pathTag));
+    static_cast<SVGPathElement*>(contextElement)->pathSegListChanged(m_role);
 }
 
 }

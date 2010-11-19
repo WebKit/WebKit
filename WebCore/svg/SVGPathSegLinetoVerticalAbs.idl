@@ -27,8 +27,7 @@
 module svg {
 
     interface [Conditional=SVG] SVGPathSegLinetoVerticalAbs : SVGPathSeg {
-                 attribute float   y
-                     /*setter raises(DOMException)*/;
+        attribute [StrictTypeChecking] float y;
     };
 
 }

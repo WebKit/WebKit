@@ -22,36 +22,45 @@
 #define SVGPathSegMoveto_h
 
 #if ENABLE(SVG)
-
-#include "PlatformString.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegWithContext.h"
 
 namespace WebCore {
-    class SVGPathSegMovetoAbs : public SVGPathSegSingleCoord { 
-    public:
-        static PassRefPtr<SVGPathSegMovetoAbs> create(float x, float y) { return adoptRef(new SVGPathSegMovetoAbs(x, y)); }
 
-    private:
-        SVGPathSegMovetoAbs(float x, float y);
+class SVGPathSegMovetoAbs : public SVGPathSegSingleCoordinate { 
+public:
+    static PassRefPtr<SVGPathSegMovetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    {
+        return adoptRef(new SVGPathSegMovetoAbs(element, role, x, y));
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "M"; }
-    };
+private:
+    SVGPathSegMovetoAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+        : SVGPathSegSingleCoordinate(element, role, x, y)
+    {
+    }
 
-    class SVGPathSegMovetoRel : public SVGPathSegSingleCoord { 
-    public:
-        static PassRefPtr<SVGPathSegMovetoRel> create(float x, float y) { return adoptRef(new SVGPathSegMovetoRel(x, y)); }
+    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
+    virtual String pathSegTypeAsLetter() const { return "M"; }
+};
 
-    private:
-        SVGPathSegMovetoRel(float x, float y);
+class SVGPathSegMovetoRel : public SVGPathSegSingleCoordinate { 
+public:
+    static PassRefPtr<SVGPathSegMovetoRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    {
+        return adoptRef(new SVGPathSegMovetoRel(element, role, x, y));
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }
-        virtual String pathSegTypeAsLetter() const { return "m"; }
-    };
+private:
+    SVGPathSegMovetoRel(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+        : SVGPathSegSingleCoordinate(element, role, x, y)
+    {
+    }
+
+    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }
+    virtual String pathSegTypeAsLetter() const { return "m"; }
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

@@ -31,8 +31,7 @@ module svg {
                                                  SVGLangSpace,
                                                  SVGExternalResourcesRequired,
                                                  SVGStylable,
-                                                 SVGTransformable,
-                                                 SVGAnimatedPathData {
+                                                 SVGTransformable {
         readonly attribute SVGAnimatedNumber pathLength;
 
         float getTotalLength();
@@ -107,6 +106,11 @@ module svg {
                                                                                       in float y);
         SVGPathSegCurvetoQuadraticSmoothRel createSVGPathSegCurvetoQuadraticSmoothRel(in float x, 
                                                                                       in float y);
+
+        readonly attribute SVGPathSegList pathSegList;
+        readonly attribute SVGPathSegList normalizedPathSegList;
+        readonly attribute SVGPathSegList animatedPathSegList;
+        readonly attribute SVGPathSegList animatedNormalizedPathSegList;
     };
 
 }

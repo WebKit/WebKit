@@ -22,48 +22,64 @@
 #define SVGPathSegLinetoVertical_h
 
 #if ENABLE(SVG)
-
-#include "PlatformString.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-    class SVGPathSegLinetoVertical : public SVGPathSeg {
-    public:
-        SVGPathSegLinetoVertical(float y) : SVGPathSeg(), m_y(y) {}
+class SVGPathSegLinetoVertical : public SVGPathSegWithContext {
+public:
+    SVGPathSegLinetoVertical(SVGPathElement* element, SVGPathSegRole role, float y)
+        : SVGPathSegWithContext(element, role)
+        , m_y(y)
+    {
+    }
 
-        void setY(float y) { m_y = y; }
-        float y() const { return m_y; }
+    float y() const { return m_y; }
+    void setY(float y)
+    {
+        m_y = y;
+        commitChange();
+    }
 
-    private:
-        float m_y;
-    };
+private:
+    float m_y;
+};
 
-    class SVGPathSegLinetoVerticalAbs : public SVGPathSegLinetoVertical {
-    public:
-        static PassRefPtr<SVGPathSegLinetoVerticalAbs> create(float y) { return adoptRef(new SVGPathSegLinetoVerticalAbs(y)); }
+class SVGPathSegLinetoVerticalAbs : public SVGPathSegLinetoVertical {
+public:
+    static PassRefPtr<SVGPathSegLinetoVerticalAbs> create(SVGPathElement* element, SVGPathSegRole role, float y)
+    {
+        return adoptRef(new SVGPathSegLinetoVerticalAbs(element, role, y));
+    }
 
-    private:
-        SVGPathSegLinetoVerticalAbs(float y);
+private:
+    SVGPathSegLinetoVerticalAbs(SVGPathElement* element, SVGPathSegRole role, float y)
+        : SVGPathSegLinetoVertical(element, role, y)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "V"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_ABS; }
+    virtual String pathSegTypeAsLetter() const { return "V"; }
+};
 
-    class SVGPathSegLinetoVerticalRel : public SVGPathSegLinetoVertical {
-    public:
-        static PassRefPtr<SVGPathSegLinetoVerticalRel> create(float y) { return adoptRef(new SVGPathSegLinetoVerticalRel(y)); }
+class SVGPathSegLinetoVerticalRel : public SVGPathSegLinetoVertical {
+public:
+    static PassRefPtr<SVGPathSegLinetoVerticalRel> create(SVGPathElement* element, SVGPathSegRole role, float y)
+    {
+        return adoptRef(new SVGPathSegLinetoVerticalRel(element, role, y));
+    }
 
-    private:
-        SVGPathSegLinetoVerticalRel(float y);
+private:
+    SVGPathSegLinetoVerticalRel(SVGPathElement* element, SVGPathSegRole role, float y)
+        : SVGPathSegLinetoVertical(element, role, y)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_REL; }
-        virtual String pathSegTypeAsLetter() const { return "v"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_REL; }
+    virtual String pathSegTypeAsLetter() const { return "v"; }
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

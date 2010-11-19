@@ -2359,6 +2359,7 @@ HEADERS += \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
     svg/properties/SVGAnimatedListPropertyTearOff.h \
+    svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
     svg/properties/SVGAnimatedProperty.h \
     svg/properties/SVGAnimatedPropertyDescription.h \
     svg/properties/SVGAnimatedPropertyMacros.h \
@@ -2368,6 +2369,8 @@ HEADERS += \
     svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
     svg/properties/SVGListProperty.h \
     svg/properties/SVGListPropertyTearOff.h \
+    svg/properties/SVGPathSegListPropertyTearOff.cpp \
+    svg/properties/SVGPathSegListPropertyTearOff.h \
     svg/properties/SVGProperty.h \
     svg/properties/SVGPropertyTearOff.h \
     svg/properties/SVGPropertyTraits.h \
@@ -2387,7 +2390,6 @@ HEADERS += \
     svg/SVGAnimatedLengthList.h \
     svg/SVGAnimatedNumber.h \
     svg/SVGAnimatedNumberList.h \
-    svg/SVGAnimatedPathData.h \
     svg/SVGAnimatedPreserveAspectRatio.h \
     svg/SVGAnimatedRect.h \
     svg/SVGAnimatedString.h \
@@ -3395,8 +3397,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
             bindings/js/JSSVGElementInstanceCustom.cpp \
             bindings/js/JSSVGLengthCustom.cpp \
-            bindings/js/JSSVGPathSegCustom.cpp \
-            bindings/js/JSSVGPathSegListCustom.cpp
+            bindings/js/JSSVGPathSegCustom.cpp
     }
 
     SOURCES += \
@@ -3431,7 +3432,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGAltGlyphElement.cpp \
         svg/SVGAngle.cpp \
         svg/SVGAnimateColorElement.cpp \
-        svg/SVGAnimatedPathData.cpp \
         svg/SVGAnimateElement.cpp \
         svg/SVGAnimateMotionElement.cpp \
         svg/SVGAnimateTransformElement.cpp \
@@ -3512,20 +3512,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathElement.cpp \
         svg/SVGPathParser.cpp \
         svg/SVGPathParserFactory.cpp \
-        svg/SVGPathSeg.cpp \
-        svg/SVGPathSegArc.cpp \
-        svg/SVGPathSegClosePath.cpp \
-        svg/SVGPathSegCurvetoCubic.cpp \
-        svg/SVGPathSegCurvetoCubicSmooth.cpp \
-        svg/SVGPathSegCurvetoQuadratic.cpp \
-        svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
-        svg/SVGPathSegLineto.cpp \
-        svg/SVGPathSegLinetoHorizontal.cpp \
-        svg/SVGPathSegLinetoVertical.cpp \
         svg/SVGPathSegList.cpp \
         svg/SVGPathSegListBuilder.cpp \
         svg/SVGPathSegListSource.cpp \
-        svg/SVGPathSegMoveto.cpp \
         svg/SVGPathStringBuilder.cpp \
         svg/SVGPathStringSource.cpp \
         svg/SVGPathTraversalStateBuilder.cpp \

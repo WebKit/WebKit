@@ -861,7 +861,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGAnimateElement.cpp \
 	svg/SVGAnimateMotionElement.cpp \
 	svg/SVGAnimateTransformElement.cpp \
-	svg/SVGAnimatedPathData.cpp \
 	svg/SVGAnimationElement.cpp \
 	svg/SVGCircleElement.cpp \
 	svg/SVGClipPathElement.cpp \
@@ -940,20 +939,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGPathElement.cpp \
 	svg/SVGPathParser.cpp \
 	svg/SVGPathParserFactory.cpp \
-	svg/SVGPathSeg.cpp \
-	svg/SVGPathSegArc.cpp \
-	svg/SVGPathSegClosePath.cpp \
-	svg/SVGPathSegCurvetoCubic.cpp \
-	svg/SVGPathSegCurvetoCubicSmooth.cpp \
-	svg/SVGPathSegCurvetoQuadratic.cpp \
-	svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
-	svg/SVGPathSegLineto.cpp \
-	svg/SVGPathSegLinetoHorizontal.cpp \
-	svg/SVGPathSegLinetoVertical.cpp \
 	svg/SVGPathSegList.cpp \
 	svg/SVGPathSegListBuilder.cpp \
 	svg/SVGPathSegListSource.cpp \
-	svg/SVGPathSegMoveto.cpp \
 	svg/SVGPathStringBuilder.cpp \
 	svg/SVGPathStringSource.cpp \
 	svg/SVGPathTraversalStateBuilder.cpp \

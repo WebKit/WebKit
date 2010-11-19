@@ -1,0 +1,75 @@
+This is a test of the SVGPathSegList::appendItem() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'pathSegList' value of path1
+PASS path1.pathSegList.numberOfItems is 3
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 0
+PASS path1.pathSegList.getItem(0).y is 0
+PASS path1.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(1).x is 100
+PASS path1.pathSegList.getItem(1).y is 0
+PASS path1.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(2).x is 100
+PASS path1.pathSegList.getItem(2).y is 100
+
+Check initial 'pathSegList' value of path2
+PASS path2.pathSegList.numberOfItems is 5
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 0
+PASS path2.pathSegList.getItem(0).y is 0
+PASS path2.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path2.pathSegList.getItem(1).x is 50
+PASS path2.pathSegList.getItem(1).y is 100
+PASS path2.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+PASS path2.pathSegList.getItem(2).x is 100
+PASS path2.pathSegList.getItem(3).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+PASS path2.pathSegList.getItem(3).x is 100
+PASS path2.pathSegList.getItem(4).toString() is "[object SVGPathSegLinetoVerticalRel]"
+PASS path2.pathSegList.getItem(4).y is 100
+
+Negate x value of fourth segment in path2
+PASS path2.pathSegList.getItem(3).x = -path2.pathSegList.getItem(3).x is -100
+
+Swap segment four and five of path2 - now should look like a rectangle
+PASS path2.pathSegList.appendItem(path2.pathSegList.getItem(3)).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+
+Append second item from path2 to path1 list
+PASS path1.pathSegList.appendItem(path2.pathSegList.getItem(1)).toString() is "[object SVGPathSegLinetoAbs]"
+
+Change last item of path1 list, that came from path2 list, assure it's updating path1
+PASS path1.pathSegList.getItem(3).x -= 50 is 0
+
+Check final 'pathSegList' value of path1
+PASS path1.pathSegList.numberOfItems is 4
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 0
+PASS path1.pathSegList.getItem(0).y is 0
+PASS path1.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(1).x is 100
+PASS path1.pathSegList.getItem(1).y is 0
+PASS path1.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(2).x is 100
+PASS path1.pathSegList.getItem(2).y is 100
+PASS path1.pathSegList.getItem(3).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(3).x is 0
+PASS path1.pathSegList.getItem(3).y is 100
+
+Check final 'pathSegList' value of path2
+PASS path2.pathSegList.numberOfItems is 4
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 0
+PASS path2.pathSegList.getItem(0).y is 0
+PASS path2.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+PASS path2.pathSegList.getItem(1).x is 100
+PASS path2.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoVerticalRel]"
+PASS path2.pathSegList.getItem(2).y is 100
+PASS path2.pathSegList.getItem(3).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+PASS path2.pathSegList.getItem(3).x is -100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

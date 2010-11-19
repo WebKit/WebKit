@@ -22,48 +22,64 @@
 #define SVGPathSegLinetoHorizontal_h
 
 #if ENABLE(SVG)
-
-#include "PlatformString.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-    class SVGPathSegLinetoHorizontal : public SVGPathSeg {
-    public:
-        SVGPathSegLinetoHorizontal(float x) : SVGPathSeg(), m_x(x) {}
+class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
+public:
+    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
+        : SVGPathSegWithContext(element, role)
+        , m_x(x)
+    {
+    }
 
-        void setX(float x) { m_x = x; }
-        float x() const { return m_x; }
+    float x() const { return m_x; }
+    void setX(float x)
+    {
+        m_x = x;
+        commitChange();
+    }
 
-    private:
-        float m_x;
-    };
+private:
+    float m_x;
+};
 
-    class SVGPathSegLinetoHorizontalAbs : public SVGPathSegLinetoHorizontal {
-    public:
-        static PassRefPtr<SVGPathSegLinetoHorizontalAbs> create(float x) { return adoptRef(new SVGPathSegLinetoHorizontalAbs(x)); }
+class SVGPathSegLinetoHorizontalAbs : public SVGPathSegLinetoHorizontal {
+public:
+    static PassRefPtr<SVGPathSegLinetoHorizontalAbs> create(SVGPathElement* element, SVGPathSegRole role, float x)
+    {
+        return adoptRef(new SVGPathSegLinetoHorizontalAbs(element, role, x));
+    }
 
-    private:
-        SVGPathSegLinetoHorizontalAbs(float x);
+private:
+    SVGPathSegLinetoHorizontalAbs(SVGPathElement* element, SVGPathSegRole role, float x)
+        : SVGPathSegLinetoHorizontal(element, role, x)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "H"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
+    virtual String pathSegTypeAsLetter() const { return "H"; }
+};
 
-    class SVGPathSegLinetoHorizontalRel : public SVGPathSegLinetoHorizontal {
-    public:
-        static PassRefPtr<SVGPathSegLinetoHorizontalRel> create(float x) { return adoptRef(new SVGPathSegLinetoHorizontalRel(x)); }
+class SVGPathSegLinetoHorizontalRel : public SVGPathSegLinetoHorizontal {
+public:
+    static PassRefPtr<SVGPathSegLinetoHorizontalRel> create(SVGPathElement* element, SVGPathSegRole role, float x)
+    {
+        return adoptRef(new SVGPathSegLinetoHorizontalRel(element, role, x));
+    }
 
-    private:
-        SVGPathSegLinetoHorizontalRel(float x);
+private:
+    SVGPathSegLinetoHorizontalRel(SVGPathElement* element, SVGPathSegRole role, float x)
+        : SVGPathSegLinetoHorizontal(element, role, x)
+    {
+    }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
-        virtual String pathSegTypeAsLetter() const { return "h"; }
-    };
+    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
+    virtual String pathSegTypeAsLetter() const { return "h"; }
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

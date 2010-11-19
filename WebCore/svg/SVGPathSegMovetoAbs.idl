@@ -27,10 +27,8 @@
 module svg {
 
     interface [Conditional=SVG] SVGPathSegMovetoAbs : SVGPathSeg {
-                 attribute float   x
-                     /*setter raises(DOMException)*/;
-                 attribute float   y
-                     /*setter raises(DOMException)*/;
+        attribute [StrictTypeChecking] float x;
+        attribute [StrictTypeChecking] float y;
     };
 
 }
