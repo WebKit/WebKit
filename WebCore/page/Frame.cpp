@@ -711,10 +711,11 @@ void Frame::transferChildFrameToNewDocument()
 {
     ASSERT(m_ownerElement);
     Frame* newParent = m_ownerElement->document()->frame();
+    ASSERT(newParent);
     bool didTransfer = false;
 
     // Switch page.
-    Page* newPage = newParent ? newParent->page() : 0;
+    Page* newPage = newParent->page();
     Page* oldPage = m_page;
     if (m_page != newPage) {
         if (m_page) {
@@ -732,10 +733,8 @@ void Frame::transferChildFrameToNewDocument()
         didTransfer = true;
     }
 
-    if (newParent) {
-        // Update the frame tree.
-        didTransfer = newParent->tree()->transferChild(this);
-    }
+    // Update the frame tree.
+    didTransfer = newParent->tree()->transferChild(this);
 
     // Avoid unnecessary calls to client and frame subtree if the frame ended
     // up on the same page and under the same parent frame.
