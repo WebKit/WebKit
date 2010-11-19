@@ -680,6 +680,12 @@ namespace JSC {
         return this[index];
     }
 
+    inline Register& ExecState::uncheckedR(int index)
+    {
+        ASSERT(index < FirstConstantRegisterIndex);
+        return this[index];
+    }
+    
 } // namespace JSC
 
 #endif // CodeBlock_h

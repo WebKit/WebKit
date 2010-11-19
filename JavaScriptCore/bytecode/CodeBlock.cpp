@@ -1699,9 +1699,9 @@ void CodeBlock::createActivation(CallFrame* callFrame)
 {
     ASSERT(codeType() == FunctionCode);
     ASSERT(needsFullScopeChain());
-    ASSERT(!callFrame->r(activationRegister()).jsValue());
+    ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
     JSActivation* activation = new (callFrame) JSActivation(callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
-    callFrame->r(activationRegister()) = JSValue(activation);
+    callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
 }
 

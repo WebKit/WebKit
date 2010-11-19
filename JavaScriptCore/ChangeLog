@@ -1,3 +1,42 @@
+2010-11-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Don't check for constant registers when we can guarantee that the register won't be in the constant pool
+        https://bugs.webkit.org/show_bug.cgi?id=49814
+
+        Add uncheckedR(int) to CallFrame, and replace all the uses of r() with uncheckedR()
+        when we can guarantee that the register is not referring to a constant.
+        This makes the interpreter about 0.5% faster, and makes the CallFrame initialisation
+        logic correct when we're using a faked callframe (as in the case of the globalExec).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::createActivation):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisObject):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::uncheckedR):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

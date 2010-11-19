@@ -76,7 +76,7 @@ JSObject* DebuggerCallFrame::thisObject() const
     if (!codeBlock)
         return 0;
 
-    JSValue thisValue = m_callFrame->r(codeBlock->thisRegister()).jsValue();
+    JSValue thisValue = m_callFrame->uncheckedR(codeBlock->thisRegister()).jsValue();
     if (!thisValue.isObject())
         return 0;
 

@@ -202,14 +202,14 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identi
     JSActivation* activation = asActivation(slotBase);
     CallFrame* callFrame = CallFrame::create(activation->d()->registers);
     int argumentsRegister = activation->d()->functionExecutable->generatedBytecode().argumentsRegister();
-    if (!callFrame->r(argumentsRegister).jsValue()) {
+    if (!callFrame->uncheckedR(argumentsRegister).jsValue()) {
         JSValue arguments = JSValue(new (callFrame) Arguments(callFrame));
-        callFrame->r(argumentsRegister) = arguments;
-        callFrame->r(unmodifiedArgumentsRegister(argumentsRegister)) = arguments;
+        callFrame->uncheckedR(argumentsRegister) = arguments;
+        callFrame->uncheckedR(unmodifiedArgumentsRegister(argumentsRegister)) = arguments;
     }
 
-    ASSERT(callFrame->r(argumentsRegister).jsValue().inherits(&Arguments::info));
-    return callFrame->r(argumentsRegister).jsValue();
+    ASSERT(callFrame->uncheckedR(argumentsRegister).jsValue().inherits(&Arguments::info));
+    return callFrame->uncheckedR(argumentsRegister).jsValue();
 }
 
 // These two functions serve the purpose of isolating the common case from a
