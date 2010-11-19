@@ -6,6 +6,11 @@ Test whether the WebGL internal buffers have been initialized to 0.
 PASS Buffers have been initialized to 0.
 Test whether user created buffers have been initialized to 0.
 PASS Buffers have been initialized to 0.
+Test whether the WebGL internal buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+Test whether user created buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+PASS clearColor is [1, 0, 0, 1]
 PASS successfullyParsed is true
 
 TEST COMPLETE

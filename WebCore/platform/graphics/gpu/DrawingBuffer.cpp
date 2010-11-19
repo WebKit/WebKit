@@ -167,20 +167,29 @@ void DrawingBuffer::reset(const IntSize& newSize)
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 
     // Initialize renderbuffers to 0.
-    unsigned char colorMask[] = {true, true, true, true}, depthMask = true, stencilMask = true;
+    float clearColor[] = {0, 0, 0, 0}, clearDepth = 0;
+    int clearStencil = 0;
+    unsigned char colorMask[] = {true, true, true, true}, depthMask = true;
+    unsigned int stencilMask = 0xffffffff;
     unsigned char isScissorEnabled = false;
     unsigned char isDitherEnabled = false;
     unsigned long clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    m_context->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, clearColor);
+    m_context->clearColor(0, 0, 0, 0);
     m_context->getBooleanv(GraphicsContext3D::COLOR_WRITEMASK, colorMask);
     m_context->colorMask(true, true, true, true);
     if (attributes.depth) {
+        m_context->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &clearDepth);
+        m_context->clearDepth(1);
         m_context->getBooleanv(GraphicsContext3D::DEPTH_WRITEMASK, &depthMask);
         m_context->depthMask(true);
         clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
     }
     if (attributes.stencil) {
-        m_context->getBooleanv(GraphicsContext3D::STENCIL_WRITEMASK, &stencilMask);
-        m_context->stencilMask(true);
+        m_context->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &clearStencil);
+        m_context->clearStencil(0);
+        m_context->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<int*>(&stencilMask));
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xffffffff);
         clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
     }
     isScissorEnabled = m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST);
@@ -190,11 +199,16 @@ void DrawingBuffer::reset(const IntSize& newSize)
 
     m_context->clear(clearMask);
 
+    m_context->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     m_context->colorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-    if (attributes.depth)
+    if (attributes.depth) {
+        m_context->clearDepth(clearDepth);
         m_context->depthMask(depthMask);
-    if (attributes.stencil)
-        m_context->stencilMask(stencilMask);
+    }
+    if (attributes.stencil) {
+        m_context->clearStencil(clearStencil);
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, stencilMask);
+    }
     if (isScissorEnabled)
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);
     else

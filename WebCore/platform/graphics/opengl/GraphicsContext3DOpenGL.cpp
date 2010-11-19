@@ -211,20 +211,29 @@ void GraphicsContext3D::reshape(int width, int height)
     }
 
     // Initialize renderbuffers to 0.
-    GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE, stencilMask = GL_TRUE;
+    GLfloat clearColor[] = {0, 0, 0, 0}, clearDepth = 0;
+    GLint clearStencil = 0;
+    GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE;
+    GLuint stencilMask = 0xffffffff;
     GLboolean isScissorEnabled = GL_FALSE;
     GLboolean isDitherEnabled = GL_FALSE;
     GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
+    ::glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
+    ::glClearColor(0, 0, 0, 0);
     ::glGetBooleanv(GL_COLOR_WRITEMASK, colorMask);
     ::glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     if (m_attrs.depth) {
+        ::glGetFloatv(GL_DEPTH_CLEAR_VALUE, &clearDepth);
+        ::glClearDepth(1);
         ::glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
         ::glDepthMask(GL_TRUE);
         clearMask |= GL_DEPTH_BUFFER_BIT;
     }
     if (m_attrs.stencil) {
-        ::glGetBooleanv(GL_STENCIL_WRITEMASK, &stencilMask);
-        ::glStencilMask(GL_TRUE);
+        ::glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &clearStencil);
+        ::glClearStencil(0);
+        ::glGetIntegerv(GL_STENCIL_WRITEMASK, reinterpret_cast<GLint*>(&stencilMask));
+        ::glStencilMaskSeparate(GL_FRONT, 0xffffffff);
         clearMask |= GL_STENCIL_BUFFER_BIT;
     }
     isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
@@ -234,11 +243,16 @@ void GraphicsContext3D::reshape(int width, int height)
 
     ::glClear(clearMask);
 
+    ::glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     ::glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-    if (m_attrs.depth)
+    if (m_attrs.depth) {
+        ::glClearDepth(clearDepth);
         ::glDepthMask(depthMask);
-    if (m_attrs.stencil)
-        ::glStencilMask(stencilMask);
+    }
+    if (m_attrs.stencil) {
+        ::glClearStencil(clearStencil);
+        ::glStencilMaskSeparate(GL_FRONT, stencilMask);
+    }
     if (isScissorEnabled)
         ::glEnable(GL_SCISSOR_TEST);
     else

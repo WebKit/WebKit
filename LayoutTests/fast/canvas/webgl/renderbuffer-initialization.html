@@ -4,23 +4,17 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script>
-function runTest()
+function runTest(gl, width, height)
 {
-    var canvas = document.getElementById("testbed");
-    var gl = canvas.getContext("experimental-webgl");
-    if (!gl) {
-        testFailed('canvas.getContext() failed');
-        return false;
-    }
 
     debug('Test whether the WebGL internal buffers have been initialized to 0.');
-    var buf = new Uint8Array(500 * 500 * 4);
-    gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    var totalBytes = width * height * 4;
+    var buf = new Uint8Array(totalBytes);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     if (gl.getError() != gl.NO_ERROR) {
         testFailed('GL error detected after readPixels().');
         return false;
     }
-    var totalBytes = 500 * 500 * 4;
     for (var i = 0; i < totalBytes; ++i) {
         if (buf[i] != 0) {
             testFailed('WebGL internal buffers are dirty.');
@@ -34,7 +28,7 @@ function runTest()
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
     var colorbuffer = gl.createRenderbuffer();
     gl.bindRenderbuffer(gl.RENDERBUFFER, colorbuffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 500, 500);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, width, height);
     if (gl.getError() != gl.NO_ERROR) {
         testFailed('GL error detected after renderbufferStorage(internalformat = RGBA4).');
         return false;
@@ -44,7 +38,7 @@ function runTest()
         testFailed('Framebuffer incomplete.');
         return false;
     }
-    gl.readPixels(0, 0, 500, 500, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     if (gl.getError() != gl.NO_ERROR) {
         testFailed('GL error detected after readPixels().');
         return false;
@@ -62,7 +56,7 @@ function runTest()
 </script>
 </head>
 <body>
-<canvas id="testbed" width="500px" height="500px"></canvas>
+<canvas id="testbed" width="400px" height="400px"></canvas>
 <div id="description"></div>
 <div id="console"></div>
 <script>
@@ -70,7 +64,24 @@ var successfullyParsed = false;
 
 description('Verify renderbuffers are initialized to 0 before being read in WebGL');
 
-runTest();
+var canvas = document.getElementById("testbed");
+var gl = canvas.getContext("experimental-webgl");
+if (!gl) {
+    testFailed('canvas.getContext() failed');
+    return false;
+}
+
+runTest(gl, canvas.width, canvas.height);
+
+// Testing that canvas resizing will clear the buffers with 0 instead of the current clear values.
+gl.clearColor(1, 0, 0, 1);
+canvas.width += 1;
+canvas.height += 1;
+runTest(gl, canvas.width, canvas.height);
+
+// Testing buffer clearing won't change the clear values.
+var clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+shouldBe("clearColor", "[1, 0, 0, 1]");
 
 successfullyParsed = true;
 </script>
