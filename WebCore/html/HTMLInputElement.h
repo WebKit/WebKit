@@ -73,6 +73,7 @@ public:
     String stepBaseString() const;
     String stepString() const;
     String typeMismatchText() const;
+    String valueMissingText() const;
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);

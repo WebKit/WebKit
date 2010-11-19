@@ -27,6 +27,7 @@
 #include "FileList.h"
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include "RenderFileUploadControl.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -75,6 +76,11 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
 bool FileInputType::valueMissing(const String& value) const
 {
     return value.isEmpty();
+}
+
+String FileInputType::valueMissingText() const
+{
+    return element()->multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
 }
 
 bool FileInputType::handleDOMActivateEvent(Event* event)

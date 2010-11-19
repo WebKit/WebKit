@@ -275,6 +275,11 @@ String InputType::typeMismatchText() const
     return validationMessageTypeMismatchText();
 }
 
+String InputType::valueMissingText() const
+{
+    return validationMessageValueMissingText();
+}
+
 bool InputType::handleClickEvent(MouseEvent*)
 {
     return false;
@@ -472,4 +477,3 @@ const AtomicString& week()
 } // namespace WebCore::InpuTypeNames
 
 } // namespace WebCore
-

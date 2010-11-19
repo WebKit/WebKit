@@ -585,6 +585,31 @@ String validationMessageValueMissingText()
     return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
 }
 
+String validationMessageValueMissingForCheckboxText()
+{
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+}
+
+String validationMessageValueMissingForFileText()
+{
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+}
+
+String validationMessageValueMissingForMultipleFileText()
+{
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+}
+
+String validationMessageValueMissingForRadioText()
+{
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+}
+
+String validationMessageValueMissingForSelectText()
+{
+    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+}
+
 String validationMessageTypeMismatchText()
 {
     return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();

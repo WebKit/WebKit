@@ -166,6 +166,11 @@ namespace WebCore {
     String localizedMediaTimeDescription(float);
 
     String validationMessageValueMissingText();
+    String validationMessageValueMissingForCheckboxText();
+    String validationMessageValueMissingForFileText();
+    String validationMessageValueMissingForMultipleFileText();
+    String validationMessageValueMissingForRadioText();
+    String validationMessageValueMissingForSelectText();
     String validationMessageTypeMismatchText();
     String validationMessageTypeMismatchForEmailText();
     String validationMessageTypeMismatchForMultipleEmailText();

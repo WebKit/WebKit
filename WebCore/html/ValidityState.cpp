@@ -42,17 +42,24 @@ String ValidityState::validationMessage() const
 
     if (customError())
         return m_customErrorMessage;
-    if (valueMissing())
-        return validationMessageValueMissingText();
-    if (patternMismatch())
-        return validationMessagePatternMismatchText();
     bool isInputElement = m_control->hasTagName(inputTag);
     bool isTextAreaElement = m_control->hasTagName(textareaTag);
+    // The order of the following checks is meaningful. e.g. We'd like to show the
+    // valueMissing message even if the control has other validation errors.
+    if (valueMissing()) {
+        if (m_control->hasTagName(selectTag))
+            return validationMessageValueMissingForSelectText();
+        if (isInputElement)
+            return static_cast<HTMLInputElement*>(m_control)->valueMissingText();
+        return validationMessageValueMissingText();
+    }
     if (typeMismatch()) {
         if (isInputElement)
             return static_cast<HTMLInputElement*>(m_control)->typeMismatchText();
         return validationMessageTypeMismatchText();
     }
+    if (patternMismatch())
+        return validationMessagePatternMismatchText();
     if (tooLong()) {
         if (!isInputElement && !isTextAreaElement) {
             ASSERT_NOT_REACHED();

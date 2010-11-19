@@ -100,6 +100,7 @@ public:
     virtual bool scaledStepValeuShouldBeInteger() const;
     virtual double acceptableError(double) const;
     virtual String typeMismatchText() const;
+    virtual String valueMissingText() const;
 
     // Event handlers
     // If the return value is true, do no further default event handling in the

@@ -32,6 +32,7 @@
 #include "RadioInputType.h"
 
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -50,6 +51,11 @@ const AtomicString& RadioInputType::formControlType() const
 bool RadioInputType::valueMissing(const String&) const
 {
     return !element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+}
+
+String RadioInputType::valueMissingText() const
+{
+    return validationMessageValueMissingForRadioText();
 }
 
 bool RadioInputType::handleClickEvent(MouseEvent* event)

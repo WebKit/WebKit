@@ -32,6 +32,7 @@
 #include "CheckboxInputType.h"
 
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -49,6 +50,11 @@ const AtomicString& CheckboxInputType::formControlType() const
 bool CheckboxInputType::valueMissing(const String&) const
 {
     return !element()->checked();
+}
+
+String CheckboxInputType::valueMissingText() const
+{
+    return validationMessageValueMissingForCheckboxText();
 }
 
 } // namespace WebCore
