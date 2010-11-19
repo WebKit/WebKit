@@ -2897,6 +2897,7 @@ BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
+BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
@@ -3070,7 +3071,6 @@ BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
 BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
 
 // Have been flaky for a long time.
-BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS TEXT
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
 BUGWK48263 : media/adopt-node-crash.html = TIMEOUT PASS
