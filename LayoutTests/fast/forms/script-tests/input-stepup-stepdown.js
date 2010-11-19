@@ -206,12 +206,11 @@ shouldThrow('stepUp("-1", "1", "0", 2)', invalidStateErr);
 shouldBe('input.value', '"-1"');
 shouldThrow('stepUp("1", "3.40282346e+38", "", 2)', invalidStateErr);
 debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepUp("1", "2", "")', '"4"');
-shouldBe('input.stepDown(); input.value', '"2"');
-shouldBe('input.min = "0"; stepUp("9", "10", "", 9)', '"100"');
-shouldBe('stepDown("19", "10", "0")', '"10"');
-// value + step is <= max, but rounded result would be > max.
-shouldThrow('stepUp("89", "10", "99")', invalidStateErr);
+shouldBe('stepUp("1", "2", "")', '"3"');
+shouldBe('input.stepDown(); input.value', '"1"');
+shouldBe('input.min = "0"; stepUp("9", "10", "", 9)', '"99"');
+shouldBe('stepDown("19", "10", "0")', '"9"');
+shouldBe('stepUp("89", "10", "99")', '"99"');
 debug('Huge value and small step');
 shouldBe('input.min = ""; stepUp("1e+38", "1", "", 999999)', '"1e+38"');
 shouldBe('input.max = ""; stepDown("1e+38", "1", "", 999999)', '"1e+38"');

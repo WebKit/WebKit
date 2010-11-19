@@ -334,13 +334,13 @@ bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(double* step, unsign
 void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
 {
     double step;
-    unsigned stepDecimalPlaces;
+    unsigned stepDecimalPlaces, currentDecimalPlaces;
     if (!getAllowedValueStepWithDecimalPlaces(&step, &stepDecimalPlaces)) {
         ec = INVALID_STATE_ERR;
         return;
     }
     const double nan = numeric_limits<double>::quiet_NaN();
-    double current = m_inputType->parseToDouble(value(), nan);
+    double current = m_inputType->parseToDoubleWithDecimalPlaces(value(), nan, &currentDecimalPlaces);
     if (!isfinite(current)) {
         ec = INVALID_STATE_ERR;
         return;
@@ -361,8 +361,13 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
     double base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
     baseDecimalPlaces = min(baseDecimalPlaces, 16u);
     if (newValue < pow(10.0, 21.0)) {
-        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
-        newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
+      if (stepMismatch(value())) {
+            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
+            newValue = round(newValue * scale) / scale;
+        } else {
+            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+            newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
+        }
     }
     if (newValue - m_inputType->maximum() > acceptableError) {
         ec = INVALID_STATE_ERR;
