@@ -1,3 +1,14 @@
+2010-11-19  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Removing unused code to show popup externally on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=49747
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened):
+        * src/ChromeClientImpl.h:
+
 2010-11-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: flip chromium version to mitigate two-sided patch impact.

@@ -44,11 +44,9 @@ class ChromeClientChromium : public ChromeClient {
 public:
     // Notifies the client of a new popup widget.  The client should place
     // and size the widget with the given bounds, relative to the screen.
-    // If handleExternal is true, then drawing and input handling for the
-    // popup will be handled by the external embedder.
-    virtual void popupOpened(PopupContainer* popupContainer, const IntRect& bounds,
-                             bool handleExternal) = 0;
-                             
+    virtual void popupOpened(PopupContainer* popupContainer,
+                             const IntRect& bounds) = 0;
+
     // Notifies the client a popup was closed.
     virtual void popupClosed(PopupContainer* popupContainer) = 0;
 };

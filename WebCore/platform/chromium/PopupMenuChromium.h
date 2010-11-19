@@ -142,9 +142,6 @@ public:
     // Show the popup
     void showPopup(FrameView*);
 
-    // Used on Mac Chromium for HTML select popup menus.
-    void showExternal(const IntRect&, FrameView*, int index);
-
     // Show the popup in the specified rect for the specified frame.
     // Note: this code was somehow arbitrarily factored-out of the Popup class
     // so WebViewImpl can create a PopupContainer. This method is used for
