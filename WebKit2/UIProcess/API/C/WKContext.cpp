@@ -142,3 +142,13 @@ void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef contextRef, 
 {
     toImpl(contextRef)->setDomainRelaxationForbiddenForURLScheme(toImpl(urlScheme)->string());
 }
+
+void WKContextClearResourceCaches(WKContextRef contextRef)
+{
+    toImpl(contextRef)->clearResourceCaches();
+}
+
+void WKContextClearApplicationCache(WKContextRef contextRef)
+{
+    toImpl(contextRef)->clearApplicationCache();
+}

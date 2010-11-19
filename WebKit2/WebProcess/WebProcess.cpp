@@ -41,6 +41,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Language.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -523,6 +524,28 @@ void WebProcess::removeWebFrame(uint64_t frameID)
         return;
 
     m_connection->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
+}
+
+void WebProcess::clearResourceCaches()
+{
+    platformClearResourceCaches();
+
+    // Toggling the cache model like this forces the cache to evict all its in-memory resources.
+    // FIXME: We need a better way to do this.
+    CacheModel cacheModel = m_cacheModel;
+    setCacheModel(CacheModelDocumentViewer);
+    setCacheModel(cacheModel);
+
+    // Empty the cross-origin preflight cache.
+    CrossOriginPreflightResultCache::shared().empty();
+}
+
+void WebProcess::clearApplicationCache()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    // Empty the application cache.
+    cacheStorage().empty();
+#endif
 }
 
 } // namespace WebKit

@@ -95,4 +95,11 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 #endif
 }
 
+void WebProcess::platformClearResourceCaches()
+{
+#if USE(CFNETWORK)
+    CFURLCacheRemoveAllCachedResponses(RetainPtr<CFURLCacheRef>(AdoptCF, CFURLCacheCopySharedURLCache()).get());
+#endif
+}
+
 } // namespace WebKit

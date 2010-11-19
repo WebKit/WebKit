@@ -1,3 +1,30 @@
+2010-11-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need a way to clear disk cache from WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=49820
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextClearResourceCaches): Added.
+        (WKContextClearApplicationCache): Added.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::clearResourceCaches): Added.
+        (WebKit::WebContext::clearApplicationCache): Added.
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearResourceCaches): Added.
+        (WebKit::WebProcess::clearApplicationCache): Added.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Added messages.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformClearResourceCaches): Added.
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformClearResourceCaches): Added.
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformClearResourceCaches): Added.
+
 2010-11-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

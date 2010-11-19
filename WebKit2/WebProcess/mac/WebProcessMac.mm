@@ -96,4 +96,9 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     [nsurlCache setDiskCapacity:max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
+void WebProcess::platformClearResourceCaches()
+{
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
+
 } // namespace WebKit

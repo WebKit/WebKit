@@ -42,4 +42,7 @@ messages -> WebProcess {
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif
+
+    ClearResourceCaches();
+    ClearApplicationCache();
 }

@@ -114,6 +114,8 @@ public:
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
+    void clearResourceCaches();
+    void clearApplicationCache();
 
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
