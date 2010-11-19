@@ -43,7 +43,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformBridge.h"
-#include "SVGElement.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
@@ -123,42 +122,6 @@ void batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor
 
 typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
-
-#if ENABLE(SVG)
-// Map of SVG objects with contexts to their contexts
-static HashMap<void*, SVGElement*>& svgObjectToContextMap()
-{
-    typedef HashMap<void*, SVGElement*> SvgObjectToContextMap;
-    DEFINE_STATIC_LOCAL(SvgObjectToContextMap, staticSvgObjectToContextMap, ());
-    return staticSvgObjectToContextMap;
-}
-
-void V8Proxy::setSVGContext(void* object, SVGElement* context)
-{
-    if (!object)
-        return;
-
-    SVGElement* oldContext = svgObjectToContextMap().get(object);
-
-    if (oldContext == context)
-        return;
-
-    if (oldContext)
-        oldContext->deref();
-
-    if (context)
-        context->ref();
-
-    svgObjectToContextMap().set(object, context);
-}
-
-SVGElement* V8Proxy::svgContext(void* object)
-{
-    return svgObjectToContextMap().get(object);
-}
-
-#endif
-
 typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
 bool AllowAllocation::m_current = false;

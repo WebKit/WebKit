@@ -58,7 +58,6 @@ namespace WebCore {
     class DOMWindow;
     class Frame;
     class Node;
-    class SVGElement;
     class ScriptExecutionContext;
     class V8EventListener;
     class V8IsolatedContext;
@@ -158,40 +157,6 @@ namespace WebCore {
         // Disconnects the proxy from its owner frame,
         // and clears all timeouts on the DOM window.
         void disconnectFrame();
-
-#if ENABLE(SVG)
-        static void setSVGContext(void*, SVGElement*);
-        static SVGElement* svgContext(void*);
-
-        // These helper functions are required in case we are given a PassRefPtr
-        // to a (possibly) newly created object and must prevent its reference
-        // count from dropping to zero as would happen in code like
-        //
-        //   V8Proxy::setSVGContext(imp->getNewlyCreatedObject().get(), context);
-        //   foo(imp->getNewlyCreatedObject().get());
-        //
-        // In the above two lines each time getNewlyCreatedObject() is called it
-        // creates a new object because we don't ref() it. (So our attemts to
-        // associate a context with it fail.) Such code should be rewritten to
-        //
-        //   foo(V8Proxy::withSVGContext(imp->getNewlyCreatedObject(), context).get());
-        //
-        // where PassRefPtr::~PassRefPtr() is invoked only after foo() is
-        // called.
-        template <typename T>
-        static PassRefPtr<T> withSVGContext(PassRefPtr<T> object, SVGElement* context)
-        {
-            setSVGContext(object.get(), context);
-            return object;
-        }
-
-        template <typename T>
-        static T* withSVGContext(T* object, SVGElement* context)
-        {
-            setSVGContext(object, context);
-            return object;
-        }
-#endif
 
         void finishedWithEvent(Event*) { }
 

@@ -794,12 +794,9 @@ webcore_sources += \
 	WebCore/bindings/js/JSStorageCustom.h \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
-	WebCore/bindings/js/JSSVGContextCache.h \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
-	WebCore/bindings/js/JSSVGPODListCustom.h \
-	WebCore/bindings/js/JSSVGPODTypeWrapper.h \
 	WebCore/bindings/js/JSTextCustom.cpp \
 	WebCore/bindings/js/JSTouchCustom.cpp \
 	WebCore/bindings/js/JSTouchListCustom.cpp \
@@ -3033,9 +3030,6 @@ webcore_sources += \
 	WebCore/svg/animation/SVGSMILElement.h \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
-	WebCore/svg/DeprecatedSVGAnimatedProperty.h \
-	WebCore/svg/DeprecatedSVGAnimatedPropertyTraits.h \
-	WebCore/svg/DeprecatedSVGAnimatedTemplate.h \
 	WebCore/svg/ElementTimeControl.h \
 	WebCore/svg/GradientAttributes.h \
 	WebCore/svg/graphics/filters/SVGFEImage.cpp \
@@ -3223,8 +3217,6 @@ webcore_sources += \
 	WebCore/svg/SVGLinearGradientElement.h \
 	WebCore/svg/SVGLineElement.cpp \
 	WebCore/svg/SVGLineElement.h \
-	WebCore/svg/SVGList.h \
-	WebCore/svg/SVGListTraits.h \
 	WebCore/svg/SVGLocatable.cpp \
 	WebCore/svg/SVGLocatable.h \
 	WebCore/svg/SVGMarkerElement.cpp \

@@ -1435,7 +1435,6 @@ v8 {
         bindings/v8/V8NPObject.h \
         bindings/v8/V8NPUtils.h \
         bindings/v8/V8Proxy.h \
-        bindings/v8/V8SVGPODTypeWrapper.h \
         bindings/v8/V8Utilities.h \
         bindings/v8/V8WorkerContextEventListener.h \
         bindings/v8/WorkerContextExecutionProxy.h \
@@ -2351,9 +2350,6 @@ HEADERS += \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \
     svg/ColorDistance.h \
-    svg/DeprecatedSVGAnimatedProperty.h \
-    svg/DeprecatedSVGAnimatedPropertyTraits.h \
-    svg/DeprecatedSVGAnimatedTemplate.h \
     svg/graphics/filters/SVGFEImage.h \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \

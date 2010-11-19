@@ -60286,10 +60286,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSSVGContextCache.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSSVGElementInstanceCustom.cpp"
 					>
 					<FileConfiguration
@@ -60496,14 +60492,6 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGPODListCustom.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGPODTypeWrapper.h"
-					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSTextCustom.cpp"
@@ -62396,14 +62384,6 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGLineElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGListTraits.h"
 				>
 			</File>
 			<File
