@@ -47,6 +47,10 @@
 			RelativePath=".\JavaScriptCoreGenerated.make"
 			>
 		</File>
+		<File
+			RelativePath=".\react-to-vsprops-changes.py"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

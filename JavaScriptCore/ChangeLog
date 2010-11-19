@@ -1,3 +1,27 @@
+2010-11-18  Adam Roben  <aroben@apple.com>
+
+        Add a script to delete manifest-related files when they are older than
+        any .vsprops file
+
+        Changes to .vsprops files can cause the manifest files to become
+        invalid, and Visual Studio doesn't always figure out that it needs to
+        rebuild them.
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        Call the new script.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        Added the new script.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py: Added.
+        (file_modification_times): Generator to return the modification time of
+        each file in a directory hierarchy.
+        (main): Get the modification time of the newest vsprops file, then find
+        all manifest-related files in the obj directory. Delete all
+        manifest-related files that are older than the newest vsprops file.
+
 2010-11-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Adam Roben.

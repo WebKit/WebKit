@@ -2,6 +2,7 @@ all:
     -xcopy /y/d/e/i "..\..\..\WebKitLibraries\win\tools" "$(WEBKITLIBRARIESDIR)\tools"
     touch "$(WEBKITOUTPUTDIR)\buildfailed"
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
+    bash -c "python react-to-vsprops-changes.py"
     -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\APICast.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JavaScript.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
