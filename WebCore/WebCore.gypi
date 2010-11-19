@@ -736,7 +736,6 @@
             'bindings/v8/IDBBindingUtilities.h',
             'bindings/v8/custom/V8CanvasPixelArrayCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferViewCustom.h',
-            'bindings/v8/custom/V8ArrayBufferViewCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferCustom.cpp',
             'bindings/v8/custom/V8Int8ArrayCustom.cpp',
             'bindings/v8/custom/V8Int32ArrayCustom.cpp',

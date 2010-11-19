@@ -55,12 +55,12 @@ class TypedArrayBase : public ArrayBufferView {
     // Overridden from ArrayBufferView. This must be public because of
     // rules about inheritance of members in template classes, and
     // because it is accessed via pointers to subclasses.
-    virtual unsigned length() const
+    unsigned length() const
     {
         return m_length;
     }
 
-  protected:
+ protected:
     TypedArrayBase(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
         : ArrayBufferView(buffer, byteOffset)
         , m_length(length)

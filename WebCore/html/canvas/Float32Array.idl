@@ -39,6 +39,9 @@ module html {
     ] Float32Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 4;
 
+        readonly attribute unsigned long length;
+        Float32Array slice(in long start, in [Optional] long end);
+
         // void set(in Float32Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

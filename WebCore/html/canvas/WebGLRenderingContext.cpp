@@ -2258,7 +2258,7 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
     // The last row needs no padding.
     unsigned long totalBytes = bytesPerRow * height - padding;
     unsigned long num = totalBytes / bytesPerComponent;
-    if (pixels->length() < num) {
+    if (pixels->byteLength() / bytesPerComponent < num) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }

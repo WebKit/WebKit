@@ -39,6 +39,9 @@ module html {
     ] Uint8Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 1;
 
+        readonly attribute unsigned long length;
+        Uint8Array slice(in long start, in [Optional] long end);
+
         // void set(in Uint8Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         [Custom] void set();

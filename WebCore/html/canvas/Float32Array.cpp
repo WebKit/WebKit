@@ -52,7 +52,12 @@ Float32Array::Float32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, 
 {
 }
 
-PassRefPtr<ArrayBufferView> Float32Array::slice(int start, int end) const
+PassRefPtr<Float32Array> Float32Array::slice(int start) const
+{
+    return slice(start, length());
+}
+
+PassRefPtr<Float32Array> Float32Array::slice(int start, int end) const
 {
     return sliceImpl<Float32Array>(start, end);
 }

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Int32Array : public IntegralTypedArrayBase<int> {
-  public:
+public:
     static PassRefPtr<Int32Array> create(unsigned length);
     static PassRefPtr<Int32Array> create(int* array, unsigned length);
     static PassRefPtr<Int32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
@@ -42,7 +42,10 @@ class Int32Array : public IntegralTypedArrayBase<int> {
     using IntegralTypedArrayBase<int>::set;
 #endif
 
-  private:
+    PassRefPtr<Int32Array> slice(int start) const;
+    PassRefPtr<Int32Array> slice(int start, int end) const;
+
+private:
     Int32Array(PassRefPtr<ArrayBuffer> buffer,
                   unsigned byteOffset,
                   unsigned length);
@@ -51,7 +54,6 @@ class Int32Array : public IntegralTypedArrayBase<int> {
 
     // Overridden from ArrayBufferView.
     virtual bool isIntArray() const { return true; }
-    virtual PassRefPtr<ArrayBufferView> slice(int start, int end) const;
 };
 
 } // namespace WebCore

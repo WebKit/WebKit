@@ -28,8 +28,5 @@ module html {
         readonly attribute ArrayBuffer buffer;
         readonly attribute unsigned long byteOffset;
         readonly attribute unsigned long byteLength;
-        readonly attribute unsigned long length;
-
-        [Custom] ArrayBufferView slice(in long start, in long end);
     };
 }

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class Float32Array : public TypedArrayBase<float> {
-  public:
+public:
     static PassRefPtr<Float32Array> create(unsigned length);
     static PassRefPtr<Float32Array> create(const float* array, unsigned length);
     static PassRefPtr<Float32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
@@ -62,7 +62,10 @@ class Float32Array : public TypedArrayBase<float> {
         return result;
     }
 
-  private:
+    PassRefPtr<Float32Array> slice(int start) const;
+    PassRefPtr<Float32Array> slice(int start, int end) const;
+
+private:
     Float32Array(PassRefPtr<ArrayBuffer> buffer,
                     unsigned byteOffset,
                     unsigned length);
@@ -71,7 +74,6 @@ class Float32Array : public TypedArrayBase<float> {
 
     // Overridden from ArrayBufferView.
     virtual bool isFloatArray() const { return true; }
-    virtual PassRefPtr<ArrayBufferView> slice(int start, int end) const;
 };
 
 } // namespace WebCore

@@ -985,7 +985,6 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
-		492273A31083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */; };
 		492863991253B8FC00F792D6 /* ResourceRawHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceRawHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
@@ -7078,7 +7077,6 @@
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
-		492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBufferViewCustom.cpp; sourceTree = "<group>"; };
 		492863981253B8FC00F792D6 /* ResourceRawHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRawHeaders.h; sourceTree = "<group>"; };
 		49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasGradient.cpp; path = canvas/CanvasGradient.cpp; sourceTree = "<group>"; };
 		49484FB4102CF23C00187DD3 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasGradient.h; path = canvas/CanvasGradient.h; sourceTree = "<group>"; };
@@ -17046,7 +17044,6 @@
 			isa = PBXGroup;
 			children = (
 				BC275CB211C5E85C00C9206C /* JSArrayBufferCustom.cpp */,
-				492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */,
 				86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
@@ -22541,7 +22538,6 @@
 				49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */,
 				BC275CB311C5E85C00C9206C /* JSArrayBufferCustom.cpp in Sources */,
 				49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */,
-				492273A31083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp in Sources */,
 				65DF31DA09D1C123000BE325 /* JSAttr.cpp in Sources */,
 				BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */,
 				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,

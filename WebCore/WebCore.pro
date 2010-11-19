@@ -3714,7 +3714,6 @@ HEADERS += \
     !v8 {
         SOURCES += \
                 bindings/js/JSArrayBufferCustom.cpp \
-                bindings/js/JSArrayBufferViewCustom.cpp \
                 bindings/js/JSInt8ArrayCustom.cpp \
                 bindings/js/JSFloat32ArrayCustom.cpp \
                 bindings/js/JSInt32ArrayCustom.cpp \

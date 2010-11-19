@@ -52,7 +52,12 @@ Uint8Array::Uint8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsi
 {
 }
 
-PassRefPtr<ArrayBufferView> Uint8Array::slice(int start, int end) const
+PassRefPtr<Uint8Array> Uint8Array::slice(int start) const
+{
+    return slice(start, length());
+}
+
+PassRefPtr<Uint8Array> Uint8Array::slice(int start, int end) const
 {
     return sliceImpl<Uint8Array>(start, end);
 }

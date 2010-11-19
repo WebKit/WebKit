@@ -33,7 +33,7 @@ namespace WebCore {
 class ArrayBuffer;
 
 class Int16Array : public IntegralTypedArrayBase<short> {
-  public:
+public:
     static PassRefPtr<Int16Array> create(unsigned length);
     static PassRefPtr<Int16Array> create(short* array, unsigned length);
     static PassRefPtr<Int16Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
@@ -41,7 +41,10 @@ class Int16Array : public IntegralTypedArrayBase<short> {
     using TypedArrayBase<short>::set;
     using IntegralTypedArrayBase<short>::set;
 
-  private:
+    PassRefPtr<Int16Array> slice(int start) const;
+    PassRefPtr<Int16Array> slice(int start, int end) const;
+
+private:
     Int16Array(PassRefPtr<ArrayBuffer> buffer,
                     unsigned byteOffset,
                     unsigned length);
@@ -50,7 +53,6 @@ class Int16Array : public IntegralTypedArrayBase<short> {
 
     // Overridden from ArrayBufferView.
     virtual bool isShortArray() const { return true; }
-    virtual PassRefPtr<ArrayBufferView> slice(int start, int end) const;
 };
 
 } // namespace WebCore

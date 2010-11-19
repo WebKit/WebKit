@@ -52,7 +52,12 @@ Uint16Array::Uint16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, un
 {
 }
 
-PassRefPtr<ArrayBufferView> Uint16Array::slice(int start, int end) const
+PassRefPtr<Uint16Array> Uint16Array::slice(int start) const
+{
+    return slice(start, length());
+}
+
+PassRefPtr<Uint16Array> Uint16Array::slice(int start, int end) const
 {
     return sliceImpl<Uint16Array>(start, end);
 }
