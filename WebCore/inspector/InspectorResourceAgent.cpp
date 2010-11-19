@@ -199,7 +199,7 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
         loadInfoObject->setString("httpStatusText", response.resourceLoadInfo()->httpStatusText);
         loadInfoObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
         loadInfoObject->setObject("responseHeaders", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
-        loadInfoObject->setObject("loadInfo", loadInfoObject);
+        responseObject->setObject("loadInfo", loadInfoObject);
     }
     return responseObject;
 }
