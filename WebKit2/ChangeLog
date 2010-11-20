@@ -1,3 +1,33 @@
+2010-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Extend sandbox when downloading files
+        https://bugs.webkit.org/show_bug.cgi?id=49844
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        Create a sandbox extension handle if necessary.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add a sandbox extension handle out parameter to the DecideDestinationWithSuggestedFilename message.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        Create and consume the returned sandbox extension handle.
+
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        Invalidate the sandbox extension handles.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:shouldDecodeSourceDataOfMIMEType:]):
+        Whoops, fix inverted logic.
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

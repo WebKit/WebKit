@@ -50,6 +50,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class SandboxExtension;
 class WebPage;
 
 class Download : public CoreIPC::MessageSender<Download> {
@@ -84,6 +85,8 @@ private:
 
     uint64_t m_downloadID;
     WebCore::ResourceRequest m_request;
+
+    RefPtr<SandboxExtension> m_sandboxExtension;
 
 #if PLATFORM(MAC)
     RetainPtr<NSURLDownload> m_nsURLDownload;

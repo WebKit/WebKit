@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -66,7 +67,7 @@ private:
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     void shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result);
-    void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite);
+    void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle);
     void didCreateDestination(const String& path);
     void didFinish();
     void didFail(const WebCore::ResourceError&);

@@ -231,7 +231,7 @@ void Download::platformInvalidate()
 
 - (BOOL)download:(NSURLDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)encodingType
 {
-    if (!_download)
+    if (_download)
         return _download->shouldDecodeSourceDataOfMIMEType(encodingType);
 
     return YES;

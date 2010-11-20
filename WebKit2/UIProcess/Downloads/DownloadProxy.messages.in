@@ -25,7 +25,7 @@ messages -> DownloadProxy {
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(uint64_t length)
     ShouldDecodeSourceDataOfMIMEType(String mimeType) -> (bool result)
-    DecideDestinationWithSuggestedFilename(String filename) -> (String destination, bool allowOverwrite)
+    DecideDestinationWithSuggestedFilename(String filename) -> (String destination, bool allowOverwrite, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     DidCreateDestination(WTF::String path)
     DidFinish()
     DidFail(WebCore::ResourceError error)
