@@ -1,3 +1,32 @@
+2010-11-20  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Support JIT_OPTIMIZE_MOD on Thumb-2
+        https://bugs.webkit.org/show_bug.cgi?id=49432
+
+        Rewrite the soft modulo operation into macroassembler form, and move it
+        to JSValue32_64 section.
+        Add support for soft modulo on Thumb-2 JIT also.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::clz):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::countLeadingZeros32):
+        (JSC::MacroAssemblerARM::relativeTableJump):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::countLeadingZeros32):
+        (JSC::MacroAssemblerARMv7::relativeTableJump):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::softModulo):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * wtf/Platform.h:
+
 2010-11-20  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/49848> Make it possible to display the last character of a secure text field unobscured

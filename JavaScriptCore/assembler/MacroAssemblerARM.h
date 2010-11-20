@@ -228,6 +228,17 @@ public:
         m_assembler.eors_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
+    void countLeadingZeros32(RegisterID src, RegisterID dest)
+    {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+        m_assembler.clz_r(dest, src);
+#else
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        ASSERT_NOT_REACHED();
+#endif
+    }
+
     void load8(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.dataTransfer32(true, dest, address.base, address.offset, true);
@@ -708,6 +719,15 @@ public:
     {
         load32(left.m_ptr, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
+    }
+
+    void relativeTableJump(RegisterID index, int scale)
+    {
+        ASSERT(scale >= 0 && scale <= 31);
+        m_assembler.add_r(ARMRegisters::pc, ARMRegisters::pc, m_assembler.lsl(index, scale));
+
+        // NOP the default prefetching
+        m_assembler.mov_r(ARMRegisters::r0, ARMRegisters::r0);
     }
 
     Call call()

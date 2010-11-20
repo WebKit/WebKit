@@ -916,22 +916,10 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    emitGetVirtualRegisters(op1, regT0, op2, regT2);
-    emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    emitJumpSlowCaseIfNotImmediateInteger(regT2);
-
-    addSlowCase(branch32(Equal, regT2, Imm32(1)));
-
-    emitNakedCall(m_globalData->jitStubs->ctiSoftModulo());
-
-    emitPutVirtualRegister(result, regT0);
-#else
     JITStubCall stubCall(this, cti_op_mod);
     stubCall.addArgument(op1, regT2);
     stubCall.addArgument(op2, regT2);
     stubCall.call(result);
-#endif
 }
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

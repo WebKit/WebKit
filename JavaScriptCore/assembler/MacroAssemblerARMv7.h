@@ -220,6 +220,11 @@ public:
         }
     }
 
+    void countLeadingZeros32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.clz(dest, src);
+    }
+
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
         // Clamp the shift to the range 0..31
@@ -1074,6 +1079,18 @@ public:
         return Jump(makeBranch(cond));
     }
     
+    void relativeTableJump(RegisterID index, int scale)
+    {
+        ASSERT(scale >= 0 && scale <= 31);
+
+        // dataTempRegister will point after the jump if index register contains zero
+        move(ARMRegisters::pc, dataTempRegister);
+        m_assembler.add(dataTempRegister, dataTempRegister, ARMThumbImmediate::makeEncodedImm(9));
+
+        ShiftTypeAndAmount shift(SRType_LSL, scale);
+        m_assembler.add(dataTempRegister, dataTempRegister, index, shift);
+        jump(dataTempRegister);
+    }
 
     // Miscellaneous operations:
 

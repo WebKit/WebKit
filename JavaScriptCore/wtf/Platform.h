@@ -983,7 +983,7 @@
 
 /* Configure the JIT */
 #if ENABLE(JIT)
-    #if CPU(ARM_TRADITIONAL)
+    #if CPU(ARM)
     #if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
     #define ENABLE_JIT_USE_SOFT_MODULO 1
     #endif

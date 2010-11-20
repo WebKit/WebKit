@@ -46,10 +46,6 @@ namespace JSC {
 
 void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    Label softModBegin = align();
-    softModulo();
-#endif
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (2) The second function provides fast property access for string length
     Label stringLengthBegin = align();
@@ -185,9 +181,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
     trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
-#endif
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
 #endif
@@ -1777,81 +1770,6 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
         lazyJump.link(this);
 }
 
-// For both JSValue32_64 and JSValue32
-#if ENABLE(JIT_USE_SOFT_MODULO)
-#if CPU(ARM_TRADITIONAL)
-void JIT::softModulo()
-{
-    push(regS0);
-    push(regS1);
-    push(regT1);
-    push(regT3);
-#if USE(JSVALUE32_64)
-    m_assembler.mov_r(regT3, regT2);
-    m_assembler.mov_r(regT2, regT0);
-#else
-    m_assembler.mov_r(regT3, m_assembler.asr(regT2, 1));
-    m_assembler.mov_r(regT2, m_assembler.asr(regT0, 1));
-#endif
-    m_assembler.mov_r(regT1, ARMAssembler::getOp2(0));
-    
-    m_assembler.teq_r(regT3, ARMAssembler::getOp2(0));
-    m_assembler.rsb_r(regT3, regT3, ARMAssembler::getOp2(0), ARMAssembler::MI);
-    m_assembler.eor_r(regT1, regT1, ARMAssembler::getOp2(1), ARMAssembler::MI);
-    
-    m_assembler.teq_r(regT2, ARMAssembler::getOp2(0));
-    m_assembler.rsb_r(regT2, regT2, ARMAssembler::getOp2(0), ARMAssembler::MI);
-    m_assembler.eor_r(regT1, regT1, ARMAssembler::getOp2(2), ARMAssembler::MI);
-    
-    Jump exitBranch = branch32(LessThan, regT2, regT3);
-
-    m_assembler.sub_r(regS1, regT3, ARMAssembler::getOp2(1));
-    m_assembler.tst_r(regS1, regT3);
-    m_assembler.and_r(regT2, regT2, regS1, ARMAssembler::EQ);
-    m_assembler.and_r(regT0, regS1, regT3);
-    Jump exitBranch2 = branchTest32(Zero, regT0);
-    
-    m_assembler.clz_r(regS1, regT2);
-    m_assembler.clz_r(regS0, regT3);
-    m_assembler.sub_r(regS0, regS0, regS1);
-
-    m_assembler.rsbs_r(regS0, regS0, ARMAssembler::getOp2(31));
-
-    m_assembler.mov_r(regS0, m_assembler.lsl(regS0, 1), ARMAssembler::NE);
-
-    m_assembler.add_r(ARMRegisters::pc, ARMRegisters::pc, m_assembler.lsl(regS0, 2), ARMAssembler::NE);
-    m_assembler.mov_r(regT0, regT0);
-    
-    for (int i = 31; i > 0; --i) {
-        m_assembler.cmp_r(regT2, m_assembler.lsl(regT3, i));
-        m_assembler.sub_r(regT2, regT2, m_assembler.lsl(regT3, i), ARMAssembler::CS);
-    }
-
-    m_assembler.cmp_r(regT2, regT3);
-    m_assembler.sub_r(regT2, regT2, regT3, ARMAssembler::CS);
-    
-    exitBranch.link(this);
-    exitBranch2.link(this);
-    
-    m_assembler.teq_r(regT1, ARMAssembler::getOp2(0));
-    m_assembler.rsb_r(regT2, regT2, ARMAssembler::getOp2(0), ARMAssembler::GT);
-    
-#if USE(JSVALUE32_64)
-    m_assembler.mov_r(regT0, regT2);
-#else
-    m_assembler.mov_r(regT0, m_assembler.lsl(regT2, 1));
-    m_assembler.eor_r(regT0, regT0, ARMAssembler::getOp2(1));
-#endif
-    pop(regT3);
-    pop(regT1);
-    pop(regS1);
-    pop(regS0);
-    ret();
-}
-#else
-#error "JIT_OPTIMIZE_MOD not yet supported on this platform."
-#endif // CPU(ARM_TRADITIONAL)
-#endif
 } // namespace JSC
 
 #endif // ENABLE(JIT)

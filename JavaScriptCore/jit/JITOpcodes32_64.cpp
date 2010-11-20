@@ -1740,6 +1740,96 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     stubCall.call(dst);
 }
 
+#if ENABLE(JIT_USE_SOFT_MODULO)
+void JIT::softModulo()
+{
+    push(regT1);
+    push(regT3);
+    move(regT2, regT3);
+    move(regT0, regT2);
+    move(Imm32(0), regT1);
+
+    // Check for negative result reminder
+    Jump positiveRegT3 = branch32(GreaterThanOrEqual, regT3, Imm32(0));
+    neg32(regT3);
+    xor32(Imm32(1), regT1);
+    positiveRegT3.link(this);
+
+    Jump positiveRegT2 = branch32(GreaterThanOrEqual, regT2, Imm32(0));
+    neg32(regT2);
+    xor32(Imm32(2), regT1);
+    positiveRegT2.link(this);
+
+    // Save the condition for negative reminder
+    push(regT1);
+
+    Jump exitBranch = branch32(LessThan, regT2, regT3);
+
+    // Power of two fast case
+    move(regT3, regT0);
+    sub32(Imm32(1), regT0);
+    Jump powerOfTwo = branchTest32(NotEqual, regT0, regT3);
+    and32(regT0, regT2);
+    powerOfTwo.link(this);
+
+    and32(regT3, regT0);
+
+    Jump exitBranch2 = branchTest32(Zero, regT0);
+
+    countLeadingZeros32(regT2, regT0);
+    countLeadingZeros32(regT3, regT1);
+    sub32(regT0, regT1);
+
+    Jump useFullTable = branch32(Equal, regT1, Imm32(31));
+
+    neg32(regT1);
+    add32(Imm32(31), regT1);
+
+    int elementSizeByShift = -1;
+#if CPU(ARM)
+    elementSizeByShift = 3;
+#else
+#error "JIT_OPTIMIZE_MOD not yet supported on this platform."
+#endif
+    relativeTableJump(regT1, elementSizeByShift);
+
+    useFullTable.link(this);
+    // Modulo table
+    for (int i = 31; i > 0; --i) {
+#if CPU(ARM_TRADITIONAL)
+        m_assembler.cmp_r(regT2, m_assembler.lsl(regT3, i));
+        m_assembler.sub_r(regT2, regT2, m_assembler.lsl(regT3, i), ARMAssembler::CS);
+#elif CPU(ARM_THUMB2)
+        ShiftTypeAndAmount shift(SRType_LSL, i);
+        m_assembler.sub_S(regT1, regT2, regT3, shift);
+        m_assembler.it(ARMv7Assembler::ConditionCS);
+        m_assembler.mov(regT2, regT1);
+#else
+#error "JIT_OPTIMIZE_MOD not yet supported on this platform."
+#endif
+    }
+
+    Jump lower = branch32(Below, regT2, regT3);
+    sub32(regT3, regT2);
+    lower.link(this);
+
+    exitBranch.link(this);
+    exitBranch2.link(this);
+
+    // Check for negative reminder
+    pop(regT1);
+    Jump positiveResult = branch32(Equal, regT1, Imm32(0));
+    neg32(regT2);
+    positiveResult.link(this);
+
+    move(regT2, regT0);
+
+    pop(regT3);
+    pop(regT1);
+    ret();
+}
+#endif // ENABLE(JIT_USE_SOFT_MODULO)
+
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)

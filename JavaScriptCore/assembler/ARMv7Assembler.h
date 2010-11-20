@@ -694,6 +694,7 @@ private:
         OP_LSR_reg_T2   = 0xFA20,
         OP_ASR_reg_T2   = 0xFA40,
         OP_ROR_reg_T2   = 0xFA60,
+        OP_CLZ          = 0xFAB0,
         OP_SMULL_T1     = 0xFB80,
     } OpcodeID1;
 
@@ -945,6 +946,13 @@ public:
     void bkpt(uint8_t imm=0)
     {
         m_formatter.oneWordOp8Imm8(OP_BKPT, imm);
+    }
+
+    void clz(RegisterID rd, RegisterID rm)
+    {
+        ASSERT(!BadReg(rd));
+        ASSERT(!BadReg(rm));
+        m_formatter.twoWordOp12Reg4FourFours(OP_CLZ, rm, FourFours(0xf, rd, 8, rm));
     }
 
     void cmn(RegisterID rn, ARMThumbImmediate imm)
