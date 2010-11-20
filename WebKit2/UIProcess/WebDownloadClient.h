@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+    class ResourceError;
     class ResourceResponse;
 }
 
@@ -48,6 +49,7 @@ public:
     String decideDestinationWithSuggestedFilename(WebContext*, DownloadProxy*, const String& filename, bool& allowOverwrite);
     void didCreateDestination(WebContext*, DownloadProxy*, const String& path);
     void didFinish(WebContext*, DownloadProxy*);
+    void didFail(WebContext*, DownloadProxy*, const WebCore::ResourceError&);
 };
 
 } // namespace WebKit

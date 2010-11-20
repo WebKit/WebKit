@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        Add a didFail WKContextDownloadClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=49847
+
+        * UIProcess/API/C/WKContext.h:
+        Add didFail callback.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didFail):
+        Call WebDownloadClient::didFail.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didFail):
+        Call the didFail client function.
+
+
+2010-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Extend sandbox when downloading files
         https://bugs.webkit.org/show_bug.cgi?id=49844
 

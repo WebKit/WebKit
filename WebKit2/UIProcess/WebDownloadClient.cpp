@@ -88,6 +88,14 @@ void WebDownloadClient::didFinish(WebContext* webContext, DownloadProxy* downloa
         return;
     
     m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
-}    
+}
+
+void WebDownloadClient::didFail(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceError& error)
+{
+    if (!m_client.didFail)
+        return;
+
+    m_client.didFail(toAPI(webContext), toAPI(downloadProxy), toAPI(error), m_client.clientInfo);
+}
 
 } // namespace WebKit
