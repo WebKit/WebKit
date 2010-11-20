@@ -28,7 +28,6 @@
 #ifndef Path_h
 #define Path_h
 
-#include <algorithm>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
@@ -108,8 +107,6 @@ namespace WebCore {
 
         Path(const Path&);
         Path& operator=(const Path&);
-
-        void swap(Path& other) { std::swap(m_path, other.m_path); }
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
