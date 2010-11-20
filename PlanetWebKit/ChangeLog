@@ -1,3 +1,11 @@
+2010-11-19  Adam Roben  <aroben@apple.com>
+
+        Add Lucas De Marchi's blog to Planet WebKit
+
+        Reviewed by Jon Honeycutt.
+
+        * config.ini:
+
 2010-09-15  Adam Roben  <aroben@apple.com>
 
         Use Qt Labs' WebKit category feed instead of filtering on "webkit"
