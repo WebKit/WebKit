@@ -2338,7 +2338,6 @@ BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 // WebKit roll 58791:58807
-BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
 BUG43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT IMAGE PASS
 
 BUG43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
