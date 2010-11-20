@@ -37,7 +37,7 @@ namespace WebCore {
     public:
         typedef HashSet<FilterEffect*> FilterEffectSet;
 
-        static PassRefPtr<SVGFilterBuilder> create() { return adoptRef(new SVGFilterBuilder); }
+        static PassRefPtr<SVGFilterBuilder> create(Filter* filter) { return adoptRef(new SVGFilterBuilder(filter)); }
 
         void add(const AtomicString& id, RefPtr<FilterEffect> effect);
 
@@ -56,7 +56,7 @@ namespace WebCore {
         void clearEffects();
 
     private:
-        SVGFilterBuilder();
+        SVGFilterBuilder(Filter*);
 
         inline void addBuiltinEffects()
         {

@@ -60,7 +60,7 @@ void SVGFEComponentTransferElement::synchronizeProperty(const QualifiedName& att
         synchronizeIn1();
 }
 
-PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder)
+PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     
@@ -83,7 +83,7 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
             alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
     
-    RefPtr<FilterEffect> effect = FEComponentTransfer::create(red, green, blue, alpha);
+    RefPtr<FilterEffect> effect = FEComponentTransfer::create(filter, red, green, blue, alpha);
     effect->inputEffects().append(input1);
     return effect.release();
 }

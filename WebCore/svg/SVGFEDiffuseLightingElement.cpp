@@ -112,7 +112,7 @@ void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrN
     }
 }
 
-PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder)
+PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     
@@ -122,7 +122,7 @@ PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* fi
     RefPtr<RenderStyle> filterStyle = styleForRenderer();
     Color color = filterStyle->svgStyle()->lightingColor();
     
-    RefPtr<FilterEffect> effect = FEDiffuseLighting::create(color, surfaceScale(), diffuseConstant(), 
+    RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(), 
                                                                 kernelUnitLengthX(), kernelUnitLengthY(), findLights());
     effect->inputEffects().append(input1);
     return effect.release();

@@ -32,18 +32,18 @@
 
 namespace WebCore {
 
-FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
-    : FilterEffect()
+FEDisplacementMap::FEDisplacementMap(Filter* filter, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
+    : FilterEffect(filter)
     , m_xChannelSelector(xChannelSelector)
     , m_yChannelSelector(yChannelSelector)
     , m_scale(scale)
 {
 }
 
-PassRefPtr<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector,
+PassRefPtr<FEDisplacementMap> FEDisplacementMap::create(Filter* filter, ChannelSelectorType xChannelSelector,
     ChannelSelectorType yChannelSelector, float scale)
 {
-    return adoptRef(new FEDisplacementMap(xChannelSelector, yChannelSelector, scale));
+    return adoptRef(new FEDisplacementMap(filter, xChannelSelector, yChannelSelector, scale));
 }
 
 ChannelSelectorType FEDisplacementMap::xChannelSelector() const
@@ -76,19 +76,19 @@ void FEDisplacementMap::setScale(float scale)
     m_scale = scale;
 }
 
-void FEDisplacementMap::apply(Filter* filter)
+void FEDisplacementMap::apply()
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
-    in->apply(filter);
-    in2->apply(filter);
+    in->apply();
+    in2->apply();
     if (!in->resultImage() || !in2->resultImage())
         return;
 
     if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
@@ -105,6 +105,7 @@ void FEDisplacementMap::apply(Filter* filter)
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 
+    Filter* filter = this->filter();
     float scaleX = filter->applyHorizontalScale(m_scale / 255);
     float scaleY = filter->applyVerticalScale(m_scale / 255);
     float scaleAdjustmentX = filter->applyHorizontalScale(0.5f - 0.5f * m_scale);

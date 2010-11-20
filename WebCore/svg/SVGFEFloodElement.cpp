@@ -39,14 +39,14 @@ PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tag
     return adoptRef(new SVGFEFloodElement(tagName, document));
 }
 
-PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*)
+PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter* filter)
 {
     RefPtr<RenderStyle> filterStyle = styleForRenderer();
 
     Color color = filterStyle->svgStyle()->floodColor();
     float opacity = filterStyle->svgStyle()->floodOpacity();
 
-    return FEFlood::create(color, opacity);
+    return FEFlood::create(filter, color, opacity);
 }
 
 }

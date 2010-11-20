@@ -31,15 +31,15 @@ namespace WebCore {
 
 class FEMerge : public FilterEffect {
 public:
-    static PassRefPtr<FEMerge> create();
+    static PassRefPtr<FEMerge> create(Filter*);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEMerge();
+    FEMerge(Filter*);
 };
 
 } // namespace WebCore

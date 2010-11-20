@@ -36,7 +36,7 @@ private:
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
 };

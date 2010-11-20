@@ -29,28 +29,28 @@
 
 namespace WebCore {
 
-FEMerge::FEMerge() 
-    : FilterEffect()
+FEMerge::FEMerge(Filter* filter) 
+    : FilterEffect(filter)
 {
 }
 
-PassRefPtr<FEMerge> FEMerge::create()
+PassRefPtr<FEMerge> FEMerge::create(Filter* filter)
 {
-    return adoptRef(new FEMerge);
+    return adoptRef(new FEMerge(filter));
 }
 
-void FEMerge::apply(Filter* filter)
+void FEMerge::apply()
 {
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        in->apply(filter);
+        in->apply();
         if (!in->resultImage())
             return;
     }
 
-    GraphicsContext* filterContext = effectContext(filter);
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 

@@ -119,12 +119,12 @@ void SVGFETurbulenceElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeNumOctaves();
 }
 
-PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*)
+PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter* filter)
 {
     if (baseFrequencyX() < 0 || baseFrequencyY() < 0)
         return 0;
 
-    return FETurbulence::create(static_cast<TurbulanceType>(type()), baseFrequencyX(), 
+    return FETurbulence::create(filter, static_cast<TurbulanceType>(type()), baseFrequencyX(), 
                 baseFrequencyY(), numOctaves(), seed(), stitchTiles() == SVG_STITCHTYPE_STITCH);
 }
 

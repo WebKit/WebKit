@@ -31,7 +31,7 @@ namespace WebCore {
 
 class FEFlood : public FilterEffect {
 public:
-    static PassRefPtr<FEFlood> create(const Color&, float);
+    static PassRefPtr<FEFlood> create(Filter* filter, const Color&, float);
 
     Color floodColor() const;
     void setFloodColor(const Color &);
@@ -39,15 +39,15 @@ public:
     float floodOpacity() const;
     void setFloodOpacity(float);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(maxEffectRect()); }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEFlood(const Color&, float);
+    FEFlood(Filter*, const Color&, float);
 
     Color m_floodColor;
     float m_floodOpacity;

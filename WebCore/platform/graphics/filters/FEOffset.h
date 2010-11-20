@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEOffset : public FilterEffect {
 public:
-    static PassRefPtr<FEOffset> create(float dx, float dy);
+    static PassRefPtr<FEOffset> create(Filter*, float dx, float dy);
 
     float dx() const;
     void setDx(float);
@@ -38,15 +38,15 @@ public:
     float dy() const;
     void setDy(float);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
     
-    virtual void determineAbsolutePaintRect(Filter*);
+    virtual void determineAbsolutePaintRect();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEOffset(float dx, float dy);
+    FEOffset(Filter*, float dx, float dy);
 
     float m_dx;
     float m_dy;

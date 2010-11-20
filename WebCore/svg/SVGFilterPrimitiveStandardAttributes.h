@@ -40,7 +40,7 @@ class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement {
 public:
     void setStandardAttributes(bool, FilterEffect*) const;
 
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*) = 0;
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter* filter) = 0;
 
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document*);

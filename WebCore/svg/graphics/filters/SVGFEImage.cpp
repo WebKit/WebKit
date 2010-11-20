@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-FEImage::FEImage(RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
-    : FilterEffect()
+FEImage::FEImage(Filter* filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+    : FilterEffect(filter)
     , m_image(image)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
-PassRefPtr<FEImage> FEImage::create(RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+PassRefPtr<FEImage> FEImage::create(Filter* filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
 {
-    return adoptRef(new FEImage(image, preserveAspectRatio));
+    return adoptRef(new FEImage(filter, image, preserveAspectRatio));
 }
 
-void FEImage::determineAbsolutePaintRect(Filter*)
+void FEImage::determineAbsolutePaintRect()
 {
     ASSERT(m_image);
     FloatRect srcRect(FloatPoint(), m_image->size());
@@ -54,12 +54,12 @@ void FEImage::determineAbsolutePaintRect(Filter*)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void FEImage::apply(Filter* filter)
+void FEImage::apply()
 {
     if (!m_image.get())
         return;
 
-    GraphicsContext* filterContext = effectContext(filter);
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 

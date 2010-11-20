@@ -40,7 +40,7 @@ enum ColorMatrixType {
 
 class FEColorMatrix : public FilterEffect {
 public:
-    static PassRefPtr<FEColorMatrix> create(ColorMatrixType, const Vector<float>&);
+    static PassRefPtr<FEColorMatrix> create(Filter*, ColorMatrixType, const Vector<float>&);
 
     ColorMatrixType type() const;
     void setType(ColorMatrixType);
@@ -48,13 +48,13 @@ public:
     const Vector<float>& values() const;
     void setValues(const Vector<float>&);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEColorMatrix(ColorMatrixType, const Vector<float>&);
+    FEColorMatrix(Filter*, ColorMatrixType, const Vector<float>&);
 
     ColorMatrixType m_type;
     Vector<float> m_values;

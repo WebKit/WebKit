@@ -30,19 +30,19 @@ namespace WebCore {
     
 class FETile : public FilterEffect {
 public:
-    static PassRefPtr<FETile> create();
+    static PassRefPtr<FETile> create(Filter* filter);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(maxEffectRect()); }
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeTile; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FETile();
+    FETile(Filter*);
 };
 
 } // namespace WebCore

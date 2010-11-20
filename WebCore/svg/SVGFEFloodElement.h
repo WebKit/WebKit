@@ -34,7 +34,7 @@ public:
 private:
     SVGFEFloodElement(const QualifiedName&, Document*);
 
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 };
 
 } // namespace WebCore

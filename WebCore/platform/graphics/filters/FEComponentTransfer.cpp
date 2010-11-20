@@ -36,9 +36,9 @@ namespace WebCore {
 
 typedef void (*TransferType)(unsigned char*, const ComponentTransferFunction&);
 
-FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
+FEComponentTransfer::FEComponentTransfer(Filter* filter, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
                                          const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
-    : FilterEffect()
+    : FilterEffect(filter)
     , m_redFunc(redFunc)
     , m_greenFunc(greenFunc)
     , m_blueFunc(blueFunc)
@@ -46,10 +46,10 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 {
 }
 
-PassRefPtr<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunc, 
+PassRefPtr<FEComponentTransfer> FEComponentTransfer::create(Filter* filter, const ComponentTransferFunction& redFunc, 
     const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
 {
-    return adoptRef(new FEComponentTransfer(redFunc, greenFunc, blueFunc, alphaFunc));
+    return adoptRef(new FEComponentTransfer(filter, redFunc, greenFunc, blueFunc, alphaFunc));
 }
 
 ComponentTransferFunction FEComponentTransfer::redFunction() const
@@ -147,14 +147,14 @@ static void gamma(unsigned char* values, const ComponentTransferFunction& transf
     }
 }
 
-void FEComponentTransfer::apply(Filter* filter)
+void FEComponentTransfer::apply()
 {
     FilterEffect* in = inputEffect(0);
-    in->apply(filter);
+    in->apply();
     if (!in->resultImage())
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];

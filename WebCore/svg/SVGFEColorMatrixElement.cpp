@@ -93,7 +93,7 @@ void SVGFEColorMatrixElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeValues();
 }
 
-PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder)
+PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
@@ -130,7 +130,7 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
             return 0;
     }
 
-    RefPtr<FilterEffect> effect = FEColorMatrix::create(filterType, filterValues);
+    RefPtr<FilterEffect> effect = FEColorMatrix::create(filter, filterType, filterValues);
     effect->inputEffects().append(input1);
     return effect.release();
 }

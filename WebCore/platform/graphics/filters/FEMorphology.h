@@ -36,7 +36,7 @@ enum MorphologyOperatorType {
 
 class FEMorphology : public FilterEffect {
 public:
-    static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
+    static PassRefPtr<FEMorphology> create(Filter*, MorphologyOperatorType, float radiusX, float radiusY);  
     MorphologyOperatorType morphologyOperator() const;
     void setMorphologyOperator(MorphologyOperatorType);
 
@@ -46,15 +46,15 @@ public:
     float radiusY() const;
     void setRadiusY(float);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*);
+    virtual void determineAbsolutePaintRect();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
+    FEMorphology(Filter*, MorphologyOperatorType, float radiusX, float radiusY);
     
     MorphologyOperatorType m_type;
     float m_radiusX;

@@ -40,18 +40,18 @@ enum BlendModeType {
 
 class FEBlend : public FilterEffect {
 public:
-    static PassRefPtr<FEBlend> create(BlendModeType);
+    static PassRefPtr<FEBlend> create(Filter*, BlendModeType);
 
     BlendModeType blendMode() const;
     void setBlendMode(BlendModeType);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEBlend(BlendModeType);
+    FEBlend(Filter*, BlendModeType);
 
     BlendModeType m_mode;
 };

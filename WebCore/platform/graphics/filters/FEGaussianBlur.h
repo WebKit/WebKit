@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEGaussianBlur : public FilterEffect {
 public:
-    static PassRefPtr<FEGaussianBlur> create(float, float);
+    static PassRefPtr<FEGaussianBlur> create(Filter*, float, float);
 
     float stdDeviationX() const;
     void setStdDeviationX(float);
@@ -40,15 +40,15 @@ public:
 
     static float calculateStdDeviation(float);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
     
-    virtual void determineAbsolutePaintRect(Filter*);
+    virtual void determineAbsolutePaintRect();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEGaussianBlur(float, float);
+    FEGaussianBlur(Filter*, float, float);
 
     float m_stdX;
     float m_stdY;

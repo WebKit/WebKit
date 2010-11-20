@@ -35,15 +35,15 @@ typedef unsigned char (*BlendType)(unsigned char colorA, unsigned char colorB, u
 
 namespace WebCore {
 
-FEBlend::FEBlend(BlendModeType mode)
-    : FilterEffect()
+FEBlend::FEBlend(Filter* filter, BlendModeType mode)
+    : FilterEffect(filter)
     , m_mode(mode)
 {
 }
 
-PassRefPtr<FEBlend> FEBlend::create(BlendModeType mode)
+PassRefPtr<FEBlend> FEBlend::create(Filter* filter, BlendModeType mode)
 {
-    return adoptRef(new FEBlend(mode));
+    return adoptRef(new FEBlend(filter, mode));
 }
 
 BlendModeType FEBlend::blendMode() const
@@ -86,19 +86,19 @@ static unsigned char lighten(unsigned char colorA, unsigned char colorB, unsigne
     return ((std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255)) / 255);
 }
 
-void FEBlend::apply(Filter* filter)
+void FEBlend::apply()
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
-    in->apply(filter);
-    in2->apply(filter);
+    in->apply();
+    in2->apply();
     if (!in->resultImage() || !in2->resultImage())
         return;
 
     if (m_mode <= FEBLEND_MODE_UNKNOWN || m_mode > FEBLEND_MODE_LIGHTEN)
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());

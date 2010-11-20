@@ -36,17 +36,17 @@ using std::max;
 
 namespace WebCore {
 
-FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY)
-    : FilterEffect()
+FEMorphology::FEMorphology(Filter* filter, MorphologyOperatorType type, float radiusX, float radiusY)
+    : FilterEffect(filter)
     , m_type(type)
     , m_radiusX(radiusX)
     , m_radiusY(radiusY)
 {
 }
 
-PassRefPtr<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY)
+PassRefPtr<FEMorphology> FEMorphology::create(Filter* filter, MorphologyOperatorType type, float radiusX, float radiusY)
 {
-    return adoptRef(new FEMorphology(type, radiusX, radiusY));
+    return adoptRef(new FEMorphology(filter, type, radiusX, radiusY));
 }
 
 MorphologyOperatorType FEMorphology::morphologyOperator() const
@@ -74,9 +74,10 @@ float FEMorphology::radiusY() const
     return m_radiusY;
 }
 
-void FEMorphology::determineAbsolutePaintRect(Filter* filter)
+void FEMorphology::determineAbsolutePaintRect()
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
+    Filter* filter = this->filter();
     paintRect.inflateX(filter->applyHorizontalScale(m_radiusX));
     paintRect.inflateY(filter->applyVerticalScale(m_radiusY));
     paintRect.intersect(maxEffectRect());
@@ -88,20 +89,21 @@ void FEMorphology::setRadiusY(float radiusY)
     m_radiusY = radiusY;
 }
 
-void FEMorphology::apply(Filter* filter)
+void FEMorphology::apply()
 {
     FilterEffect* in = inputEffect(0);
-    in->apply(filter);
+    in->apply();
     if (!in->resultImage())
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     setIsAlphaImage(in->isAlphaImage());
     if (m_radiusX <= 0 || m_radiusY <= 0)
         return;
 
+    Filter* filter = this->filter();
     int radiusX = static_cast<int>(floorf(filter->applyHorizontalScale(m_radiusX)));
     int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
 

@@ -37,9 +37,9 @@ PassRefPtr<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tag
     return adoptRef(new SVGFEMergeElement(tagName, document));
 }
 
-PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder)
+PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
-    RefPtr<FilterEffect> effect = FEMerge::create();
+    RefPtr<FilterEffect> effect = FEMerge::create(filter);
     FilterEffectVector& mergeInputs = effect->inputEffects();
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feMergeNodeTag)) {

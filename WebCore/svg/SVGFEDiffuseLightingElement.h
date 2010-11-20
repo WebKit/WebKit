@@ -41,7 +41,7 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();

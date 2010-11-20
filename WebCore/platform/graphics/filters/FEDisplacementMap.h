@@ -39,7 +39,7 @@ enum ChannelSelectorType {
 
 class FEDisplacementMap : public FilterEffect {
 public:
-    static PassRefPtr<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    static PassRefPtr<FEDisplacementMap> create(Filter*, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType xChannelSelector() const;
     void setXChannelSelector(const ChannelSelectorType);
@@ -50,15 +50,15 @@ public:
     float scale() const;
     void setScale(float scale);
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(maxEffectRect()); }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    FEDisplacementMap(Filter*, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;

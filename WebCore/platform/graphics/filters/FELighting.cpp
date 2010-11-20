@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-FELighting::FELighting(LightingType lightingType, const Color& lightingColor, float surfaceScale,
+FELighting::FELighting(Filter* filter, LightingType lightingType, const Color& lightingColor, float surfaceScale,
     float diffuseConstant, float specularConstant, float specularExponent,
     float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
-    : FilterEffect()
+    : FilterEffect(filter)
     , m_lightingType(lightingType)
     , m_lightSource(lightSource)
     , m_lightingColor(lightingColor)
@@ -329,14 +329,14 @@ bool FELighting::drawLighting(ByteArray* pixels, int width, int height)
     return true;
 }
 
-void FELighting::apply(Filter* filter)
+void FELighting::apply()
 {
     FilterEffect* in = inputEffect(0);
-    in->apply(filter);
+    in->apply();
     if (!in->resultImage())
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     setIsAlphaImage(false);

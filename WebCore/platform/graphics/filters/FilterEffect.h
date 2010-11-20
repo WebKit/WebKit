@@ -56,7 +56,7 @@ public:
 
     // Creates the ImageBuffer for the current filter primitive result in the size of the
     // repaintRect. Gives back the GraphicsContext of the own ImageBuffer.
-    GraphicsContext* effectContext(Filter*);
+    GraphicsContext* effectContext();
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
@@ -75,10 +75,10 @@ public:
     IntRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const IntRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
-    virtual void apply(Filter*) = 0;
+    virtual void apply() = 0;
     virtual void dump() = 0;
 
-    virtual void determineAbsolutePaintRect(Filter*);
+    virtual void determineAbsolutePaintRect();
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
 
@@ -105,8 +105,10 @@ public:
     FloatRect effectBoundaries() const { return m_effectBoundaries; }
     void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
 
+    Filter* filter() { return m_filter; }
+
 protected:
-    FilterEffect();
+    FilterEffect(Filter*);
 
 private:
     OwnPtr<ImageBuffer> m_effectBuffer;
@@ -119,6 +121,7 @@ private:
     // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
     // The absolute paint rect should never be bigger than m_maxEffectRect.
     IntRect m_maxEffectRect;
+    Filter* m_filter;
 
 private:
     // The following member variables are SVG specific and will move to RenderSVGResourceFilterPrimitive.

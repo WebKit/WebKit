@@ -31,7 +31,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    static PassRefPtr<FEDiffuseLighting> create(const Color&, float, float,
+    static PassRefPtr<FEDiffuseLighting> create(Filter*, const Color&, float, float,
         float, float, PassRefPtr<LightSource>);
     virtual ~FEDiffuseLighting();
 
@@ -58,7 +58,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEDiffuseLighting(const Color&, float, float, float, float, PassRefPtr<LightSource>);
+    FEDiffuseLighting(Filter*, const Color&, float, float, float, float, PassRefPtr<LightSource>);
 };
 
 } // namespace WebCore

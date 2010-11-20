@@ -31,21 +31,24 @@ namespace WebCore {
 
 class SourceGraphic : public FilterEffect {
 public:        
-    static PassRefPtr<SourceGraphic> create();
+    static PassRefPtr<SourceGraphic> create(Filter*);
 
     static const AtomicString& effectName();
 
-    virtual void apply(Filter*);
+    virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*);
+    virtual void determineAbsolutePaintRect();
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeSourceInput; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    SourceGraphic() { }
+    SourceGraphic(Filter* filter)
+        : FilterEffect(filter)
+    {
+    }
 };
 
 } //namespace WebCore

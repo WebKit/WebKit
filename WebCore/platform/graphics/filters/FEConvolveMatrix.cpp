@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize,
+FEConvolveMatrix::FEConvolveMatrix(Filter* filter, const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
-    : FilterEffect()
+    : FilterEffect(filter)
     , m_kernelSize(kernelSize)
     , m_divisor(divisor)
     , m_bias(bias)
@@ -47,11 +47,11 @@ FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize,
 {
 }
 
-PassRefPtr<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize,
+PassRefPtr<FEConvolveMatrix> FEConvolveMatrix::create(Filter* filter, const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
 {
-    return adoptRef(new FEConvolveMatrix(kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength,
+    return adoptRef(new FEConvolveMatrix(filter, kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength,
         preserveAlpha, kernelMatrix));
 }
 
@@ -370,14 +370,14 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
 
-void FEConvolveMatrix::apply(Filter* filter)
+void FEConvolveMatrix::apply()
 {
     FilterEffect* in = inputEffect(0);
-    in->apply(filter);
+    in->apply();
     if (!in->resultImage())
         return;
 
-    if (!effectContext(filter))
+    if (!effectContext())
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());
