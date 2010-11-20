@@ -1272,14 +1272,6 @@ BUG23498 MAC : fast/forms/fieldset-align.html = IMAGE
 BUG23498 MAC : fast/forms/form-hides-table.html = IMAGE
 BUG23498 MAC : fast/forms/input-table.html = IMAGE
 BUG23498 MAC : fast/forms/textAreaLineHeight.html = IMAGE
-
-BUG23498 MAC : fast/frames/frame-scrolling-attribute.html = IMAGE
-
-BUG23498 MAC : fast/frames/iframe-scrolling-attribute.html = IMAGE
-BUG23498 BUG26044 MAC RELEASE : fast/frames/invalid.html = IMAGE CRASH
-BUG23498 BUG26044 SLOW MAC DEBUG : fast/frames/invalid.html = IMAGE
-BUG23498 MAC DEBUG : fast/frames/valid.html = IMAGE
-BUG23498 MAC RELEASE : fast/frames/valid.html = IMAGE CRASH
 BUG23498 MAC : fast/gradients/background-clipped.html = IMAGE
 BUG23498 MAC : fast/inline/inline-borders-with-bidi-override.html = IMAGE
 BUG23498 MAC : fast/inline/inline-continuation-borders.html = IMAGE
