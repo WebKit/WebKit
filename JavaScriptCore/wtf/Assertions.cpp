@@ -50,7 +50,7 @@
 #endif
 
 #if PLATFORM(BREWMP)
-#include <AEEStdLib.h>
+#include <AEEdbg.h>
 #include <wtf/Vector.h>
 #endif
 
@@ -76,7 +76,7 @@ static void printLog(const Vector<char>& buffer)
     const char* end = buffer.data() + buffer.size();
     while (p < end) {
         strncpy(printBuffer, p, printBufferSize);
-        DBGPRINTF(printBuffer);
+        dbg_Message(printBuffer, DBG_MSG_LEVEL_HIGH, __FILE__, __LINE__);
         p += printBufferSize;
     }
 }

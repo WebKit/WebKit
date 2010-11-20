@@ -56,7 +56,8 @@
 #endif
 
 #if PLATFORM(BREWMP)
-#include <AEEStdLib.h>
+#include <AEEError.h>
+#include <AEEdbg.h>
 #endif
 
 #ifdef NDEBUG
@@ -169,7 +170,7 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     } while(false)
 #elif PLATFORM(BREWMP)
 #define CRASH() do { \
-    DBGPRINTF_FATAL("WebKit CRASH"); \
+    dbg_Message("WebKit CRASH", DBG_MSG_LEVEL_FATAL, __FILE__, __LINE__); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
 } while(false)
