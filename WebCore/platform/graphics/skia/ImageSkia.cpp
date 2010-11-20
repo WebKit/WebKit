@@ -143,7 +143,9 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
 
     // Everything else gets resampled.
     // If the platform context permits high quality interpolation, use it.
-    if (platformContext->interpolationQuality() == InterpolationHigh)
+    // High quality interpolation only enabled for scaling and translation.
+    if (platformContext->interpolationQuality() == InterpolationHigh
+        && !(platformContext->canvas()->getTotalMatrix().getType() & (SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask)))
         return RESAMPLE_AWESOME;
     
     return RESAMPLE_LINEAR;
@@ -178,9 +180,17 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
     SkIRect resizedImageRect =  // Represents the size of the resized image.
         { 0, 0, destRectRounded.width(), destRectRounded.height() };
 
-    if (srcIsFull && bitmap.hasResizedBitmap(destRectRounded.width(), destRectRounded.height())) {
+    // Apply forward transform to destRect to estimate required size of
+    // re-sampled bitmap, and use only in calls required to resize, or that
+    // check for the required size.
+    SkRect destRectTransformed;
+    canvas.getTotalMatrix().mapRect(&destRectTransformed, destRect);
+    SkIRect destRectTransformedRounded;
+    destRectTransformed.round(&destRectTransformedRounded);
+
+    if (srcIsFull && bitmap.hasResizedBitmap(destRectTransformedRounded.width(), destRectTransformedRounded.height())) {
         // Yay, this bitmap frame already has a resized version.
-        SkBitmap resampled = bitmap.resizedBitmap(destRectRounded.width(), destRectRounded.height());
+        SkBitmap resampled = bitmap.resizedBitmap(destRectTransformedRounded.width(), destRectTransformedRounded.height());
         canvas.drawBitmapRect(resampled, 0, destRect, &paint);
         return;
     }
@@ -207,8 +217,8 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
             destBitmapSubsetSkI.height())) {
         // We're supposed to resize the entire image and cache it, even though
         // we don't need all of it.
-        SkBitmap resampled = bitmap.resizedBitmap(destRectRounded.width(),
-                                                  destRectRounded.height());
+        SkBitmap resampled = bitmap.resizedBitmap(destRectTransformedRounded.width(),
+                                                  destRectTransformedRounded.height());
         canvas.drawBitmapRect(resampled, 0, destRect, &paint);
     } else {
         // We should only resize the exposed part of the bitmap to do the
@@ -217,7 +227,7 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
         // Resample the needed part of the image.
         SkBitmap resampled = skia::ImageOperations::Resize(subset,
             skia::ImageOperations::RESIZE_LANCZOS3,
-            destRectRounded.width(), destRectRounded.height(),
+            destRectTransformedRounded.width(), destRectTransformedRounded.height(),
             destBitmapSubsetSkI);
 
         // Compute where the new bitmap should be drawn. Since our new bitmap
