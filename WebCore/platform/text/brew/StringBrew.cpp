@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformString.h"
 
-#include <AEEStdLib.h>
+#include <AEEstd.h>
 
 namespace WTF {
 
@@ -35,7 +35,7 @@ String::String(const AECHAR* string)
 {
     // It is safe to cast AECHAR to UChar as both of them use 16 bits representation.
     const UChar* str = reinterpret_cast<const UChar*>(string);
-    const size_t len = WSTRLEN(string);
+    const size_t len = std_wstrlen(string);
 
     m_impl = StringImpl::create(str, len);
 }
