@@ -91,6 +91,8 @@ QWebInspector::~QWebInspector()
 {
     // Remove association principally to prevent deleting a child frontend
     setPage(0);
+    delete d;
+    d = 0;
 }
 
 /*!

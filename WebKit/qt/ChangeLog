@@ -1,3 +1,15 @@
+2010-11-19  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Memory leak in QWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=49765
+
+        Delete QWebInspectorPrivate in ~QWebInspector()
+
+        * Api/qwebinspector.cpp:
+        (QWebInspector::~QWebInspector):
+
 2010-11-19  Sam Magnuson  <smagnuso@gmail.com>
 
         Reviewed by Andreas Kling.
