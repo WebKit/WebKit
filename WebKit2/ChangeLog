@@ -1,3 +1,15 @@
+2010-11-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add Debug_Cairo_CFLite and Release_Cairo_CFLite configurations for all vcproj files
+        https://bugs.webkit.org/show_bug.cgi?id=49819
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+        * win/WebKit2WebProcessCommon.vsprops:
+
 2010-11-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

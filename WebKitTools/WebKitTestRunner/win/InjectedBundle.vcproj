@@ -201,7 +201,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;..\Configurations\InjectedBundleCFLite.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;..\Configurations\InjectedBundleCFLite.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -262,7 +262,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;..\Configurations\InjectedBundleCFLite.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;..\Configurations\InjectedBundleCFLite.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

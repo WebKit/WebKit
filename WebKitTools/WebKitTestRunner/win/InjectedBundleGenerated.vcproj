@@ -51,6 +51,24 @@
 				Name="VCNMakeTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release_Cairo_CFLite|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets=".\InjectedBundleGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Cairo_CFLite|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets=".\InjectedBundleGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>

@@ -140,7 +140,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -201,7 +201,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
