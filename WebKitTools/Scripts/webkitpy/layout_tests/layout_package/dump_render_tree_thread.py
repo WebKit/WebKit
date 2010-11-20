@@ -399,9 +399,9 @@ class TestShellThread(WatchableThread):
             batch_count += 1
             self._num_tests += 1
             if self._options.run_singly:
-                result = self._run_test_singly(test_input)
+                result = self._run_test_in_another_thread(test_input)
             else:
-                result = self._run_test(test_input)
+                result = self._run_test_in_this_thread(test_input)
 
             filename = test_input.filename
             tests_run_file.write(filename + "\n")
@@ -431,7 +431,7 @@ class TestShellThread(WatchableThread):
             if test_runner:
                 test_runner.update_summary(result_summary)
 
-    def _run_test_singly(self, test_input):
+    def _run_test_in_another_thread(self, test_input):
         """Run a test in a separate thread, enforcing a hard time limit.
 
         Since we can only detect the termination of a thread, not any internal
@@ -443,7 +443,6 @@ class TestShellThread(WatchableThread):
 
         Returns:
           A TestResult
-
         """
         worker = SingleTestThread(self._port,
                                   self._options,
@@ -478,11 +477,11 @@ class TestShellThread(WatchableThread):
             _log.error('Cannot get results of test: %s' %
                        test_input.filename)
             result = test_results.TestResult(test_input.filename, failures=[],
-                test_run_time=0, total_time_for_all_diffs=0, time_for_diffs=0)
+                test_run_time=0, total_time_for_all_diffs=0, time_for_diffs={})
 
         return result
 
-    def _run_test(self, test_input):
+    def _run_test_in_this_thread(self, test_input):
         """Run a single test file using a shared DumpRenderTree process.
 
         Args:
