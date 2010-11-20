@@ -72,9 +72,6 @@ from layout_package import test_expectations
 from layout_package import test_failures
 from layout_package import test_results
 from layout_package import test_results_uploader
-from test_types import image_diff
-from test_types import text_diff
-from test_types import test_type_base
 
 from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson
@@ -253,11 +250,6 @@ class TestRunner:
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
         #        options.results_directory, use_tls=True, port=9323)
-
-        # a list of TestType objects
-        self._test_types = [text_diff.TestTextDiff]
-        if options.pixel_tests:
-            self._test_types.append(image_diff.ImageDiff)
 
         # a set of test files, and the same tests as a list
         self._test_files = set()
@@ -559,19 +551,6 @@ class TestRunner:
             filename_queue.put(item)
         return filename_queue
 
-    def _get_test_args(self, index):
-        """Returns the tuple of arguments for tests and for DumpRenderTree."""
-        test_args = test_type_base.TestArguments()
-        test_args.png_path = None
-        if self._options.pixel_tests:
-            png_path = os.path.join(self._options.results_directory,
-                                    "png_result%s.png" % index)
-            test_args.png_path = png_path
-        test_args.new_baseline = self._options.new_baseline
-        test_args.reset_results = self._options.reset_results
-
-        return test_args
-
     def _contains_tests(self, subdir):
         for test_file in self._test_files:
             if test_file.find(subdir) >= 0:
@@ -589,17 +568,10 @@ class TestRunner:
 
         # Instantiate TestShellThreads and start them.
         threads = []
-        for i in xrange(int(self._options.child_processes)):
-            # Create separate TestTypes instances for each thread.
-            test_types = []
-            for test_type in self._test_types:
-                test_types.append(test_type(self._port,
-                                    self._options.results_directory))
-
-            test_args = self._get_test_args(i)
+        for worker_number in xrange(int(self._options.child_processes)):
             thread = dump_render_tree_thread.TestShellThread(self._port,
-                self._options, filename_queue, self._result_queue,
-                test_types, test_args)
+                self._options, worker_number,
+                filename_queue, self._result_queue)
             if self._is_single_threaded():
                 thread.run_in_main_thread(self, result_summary)
             else:
