@@ -1,3 +1,19 @@
+2010-11-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        nrwt - config.build_directory() is busted
+
+        Fixes a typo that was causing us to usually return the top level
+        directory WebKitBuild instead of WebKitBuild/{Debug,Release}. The
+        bug was hidden by test stubs that were too simplistic :(.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49815
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

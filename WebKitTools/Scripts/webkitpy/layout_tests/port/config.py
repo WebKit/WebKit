@@ -75,7 +75,6 @@ class Config(object):
         if configuration:
             flags = ["--configuration",
                      self._FLAGS_FROM_CONFIGURATIONS[configuration]]
-            configuration = ""
         else:
             configuration = ""
             flags = ["--top-level"]

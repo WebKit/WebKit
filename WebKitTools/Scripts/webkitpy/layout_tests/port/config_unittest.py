@@ -38,13 +38,37 @@ from webkitpy.common.system import outputcapture
 
 import config
 
+
+def mock_run_command(arg_list):
+    # Set this to True to test actual output (where possible).
+    integration_test = False
+    if integration_test:
+        return executive.Executive().run_command(arg_list)
+
+    if 'webkit-build-directory' in arg_list[1]:
+        return mock_webkit_build_directory(arg_list[2:])
+    return 'Error'
+
+
+def mock_webkit_build_directory(arg_list):
+    if arg_list == ['--top-level']:
+        return '/WebKitBuild'
+    elif arg_list == ['--configuration', '--debug']:
+        return '/WebKitBuild/Debug'
+    elif arg_list == ['--configuration', '--release']:
+        return '/WebKitBuild/Release'
+    return 'Error'
+
+
 class ConfigTest(unittest.TestCase):
     def tearDown(self):
         config.clear_cached_configuration()
 
-    def make_config(self, output='', files={}, exit_code=0, exception=None):
+    def make_config(self, output='', files={}, exit_code=0, exception=None,
+                    run_command_fn=None):
         e = executive_mock.MockExecutive2(output=output, exit_code=exit_code,
-                                          exception=exception)
+                                          exception=exception,
+                                          run_command_fn=run_command_fn)
         fs = filesystem_mock.MockFileSystem(files)
         return config.Config(e, fs)
 
@@ -54,23 +78,17 @@ class ConfigTest(unittest.TestCase):
         c = self.make_config('foo', {'foo/Configuration': contents})
         self.assertEqual(c.default_configuration(), expected)
 
-    def test_build_directory_toplevel(self):
-        c = self.make_config('toplevel')
-        self.assertEqual(c.build_directory(None), 'toplevel')
+    def test_build_directory(self):
+        # --top-level
+        c = self.make_config(run_command_fn=mock_run_command)
+        self.assertTrue(c.build_directory(None).endswith('WebKitBuild'))
 
         # Test again to check caching
-        self.assertEqual(c.build_directory(None), 'toplevel')
+        self.assertTrue(c.build_directory(None).endswith('WebKitBuild'))
 
-    def test_build_directory__release(self):
-        c = self.make_config('release')
-        self.assertEqual(c.build_directory('Release'), 'release')
-
-    def test_build_directory__debug(self):
-        c = self.make_config('debug')
-        self.assertEqual(c.build_directory('Debug'), 'debug')
-
-    def test_build_directory__unknown(self):
-        c = self.make_config("unknown")
+        # Test other values
+        self.assertTrue(c.build_directory('Release').endswith('/Release'))
+        self.assertTrue(c.build_directory('Debug').endswith('/Debug'))
         self.assertRaises(KeyError, c.build_directory, 'Unknown')
 
     def test_build_dumprendertree__success(self):

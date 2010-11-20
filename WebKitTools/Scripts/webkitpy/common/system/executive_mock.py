@@ -32,10 +32,12 @@
 
 
 class MockExecutive2(object):
-    def __init__(self, output='', exit_code=0, exception=None):
+    def __init__(self, output='', exit_code=0, exception=None,
+                 run_command_fn=None):
         self._output = output
         self._exit_code = exit_code
         self._exception = exception
+        self._run_command_fn = run_command_fn
 
     def cpu_count(self):
         return 2
@@ -52,4 +54,6 @@ class MockExecutive2(object):
             raise self._exception
         if return_exit_code:
             return self._exit_code
+        if self._run_command_fn:
+            return self._run_command_fn(arg_list)
         return self._output
