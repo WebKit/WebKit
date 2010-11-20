@@ -1,3 +1,17 @@
+2010-11-19  William Chan  <willchan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add USE(CHROMIUM_NET)
+
+        Indicates the use of Chromium's network stack.  Chromium's network
+        stack performs better when it has full view of all resource requests,
+        so USE(CHROMIUM_NET) can be used to bypass throttles.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49778
+
+        * wtf/Platform.h:
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

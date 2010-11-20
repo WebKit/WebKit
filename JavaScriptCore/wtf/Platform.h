@@ -541,6 +541,7 @@
 #define WTF_USE_ICCJPEG 1
 #else
 #define WTF_PLATFORM_SKIA 1
+#define WTF_USE_CHROMIUM_NET 1
 #endif
 #endif
 
@@ -1124,4 +1125,3 @@
 #endif
 
 #endif /* WTF_Platform_h */
-
