@@ -28,6 +28,11 @@
                     { "name": "apple-windows-8", "platform": "win"},
                     { "name": "apple-windows-9", "platform": "win"},
                     { "name": "apple-windows-10", "platform": "win"},
+                    { "name": "apple-windows-11", "platform": "win"},
+                    { "name": "apple-windows-12", "platform": "win"},
+                    { "name": "apple-windows-13", "platform": "win"},
+                    { "name": "apple-windows-14", "platform": "win"},
+                    { "name": "apple-windows-15", "platform": "win"},
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
@@ -100,7 +105,7 @@
                     {
                       "name": "Windows 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-5", "apple-windows-6", "test-slave"]
+                      "slavenames": ["apple-windows-5", "apple-windows-6", "apple-windows-11", "apple-windows-12", "test-slave"]
                     },
                     {
                       "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
@@ -111,11 +116,11 @@
                     {
                       "name": "Windows XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-8", "apple-windows-9", "apple-windows-10", "test-slave"]
+                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-13", "apple-windows-14", "apple-windows-15", "test-slave"]
                     },
                     { "name": "Windows 7 Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-release-tests-wk2",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-7", "test-slave"]
+                      "slavenames": ["apple-windows-7", "apple-windows-8", "apple-windows-9", "apple-windows-10", "test-slave"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-32-release",

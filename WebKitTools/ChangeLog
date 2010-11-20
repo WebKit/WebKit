@@ -1,3 +1,17 @@
+2010-11-19  Adam Roben  <aroben@apple.com>
+
+        Add some more Windows slaves
+
+        This is probably more than we will be using in the immediate future,
+        but having some extra slave names makes experimenting with different
+        configurations easier.
+
+        Reviewed by Jon Honeycutt.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added 5 more
+        Windows slaves and distributed them among the three different Test
+        builders.
+
 2010-11-19  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.
