@@ -444,32 +444,6 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     m_data->p()->drawEllipse(rect);
 }
 
-void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
-{
-    if (paintingDisabled() || strokeStyle() == NoStroke || strokeThickness() <= 0.0f)
-        return;
-
-    QPainter* p = m_data->p();
-    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
-    p->setRenderHint(QPainter::Antialiasing, true);
-
-    startAngle *= 16;
-    angleSpan *= 16;
-
-    if (m_data->hasShadow()) {
-        p->save();
-        p->translate(m_data->shadow.offset());
-        QPen pen(p->pen());
-        pen.setColor(m_data->shadow.m_color);
-        p->setPen(pen);
-        p->drawArc(rect, startAngle, angleSpan);
-        p->restore();
-    }
-    p->drawArc(rect, startAngle, angleSpan);
-
-    p->setRenderHint(QPainter::Antialiasing, antiAlias);
-}
-
 void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
 {
     if (paintingDisabled())
