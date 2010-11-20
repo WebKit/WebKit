@@ -125,6 +125,7 @@ canvas/philip/tests/2d.gradient.interpolate.overlap.html
 canvas/philip/tests/2d.gradient.interpolate.overlap2.html
 
 # Disable spelling tests for autocorrection panel
+platform/mac/editing/spelling/autocorrection-contraction.html
 platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
 platform/mac/editing/spelling/autocorrection-removing-underline.html

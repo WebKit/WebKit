@@ -205,6 +205,7 @@ fast/harness/show-modal-dialog.html
 http/tests/misc/401-alternative-content.php
 
 # Disable spelling tests for autocorrection panel
+platform/mac/editing/spelling/autocorrection-contraction.html
 platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
 platform/mac/editing/spelling/autocorrection-removing-underline.html

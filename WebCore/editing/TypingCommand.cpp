@@ -310,7 +310,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
-            document()->frame()->editor()->markMisspellingsAfterTypingToPosition(p1);
+            document()->frame()->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection());
 #if SUPPORT_AUTOCORRECTION_PANEL
         else if (commandType == TypingCommand::InsertText)
             document()->frame()->editor()->startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeCorrection);

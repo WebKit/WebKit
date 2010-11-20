@@ -100,6 +100,7 @@ media/video-played-ranges-1.html
 media/video-played-reset.html
 
 # Disable spelling tests for autocorrection panel
+platform/mac/editing/spelling/autocorrection-contraction.html
 platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
 platform/mac/editing/spelling/autocorrection-removing-underline.html
