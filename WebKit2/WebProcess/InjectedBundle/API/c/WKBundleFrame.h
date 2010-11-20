@@ -49,6 +49,8 @@ WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleF
 
 WK_EXPORT WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frame);
 
+WK_EXPORT bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frame, WKURLRef url);
+
 #ifdef __cplusplus
 }
 #endif

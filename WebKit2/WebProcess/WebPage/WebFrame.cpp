@@ -415,6 +415,14 @@ unsigned WebFrame::pendingUnloadCount() const
     return m_coreFrame->domWindow()->pendingUnloadEventListeners();
 }
 
+bool WebFrame::allowsFollowingLink(const WebCore::KURL& url) const
+{
+    if (!m_coreFrame)
+        return true;
+        
+    return m_coreFrame->document()->securityOrigin()->canDisplay(url);
+}
+
 JSGlobalContextRef WebFrame::jsContext()
 {
     return toGlobalRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
