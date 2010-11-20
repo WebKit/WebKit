@@ -1,3 +1,19 @@
+2010-11-19  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: checksum-only differences and prefetching
+        https://bugs.webkit.org/show_bug.cgi?id=49841
+        
+        Add support for image test results where the only difference is in the
+        checksum.
+        
+        Add prefetching of the image results from the next test.
+        
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+
 2010-11-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

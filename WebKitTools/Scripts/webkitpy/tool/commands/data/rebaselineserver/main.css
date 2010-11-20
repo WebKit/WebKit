@@ -151,13 +151,18 @@ a, .link {
 }
 
 #image-outputs img,
-#image-outputs canvas {
+#image-outputs canvas,
+#image-outputs #diff-checksum {
   width: 800px;
   height: 600px;
   border: solid 1px #ddd;
   -webkit-user-select: none;
   -webkit-user-drag: none;
-  cursor: crosshair;  
+}
+
+#image-outputs img,
+#image-outputs canvas {
+  cursor: crosshair;
 }
 
 #image-outputs img.loading,
@@ -238,7 +243,7 @@ a, .link {
 
 #loupe td {
   padding: 0;
-  border: solid 1px #ccc;     
+  border: solid 1px #ccc;
 }
 
 #loupe label {

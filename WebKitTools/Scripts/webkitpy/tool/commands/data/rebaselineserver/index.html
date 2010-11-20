@@ -52,7 +52,7 @@
     <!-- Add a dummy <select> node so that this lines up with the text on the left -->
     <select style="visibility: hidden"></select>
     <span id="toggle-log" class="link">Log</span>
-    <span class="divider">|</span>    
+    <span class="divider">|</span>
     <a href="/quitquitquit">Exit</a>
   </div>
 
@@ -97,7 +97,14 @@
     <tr>
       <td><img id="expected-image"></td>
       <td><img id="actual-image"></td>
-      <td><canvas id="diff-canvas" width="800" height="600"></canvas></td>
+      <td>
+        <canvas id="diff-canvas" width="800" height="600"></canvas>
+        <div id="diff-checksum" style="display: none">
+          <h3>Checksum mismatch</h3>
+          Expected: <span id="expected-checksum"></span><br>
+          Actual: <span id="actual-checksum"></span>
+        </div>
+      </td>
     </tr>
   </tbody>
   <tbody id="text-outputs" style="display: none">
@@ -117,7 +124,7 @@
 
   <!-- Add a dummy <button> node so that this lines up with the text on the left -->
   <button style="visibility: hidden"></button>
-  
+
   <div id="action-buttons">
     <span id="toggle-queue" class="link">Queue</span>
     <button id="add-to-rebaseline-queue">Add to rebaseline queue</button>

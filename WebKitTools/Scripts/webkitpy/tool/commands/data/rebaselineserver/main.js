@@ -237,6 +237,21 @@ function selectTest()
 
     updateState();
     loupe.hide();
+
+    prefetchNextImageTest();
+}
+
+function prefetchNextImageTest()
+{
+    var testSelector = $('test-selector');
+    if (testSelector.selectedIndex == testSelector.options.length - 1) {
+        return;
+    }
+    var nextTest = testSelector.options[testSelector.selectedIndex + 1].value;
+    if (results.tests[nextTest].actual.indexOf('IMAGE') != -1) {
+        new Image().src = getTestResultUrl(nextTest, 'expected-image');
+        new Image().src = getTestResultUrl(nextTest, 'actual-image');
+    }
 }
 
 function updateState()
@@ -295,6 +310,7 @@ function displayImageResults(testName)
 
     $('diff-canvas').className = 'loading';
     $('diff-canvas').style.display = '';
+    $('diff-checksum').style.display = 'none';
 }
 
 /**
@@ -346,6 +362,7 @@ function updateImageDiff() {
     var diffWidth = diffImageData.width;
     var diff = diffImageData.data;
 
+    var hadDiff = false;
     for (var x = 0; x < expectedWidth; x++) {
         for (var y = 0; y < expectedHeight; y++) {
             var expectedOffset = (y * expectedWidth + x) * 4;
@@ -355,6 +372,7 @@ function updateImageDiff() {
                 expected[expectedOffset + 1] != actual[actualOffset + 1] ||
                 expected[expectedOffset + 2] != actual[actualOffset + 2] ||
                 expected[expectedOffset + 3] != actual[actualOffset + 3]) {
+                hadDiff = true;
                 diff[diffOffset] = 255;
                 diff[diffOffset + 1] = 0;
                 diff[diffOffset + 2] = 0;
@@ -374,19 +392,27 @@ function updateImageDiff() {
         0, 0,
         diffImageData.width, diffImageData.height);
     diffCanvas.className = '';
+
+    if (!hadDiff) {
+        diffCanvas.style.display = 'none';
+        $('diff-checksum').style.display = '';
+        loadTextResult(currentExpectedImageTest, 'expected-checksum');
+        loadTextResult(currentExpectedImageTest, 'actual-checksum');
+    }
+}
+
+function loadTextResult(testName, mode)
+{
+    loadText(getTestResultUrl(testName, mode), function(text) {
+        $(mode).textContent = text;
+    });
 }
 
 function displayTextResults(testName)
 {
-    function loadTextResult(mode) {
-        loadText(getTestResultUrl(testName, mode), function(text) {
-            $(mode).textContent = text;
-        });
-    }
-
-    loadTextResult('expected-text');
-    loadTextResult('actual-text');
-    loadTextResult('diff-text');
+    loadTextResult(testName, 'expected-text');
+    loadTextResult(testName, 'actual-text');
+    loadTextResult(testName, 'diff-text');
 }
 
 function nextTest()
