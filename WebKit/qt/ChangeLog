@@ -1,3 +1,22 @@
+2010-11-19  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Fixed handling of QInputMethodEvents with nonzero replacementLength.
+
+        These types of events replace text that is already in the widget, but
+        WebKit did not check for replacementLength at all.
+
+        Also made sure that the preeditString is always respected, even if
+        there is committed text. This is how QLineEdit does it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49787
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-11-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
