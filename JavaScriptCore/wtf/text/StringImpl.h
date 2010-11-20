@@ -284,7 +284,10 @@ public:
 
     PassRefPtr<StringImpl> lower();
     PassRefPtr<StringImpl> upper();
-    PassRefPtr<StringImpl> secure(UChar aChar);
+
+    enum LastCharacterBehavior { ObscureLastCharacter, DisplayLastCharacter };
+
+    PassRefPtr<StringImpl> secure(UChar, LastCharacterBehavior = ObscureLastCharacter);
     PassRefPtr<StringImpl> foldCase();
 
     PassRefPtr<StringImpl> stripWhiteSpace();

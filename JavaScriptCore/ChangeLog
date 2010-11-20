@@ -1,3 +1,17 @@
+2010-11-20  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/49848> Make it possible to display the last character of a secure text field unobscured
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.exp:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::secure): Added argument that controls whether
+        the last character is obscured or not.  Implemented behavior.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::LastCharacterBehavior): Added enum.
+        (WTF::StringImpl::secure): Updated method signature.
+
 2010-11-19  William Chan  <willchan@chromium.org>
 
         Reviewed by David Levin.
