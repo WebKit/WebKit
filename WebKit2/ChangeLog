@@ -1,3 +1,13 @@
+2010-11-19  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        WebUIClient::createNewPage() expects a retained WKPageRef. 
+        https://bugs.webkit.org/show_bug.cgi?id=48549
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_createNewPage):
+
 2010-11-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

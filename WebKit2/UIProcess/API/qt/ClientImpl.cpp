@@ -26,6 +26,7 @@
 #include <qwkpage.h>
 #include <qwkpage_p.h>
 #include <WKFrame.h>
+#include <WKType.h>
 
 using namespace WebKit;
 
@@ -143,8 +144,10 @@ WKPageRef qt_wk_createNewPage(WKPageRef page, WKDictionaryRef features, WKEventM
     if (!createNewPageFn)
         return 0;
 
-    if (QWKPage* newPage = createNewPageFn(wkPage))
+    if (QWKPage* newPage = createNewPageFn(wkPage)) {
+        WKRetain(newPage->pageRef());
         return newPage->pageRef();
+    }
 
     return 0;
 }
