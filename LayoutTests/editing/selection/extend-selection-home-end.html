@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="resources/extend-selection.css" />
+<script src="resources/extend-selection.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+
+function testExtendingLineBoundary(tests, sel)
+{
+    for (var i = 0; i < tests.length; ++i) {
+        tests[i].style.direction = "ltr";
+        log("Test " + (i + 1) + ", LTR:\n  Extending forward: ");
+        sel.setPosition(tests[i], 0);
+        var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
+
+        log("  Extending backward:  ");
+        var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+
+        tests[i].style.direction = "rtl";
+        log("Test " + (i + 1) + ", RTL:\n  Extending forward: ");
+        sel.setPosition(tests[i], 0);
+        var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
+
+        log("  Extending backward:  ");
+        var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+    }
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+    tests = createTestNodes(); // all
+    var sel = getSelection();
+    log("\n\n\nExtending by lineBoundary\n");
+    testExtendingLineBoundary(tests,  sel);
+}
+
+</script>
+</body>
