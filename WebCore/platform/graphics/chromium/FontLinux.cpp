@@ -234,6 +234,7 @@ private:
     static bool isCodepointSpace(HB_UChar16 c) { return c == ' ' || c == '\t'; }
 
     const Font* const m_font;
+    const SimpleFontData* m_currentFontData;
     HB_ShaperItem m_item;
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
     SkScalar* m_xPositions; // A vector of x positions for each glyph.
@@ -381,6 +382,7 @@ bool TextRunWalker::nextScriptRun()
         // (and the glyphs in each A, C and T section are backwards too)
         if (!hb_utf16_script_run_prev(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
             return false;
+        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
     } else {
         if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
             return false;
@@ -392,11 +394,11 @@ bool TextRunWalker::nextScriptRun()
         // in the harfbuzz data structures to e.g. pick the correct script's shaper.
         // So we allow that to run first, then do a second pass over the range it
         // found and take the largest subregion that stays within a single font.
-        const FontData* glyphData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
+        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
         unsigned endOfRun;
         for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-            const FontData* nextGlyphData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false, false).fontData;
-            if (nextGlyphData != glyphData)
+            const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false, false).fontData;
+            if (nextFontData != m_currentFontData)
                 break;
         }
         m_item.item.length = endOfRun;
@@ -518,13 +520,15 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
         // Glyphs are stored in logical order, but for layout purposes we
         // always go left to right.
         for (int i = m_item.num_glyphs - 1; i >= 0; --i) {
-            // Whitespace must be laid out in logical order, so when inserting
-            // spaces in RTL (but iterating in LTR order) we must insert spaces
-            // _before_ the next glyph.
-            if (i + 1 >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
-                position += m_letterSpacing;
+            if (!m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i])) {
+                // Whitespace must be laid out in logical order, so when inserting
+                // spaces in RTL (but iterating in LTR order) we must insert spaces
+                // _before_ the next glyph.
+                if (i + 1 >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
+                    position += m_letterSpacing;
 
-            position += determineWordBreakSpacing(logClustersIndex);
+                position += determineWordBreakSpacing(logClustersIndex);
+            }
 
             m_glyphs16[i] = m_item.glyphs[i];
             double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
@@ -533,13 +537,17 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
             while (logClustersIndex > 0 && logClusters()[logClustersIndex] == i)
                 logClustersIndex--;
 
-            position += truncateFixedPointToInteger(m_item.advances[i]);
+            if (!m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
+                position += truncateFixedPointToInteger(m_item.advances[i]);
         }
     } else {
         for (int i = 0; i < m_item.num_glyphs; ++i) {
             m_glyphs16[i] = m_item.glyphs[i];
             double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
             m_xPositions[i] = m_offsetX + position + offsetX;
+
+            if (m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
+                continue;
 
             double advance = truncateFixedPointToInteger(m_item.advances[i]);
 
@@ -569,6 +577,8 @@ void TextRunWalker::normalizeSpacesAndMirrorChars(const UChar* source, bool rtl,
         U16_NEXT(source, nextPosition, length, character);
         if (Font::treatAsSpace(character))
             character = ' ';
+        else if (Font::treatAsZeroWidthSpace(character))
+            character = zeroWidthSpace;
         else if (rtl)
             character = u_charMirror(character);
         U16_APPEND(destination, position, length, character, error);
@@ -592,7 +602,7 @@ const TextRun& TextRunWalker::getNormalizedTextRun(const TextRun& originalRun, O
     // 2) Convert spacing characters into plain spaces, as some fonts will provide glyphs
     // for characters like '\n' otherwise.
     // 3) Convert mirrored characters such as parenthesis for rtl text.
- 
+
     // Convert to NFC form if the text has diacritical marks.
     icu::UnicodeString normalizedString;
     UErrorCode error = U_ZERO_ERROR;
