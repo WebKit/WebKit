@@ -539,9 +539,22 @@ void GraphicsContext::fillPath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset());
-        p->fillPath(path, QColor(m_data->shadow.m_color));
-        p->translate(-m_data->shadow.offset());
+        ContextShadow* shadow = contextShadow();
+        if (shadow->m_type != ContextShadow::BlurShadow
+            && !m_common->state.fillPattern && !m_common->state.fillGradient)
+        {
+            p->translate(m_data->shadow.offset());
+            p->fillPath(path, QColor(m_data->shadow.m_color));
+            p->translate(-m_data->shadow.offset());
+        } else {
+            QPainter* shadowPainter = shadow->beginShadowLayer(p, path.controlPointRect());
+            if (shadowPainter) {
+                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
+                shadowPainter->fillPath(path, QColor(m_data->shadow.m_color));
+                shadow->endShadowLayer(p);
+            }
+        }
+
     }
     if (m_common->state.fillPattern) {
         AffineTransform affine;
