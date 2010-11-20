@@ -385,10 +385,11 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
+        WebInspector.currentPanel = this;
+
         this.sidebarPanes.callstack.update(callFrames, this._sourceIDMap);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
-        WebInspector.currentPanel = this;
         window.focus();
     },
 
