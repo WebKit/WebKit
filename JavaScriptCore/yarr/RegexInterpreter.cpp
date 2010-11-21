@@ -35,8 +35,6 @@
 #include <stdio.h>
 #endif
 
-#if ENABLE(YARR)
-
 using namespace WTF;
 
 namespace JSC { namespace Yarr {
@@ -1341,9 +1339,8 @@ public:
 
         pattern->m_allocator->stopAllocator();
 
-        if (output[0] == -1 && result != JSRegExpNoMatch)
-            return result;
-
+        // RegExp.cpp currently expects all error to be converted to -1.
+        ASSERT((result == JSRegExpMatch) == (output[0] != -1));
         return output[0];
     }
 
@@ -1742,6 +1739,11 @@ PassOwnPtr<BytecodePattern> byteCompileRegex(const UString& patternString, unsig
     return ByteCompiler(pattern).compile(allocator);
 }
 
+PassOwnPtr<BytecodePattern> byteCompileRegex(RegexPattern& pattern, BumpPointerAllocator* allocator)
+{
+    return ByteCompiler(pattern).compile(allocator);
+}
+
 int interpretRegex(BytecodePattern* regex, const UChar* input, unsigned start, unsigned length, int* output)
 {
     return Interpreter(regex, output, input, start, length).interpret();
@@ -1758,5 +1760,3 @@ COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParentheses) == (RegexStackSpace
 
 
 } }
-
-#endif

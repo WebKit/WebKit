@@ -31,8 +31,7 @@
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "RegexCompiler.h"
-
-#include "pcre.h" // temporary, remove when fallback is removed.
+#include "RegexInterpreter.h" // temporary, remove when fallback is removed.
 
 #if ENABLE(YARR_JIT)
 
@@ -1532,7 +1531,7 @@ private:
     Vector<AlternativeBacktrackRecord> m_backtrackRecords;
 };
 
-void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& patternString, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline)
+void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& patternString, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator* allocator, bool ignoreCase, bool multiline)
 {
     RegexPattern pattern(ignoreCase, multiline);
     if ((error = compileRegex(patternString, pattern)))
@@ -1546,9 +1545,7 @@ void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const 
             return;
     }
 
-    JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
-    JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
-    jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.characters()), patternString.length(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
+    jitObject.setFallback(byteCompileRegex(pattern, allocator));
 }
 
 }}

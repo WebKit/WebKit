@@ -2673,13 +2673,13 @@ No match
 /(abc|)+/
     abc
  0: abc
- 1: 
+ 1: abc
     abcabc
  0: abcabc
- 1: 
+ 1: abc
     abcabcabc
  0: abcabcabc
- 1: 
+ 1: abc
     xyz      
  0: 
  1: 
@@ -2687,35 +2687,35 @@ No match
 /([a]*)*/
     a
  0: a
- 1: 
+ 1: a
     aaaaa 
  0: aaaaa
- 1: 
+ 1: aaaaa
  
 /([ab]*)*/
     a
  0: a
- 1: 
+ 1: a
     b
  0: b
- 1: 
+ 1: b
     ababab
  0: ababab
- 1: 
+ 1: ababab
     aaaabcde
  0: aaaab
- 1: 
+ 1: aaaab
     bbbb    
  0: bbbb
- 1: 
+ 1: bbbb
  
 /([^a]*)*/
     b
  0: b
- 1: 
+ 1: b
     bbbb
  0: bbbb
- 1: 
+ 1: bbbb
     aaa   
  0: 
  1: 
@@ -2723,51 +2723,51 @@ No match
 /([^ab]*)*/
     cccc
  0: cccc
- 1: 
+ 1: cccc
     abab  
  0: 
  1: 
  
 /([a]*?)*/
     a
- 0: 
- 1: 
+ 0: a
+ 1: a
     aaaa 
- 0: 
- 1: 
+ 0: aaaa
+ 1: a
  
 /([ab]*?)*/
     a
- 0: 
- 1: 
+ 0: a
+ 1: a
     b
- 0: 
- 1: 
+ 0: b
+ 1: b
     abab
- 0: 
- 1: 
+ 0: abab
+ 1: b
     baba   
- 0: 
- 1: 
+ 0: baba
+ 1: a
  
 /([^a]*?)*/
     b
- 0: 
- 1: 
+ 0: b
+ 1: b
     bbbb
- 0: 
- 1: 
+ 0: bbbb
+ 1: b
     aaa   
  0: 
  1: 
  
 /([^ab]*?)*/
     c
- 0: 
- 1: 
+ 0: c
+ 1: c
     cccc
- 0: 
- 1: 
+ 0: cccc
+ 1: c
     baba   
  0: 
  1: 
@@ -2952,18 +2952,15 @@ No match
  0: aaaa
  1: a
     aaaaa
- 0: aaaaa
- 1: a
+No match
     aaaaaaa
- 0: aaaaaaa
- 1: a
+No match
     aaaaaaaa
 No match
     aaaaaaaaa
 No match
     aaaaaaaaaa
- 0: aaaaaaaaaa
- 1: aaaa
+No match
     aaaaaaaaaaa
 No match
     aaaaaaaaaaaa
@@ -3705,9 +3702,9 @@ No match
 
 /((\3|b)\2(a)){2,}/
     bbaababbabaaaaabbaaaabba
- 0: bbaaaabba
- 1: bba
- 2: b
+ 0: bbaa
+ 1: a
+ 2: 
  3: a
 
 /abc/i
@@ -4291,7 +4288,7 @@ No match
     foobar
  0: foobar
  1: bar
- 2: foo
+ 2: 
  3: bar
 
 /a(?:b|c|d){6,7}(.)/
@@ -4346,8 +4343,7 @@ No match
 
 /^(a\1?){4}$/
     aaaaaaaaaa
- 0: aaaaaaaaaa
- 1: aaaa
+No match
     *** Failers
 No match
     AB
@@ -4371,9 +4367,9 @@ No match
 /(?:(f)(o)(o)|(b)(a)(r))*/
     foobar
  0: foobar
- 1: f
- 2: o
- 3: o
+ 1: 
+ 2: 
+ 3: 
  4: b
  5: a
  6: r
@@ -4407,7 +4403,7 @@ No match
 /^(?:b|a(?=(.)))*\1/
     abc
  0: ab
- 1: b
+ 1: 
 
 /^(){3,5}/
     abc
@@ -5129,7 +5125,7 @@ No match
     ZABCDEFG
  0: ZA
  1: A
- 2: Z
+ 2: 
 
 /(Z()|A)*/
     ZABCDEFG
@@ -5720,7 +5716,7 @@ No match
 No match
   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4
  0: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4
- 1: 
+ 1: a
 
 /(?>a|)*\d/
   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -5760,7 +5756,8 @@ No match
 /(.*(.)?)*/
     abcd
  0: abcd
- 1: 
+ 1: abcd
+ 2: 
 
 /( (A | (?(1)0|) )*   )/x
     abcd

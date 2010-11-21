@@ -1791,7 +1791,7 @@ FAILED TO COMPILE
     aaaxabaxbaaxbbax: FAIL. Actual results: "ax,ax,,a"
 
 /((\3|b)\2(a)){2,}/
-    bbaababbabaaaaabbaaaabba: FAIL. Actual results: "abba,bba,b,a"
+    bbaababbabaaaaabbaaaabba: PASS
 
 /abc/i
     ABC: PASS
@@ -2843,7 +2843,7 @@ Unsupported modifiers: x
     abc=xyz\\\npqr: FAIL. Actual results: "abc=xyz\\\npqr,"
 
 /(?=(\w+))\1:/
-    abcd:: FAIL. Actual results: "null"
+    abcd:: PASS
 
 /^(?=(\w+))\1:/
     abcd:: PASS
@@ -2879,10 +2879,10 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /^(a()*)*/
-    aaaa: FAIL. Actual results: "a,a,"
+    aaaa: PASS
 
 /^(?:a(?:(?:))*)*/
-    aaaa: FAIL. Actual results: "a"
+    aaaa: PASS
 
 /^(a()+)+/
     aaaa: PASS
@@ -2919,7 +2919,7 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /(.*(.)?)*/
-    abcd: FAIL. Actual results: "abcd,,"
+    abcd: PASS
 
 /( (A | (?(1)0|) )*   )/x
 Unsupported modifiers: x

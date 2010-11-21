@@ -1,6 +1,6 @@
 S15.10.2.8_A2_T1
 
-FAIL SputnikError: #4: __executed = /(.*?)a(?!(a+)b\2c)\2(.*)/.exec("baaabaac"); __executed[2] === undefined. Actual: aa
+PASS 
 
 TEST COMPLETE
 

@@ -1,3 +1,36 @@
+2010-11-19  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        YARR JIT should fallback to YARR Interpreter instead of PCRE.
+        https://bugs.webkit.org/show_bug.cgi?id=46719
+
+        Remove the ENABLE_YARR macro and the option of matching regular
+        expressions with PCRE from JavaScriptCore.
+
+        * runtime/JSGlobalData.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        * tests/mozilla/expected.html:
+        * wtf/Platform.h:
+        * yarr/RegexCompiler.cpp:
+        * yarr/RegexCompiler.h:
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::byteCompileRegex):
+        * yarr/RegexInterpreter.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::RegexCodeBlock):
+        (JSC::Yarr::RegexCodeBlock::~RegexCodeBlock):
+        (JSC::Yarr::RegexCodeBlock::getFallback):
+        (JSC::Yarr::RegexCodeBlock::isFallback):
+        (JSC::Yarr::RegexCodeBlock::setFallback):
+        (JSC::Yarr::executeRegex):
+        * yarr/RegexParser.h:
+        * yarr/RegexPattern.h:
+
 2010-11-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by David Kilzer.
