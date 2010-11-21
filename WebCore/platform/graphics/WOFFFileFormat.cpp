@@ -36,11 +36,11 @@
 #endif
 
 #if PLATFORM(BREWMP)
-#include <AEEStdLib.h>
-#define htonl(x) HTONL(x)
-#define htons(x) HTONS(x)
-#define ntohl(x) NTOHL(x)
-#define ntohs(x) NTOHS(x)
+#include <AEEstd.h>
+#define htonl(x) std_htonl(x)
+#define htons(x) std_htons(x)
+#define ntohl(x) std_ntohl(x)
+#define ntohs(x) std_ntohs(x)
 #endif
 
 #if PLATFORM(WIN)
