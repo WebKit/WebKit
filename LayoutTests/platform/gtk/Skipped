@@ -21,7 +21,6 @@
 # These tests are not failing locally, but fail on the bot: Most of
 # the media/video tests fail if you remove some of them.
 #
-# editing/selection/extend-selection.html
 # fast/dom/Window/window-screen-properties.html
 # fast/dom/null-document-location-href-put-crash.html
 # fast/dom/null-document-location-put-crash.html

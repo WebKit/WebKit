@@ -3135,9 +3135,6 @@ WONTFIX SKIP : platform/win/plugins/draws-gradient.html = IMAGE+TEXT
 // Added in WK r71424
 BUG62138 : animations/stop-animation-on-suspend.html = TEXT PASS
 
-// Takes >12 seconds to run in debug
-BUGWK48374 SLOW : editing/selection/extend-selection.html = PASS
-
 // Update canvas/philip in WK r71481
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.null.html = TEXT

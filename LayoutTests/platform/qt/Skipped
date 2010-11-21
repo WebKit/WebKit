@@ -1946,7 +1946,6 @@ editing/selection/select-box.html
 
 # [Qt] editing tests fails after r54980
 # https://bugs.webkit.org/show_bug.cgi?id=35145
-editing/selection/extend-selection.html
 editing/selection/extend-after-mouse-selection.html
 
 # stderr
