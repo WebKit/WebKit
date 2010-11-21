@@ -558,6 +558,10 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
         qDebug() << "Warning: couldn't get window object";
         return;
     }
+    if (!root) {
+        qDebug() << "Warning: couldn't get root object";
+        return;
+    }
 
     JSC::ExecState* exec = window->globalExec();
 
