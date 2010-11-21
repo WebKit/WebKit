@@ -86,7 +86,7 @@ void DragClientQt::willPerformDragSourceAction(DragSourceAction, const IntPoint&
 {
 }
 
-void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame* frame, bool)
+void DragClientQt::startDrag(DragImageRef dragImage, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame* frame, bool)
 {
 #ifndef QT_NO_DRAGANDDROP
     QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
@@ -94,7 +94,9 @@ void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Cli
     QWidget* view = m_webPage->view();
     if (view) {
         QDrag* drag = new QDrag(view);
-        if (clipboardData && clipboardData->hasImage())
+        if (dragImage)
+            drag->setPixmap(*dragImage);
+        else if (clipboardData && clipboardData->hasImage())
             drag->setPixmap(qvariant_cast<QPixmap>(clipboardData->imageData()));
         DragOperation dragOperationMask = clipboard->sourceOperation();
         drag->setMimeData(clipboardData);

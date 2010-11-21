@@ -1,3 +1,13 @@
+2010-11-20  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Dragging a selection should use a rendering of the selection as "cursor" for the drag
+        https://bugs.webkit.org/show_bug.cgi?id=49870
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag): Pass the DragImage to QDrag::setPixmap()
+
 2010-11-20  Sam Magnuson  <smagnuso@gmail.com>
 
         Reviewed by Andreas Kling.

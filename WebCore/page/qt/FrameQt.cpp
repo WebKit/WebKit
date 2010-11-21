@@ -23,6 +23,9 @@
 
 #include "config.h"
 #include "Frame.h"
+#include "FrameView.h"
+#include "Image.h"
+#include "ImageBuffer.h"
 
 #include "NotImplemented.h"
 
@@ -36,8 +39,27 @@ DragImageRef Frame::nodeImage(Node*)
 
 DragImageRef Frame::dragImageForSelection()
 {
-    notImplemented();
-    return 0;
+    if (!selection()->isRange())
+        return 0;
+
+    m_doc->updateLayout();
+
+    IntRect paintingRect = enclosingIntRect(selection()->bounds());
+    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));
+    if (!buffer)
+        return 0;
+
+    GraphicsContext* context = buffer->context();
+    context->translate(-paintingRect.x(), -paintingRect.y());
+    context->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
+
+    PaintBehavior previousPaintBehavior = m_view->paintBehavior();
+    m_view->setPaintBehavior(PaintBehaviorSelectionOnly);
+    m_view->paintContents(context, paintingRect);
+    m_view->setPaintBehavior(previousPaintBehavior);
+
+    RefPtr<Image> image = buffer->copyImage();
+    return createDragImageFromImage(image.get());
 }
 
 }

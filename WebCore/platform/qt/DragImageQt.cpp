@@ -36,8 +36,9 @@ IntSize dragImageSize(DragImageRef)
     return IntSize(0, 0);
 }
 
-void deleteDragImage(DragImageRef)
+void deleteDragImage(DragImageRef image)
 {
+    delete image;
 }
 
 DragImageRef scaleDragImage(DragImageRef image, FloatSize)
@@ -50,9 +51,12 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
     return image;
 }
 
-DragImageRef createDragImageFromImage(Image*)
+DragImageRef createDragImageFromImage(Image* image)
 {
-    return 0;
+    if (!image)
+        return 0;
+
+    return new QPixmap(*image->nativeImageForCurrentFrame());
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)
