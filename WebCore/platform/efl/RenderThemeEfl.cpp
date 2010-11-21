@@ -247,11 +247,10 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* o, ControlStates states
         "window-inactive",
         "indeterminate"
     };
-    size_t i, last = sizeof(signals) / sizeof(signals[0]);
 
     edje_object_signal_emit(o, "reset", "");
 
-    for (i = 0; i < last; i++) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(signals); ++i) {
         if (states & (1 << i))
             edje_object_signal_emit(o, signals[i], "");
     }

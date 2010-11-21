@@ -62,15 +62,13 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typese
         const void* valuesWithKerningDisabled[] = { platformData().ctFont(), kerningAdjustment, allowLigatures
             ? ligaturesAllowed : ligaturesNotAllowed, orientation() == Vertical ? kCFBooleanTrue : kCFBooleanFalse };
         attributesDictionary.adoptCF(CFDictionaryCreate(0, keysWithKerningDisabled, valuesWithKerningDisabled,
-            sizeof(keysWithKerningDisabled) / sizeof(*keysWithKerningDisabled),
-            &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            WTF_ARRAY_LENGTH(keysWithKerningDisabled), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     } else {
         // By omitting the kCTKernAttributeName attribute, we get Core Text's standard kerning.
         static const void* keysWithKerningEnabled[] = { kCTFontAttributeName, kCTLigatureAttributeName, kCTVerticalFormsAttributeName };
         const void* valuesWithKerningEnabled[] = { platformData().ctFont(), allowLigatures ? ligaturesAllowed : ligaturesNotAllowed, orientation() == Vertical ? kCFBooleanTrue : kCFBooleanFalse };
         attributesDictionary.adoptCF(CFDictionaryCreate(0, keysWithKerningEnabled, valuesWithKerningEnabled,
-            sizeof(keysWithKerningEnabled) / sizeof(*keysWithKerningEnabled),
-            &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            WTF_ARRAY_LENGTH(keysWithKerningEnabled), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     }
 
     return attributesDictionary.get();

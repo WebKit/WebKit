@@ -41,23 +41,23 @@ FontTranscoder::FontTranscoder()
 {
     m_converterTypes.add("MS PGothic", BackslashToYenSign);
     UChar unicodeNameMSPGothic[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
-    m_converterTypes.add(AtomicString(unicodeNameMSPGothic, sizeof(unicodeNameMSPGothic) / sizeof(UChar)), BackslashToYenSign);
+    m_converterTypes.add(AtomicString(unicodeNameMSPGothic, WTF_ARRAY_LENGTH(unicodeNameMSPGothic)), BackslashToYenSign);
 
     m_converterTypes.add("MS PMincho", BackslashToYenSign);
     UChar unicodeNameMSPMincho[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D};
-    m_converterTypes.add(AtomicString(unicodeNameMSPMincho, sizeof(unicodeNameMSPMincho) / sizeof(UChar)), BackslashToYenSign);
+    m_converterTypes.add(AtomicString(unicodeNameMSPMincho, WTF_ARRAY_LENGTH(unicodeNameMSPMincho)), BackslashToYenSign);
 
     m_converterTypes.add("MS Gothic", BackslashToYenSign);
     UChar unicodeNameMSGothic[] = {0xFF2D, 0xFF33, 0x0020, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
-    m_converterTypes.add(AtomicString(unicodeNameMSGothic, sizeof(unicodeNameMSGothic) / sizeof(UChar)), BackslashToYenSign);
+    m_converterTypes.add(AtomicString(unicodeNameMSGothic, WTF_ARRAY_LENGTH(unicodeNameMSGothic)), BackslashToYenSign);
 
     m_converterTypes.add("MS Mincho", BackslashToYenSign);
     UChar unicodeNameMSMincho[] = {0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D};
-    m_converterTypes.add(AtomicString(unicodeNameMSMincho, sizeof(unicodeNameMSMincho) / sizeof(UChar)), BackslashToYenSign);
+    m_converterTypes.add(AtomicString(unicodeNameMSMincho, WTF_ARRAY_LENGTH(unicodeNameMSMincho)), BackslashToYenSign);
 
     m_converterTypes.add("Meiryo", BackslashToYenSign);
     UChar unicodeNameMeiryo[] = {0x30E1, 0x30A4, 0x30EA, 0x30AA};
-    m_converterTypes.add(AtomicString(unicodeNameMeiryo, sizeof(unicodeNameMeiryo) / sizeof(UChar)), BackslashToYenSign);
+    m_converterTypes.add(AtomicString(unicodeNameMeiryo, WTF_ARRAY_LENGTH(unicodeNameMeiryo)), BackslashToYenSign);
 }
 
 FontTranscoder::ConverterType FontTranscoder::converterType(const FontDescription& fontDescription, const TextEncoding* encoding) const

@@ -211,9 +211,8 @@ static bool LookupAltName(const String& name, String& altName)
     static NameMap* fontNameMap = 0;
 
     if (!fontNameMap) {
-        size_t numElements = sizeof(namePairs) / sizeof(NamePair);
         fontNameMap = new NameMap;
-        for (size_t i = 0; i < numElements; ++i)
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(namePairs); ++i)
             fontNameMap->set(String(namePairs[i].name), &(namePairs[i].altNameCodepage));
     }
 

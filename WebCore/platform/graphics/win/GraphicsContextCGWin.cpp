@@ -228,20 +228,17 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, 
     const float lowerOpacity = 0.88f;
 
     //Top line
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, 
-                         sizeof(edge_dash_lengths) / sizeof(edge_dash_lengths[0]));
+    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, WTF_ARRAY_LENGTH(edge_dash_lengths));
     CGContextSetAlpha(context, upperOpacity);
     CGContextStrokeLineSegments(context, upperPoints, 2);
  
     // Middle line
-    CGContextSetLineDash(context, middle_offset, middle_dash_lengths, 
-                         sizeof(middle_dash_lengths) / sizeof(middle_dash_lengths[0]));
+    CGContextSetLineDash(context, middle_offset, middle_dash_lengths, WTF_ARRAY_LENGTH(middle_dash_lengths));
     CGContextSetAlpha(context, middleOpacity);
     CGContextStrokeLineSegments(context, middlePoints, 2);
     
     // Bottom line
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths,
-                         sizeof(edge_dash_lengths) / sizeof(edge_dash_lengths[0]));
+    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, WTF_ARRAY_LENGTH(edge_dash_lengths));
     CGContextSetAlpha(context, lowerOpacity);
     CGContextStrokeLineSegments(context, lowerPoints, 2);
 

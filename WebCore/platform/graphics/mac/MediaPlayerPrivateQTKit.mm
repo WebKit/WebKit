@@ -316,7 +316,7 @@ static void disableComponentsOnce()
         {'imdc', 'pdf ', 'appl', 0, 0},  
     };
 
-    for (size_t i = 0; i < sizeof(componentsToDisable)/sizeof(componentsToDisable[0]); ++i) 
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(componentsToDisable); ++i) 
         wkQTMovieDisableComponent(componentsToDisable[i]);
 }
 

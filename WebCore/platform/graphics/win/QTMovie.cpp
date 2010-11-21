@@ -548,7 +548,7 @@ void QTMovie::load(CFURLRef url, bool preservesPitch)
     movieProps[moviePropCount].propStatus = 0; 
     moviePropCount++; 
 
-    ASSERT(moviePropCount <= sizeof(movieProps) / sizeof(movieProps[0]));
+    ASSERT(moviePropCount <= WTF_ARRAY_LENGTH(movieProps));
     m_private->m_loadError = NewMovieFromProperties(moviePropCount, movieProps, 0, 0, &m_private->m_movie);
 
 end:

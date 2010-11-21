@@ -59,7 +59,7 @@ void SimpleFontData::checkShapesArabic() const
     // heuristic is that if such a font has a glyph metamorphosis table, then
     // it includes shaping information for Arabic.
     FourCharCode tables[] = { 'morx', 'mort' };
-    for (unsigned i = 0; i < sizeof(tables) / sizeof(tables[0]); ++i) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(tables); ++i) {
         ByteCount tableSize;
         OSStatus status = ATSFontGetTable(fontID, tables[i], 0, 0, 0, &tableSize);
         if (status == noErr) {

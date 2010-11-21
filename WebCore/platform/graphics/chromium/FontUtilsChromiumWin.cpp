@@ -150,14 +150,14 @@ void initializeScriptFontMap(ScriptToFontMap& scriptFontMap)
         {USCRIPT_MYANMAR, myanmarFonts},
     };
 
-    for (int i = 0; i < sizeof(fontMap) / sizeof(fontMap[0]); ++i)
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(fontMap); ++i)
         scriptFontMap[fontMap[i].script] = fontMap[i].family;
 
     // FIXME: Instead of scanning the hard-coded list, we have to 
     // use EnumFont* to 'inspect' fonts to pick up fonts covering scripts
     // when it's possible (e.g. using OS/2 table). If we do that, this 
     // had better be pulled out of here.
-    for (int i = 0; i < sizeof(scriptToFontFamilies) / sizeof(scriptToFontFamilies[0]); ++i) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(scriptToFontFamilies); ++i) {
         UScriptCode script = scriptToFontFamilies[i].script;
         scriptFontMap[script] = 0;
         const UChar** familyPtr = scriptToFontFamilies[i].families;

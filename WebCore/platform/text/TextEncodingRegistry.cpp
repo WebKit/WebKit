@@ -189,8 +189,7 @@ static void addToTextCodecMap(const char* name, NewTextCodecFunction function, c
 
 static void pruneBlacklistedCodecs()
 {
-    size_t blacklistedCodecListLength = sizeof(textEncodingNameBlacklist) / sizeof(textEncodingNameBlacklist[0]);
-    for (size_t i = 0; i < blacklistedCodecListLength; ++i) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(textEncodingNameBlacklist); ++i) {
         const char* atomicName = textEncodingNameMap->get(textEncodingNameBlacklist[i]);
         if (!atomicName)
             continue;

@@ -95,7 +95,7 @@ String createCanonicalUUIDString()
     return canonicalUuidStr;
 #elif OS(LINUX) && PLATFORM(CHROMIUM)
     unsigned randomData[4];
-    for (size_t i = 0; i < sizeof(randomData) / sizeof(randomData[0]); ++i)
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(randomData); ++i)
         randomData[i] = static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
 
     // Format as Version 4 UUID.
