@@ -1322,6 +1322,7 @@ sub Generate {
 
     $implIncludes{"webkitmarshal.h"} = 1;
     $implIncludes{"webkitprivate.h"} = 1;
+    $implIncludes{"DOMObjectCache.h"} = 1;
     $implIncludes{"WebKitDOMBinding.h"} = 1;
     $implIncludes{"gobject/ConvertToUTF8String.h"} = 1;
     $implIncludes{"webkit/$className.h"} = 1;

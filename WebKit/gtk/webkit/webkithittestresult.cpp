@@ -71,6 +71,13 @@ static void webkit_hit_test_result_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_hit_test_result_parent_class)->finalize(object);
 }
 
+static void webkit_hit_test_result_dispose(GObject* object)
+{
+    g_object_unref(WEBKIT_HIT_TEST_RESULT(object)->priv->innerNode);
+
+    G_OBJECT_CLASS(webkit_hit_test_result_parent_class)->dispose(object);
+}
+
 static void webkit_hit_test_result_get_property(GObject* object, guint propertyID, GValue* value, GParamSpec* pspec)
 {
     WebKitHitTestResult* web_hit_test_result = WEBKIT_HIT_TEST_RESULT(object);
@@ -131,6 +138,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
     GObjectClass* objectClass = G_OBJECT_CLASS(webHitTestResultClass);
 
     objectClass->finalize = webkit_hit_test_result_finalize;
+    objectClass->dispose = webkit_hit_test_result_dispose;
     objectClass->get_property = webkit_hit_test_result_get_property;
     objectClass->set_property = webkit_hit_test_result_set_property;
 

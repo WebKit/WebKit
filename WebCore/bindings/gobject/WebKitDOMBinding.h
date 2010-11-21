@@ -38,13 +38,6 @@ gpointer kit(WebCore::Node* node);
 gpointer kit(WebCore::Element* element);
 gpointer kit(WebCore::Event* event);
 gpointer kit(WebCore::EventTarget* target);
-
-class DOMObjectCache {
-public:
-    static gpointer get(void* objectHandle);
-    static gpointer put(void* objectHandle, gpointer wrapper);
-    static void forget(void* objectHandle);
-};
 } // namespace WebKit
 
 #endif // WebKitDOMBinding_h

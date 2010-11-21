@@ -639,6 +639,8 @@ webcore_sources += \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
 	WebCore/bindings/gobject/ConvertToUTF8String.h \
+	WebCore/bindings/gobject/DOMObjectCache.cpp \
+	WebCore/bindings/gobject/DOMObjectCache.h \
 	WebCore/bindings/gobject/GObjectEventListener.cpp \
 	WebCore/bindings/gobject/GObjectEventListener.h \
 	WebCore/bindings/gobject/WebKitDOMBinding.cpp \

@@ -28,6 +28,7 @@
 #include "ArchiveResource.h"
 #include "CachedFrame.h"
 #include "Color.h"
+#include "DOMObjectCache.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "FormState.h"
@@ -696,9 +697,10 @@ void FrameLoaderClient::registerForIconNotification(bool shouldRegister)
     notImplemented();
 }
 
-void FrameLoaderClient::setMainFrameDocumentReady(bool)
+void FrameLoaderClient::setMainFrameDocumentReady(bool ready)
 {
-    // this is only interesting once we provide an external API for the DOM
+    if (!ready)
+        DOMObjectCache::clearByFrame(core(m_frame));
 }
 
 bool FrameLoaderClient::hasWebView() const

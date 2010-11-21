@@ -71,6 +71,7 @@ void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
     gboolean handled = FALSE;
     WebKitDOMEvent* gobjectEvent = WEBKIT_DOM_EVENT(WebKit::kit(event));
     g_signal_emit_by_name(m_object, m_signalName.data(), gobjectEvent, &handled);
+    g_object_unref(gobjectEvent);
 }
 
 bool GObjectEventListener::operator==(const EventListener& listener)

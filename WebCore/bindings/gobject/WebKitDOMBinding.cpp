@@ -24,6 +24,7 @@
 #include "config.h"
 #include "WebKitDOMBinding.h"
 
+#include "DOMObjectCache.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventException.h"
@@ -43,32 +44,6 @@ namespace WebKit {
 
 using namespace WebCore;
 using namespace WebCore::HTMLNames;
-
-// DOMObjectCache
-
-typedef HashMap<void*, gpointer> DOMObjectMap;
-
-static DOMObjectMap& domObjects()
-{
-    static DOMObjectMap staticDOMObjects;
-    return staticDOMObjects;
-}
-
-gpointer DOMObjectCache::get(void* objectHandle)
-{
-    return domObjects().get(objectHandle);
-}
-
-gpointer DOMObjectCache::put(void* objectHandle, gpointer wrapper)
-{
-    domObjects().set(objectHandle, wrapper);
-    return wrapper;
-}
-
-void DOMObjectCache::forget(void* objectHandle)
-{
-    domObjects().take(objectHandle);
-}
 
 // kit methods
 

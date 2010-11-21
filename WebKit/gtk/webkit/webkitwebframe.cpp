@@ -35,6 +35,7 @@
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
 #include "AXObjectCache.h"
+#include "DOMObjectCache.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "FrameLoader.h"
@@ -146,7 +147,10 @@ static void webkit_web_frame_get_property(GObject* object, guint prop_id, GValue
 void webkit_web_frame_core_frame_gone(WebKitWebFrame* frame)
 {
     ASSERT(WEBKIT_IS_WEB_FRAME(frame));
-    frame->priv->coreFrame = 0;
+    WebKitWebFramePrivate* priv = frame->priv;
+    if (priv->coreFrame)
+        DOMObjectCache::clearByFrame(priv->coreFrame);
+    priv->coreFrame = 0;
 }
 
 static WebKitWebDataSource* webkit_web_frame_get_data_source_from_core_loader(WebCore::DocumentLoader* loader)
@@ -160,6 +164,7 @@ static void webkit_web_frame_finalize(GObject* object)
     WebKitWebFramePrivate* priv = frame->priv;
 
     if (priv->coreFrame) {
+        DOMObjectCache::clearByFrame(priv->coreFrame);
         priv->coreFrame->loader()->cancelAndClear();
         priv->coreFrame = 0;
     }

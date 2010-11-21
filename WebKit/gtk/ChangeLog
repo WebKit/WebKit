@@ -1,3 +1,42 @@
+2010-11-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Memory managament for DOM GObject wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=40302
+
+        Initial attempt to have a kind of poor man's garbage collection
+        for GObject DOM objects. We tie the object's lifecycle to their
+        parent Frame and/or its document; that is, all objects will be
+        collected when their parent frame is destroyed or when that frame
+        transitions to a new document. Manual management (calling
+        g_object_unref on them) is also allowed, and is required for
+        objects that are not in the DOM tree (eg NodeLists).
+
+        * GNUmakefile.am: add testutils file to testdomdocument.c
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::setMainFrameDocumentReady): collect
+        DOM objects on document transition.
+        * tests/testdomdocument.c:
+        (dom_document_fixture_teardown): only destroy the view if it's not
+        already destroyed, since the new test detroys it on its own.
+        (test_dom_document_get_elements_by_tag_name): manually unref node list.
+        (test_dom_document_get_elements_by_class_name): ditto.
+        (test_dom_document_get_links): ditto.
+        (test_dom_document_garbage_collection): test all possible
+        scenarios for DOM object "garbage collection".
+        (main): add new test.
+        * tests/testdomnode.c:
+        (test_dom_node_hierarchy_navigation): manually unref node list.
+        (test_dom_node_insertion): ditto.
+        * webkit/webkithittestresult.cpp:
+        (webkit_hit_test_result_dispose): unref the inner node on dispose
+        now that the memory management model is clarified.
+        (webkit_hit_test_result_class_init): hook dispose.
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_core_frame_gone): clear DOM objects attached to this frame.
+        (webkit_web_frame_finalize): ditto.
+
 2010-11-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
