@@ -554,12 +554,28 @@ void GraphicsContext::strokePath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset());
-        QPen shadowPen(pen);
-        shadowPen.setColor(m_data->shadow.m_color);
-        p->strokePath(path, shadowPen);
-        p->translate(-m_data->shadow.offset());
+        ContextShadow* shadow = contextShadow();
+
+        if (shadow->m_type != ContextShadow::BlurShadow
+            && !m_common->state.strokePattern && !m_common->state.strokeGradient)
+        {
+            QPen shadowPen(pen);
+            shadowPen.setColor(m_data->shadow.m_color);
+            p->translate(m_data->shadow.offset());
+            p->strokePath(path, shadowPen);
+            p->translate(-m_data->shadow.offset());
+        } else {
+            FloatRect boundingRect = path.controlPointRect();
+            boundingRect.inflate(pen.miterLimit() + pen.widthF());
+            QPainter* shadowPainter = shadow->beginShadowLayer(p, boundingRect);
+            if (shadowPainter) {
+                shadowPainter->setOpacity(static_cast<qreal>(m_data->shadow.m_color.alpha()) / 255);
+                shadowPainter->strokePath(path, pen);
+                shadow->endShadowLayer(p);
+            }
+        }
     }
+
     if (m_common->state.strokePattern) {
         AffineTransform affine;
         pen.setBrush(QBrush(m_common->state.strokePattern->createPlatformPattern(affine)));
