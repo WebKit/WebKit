@@ -95,10 +95,19 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AXNotification notification)
 {
+    AtkObject* axObject = coreObject->wrapper();
+    if (!axObject)
+        return;
+
     if (notification == AXCheckedStateChanged) {
         if (!coreObject->isCheckboxOrRadio())
             return;
-        g_signal_emit_by_name(coreObject->wrapper(), "state-change", "checked", coreObject->isChecked());
+        g_signal_emit_by_name(axObject, "state-change", "checked", coreObject->isChecked());
+    } else if (notification == AXMenuListValueChanged) {
+        if (!coreObject->isMenuList())
+            return;
+        g_signal_emit_by_name(axObject, "focus-event", true);
+        g_signal_emit_by_name(axObject, "state-change", "focused", true);
     } else if (notification == AXSelectedChildrenChanged)
         notifyChildrenSelectionChange(coreObject);
 }

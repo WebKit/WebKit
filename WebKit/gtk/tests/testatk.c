@@ -44,6 +44,8 @@ static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar
 
 static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo</th><th>bar</th><th colspan='2'>baz</th></tr><tr><th>qux</th><td>1</td><td>2</td><td>3</td></tr><tr><th rowspan='2'>quux</th><td>4</td><td>5</td><td>6</td></tr><tr><td>6</td><td>7</td><td>8</td></tr><tr><th>corge</th><td>9</td><td>10</td><td>11</td></tr></table><table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></body></html>";
 
+static const char* comboBoxSelector = "<html><body><select><option selected value='foo'>foo</option><option value='bar'>bar</option></select></body></html>";
+
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
 
 static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p></body></html>";
@@ -219,6 +221,107 @@ static void runGetTextTests(AtkText* textObject)
     /* ATK_TEXT_BOUNDARY_LINE_END */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
                         0, "This is a test. This is the second sentence. And this the third.", 0, 64);
+}
+
+static void testWebkitAtkComboBox()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, comboBoxSelector, 0, 0, 0);
+
+    /* Wait for the accessible objects to be created. */
+    waitForAccessibleObjects();
+
+    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(object);
+
+    AtkObject* formObject = atk_object_ref_accessible_child(object, 0);
+    g_assert(formObject);
+
+    AtkObject* comboBox = atk_object_ref_accessible_child(formObject, 0);
+    g_assert(ATK_IS_OBJECT(comboBox));
+
+    AtkObject* menuPopup = atk_object_ref_accessible_child(comboBox, 0);
+    g_assert(ATK_IS_OBJECT(menuPopup));
+
+    AtkObject* item1 = atk_object_ref_accessible_child(menuPopup, 0);
+    g_assert(ATK_IS_OBJECT(item1));
+
+    AtkObject* item2 = atk_object_ref_accessible_child(menuPopup, 1);
+    g_assert(ATK_IS_OBJECT(item2));
+
+    /* Check roles. */
+    g_assert(atk_object_get_role(comboBox) == ATK_ROLE_COMBO_BOX);
+    g_assert(atk_object_get_role(menuPopup) == ATK_ROLE_MENU);
+    g_assert(atk_object_get_role(item1) == ATK_ROLE_MENU_ITEM);
+    g_assert(atk_object_get_role(item2) == ATK_ROLE_MENU_ITEM);
+
+    /* Check the implementation of the AtkSelection interface. */
+    g_assert(ATK_IS_SELECTION(comboBox));
+    AtkSelection* atkSelection = ATK_SELECTION(comboBox);
+    g_assert_cmpint(atk_selection_get_selection_count(atkSelection), ==, 1);
+    g_assert(atk_selection_is_child_selected(atkSelection, 0));
+    g_assert(!atk_selection_is_child_selected(atkSelection, 1));
+    AtkObject* selectedItem = atk_selection_ref_selection(atkSelection, 0);
+    g_assert(selectedItem == item1);
+    g_object_unref(selectedItem);
+
+    /* Check the implementations of the AtkAction interface. */
+    g_assert(ATK_IS_ACTION(comboBox));
+    AtkAction* atkAction = ATK_ACTION(comboBox);
+    g_assert_cmpint(atk_action_get_n_actions(atkAction), ==, 1);
+    g_assert(atk_action_do_action(atkAction, 0));
+
+    g_assert(ATK_IS_ACTION(menuPopup));
+    atkAction = ATK_ACTION(menuPopup);
+    g_assert_cmpint(atk_action_get_n_actions(atkAction), ==, 1);
+    g_assert(atk_action_do_action(atkAction, 0));
+
+    g_assert(ATK_IS_ACTION(item1));
+    atkAction = ATK_ACTION(item1);
+    g_assert_cmpint(atk_action_get_n_actions(atkAction), ==, 1);
+    g_assert(atk_action_do_action(atkAction, 0));
+
+    g_assert(ATK_IS_ACTION(item2));
+    atkAction = ATK_ACTION(item2);
+    g_assert_cmpint(atk_action_get_n_actions(atkAction), ==, 1);
+    g_assert(atk_action_do_action(atkAction, 0));
+
+    /* After selecting the second item, selection should have changed. */
+    g_assert_cmpint(atk_selection_get_selection_count(atkSelection), ==, 1);
+    g_assert(!atk_selection_is_child_selected(atkSelection, 0));
+    g_assert(atk_selection_is_child_selected(atkSelection, 1));
+    selectedItem = atk_selection_ref_selection(atkSelection, 0);
+    g_assert(selectedItem == item2);
+    g_object_unref(selectedItem);
+
+    /* Check the implementation of the AtkText interface. */
+    g_assert(ATK_IS_TEXT(item1));
+    AtkText* atkText = ATK_TEXT(item1);
+    char *text = atk_text_get_text(atkText, 0, -1);
+    g_assert_cmpstr(text, ==, "foo");
+    g_free(text);
+    text = atk_text_get_text(atkText, 0, 2);
+    g_assert_cmpstr(text, ==, "fo");
+    g_free(text);
+
+    g_assert(ATK_IS_TEXT(item2));
+    atkText = ATK_TEXT(item2);
+    text = atk_text_get_text(atkText, 0, -1);
+    g_assert_cmpstr(text, ==, "bar");
+    g_free(text);
+    text = atk_text_get_text(atkText, 1, 3);
+    g_assert_cmpstr(text, ==, "ar");
+    g_free(text);
+
+    g_object_unref(formObject);
+    g_object_unref(comboBox);
+    g_object_unref(menuPopup);
+    g_object_unref(item1);
+    g_object_unref(item2);
+    g_object_unref(webView);
 }
 
 static void testWebkitAtkGetTextAtOffsetForms()
@@ -1211,6 +1314,7 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, 0);
 
     g_test_bug_base("https://bugs.webkit.org/");
+    g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
     g_test_add_func("/webkit/atk/getTextAtOffsetForms", testWebkitAtkGetTextAtOffsetForms);
     g_test_add_func("/webkit/atk/getTextAtOffsetNewlines", testWebkitAtkGetTextAtOffsetNewlines);
