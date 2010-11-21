@@ -325,8 +325,6 @@ int main(int argc, char** argv)
 
     gtk_test_init(&argc, &argv, NULL);
 
-    testutils_relative_chdir("WebKit/gtk/tests/resources/iframedocument.html", argv[0]);
-
     g_test_bug_base("https://bugs.webkit.org/");
 
     g_test_add("/webkit/domdocument/test_title",

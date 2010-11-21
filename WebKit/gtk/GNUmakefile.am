@@ -391,7 +391,7 @@ TEST_PROGS += \
 	Programs/unittests/testcopyandpaste
 
 # Add additional tests here
-Programs_unittests_testdomdocument_SOURCES = WebKit/gtk/tests/testdomdocument.c WebKit/gtk/tests/test_utils.c
+Programs_unittests_testdomdocument_SOURCES = WebKit/gtk/tests/testdomdocument.c
 Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdomdocument_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdomdocument_LDFLAGS = $(webkit_tests_ldflags)
