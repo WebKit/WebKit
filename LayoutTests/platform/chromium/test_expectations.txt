@@ -673,7 +673,6 @@ BUG11577 WIN LINUX : editing/spelling/spelling-attribute-at-child.html = FAIL
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
 // tree red. May be more involved then just rebaselining.
-BUG11613 LINUX : editing/deleting/5168598.html = FAIL
 
 BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 
