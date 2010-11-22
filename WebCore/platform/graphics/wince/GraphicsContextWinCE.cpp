@@ -982,7 +982,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
     ExcludeClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
 }
 
-void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
 {
     // FIXME: implement
 }

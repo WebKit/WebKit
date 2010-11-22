@@ -57,23 +57,19 @@ static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath
 #endif
 }
 
-void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, int width, int /*offset*/, const Color& color)
 {
+    // FIXME: Use 'offset' for something? http://webkit.org/b/49909
+
     if (paintingDisabled())
         return;
-    
+
     int radius = (width - 1) / 2;
-    offset += radius;
     CGColorRef colorRef = color.isValid() ? cachedCGColor(color, ColorSpaceDeviceRGB) : 0;
 
-    RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
-    unsigned pathCount = paths.size();
-    for (unsigned i = 0; i < pathCount; i++)
-        CGPathAddPath(focusRingPath.get(), 0, paths[i].platformPath());
-    
-    drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
-}    
-    
+    drawFocusRingToContext(platformContext(), path.platformPath(), colorRef, radius);
+}
+
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (paintingDisabled())

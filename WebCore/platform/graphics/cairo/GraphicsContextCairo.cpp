@@ -617,7 +617,7 @@ void GraphicsContext::clipPath(WindRule clipRule)
     cairo_clip(cr);
 }
 
-void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
 {
     // FIXME: implement
 }

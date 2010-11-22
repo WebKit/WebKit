@@ -57,7 +57,7 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
-    void paintFocusRings(PaintInfo&, const RenderStyle*);
+    void paintFocusRing(PaintInfo&, const RenderStyle*);
     virtual void paint(PaintInfo&, int tx, int ty);
 
     bool isLogicalWidthSpecified() const;
