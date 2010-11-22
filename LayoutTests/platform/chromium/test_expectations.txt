@@ -3197,14 +3197,6 @@ BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // Next SVG change: http://trac.webkit.org/changeset/72381 .  Diffs should be fine, but let's suppress tests for now.
-BUG_ANTONM : svg/dom/SVGPathSegList-appendItem.xhtml = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/SVGPathSegList-clear-and-initialize.xhtml = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/SVGPathSegList-insertItemBefore.xhtml = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/SVGPathSegList-removeItem.xhtml = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/SVGPathSegList-replaceItem.xhtml = IMAGE+TEXT IMAGE
-BUG_ANTONM : svg/dom/svgpath-out-of-bounds-getPathSeg.html = TEXT
-
-// To be rebaselined (http://trac.webkit.org/changeset/72402)
 
 // Seems like it started failing with r72364.
 BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
