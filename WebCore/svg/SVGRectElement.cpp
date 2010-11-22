@@ -130,6 +130,7 @@ void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeRx();
         synchronizeRy();
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
@@ -147,6 +148,8 @@ void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeRy();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 void SVGRectElement::toPathData(Path& path) const

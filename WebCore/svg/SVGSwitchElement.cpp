@@ -62,8 +62,16 @@ void SVGSwitchElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::synchronizeProperty(attrName);
 
-    if (attrName == anyQName() || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 }

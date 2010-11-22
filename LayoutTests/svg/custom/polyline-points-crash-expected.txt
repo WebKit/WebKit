@@ -1,2 +1,2 @@
-Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Caught exception: Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0
 PASSED -- WebKit did not crash!

@@ -61,7 +61,7 @@ String SVGLengthList::valueAsString() const
     unsigned size = this->size();
     for (unsigned i = 0; i < size; ++i) {
         if (i > 0)
-            builder.append(", ");
+            builder.append(' ');
 
         builder.append(at(i).valueAsString());
     }

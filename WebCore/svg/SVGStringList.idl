@@ -30,17 +30,17 @@ module svg {
 
         void clear()
             raises(DOMException);
-        DOMString initialize(in DOMString item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString initialize(in DOMString item)
             raises(DOMException, SVGException);
-        DOMString getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString getItem(in unsigned long index)
             raises(DOMException);
-        DOMString insertItemBefore(in DOMString item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString insertItemBefore(in DOMString item, in unsigned long index)
             raises(DOMException, SVGException);
-        DOMString replaceItem(in DOMString item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString replaceItem(in DOMString item, in unsigned long index)
             raises(DOMException, SVGException);
-        DOMString removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString removeItem(in unsigned long index)
             raises(DOMException);
-        DOMString appendItem(in DOMString item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString appendItem(in DOMString item)
             raises(DOMException, SVGException);
     };
 

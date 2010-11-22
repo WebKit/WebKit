@@ -31,17 +31,17 @@ module svg {
 
         void clear()
             raises(DOMException);
-        SVGNumber initialize(in SVGNumber item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber initialize(in SVGNumber item)
             raises(DOMException, SVGException);
-        SVGNumber getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber getItem(in unsigned long index)
             raises(DOMException);
-        SVGNumber insertItemBefore(in SVGNumber item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber insertItemBefore(in SVGNumber item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGNumber replaceItem(in SVGNumber item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber replaceItem(in SVGNumber item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGNumber removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber removeItem(in unsigned long index)
             raises(DOMException);
-        SVGNumber appendItem(in SVGNumber item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber appendItem(in SVGNumber item)
             raises(DOMException, SVGException);
     };
 

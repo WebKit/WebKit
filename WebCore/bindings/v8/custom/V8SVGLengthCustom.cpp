@@ -56,12 +56,17 @@ v8::Handle<v8::Value> V8SVGLength::valueAccessorGetter(v8::Local<v8::String> nam
 void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.SVGLength.value._set");
+    SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(info.Holder());
+    if (wrapper->role() == AnimValRole) {
+        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);
+        return;
+    }
+
     if (!isUndefinedOrNull(value) && !value->IsNumber() && !value->IsBoolean()) {
         V8Proxy::throwTypeError();
         return;
     }
 
-    SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(info.Holder());
     SVGLength& imp = wrapper->propertyReference();
     ExceptionCode ec = 0;
     imp.setValue(static_cast<float>(value->NumberValue()), wrapper->contextElement(), ec);
@@ -74,10 +79,15 @@ void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
 v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
+    SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
+    if (wrapper->role() == AnimValRole) {
+        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);
+        return v8::Handle<v8::Value>();
+    }
+
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
 
-    SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
     SVGLength& imp = wrapper->propertyReference();
     ExceptionCode ec = 0;
     EXCEPTION_BLOCK(int, unitType, toUInt32(args[0]));

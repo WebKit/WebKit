@@ -1394,6 +1394,10 @@ sub GenerateImplementation
 
                 if ($svgPropertyType) {
                     $getterContentHead = "$getterExpressionPrefix";
+                    push(@implContent, "    if (IMPL->role() == WebCore::AnimValRole) {\n");
+                    push(@implContent, "        WebCore::raiseOnDOMError(WebCore::NO_MODIFICATION_ALLOWED_ERR);\n");
+                    push(@implContent, "        return;\n");
+                    push(@implContent, "    }\n");
                     push(@implContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
                     my $ec = $hasSetterException ? ", ec" : "";
                     push(@implContent, "    $exceptionInit\n") if $hasSetterException;
@@ -1576,6 +1580,14 @@ sub GenerateImplementation
             my $content = $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
 
             if ($svgPropertyType) {
+                push(@functionContent, "    if (IMPL->role() == WebCore::AnimValRole) {\n");
+                push(@functionContent, "        WebCore::raiseOnDOMError(WebCore::NO_MODIFICATION_ALLOWED_ERR);\n");
+                if ($returnType eq "void") {
+                    push(@functionContent, "        return;\n");
+                } else {
+                    push(@functionContent, "        return nil;\n");
+                }
+                push(@functionContent, "    }\n");
                 push(@functionContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
                 $content = "podImpl.$content"; 
             } else {

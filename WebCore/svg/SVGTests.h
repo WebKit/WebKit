@@ -22,6 +22,7 @@
 #define SVGTests_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGStringList.h"
 
 namespace WebCore {
@@ -32,9 +33,9 @@ class SVGElement;
 
 class SVGTests {
 public:
-    SVGStringList& requiredFeatures() { return m_features; }
-    SVGStringList& requiredExtensions() { return m_extensions; }
-    SVGStringList& systemLanguage() { return m_systemLanguage; }
+    SVGStringList& requiredFeatures();
+    SVGStringList& requiredExtensions();
+    SVGStringList& systemLanguage();
 
     bool hasExtension(const String&) const;
     bool isValid() const;
@@ -42,15 +43,20 @@ public:
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
 
-    static bool handleAttributeChange(const SVGElement*, const QualifiedName&);
+    bool handleAttributeChange(const SVGElement*, const QualifiedName&);
+    void synchronizeProperties(SVGElement*, const QualifiedName&);
 
 protected:
     SVGTests();
 
 private:
-    SVGStringList m_features;
-    SVGStringList m_extensions;
-    SVGStringList m_systemLanguage;
+    void synchronizeRequiredFeatures(SVGElement*);
+    void synchronizeRequiredExtensions(SVGElement*);
+    void synchronizeSystemLanguage(SVGElement*);
+
+    SVGSynchronizableAnimatedProperty<SVGStringList> m_requiredFeatures;
+    SVGSynchronizableAnimatedProperty<SVGStringList> m_requiredExtensions;
+    SVGSynchronizableAnimatedProperty<SVGStringList> m_systemLanguage;
 };
 
 } // namespace WebCore

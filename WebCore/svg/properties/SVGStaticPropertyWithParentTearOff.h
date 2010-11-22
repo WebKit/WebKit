@@ -53,7 +53,7 @@ public:
 
 private:
     SVGStaticPropertyWithParentTearOff(SVGProperty* parent, PropertyType& value, UpdateMethod update)
-        : SVGPropertyTearOff<PropertyType>(0, value)
+        : SVGPropertyTearOff<PropertyType>(0, UndefinedRole, value)
         , m_update(update)
         , m_parent(parent)
     {

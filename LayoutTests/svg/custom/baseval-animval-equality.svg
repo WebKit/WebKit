@@ -28,10 +28,14 @@
       else
         log("FAILED");
       log("setting svg.x.animVal.value = 5");
-      svg.x.animVal.value = 5;
+      try {
+        svg.x.animVal.value = 5;
+      } catch(e) {
+        log("caught exception: " + e.message);
+      }
       log("svg.x.baseVal.value = " + svg.x.baseVal.value);
       log("svg.x.animVal.value = " + svg.x.animVal.value);
-      if ((svg.x.baseVal.value == svg.x.animVal.value) && (svg.x.animVal.value == 5))
+      if ((svg.x.baseVal.value == svg.x.animVal.value) && (svg.x.animVal.value == 10))
         log("SUCCESS (2 of 2)");
       else
         log("FAILED");

@@ -45,6 +45,11 @@ JSValue JSSVGLength::value(ExecState* exec) const
 
 void JSSVGLength::setValue(ExecState* exec, JSValue value)
 {
+    if (impl()->role() == AnimValRole) {
+        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
+        return;
+    }
+
     if (!value.isUndefinedOrNull() && !value.isNumber() && !value.isBoolean()) {
         throwVMTypeError(exec);
         return;
@@ -64,6 +69,11 @@ void JSSVGLength::setValue(ExecState* exec, JSValue value)
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
+    if (impl()->role() == AnimValRole) {
+        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
+        return jsUndefined();
+    }
+
     SVGLength& podImp = impl()->propertyReference();
 
     // Mimic the behaviour of RequiresAllArguments=Raise.

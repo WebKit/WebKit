@@ -1747,6 +1747,12 @@ sub GenerateImplementation
 
                             my $nativeValue = JSValueToNative($attribute->signature, "value");
                             if ($svgPropertyOrListPropertyType) {
+                                if ($svgPropertyType) {
+                                    push(@implContent, "    if (imp->role() == AnimValRole) {\n");
+                                    push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
+                                    push(@implContent, "        return;\n");
+                                    push(@implContent, "    }\n");
+                                }
                                 push(@implContent, "    $svgPropertyOrListPropertyType& podImp = imp->propertyReference();\n");
                                 if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
                                     push(@implContent, "    podImp = $nativeValue;\n");
@@ -1848,7 +1854,13 @@ sub GenerateImplementation
                 push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
             } else {
                 push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
-                push(@implContent, "    $svgPropertyOrListPropertyType& podImp = imp->propertyReference();\n") if $svgPropertyType;
+                if ($svgPropertyType) {
+                    push(@implContent, "    if (imp->role() == AnimValRole) {\n");
+                    push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
+                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                    push(@implContent, "    }\n");
+                    push(@implContent, "    $svgPropertyType& podImp = imp->propertyReference();\n");
+                }
 
                 my $numParameters = @{$function->parameters};
 

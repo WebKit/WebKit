@@ -21,13 +21,16 @@
 #include "config.h"
 
 #if ENABLE(SVG)
+#include "SVGTransform.h"
+
+#include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "SVGAngle.h"
 #include "SVGSVGElement.h"
-#include "SVGTransform.h"
-
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -124,6 +127,41 @@ void SVGTransform::setSkewY(float angle)
 
     m_matrix.makeIdentity();
     m_matrix.skewY(angle);
+}
+
+String SVGTransform::valueAsString() const
+{
+    switch (m_type) {
+    case SVG_TRANSFORM_UNKNOWN:
+        return String();
+    case SVG_TRANSFORM_MATRIX: {
+        StringBuilder builder;
+        builder.append(makeString("matrix(", String::number(m_matrix.a()), ' ', String::number(m_matrix.b()), ' ', String::number(m_matrix.c()), ' '));
+        builder.append(makeString(String::number(m_matrix.d()), ' ', String::number(m_matrix.e()), ' ', String::number(m_matrix.f()), ')'));
+        return builder.toString();
+    }
+    case SVG_TRANSFORM_TRANSLATE:
+        return makeString("translate(", String::number(m_matrix.e()), ' ', String::number(m_matrix.f()), ')');
+    case SVG_TRANSFORM_SCALE:
+        return makeString("scale(", String::number(m_matrix.xScale()), ' ', String::number(m_matrix.yScale()), ')');
+    case SVG_TRANSFORM_ROTATE: {
+        double angleInRad = deg2rad(m_angle);
+        double cosAngle = cos(angleInRad);
+        double sinAngle = sin(angleInRad);
+        float cx = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix.e() * (1 - cosAngle) - m_matrix.f() * sinAngle) / (1 - cosAngle) / 2 : 0);
+        float cy = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix.e() * sinAngle / (1 - cosAngle) + m_matrix.f()) / 2 : 0);
+        if (cx || cy)
+            return makeString("rotate(", String::number(m_angle), ' ', String::number(cx), ' ', String::number(cy), ')');
+        return makeString("rotate(", String::number(m_angle), ')');
+    }    
+    case SVG_TRANSFORM_SKEWX:
+        return makeString("skewX(", String::number(m_angle), ')');
+    case SVG_TRANSFORM_SKEWY:
+        return makeString("skewY(", String::number(m_angle), ')');
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 } // namespace WebCore

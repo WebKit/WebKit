@@ -35,6 +35,7 @@ class SVGProperty : public RefCounted<SVGProperty> {
 public:
     virtual ~SVGProperty() { }
 
+    virtual SVGPropertyRole role() const = 0;
     virtual void commitChange() = 0;
 };
 

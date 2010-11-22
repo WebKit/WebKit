@@ -199,6 +199,7 @@ void SVGUseElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHeight();
         synchronizeExternalResourcesRequired();
         synchronizeHref();
+        SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
@@ -214,6 +215,8 @@ void SVGUseElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
     else if (SVGURIReference::isKnownAttribute(attrName))
         synchronizeHref();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 static void updateContainerSize(SVGUseElement* useElement, SVGElementInstance* targetInstance)

@@ -158,6 +158,7 @@ void SVGPatternElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeViewBox();
         synchronizePreserveAspectRatio();
         synchronizeHref();
+        SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
@@ -177,11 +178,14 @@ void SVGPatternElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHeight();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
-    else if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+    else if (attrName == SVGNames::viewBoxAttr)
         synchronizeViewBox();
+    else if (attrName == SVGNames::preserveAspectRatioAttr)
         synchronizePreserveAspectRatio();
-    } else if (SVGURIReference::isKnownAttribute(attrName))
+    else if (SVGURIReference::isKnownAttribute(attrName))
         synchronizeHref();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 void SVGPatternElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

@@ -43,6 +43,8 @@ public:
     // Only used by SVGStringListPropertyTearOff.
     void commitChange(SVGElement* contextElement);
 
+    String valueAsString() const;
+
 private:
     const QualifiedName& m_attributeName;
 };

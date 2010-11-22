@@ -915,11 +915,13 @@ sub GenerateNormalAttrSetter
     $svgNativeType* imp = V8${implClassName}::toNative(info.Holder());
 END
         } else {
-            push(@implContentDecls, <<END);
-    $svgNativeType* wrapper = V8${implClassName}::toNative(info.Holder());
-    $svgWrappedNativeType& impInstance = wrapper->propertyReference();
-    $svgWrappedNativeType* imp = &impInstance;
-END
+            push(@implContentDecls, "    $svgNativeType* wrapper = V8${implClassName}::toNative(info.Holder());\n");
+            push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
+            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
+            push(@implContentDecls, "        return;\n");
+            push(@implContentDecls, "    }\n");
+            push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
+            push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
         }
     } elsif ($attrExt->{"v8OnProto"}) {
       if ($interfaceName eq "DOMWindow") {
@@ -1216,8 +1218,12 @@ END
         if ($implClassName =~ /List$/) {
             push(@implContentDecls, "    $nativeClassName imp = V8${implClassName}::toNative(args.Holder());\n");
         } else {
-            my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
             push(@implContentDecls, "    $nativeClassName wrapper = V8${implClassName}::toNative(args.Holder());\n");
+            push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
+            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
+            push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
+            push(@implContentDecls, "    }\n");
+            my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
             push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
         }

@@ -86,6 +86,7 @@ void SVGClipPathElement::synchronizeProperty(const QualifiedName& attrName)
     if (attrName == anyQName()) {
         synchronizeClipPathUnits();
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
@@ -93,6 +94,8 @@ void SVGClipPathElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeClipPathUnits();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 void SVGClipPathElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

@@ -62,13 +62,15 @@ bool SVGTransformList::concatenate(AffineTransform& result) const
 
 String SVGTransformList::valueAsString() const
 {
-    // TODO: We may want to build a real transform string, instead of concatting to a matrix(...).
-    AffineTransform matrix;
-    concatenate(matrix);
-
     StringBuilder builder;
-    builder.append(makeString("matrix(", String::number(matrix.a()), ' ', String::number(matrix.b()), ' ', String::number(matrix.c()), ' '));
-    builder.append(makeString(String::number(matrix.d()), ' ', String::number(matrix.e()), ' ', String::number(matrix.f()), ')'));
+    unsigned size = this->size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (i > 0)
+            builder.append(' ');
+
+        builder.append(at(i).valueAsString());
+    }
+
     return builder.toString();
 }
 

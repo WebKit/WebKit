@@ -66,6 +66,7 @@ public:
     FloatSize scale() const;
 
     bool isValid() const { return m_type != SVG_TRANSFORM_UNKNOWN; }
+    String valueAsString() const;
 
 private:
     friend bool operator==(const SVGTransform& a, const SVGTransform& b);

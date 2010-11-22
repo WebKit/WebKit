@@ -75,7 +75,7 @@ public:
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
         if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
+            ec = SVGException::SVG_WRONG_TYPE_ERR;
             return 0;
         }
 
@@ -90,7 +90,7 @@ public:
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
         if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
+            ec = SVGException::SVG_WRONG_TYPE_ERR;
             return 0;
         }
 
@@ -103,7 +103,7 @@ public:
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
         if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
+            ec = SVGException::SVG_WRONG_TYPE_ERR;
             return 0;
         }
 
@@ -118,7 +118,7 @@ public:
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
         if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
+            ec = SVGException::SVG_WRONG_TYPE_ERR;
             return 0;
         }
 

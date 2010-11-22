@@ -124,6 +124,7 @@ void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeX();
         synchronizeY();
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
@@ -137,6 +138,8 @@ void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeY();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
+    else if (SVGTests::isKnownAttribute(attrName))
+        SVGTests::synchronizeProperties(this, attrName);
 }
 
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

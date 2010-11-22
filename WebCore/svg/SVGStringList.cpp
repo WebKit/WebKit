@@ -25,6 +25,7 @@
 
 #include "SVGElement.h"
 #include "SVGParserUtilities.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -60,6 +61,21 @@ void SVGStringList::parse(const String& data, UChar delimiter)
         append(String(start, ptr - start));
         skipOptionalSpacesOrDelimiter(ptr, end, delimiter);
     }
+}
+
+String SVGStringList::valueAsString() const
+{
+    StringBuilder builder;
+
+    unsigned size = this->size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (i > 0)
+            builder.append(' ');
+
+        builder.append(at(i));
+    }
+
+    return builder.toString();
 }
 
 }

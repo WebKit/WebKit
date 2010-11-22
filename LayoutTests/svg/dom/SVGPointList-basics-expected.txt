@@ -1,0 +1,148 @@
+This is a test of the simple SVGPointList API parts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+
+Creating point x=200 y=100
+PASS (point = svg.createSVGPoint()).toString() is "[object SVGPoint]"
+PASS point.x = 200 is 200
+PASS point.y = 100 is 100
+
+Test uncommon arguments for initialize()
+PASS poly1.points.initialize(point) is point
+PASS poly1.points.numberOfItems is 1
+PASS dumpPoint(poly1.points.getItem(0)) is "x=200 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "200 100"
+PASS poly1.points.initialize(poly1) threw exception TypeError: Type error.
+PASS poly1.points.initialize(0) threw exception TypeError: Type error.
+PASS poly1.points.initialize('aString') threw exception TypeError: Type error.
+
+Reset points attribute to 0 0 100 0 100 100 0 100
+PASS poly1.setAttribute('points', '0 0 100 0 100 100 0 100') is undefined.
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+
+Test uncommon arguments for getItem()
+PASS poly1.points.getItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS poly1.points.getItem('aString') is poly1.points.getItem(0)
+PASS poly1.points.getItem(poly1) is poly1.points.getItem(0)
+PASS poly1.points.getItem(null) is poly1.points.getItem(0)
+
+Test uncommon arguments for insertItemBefore()
+PASS poly1.points.insertItemBefore(30) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.insertItemBefore('aString') threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.insertItemBefore(poly1) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.insertItemBefore(null) threw exception SyntaxError: Not enough arguments.
+PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), 'aString')) is "x=100 y=0"
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "100 0 0 0 100 100 0 100"
+PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), poly1)) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), null)) is "x=100 y=0"
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "100 0 0 0 100 100 0 100"
+PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), 0)) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+PASS poly1.points.insertItemBefore(30, 0) threw exception TypeError: Type error.
+PASS poly1.points.insertItemBefore('aString', 0) threw exception TypeError: Type error.
+PASS poly1.points.insertItemBefore(poly1, 0) threw exception TypeError: Type error.
+PASS poly1.points.insertItemBefore(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+
+Test uncommon arguments for replaceItem()
+PASS poly1.points.replaceItem(30) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.replaceItem('aString') threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.replaceItem(poly1) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.replaceItem(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS poly1.points.replaceItem('aString', 0) threw exception TypeError: Type error.
+PASS poly1.points.replaceItem(poly1, 0) threw exception TypeError: Type error.
+PASS poly1.points.replaceItem(1, 0) threw exception TypeError: Type error.
+
+Test uncommon arguments for replaceItem() and xml-dom synchronization
+PASS poly1.points.numberOfItems is 4
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 0)) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 3
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 100 0 100"
+PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 'aString')) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 2
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 0 100"
+PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), poly1)) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 1
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0"
+PASS poly1.points.replaceItem(poly1.points.getItem(0), null) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS poly1.points.numberOfItems is 0
+PASS poly1.getAttribute('points') is ""
+
+Reset points attribute to 0 0 100 0 100 100 0 100
+PASS poly1.setAttribute('points', '0 0 100 0 100 100 0 100') is undefined.
+
+Test uncommon arguments for removeItem()
+PASS poly1.points.removeItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS dumpPoint(poly1.points.removeItem('aString')) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 3
+PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "100 0 100 100 0 100"
+PASS dumpPoint(poly1.points.removeItem(poly1)) is "x=100 y=0"
+PASS poly1.points.numberOfItems is 2
+PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "100 100 0 100"
+PASS dumpPoint(poly1.points.removeItem(null)) is "x=100 y=100"
+PASS poly1.points.numberOfItems is 1
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 100"
+
+Test uncommon arguments for appendItem()
+PASS poly1.points.appendItem(30) threw exception TypeError: Type error.
+PASS poly1.points.appendItem('aString') threw exception TypeError: Type error.
+PASS poly1.points.appendItem(poly1) threw exception TypeError: Type error.
+PASS poly1.points.appendItem(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS dumpPoint(poly1.points.appendItem(point)) is "x=200 y=100"
+PASS poly1.points.numberOfItems is 2
+PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=100"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=200 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 100 200 100"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
