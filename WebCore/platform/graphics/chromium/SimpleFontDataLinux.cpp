@@ -53,6 +53,18 @@ static const size_t maxVDMXTableSize = 1024 * 1024;  // 1 MB
 
 void SimpleFontData::platformInit()
 {
+    if (!m_platformData.size()) {
+        m_ascent = 0;
+        m_descent = 0;
+        m_lineGap = 0;
+        m_lineSpacing = 0;
+        m_avgCharWidth = 0;
+        m_maxCharWidth = 0;
+        m_xHeight = 0;
+        m_unitsPerEm = 0;
+        return;
+    }
+
     SkPaint paint;
     SkPaint::FontMetrics metrics;
 
@@ -177,6 +189,9 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
     
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
+    if (!m_platformData.size())
+        return 0;
+
     SkASSERT(sizeof(glyph) == 2);   // compile-time assert
 
     SkPaint paint;

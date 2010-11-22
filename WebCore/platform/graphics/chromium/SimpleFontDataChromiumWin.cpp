@@ -167,6 +167,9 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
+    if (!m_platformData.size())
+        return 0;
+
     HDC dc = GetDC(0);
     HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
