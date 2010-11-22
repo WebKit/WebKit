@@ -32,6 +32,7 @@
 from __future__ import with_statement
 
 import codecs
+import errno
 import logging
 import os
 import re
@@ -454,6 +455,21 @@ class ChromiumDriver(base.Driver):
         else:
             return None
 
+    def _output_image_with_retry(self):
+        # Retry a few more times because open() sometimes fails on Windows,
+        # raising "IOError: [Errno 13] Permission denied:"
+        retry_num = 50
+        timeout_seconds = 5.0
+        for i in range(retry_num):
+            try:
+                return self._output_image()
+            except IOError, e:
+                if e.errno == errno.EACCES:
+                    time.sleep(timeout_seconds / retry_num)
+                else:
+                    raise e
+        return self._output_image()
+
     def run_test(self, uri, timeoutms, checksum):
         output = []
         error = []
@@ -505,9 +521,10 @@ class ChromiumDriver(base.Driver):
 
             (line, crash) = self._write_command_and_read_line(input=None)
 
+        run_time = time.time() - start_time
         return test_output.TestOutput(
-            ''.join(output), self._output_image(), actual_checksum,
-            crash, time.time() - start_time, timeout, ''.join(error))
+            ''.join(output), self._output_image_with_retry(), actual_checksum,
+            crash, run_time, timeout, ''.join(error))
 
     def stop(self):
         if self._proc:

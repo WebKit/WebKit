@@ -1,3 +1,13 @@
+2010-11-22  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Retry a few times in reading a png image to avoid a race condition.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49924
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-11-22  João Paulo Rechi Vita  <jprvita@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
