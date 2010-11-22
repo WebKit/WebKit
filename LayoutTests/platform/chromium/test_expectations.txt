@@ -2177,7 +2177,6 @@ BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
 
 // WebKit roll 54016 -> 54045
-BUG33486 WIN LINUX : fast/text/international/hebrew-vowels.html = IMAGE+TEXT
 BUG33486 LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 
 // WebKit roll 54059 -> 54075
@@ -3181,15 +3180,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 // crashes on Windows.
 BUG63460 : editing/selection/context-menu-on-text.html = TEXT
 BUG63460 : editing/spelling/context-menu-suggestions.html = TEXT
-
-// Needs rebaselining after r72173
-BUG_ANTONM MAC : css2.1/t1202-counters-04-b.html = IMAGE
-BUG_ANTONM MAC : editing/selection/caret-rtl-2.html = IMAGE
-BUG_ANTONM MAC : fast/forms/select-visual-hebrew.html = IMAGE
-BUG_ANTONM MAC : fast/forms/visual-hebrew-text-field.html = IMAGE
-BUG_ANTONM MAC : fast/text/international/001.html = IMAGE
-BUG_ANTONM MAC : fast/text/international/hebrew-vowels.html = IMAGE
-BUG_ANTONM WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE+TEXT IMAGE
 
 BUG61655 MAC : security/block-test-no-port.html = TEXT
 
