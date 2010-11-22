@@ -282,8 +282,8 @@ sub determineConfigurationForVisualStudio
 {
     return if defined $configurationForVisualStudio;
     determineConfiguration();
+    # FIXME: We should detect when Debug_All or Release_LTCG has been chosen.
     $configurationForVisualStudio = $configuration;
-    setupCygwinEnv();
 }
 
 sub determineConfigurationProductDir
@@ -1184,7 +1184,7 @@ sub buildXCodeProject($$@)
 
 sub usingVisualStudioExpress()
 {
-    determineConfigurationForVisualStudio();
+    setupCygwinEnv();
     return $willUseVCExpressWhenBuilding;
 }
 

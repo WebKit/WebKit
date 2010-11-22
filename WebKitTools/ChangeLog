@@ -1,3 +1,24 @@
+2010-11-22  Adam Roben  <aroben@apple.com>
+
+        Make it possible to run tests on Windows without Visual Studio or VC++
+        Express installed
+
+        webkitdir.pm::setupCygwinEnv dies when Visual Studio and VC++ Express
+        are not installed. But this function doesn't need to be called when we
+        already have a build available and are just trying to run the tests.
+
+        Fixes <http://webkit.org/b/49932> New Windows 7 bot can't run tests
+        because Visual Studio/VC++ Express aren't installed
+
+        Reviewed by Dave Hyatt.
+
+        * Scripts/webkitdirs.pm:
+        (determineConfigurationForVisualStudio): Don't call setupCygwinEnv, as
+        it is not needed by this function. Also added a FIXME.
+
+        (usingVisualStudioExpress): Call setupCygwinEnv directly rather than
+        relying on determineConfigurationForVisualStudio doing it.
+
 2010-11-19  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
