@@ -282,7 +282,9 @@ void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const Str
     if (!inspectorStyleSheet)
         return;
 
-    inspectorStyleSheet->setText(text);
+    bool success = inspectorStyleSheet->setText(text);
+    if (success)
+        inspectorStyleSheet->reparseStyleSheet(text);
 }
 
 void InspectorCSSAgent::setPropertyText2(const String& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)

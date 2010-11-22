@@ -112,7 +112,7 @@ bool CSSImportRule::isLoading() const
 void CSSImportRule::insertedIntoParent()
 {
     CSSStyleSheet* parentSheet = parentStyleSheet();
-    if (!parentSheet)
+    if (!parentSheet || !parentSheet->document())
         return;
 
     CachedResourceLoader* cachedResourceLoader = parentSheet->document()->cachedResourceLoader();

@@ -18,6 +18,10 @@ body: [user-agent]
 
 rule
 body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+
+rule
+body: []
 ['font-size':'12px'] @[5-21] active
 ['foo':'bar !
 
@@ -84,10 +88,13 @@ raw style
 
 === All stylesheets ===
 
-StyleSheet: 'html {
+StyleSheet: '@import url("styles-new-API-1.css");
+
+html {
     font-weight: 400;
 }
 
+@media screen {
 body {
     font-size: 12px;
     foo: bar !
@@ -102,6 +109,7 @@ body {
 /* comment before selector */body.main1/* comment after selector */{/* comment */color: #F00BAA;zoo:moo /* not an !important unrecognized property */}/* comment */
 
 body.main2{background: green /* value !important comment */ !important /* no semicolon, very !important */}
+}
 
 body::after  {
     content: "After body";
@@ -241,6 +249,10 @@ body: [user-agent]
 ['margin-right':'8px'] @[undefined-undefined] style
 ['margin-bottom':'8px'] @[undefined-undefined] style
 ['margin-left':'8px'] @[undefined-undefined] style
+
+rule
+body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
 body: []

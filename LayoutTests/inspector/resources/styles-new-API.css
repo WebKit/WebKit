@@ -1,7 +1,10 @@
+@import url("styles-new-API-1.css");
+
 html {
     font-weight: 400;
 }
 
+@media screen {
 body {
     font-size: 12px;
     foo: bar !
@@ -16,6 +19,7 @@ body {
 /* comment before selector */body.main1/* comment after selector */{/* comment */color: #F00BAA;zoo:moo /* not an !important unrecognized property */}/* comment */
 
 body.main2{background: green /* value !important comment */ !important /* no semicolon, very !important */}
+}
 
 body::after  {
     content: "After body";

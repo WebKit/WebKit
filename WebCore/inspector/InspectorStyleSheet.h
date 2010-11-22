@@ -158,6 +158,7 @@ public:
 
     const String& id() const { return m_id; }
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet; }
+    void reparseStyleSheet(const String&);
     bool setText(const String&);
     bool setRuleSelector(const InspectorCSSId&, const String& selector);
     CSSStyleRule* addRule(const String& selector);
@@ -173,7 +174,6 @@ public:
 protected:
     bool canBind() const { return m_origin != "userAgent" && m_origin != "user"; }
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
-    void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
     virtual bool text(String* result) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;
@@ -187,10 +187,12 @@ protected:
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
+    static void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
+    static void collectFlatRules(PassRefPtr<CSSRuleList>, Vector<CSSStyleRule*>* result);
     bool ensureText() const;
     bool ensureSourceData();
+    void ensureFlatRules() const;
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
-    CSSStyleRule* findPageRuleWithStyle(CSSStyleDeclaration*);
     InspectorCSSId ruleId(CSSStyleRule* rule) const;
     InspectorCSSId styleId(CSSStyleDeclaration* style) const { return ruleOrStyleId(style); }
     void revalidateStyle(CSSStyleDeclaration*);
@@ -199,7 +201,6 @@ private:
     bool inlineStyleSheetText(String* result) const;
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList*);
 
-
     String m_id;
     CSSStyleSheet* m_pageStyleSheet;
     String m_origin;
@@ -207,6 +208,7 @@ private:
     bool m_isRevalidating;
     ParsedStyleSheet* m_parsedStyleSheet;
     InspectorStyleMap m_inspectorStyles;
+    mutable Vector<CSSStyleRule*> m_flatRules;
 
     friend class InspectorStyle;
 };
