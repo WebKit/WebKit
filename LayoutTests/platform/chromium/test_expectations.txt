@@ -3229,8 +3229,8 @@ BUG_ANTONM LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
 // Newly added tests in http://trac.webkit.org/changeset/72518.  Need just a rebaseline.
 BUG_ANTONM : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = IMAGE+TEXT
 BUG_ANTONM : svg/custom/baseval-animval-equality.svg = IMAGE+TEXT
-BUG_ANTONM : svg/dom/SVGLengthList-basics.xhtml = IMAGE+TEXT
-BUG_ANTONM : svg/dom/SVGNumberList-basics.xhtml = IMAGE+TEXT
-BUG_ANTONM : svg/dom/SVGPointList-basics.xhtml = IMAGE+TEXT
-BUG_ANTONM : svg/dom/SVGStringList-basics.xhtml = IMAGE+TEXT
-BUG_ANTONM : svg/dom/SVGTransformList-basics.xhtml = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGLengthList-basics.xhtml = IMAGE
+BUG_ANTONM : svg/dom/SVGNumberList-basics.xhtml = IMAGE
+BUG_ANTONM : svg/dom/SVGPointList-basics.xhtml = IMAGE
+BUG_ANTONM : svg/dom/SVGStringList-basics.xhtml = IMAGE
+BUG_ANTONM : svg/dom/SVGTransformList-basics.xhtml = IMAGE
