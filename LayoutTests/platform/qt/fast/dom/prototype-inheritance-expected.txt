@@ -705,6 +705,8 @@ PASS inner.location.isInner is true
 PASS inner.location.constructor.isInner is true
 PASS inner.locationbar.isInner is true
 PASS inner.locationbar.constructor.isInner is true
+PASS inner.matchMedia.isInner is true
+PASS inner.matchMedia.constructor.isInner is true
 PASS inner.menubar.isInner is true
 PASS inner.menubar.constructor.isInner is true
 PASS inner.moveBy.isInner is true
