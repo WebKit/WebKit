@@ -3188,8 +3188,6 @@ BUG_ANTONM WIN LINUX MAC : fast/css/line-height-determined-by-primary-font.html 
 
 BUG61655 MAC : security/block-test-no-port.html = TEXT
 
-BUG_ANTONM WIN : editing/selection/5354455-1.html = FAIL
-
 BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
