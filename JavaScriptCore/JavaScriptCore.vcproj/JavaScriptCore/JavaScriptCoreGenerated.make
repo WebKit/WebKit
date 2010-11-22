@@ -1,5 +1,4 @@
 all:
-    -xcopy /y/d/e/i "..\..\..\WebKitLibraries\win\tools" "$(WEBKITLIBRARIESDIR)\tools"
     touch "$(WEBKITOUTPUTDIR)\buildfailed"
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
     bash -c "python react-to-vsprops-changes.py"
