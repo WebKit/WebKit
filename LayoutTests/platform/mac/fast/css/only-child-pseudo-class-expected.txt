@@ -27,7 +27,7 @@ layer at (0,0) size 785x1608
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x105 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "1"
+            RenderListMarker at (-31,6) size 17x17: "1"
             RenderText {#text} at (6,8) size 136x91
               text run at (6,8) width 136: "div :only-child {"
               text run at (142,8) width 0: " "
@@ -47,7 +47,7 @@ layer at (0,0) size 785x1608
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x120 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "2"
+            RenderListMarker at (-31,6) size 17x17: "2"
             RenderText {#text} at (6,8) size 208x106
               text run at (6,8) width 136: "div :only-child {"
               text run at (142,8) width 0: " "
@@ -95,7 +95,7 @@ layer at (0,0) size 785x1608
             RenderBlock {DIV} at (0,0) size 583x24
             RenderBlock {BLOCKQUOTE} at (40,40) size 503x0
           RenderBlock {PRE} at (16,56) size 583x120 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "4"
+            RenderListMarker at (-31,6) size 17x17: "4"
             RenderText {#text} at (6,8) size 224x106
               text run at (6,8) width 136: "div :only-child {"
               text run at (142,8) width 0: " "
@@ -118,7 +118,7 @@ layer at (0,0) size 785x1608
             RenderBlock {DIV} at (0,0) size 583x24
             RenderBlock {DIV} at (0,24) size 583x0
           RenderBlock {PRE} at (16,53) size 583x150 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "5"
+            RenderListMarker at (-31,6) size 17x17: "5"
             RenderText {#text} at (6,8) size 480x136
               text run at (6,8) width 136: "div :only-child {"
               text run at (142,8) width 0: " "

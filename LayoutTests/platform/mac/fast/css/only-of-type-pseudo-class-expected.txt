@@ -27,7 +27,7 @@ layer at (0,0) size 785x1488
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x75 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "1"
+            RenderListMarker at (-31,6) size 17x17: "1"
             RenderText {#text} at (6,8) size 280x61
               text run at (6,8) width 144: "div:only-of-type {"
               text run at (150,8) width 0: " "
@@ -44,7 +44,7 @@ layer at (0,0) size 785x1488
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 583x0 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x90 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "2"
+            RenderListMarker at (-31,6) size 17x17: "2"
             RenderText {#text} at (6,8) size 280x76
               text run at (6,8) width 144: "div:only-of-type {"
               text run at (150,8) width 0: " "
@@ -64,7 +64,7 @@ layer at (0,0) size 785x1488
             RenderBlock {BLOCKQUOTE} at (0,24) size 583x0 [bgcolor=#009900]
               RenderBlock {DIV} at (0,0) size 583x0
           RenderBlock {PRE} at (16,53) size 583x120 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "3"
+            RenderListMarker at (-31,6) size 17x17: "3"
             RenderText {#text} at (6,8) size 280x106
               text run at (6,8) width 144: "div:only-of-type {"
               text run at (150,8) width 0: " "
@@ -87,7 +87,7 @@ layer at (0,0) size 785x1488
             RenderBlock {DIV} at (0,0) size 583x24
             RenderBlock {DIV} at (0,24) size 583x0
           RenderBlock {PRE} at (16,53) size 583x90 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "4"
+            RenderListMarker at (-31,6) size 17x17: "4"
             RenderText {#text} at (6,8) size 280x76
               text run at (6,8) width 144: "div:only-of-type {"
               text run at (150,8) width 0: " "
@@ -106,7 +106,7 @@ layer at (0,0) size 785x1488
             RenderBlock {DIV} at (0,0) size 583x24
             RenderBlock {DIV} at (0,24) size 583x0
           RenderBlock {PRE} at (16,53) size 583x120 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 17x17: "5"
+            RenderListMarker at (-31,6) size 17x17: "5"
             RenderText {#text} at (6,8) size 480x106
               text run at (6,8) width 144: "div:only-of-type {"
               text run at (150,8) width 0: " "

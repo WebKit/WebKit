@@ -262,8 +262,10 @@ void RenderListItem::positionListMarker()
         // and really shouldn't keep propagating overflow up.  This won't really break anything other than repainting
         // not being as tight as it could be though.
         if (style()->isLeftToRightDirection()) {
-            int leftLineOffset = logicalLeftOffsetForLine(blockOffset, logicalLeftOffsetForLine(blockOffset, false), false);
-            markerLogicalLeft = leftLineOffset - lineOffset - paddingStart() - borderStart() + m_marker->marginStart();
+            if (style()->isHorizontalWritingMode())
+                markerLogicalLeft = m_marker->logicalLeft() - paddingStart() - borderStart() + m_marker->marginStart();
+            else
+                markerLogicalLeft = m_marker->logicalLeft() - borderStart() + m_marker->marginStart();
             m_marker->inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
             for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
                 if (markerLogicalLeft < box->logicalLeftLayoutOverflow()) {
@@ -273,8 +275,10 @@ void RenderListItem::positionListMarker()
                 }
             }
         } else {
-            int rightLineOffset = logicalRightOffsetForLine(blockOffset, logicalRightOffsetForLine(blockOffset, false), false);
-            markerLogicalLeft = rightLineOffset - lineOffset + paddingStart() + borderStart() + m_marker->marginEnd();
+            if (style()->isHorizontalWritingMode())
+                markerLogicalLeft = m_marker->logicalLeft() + paddingStart() + borderStart() + m_marker->marginEnd();
+            else
+                markerLogicalLeft = m_marker->logicalLeft() + borderStart() + m_marker->marginEnd();
             m_marker->inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
             for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
                 if (markerLogicalLeft + m_marker->logicalWidth() > box->logicalRightLayoutOverflow()) {
