@@ -599,6 +599,9 @@ WebInspector.InspectorBackendStub.prototype = {
             request.seq = WebInspector.Callback.wrap(args[0]);
         }
 
+        if (window.dumpInspectorProtocolMessages)
+            console.log("frontend: " + JSON.stringify(request));
+
         var message = JSON.stringify(request);
         InspectorFrontendHost.sendMessageToBackend(message);
     }

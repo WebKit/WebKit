@@ -81,7 +81,6 @@ WebInspector.WorkersSidebarPane.prototype = {
 
     reset: function()
     {
-        InspectorBackend.removeAllScriptsToEvaluateOnLoad();
         this.setInstrumentation(this._enableWorkersCheckbox.checked);
         this._treeOutline.removeChildren();
         this._workers = {};

@@ -658,6 +658,9 @@ WebInspector.dispatch = function(message) {
 // This function is purposely put into the global scope for easy access.
 WebInspector_syncDispatch = function(message)
 {
+    if (window.dumpInspectorProtocolMessages)
+        console.log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
+
     var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
     var arguments = [];
