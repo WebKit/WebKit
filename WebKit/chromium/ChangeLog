@@ -1,3 +1,9 @@
+2010-11-22  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, roll Chromium DEPS to r67004.
+
+        * DEPS:
+
 2010-11-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Partially roll out r72282.
