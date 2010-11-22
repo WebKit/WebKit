@@ -1248,14 +1248,20 @@ BUG23498 MAC : fast/css/005.html = IMAGE
 BUG23498 MAC : fast/css/MarqueeLayoutTest.html = IMAGE
 BUG23498 MAC : fast/css/border-height.html = IMAGE
 BUG23498 MAC : fast/css/empty-pseudo-class.html = IMAGE
+BUG23498 WIN LINUX : fast/css/empty-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/first-child-pseudo-class.html = IMAGE
+BUG23498 WIN LINUX : fast/css/first-child-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/first-of-type-pseudo-class.html = IMAGE
+BUG23498 WIN LINUX : fast/css/first-of-type-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/hsl-color.html = IMAGE
 BUG9798 BUG23498 MAC : fast/css/last-child-pseudo-class.html = IMAGE FAIL
+BUG23498 WIN LINUX : fast/css/last-child-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/line-height-overflow.html = IMAGE
 BUG23498 MAC : fast/css/nested-floating-relative-position-percentages.html = IMAGE
 BUG23498 MAC : fast/css/only-child-pseudo-class.html = IMAGE
+BUG23498 WIN LINUX : fast/css/only-child-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/only-of-type-pseudo-class.html = IMAGE
+BUG23498 WIN LINUX : fast/css/only-of-type-pseudo-class.html = IMAGE+TEXT
 BUG23498 MAC : fast/css/percentage-non-integer.html = IMAGE
 BUG23498 MAC : fast/css/text-overflow-ellipsis.html = IMAGE
 BUG23498 MAC : fast/css/word-space-extra.html = IMAGE
@@ -3227,12 +3233,3 @@ BUG_ANTONM : svg/dom/SVGNumberList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGPointList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGStringList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGTransformList-basics.xhtml = IMAGE
-
-// Follow up to http://trac.webkit.org/changeset/72527
-// Careful with the tests below, they have exceptions for MAC above.
-BUG_ANTONM WIN LINUX : fast/css/empty-pseudo-class.html = IMAGE+TEXT
-BUG_ANTONM WIN LINUX : fast/css/first-child-pseudo-class.html = IMAGE+TEXT
-BUG_ANTONM WIN LINUX : fast/css/first-of-type-pseudo-class.html = IMAGE+TEXT
-BUG_ANTONM WIN LINUX : fast/css/last-child-pseudo-class.html = IMAGE+TEXT
-BUG_ANTONM WIN LINUX : fast/css/only-child-pseudo-class.html = IMAGE+TEXT
-BUG_ANTONM WIN LINUX : fast/css/only-of-type-pseudo-class.html = IMAGE+TEXT
