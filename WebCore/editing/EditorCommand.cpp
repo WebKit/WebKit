@@ -1556,8 +1556,7 @@ static const CommandMap& createCommandMap()
 
     CommandMap& commandMap = *new CommandMap;
 
-    const unsigned numCommands = sizeof(commands) / sizeof(commands[0]);
-    for (unsigned i = 0; i < numCommands; i++) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(commands); ++i) {
         ASSERT(!commandMap.get(commands[i].name));
         commandMap.set(commands[i].name, &commands[i].command);
     }

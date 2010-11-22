@@ -1242,7 +1242,7 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration
     // Current implementation does not support stylePushedDown when mode == RemoveNone because of early exit.
     ASSERT(!extractedStyle || mode != RemoveNone);
     bool removed = false;
-    for (size_t i = 0; i < sizeof(HTMLEquivalents) / sizeof(HTMLEquivalent); i++) {
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(HTMLEquivalents); ++i) {
         const HTMLEquivalent& equivalent = HTMLEquivalents[i];
         ASSERT(equivalent.element || equivalent.attribute);
         if ((extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown)

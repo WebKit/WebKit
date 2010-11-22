@@ -227,7 +227,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= RangeException::RangeExceptionOffset;
         nameTable = rangeExceptionNames;
         descriptionTable = rangeExceptionDescriptions;
-        nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(rangeExceptionNames);
         nameTableOffset = RangeException::BAD_BOUNDARYPOINTS_ERR;
     } else if (code >= EventException::EventExceptionOffset && code <= EventException::EventExceptionMax) {
         type = EventExceptionType;
@@ -235,7 +235,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= EventException::EventExceptionOffset;
         nameTable = eventExceptionNames;
         descriptionTable = eventExceptionDescriptions;
-        nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(eventExceptionNames);
         nameTableOffset = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
     } else if (code >= XMLHttpRequestException::XMLHttpRequestExceptionOffset && code <= XMLHttpRequestException::XMLHttpRequestExceptionMax) {
         type = XMLHttpRequestExceptionType;
@@ -243,7 +243,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= XMLHttpRequestException::XMLHttpRequestExceptionOffset;
         nameTable = xmlHttpRequestExceptionNames;
         descriptionTable = xmlHttpRequestExceptionDescriptions;
-        nameTableSize = sizeof(xmlHttpRequestExceptionNames) / sizeof(xmlHttpRequestExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(xmlHttpRequestExceptionNames);
         // XMLHttpRequest exception codes start with 101 and we don't want 100 empty elements in the name array
         nameTableOffset = XMLHttpRequestException::NETWORK_ERR;
 #if ENABLE(XPATH)
@@ -253,7 +253,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= XPathException::XPathExceptionOffset;
         nameTable = xpathExceptionNames;
         descriptionTable = xpathExceptionDescriptions;
-        nameTableSize = sizeof(xpathExceptionNames) / sizeof(xpathExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(xpathExceptionNames);
         // XPath exception codes start with 51 and we don't want 51 empty elements in the name array
         nameTableOffset = XPathException::INVALID_EXPRESSION_ERR;
 #endif
@@ -264,7 +264,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= SVGException::SVGExceptionOffset;
         nameTable = svgExceptionNames;
         descriptionTable = svgExceptionDescriptions;
-        nameTableSize = sizeof(svgExceptionNames) / sizeof(svgExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(svgExceptionNames);
         nameTableOffset = SVGException::SVG_WRONG_TYPE_ERR;
 #endif
 #if ENABLE(DATABASE)
@@ -274,7 +274,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= SQLException::SQLExceptionOffset;
         nameTable = sqlExceptionNames;
         descriptionTable = sqlExceptionDescriptions;
-        nameTableSize = sizeof(sqlExceptionNames) / sizeof(sqlExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(sqlExceptionNames);
         nameTableOffset = SQLException::UNKNOWN_ERR;
 #endif
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
@@ -284,7 +284,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         code -= FileException::FileExceptionOffset;
         nameTable = fileExceptionNames;
         descriptionTable = fileExceptionDescriptions;
-        nameTableSize = sizeof(fileExceptionNames) / sizeof(fileExceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(fileExceptionNames);
         nameTableOffset = FileException::NOT_FOUND_ERR;
 #endif
     } else {
@@ -292,7 +292,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         typeName = "DOM";
         nameTable = exceptionNames;
         descriptionTable = exceptionDescriptions;
-        nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
+        nameTableSize = WTF_ARRAY_LENGTH(exceptionNames);
         nameTableOffset = INDEX_SIZE_ERR;
     }
 

@@ -937,9 +937,8 @@ static ARIARoleMap* createARIARoleMap()
         { "treeitem", TreeItemRole }
     };
     ARIARoleMap* roleMap = new ARIARoleMap;
-    
-    const unsigned numRoles = sizeof(roles) / sizeof(roles[0]);
-    for (unsigned i = 0; i < numRoles; ++i)
+
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(roles); ++i)
         roleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
     return roleMap;
 }

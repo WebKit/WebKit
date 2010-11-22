@@ -162,7 +162,7 @@ void RenderMathMLOperator::updateFromElement()
     
     // Check for a stretchable character.
     if (!stretchDisabled && firstChar) {
-        const int maxIndex = sizeof(stretchyCharacters) / sizeof(stretchyCharacters[0]);
+        const int maxIndex = WTF_ARRAY_LENGTH(stretchyCharacters);
         for (index++; index < maxIndex; index++) {
             if (stretchyCharacters[index].character == firstChar) {
                 isStretchy = true;

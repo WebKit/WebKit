@@ -56,9 +56,9 @@ static const UChar magnify[] =  {'m', 'a', 'g', 'n', 'i', 'f', 'y'};
 
 bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end)
 {
-    if (skipString(start, end, disable, sizeof(disable) / sizeof(UChar)))
+    if (skipString(start, end, disable, WTF_ARRAY_LENGTH(disable)))
         setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
-    else if (skipString(start, end, magnify, sizeof(magnify) / sizeof(UChar)))
+    else if (skipString(start, end, magnify, WTF_ARRAY_LENGTH(magnify)))
         setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
     else
         return false;

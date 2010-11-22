@@ -65,7 +65,7 @@ static const int editingStyleProperties[] = {
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
 };
-size_t numEditingStyleProperties = sizeof(editingStyleProperties) / sizeof(editingStyleProperties[0]);
+size_t numEditingStyleProperties = WTF_ARRAY_LENGTH(editingStyleProperties);
 
 static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style)
 {

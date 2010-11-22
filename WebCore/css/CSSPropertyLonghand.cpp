@@ -32,7 +32,7 @@ typedef HashMap<int, CSSPropertyLonghand> ShorthandMap;
 static void initShorthandMap(ShorthandMap& shorthandMap)
 {
     #define SET_SHORTHAND_MAP_ENTRY(map, propID, array) \
-        map.set(propID, CSSPropertyLonghand(array, sizeof(array) / sizeof(array[0])))
+        map.set(propID, CSSPropertyLonghand(array, WTF_ARRAY_LENGTH(array)))
 
     // FIXME: The 'font' property has "shorthand nature" but is not parsed as a shorthand.
 

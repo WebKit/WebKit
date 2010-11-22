@@ -708,10 +708,9 @@ static void createFunctionMap()
         { "translate", { &createFunTranslate, 3 } },
         { "true", { &createFunTrue, 0 } },
     };
-    const unsigned int numFunctions = sizeof(functions) / sizeof(functions[0]);
 
     functionMap = new HashMap<String, FunctionRec>;
-    for (unsigned i = 0; i < numFunctions; ++i)
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(functions); ++i)
         functionMap->set(functions[i].name, functions[i].function);
 }
 

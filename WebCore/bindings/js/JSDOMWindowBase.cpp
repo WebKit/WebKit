@@ -60,7 +60,7 @@ JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRef
         GlobalPropertyInfo(Identifier(globalExec(), "window"), d()->shell, DontDelete | ReadOnly)
     };
     
-    addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
+    addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 }
 
 void JSDOMWindowBase::updateDocument()

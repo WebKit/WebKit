@@ -28,6 +28,7 @@
 
 #include "CharacterNames.h"
 #include "TextBreakIterator.h"
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
@@ -114,8 +115,7 @@ static const unsigned char asciiLineBreakTable[][(asciiLineBreakTableLastChar - 
 #undef DI
 #undef AL
 
-COMPILE_ASSERT(sizeof(asciiLineBreakTable) / sizeof(asciiLineBreakTable[0]) == asciiLineBreakTableLastChar - asciiLineBreakTableFirstChar + 1,
-        TestLineBreakTableConsistency);
+COMPILE_ASSERT(WTF_ARRAY_LENGTH(asciiLineBreakTable) == asciiLineBreakTableLastChar - asciiLineBreakTableFirstChar + 1, TestLineBreakTableConsistency);
 
 static inline bool shouldBreakAfter(UChar ch, UChar nextCh)
 {

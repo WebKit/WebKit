@@ -1916,7 +1916,7 @@ END
         push(@implContent, <<END);
 static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Persistent<v8::ObjectTemplate> templ)
 {
-    batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, sizeof(shadowAttrs) / sizeof(*shadowAttrs));
+    batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
 
     // Install a security handler with V8.
     templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
@@ -1948,7 +1948,7 @@ END
     # Set up our attributes if we have them
     if ($has_attributes) {
         push(@implContent, <<END);
-        ${interfaceName}Attrs, sizeof(${interfaceName}Attrs) / sizeof(*${interfaceName}Attrs),
+        ${interfaceName}Attrs, WTF_ARRAY_LENGTH(${interfaceName}Attrs),
 END
     } else {
         push(@implContent, <<END);
@@ -1958,7 +1958,7 @@ END
 
     if ($has_callbacks) {
         push(@implContent, <<END);
-        ${interfaceName}Callbacks, sizeof(${interfaceName}Callbacks) / sizeof(*${interfaceName}Callbacks));
+        ${interfaceName}Callbacks, WTF_ARRAY_LENGTH(${interfaceName}Callbacks));
 END
     } else {
         push(@implContent, <<END);
@@ -2096,7 +2096,7 @@ END
 
     if ($has_constants) {
         push(@implContent, <<END);
-    batchConfigureConstants(desc, proto, ${interfaceName}Consts, sizeof(${interfaceName}Consts) / sizeof(*${interfaceName}Consts));
+    batchConfigureConstants(desc, proto, ${interfaceName}Consts, WTF_ARRAY_LENGTH(${interfaceName}Consts));
 END
     }
 

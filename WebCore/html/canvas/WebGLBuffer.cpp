@@ -170,8 +170,7 @@ unsigned WebGLBuffer::byteLength() const
 
 long WebGLBuffer::getCachedMaxIndex(unsigned long type)
 {
-    size_t numEntries = sizeof(m_maxIndexCache) / sizeof(MaxIndexCacheEntry);
-    for (size_t i = 0; i < numEntries; i++)
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(m_maxIndexCache); ++i)
         if (m_maxIndexCache[i].type == type)
             return m_maxIndexCache[i].maxIndex;
     return -1;
@@ -179,8 +178,8 @@ long WebGLBuffer::getCachedMaxIndex(unsigned long type)
 
 void WebGLBuffer::setCachedMaxIndex(unsigned long type, long value)
 {
-    int numEntries = sizeof(m_maxIndexCache) / sizeof(MaxIndexCacheEntry);
-    for (int i = 0; i < numEntries; i++)
+    size_t numEntries = WTF_ARRAY_LENGTH(m_maxIndexCache);
+    for (size_t i = 0; i < numEntries; ++i)
         if (m_maxIndexCache[i].type == type) {
             m_maxIndexCache[i].maxIndex = value;
             return;
