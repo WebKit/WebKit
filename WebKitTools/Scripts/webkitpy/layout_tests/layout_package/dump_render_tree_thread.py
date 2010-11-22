@@ -155,11 +155,8 @@ def _run_single_test(port, options, test_input, test_types, test_args, driver, w
     # are generating a new baseline.  (Otherwise, an image from a
     # previous run will be copied into the baseline."""
     if _should_fetch_expected_checksum(options):
-        image_hash_to_driver = port.expected_checksum(test_input.filename)
-    else:
-        image_hash_to_driver = None
-    uri = port.filename_to_uri(test_input.filename)
-    test_output = driver.run_test(uri, test_input.timeout, image_hash_to_driver)
+        test_input.image_hash = port.expected_checksum(test_input.filename)
+    test_output = driver.run_test(test_input)
     return _process_output(port, options, test_input, test_types, test_args,
                            test_output, worker_name)
 

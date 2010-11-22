@@ -433,14 +433,15 @@ class WebKitDriver(base.Driver):
         return
 
     # FIXME: This function is huge.
-    def run_test(self, uri, timeoutms, image_hash):
+    def run_test(self, test_input):
+        uri = self._port.filename_to_uri(test_input.filename)
         if uri.startswith("file:///"):
             command = uri[7:]
         else:
             command = uri
 
-        if image_hash:
-            command += "'" + image_hash
+        if test_input.image_hash:
+            command += "'" + test_input.image_hash
         command += "\n"
 
         start_time = time.time()
@@ -451,7 +452,7 @@ class WebKitDriver(base.Driver):
         output = str()  # Use a byte array for output, even though it should be UTF-8.
         image = str()
 
-        timeout = int(timeoutms) / 1000.0
+        timeout = int(test_input.timeout) / 1000.0
         deadline = time.time() + timeout
         line = self._server_process.read_line(timeout)
         while (not self._server_process.timed_out

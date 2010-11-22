@@ -1,3 +1,22 @@
+2010-11-19  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Simplify Driver.run_test() so that it takes only one parameter, TestInput.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49812
+
+        * Scripts/webkitpy/layout_tests/driver_test.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-11-22  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Tony Chang.

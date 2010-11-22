@@ -290,7 +290,7 @@ class VirtualTest(unittest.TestCase):
                 pass
 
         driver = VirtualDriver()
-        self.assertVirtual(driver.run_test, None, None, None)
+        self.assertVirtual(driver.run_test, None)
         self.assertVirtual(driver.poll)
         self.assertVirtual(driver.stop)
 

@@ -470,7 +470,7 @@ class ChromiumDriver(base.Driver):
                     raise e
         return self._output_image()
 
-    def run_test(self, uri, timeoutms, checksum):
+    def run_test(self, test_input):
         output = []
         error = []
         crash = False
@@ -480,7 +480,9 @@ class ChromiumDriver(base.Driver):
 
         start_time = time.time()
 
-        cmd = self._test_shell_command(uri, timeoutms, checksum)
+        uri = self._port.filename_to_uri(test_input.filename)
+        cmd = self._test_shell_command(uri, test_input.timeout,
+                                       test_input.image_hash)
         (line, crash) = self._write_command_and_read_line(input=cmd)
 
         while not crash and line.rstrip() != "#EOF":

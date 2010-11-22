@@ -820,17 +820,15 @@ class Driver:
         """
         raise NotImplementedError('Driver.__init__')
 
-    def run_test(self, uri, timeout, checksum):
+    def run_test(self, test_input):
         """Run a single test and return the results.
 
         Note that it is okay if a test times out or crashes and leaves
         the driver in an indeterminate state. The upper layers of the program
         are responsible for cleaning up and ensuring things are okay.
 
-        uri - a full URI for the given test
-        timeout - number of milliseconds to wait before aborting this test.
-        checksum - if present, the expected checksum for the image for this
-            test
+        Args:
+          test_input: a TestInput object
 
         Returns a TestOutput object.
         """

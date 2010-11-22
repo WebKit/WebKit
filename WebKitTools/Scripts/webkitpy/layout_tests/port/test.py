@@ -290,16 +290,16 @@ class TestDriver(base.Driver):
     def poll(self):
         return True
 
-    def run_test(self, uri, timeoutms, image_hash):
+    def run_test(self, test_input):
         start_time = time.time()
-        test_name = self._port.uri_to_test_name(uri)
+        test_name = self._port.relative_test_filename(test_input.filename)
         test = self._port._tests[test_name]
         if test.keyboard:
             raise KeyboardInterrupt
         if test.exception:
             raise ValueError('exception from ' + test_name)
         if test.hang:
-            time.sleep((float(timeoutms) * 4) / 1000.0)
+            time.sleep((float(test_input.timeout) * 4) / 1000.0)
         return test_output.TestOutput(test.actual_text, test.actual_image,
                                       test.actual_checksum, test.crash,
                                       time.time() - start_time, test.timeout,

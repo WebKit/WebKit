@@ -139,12 +139,13 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
         def stop(self):
             self._current_test_batch = None
 
-        def run_test(self, uri, timeoutms, image_hash):
+        def run_test(self, test_input):
             if self._current_test_batch is None:
                 self._current_test_batch = []
                 test_batches.append(self._current_test_batch)
-            self._current_test_batch.append(self._port.uri_to_test_name(uri))
-            return TestDriver.run_test(self, uri, timeoutms, image_hash)
+            test_name = self._port.relative_test_filename(test_input.filename)
+            self._current_test_batch.append(test_name)
+            return TestDriver.run_test(self, test_input)
 
     class RecordingTestPort(TestPort):
         def create_driver(self, image_path, options):

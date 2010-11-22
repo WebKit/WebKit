@@ -111,15 +111,13 @@ class DryrunDriver(base.Driver):
     def poll(self):
         return None
 
-    def run_test(self, uri, timeoutms, image_hash):
+    def run_test(self, test_input):
         start_time = time.time()
-        test_name = self._port.uri_to_test_name(uri)
-        path = os.path.join(self._port.layout_tests_dir(), test_name)
-        text_output = self._port.expected_text(path)
+        text_output = self._port.expected_text(test_input.filename)
 
-        if image_hash is not None:
-            image = self._port.expected_image(path)
-            hash = self._port.expected_checksum(path)
+        if test_input.image_hash is not None:
+            image = self._port.expected_image(test_input.filename)
+            hash = self._port.expected_checksum(test_input.filename)
         else:
             image = None
             hash = None
