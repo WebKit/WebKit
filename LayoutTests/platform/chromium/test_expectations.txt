@@ -3207,7 +3207,6 @@ BUG_ANTONM : svg/dom/svgpath-out-of-bounds-getPathSeg.html = TEXT
 BUG_ANTONM : svg/filters/filter-rounding-issues.svg = IMAGE IMAGE+TEXT
 
 // To be rebaselined (http://trac.webkit.org/changeset/72402)
-BUG_ANTONM : fast/images/imagemap-focus-ring-zoom.html = IMAGE IMAGE+TEXT
 
 // Seems like it started failing with r72364.
 BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
