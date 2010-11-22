@@ -3225,3 +3225,12 @@ BUG_ANTONM WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
 BUG_ANTONM WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
 BUG_ANTONM WIN LINUX : svg/custom/image-small-width-height.svg = IMAGE 
 BUG_ANTONM LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
+
+// Newly added tests in http://trac.webkit.org/changeset/72518.  Need just a rebaseline.
+BUG_ANTONM : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = IMAGE+TEXT
+BUG_ANTONM : svg/custom/baseval-animval-equality.svg = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGLengthList-basics.xhtml = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGNumberList-basics.xhtml = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGPointList-basics.xhtml = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGStringList-basics.xhtml = IMAGE+TEXT
+BUG_ANTONM : svg/dom/SVGTransformList-basics.xhtml = IMAGE+TEXT
