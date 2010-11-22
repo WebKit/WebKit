@@ -28,7 +28,19 @@
     <script type="application/javascript">
 
     var resultMap = [
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
       ["Down", "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
       ["Up"  , "start"],
       ["DONE", "DONE"]
     ];
@@ -59,22 +71,16 @@
     <script src="../js/resources/js-test-post.js"></script>
   </head>
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
-    <div><a id="start" href="a">a</a></div>
+    <div><a id="start" href="a"><img src="resources/green.png" width=30 height=30></a></div>
     <div class="scroll">
-      <p>This is a scrollable Div created with the CSS property overflow.</p>
-      <p>It has no keyboard focusable elements ....</p>
-      <br><br><br><br><br><br>
-      <br><br><br><br><br><br>
-      <p>... and scrollbars!</p>
+      <img src="resources/green.png" width=240 height=300>
     </div>
 
     <div class="scroll">
-      <p>This is another scrollable div created with the CSS property overflow.</p>
-      <p>It has also no keyboard focusable elements ....</p>
-      <br><br><br><br><br><br>
-      <p>... as well as scrollbars!</p>
+      <img src="resources/green.png" width=240 height=300>
     </div>
-    <div><a id="end" href="a">e</a></div>
+    <div><a id="end" href="a"><img src="resources/green.png" width=30 height=30></a></div>
     <div id="console"></div>
+    This test is to test that a scrollable div can scroll and reveal its content even if it does not have any focusable content.
   </body>
 </html>

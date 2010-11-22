@@ -22,6 +22,7 @@
 #define SpatialNavigation_h
 
 #include "FocusDirection.h"
+#include "IntRect.h"
 #include "Node.h"
 
 #include <limits>
@@ -107,16 +108,7 @@ struct FocusCandidate {
     {
     }
 
-    FocusCandidate(Node* n)
-        : node(n)
-        , enclosingScrollableBox(0)
-        , distance(maxDistance())
-        , parentDistance(maxDistance())
-        , alignment(None)
-        , parentAlignment(None)
-    {
-    }
-
+    FocusCandidate(Node* n);
     bool isNull() const { return !node; }
     bool inScrollableContainer() const { return node && enclosingScrollableBox; }
     Document* document() const { return node ? node->document() : 0; }
@@ -127,16 +119,25 @@ struct FocusCandidate {
     long long parentDistance;
     RectsAlignment alignment;
     RectsAlignment parentAlignment;
+    IntRect rect;
 };
 
 void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& candidate);
-bool scrollInDirection(Frame*, FocusDirection, const FocusCandidate& candidate = FocusCandidate());
+bool scrollInDirection(Frame*, FocusDirection);
+bool scrollInDirection(Node* container, FocusDirection);
 void scrollIntoView(Element*);
-bool hasOffscreenRect(Node*);
+bool hasOffscreenRect(Node*, FocusDirection direction = FocusDirectionNone);
 bool isInRootDocument(Node*);
-bool isScrollableContainerNode(Node*);
+bool isScrollableContainerNode(const Node*);
 bool isNodeDeepDescendantOfDocument(Node*, Document*);
-
+Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, Node* node);
+bool canScrollInDirection(FocusDirection, const Node* container);
+bool canScrollInDirection(FocusDirection, const Frame*);
+IntRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
+IntRect frameRectInAbsoluteCoordinates(Frame*);
+void distanceDataForNode(FocusDirection, FocusCandidate& current, FocusCandidate& candidate);
+bool canBeScrolledIntoView(FocusDirection, FocusCandidate&);
+IntRect virtualRectForDirection(FocusDirection, const IntRect& startingRect);
 } // namspace WebCore
 
 #endif // SpatialNavigation_h

@@ -17,7 +17,19 @@
     <script type="application/javascript">
 
     var resultMap = [
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
       ["Down", "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
       ["Up"  , "start"],
       ["DONE", "DONE"]
     ];
@@ -52,23 +64,18 @@
 
     <iframe width="80" height="80" scrolling="auto" src="data:text/html,
       <body>
-        <div style='margin-top:120px'>
-          <p>This frame has some text and no focusable element ...</a>
-        </div>
-        <p>... and some more text ...</a>
+        <img width=120 height=200 src='resources/green.png'>
       </body>
     "></iframe><br>
 
     <iframe scrolling="auto" src="data:text/html,
       <body>
-        <div style='margin-top:120px'>
-          <p>This frame has some text and no focusable element ...</a>
-        </div>
-        <p>... and some more text ...</a>
+        <img width=120 height=200 src='resources/green.png'>
       </body>
     "></iframe><br>
 
     <a id="end" href="a">e</a>
     <div id="console"></div>
+    This is to test that an iframe with no focusable content still scrolls
   </body>
 </html>

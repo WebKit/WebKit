@@ -22,8 +22,16 @@
       ["Down", "1"],
       ["Down", "1"],
       ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
       ["Down", "2"],
       ["Down", "end"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
       ["Up", "2"],
       ["Up", "2"],
       ["Up", "2"],
@@ -58,18 +66,19 @@
     <script src="../js/resources/js-test-post.js"></script>
   </head>
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
-    <div><a id="start" href="a">a</a></div>
+    <div><a id="start" href="a"><img src="resources/green.png" width=30 height=30></a></div>
 
     <iframe width="80" height="80" scrolling="auto" src="data:text/html,
       <body>
-        <a id='1' href='a'>b</a>
-        <div style='margin-top:120px'>
-          <a id='2' href='a'>d</a>
+        <a id='1' href='a'><img src='no_image' width=30 height=30></a>
+        <div>
+          <img src='no_image' width=50 height=300>
+          <a id='2' href='a'><img src='no_image' width=30 height=30></a>
         </div>
       </body>
     "></iframe><br>
 
-    <div><a id="end" href="a">e</a></div>
+    <div><a id="end" href="a"><img src="resources/green.png" width=30 height=30></a></div>
     <div id="console"></div>
   </body>
 </html>

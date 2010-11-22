@@ -68,6 +68,9 @@ private:
                                       const FocusCandidate& parentCandidate = FocusCandidate());
     void deepFindFocusableNodeInDirection(Node* container, Node* focused, FocusDirection, KeyboardEvent*, FocusCandidate&);
 
+    bool advanceFocusDirectionallyInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*);
+    void findFocusCandidateInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
+
     Page* m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isActive;
