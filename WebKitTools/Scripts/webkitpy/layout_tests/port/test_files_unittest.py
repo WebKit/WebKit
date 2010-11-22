@@ -63,6 +63,13 @@ class TestFilesTest(unittest.TestCase):
         tests = test_files.find(port, ['userscripts/resources'])
         self.assertEqual(tests, set([]))
 
+    def test_is_test_file(self):
+        self.assertTrue(test_files._is_test_file('foo.html'))
+        self.assertTrue(test_files._is_test_file('foo.shtml'))
+        self.assertFalse(test_files._is_test_file('foo.png'))
+        self.assertFalse(test_files._is_test_file('foo-expected.html'))
+        self.assertFalse(test_files._is_test_file('foo-expected-mismatch.html'))
+
 
 if __name__ == '__main__':
     unittest.main()

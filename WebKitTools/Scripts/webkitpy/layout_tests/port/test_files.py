@@ -78,7 +78,7 @@ def find(port, paths):
     # Now walk all the paths passed in on the command line and get filenames
     test_files = set()
     for path in paths_to_walk:
-        if os.path.isfile(path) and _has_supported_extension(path):
+        if os.path.isfile(path) and _is_test_file(path):
             test_files.add(os.path.normpath(path))
             continue
 
@@ -95,7 +95,7 @@ def find(port, paths):
                     dirs.remove(directory)
 
             for filename in files:
-                if _has_supported_extension(filename):
+                if _is_test_file(filename):
                     filename = os.path.join(root, filename)
                     filename = os.path.normpath(filename)
                     test_files.add(filename)
@@ -111,3 +111,18 @@ def _has_supported_extension(filename):
     test on."""
     extension = os.path.splitext(filename)[1]
     return extension in _supported_file_extensions
+
+
+def _is_reference_html_file(filename):
+    """Return true if the filename points to a reference HTML file."""
+    if (filename.endswith('-expected.html') or
+        filename.endswith('-expected-mismatch.html')):
+        _log.warn("Reftests are not supported - ignoring %s" % filename)
+        return True
+    return False
+
+
+def _is_test_file(filename):
+    """Return true if the filename points to a test file."""
+    return (_has_supported_extension(filename) and
+            not _is_reference_html_file(filename))
