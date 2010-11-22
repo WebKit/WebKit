@@ -654,9 +654,6 @@ BUG3273 : editing/selection/5825350-1.html = TEXT
 BUG3273 : editing/selection/5825350-2.html = TEXT
 BUG3273 : editing/selection/mixed-editability-10.html = TEXT
 
-// WebKit 50358:50395
-BUG3273 WIN LINUX : fast/text/international/thai-cursor-position.html = TEXT
-
 // Linux pixeltest failure: caret is in the wrong place
 // Upstream WebKit also skips this test and Safari with latest WebKit shows
 // same behavior as Chromium.
