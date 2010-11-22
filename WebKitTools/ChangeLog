@@ -1,5 +1,14 @@
 2010-11-21  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Fix ~300 WebKit2 tests by enabling developer extras preference.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
+2010-11-21  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Textareas should be resizable by default
