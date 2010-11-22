@@ -1,3 +1,16 @@
+2010-11-22  João Paulo Rechi Vita  <jprvita@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix EWebLauncher zoom discretization
+        https://bugs.webkit.org/show_bug.cgi?id=49810
+
+        * EWebLauncher/main.c:
+        (nearest_zoom_level_get):
+        (zoom_level_set):
+        (on_load_finished):
+        (on_key_down):
+
 2010-11-21  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.

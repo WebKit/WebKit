@@ -60,6 +60,7 @@
 #define MAX_ZOOM_LEVEL 13
 
 static int currentZoomLevel = DEFAULT_ZOOM_LEVEL;
+static float currentZoom = 1.0;
 
 // the zoom values are chosen to be like in Mozilla Firefox 3
 static int zoomLevels[] = {30, 50, 67, 80, 90,
@@ -183,7 +184,19 @@ print_history(Eina_List *list)
     }
 }
 
-static void
+static int
+nearest_zoom_level_get(float factor)
+{
+    int i, intFactor = (int)(factor * 100.0);
+    for (i = 0; zoomLevels[i] <= intFactor; i++) { }
+    printf("factor=%f, intFactor=%d, zoomLevels[%d]=%d, zoomLevels[%d]=%d\n",
+           factor, intFactor, i-1, zoomLevels[i-1], i, zoomLevels[i]);
+    if (intFactor - zoomLevels[i-1] < zoomLevels[i] - intFactor)
+        return i - 1;
+    return i;
+}
+
+static Eina_Bool
 zoom_level_set(Evas_Object *webview, int level)
 {
     float factor = ((float) zoomLevels[level]) / 100.0;
@@ -192,7 +205,7 @@ zoom_level_set(Evas_Object *webview, int level)
     evas_object_geometry_get(webview, &ox, &oy, NULL, NULL);
     cx = mx - ox;
     cy = my - oy;
-    ewk_view_zoom_animated_set(webview, factor, 0.5, cx, cy);
+    return ewk_view_zoom_animated_set(webview, factor, 0.5, cx, cy);
 }
 
 static void
@@ -284,6 +297,10 @@ on_load_finished(void *user_data, Evas_Object *webview, void *event_info)
     else
         info("Failed loading page: %d %s \"%s\", url=%s\n",
              err->code, err->domain, err->description, err->failing_url);
+
+    currentZoom = ewk_view_zoom_get(webview);
+    currentZoomLevel = nearest_zoom_level_get(currentZoom);
+    info("WebCore Zoom=%f, currentZoomLevel=%d\n", currentZoom, currentZoomLevel);
 }
 
 static void
@@ -557,12 +574,12 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Command::keyboard navigation toggle\n");*/
     } else if (!strcmp(ev->key, "F7")) {
         info("Zoom out (F7) was pressed.\n");
-        if (currentZoomLevel > MIN_ZOOM_LEVEL)
-            zoom_level_set(obj, --currentZoomLevel);
+        if (currentZoomLevel > MIN_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel - 1))
+            currentZoomLevel--;
     } else if (!strcmp(ev->key, "F8")) {
         info("Zoom in (F8) was pressed.\n");
-        if (currentZoomLevel < MAX_ZOOM_LEVEL)
-            zoom_level_set(obj, ++currentZoomLevel);
+        if (currentZoomLevel < MAX_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel + 1))
+            currentZoomLevel++;
     } else if (!strcmp(ev->key, "F9")) {
         info("Create new window (F9) was pressed.\n");
         Eina_Rectangle geometry = {0, 0, 0, 0};
