@@ -1084,7 +1084,7 @@ BUG10338 LINUX : fast/events/updateLayoutForHitTest.html = FAIL
 BUG10340 LINUX : fast/frames/viewsource-attribute.html = FAIL
 
 // Linux flaky: sometimes I get scrollbars and sometimes not.
-BUG10341 LINUX : fast/lists/001.html = IMAGE
+BUG10341 WIN LINUX : fast/lists/001.html = IMAGE+TEXT
 
 // We fail to load a file URL with a port number -- how does this work on
 // Windows?
@@ -1926,7 +1926,8 @@ BUG23956 WIN LINUX : fast/dom/Range/getClientRects.html = FAIL
 BUG24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Started happening somewhere around http://trac.webkit.org/changeset/48989.
-BUG23955 LINUX MAC : fast/css/last-of-type-pseudo-class.html = IMAGE
+BUG23955 MAC : fast/css/last-of-type-pseudo-class.html = IMAGE
+BUG23955 LINUX WIN : fast/css/last-of-type-pseudo-class.html = IMAGE+TEXT
 
 // WebKit update: 49190:49206
 BUG_JPARENT LINUX DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
@@ -3202,3 +3203,4 @@ BUG_JPARENT WIN DEBUG : inspector/styles-disable-then-delete.html = PASS TIMEOUT
 
 // Test added with http://trac.webkit.org/changeset/72504 needs better expectations for Chromium.
 BUGWK4989 WIN LINUX : fast/css/font-face-data-uri.html = TEXT
+
