@@ -152,6 +152,17 @@ bool WebPreferences::developerExtrasEnabled() const
     return m_store.developerExtrasEnabled;
 }
 
+void WebPreferences::setTextAreasAreResizable(bool r)
+{
+    m_store.textAreasAreResizable = r;
+    update();
+}
+
+bool WebPreferences::textAreasAreResizable() const
+{
+    return m_store.textAreasAreResizable;
+}
+
 void WebPreferences::setNeedsSiteSpecificQuirks(bool b)
 {
     m_store.needsSiteSpecificQuirks = b;

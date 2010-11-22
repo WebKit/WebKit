@@ -43,6 +43,7 @@ WebPreferencesStore::WebPreferencesStore()
     , frameFlatteningEnabled(false)
     , developerExtrasEnabled(false)
     , privateBrowsingEnabled(false)
+    , textAreasAreResizable(true)
     , needsSiteSpecificQuirks(false)
     , acceleratedCompositingEnabled(true)
     , compositingBordersVisible(false)
@@ -81,6 +82,7 @@ void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(xssAuditorEnabled);
     encoder->encode(frameFlatteningEnabled);
     encoder->encode(privateBrowsingEnabled);
+    encoder->encode(textAreasAreResizable);
     encoder->encode(developerExtrasEnabled);
     encoder->encode(fontSmoothingLevel);
     encoder->encode(minimumFontSize);
@@ -118,6 +120,8 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
     if (!decoder->decode(s.frameFlatteningEnabled))
         return false;
     if (!decoder->decode(s.privateBrowsingEnabled))
+        return false;
+    if (!decoder->decode(s.textAreasAreResizable))
         return false;
     if (!decoder->decode(s.developerExtrasEnabled))
         return false;

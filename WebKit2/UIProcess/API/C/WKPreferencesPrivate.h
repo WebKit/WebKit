@@ -37,7 +37,7 @@ enum WKFontSmoothingLevel {
     kWKFontSmoothingLevelLight = 1,
     kWKFontSmoothingLevelMedium = 2,
     kWKFontSmoothingLevelStrong = 3,
-#if PLATFORM(WIN)
+#if defined(WIN32) || defined(_WIN32)
     kWKFontSmoothingLevelWindows = 4,
 #endif
 };

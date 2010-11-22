@@ -120,12 +120,12 @@ bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->pluginsEnabled();
 }
 
-void WKPReferencesSetJavaEnabled(WKPreferencesRef preferencesRef, bool javaEnabled)
+void WKPreferencesSetJavaEnabled(WKPreferencesRef preferencesRef, bool javaEnabled)
 {
     toImpl(preferencesRef)->setJavaEnabled(javaEnabled);
 }
 
-bool WKPReferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->javaEnabled();
 }
@@ -218,6 +218,16 @@ void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, boo
 bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->developerExtrasEnabled();
+}
+
+void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable)
+{
+    toImpl(preferencesRef)->setTextAreasAreResizable(resizable);
+}
+
+bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->textAreasAreResizable();
 }
 
 void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef preferencesRef, WKFontSmoothingLevel wkLevel)

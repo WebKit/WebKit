@@ -1,3 +1,44 @@
+2010-11-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Textareas should be resizable by default
+        https://bugs.webkit.org/show_bug.cgi?id=49892
+
+        Test: WebKit2/WKPreferences
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        Add textAreasAreResizable bit.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaEnabled):
+        (WKPreferencesGetJavaEnabled):
+        Fix typo, WKPRe... -> WKPre...
+
+        (WKPreferencesSetMinimumFontSize):
+        (WKPreferencesGetMinimumFontSize):
+        Fix comment to correctly reflect that the default minimumFontSize is 0, not 1.
+
+        (WKPreferencesSetTextAreasAreResizable):
+        (WKPreferencesGetTextAreasAreResizable):
+        * UIProcess/API/C/WKPreferences.h:
+        Add API.
+
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        Don't use PLATFORM in API headers.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setTextAreasAreResizable):
+        (WebKit::WebPreferences::textAreasAreResizable):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pipe bit through to the WebProcess and onto WebCore::Settings.
+
 2010-11-19  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Andreas Kling.

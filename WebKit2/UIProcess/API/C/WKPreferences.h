@@ -70,8 +70,8 @@ WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool
 WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
 
 // Defaults to true.
-WK_EXPORT void WKPReferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled);
-WK_EXPORT bool WKPReferencesGetJavaEnabled(WKPreferencesRef preferences);
+WK_EXPORT void WKPreferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled);
+WK_EXPORT bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferences);
     
 WK_EXPORT void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef);
@@ -91,7 +91,7 @@ WK_EXPORT WKStringRef WKPreferencesCopyCursiveFontFamily(WKPreferencesRef prefer
 WK_EXPORT void WKPreferencesSetFantasyFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef);
 
-// Defaults to 1, which means "no minimum".
+// Defaults to 0.
 WK_EXPORT void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t);
 WK_EXPORT uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef);
 
@@ -102,6 +102,10 @@ WK_EXPORT bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferenc
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef);
+
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable);
+WK_EXPORT bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

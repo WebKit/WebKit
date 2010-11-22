@@ -461,6 +461,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\WKPreferences.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\WKString.cpp"
 					>
 				</File>

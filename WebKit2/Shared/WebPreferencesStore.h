@@ -52,6 +52,7 @@ struct WebPreferencesStore {
     bool frameFlatteningEnabled;
     bool developerExtrasEnabled;
     bool privateBrowsingEnabled;
+    bool textAreasAreResizable;
     bool needsSiteSpecificQuirks;
     bool acceleratedCompositingEnabled;
     bool compositingBordersVisible;

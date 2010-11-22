@@ -24,6 +24,7 @@
 		BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
+		BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */; };
 		BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
 		BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90964B125561BF00083756 /* VectorBasic.cpp */; };
 		BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
@@ -101,6 +102,7 @@
 		BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBasic_Bundle.cpp; sourceTree = "<group>"; };
 		BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
 		BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUtilities.cpp; sourceTree = "<group>"; };
+		BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferences.cpp; sourceTree = "<group>"; };
 		BC90951B125533D700083756 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC90955C125548AA00083756 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC90957E12554CF900083756 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -227,20 +229,21 @@
 			isa = PBXGroup;
 			children = (
 				BC90977B125571AE00083756 /* Resources */,
+				BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */,
+				BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */,
 				1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */,
+				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
 				1A02C84E125D4A8400E3F4BD /* Find.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
+				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
+				BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
 				333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
+				BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
-				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
-				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
-				BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */,
-				BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */,
-				BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */,
 			);
 			path = WebKit2;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				BCB68040126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
 				1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */,
 				333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */,
+				BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

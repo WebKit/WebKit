@@ -1,3 +1,15 @@
+2010-11-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Textareas should be resizable by default
+        https://bugs.webkit.org/show_bug.cgi?id=49892
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp: Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Add preferences test.
+
 2010-11-19  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
