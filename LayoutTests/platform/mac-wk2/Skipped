@@ -1909,6 +1909,7 @@ fast/events/spatial-navigation/snav-1st-stop.html
 fast/events/spatial-navigation/snav-clipped-overflowed-content.html
 fast/events/spatial-navigation/snav-container-only-white-space.html
 fast/events/spatial-navigation/snav-container-white-space.html
+fast/events/spatial-navigation/snav-div-overflow-scrol-hidden.html
 fast/events/spatial-navigation/snav-div-scrollable-but-without-focusable-content.html
 fast/events/spatial-navigation/snav-fully-aligned-horizontally.html
 fast/events/spatial-navigation/snav-fully-aligned-vertically.html
@@ -1928,6 +1929,7 @@ fast/events/spatial-navigation/snav-single-select.html
 fast/events/spatial-navigation/snav-table-traversal.html
 fast/events/spatial-navigation/snav-textarea.html
 fast/events/spatial-navigation/snav-tiny-table-traversal.html
+fast/events/spatial-navigation/snav-z-index.html
 fast/events/spatial-navigation/snav-zero-margin-content.html
 
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
@@ -2157,6 +2159,7 @@ fast/dom/StyleSheet/detached-style.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
 fast/events/simulated-key-state.html
+fast/forms/input-image-submit.html
 fast/forms/paste-multiline-text-input.html
 fast/frames/frame-element-name.html
 fast/frames/iframe-onload-remove-self-no-crash.html
