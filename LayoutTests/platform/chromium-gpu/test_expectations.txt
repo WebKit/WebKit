@@ -368,3 +368,6 @@ BUG58536 WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
 BUG60965 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
+
+// New test added with http://trac.webkit.org/changeset/72472
+BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
