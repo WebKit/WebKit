@@ -1,0 +1,83 @@
+layer at (0,0) size 784x649
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x649
+  RenderBlock {HTML} at (0,0) size 784x649
+    RenderBody {BODY} at (8,8) size 768x625
+      RenderBlock {H2} at (0,0) size 768x31
+        RenderText {#text} at (0,0) size 509x32
+          text run at (0,0) width 509: "The following lists have list-style-position: outside"
+      RenderBlock {P} at (0,50) size 768x21
+        RenderInline {U} at (0,0) size 114x21
+          RenderText {#text} at (0,0) size 114x21
+            text run at (0,0) width 114: "text-align: center"
+      RenderBlock {UL} at (0,87) size 768x63
+        RenderListItem {LI} at (40,0) size 728x21
+          RenderListMarker at (237,0) size 7x21: bullet
+          RenderText {#text} at (255,0) size 217x21
+            text run at (255,0) width 217: "Earl Grey Tea - A fine black tea"
+        RenderListItem {LI} at (40,21) size 728x21
+          RenderListMarker at (199,0) size 7x21: bullet
+          RenderText {#text} at (217,0) size 293x21
+            text run at (217,0) width 293: "Jasmine Tea - A fabulous \"all purpose\" tea"
+        RenderListItem {LI} at (40,42) size 728x21
+          RenderListMarker at (201,0) size 7x21: bullet
+          RenderText {#text} at (219,0) size 290x21
+            text run at (219,0) width 290: "Honeybush Tea - A super fruity delight tea"
+      RenderBlock (anonymous) at (0,166) size 768x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {P} at (0,203) size 768x21
+        RenderInline {U} at (0,0) size 105x21
+          RenderText {#text} at (0,0) size 105x21
+            text run at (0,0) width 105: "text-align: right"
+      RenderBlock {UL} at (0,240) size 768x63
+        RenderListItem {LI} at (40,0) size 728x21
+          RenderListMarker at (493,0) size 7x21: bullet
+          RenderText {#text} at (511,0) size 217x21
+            text run at (511,0) width 217: "Earl Grey Tea - A fine black tea"
+        RenderListItem {LI} at (40,21) size 728x21
+          RenderListMarker at (417,0) size 7x21: bullet
+          RenderText {#text} at (435,0) size 293x21
+            text run at (435,0) width 293: "Jasmine Tea - A fabulous \"all purpose\" tea"
+        RenderListItem {LI} at (40,42) size 728x21
+          RenderListMarker at (420,0) size 7x21: bullet
+          RenderText {#text} at (438,0) size 290x21
+            text run at (438,0) width 290: "Honeybush Tea - A super fruity delight tea"
+      RenderBlock {H2} at (0,322) size 768x31
+        RenderText {#text} at (0,0) size 509x32
+          text run at (0,0) width 509: "The following lists have list-style-position: outside"
+      RenderBlock {P} at (0,372) size 768x21
+        RenderInline {U} at (0,0) size 114x21
+          RenderText {#text} at (0,0) size 114x21
+            text run at (0,0) width 114: "text-align: center"
+      RenderBlock {UL} at (0,409) size 768x63
+        RenderListItem {LI} at (40,0) size 728x21
+          RenderListMarker at (237,0) size 7x21: bullet
+          RenderText {#text} at (255,0) size 217x21
+            text run at (255,0) width 217: "Earl Grey Tea - A fine black tea"
+        RenderListItem {LI} at (40,21) size 728x21
+          RenderListMarker at (199,0) size 7x21: bullet
+          RenderText {#text} at (217,0) size 293x21
+            text run at (217,0) width 293: "Jasmine Tea - A fabulous \"all purpose\" tea"
+        RenderListItem {LI} at (40,42) size 728x21
+          RenderListMarker at (201,0) size 7x21: bullet
+          RenderText {#text} at (219,0) size 290x21
+            text run at (219,0) width 290: "Honeybush Tea - A super fruity delight tea"
+      RenderBlock (anonymous) at (0,488) size 768x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {P} at (0,525) size 768x21
+        RenderInline {U} at (0,0) size 105x21
+          RenderText {#text} at (0,0) size 105x21
+            text run at (0,0) width 105: "text-align: right"
+      RenderBlock {UL} at (0,562) size 768x63
+        RenderListItem {LI} at (40,0) size 728x21
+          RenderListMarker at (493,0) size 7x21: bullet
+          RenderText {#text} at (511,0) size 217x21
+            text run at (511,0) width 217: "Earl Grey Tea - A fine black tea"
+        RenderListItem {LI} at (40,21) size 728x21
+          RenderListMarker at (417,0) size 7x21: bullet
+          RenderText {#text} at (435,0) size 293x21
+            text run at (435,0) width 293: "Jasmine Tea - A fabulous \"all purpose\" tea"
+        RenderListItem {LI} at (40,42) size 728x21
+          RenderListMarker at (420,0) size 7x21: bullet
+          RenderText {#text} at (438,0) size 290x21
+            text run at (438,0) width 290: "Honeybush Tea - A super fruity delight tea"

@@ -54,12 +54,12 @@ layer at (0,0) size 784x1309
           text run at (395,63) width 181: "right padding easier to see."
       RenderBlock {UL} at (0,538) size 768x84 [bgcolor=#808080]
         RenderListItem {LI} at (40,0) size 703x42
-          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderListMarker at (-5,0) size 7x21: bullet
           RenderText {#text} at (13,0) size 690x42
             text run at (13,0) width 690: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text in"
             text run at (617,21) width 86: "order to test."
         RenderListItem {LI} at (40,42) size 703x42 [bgcolor=#FFFFFF]
-          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderListMarker at (-16,0) size 7x21: bullet
           RenderText {#text} at (2,0) size 676x42
             text run at (2,0) width 676: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of the"
             text run at (595,21) width 83: "UL element."
@@ -114,12 +114,12 @@ layer at (0,0) size 784x1309
                   text run at (379,63) width 181: "right padding easier to see."
               RenderBlock {UL} at (4,378) size 746x84 [bgcolor=#808080]
                 RenderListItem {LI} at (40,0) size 681x42
-                  RenderListMarker at (-18,0) size 7x21: bullet
+                  RenderListMarker at (-10,0) size 7x21: bullet
                   RenderText {#text} at (8,0) size 673x42
                     text run at (8,0) width 673: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text"
                     text run at (578,21) width 103: "in order to test."
                 RenderListItem {LI} at (40,42) size 681x42 [bgcolor=#FFFFFF]
-                  RenderListMarker at (-18,0) size 7x21: bullet
+                  RenderListMarker at (-13,0) size 7x21: bullet
                   RenderText {#text} at (5,0) size 651x42
                     text run at (5,0) width 651: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of"
                     text run at (548,21) width 108: "the UL element."
