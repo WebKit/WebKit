@@ -507,6 +507,7 @@ PASS Object.getOwnPropertyDescriptor(window, 'getMatchedCSSRules') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'getSelection') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'hasOwnProperty') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'isPrototypeOf') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'matchMedia') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'moveBy') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'moveTo') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'open') is undefined.

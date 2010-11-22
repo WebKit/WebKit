@@ -128,6 +128,7 @@ SET(WebCore_IDL_FILES
     css/CSSValue.idl
     css/CSSValueList.idl
     css/MediaList.idl
+    css/MediaQueryList.idl
     css/Rect.idl
     css/RGBColor.idl
     css/StyleMedia.idl
@@ -765,6 +766,9 @@ SET(WebCore_SOURCES
     css/MediaQuery.cpp
     css/MediaQueryEvaluator.cpp
     css/MediaQueryExp.cpp
+    css/MediaQueryList.cpp
+    css/MediaQueryListListener.cpp
+    css/MediaQueryMatcher.cpp
     css/RGBColor.cpp
     css/ShadowValue.cpp
     css/StyleBase.cpp

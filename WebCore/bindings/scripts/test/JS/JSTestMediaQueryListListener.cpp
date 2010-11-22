@@ -23,7 +23,7 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include "JSMediaQueryListListener.h"
+#include "MediaQueryListListener.h"
 #include "TestMediaQueryListListener.h"
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
@@ -174,7 +174,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
         return throwVMTypeError(exec);
     JSTestMediaQueryListListener* castedThis = static_cast<JSTestMediaQueryListListener*>(asObject(thisValue));
     TestMediaQueryListListener* imp = static_cast<TestMediaQueryListListener*>(castedThis->impl());
-    MediaQueryListListener* listener = toMediaQueryListListener(exec->argument(0));
+    RefPtr<MediaQueryListListener> listener = MediaQueryListListener::create(exec->argument(0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

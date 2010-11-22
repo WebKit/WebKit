@@ -2252,8 +2252,14 @@ BUG38578 : plugins/override-node-method.html = TEXT
 // Needs layoutTestController.setMediaType() (implemented on Qt only)
 BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 
-// Needs layoutTestController.setViewModeMediaFeature() (implemented on Qt only)
+// Needs layoutTestController.setViewModeMediaFeature()
 BUG40680 SKIP : fast/media/view-mode-media-feature.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-02.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-03.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-04.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-05.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-06.html = FAIL
+BUG40680 SKIP : fast/media/media-query-list-07.html = FAIL
 
 // Unknown flakiness.
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS

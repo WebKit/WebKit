@@ -429,6 +429,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaError.h \
 	DerivedSources/WebCore/JSMediaList.cpp \
 	DerivedSources/WebCore/JSMediaList.h \
+	DerivedSources/WebCore/JSMediaQueryList.cpp \
+	DerivedSources/WebCore/JSMediaQueryList.h \
 	DerivedSources/WebCore/JSMemoryInfo.cpp \
 	DerivedSources/WebCore/JSMemoryInfo.h \
 	DerivedSources/WebCore/JSMessageChannel.cpp \
@@ -994,11 +996,17 @@ webcore_sources += \
 	WebCore/css/MediaList.cpp \
 	WebCore/css/MediaList.h \
 	WebCore/css/MediaQuery.cpp \
+	WebCore/css/MediaQuery.h \
 	WebCore/css/MediaQueryEvaluator.cpp \
 	WebCore/css/MediaQueryEvaluator.h \
 	WebCore/css/MediaQueryExp.cpp \
 	WebCore/css/MediaQueryExp.h \
-	WebCore/css/MediaQuery.h \
+	WebCore/css/MediaQueryList.cpp \
+	WebCore/css/MediaQueryList.h \
+	WebCore/css/MediaQueryListListener.cpp \
+	WebCore/css/MediaQueryListListener.h \
+	WebCore/css/MediaQueryMatcher.cpp \
+	WebCore/css/MediaQueryMatcher.h \
 	WebCore/css/Pair.h \
 	WebCore/css/Rect.h \
 	WebCore/css/RGBColor.cpp \

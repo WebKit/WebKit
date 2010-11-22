@@ -654,6 +654,9 @@ SOURCES += \
     css/MediaQuery.cpp \
     css/MediaQueryEvaluator.cpp \
     css/MediaQueryExp.cpp \
+    css/MediaQueryList.cpp \
+    css/MediaQueryListListener.cpp \
+    css/MediaQueryMatcher.cpp \
     css/RGBColor.cpp \
     css/ShadowValue.cpp \
     css/StyleBase.cpp \
@@ -1566,9 +1569,12 @@ HEADERS += \
     css/FontValue.h \
     css/MediaFeatureNames.h \
     css/MediaList.h \
+    css/MediaQuery.h \
     css/MediaQueryEvaluator.h \
     css/MediaQueryExp.h \
-    css/MediaQuery.h \
+    css/MediaQueryList.h \
+    css/MediaQueryListListener.h \
+    css/MediaQueryMatcher.h \
     css/RGBColor.h \
     css/ShadowValue.h \
     css/StyleBase.h \

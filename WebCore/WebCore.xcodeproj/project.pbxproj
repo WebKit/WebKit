@@ -5313,8 +5313,16 @@
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
 		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
 		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
+		D340629B1253BC8C009E4259 /* MediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D340629A1253BC8C009E4259 /* MediaQueryListListener.cpp */; };
 		D39D006D11F8E308006041F2 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = D39D006C11F8E308006041F2 /* PopupMenuMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D39D009D11F907E6006041F2 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = D39D009C11F907E6006041F2 /* SearchPopupMenuMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */; };
+		D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A32122DABAC00A37BBC /* MediaQueryList.h */; };
+		D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */; };
+		D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */; };
+		D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */; };
+		D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */; };
+		D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */; };
 		D8B6152F1032495100C8554A /* Cookie.h in Headers */ = {isa = PBXBuildFile; fileRef = D8B6152E1032495100C8554A /* Cookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
@@ -11363,8 +11371,18 @@
 		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRangeException.h; sourceTree = "<group>"; };
 		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeException.cpp; sourceTree = "<group>"; };
 		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
+		D340629A1253BC8C009E4259 /* MediaQueryListListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryListListener.cpp; sourceTree = "<group>"; };
 		D39D006C11F8E308006041F2 /* PopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuMac.h; sourceTree = "<group>"; };
 		D39D009C11F907E6006041F2 /* SearchPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuMac.h; sourceTree = "<group>"; };
+		D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryList.cpp; sourceTree = "<group>"; };
+		D3A94A32122DABAC00A37BBC /* MediaQueryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryList.h; sourceTree = "<group>"; };
+		D3A94A33122DABAC00A37BBC /* MediaQueryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryList.idl; sourceTree = "<group>"; };
+		D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryListListener.h; sourceTree = "<group>"; };
+		D3A94A35122DABAC00A37BBC /* MediaQueryListListener.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryListListener.idl; sourceTree = "<group>"; };
+		D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaQueryList.cpp; sourceTree = "<group>"; };
+		D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaQueryList.h; sourceTree = "<group>"; };
+		D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryMatcher.cpp; sourceTree = "<group>"; };
+		D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryMatcher.h; sourceTree = "<group>"; };
 		D8B6152E1032495100C8554A /* Cookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cookie.h; sourceTree = "<group>"; };
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
@@ -15774,6 +15792,8 @@
 				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
 				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
+				D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */,
+				D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
 				BCFE2F0F0C1B58370020235F /* JSRect.cpp */,
 				BCFE2F100C1B58370020235F /* JSRect.h */,
@@ -17763,6 +17783,14 @@
 				4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */,
 				4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */,
 				4E1959280A39DACC00220FE5 /* MediaQueryExp.h */,
+				D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */,
+				D3A94A32122DABAC00A37BBC /* MediaQueryList.h */,
+				D3A94A33122DABAC00A37BBC /* MediaQueryList.idl */,
+				D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */,
+				D340629A1253BC8C009E4259 /* MediaQueryListListener.cpp */,
+				D3A94A35122DABAC00A37BBC /* MediaQueryListListener.idl */,
+				D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */,
+				D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */,
 				A80E6CD10A1989CA007FB8C5 /* Pair.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				BC4368E70C226E32005EFB5F /* Rect.h */,
@@ -21291,6 +21319,10 @@
 				E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */,
 				E1AD14231295EA7F00ACA989 /* JSHTMLInputElementCustom.h in Headers */,
 				E1AD14251295EA9500ACA989 /* JSHTMLObjectElementCustom.h in Headers */,
+				D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */,
+				D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */,
+				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
+				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23848,6 +23880,10 @@
 				E1AD12D61295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp in Sources */,
 				E1AD139B1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp in Sources */,
 				E1AD139E1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp in Sources */,
+				D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */,
+				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
+				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
+				D340629B1253BC8C009E4259 /* MediaQueryListListener.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

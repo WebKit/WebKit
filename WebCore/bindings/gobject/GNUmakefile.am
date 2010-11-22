@@ -196,6 +196,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMMediaErrorPrivate.h \
 	DerivedSources/webkit/WebKitDOMMediaList.cpp \
 	DerivedSources/webkit/WebKitDOMMediaListPrivate.h \
+	DerivedSources/webkit/WebKitDOMMediaQueryList.cpp \
+	DerivedSources/webkit/WebKitDOMMediaQueryListPrivate.h \
 	DerivedSources/webkit/WebKitDOMMemoryInfo.cpp \
 	DerivedSources/webkit/WebKitDOMMemoryInfoPrivate.h \
 	DerivedSources/webkit/WebKitDOMMessagePort.cpp \
@@ -254,6 +256,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMCSSStyleSheet.h \
 	DerivedSources/webkit/WebKitDOMCSSValue.h \
 	DerivedSources/webkit/WebKitDOMMediaList.h \
+	DerivedSources/webkit/WebKitDOMMediaQueryList.h \
 	DerivedSources/webkit/WebKitDOMStyleMedia.h \
 	DerivedSources/webkit/WebKitDOMStyleSheet.h \
 	DerivedSources/webkit/WebKitDOMStyleSheetList.h \

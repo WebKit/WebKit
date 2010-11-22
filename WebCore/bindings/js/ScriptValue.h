@@ -55,7 +55,10 @@ public:
     bool isNull() const;
     bool isUndefined() const;
     bool isObject() const;
+    bool isFunction() const;
     bool hasNoValue() const { return m_value == JSC::JSValue(); }
+
+    bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*);

@@ -210,8 +210,11 @@ sub SkipFunction {
 
     # Skip functions that have ["Callback"] parameters, because this
     # code generator doesn't know how to auto-generate callbacks.
+    # Skip functions that have "MediaQueryListListener" parameters, because this
+    # code generator doesn't know how to auto-generate MediaQueryListListener.
     foreach my $param (@{$function->parameters}) {
-        if ($param->extendedAttributes->{"Callback"}) {
+        if ($param->extendedAttributes->{"Callback"} ||
+            $param->type eq "MediaQueryListListener") {
             return 1;
         }
     }
@@ -599,7 +602,8 @@ EOF
     push(@txtSetProps, $txtSetProps);
 
     foreach my $attribute (@readableProperties) {
-        if ($attribute->signature->type ne "EventListener") {
+        if ($attribute->signature->type ne "EventListener" &&
+            $attribute->signature->type ne "MediaQueryListListener") {
             GenerateProperty($attribute, $interfaceName, \@writeableProperties);
         }
     }
@@ -766,6 +770,7 @@ sub getIncludeHeader {
     return "" if $type eq "unsigned short";
     return "" if $type eq "DOMTimeStamp";
     return "" if $type eq "EventListener";
+    return "" if $type eq "MediaQueryListListener";
     return "" if $type eq "unsigned char";
     return "" if $type eq "DOMString";
     return "" if $type eq "float";
@@ -800,6 +805,10 @@ sub GenerateFunction {
 
     my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
 
+    if ($object eq "MediaQueryListListener") {
+        return;
+    }
+
     if (SkipFunction($function, $decamelize, $prefix)) {
         return;
     }
@@ -821,7 +830,7 @@ sub GenerateFunction {
 
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
-        if ($paramIDLType eq "EventListener") {
+        if ($paramIDLType eq "EventListener" || $paramIDLType eq "MediaQueryListListener") {
             push(@hBody, "\n/* TODO: event function ${functionName} */\n\n");
             push(@cBody, "\n/* TODO: event function ${functionName} */\n\n");
             return;
@@ -1075,7 +1084,9 @@ sub GenerateFunctions {
 
     TOP:
     foreach my $attribute (@{$dataNode->attributes}) {
-        if (SkipAttribute($attribute) || $attribute->signature->type eq "EventListener") {
+        if (SkipAttribute($attribute) ||
+            $attribute->signature->type eq "EventListener" ||
+            $attribute->signature->type eq "MediaQueryListListener") {
             next TOP;
         }
         

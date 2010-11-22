@@ -9851,6 +9851,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSKeyboardEvent.cpp"
 				>
 				<FileConfiguration
@@ -30548,6 +30604,30 @@
 			</File>
 			<File
 				RelativePath="..\css\MediaQueryExp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryListListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryListListener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryMatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\MediaQueryMatcher.h"
 				>
 			</File>
 			<File

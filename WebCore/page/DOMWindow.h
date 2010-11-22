@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,10 +59,11 @@ namespace WebCore {
     class History;
     class IDBFactory;
     class Location;
-    class StyleMedia;
+    class MediaQueryList;
     class Navigator;
     class Node;
     class NotificationCenter;
+    class StyleMedia;
 
 #if ENABLE(WEB_TIMING)
     class Performance;
@@ -95,6 +97,8 @@ namespace WebCore {
         void disconnectFrame();
 
         void clear();
+
+        PassRefPtr<MediaQueryList> matchMedia(const String&);
 
 #if ENABLE(ORIENTATION_EVENTS)
         // This is the interface orientation in degrees. Some examples are:

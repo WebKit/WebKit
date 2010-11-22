@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +68,8 @@
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Location.h"
-#include "StyleMedia.h"
+#include "MediaQueryList.h"
+#include "MediaQueryMatcher.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
 #include "NotificationCenter.h"
@@ -83,6 +85,7 @@
 #include "Storage.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
+#include "StyleMedia.h"
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include <algorithm>
@@ -409,6 +412,11 @@ DOMWindow::~DOMWindow()
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
 {
     return document();
+}
+
+PassRefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
+{
+    return document() ? document()->mediaQueryMatcher()->matchMedia(media) : 0;
 }
 
 void DOMWindow::disconnectFrame()

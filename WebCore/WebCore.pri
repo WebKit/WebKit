@@ -84,6 +84,7 @@ IDL_BINDINGS += \
     css/CSSValue.idl \
     css/CSSValueList.idl \
     css/MediaList.idl \
+    css/MediaQueryList.idl \
     css/Rect.idl \
     css/RGBColor.idl \
     css/StyleMedia.idl \

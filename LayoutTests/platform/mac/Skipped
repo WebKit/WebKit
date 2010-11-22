@@ -124,8 +124,14 @@ http/tests/plugins/plugin-document-has-focus.html
 # Misses setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
 
-# view mode media feature
+# Needs layoutTestController.setViewModeMediaFeature()
 fast/media/view-mode-media-feature.html
+fast/media/media-query-list-02.html
+fast/media/media-query-list-03.html
+fast/media/media-query-list-04.html
+fast/media/media-query-list-05.html
+fast/media/media-query-list-06.html
+fast/media/media-query-list-07.html
 
 # Test is flaky and thus not useful until fixed.
 # https://bugs.webkit.org/show_bug.cgi?id=36642

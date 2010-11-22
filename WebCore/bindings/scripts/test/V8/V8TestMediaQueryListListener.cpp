@@ -22,13 +22,13 @@
 #include "V8TestMediaQueryListListener.h"
 
 #include "ExceptionCode.h"
+#include "MediaQueryListListener.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
-#include "V8MediaQueryListListener.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -43,27 +43,24 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestMediaQueryListListener.method");
     TestMediaQueryListListener* imp = V8TestMediaQueryListListener::toNative(args.Holder());
-    EXCEPTION_BLOCK(MediaQueryListListener*, listener, V8MediaQueryListListener::HasInstance(args[0]) ? V8MediaQueryListListener::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    EXCEPTION_BLOCK(RefPtr<MediaQueryListListener>, listener, MediaQueryListListener::create(args[0]));
     imp->method(listener);
     return v8::Handle<v8::Value>();
 }
 
 } // namespace TestMediaQueryListListenerInternal
 
+static const BatchedCallback TestMediaQueryListListenerCallbacks[] = {
+    {"method", TestMediaQueryListListenerInternal::methodCallback},
+};
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
         0, 0,
-        0, 0);
+        TestMediaQueryListListenerCallbacks, sizeof(TestMediaQueryListListenerCallbacks) / sizeof(*TestMediaQueryListListenerCallbacks));
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     
-
-    // Custom Signature 'method'
-    const int methodArgc = 1;
-    v8::Handle<v8::FunctionTemplate> methodArgv[methodArgc] = { V8MediaQueryListListener::GetRawTemplate() };
-    v8::Handle<v8::Signature> methodSignature = v8::Signature::New(desc, methodArgc, methodArgv);
-    proto->Set(v8::String::New("method"), v8::FunctionTemplate::New(TestMediaQueryListListenerInternal::methodCallback, v8::Handle<v8::Value>(), methodSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

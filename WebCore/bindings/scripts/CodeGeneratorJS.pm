@@ -6,6 +6,7 @@
 # Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
+# Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -272,6 +273,10 @@ sub AddIncludesForType
 
     if ($type eq "Document") {
         $implIncludes{"NodeFilter.h"} = 1;
+    }
+
+    if ($type eq "MediaQueryListListener") {
+        $implIncludes{"MediaQueryListListener.h"} = 1;
     }
 }
 
@@ -2364,6 +2369,7 @@ my %nativeType = (
     "unsigned short" => "unsigned short",
     "long long" => "long long",
     "unsigned long long" => "unsigned long long",
+    "MediaQueryListListener" => "RefPtr<MediaQueryListListener>"
 );
 
 sub GetNativeType
@@ -2450,6 +2456,11 @@ sub JSValueToNative
 
     if ($type eq "DOMObject") {
         return "$value";
+    }
+
+    if ($type eq "MediaQueryListListener") {
+        $implIncludes{"MediaQueryListListener.h"} = 1;
+        return "MediaQueryListListener::create(" . $value .")";
     }
 
     if ($type eq "SerializedScriptValue" or $type eq "any") {

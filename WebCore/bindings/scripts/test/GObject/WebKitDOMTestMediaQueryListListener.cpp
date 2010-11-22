@@ -28,8 +28,6 @@
 #include "TestMediaQueryListListener.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMMediaQueryListListener.h"
-#include "webkit/WebKitDOMMediaQueryListListenerPrivate.h"
 #include "webkit/WebKitDOMTestMediaQueryListListener.h"
 #include "webkit/WebKitDOMTestMediaQueryListListenerPrivate.h"
 #include "webkitmarshal.h"
@@ -48,21 +46,6 @@ gpointer kit(WebCore::TestMediaQueryListListener* obj)
 }
     
 } // namespace WebKit //
-
-void
-webkit_dom_test_media_query_list_listener_method(WebKitDOMTestMediaQueryListListener* self, WebKitDOMMediaQueryListListener* listener)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestMediaQueryListListener * item = WebKit::core(self);
-    g_return_if_fail(listener);
-    WebCore::MediaQueryListListener * converted_listener = NULL;
-    if (listener != NULL) {
-        converted_listener = WebKit::core(listener);
-        g_return_if_fail(converted_listener);
-    }
-    item->method(converted_listener);
-}
 
 
 G_DEFINE_TYPE(WebKitDOMTestMediaQueryListListener, webkit_dom_test_media_query_list_listener, WEBKIT_TYPE_DOM_OBJECT)

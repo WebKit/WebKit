@@ -1,0 +1,25 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Testing page cache
+
+------------- minimized -------------
+[1] - query (-webkit-view-mode: windowed) changed to false
+[1] - query (-webkit-view-mode: minimized) changed to true
+[2] - query (-webkit-view-mode: windowed) changed to false
+[2] - query (-webkit-view-mode: minimized) changed to true
+------------- maximized -------------
+[1] - query (-webkit-view-mode: minimized) changed to false
+[1] - query (-webkit-view-mode: maximized) changed to true
+[2] - query (-webkit-view-mode: minimized) changed to false
+[2] - query (-webkit-view-mode: maximized) changed to true
+------------- windowed -------------
+[1] - query (-webkit-view-mode: windowed) changed to true
+[1] - query (-webkit-view-mode: maximized) changed to false
+[2] - query (-webkit-view-mode: windowed) changed to true
+[2] - query (-webkit-view-mode: maximized) changed to false
+------------- floating -------------
+[1] - query (-webkit-view-mode: windowed) changed to false
+[1] - query (-webkit-view-mode: floating) changed to true
+[2] - query (-webkit-view-mode: windowed) changed to false
+[2] - query (-webkit-view-mode: floating) changed to true
+

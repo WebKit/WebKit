@@ -1,0 +1,41 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Testing removeListener in different MediaQueryList objects and the callback call sequence
+
+adding windowed[1], minimized[1], windowed[2] and minimized[2]
+
+------------- minimized -------------
+[1] - query (-webkit-view-mode: windowed) changed to false
+[1] - query (-webkit-view-mode: minimized) changed to true
+[2] - query (-webkit-view-mode: windowed) changed to false
+[2] - query (-webkit-view-mode: minimized) changed to true
+------------- windowed -------------
+[1] - query (-webkit-view-mode: windowed) changed to true
+[1] - query (-webkit-view-mode: minimized) changed to false
+[2] - query (-webkit-view-mode: windowed) changed to true
+[2] - query (-webkit-view-mode: minimized) changed to false
+
+
+removing windowed[1] and minimized[2]
+
+------------- minimized -------------
+[1] - query (-webkit-view-mode: minimized) changed to true
+[2] - query (-webkit-view-mode: windowed) changed to false
+------------- windowed -------------
+[1] - query (-webkit-view-mode: minimized) changed to false
+[2] - query (-webkit-view-mode: windowed) changed to true
+
+
+adding windowed[1] and minimized[2]
+
+------------- minimized -------------
+[1] - query (-webkit-view-mode: minimized) changed to true
+[2] - query (-webkit-view-mode: windowed) changed to false
+[1] - query (-webkit-view-mode: windowed) changed to false
+[2] - query (-webkit-view-mode: minimized) changed to true
+------------- windowed -------------
+[1] - query (-webkit-view-mode: minimized) changed to false
+[2] - query (-webkit-view-mode: windowed) changed to true
+[1] - query (-webkit-view-mode: windowed) changed to true
+[2] - query (-webkit-view-mode: minimized) changed to false
+

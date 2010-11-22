@@ -46,9 +46,6 @@ struct _WebKitDOMTestMediaQueryListListenerClass {
 WEBKIT_API GType
 webkit_dom_test_media_query_list_listener_get_type (void);
 
-WEBKIT_API void
-webkit_dom_test_media_query_list_listener_method(WebKitDOMTestMediaQueryListListener* self, WebKitDOMMediaQueryListListener* listener);
-
 G_END_DECLS
 
 #endif /* WebKitDOMTestMediaQueryListListener_h */

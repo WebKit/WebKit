@@ -140,6 +140,9 @@ module window {
         readonly attribute Document document;
 
         // CSSOM View Module
+        MediaQueryList matchMedia(in DOMString query);
+
+        // styleMedia has been removed from the CSSOM View specification.
         readonly attribute StyleMedia styleMedia;
 
         // DOM Level 2 Style Interface
