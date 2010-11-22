@@ -224,6 +224,7 @@
 #include "JSLocation.cpp"
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
+#include "JSMediaQueryList.cpp"
 #include "JSMemoryInfo.cpp"
 #include "JSMessageChannel.cpp"
 #include "JSMessageEvent.cpp"
