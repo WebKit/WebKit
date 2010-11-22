@@ -91,24 +91,32 @@ void WebInspector::showConsole()
 
 void WebInspector::startJavaScriptDebugging()
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController()->showPanel(InspectorController::ScriptsPanel);
     m_page->corePage()->inspectorController()->enableDebugger();
+#endif
 }
 
 void WebInspector::stopJavaScriptDebugging()
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController()->disableDebugger();
+#endif
 }
 
 void WebInspector::startJavaScriptProfiling()
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController()->startUserInitiatedProfiling();
+#endif
 }
 
 void WebInspector::stopJavaScriptProfiling()
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController()->stopUserInitiatedProfiling();
     m_page->corePage()->inspectorController()->showPanel(InspectorController::ProfilesPanel);
+#endif
 }
 
 void WebInspector::startPageProfiling()

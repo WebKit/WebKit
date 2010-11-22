@@ -1,3 +1,15 @@
+2010-11-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Make WebKit2 compile with ENABLE_JAVASCRIPT_DEBUGGER=0
+
+        * WebProcess/WebPage/WebInspector.cpp: Add missing ENABLE(JAVASCRIPT_DEBUGGER) guards.
+        (WebKit::WebInspector::startJavaScriptDebugging):
+        (WebKit::WebInspector::stopJavaScriptDebugging):
+        (WebKit::WebInspector::startJavaScriptProfiling):
+        (WebKit::WebInspector::stopJavaScriptProfiling):
+
 2010-11-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
