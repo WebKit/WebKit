@@ -48,7 +48,7 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
     // we will also check to see if the URL ends with .eot.  If so, we'll go ahead and assume that we shouldn't load it.
     if (m_format.isEmpty()) {
         // Check for .eot.
-        if (m_resource.endsWith("eot", false))
+        if (!m_resource.startsWith("data:", false) && m_resource.endsWith(".eot", false))
             return false;
         return true;
     }
