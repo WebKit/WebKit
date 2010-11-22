@@ -3223,3 +3223,6 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // Debug only timeout, so no coverage from canaries, somewhere in r72395:72417.
 BUG_JPARENT WIN DEBUG : inspector/styles-disable-then-delete.html = PASS TIMEOUT
+
+// Test added with http://trac.webkit.org/changeset/72504 needs better expectations for Chromium.
+BUGWK4989 : fast/css/font-face-data-uri.html = TEXT
