@@ -129,7 +129,7 @@ PASS HTMLHeadElementPrototype from inner.document.forms.testForm.0.parentNode.pr
 PASS HTMLHtmlElement from inner.document.forms.testForm.0.parentNode.parentNode
 PASS HTMLHtmlElementConstructor from inner.document.forms.testForm.0.parentNode.parentNode.constructor
 PASS HTMLHtmlElementPrototype from inner.document.forms.testForm.0.parentNode.parentNode.__proto__
-FAIL HTMLInputElement from inner.document.testForm[0].testInput
+PASS HTMLInputElement from inner.document.forms.testForm.0.0
 PASS HTMLInputElementConstructor from inner.document.forms.testForm.0.0.constructor
 PASS HTMLInputElementPrototype from inner.document.forms.testForm.0.0.__proto__
 PASS HTMLMediaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__.__proto__
