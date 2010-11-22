@@ -3227,3 +3227,12 @@ BUG_ANTONM : svg/dom/SVGNumberList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGPointList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGStringList-basics.xhtml = IMAGE
 BUG_ANTONM : svg/dom/SVGTransformList-basics.xhtml = IMAGE
+
+// Follow up to http://trac.webkit.org/changeset/72527
+// Careful with the tests below, they have exceptions for MAC above.
+BUG_ANTONM WIN LINUX : fast/css/empty-pseudo-class.html = IMAGE+TEXT
+BUG_ANTONM WIN LINUX : fast/css/first-child-pseudo-class.html = IMAGE+TEXT
+BUG_ANTONM WIN LINUX : fast/css/first-of-type-pseudo-class.html = IMAGE+TEXT
+BUG_ANTONM WIN LINUX : fast/css/last-child-pseudo-class.html = IMAGE+TEXT
+BUG_ANTONM WIN LINUX : fast/css/only-child-pseudo-class.html = IMAGE+TEXT
+BUG_ANTONM WIN LINUX : fast/css/only-of-type-pseudo-class.html = IMAGE+TEXT

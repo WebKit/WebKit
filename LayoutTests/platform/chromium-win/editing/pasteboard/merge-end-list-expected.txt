@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
         RenderBlock {UL} at (0,0) size 784x40
           RenderListItem {LI} at (40,0) size 744x40
             RenderBlock {DIV} at (0,0) size 744x20
-              RenderListMarker at (-18,0) size 7x19: bullet
+              RenderListMarker at (-90,0) size 7x19: bullet
               RenderText {#text} at (0,0) size 27x19
                 text run at (0,0) width 27: "Item"
               RenderText {#text} at (27,0) size 20x19

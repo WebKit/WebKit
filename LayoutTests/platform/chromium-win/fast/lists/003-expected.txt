@@ -119,42 +119,42 @@ layer at (0,0) size 800x380
       RenderBlock {DIV} at (0,0) size 784x332
         RenderBlock {UL} at (0,0) size 784x160
           RenderListItem {LI} at (40,0) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (688,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 38x19 [color=#0000EE]
               RenderText {#text} at (706,0) size 38x19
                 text run at (706,0) width 38: "About"
           RenderListItem {LI} at (40,20) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (673,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 53x19 [color=#0000EE]
               RenderText {#text} at (691,0) size 53x19
                 text run at (691,0) width 53: "Site map"
           RenderListItem {LI} at (40,40) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (673,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 53x19 [color=#0000EE]
               RenderText {#text} at (691,0) size 53x19
                 text run at (691,0) width 53: "Archives"
           RenderListItem {LI} at (40,60) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (676,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 50x19 [color=#0000EE]
               RenderText {#text} at (694,0) size 50x19
                 text run at (694,0) width 50: "Projects"
           RenderListItem {LI} at (40,80) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (684,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 42x19 [color=#0000EE]
               RenderText {#text} at (702,0) size 42x19
                 text run at (702,0) width 42: "Photos"
           RenderListItem {LI} at (40,100) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (673,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 53x19 [color=#0000EE]
               RenderText {#text} at (691,0) size 53x19
                 text run at (691,0) width 53: "Statistics"
           RenderListItem {LI} at (40,120) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (590,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 136x19 [color=#0000EE]
               RenderText {#text} at (608,0) size 136x19
                 text run at (608,0) width 136: "Accessibility statement"
           RenderListItem {LI} at (40,140) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (617,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 28x19 [color=#0000EE]
               RenderText {#text} at (635,0) size 28x19
                 text run at (635,0) width 28: "RSS"
@@ -167,38 +167,38 @@ layer at (0,0) size 800x380
               text run at (739,0) width 5: ")"
         RenderBlock {UL} at (0,176) size 784x20
           RenderListItem {LI} at (40,0) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (641,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 85x19 [color=#0000EE]
               RenderText {#text} at (659,0) size 85x19
                 text run at (659,0) width 85: "What is RSS?"
         RenderBlock {UL} at (0,212) size 784x120
           RenderListItem {LI} at (40,0) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (638,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
               RenderText {#text} at (656,0) size 88x19
                 text run at (656,0) width 88: "RSS Validator"
           RenderListItem {LI} at (40,20) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (591,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 135x19 [color=#0000EE]
               RenderText {#text} at (609,0) size 135x19
                 text run at (609,0) width 135: "Dive Into Accessibility"
           RenderListItem {LI} at (40,40) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (630,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 96x19 [color=#0000EE]
               RenderText {#text} at (648,0) size 96x19
                 text run at (648,0) width 96: "Dive Into OS X"
           RenderListItem {LI} at (40,60) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (634,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 92x19 [color=#0000EE]
               RenderText {#text} at (652,0) size 92x19
                 text run at (652,0) width 92: "Dive Into J2EE"
           RenderListItem {LI} at (40,80) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (624,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 102x19 [color=#0000EE]
               RenderText {#text} at (642,0) size 102x19
                 text run at (642,0) width 102: "Dive Into Python"
           RenderListItem {LI} at (40,100) size 744x20
-            RenderListMarker at (412,0) size 7x19: bullet
+            RenderListMarker at (683,0) size 7x19: bullet
             RenderInline {A} at (0,0) size 43x19 [color=#0000EE]
               RenderText {#text} at (701,0) size 43x19
                 text run at (701,0) width 43: "r\x{E9}sum\x{E9}"
