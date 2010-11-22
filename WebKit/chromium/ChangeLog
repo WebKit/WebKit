@@ -1,3 +1,10 @@
+2010-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Partially roll out r72282.
+        It should not have modified devtools files.
+
+        * src/js/devTools.css:
+
 2010-11-19  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Fisher.
