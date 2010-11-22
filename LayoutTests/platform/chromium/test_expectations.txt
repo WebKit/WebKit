@@ -896,7 +896,6 @@ BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 
 // May require re-baseline.
-BUGWK42370 WIN MAC : svg/custom/image-rescale.svg = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 
 // -----------------------------------------------------------------
