@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html> 
 <head>
-
+<script src="../../../resources/dump-as-markup.js"></script>
 <style>
 .editing { 
     border: 2px solid red; 
@@ -17,34 +18,9 @@
 .expected-results:first-line { font-weight: bold }
 </style>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function sendDeleteWordKey()
-{
-    var deleteWordModifiers;
-    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-        deleteWordModifiers = ["altKey"];
-    else
-        deleteWordModifiers = ["ctrlKey"];
-    if (window.eventSender)
-        eventSender.keyDown(String.fromCharCode(8), deleteWordModifiers);
-}
-
-function editingTest()
-{
-    moveSelectionForwardByWordCommand();
-    moveSelectionForwardByWordCommand();
-    sendDeleteWordKey();
-    undoCommand();
-}
-
-</script>
-
 <title>Editing Test</title> 
 </head> 
 <body>
-
 <div class="explanation">
 <div class="scenario">
 Tests: 
@@ -59,14 +35,31 @@ It should like this, with the word "two" selected:
 one two three four
 </div>
 </div>
-
 <div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
 <div id="test" class="editing">one two three four</div>
 </div>
-
 <script>
-runEditingTest();
-</script>
+function sendDeleteWordKey()
+{
+    var deleteWordModifiers;
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        deleteWordModifiers = ["altKey"];
+    else
+        deleteWordModifiers = ["ctrlKey"];
+    if (window.eventSender)
+        eventSender.keyDown(String.fromCharCode(8), deleteWordModifiers);
+    debugForDumpAsText("DeleteWord");
+}
 
+function editingTest()
+{
+    moveSelectionForwardByWordCommand();
+    moveSelectionForwardByWordCommand();
+    sendDeleteWordKey();
+    undoCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
 </body>
 </html>

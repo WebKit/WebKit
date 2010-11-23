@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html> 
 <head>
-
+<script src="../../../resources/dump-as-markup.js"></script>
 <style>
 .editing { 
     border: 2px solid red; 
@@ -17,7 +18,28 @@
 .expected-results:first-line { font-weight: bold }
 </style>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<title>Editing Test</title> 
+</head> 
+<body>
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Option-delete when a typing command is open.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Net result is a third "cha". It should like this:
+<BR>
+one two cha cha cha three four cha cha cha
+</div>
+</div>
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+one two cha cha three four cha cha cha
+</div>
+</div>
 <script>
 
 function sendDeleteWordKey()
@@ -29,6 +51,7 @@ function sendDeleteWordKey()
         deleteWordModifiers = ["ctrlKey"];
     if (window.eventSender)
         eventSender.keyDown(String.fromCharCode(8), deleteWordModifiers);
+    debugForDumpAsText("DeleteWord");
 }
 
 function editingTest()
@@ -45,36 +68,7 @@ function editingTest()
     typeCharacterCommand('a');
 }
 
+runDumpAsTextEditingTest(true);
 </script>
-
-<title>Editing Test</title> 
-</head> 
-<body>
-
-<div class="explanation">
-<div class="scenario">
-Tests: 
-<br>
-Option-delete when a typing command is open.
-</div>
-<div class="expected-results">
-Expected Results:
-<br>
-Net result is a third "cha". It should like this:
-<BR>
-one two cha cha cha three four cha cha cha
-</div>
-</div>
-
-<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
-<div id="test" class="editing">
-one two cha cha three four cha cha cha
-</div>
-</div>
-
-<script>
-runEditingTest();
-</script>
-
 </body>
 </html>

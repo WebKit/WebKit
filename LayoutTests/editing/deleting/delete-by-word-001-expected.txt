@@ -28,29 +28,17 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > DIV > BODY > HTML > #document to 11 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 12 of #text > DIV > DIV > BODY > HTML > #document to 12 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x199 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x62
-          RenderText {#text} at (0,0) size 67x32
-            text run at (0,0) width 67: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 480x32
-            text run at (0,31) width 480: "Option-delete when a typing command is open."
-        RenderBlock {DIV} at (14,92) size 756x93
-          RenderText {#text} at (0,0) size 189x32
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,31) size 470x32
-            text run at (0,31) width 470: "Net result is a third \"cha\". It should like this: "
-          RenderBR {BR} at (470,55) size 0x0
-          RenderText {#text} at (0,62) size 441x32
-            text run at (0,62) width 441: "one two cha cha cha three four cha cha cha"
-      RenderBlock {DIV} at (0,223) size 784x35
-        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 441x32
-            text run at (2,2) width 441: "one two cha cha cha three four cha cha cha"
-caret: position 12 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
+Tests: 
+Option-delete when a typing command is open.
+Expected Results: 
+Net result is a third "cha". It should like this: 
+one two cha cha cha three four cha cha cha
+one two cha cha cha three four cha cha cha
+execTypeCharacterCommand: <div id="test" class="editing"> one two &nbsp;cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two a cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two ab cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two abc cha cha three four cha cha cha </div>
+DeleteWord: <div id="test" class="editing"> one two &nbsp;cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two c cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two ch cha cha three four cha cha cha </div>
+execTypeCharacterCommand: <div id="test" class="editing"> one two cha cha cha three four cha cha cha </div>
