@@ -73,6 +73,12 @@ static Eina_List *windows = NULL;
 
 static char *themePath = NULL;
 
+static const char *backingStores[] = {
+    "tiled",
+    "single",
+    NULL
+};
+
 typedef struct _Window_Properties {
     Eina_Bool toolbarsVisible:1;
     Eina_Bool statusbarVisible:1;
@@ -102,6 +108,8 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
+        ECORE_GETOPT_CHOICE
+            ('b', "backing-store", "choose backing store to use.", backingStores),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('F', "fullscreen", "fullscreen mode.", 0),
         ECORE_GETOPT_CALLBACK_ARGS
@@ -144,12 +152,13 @@ typedef struct _ELauncher {
     Evas_Object *browser;
     const char *theme;
     const char *userAgent;
+    const char *backingStore;
     Viewport viewport;
 } ELauncher;
 
 static void browserDestroy(Ecore_Evas *ee);
 static void closeWindow(Ecore_Evas *ee);
-static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen, const char *databasePath);
+static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFullscreen, const char *databasePath);
 
 static void
 print_history(Eina_List *list)
@@ -584,7 +593,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Create new window (F9) was pressed.\n");
         Eina_Rectangle geometry = {0, 0, 0, 0};
         browserCreate("http://www.google.com",
-                       app->theme, app->userAgent, geometry, NULL, 0, NULL);
+                       app->theme, app->userAgent, geometry, app-> backingStore,
+                       NULL, 0, NULL);
     } else if (!strcmp(ev->key, "F10")) {
         Evas_Coord x, y, w, h;
         Evas_Object *frame = ewk_view_frame_main_get(obj);
@@ -597,6 +607,15 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         h *= 4;
         info("Pre-render %d,%d + %dx%d\n", x, y, w, h);
         ewk_view_pre_render_region(obj, x, y, w, h, zoom);
+    } else if (!strcmp(ev->key, "F11")) {
+        info("Pre-render 1 extra column/row with current zoom");
+        ewk_view_pre_render_relative_radius(obj, 1);
+    } else if (!strcmp(ev->key, "d")) {
+        info("Render suspended");
+        ewk_view_disable_render(obj);
+    } else if (!strcmp(ev->key, "e")) {
+        info("Render resumed");
+        ewk_view_enable_render(obj);
     }
 }
 
@@ -639,7 +658,7 @@ quit(Eina_Bool success, const char *msg)
 }
 
 static int
-browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen, const char *databasePath)
+browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFullscreen, const char *databasePath)
 {
     if ((geometry.w <= 0) && (geometry.h <= 0)) {
         geometry.w = DEFAULT_WIDTH;
@@ -669,6 +688,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
 
     app->theme = theme;
     app->userAgent = userAgent;
+    app->backingStore = backingStore;
 
     app->bg = evas_object_rectangle_add(app->evas);
     evas_object_name_set(app->bg, "bg");
@@ -677,8 +697,14 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_resize(app->bg, geometry.w, geometry.h);
     evas_object_layer_set(app->bg, EVAS_LAYER_MIN);
     evas_object_show(app->bg);
-    app->browser = ewk_view_single_add(app->evas);
 
+    if (backingStore && !strcasecmp(backingStore, "single")) {
+        app->browser = ewk_view_single_add(app->evas);
+        info("backing store: single\n");
+    } else {
+        app->browser = ewk_view_tiled_add(app->evas);
+        info("backing store: tiled\n");
+    }
     ewk_view_theme_set(app->browser, theme);
     if (userAgent)
         ewk_view_setting_user_agent_set(app->browser, userAgent);
@@ -800,6 +826,7 @@ main(int argc, char *argv[])
 
     char *engine = NULL;
     char *theme = NULL;
+    char *backingStore = (char *)backingStores[0];
 
     unsigned char quitOption = 0;
     unsigned char isFullscreen = 0;
@@ -809,6 +836,7 @@ main(int argc, char *argv[])
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(engine),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_STR(backingStore),
         ECORE_GETOPT_VALUE_BOOL(isFullscreen),
         ECORE_GETOPT_VALUE_PTR_CAST(geometry),
         ECORE_GETOPT_VALUE_STR(theme),
@@ -864,7 +892,7 @@ main(int argc, char *argv[])
     if (proxyUri)
         ewk_settings_proxy_uri_set(proxyUri);
 
-    browserCreate(url, themePath, userAgent, geometry, engine, isFullscreen, path);
+    browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFullscreen, path);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();
