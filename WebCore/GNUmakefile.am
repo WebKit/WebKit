@@ -662,25 +662,28 @@ webcore_sources += \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/IDBBindingUtilities.h \
-	WebCore/bindings/js/JavaScriptCallFrame.cpp \
-	WebCore/bindings/js/JavaScriptCallFrame.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
 	WebCore/bindings/js/JSAudioConstructor.h \
 	WebCore/bindings/js/JSBinding.h \
-	WebCore/bindings/js/JSCallbackData.cpp \
-	WebCore/bindings/js/JSCallbackData.h \
-	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
-	WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
 	WebCore/bindings/js/JSCDATASectionCustom.cpp \
-	WebCore/bindings/js/JSClipboardCustom.cpp \
-	WebCore/bindings/js/JSConsoleCustom.cpp \
-	WebCore/bindings/js/JSCoordinatesCustom.cpp \
+	WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
+	WebCore/bindings/js/JSCSSImportRuleCustom.cpp \
+	WebCore/bindings/js/JSCSSMediaRuleCustom.cpp \
+	WebCore/bindings/js/JSCSSPageRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleListCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
+	WebCore/bindings/js/JSCSSStyleRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
+	WebCore/bindings/js/JSCallbackData.cpp \
+	WebCore/bindings/js/JSCallbackData.h \
+	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+	WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
+	WebCore/bindings/js/JSClipboardCustom.cpp \
+	WebCore/bindings/js/JSConsoleCustom.cpp \
+	WebCore/bindings/js/JSCoordinatesCustom.cpp \
 	WebCore/bindings/js/JSCustomPositionCallback.cpp \
 	WebCore/bindings/js/JSCustomPositionCallback.h \
 	WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
@@ -690,17 +693,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomVoidCallback.h \
 	WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
 	WebCore/bindings/js/JSCustomXPathNSResolver.h \
-	WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
-	WebCore/bindings/js/JSDataGridDataSource.cpp \
-	WebCore/bindings/js/JSDataGridDataSource.h \
-	WebCore/bindings/js/JSDebugWrapperSet.cpp \
-	WebCore/bindings/js/JSDebugWrapperSet.h \
-	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
-	WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
-	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
-	WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
-	WebCore/bindings/js/JSDirectoryEntrySyncCustom.cpp \
-	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
 	WebCore/bindings/js/JSDOMBinding.cpp \
 	WebCore/bindings/js/JSDOMBinding.h \
@@ -720,6 +712,17 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWindowShell.h \
 	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
+	WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
+	WebCore/bindings/js/JSDataGridDataSource.cpp \
+	WebCore/bindings/js/JSDataGridDataSource.h \
+	WebCore/bindings/js/JSDebugWrapperSet.cpp \
+	WebCore/bindings/js/JSDebugWrapperSet.h \
+	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
+	WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
+	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
+	WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
+	WebCore/bindings/js/JSDirectoryEntrySyncCustom.cpp \
+	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEntryCustom.cpp \
 	WebCore/bindings/js/JSEntrySyncCustom.cpp \
@@ -733,8 +736,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSExceptionBase.h \
 	WebCore/bindings/js/JSFileReaderCustom.cpp \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
-	WebCore/bindings/js/JSHistoryCustom.cpp \
-	WebCore/bindings/js/JSHistoryCustom.h \
 	WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
@@ -758,6 +759,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.h \
 	WebCore/bindings/js/JSHTMLStyleElementCustom.cpp \
+	WebCore/bindings/js/JSHistoryCustom.cpp \
+	WebCore/bindings/js/JSHistoryCustom.h \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSImageConstructor.h \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
@@ -789,22 +792,24 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
 	WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
-	WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
-	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionSyncCustom.cpp \
+	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
+	WebCore/bindings/js/JSSVGLengthCustom.cpp \
+	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
+	WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
+	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	WebCore/bindings/js/JSStorageCustom.cpp \
 	WebCore/bindings/js/JSStorageCustom.h \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
-	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
-	WebCore/bindings/js/JSSVGLengthCustom.cpp \
-	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	WebCore/bindings/js/JSTextCustom.cpp \
 	WebCore/bindings/js/JSTouchCustom.cpp \
 	WebCore/bindings/js/JSTouchListCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
+	WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
+	WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	WebCore/bindings/js/JSWebSocketCustom.cpp \
@@ -817,6 +822,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
+	WebCore/bindings/js/JavaScriptCallFrame.cpp \
+	WebCore/bindings/js/JavaScriptCallFrame.h \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptCachedFrameData.cpp \
@@ -851,12 +858,12 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptWrappable.h \
 	WebCore/bindings/js/SerializedScriptValue.cpp \
 	WebCore/bindings/js/SerializedScriptValue.h \
-	WebCore/bindings/js/specialization/JSBindingState.cpp \
-	WebCore/bindings/js/specialization/JSBindingState.h \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bindings/js/WebCoreJSClientData.h \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
+	WebCore/bindings/js/specialization/JSBindingState.cpp \
+	WebCore/bindings/js/specialization/JSBindingState.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
 	WebCore/bindings/ScriptControllerBase.h \
 	WebCore/bridge/Bridge.h \

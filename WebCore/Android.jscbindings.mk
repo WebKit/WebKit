@@ -62,9 +62,14 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSAttrCustom.cpp \
 	bindings/js/JSAudioConstructor.cpp \
 	bindings/js/JSCDATASectionCustom.cpp \
+	bindings/js/JSCSSFontFaceRuleCustom.cpp \
+	bindings/js/JSCSSImportRuleCustom.cpp \
+	bindings/js/JSCSSMediaRuleCustom.cpp \
+	bindings/js/JSCSSPageRuleCustom.cpp \
 	bindings/js/JSCSSRuleCustom.cpp \
 	bindings/js/JSCSSRuleListCustom.cpp \
 	bindings/js/JSCSSStyleDeclarationCustom.cpp \
+	bindings/js/JSCSSStyleRuleCustom.cpp \
 	bindings/js/JSCSSValueCustom.cpp \
 	bindings/js/JSCallbackData.cpp \
 	bindings/js/JSCanvasRenderingContext2DCustom.cpp \
@@ -88,9 +93,9 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDOMWindowBase.cpp \
 	bindings/js/JSDOMWindowCustom.cpp \
 	bindings/js/JSDOMWindowShell.cpp \
-	bindings/js/JSDatabaseCallback.cpp \
 	bindings/js/JSDataGridColumnListCustom.cpp \
 	bindings/js/JSDataGridDataSource.cpp \
+	bindings/js/JSDatabaseCallback.cpp \
 	bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	bindings/js/JSDesktopNotificationsCustom.cpp \
 	bindings/js/JSDeviceMotionEventCustom.cpp \
@@ -159,6 +164,8 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSTouchCustom.cpp \
 	bindings/js/JSTouchListCustom.cpp \
 	bindings/js/JSTreeWalkerCustom.cpp \
+	bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
+	bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	bindings/js/JSWebKitPointCustom.cpp \
 	bindings/js/JSWorkerContextBase.cpp \

@@ -575,24 +575,40 @@ SET(WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
     bindings/js/IDBBindingUtilities.cpp
-    bindings/js/JavaScriptCallFrame.cpp
     bindings/js/JSAttrCustom.cpp
-    bindings/js/JSCallbackData.cpp
-    bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCanvasRenderingContextCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
-    bindings/js/JSClipboardCustom.cpp
-    bindings/js/JSConsoleCustom.cpp
-    bindings/js/JSCoordinatesCustom.cpp
+    bindings/js/JSCSSFontFaceRuleCustom.cpp
+    bindings/js/JSCSSImportRuleCustom.cpp
+    bindings/js/JSCSSMediaRuleCustom.cpp
+    bindings/js/JSCSSPageRuleCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
+    bindings/js/JSCSSStyleRuleCustom.cpp
     bindings/js/JSCSSValueCustom.cpp
+    bindings/js/JSCallbackData.cpp
+    bindings/js/JSCanvasRenderingContext2DCustom.cpp
+    bindings/js/JSCanvasRenderingContextCustom.cpp
+    bindings/js/JSClipboardCustom.cpp
+    bindings/js/JSConsoleCustom.cpp
+    bindings/js/JSCoordinatesCustom.cpp
     bindings/js/JSCustomPositionCallback.cpp
     bindings/js/JSCustomPositionErrorCallback.cpp
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomVoidCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
+    bindings/js/JSDOMApplicationCacheCustom.cpp
+    bindings/js/JSDOMBinding.cpp
+    bindings/js/JSDOMFormDataCustom.cpp
+    bindings/js/JSDOMGlobalObject.cpp
+    bindings/js/JSDOMMimeTypeArrayCustom.cpp
+    bindings/js/JSDOMPluginArrayCustom.cpp
+    bindings/js/JSDOMPluginCustom.cpp
+    bindings/js/JSDOMStringMapCustom.cpp
+    bindings/js/JSDOMWindowBase.cpp
+    bindings/js/JSDOMWindowCustom.cpp
+    bindings/js/JSDOMWindowShell.cpp
+    bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDataGridColumnListCustom.cpp
     bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDebugWrapperSet.cpp
@@ -600,15 +616,6 @@ SET(WebCore_SOURCES
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
-    bindings/js/JSDOMApplicationCacheCustom.cpp
-    bindings/js/JSDOMBinding.cpp
-    bindings/js/JSDOMFormDataCustom.cpp
-    bindings/js/JSDOMGlobalObject.cpp
-    bindings/js/JSDOMStringMapCustom.cpp
-    bindings/js/JSDOMWindowBase.cpp
-    bindings/js/JSDOMWindowCustom.cpp
-    bindings/js/JSDOMWindowShell.cpp
-    bindings/js/JSDOMWrapper.cpp
     bindings/js/JSElementCustom.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
@@ -617,9 +624,6 @@ SET(WebCore_SOURCES
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
-    bindings/js/JSHistoryCustom.cpp
-    bindings/js/JSIDBAnyCustom.cpp
-    bindings/js/JSIDBKeyCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
     bindings/js/JSHTMLAppletElementCustom.cpp
     bindings/js/JSHTMLCanvasElementCustom.cpp
@@ -638,6 +642,9 @@ SET(WebCore_SOURCES
     bindings/js/JSHTMLOutputElementCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp
     bindings/js/JSHTMLStyleElementCustom.cpp
+    bindings/js/JSHistoryCustom.cpp
+    bindings/js/JSIDBAnyCustom.cpp
+    bindings/js/JSIDBKeyCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
@@ -649,7 +656,6 @@ SET(WebCore_SOURCES
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
-    bindings/js/JSDOMMimeTypeArrayCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
     bindings/js/JSNavigatorCustom.cpp
     bindings/js/JSNodeCustom.cpp
@@ -658,16 +664,14 @@ SET(WebCore_SOURCES
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSOptionConstructor.cpp
-    bindings/js/JSDOMPluginArrayCustom.cpp
-    bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
-    bindings/js/JSScriptProfileNodeCustom.cpp
-    bindings/js/JSSharedWorkerCustom.cpp
     bindings/js/JSSQLResultSetRowListCustom.cpp
     bindings/js/JSSQLTransactionCustom.cpp
     bindings/js/JSSQLTransactionSyncCustom.cpp
+    bindings/js/JSScriptProfileNodeCustom.cpp
+    bindings/js/JSSharedWorkerCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
@@ -675,6 +679,8 @@ SET(WebCore_SOURCES
     bindings/js/JSTouchCustom.cpp
     bindings/js/JSTouchListCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
+    bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
     bindings/js/JSWebSocketCustom.cpp
@@ -685,6 +691,7 @@ SET(WebCore_SOURCES
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
+    bindings/js/JavaScriptCallFrame.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptCallStackFactory.cpp
