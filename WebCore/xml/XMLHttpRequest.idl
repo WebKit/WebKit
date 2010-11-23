@@ -95,6 +95,12 @@ module xml {
         readonly attribute [EnabledAtRuntime] Blob responseBlob
             getter raises(DOMException);
 #endif
+
+        attribute DOMString responseType
+            setter raises(DOMException);
+        readonly attribute [CustomGetter] Object response
+            getter raises(DOMException);
+
         readonly attribute unsigned short status
             getter raises(DOMException);
         readonly attribute DOMString statusText

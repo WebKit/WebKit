@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
+#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
@@ -38,6 +39,7 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
+#include "JSArrayBuffer.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
@@ -59,6 +61,19 @@ void JSXMLHttpRequest::markChildren(MarkStack& markStack)
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), upload);
 
+    if (Document* responseDocument = m_impl->optionalResponseXML())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseDocument);
+
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+    if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseArrayBuffer);
+#endif
+
+#if ENABLE(XHR_RESPONSE_BLOB)
+    if (Blob* responseBlob = m_impl->optionalResponseBlob())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseBlob);
+#endif
+
     m_impl->markJSEventListeners(markStack);
 }
 
@@ -77,7 +92,7 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
 
         if (exec->argumentCount() >= 4 && !exec->argument(3).isUndefined()) {
             String user = valueToStringWithNullCheck(exec, exec->argument(3));
-            
+
             if (exec->argumentCount() >= 5 && !exec->argument(4).isUndefined()) {
                 String password = valueToStringWithNullCheck(exec, exec->argument(4));
                 impl()->open(method, url, async, user, password, ec);
@@ -134,6 +149,56 @@ JSValue JSXMLHttpRequest::responseText(ExecState* exec) const
         return jsUndefined();
     }
     return jsOwnedStringOrNull(exec, text);
+}
+
+JSValue JSXMLHttpRequest::response(ExecState* exec) const
+{
+    switch (impl()->responseTypeCode()) {
+    case XMLHttpRequest::ResponseTypeDefault:
+    case XMLHttpRequest::ResponseTypeText:
+        return responseText(exec);
+
+    case XMLHttpRequest::ResponseTypeDocument:
+        {
+            ExceptionCode ec = 0;
+            Document* document = impl()->responseXML(ec);
+            if (ec) {
+                setDOMException(exec, ec);
+                return jsUndefined();
+            }
+            return toJS(exec, globalObject(), document);
+        }
+
+    case XMLHttpRequest::ResponseTypeBlob:
+#if ENABLE(XHR_RESPONSE_BLOB)
+        {
+            ExceptionCode ec = 0;
+            Blob* blob = impl()->responseBlob(ec);
+            if (ec) {
+                setDOMException(exec, ec);
+                return jsUndefined();
+            }
+            return toJS(exec, globalObject(), blob);
+        }
+#else
+        return jsUndefined();
+#endif
+
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+    case XMLHttpRequest::ResponseTypeArrayBuffer:
+        {
+            ExceptionCode ec = 0;
+            ArrayBuffer* arrayBuffer = impl()->responseArrayBuffer(ec);
+            if (ec) {
+                setDOMException(exec, ec);
+                return jsUndefined();
+            }
+            return toJS(exec, globalObject(), arrayBuffer);
+        }
+#endif
+    }
+
+    return jsUndefined();
 }
 
 EncodedJSValue JSC_HOST_CALL JSXMLHttpRequestConstructor::constructJSXMLHttpRequest(ExecState* exec)

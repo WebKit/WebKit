@@ -22,6 +22,7 @@
 #include "config.h"
 #include "XMLHttpRequest.h"
 
+#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "MemoryCache.h"
 #include "CrossOriginAccessControl.h"
@@ -40,6 +41,7 @@
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
 #include "XMLHttpRequestException.h"
@@ -169,9 +171,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_async(true)
     , m_includeCredentials(false)
-#if ENABLE(XHR_RESPONSE_BLOB)
-    , m_asBlob(false)
-#endif
     , m_state(UNSENT)
     , m_createdDocument(false)
     , m_error(false)
@@ -182,6 +181,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_lastSendLineNumber(0)
     , m_exceptionCode(0)
     , m_progressEventThrottle(this)
+    , m_responseTypeCode(ResponseTypeDefault)
 {
     initializeXMLHttpRequestStaticData();
 #ifndef NDEBUG
@@ -222,25 +222,19 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
 
 String XMLHttpRequest::responseText(ExceptionCode& ec)
 {
-#if ENABLE(XHR_RESPONSE_BLOB)
-    if (m_asBlob)
+    if (responseTypeCode() != ResponseTypeDefault && responseTypeCode() != ResponseTypeText) {
         ec = INVALID_STATE_ERR;
-#else
-    UNUSED_PARAM(ec);
-#endif
+        return "";
+    }
     return m_responseBuilder.toStringPreserveCapacity();
 }
 
 Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 {
-#if ENABLE(XHR_RESPONSE_BLOB)
-    if (m_asBlob) {
+    if (responseTypeCode() != ResponseTypeDefault && responseTypeCode() != ResponseTypeText && responseTypeCode() != ResponseTypeDocument) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
-#else
-    UNUSED_PARAM(ec);
-#endif
 
     if (m_state != DONE)
         return 0;
@@ -269,13 +263,78 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 #if ENABLE(XHR_RESPONSE_BLOB)
 Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec) const
 {
-    if (!m_asBlob) {
+    if (responseTypeCode() != ResponseTypeBlob) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
     return m_responseBlob.get();
 }
 #endif
+
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
+{
+    if (m_responseTypeCode != ResponseTypeArrayBuffer) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    if (m_state != DONE)
+        return 0;
+
+    if (!m_responseArrayBuffer.get() && m_binaryResponseBuilder.get() && m_binaryResponseBuilder->size() > 0) {
+        m_responseArrayBuffer = ArrayBuffer::create(const_cast<char*>(m_binaryResponseBuilder->data()), static_cast<unsigned>(m_binaryResponseBuilder->size()));
+        m_binaryResponseBuilder.clear();
+    }
+
+    if (m_responseArrayBuffer.get())
+        return m_responseArrayBuffer.get();
+
+    return 0;
+}
+#endif
+
+void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& ec)
+{
+    if (m_state != OPENED || m_loader) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (responseType == "")
+        m_responseTypeCode = ResponseTypeDefault;
+    else if (responseType == "text")
+        m_responseTypeCode = ResponseTypeText;
+    else if (responseType == "document")
+        m_responseTypeCode = ResponseTypeDocument;
+    else if (responseType == "blob") {
+#if ENABLE(XHR_RESPONSE_BLOB)
+        m_responseTypeCode = ResponseTypeBlob;
+#endif
+    } else if (responseType == "arraybuffer") {
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+        m_responseTypeCode = ResponseTypeArrayBuffer;
+#endif
+    } else
+        ec = SYNTAX_ERR;
+}
+
+String XMLHttpRequest::responseType()
+{
+    switch (m_responseTypeCode) {
+    case ResponseTypeDefault:
+        return "";
+    case ResponseTypeText:
+        return "text";
+    case ResponseTypeDocument:
+        return "document";
+    case ResponseTypeBlob:
+        return "blob";
+    case ResponseTypeArrayBuffer:
+        return "arraybuffer";
+    }
+    return "";
+}
 
 XMLHttpRequestUpload* XMLHttpRequest::upload()
 {
@@ -328,8 +387,8 @@ void XMLHttpRequest::setAsBlob(bool value, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
-
-    m_asBlob = value;
+    
+    m_responseTypeCode = value ? ResponseTypeBlob : ResponseTypeDefault;
 }
 #endif
 
@@ -344,9 +403,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     State previousState = m_state;
     m_state = UNSENT;
     m_error = false;
-#if ENABLE(XHR_RESPONSE_BLOB)
-    m_asBlob = false;
-#endif
+    m_responseTypeCode = ResponseTypeDefault;
     m_uploadComplete = false;
 
     // clear stuff from possible previous load
@@ -666,6 +723,10 @@ void XMLHttpRequest::clearResponse()
 #if ENABLE(XHR_RESPONSE_BLOB)
     m_responseBlob = 0;
 #endif
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+    m_binaryResponseBuilder.clear();
+    m_responseArrayBuffer.clear();
+#endif
 }
 
 void XMLHttpRequest::clearRequest()
@@ -920,9 +981,9 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
         m_responseBuilder.append(m_decoder->flush());
 
     m_responseBuilder.shrinkToFit();
-
+    
 #if ENABLE(XHR_RESPONSE_BLOB)
-    // FIXME: Set m_responseBlob to something here in the m_asBlob case.
+    // FIXME: Set m_responseBlob to something here in the ResponseTypeBlob case.
 #endif
 
 #if ENABLE(INSPECTOR)
@@ -976,7 +1037,9 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
 
-    if (!m_decoder) {
+    bool useDecoder = responseTypeCode() == ResponseTypeDefault || responseTypeCode() == ResponseTypeText || responseTypeCode() == ResponseTypeDocument;
+
+    if (useDecoder && !m_decoder) {
         if (!m_responseEncoding.isEmpty())
             m_decoder = TextResourceDecoder::create("text/plain", m_responseEncoding);
         // allow TextResourceDecoder to look inside the m_response if it's XML or HTML
@@ -996,7 +1059,16 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     if (len == -1)
         len = strlen(data);
 
-    m_responseBuilder.append(m_decoder->decode(data, len));
+    if (useDecoder)
+        m_responseBuilder.append(m_decoder->decode(data, len));
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+    else if (responseTypeCode() == ResponseTypeArrayBuffer) {
+        // Buffer binary data.
+        if (!m_binaryResponseBuilder)
+            m_binaryResponseBuilder = SharedBuffer::create();
+        m_binaryResponseBuilder->append(data, len);
+    }
+#endif
 
     if (!m_error) {
         long long expectedLength = m_response.expectedContentLength();
