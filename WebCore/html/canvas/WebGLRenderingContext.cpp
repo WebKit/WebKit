@@ -2249,8 +2249,12 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
+    if (format != GraphicsContext3D::RGBA && type != GraphicsContext3D::UNSIGNED_BYTE) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+    if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
     // Validate array type against pixel type.
