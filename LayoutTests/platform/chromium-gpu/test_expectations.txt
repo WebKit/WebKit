@@ -222,11 +222,6 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.null.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.drawImage.canvas.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.drawImage.image.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.fillStyle.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/security.reset.html = TEXT
 BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
 // END OF DUPLICATED SECTION
@@ -376,6 +371,4 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUG_LOISLO : fast/canvas/canvas-drawImage-shadow.html = TEXT
 
 BUG_LOISLO MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
-BUG_LOISLO MAC : compositing/plugins/composited-plugin.html = CRASH
 BUG_LOISLO MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
-BUG_LOISLO MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
