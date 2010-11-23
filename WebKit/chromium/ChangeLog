@@ -1,3 +1,32 @@
+2010-11-23  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Introduce wrapper types for WebCore::GeolocationError, WebCore::GeolocationPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=49735
+
+        Introduce WebKit API types so that the browser implementation can feed
+        position and error updates to the WebCore::GeolocationController.
+
+        * WebKit.gyp:
+        * public/WebGeolocationError.h: Added.
+        (WebKit::WebGeolocationError::WebGeolocationError):
+        (WebKit::WebGeolocationError::~WebGeolocationError):
+        * public/WebGeolocationPosition.h: Added.
+        (WebKit::WebGeolocationPosition::WebGeolocationPosition):
+        (WebKit::WebGeolocationPosition::~WebGeolocationPosition):
+        * src/WebGeolocationError.cpp: Added.
+        (WebKit::WebGeolocationError::assign):
+        (WebKit::WebGeolocationError::reset):
+        (WebKit::WebGeolocationError::WebGeolocationError):
+        (WebKit::WebGeolocationError::operator=):
+        (WebKit::WebGeolocationError::operator WTF::PassRefPtr<WebCore::GeolocationError>):
+        * src/WebGeolocationPosition.cpp: Added.
+        (WebKit::WebGeolocationPosition::assign):
+        (WebKit::WebGeolocationPosition::reset):
+        (WebKit::WebGeolocationPosition::operator=):
+        (WebKit::WebGeolocationPosition::operator PassRefPtr<WebCore::GeolocationPosition>):
+
 2010-11-23  Jonathan Backer  <backer@chromium.org>
 
         Reviewed by Kenneth Russell.

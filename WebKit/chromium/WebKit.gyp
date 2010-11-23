@@ -173,6 +173,8 @@
                 'public/WebFontCache.h',
                 'public/WebFormControlElement.h',
                 'public/WebFormElement.h',
+                'public/WebGeolocationError.h',
+                'public/WebGeolocationPosition.h',
                 'public/WebGeolocationService.h',
                 'public/WebGeolocationServiceBridge.h',
                 'public/WebGeolocationServiceMock.h',
@@ -442,6 +444,8 @@
                 'src/WebFormElement.cpp',
                 'src/WebFrameImpl.cpp',
                 'src/WebFrameImpl.h',
+                'src/WebGeolocationError.cpp',
+                'src/WebGeolocationPosition.cpp',
                 'src/WebGeolocationServiceBridgeImpl.cpp',
                 'src/WebGeolocationServiceBridgeImpl.h',
                 'src/WebGeolocationServiceMock.cpp',
@@ -666,6 +670,11 @@
                         ['exclude', 'WebGeolocationService.*$'],
                         ['include', 'WebGeolocationServiceMock.*'],
                     ],
+                }, {
+                   'sources/': [
+                        ['exclude', 'WebGeolocationError.*'],
+                        ['exclude', 'WebGeolocationPosition.*'],
+                   ],
                 }]
             ],
         },

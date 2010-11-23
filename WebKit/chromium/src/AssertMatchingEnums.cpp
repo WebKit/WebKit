@@ -41,6 +41,8 @@
 #include "FileMetadata.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
+#include "GeolocationError.h"
+#include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
@@ -62,6 +64,8 @@
 #include "WebFileInfo.h"
 #include "WebFileSystem.h"
 #include "WebFontDescription.h"
+#include "WebGeolocationError.h"
+#include "WebGeolocationPosition.h"
 #include "WebIDBKey.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -383,3 +387,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorInvalidModification, FileError::INVALID
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorQuotaExceeded, FileError::QUOTA_EXCEEDED_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorTypeMismatch, FileError::TYPE_MISMATCH_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorPathExists, FileError::PATH_EXISTS_ERR);
+
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, GeolocationError::PermissionDenied);
+COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
+#endif
