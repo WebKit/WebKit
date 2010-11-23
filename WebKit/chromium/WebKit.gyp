@@ -290,6 +290,8 @@
                 'src/ApplicationCacheHost.cpp',
                 'src/ApplicationCacheHostInternal.h',
                 'src/AssertMatchingEnums.cpp',
+                'src/AssociatedURLLoader.cpp',
+                'src/AssociatedURLLoader.h',
                 'src/AsyncFileSystemChromium.cpp',
                 'src/AsyncFileSystemChromium.h',
                 'src/AsyncFileWriterChromium.cpp',

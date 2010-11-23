@@ -61,6 +61,7 @@ class WebRange;
 class WebSecurityOrigin;
 class WebString;
 class WebURL;
+class WebURLLoader;
 class WebURLRequest;
 class WebView;
 struct WebConsoleMessage;
@@ -327,7 +328,13 @@ public:
     // Called to associate the WebURLRequest with this frame.  The request
     // will be modified to inherit parameters that allow it to be loaded.
     // This method ends up triggering WebFrameClient::willSendRequest.
+    // DEPRECATED: Please use createAssociatedURLLoader instead.
     virtual void dispatchWillSendRequest(WebURLRequest&) = 0;
+
+    // Returns a WebURLLoader that is associated with this frame.  The loader
+    // will, for example, be cancelled when WebFrame::stopLoading is called.
+    // FIXME: stopLoading does not yet cancel an associated loader!!
+    virtual WebURLLoader* createAssociatedURLLoader() = 0;
 
     // Called from within WebFrameClient::didReceiveDocumentData to commit
     // data for the frame that will be used to construct the frame's
