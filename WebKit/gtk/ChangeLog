@@ -1,3 +1,22 @@
+2010-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        focus issue with links that have tooltips
+        https://bugs.webkit.org/show_bug.cgi?id=49498
+
+        Set the area of the widget where the tooltip should be shown when
+        a new tooltip is set. Since the widget is the same (the view), if
+        the tooltip area is not set and a new tooltip is triggered while
+        the previous one is still visible, the text of the tooltip is
+        updated but its position doesn't change.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_query_tooltip):
+
 2010-11-21  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

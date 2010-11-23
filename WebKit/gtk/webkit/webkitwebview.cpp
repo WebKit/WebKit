@@ -1637,6 +1637,13 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(widget);
 
     if (priv->tooltipText.length() > 0) {
+        if (!keyboard_mode) {
+            if (!priv->tooltipArea.isEmpty()) {
+                GdkRectangle area = priv->tooltipArea;
+                gtk_tooltip_set_tip_area(tooltip, &area);
+            } else
+                gtk_tooltip_set_tip_area(tooltip, 0);
+        }
         gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
         return TRUE;
     }

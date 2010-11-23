@@ -520,6 +520,9 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
         g_signal_emit_by_name(m_webView, "hovering-over-link", 0, 0);
         m_hoveredLinkURL = KURL();
     }
+
+    Node* node = hit.innerNonSharedNode();
+    m_webView->priv->tooltipArea = node ? node->getRect() : IntRect();
 }
 
 void ChromeClient::setToolTip(const String& toolTip, TextDirection)
