@@ -257,6 +257,12 @@ void closeFile(PlatformFileHandle& handle)
     }
 }
 
+long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+{
+    // FIXME - Awaiting implementation, see https://bugs.webkit.org/show_bug.cgi?id=43878
+    return -1;
+}
+
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     int totalBytesWritten = 0;

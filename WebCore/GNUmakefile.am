@@ -246,10 +246,14 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
 	DerivedSources/WebCore/JSFile.h \
+	DerivedSources/WebCore/JSFileException.cpp \
+	DerivedSources/WebCore/JSFileException.h \
 	DerivedSources/WebCore/JSFileList.cpp \
 	DerivedSources/WebCore/JSFileList.h \
 	DerivedSources/WebCore/JSFileReader.cpp \
 	DerivedSources/WebCore/JSFileReader.h \
+	DerivedSources/WebCore/JSFileReaderSync.cpp \
+	DerivedSources/WebCore/JSFileReaderSync.h \
 	DerivedSources/WebCore/JSFloat32Array.cpp \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
@@ -668,6 +672,7 @@ webcore_sources += \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/IDBBindingUtilities.h \
+	WebCore/bindings/js/JSArrayBufferCustom.cpp \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
 	WebCore/bindings/js/JSAudioConstructor.h \
@@ -741,6 +746,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSExceptionBase.cpp \
 	WebCore/bindings/js/JSExceptionBase.h \
 	WebCore/bindings/js/JSFileReaderCustom.cpp \
+	WebCore/bindings/js/JSFloat32ArrayCustom.cpp \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -772,6 +778,9 @@ webcore_sources += \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
 	WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
 	WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
+	WebCore/bindings/js/JSInt16ArrayCustom.cpp \
+	WebCore/bindings/js/JSInt32ArrayCustom.cpp \
+	WebCore/bindings/js/JSInt8ArrayCustom.cpp \
 	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	WebCore/bindings/js/JSLazyEventListener.cpp \
 	WebCore/bindings/js/JSLazyEventListener.h \
@@ -816,6 +825,9 @@ webcore_sources += \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
+	WebCore/bindings/js/JSUint16ArrayCustom.cpp \
+	WebCore/bindings/js/JSUint32ArrayCustom.cpp \
+	WebCore/bindings/js/JSUint8ArrayCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	WebCore/bindings/js/JSWebSocketCustom.cpp \
@@ -1494,7 +1506,10 @@ webcore_sources += \
 	WebCore/html/BaseTextInputType.h \
 	WebCore/html/ButtonInputType.cpp \
 	WebCore/html/ButtonInputType.h \
+	WebCore/html/canvas/ArrayBuffer.cpp \
 	WebCore/html/canvas/ArrayBuffer.h \
+	WebCore/html/canvas/ArrayBufferView.cpp \
+	WebCore/html/canvas/ArrayBufferView.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \
@@ -1508,6 +1523,20 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasStyle.cpp \
 	WebCore/html/canvas/CanvasStyle.h \
+	WebCore/html/canvas/Float32Array.cpp \
+	WebCore/html/canvas/Float32Array.h \
+	WebCore/html/canvas/Int16Array.cpp \
+	WebCore/html/canvas/Int16Array.h \
+	WebCore/html/canvas/Int32Array.cpp \
+	WebCore/html/canvas/Int32Array.h \
+	WebCore/html/canvas/Int8Array.cpp \
+	WebCore/html/canvas/Int8Array.h \
+	WebCore/html/canvas/Uint16Array.cpp \
+	WebCore/html/canvas/Uint16Array.h \
+	WebCore/html/canvas/Uint32Array.cpp \
+	WebCore/html/canvas/Uint32Array.h \
+	WebCore/html/canvas/Uint8Array.cpp \
+	WebCore/html/canvas/Uint8Array.h \
 	WebCore/html/DOMSettableTokenList.cpp \
 	WebCore/html/DOMSettableTokenList.h \
 	WebCore/html/DOMTokenList.cpp \
