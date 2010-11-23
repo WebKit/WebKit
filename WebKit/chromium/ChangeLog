@@ -1,3 +1,16 @@
+2010-11-23  Jonathan Backer  <backer@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Renderer is resizing IOSurfaces when accelerated compositing is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=49827
+
+        - IOSurfaces are only presented when accelerated compositing is enabled.
+        - Slight performance increase (and clean-up for using this path for Linux and Windows).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2010-11-23  Grace Kloba  <klobag@chromium.org>
 
         Reviewed by Kenneth Russell.

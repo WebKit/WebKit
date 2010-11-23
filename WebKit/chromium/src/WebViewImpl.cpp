@@ -937,7 +937,7 @@ void WebViewImpl::resize(const WebSize& newSize)
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_layerRenderer) {
+    if (m_layerRenderer && isAcceleratedCompositingActive()) {
         m_layerRenderer->resizeOnscreenContent(IntSize(std::max(1, m_size.width),
                                                        std::max(1, m_size.height)));
     }
