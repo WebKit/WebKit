@@ -1,3 +1,14 @@
+2010-11-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Fix some spacing issues with log messages with
+        new-run-webkit-tests --verbose.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49936
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
 2010-11-22  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
