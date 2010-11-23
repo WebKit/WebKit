@@ -2111,16 +2111,16 @@ bool QWebPage::shouldInterruptJavaScript()
 #endif
 }
 
-void QWebPage::setUserPermission(QWebFrame* frame, PermissionDomain domain, PermissionPolicy policy)
+void QWebPage::setUserPermission(QWebFrame* frame, Feature feature, PermissionPolicy policy)
 {
-    switch (domain) {
-    case NotificationsPermissionDomain:
+    switch (feature) {
+    case Notifications:
 #if ENABLE(NOTIFICATIONS)
         if (policy == PermissionGrantedByUser)
             NotificationPresenterClientQt::notificationPresenter()->allowNotificationForFrame(frame->d->frame);
 #endif
         break;
-    case GeolocationPermissionDomain:
+    case Geolocation:
 #if ENABLE(GEOLOCATION)
         GeolocationPermissionClientQt::geolocationPermissionClient()->setPermission(frame, policy);
 #endif

@@ -194,12 +194,12 @@ public:
 
     QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&);
 
-    void permissionSet(QWebPage::PermissionDomain domain);
+    void permissionSet(QWebPage::Feature feature);
 
 public slots:
     bool shouldInterruptJavaScript() { return false; }
-    void requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
-    void cancelPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
+    void requestPermission(QWebFrame* frame, QWebPage::Feature feature);
+    void cancelPermission(QWebFrame* frame, QWebPage::Feature feature);
 
 protected:
     bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);

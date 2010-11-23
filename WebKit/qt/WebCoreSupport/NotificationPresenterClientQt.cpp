@@ -328,7 +328,7 @@ void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* co
 
         if (toPage(context) && toFrame(context)) {
             m_pendingPermissionRequests.insert(context, info);
-            emit toPage(context)->requestPermissionFromUser(toFrame(context), QWebPage::NotificationsPermissionDomain);
+            emit toPage(context)->requestPermissionFromUser(toFrame(context), QWebPage::Notifications);
         }
     }
 }
@@ -358,7 +358,7 @@ void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionC
     if (dumpNotification)
         printf("DESKTOP NOTIFICATION PERMISSION REQUEST CANCELLED: %s\n", QString(context->securityOrigin()->toString()).toUtf8().constData());
 
-    emit page->cancelRequestsForPermission(frame, QWebPage::NotificationsPermissionDomain);
+    emit page->cancelRequestsForPermission(frame, QWebPage::Notifications);
 }
 
 void NotificationPresenterClientQt::allowNotificationForFrame(Frame* frame)

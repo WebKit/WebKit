@@ -158,8 +158,8 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     setNetworkAccessManager(m_drt->networkAccessManager());
     setPluginFactory(new TestPlugin(this));
 
-    connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(requestPermission(QWebFrame*, QWebPage::PermissionDomain)));
-    connect(this, SIGNAL(cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)), this, SLOT(cancelPermission(QWebFrame*, QWebPage::PermissionDomain)));
+    connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::Feature)), this, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
+    connect(this, SIGNAL(cancelRequestsForPermission(QWebFrame*, QWebPage::Feature)), this, SLOT(cancelPermission(QWebFrame*, QWebPage::Feature)));
 }
 
 WebPage::~WebPage()
@@ -219,19 +219,19 @@ void WebPage::javaScriptAlert(QWebFrame*, const QString& message)
     fprintf(stdout, "ALERT: %s\n", message.toUtf8().constData());
 }
 
-void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain)
+void WebPage::requestPermission(QWebFrame* frame, QWebPage::Feature feature)
 {
-    switch (domain) {
-    case NotificationsPermissionDomain:
+    switch (feature) {
+    case Notifications:
         if (!m_drt->layoutTestController()->ignoreReqestForPermission())
-            setUserPermission(frame, domain, PermissionGrantedByUser);
+            setUserPermission(frame, feature, PermissionGrantedByUser);
         break;
-    case GeolocationPermissionDomain:
+    case Geolocation:
         if (m_drt->layoutTestController()->isGeolocationPermissionSet())
             if (m_drt->layoutTestController()->geolocationPermission())
-                setUserPermission(frame, domain, PermissionGrantedByUser);
+                setUserPermission(frame, feature, PermissionGrantedByUser);
             else
-                setUserPermission(frame, domain, PermissionDeniedByUser);
+                setUserPermission(frame, feature, PermissionDeniedByUser);
         else
             m_pendingGeolocationRequests.append(frame);
         break;
@@ -240,10 +240,10 @@ void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain dom
     }
 }
 
-void WebPage::cancelPermission(QWebFrame* frame, QWebPage::PermissionDomain domain)
+void WebPage::cancelPermission(QWebFrame* frame, QWebPage::Feature feature)
 {
-    switch (domain) {
-    case GeolocationPermissionDomain:
+    switch (feature) {
+    case Geolocation:
         m_pendingGeolocationRequests.removeOne(frame);
         break;
     default:
@@ -251,17 +251,17 @@ void WebPage::cancelPermission(QWebFrame* frame, QWebPage::PermissionDomain doma
     }
 }
 
-void WebPage::permissionSet(QWebPage::PermissionDomain domain)
+void WebPage::permissionSet(QWebPage::Feature feature)
 {
-    switch (domain) {
-    case GeolocationPermissionDomain:
+    switch (feature) {
+    case Geolocation:
         {
         Q_ASSERT(m_drt->layoutTestController()->isGeolocationPermissionSet());
         foreach (QWebFrame* frame, m_pendingGeolocationRequests)
             if (m_drt->layoutTestController()->geolocationPermission())
-                setUserPermission(frame, domain, PermissionGrantedByUser);
+                setUserPermission(frame, feature, PermissionGrantedByUser);
             else
-                setUserPermission(frame, domain, PermissionDeniedByUser);
+                setUserPermission(frame, feature, PermissionDeniedByUser);
 
         m_pendingGeolocationRequests.clear();
         break;
@@ -1077,7 +1077,7 @@ int DumpRenderTree::windowCount() const
 
 void DumpRenderTree::geolocationPermissionSet() 
 {
-    m_page->permissionSet(QWebPage::GeolocationPermissionDomain);
+    m_page->permissionSet(QWebPage::Geolocation);
 }
 
 void DumpRenderTree::switchFocus(bool focused)

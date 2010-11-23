@@ -57,8 +57,8 @@ public slots:
     void setUserAgent(const QString& ua) { m_userAgent = ua; }
     bool shouldInterruptJavaScript();
     void authenticationRequired(QNetworkReply*, QAuthenticator*);
-    void requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
-    void cancelRequestsForPermission(QWebFrame* frame, QWebPage::PermissionDomain domain);
+    void requestPermission(QWebFrame* frame, QWebPage::Feature feature);
+    void cancelRequestsForPermission(QWebFrame* frame, QWebPage::Feature feature);
 
 private:
     void applyProxy();

@@ -5,6 +5,29 @@
         [Qt] Review the setUserPermission & friends API
         https://bugs.webkit.org/show_bug.cgi?id=46810
 
+        Rename PermissionDomain to Feature, NotificationsPermissionDomain to Notifications
+        and GeolocationPermissionDomain to Geolocation.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setUserPermission):
+        * Api/qwebpage.h:
+        * WebCoreSupport/GeolocationPermissionClientQt.cpp:
+        (WebCore::GeolocationPermissionClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::cancelRequestsForPermission):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (JSTestPage::requestPermission):
+        (tst_QWebPage::geolocationRequestJS):
+
+2010-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Review the setUserPermission & friends API
+        https://bugs.webkit.org/show_bug.cgi?id=46810
+
         Add a ByUser suffix to PermissionGranted/Denied. In the future
         we can add PermissionGrantedByDefault.
 
