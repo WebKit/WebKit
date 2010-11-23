@@ -360,10 +360,12 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
 
         QByteArray payload = m_data.mid(1, length);
 
+#if ENABLE(INSPECTOR)
         if (m_inspectorClient) {
           InspectorController* inspectorController = m_inspectorClient->m_inspectedWebPage->d->page->inspectorController();
           inspectorController->inspectorBackendDispatcher()->dispatch(QString::fromUtf8(payload));
         }
+#endif
 
         // Remove this WebSocket message from m_data (payload, start-of-frame byte, end-of-frame byte).
         m_data = m_data.mid(length + 2);
