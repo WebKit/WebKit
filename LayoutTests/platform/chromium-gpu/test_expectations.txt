@@ -374,3 +374,8 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO : fast/canvas/canvas-drawImage-shadow.html = TEXT
+
+BUG_LOISLO MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
+BUG_LOISLO MAC : compositing/plugins/composited-plugin.html = CRASH
+BUG_LOISLO MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
+BUG_LOISLO MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
