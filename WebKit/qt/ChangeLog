@@ -1,5 +1,15 @@
 2010-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Andreas Kling.
+
+        [Qt] Restore binary compatibility with the QtWebKit 2.1 branch
+
+        Re-order the enums by adding new enum entries to the end.
+
+        * Api/qwebsettings.h:
+
+2010-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Review the setUserPermission & friends API

@@ -75,9 +75,9 @@ public:
         TiledBackingStoreEnabled,
         FrameFlatteningEnabled,
         SiteSpecificQuirksEnabled,
+        JavascriptCanCloseWindows,
         WebGLEnabled,
-        HyperlinkAuditingEnabled,
-        JavascriptCanCloseWindows
+        HyperlinkAuditingEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,
