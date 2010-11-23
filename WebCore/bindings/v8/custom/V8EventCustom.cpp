@@ -55,6 +55,7 @@
 #include "V8PopStateEvent.h"
 #include "V8ProgressEvent.h"
 #include "V8Proxy.h"
+#include "V8SpeechInputEvent.h"
 #include "V8StorageEvent.h"
 #include "V8TextEvent.h"
 #include "V8TouchEvent.h"
@@ -171,6 +172,10 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #if ENABLE(WEB_AUDIO)
     if (impl->isAudioProcessingEvent())
         return toV8(static_cast<AudioProcessingEvent*>(impl));
+#endif
+#if ENABLE(INPUT_SPEECH)
+    if (impl->isSpeechInputEvent())
+        return toV8(static_cast<SpeechInputEvent*>(impl));
 #endif
     if (impl->isCustomEvent())
         return toV8(static_cast<CustomEvent*>(impl));

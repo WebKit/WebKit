@@ -62,7 +62,7 @@ public:
     void stopRecording(int requestId);
 
     // WebSpeechInputControllerMock methods.
-    void setMockRecognitionResult(const WebString& result, const WebString& language);
+    void addMockRecognitionResult(const WebString& result, double confidence, const WebString& language);
     void clearResults();
 
 private:

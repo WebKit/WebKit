@@ -150,7 +150,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
-    bindMethod("setMockSpeechInputResult", &LayoutTestController::setMockSpeechInputResult);
+    bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
     bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
@@ -1537,13 +1537,13 @@ void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVaria
     result->setNull();
 }
 
-void LayoutTestController::setMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
+void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isString())
+    if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
         return;
 
-    m_shell->webViewHost()->speechInputControllerMock()->setMockRecognitionResult(cppVariantToWebString(arguments[0]), cppVariantToWebString(arguments[1]));
+    m_shell->webViewHost()->speechInputControllerMock()->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
 }
 
 void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)

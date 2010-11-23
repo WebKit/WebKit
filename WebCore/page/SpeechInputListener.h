@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-typedef Vector<RefPtr<SpeechInputResult> > SpeechInputResultArray;
-
 // Interface to be implemented by the element which invokes SpeechInput.
 class SpeechInputListener {
 public:

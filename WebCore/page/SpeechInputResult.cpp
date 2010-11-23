@@ -35,6 +35,11 @@ PassRefPtr<SpeechInputResult> SpeechInputResult::create(const String& utterance,
     return adoptRef(new SpeechInputResult(utterance, confidence));
 }
 
+PassRefPtr<SpeechInputResult> SpeechInputResult::create(const SpeechInputResult& source)
+{
+    return adoptRef(new SpeechInputResult(source.m_utterance, source.m_confidence));
+}
+
 SpeechInputResult::SpeechInputResult(const String& utterance, double confidence)
     : m_utterance(utterance)
     , m_confidence(confidence)

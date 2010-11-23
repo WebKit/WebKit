@@ -81,18 +81,21 @@ void SpeechInputClientMock::cancelRecognition(int requestId)
     }
 }
 
-void SpeechInputClientMock::setRecognitionResult(const String& result, const AtomicString& language)
+void SpeechInputClientMock::addRecognitionResult(const String& result, double confidence, const AtomicString& language)
 {
     if (language.isEmpty())
-        m_resultForEmptyLanguage = result;
-    else
-        m_recognitionResult.set(language, result);
+        m_resultsForEmptyLanguage.append(SpeechInputResult::create(result, confidence));
+    else {
+        if (!m_recognitionResults.contains(language))
+            m_recognitionResults.set(language, SpeechInputResultArray());
+        m_recognitionResults.find(language)->second.append(SpeechInputResult::create(result, confidence));
+    }
 }
 
 void SpeechInputClientMock::clearResults()
 {
-    m_resultForEmptyLanguage = String();
-    m_recognitionResult.clear();
+    m_resultsForEmptyLanguage.clear();
+    m_recognitionResults.clear();
 }
 
 void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
@@ -102,18 +105,17 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
         m_listener->didCompleteRecording(m_requestId);
         m_timer.startOneShot(0);
     } else {
-        SpeechInputResultArray results;
         bool noResultsFound = false;
 
         // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
         if (m_language.isEmpty()) {
-            if (!m_resultForEmptyLanguage.isNull())
-                results.append(SpeechInputResult::create(m_resultForEmptyLanguage, 1.0));
+            if (!m_resultsForEmptyLanguage.isEmpty())
+                m_listener->setRecognitionResult(m_requestId, m_resultsForEmptyLanguage);
             else
                 noResultsFound = true;
         } else {
-            if (m_recognitionResult.contains(m_language))
-                results.append(SpeechInputResult::create(m_recognitionResult.get(m_language), 1.0));
+            if (m_recognitionResults.contains(m_language))
+                m_listener->setRecognitionResult(m_requestId, m_recognitionResults.get(m_language));
             else
                 noResultsFound = true;
         }
@@ -124,10 +126,11 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
             String error("error: no result found for language '");
             error.append(m_language);
             error.append("'");
+            SpeechInputResultArray results;
             results.append(SpeechInputResult::create(error, 1.0));
+            m_listener->setRecognitionResult(m_requestId, results);
         }
 
-        m_listener->setRecognitionResult(m_requestId, results);
         m_listener->didCompleteRecognition(m_requestId);
         m_requestId = 0;
     }

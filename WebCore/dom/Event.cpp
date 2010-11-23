@@ -236,6 +236,13 @@ bool Event::isAudioProcessingEvent() const
 }
 #endif
 
+#if ENABLE(INPUT_SPEECH)
+bool Event::isSpeechInputEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::fromUserGesture()
 {
     if (!UserGestureIndicator::processingUserGesture())

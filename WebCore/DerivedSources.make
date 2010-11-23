@@ -304,6 +304,9 @@ DOM_CLASSES = \
     SharedWorkerContext \
     ScriptProfile \
     ScriptProfileNode \
+    SpeechInputEvent \
+    SpeechInputResult \
+    SpeechInputResultList \
     SQLError \
     SQLException \
     SQLResultSet \

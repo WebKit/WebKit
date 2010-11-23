@@ -312,6 +312,9 @@ IDL_BINDINGS += \
     page/PerformanceTiming.idl \
     page/PositionError.idl \
     page/Screen.idl \
+    page/SpeechInputEvent.idl \
+    page/SpeechInputResult.idl \
+    page/SpeechInputResultList.idl \
     page/WebKitPoint.idl \
     page/WorkerNavigator.idl \
     plugins/DOMPlugin.idl \

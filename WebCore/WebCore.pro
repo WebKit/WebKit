@@ -2025,8 +2025,10 @@ HEADERS += \
     page/SpatialNavigation.h \
     page/SpeechInput.h \
     page/SpeechInputClient.h \
+    page/SpeechInputEvent.h \
     page/SpeechInputListener.h \
     page/SpeechInputResult.h \
+    page/SpeechInputResultList.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
     page/XSSAuditor.h \
@@ -3149,7 +3151,9 @@ contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
 contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
     SOURCES += \
         page/SpeechInput.cpp \
+        page/SpeechInputEvent.cpp \
         page/SpeechInputResult.cpp \
+        page/SpeechInputResultList.cpp \
         rendering/RenderInputSpeech.cpp
 }
 

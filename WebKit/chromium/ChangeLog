@@ -1,3 +1,17 @@
+2010-11-18  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        For speech input event, send an event object containing all the recognition results and metadata.
+        https://bugs.webkit.org/show_bug.cgi?id=49736
+
+        Updated mock object's method to new signature.
+
+        * public/WebSpeechInputControllerMock.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::addMockRecognitionResult):
+        * src/WebSpeechInputControllerMockImpl.h:
+
 2010-11-22  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.

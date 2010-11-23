@@ -41,6 +41,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "ScrollbarTheme.h"
 #include "SpeechInput.h"
+#include "SpeechInputEvent.h"
 
 namespace WebCore {
 
@@ -478,7 +479,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> holdRef(input);
     input->setValue(results.isEmpty() ? "" : results[0]->utterance());
-    input->dispatchWebkitSpeechChangeEvent();
+    input->dispatchEvent(SpeechInputEvent::create(eventNames().webkitspeechchangeEvent, results));
     renderer()->repaint();
 }
 

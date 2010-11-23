@@ -1,3 +1,32 @@
+2010-11-18  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        For speech input event, send an event object containing all the recognition results and metadata.
+        https://bugs.webkit.org/show_bug.cgi?id=49736
+
+        Updated DRT by renaming the mock result method on all platforms to the new signature.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (addMockSpeechInputResultCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+
 2010-11-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

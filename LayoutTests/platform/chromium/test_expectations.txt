@@ -3208,3 +3208,8 @@ BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
 // Test added with http://trac.webkit.org/changeset/72504 needs better expectations for Chromium.
 BUGWK4989 WIN LINUX : fast/css/font-face-data-uri.html = TEXT
 
+// Remove these once the Chromium side has caught on with multiple speech input results.
+BUG49736 : fast/speech/input-onspeechchange-event.html = TEXT
+BUG49736 : fast/speech/input-text-language-tag.html = TEXT
+BUG49736 : fast/speech/input-text-speechbutton.html = TEXT
+BUG49736 : fast/speech/speech-button-ignore-generated-events.html = TEXT

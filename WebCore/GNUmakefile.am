@@ -497,6 +497,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSharedWorkerContext.h \
 	DerivedSources/WebCore/JSSharedWorker.cpp \
 	DerivedSources/WebCore/JSSharedWorker.h \
+	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
+	DerivedSources/WebCore/JSSpeechInputEvent.h \
+	DerivedSources/WebCore/JSSpeechInputResult.cpp \
+	DerivedSources/WebCore/JSSpeechInputResult.h \
+	DerivedSources/WebCore/JSSpeechInputResultList.cpp \
+	DerivedSources/WebCore/JSSpeechInputResultList.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
@@ -2171,11 +2177,15 @@ webcore_sources += \
 	WebCore/page/SpatialNavigation.cpp \
 	WebCore/page/SpatialNavigation.h \
 	WebCore/page/SpeechInputClient.h \
+	WebCore/page/SpeechInputEvent.cpp \
+	WebCore/page/SpeechInputEvent.h \
 	WebCore/page/SpeechInput.cpp \
 	WebCore/page/SpeechInput.h \
 	WebCore/page/SpeechInputListener.h \
 	WebCore/page/SpeechInputResult.cpp \
 	WebCore/page/SpeechInputResult.h \
+	WebCore/page/SpeechInputResultList.cpp \
+	WebCore/page/SpeechInputResultList.h \
 	WebCore/page/SuspendableTimer.cpp \
 	WebCore/page/SuspendableTimer.h \
 	WebCore/page/UserContentTypes.h \

@@ -38,8 +38,8 @@ function speechButtonClick(elementId) {
 
 function run() {
     if (window.layoutTestController && window.eventSender) {
-        layoutTestController.setMockSpeechInputResult('Pictures of the moon', 'en-GB');
-        layoutTestController.setMockSpeechInputResult('月の写真', 'ja');
+        layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, 'en-GB');
+        layoutTestController.addMockSpeechInputResult('月の写真', 1.0, 'ja');
         speechButtonClick('speechInputNone');
     }
 }

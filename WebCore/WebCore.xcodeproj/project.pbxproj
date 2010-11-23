@@ -1512,6 +1512,16 @@
 		7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
+		75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415AF812958D5E003AD669 /* SpeechInputEvent.h */; };
+		75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415AFB12958D5E003AD669 /* SpeechInputResultList.h */; };
+		75415C28129A9920003AD669 /* SpeechInputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415C26129A9920003AD669 /* SpeechInputEvent.cpp */; };
+		75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415C27129A9920003AD669 /* SpeechInputResultList.cpp */; };
+		75415D55129AB2D2003AD669 /* JSSpeechInputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415D4F129AB2D2003AD669 /* JSSpeechInputEvent.cpp */; };
+		75415D56129AB2D2003AD669 /* JSSpeechInputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D50129AB2D2003AD669 /* JSSpeechInputEvent.h */; };
+		75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415D51129AB2D2003AD669 /* JSSpeechInputResult.cpp */; };
+		75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */; };
+		75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */; };
+		75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
 		7578F90B11DDF26900D933C5 /* SpeechInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7578F90811DDF26900D933C5 /* SpeechInput.cpp */; };
@@ -7670,6 +7680,19 @@
 		7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeechInputClientMock.h; path = mock/SpeechInputClientMock.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
+		75415AF812958D5E003AD669 /* SpeechInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputEvent.h; sourceTree = "<group>"; };
+		75415AF912958D5E003AD669 /* SpeechInputEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechInputEvent.idl; sourceTree = "<group>"; };
+		75415AFA12958D5E003AD669 /* SpeechInputResult.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechInputResult.idl; sourceTree = "<group>"; };
+		75415AFB12958D5E003AD669 /* SpeechInputResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResultList.h; sourceTree = "<group>"; };
+		75415AFC12958D5E003AD669 /* SpeechInputResultList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechInputResultList.idl; sourceTree = "<group>"; };
+		75415C26129A9920003AD669 /* SpeechInputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputEvent.cpp; sourceTree = "<group>"; };
+		75415C27129A9920003AD669 /* SpeechInputResultList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputResultList.cpp; sourceTree = "<group>"; };
+		75415D4F129AB2D2003AD669 /* JSSpeechInputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechInputEvent.cpp; sourceTree = "<group>"; };
+		75415D50129AB2D2003AD669 /* JSSpeechInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputEvent.h; sourceTree = "<group>"; };
+		75415D51129AB2D2003AD669 /* JSSpeechInputResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechInputResult.cpp; sourceTree = "<group>"; };
+		75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResult.h; sourceTree = "<group>"; };
+		75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechInputResultList.cpp; sourceTree = "<group>"; };
+		75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResultList.h; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
 		7578F90811DDF26900D933C5 /* SpeechInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInput.cpp; sourceTree = "<group>"; };
@@ -13340,9 +13363,16 @@
 				7578F90811DDF26900D933C5 /* SpeechInput.cpp */,
 				7578F90911DDF26900D933C5 /* SpeechInput.h */,
 				7578F90A11DDF26900D933C5 /* SpeechInputClient.h */,
+				75415C26129A9920003AD669 /* SpeechInputEvent.cpp */,
+				75415AF812958D5E003AD669 /* SpeechInputEvent.h */,
+				75415AF912958D5E003AD669 /* SpeechInputEvent.idl */,
 				7578F91E11E4E32800D933C5 /* SpeechInputListener.h */,
 				758978EA127090D60076D5A9 /* SpeechInputResult.cpp */,
 				758978EB127090D60076D5A9 /* SpeechInputResult.h */,
+				75415AFA12958D5E003AD669 /* SpeechInputResult.idl */,
+				75415C27129A9920003AD669 /* SpeechInputResultList.cpp */,
+				75415AFB12958D5E003AD669 /* SpeechInputResultList.h */,
+				75415AFC12958D5E003AD669 /* SpeechInputResultList.idl */,
 				62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */,
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
 				003F1FE911E6AB43008258D9 /* UserContentTypes.h */,
@@ -15894,6 +15924,12 @@
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
 				E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */,
+				75415D4F129AB2D2003AD669 /* JSSpeechInputEvent.cpp */,
+				75415D50129AB2D2003AD669 /* JSSpeechInputEvent.h */,
+				75415D51129AB2D2003AD669 /* JSSpeechInputResult.cpp */,
+				75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */,
+				75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */,
+				75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 			);
@@ -21351,6 +21387,11 @@
 				D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
+				75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */,
+				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
+				75415D56129AB2D2003AD669 /* JSSpeechInputEvent.h in Headers */,
+				75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */,
+				75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23920,6 +23961,11 @@
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				D340629B1253BC8C009E4259 /* MediaQueryListListener.cpp in Sources */,
+				75415C28129A9920003AD669 /* SpeechInputEvent.cpp in Sources */,
+				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
+				75415D55129AB2D2003AD669 /* JSSpeechInputEvent.cpp in Sources */,
+				75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */,
+				75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

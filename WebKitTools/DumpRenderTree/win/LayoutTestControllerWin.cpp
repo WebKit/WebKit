@@ -411,7 +411,7 @@ void LayoutTestController::setGeolocationPermission(bool allow)
     setGeolocationPermissionCommon(allow);
 }
 
-void LayoutTestController::setMockSpeechInputResult(JSStringRef result, JSStringRef language)
+void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.

@@ -108,7 +108,6 @@ public:
 
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const;
-    void dispatchWebkitSpeechChangeEvent();
 #endif
 
     bool checked() const { return m_checked; }
