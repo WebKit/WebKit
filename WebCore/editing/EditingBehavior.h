@@ -57,9 +57,6 @@ public:
     // in place and moving the extent. Matches NSTextView.
     bool shouldAlwaysGrowSelectionWhenExtendingToBoundary() const { return m_type == EditingMacBehavior; }
 
-    // On Mac, when processing a contextual click, the object being clicked upon should be selected.
-    bool shouldSelectOnContextualMenuClick() const { return m_type == EditingMacBehavior; }
-
 private:
     EditingBehaviorType m_type;
 };
