@@ -382,8 +382,11 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache()) {
                         RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
-                        if (m_provisionalDocumentLoader) {
-                            DocumentLoadTiming* timing = m_provisionalDocumentLoader->timing();
+                        // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
+                        // while dispatching the event, so protect it to prevent writing the end
+                        // time into freed memory.
+                        if (RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader) {
+                            DocumentLoadTiming* timing = documentLoader->timing();
                             ASSERT(timing->navigationStart);
                             ASSERT(!timing->unloadEventStart);
                             ASSERT(!timing->unloadEventEnd);
