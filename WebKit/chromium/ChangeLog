@@ -1,3 +1,10 @@
+2010-11-23  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, chromium build fix.
+
+        * public/WebSpeechInputControllerMock.h:
+        (WebKit::WebSpeechInputControllerMock::setMockRecognitionResult):
+
 2010-11-18  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
