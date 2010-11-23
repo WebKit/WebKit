@@ -1,5 +1,17 @@
 2010-11-22  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Add WTF::FixedArray::size()
+        https://bugs.webkit.org/show_bug.cgi?id=49891
+
+        Add a method to get the size of a FixedArray.
+
+        * wtf/FixedArray.h:
+        (WTF::FixedArray::size):
+
+2010-11-22  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Adam Roben.
 
         [WINCE] Set correct preprocessor definitions
