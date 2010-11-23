@@ -706,8 +706,43 @@ BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 // Low priority, unclear if test expectations are correct (see bug)
 BUG6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
+// -----------------------------------------------------------------
+// Plugin tests
+// -----------------------------------------------------------------
+BUG21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
+// Webkit patch http://trac.webkit.org/changeset/64323 modify the test
+BUG50704 : plugins/document-open.html = TIMEOUT
+BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
+BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
+BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
+BUG10351 MAC : plugins/inner-html-display-none.html = FAIL
+BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
+// Need to implement NPP_HandleEvent in the layout_test_plugin
+// WIN started failing during webkit roll 62670 -> 62844.
+BUG38353 : plugins/keyboard-events.html = TEXT
+BUG10351 MAC : plugins/mouse-events.html = FAIL
+BUG32864 : plugins/mouse-events-fixedpos.html = TEXT
+BUG35822 : plugins/npruntime/browser-object-identity.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUG21901 : plugins/npruntime/enumerate.html = TEXT
+BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
+BUG50910 : plugins/npruntime/remove-property.html = TEXT
+BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
+BUG38578 : plugins/override-node-method.html = TEXT
+BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
+// NPP_HandleEvent doesn't be implemented/work on mac/linux.
+BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
+// Due to not building TestNetscapePlugin.cpp.
+BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
+// Needs to implement NPN_reloadPlugins and add reloadPluginNoPages &
+// reloadPluginAndPages to plugin object.
+BUG29018 : plugins/reloadplugins-no-pages.html = TEXT
+BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT
+BUG38392 : plugins/resize-from-plugin.html = TEXT
+// Times out after http://trac.webkit.org/changeset/62739/
+BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
+BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
+BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
@@ -1113,8 +1148,6 @@ BUG15797 LINUX : plugins/embed-attributes-setting.html = FAIL
 
 // Skip because we throw an exception before we get to dumpAsText.
 BUG10351 SKIP MAC : http/tests/plugins/geturlnotify-from-npp-destroystream.html = FAIL
-BUG10351 MAC : plugins/inner-html-display-none.html = FAIL
-BUG10351 MAC : plugins/mouse-events.html = FAIL
 
 // NEW FOR MERGE 36102:37604
 
@@ -1889,9 +1922,6 @@ BUG21141 LINUX : fast/forms/select-script-onchange.html = FAIL
 // Flaky, not clear as of when.
 BUG21411 WIN LINUX DEBUG : svg/dom/SVGScriptElement/script-load-and-error-events.svg = TEXT PASS
 
-// WK roll to 48371
-BUG21841 MAC DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
-BUG21841 WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
 
 BUG25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 
@@ -2049,13 +2079,6 @@ BUG2844 SKIP : http/tests/appcache/404-resource.html = TIMEOUT PASS
 BUG2844 SKIP : http/tests/appcache/foreign-iframe-main.html = TIMEOUT PASS
 BUG2844 SKIP : http/tests/appcache/non-html.xhtml = TIMEOUT PASS
 
-// New tests. Failures from merge 51253:51310.
-// Needs to implement NPN_reloadPlugins and add reloadPluginNoPages & reloadPluginAndPages
-// to plugin object.
-BUG29018 : plugins/reloadplugins-no-pages.html = TEXT
-BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT
-
-
 // New failures from WebKit r51577
 BUG29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
@@ -2155,9 +2178,6 @@ BUG32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
 
 BUG33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
-// WebKit roll 53585 -> 53655
-BUG32864 WIN LINUX MAC : plugins/mouse-events-fixedpos.html = TEXT
-
 // WebKit roll 53655 -> 53704
 BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 
@@ -2187,13 +2207,6 @@ BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg = IMAGE
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg = IMAGE
 
-// Due to not building TestNetscapePlugin.cpp.
-BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
-BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
-
-// New test added in WebKit r54783
-BUG35822 : plugins/npruntime/browser-object-identity.html = TEXT
-
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
 BUG36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
@@ -2210,30 +2223,16 @@ BUG37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
 // Three flaky tests noticed during a sheriff rotation.
 BUG37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUG37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS
-BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 
 // WebKit roll r55853 -> 55940
 // Flaky test
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
-BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
-
 // The touch targeting logic was recently changed.
 BUG36415 : fast/events/touch/touch-target.html = TEXT
 
-// Need to implement NPP_HandleEvent in the layout_test_plugin
-// WIN started failing during webkit roll 62670 -> 62844.
-BUG38353 WIN MAC LINUX : plugins/keyboard-events.html = TEXT
-BUG38353 WIN MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
-
-BUG38392 : plugins/resize-from-plugin.html = TEXT
-
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUG38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
-
-// WebKit roll 56165:56197.
-// New test (http://trac.webkit.org/changeset/56198), requires changes to PluginObject
-BUG38578 : plugins/override-node-method.html = TEXT
 
 // WebKit roll 56197:56239.
 // Needs layoutTestController.setMediaType() (implemented on Qt only)
@@ -2565,9 +2564,6 @@ BUG48239 : fast/js/function-apply-many-args.html = TEXT
 // difference?
 BUG48452 : svg/custom/use-font-face-crash.svg = FAIL
 
-// Times out after http://trac.webkit.org/changeset/62739/
-BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
-
 BUG48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
 // These ietestcenter tests still don't pass. Careful before removing these
@@ -2747,14 +2743,6 @@ BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PAS
 // Fails since WebKit r64156
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
 
-// Webkit patch http://trac.webkit.org/changeset/64323 modify the test
-// Need to change chromium TestNetscape plugin.
-BUG50704 : plugins/document-open.html = TIMEOUT
-// New plugin test added in r64359 which fails in Chromium.
-BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
-// New plugin test added in r64444
-BUG50910 : plugins/npruntime/remove-property.html = TEXT
-
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
@@ -2927,9 +2915,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
-// NPP_HandleEvent doesn't be implemented/work on mac/linux.
-BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
-
 // New test added in 68808.
 BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
 
@@ -2948,8 +2933,6 @@ BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 WIN LINUX DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT PASS
-
-BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 
 BUG62738 WIN LINUX : media/video-size.html = PASS TEXT
 
@@ -3054,8 +3037,6 @@ BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html =
 // r69833, JSC/V8 Date parsing differences
 BUGJAPHET : fast/js/date-parse-test.html = TEXT
 
-// Added in WebKit r70190
-BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
 // Added in WebKit r70265
 BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
 
@@ -3065,8 +3046,6 @@ BUGWK48256 : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
 BUGWK48263 : media/adopt-node-crash.html = TIMEOUT PASS
 BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
-// needs assignment.
-BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 
 // Chromium-mac-specific test, and only runs in DRT.
 BUGWK46868 WONTFIX : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
@@ -3113,9 +3092,6 @@ BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-pr
 //BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 // Now fails all the time on Win and Linux, see bug for details.
 BUG61655 WIN LINUX : security/block-test-no-port.html = TEXT
-
-// Added in http://trac.webkit.org/changeset/71249
-BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 
 // Fails because of http://trac.webkit.org/changeset/71268
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
