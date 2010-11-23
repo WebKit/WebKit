@@ -40,7 +40,8 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode, in [Optional] unsigned long timeout)
             raises (IDBDatabaseException);
-        void close();
+        // FIXME: Implement.
+        //void close();
     };
 
 }
