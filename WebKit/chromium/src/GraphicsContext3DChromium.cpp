@@ -246,6 +246,11 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 #endif // PLATFORM(CG)
 }
 
+bool GraphicsContext3DInternal::isContextLost()
+{
+    return m_impl->isContextLost();
+}
+
 // Macros to assist in delegating from GraphicsContext3DInternal to
 // WebGraphicsContext3D.
 

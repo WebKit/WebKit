@@ -50,8 +50,7 @@ bool Extensions3DChromium::supports(const String& name)
 
 int Extensions3DChromium::getGraphicsResetStatusARB()
 {
-    // FIXME: implement this in GraphicsContext3DInternal / WebGraphicsContext3DInternal.
-    return GraphicsContext3D::NO_ERROR;
+    return m_internal->isContextLost() ? static_cast<int>(Extensions3D::UNKNOWN_CONTEXT_RESET_ARB) : static_cast<int>(GraphicsContext3D::NO_ERROR);
 }
 
 void* Extensions3DChromium::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)

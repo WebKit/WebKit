@@ -145,6 +145,8 @@ public:
 
     virtual unsigned long getError();
 
+    virtual bool isContextLost();
+
     virtual void getFloatv(unsigned long pname, float* value);
 
     virtual void getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname, int* value);

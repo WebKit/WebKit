@@ -1,3 +1,22 @@
+2010-11-22  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Implement Extensions3DChromium::getGraphicsResetStatusARB
+        https://bugs.webkit.org/show_bug.cgi?id=49946
+
+        * public/WebGraphicsContext3D.h: added isContextLost()
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::getGraphicsResetStatusARB):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::isContextLost):
+        * src/GraphicsContext3DInternal.h:
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::isContextLost):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::reallocateRenderer): ensure root layer repaining
+
 2010-11-22  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.

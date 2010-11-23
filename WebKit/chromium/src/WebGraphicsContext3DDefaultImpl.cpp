@@ -987,6 +987,11 @@ unsigned long WebGraphicsContext3DDefaultImpl::getError()
     return glGetError();
 }
 
+bool WebGraphicsContext3DDefaultImpl::isContextLost()
+{
+    return false;
+}
+
 DELEGATE_TO_GL_2(getFloatv, GetFloatv, unsigned long, float*)
 
 void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment,

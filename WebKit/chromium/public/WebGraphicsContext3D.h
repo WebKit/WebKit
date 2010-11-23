@@ -203,6 +203,8 @@ public:
 
     virtual unsigned long getError() = 0;
 
+    virtual bool isContextLost() = 0;
+
     virtual void getFloatv(unsigned long pname, float* value) = 0;
 
     virtual void getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname, int* value) = 0;
