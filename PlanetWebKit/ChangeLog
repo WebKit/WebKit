@@ -1,3 +1,12 @@
+2010-11-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Add Leandro Pereira's blog to Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=49910
+
+        * config.ini:
+
 2010-11-19  Adam Roben  <aroben@apple.com>
 
         Add Lucas De Marchi's blog to Planet WebKit
