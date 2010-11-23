@@ -1,3 +1,19 @@
+2010-11-23  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Include the FrameView widget of a RenderWidget in the accessibility tree.
+        https://bugs.webkit.org/show_bug.cgi?id=49106
+
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::parentElementCallback):
+        (AccessibilityUIElement::isEqualCallback):
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+        * DumpRenderTree/chromium/CppBoundClass.cpp:
+        (CppBoundClass::getFromCppVariant):
+        * DumpRenderTree/chromium/CppBoundClass.h:
+
 2010-11-23  Alex Grilo  <abgrilo@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

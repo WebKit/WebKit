@@ -390,26 +390,33 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     RenderObject* startOfConts = 0;
     RenderObject* firstChild = 0;
     if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
-        parent = startOfConts;
+        return startOfConts;
 
     // Case 2: node's parent is an inline which is some node's continuation; parent is 
     // the earliest node in the continuation chain.
-    else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
-        parent = startOfConts;
+    if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
+        return startOfConts;
     
     // Case 3: The first sibling is the beginning of a continuation chain. Find the origin of that continuation.
-    else if (parent && (firstChild = parent->firstChild()) && firstChild->node()) {
+    if (parent && (firstChild = parent->firstChild()) && firstChild->node()) {
         // Get the node's renderer and follow that continuation chain until the first child is found
         RenderObject* nodeRenderFirstChild = firstChild->node()->renderer();
         if (nodeRenderFirstChild != firstChild) {
             for (RenderObject* contsTest = nodeRenderFirstChild; contsTest; contsTest = nextContinuation(contsTest)) {
-                if (contsTest == firstChild) {
-                    parent = nodeRenderFirstChild->parent();
-                    break;
-                }
+                if (contsTest == firstChild)
+                    return nodeRenderFirstChild->parent();
             }
         }
     }
+
+#if !PLATFORM(MAC)
+    // Case 4: The node is a RenderView whose FrameView has an associated RenderWidget.
+    // The parent is the associated RenderWidget.
+    // On the mac port this parent logic is in AccessibilityObjectWrapper.mm.
+    RenderWidget* renderWidget = 0;
+    if (!parent && (renderWidget = RenderWidget::find(frameViewIfRenderView())))
+        return renderWidget;
+#endif
         
     return parent;
 }
@@ -3358,6 +3365,27 @@ void AccessibilityRenderObject::addChildren()
             }
         }
     }
+
+    addRenderWidgetChildren();
+}
+
+void AccessibilityRenderObject::addRenderWidgetChildren()
+{
+#if !PLATFORM(MAC)
+    // For RenderWidget, add frame's content renderer if the widget is a FrameView.
+    // On the mac port this children logic is in AccessibilityObjectWrapper.mm.
+    Widget* widget = widgetForAttachmentView();
+    if (!widget || !widget->isFrameView())
+        return;
+    Frame* frame = static_cast<FrameView*>(widget)->frame();
+    if (!frame)
+        return;
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return;
+    ASSERT(!m_children.size());
+    m_children.append(axObjectCache()->getOrCreate(renderView));
+#endif
 }
         
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const

@@ -1,3 +1,15 @@
+2010-11-23  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Include the FrameView widget of a RenderWidget in the accessibility tree.
+        https://bugs.webkit.org/show_bug.cgi?id=49106
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::equals):
+        (WebKit::WebAccessibilityObject::parentObject):
+
 2010-11-23  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Darin Fisher.

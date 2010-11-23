@@ -26,11 +26,25 @@
 
 #include "config.h"
 #include "AccessibilityObject.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "Widget.h"
 
 namespace WebCore {
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
+    // Ignore render widgets with an attached RenderView because they have
+    // no role and are not useful in the accessibility tree.
+    // On the mac port, these render widgets are ignored by forwarding
+    // calls the to the attached widget.
+    Widget* widget = widgetForAttachmentView();
+    if (widget && widget->isFrameView()) {
+        Frame* frame = static_cast<FrameView*>(widget)->frame();
+        if (frame && frame->contentRenderer())
+            return true;
+    }
+
     return false;
 }
 
