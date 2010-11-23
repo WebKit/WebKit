@@ -2116,7 +2116,7 @@ void QWebPage::setUserPermission(QWebFrame* frame, PermissionDomain domain, Perm
     switch (domain) {
     case NotificationsPermissionDomain:
 #if ENABLE(NOTIFICATIONS)
-        if (policy == PermissionGranted)
+        if (policy == PermissionGrantedByUser)
             NotificationPresenterClientQt::notificationPresenter()->allowNotificationForFrame(frame->d->frame);
 #endif
         break;

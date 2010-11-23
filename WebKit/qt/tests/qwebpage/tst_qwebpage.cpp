@@ -223,9 +223,9 @@ public slots:
     void requestPermission(QWebFrame* frame, QWebPage::PermissionDomain domain)
     {
         if (m_allowGeolocation)
-            setUserPermission(frame, domain, PermissionGranted);
+            setUserPermission(frame, domain, PermissionGrantedByUser);
         else 
-            setUserPermission(frame, domain, PermissionDenied);
+            setUserPermission(frame, domain, PermissionDeniedByUser);
     }
 
 public:

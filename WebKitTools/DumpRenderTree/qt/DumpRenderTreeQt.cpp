@@ -224,14 +224,14 @@ void WebPage::requestPermission(QWebFrame* frame, QWebPage::PermissionDomain dom
     switch (domain) {
     case NotificationsPermissionDomain:
         if (!m_drt->layoutTestController()->ignoreReqestForPermission())
-            setUserPermission(frame, domain, PermissionGranted);
+            setUserPermission(frame, domain, PermissionGrantedByUser);
         break;
     case GeolocationPermissionDomain:
         if (m_drt->layoutTestController()->isGeolocationPermissionSet())
             if (m_drt->layoutTestController()->geolocationPermission())
-                setUserPermission(frame, domain, PermissionGranted);
+                setUserPermission(frame, domain, PermissionGrantedByUser);
             else
-                setUserPermission(frame, domain, PermissionDenied);
+                setUserPermission(frame, domain, PermissionDeniedByUser);
         else
             m_pendingGeolocationRequests.append(frame);
         break;
@@ -259,9 +259,9 @@ void WebPage::permissionSet(QWebPage::PermissionDomain domain)
         Q_ASSERT(m_drt->layoutTestController()->isGeolocationPermissionSet());
         foreach (QWebFrame* frame, m_pendingGeolocationRequests)
             if (m_drt->layoutTestController()->geolocationPermission())
-                setUserPermission(frame, domain, PermissionGranted);
+                setUserPermission(frame, domain, PermissionGrantedByUser);
             else
-                setUserPermission(frame, domain, PermissionDenied);
+                setUserPermission(frame, domain, PermissionDeniedByUser);
 
         m_pendingGeolocationRequests.clear();
         break;

@@ -198,9 +198,9 @@ public:
     };
 
     enum PermissionPolicy {
-        PermissionGranted,
         PermissionUnknown,
-        PermissionDenied
+        PermissionGrantedByUser,
+        PermissionDeniedByUser
     };
 
     enum PermissionDomain {

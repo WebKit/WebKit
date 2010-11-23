@@ -84,9 +84,9 @@ void GeolocationPermissionClientQt::setPermission(QWebFrame* webFrame, QWebPage:
 
     Geolocation* listener = m_pendingPermissionRequests.value(webFrame);
 
-    if (permission == QWebPage::PermissionGranted)
+    if (permission == QWebPage::PermissionGrantedByUser)
         listener->setIsAllowed(true);
-    else if (permission == QWebPage::PermissionDenied)
+    else if (permission == QWebPage::PermissionDeniedByUser)
         listener->setIsAllowed(false);
     else
         return;
