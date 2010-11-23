@@ -88,6 +88,9 @@ namespace WebCore {
         PlatformMenuDescription m_platformDescription;
 #else
         PlatformMenuDescription m_platformDescription;
+#if OS(WINCE)
+        unsigned m_itemCount;
+#endif
 #endif
     };
 
