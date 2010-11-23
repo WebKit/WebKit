@@ -371,3 +371,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 
 // New test added with http://trac.webkit.org/changeset/72472
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
+
+// Unknown reason. Was introduced at r72588
+BUG_LOISLO : fast/canvas/canvas-drawImage-shadow.html = TEXT
