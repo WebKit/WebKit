@@ -1,3 +1,12 @@
+2010-11-22  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        speculative fix for upload errors: stop using mechanize to upload to test-results.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=49944
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_uploader.py:
+
 2010-11-23  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Dimitri Glazkov.
