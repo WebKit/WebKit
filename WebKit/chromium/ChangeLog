@@ -1,3 +1,13 @@
+2010-11-22  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Don't create an external popup menu when there are no items to show.
+        https://bugs.webkit.org/show_bug.cgi?id=49937
+
+        * src/ExternalPopupMenu.cpp:
+        (WebKit::ExternalPopupMenu::show):
+
 2010-11-22  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Kenneth Russell.

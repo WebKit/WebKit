@@ -65,6 +65,8 @@ void ExternalPopupMenu::show(const IntRect& rect, FrameView* v, int index)
 
     WebPopupMenuInfo info;
     getPopupMenuInfo(&info);
+    if (info.items.isEmpty())
+        return;
     m_webExternalPopupMenu =
         m_webViewClient->createExternalPopupMenu(info, this);
     m_webExternalPopupMenu->show(v->contentsToWindow(rect));
