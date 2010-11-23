@@ -1,3 +1,217 @@
+2010-11-22  Alex Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Tiled Backing Store for Webkit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=45397
+
+        This tile based backing store is a grid of tiles where each tile is
+        an Evas_Object showing a piece of the page content. The
+        new ewk_view_tiled.c is an implementation of some of the functions of
+        the original ewk_view, that makes calls to the Tiled Backing Store
+        specific functions.
+
+        The rendering occurs in the pixels stored in each tile (Evas_Object),
+        in the same way as the previous single backing store. Tiles not being
+        shown in the viewport are stored in a cache, and can be reused later
+        to avoid having to be rendered again.
+
+        Scrolling occurs as just moving the tiles, using Evas move operations,
+        and when more than one tile size is scrolled, a shift of rows or
+        columns needs to be done.
+
+        * CMakeListsEfl.txt:
+        * ewk/ewk_tiled_backing_store.c: Added.
+        (_ewk_tiled_backing_store_updates_process):
+        (_ewk_tiled_backing_store_flush):
+        (_ewk_tiled_backing_store_tile_new):
+        (_ewk_tiled_backing_store_item_move):
+        (_ewk_tiled_backing_store_item_resize):
+        (_ewk_tiled_backing_store_tile_associate):
+        (_ewk_tiled_backing_store_tile_dissociate):
+        (_ewk_tiled_backing_store_tile_dissociate_all):
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_del):
+        (_ewk_tiled_backing_store_pre_render_request_first):
+        (_ewk_tiled_backing_store_pre_render_request_flush):
+        (_ewk_tiled_backing_store_pre_render_request_remove_unassociated):
+        (_ewk_tiled_backing_store_pre_render_request_remove_associated):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_process_idler_cb):
+        (_ewk_tiled_backing_store_item_process_idler_stop):
+        (_ewk_tiled_backing_store_item_process_idler_start):
+        (_ewk_tiled_backing_store_item_request_del):
+        (_ewk_tiled_backing_store_item_request_add):
+        (_ewk_tiled_backing_store_disable_render):
+        (_ewk_tiled_backing_store_enable_render):
+        (_ewk_tiled_backing_store_visible_tiles_rect):
+        (_ewk_tiled_backing_store_tile_is_inside_viewport):
+        (_ewk_tiled_backing_store_tile_is_adjacent_to_viewport):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+        (_ewk_tiled_backing_store_item_smooth_scale_set):
+        (_ewk_tiled_backing_store_changed):
+        (_ewk_tiled_backing_store_view_cols_end_del):
+        (_ewk_tiled_backing_store_view_cols_end_add):
+        (_ewk_tiled_backing_store_view_row_del):
+        (_ewk_tiled_backing_store_view_rows_range_del):
+        (_ewk_tiled_backing_store_view_rows_all_del):
+        (_ewk_tiled_backing_store_render):
+        (_ewk_tiled_backing_store_model_matrix_create):
+        (_ewk_tiled_backing_store_smart_member_del):
+        (_ewk_tiled_backing_store_smart_member_add):
+        (_ewk_tiled_backing_store_mem_dbg):
+        (_ewk_tiled_backing_store_sig_usr):
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_smart_del):
+        (_ewk_tiled_backing_store_smart_move):
+        (_ewk_tiled_backing_store_smart_resize):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_smart_calculate_size):
+        (_ewk_tiled_backing_store_view_dbg):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_wrap_right):
+        (_ewk_tiled_backing_store_view_refill):
+        (_ewk_tiled_backing_store_view_pos_apply):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate_pos):
+        (_ewk_tiled_backing_store_fill_renderers):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (ewk_tiled_backing_store_add):
+        (ewk_tiled_backing_store_render_cb_set):
+        (ewk_tiled_backing_store_tile_unused_cache_get):
+        (ewk_tiled_backing_store_tile_unused_cache_set):
+        (_ewk_tiled_backing_store_scroll_full_offset_set_internal):
+        (ewk_tiled_backing_store_scroll_full_offset_set):
+        (ewk_tiled_backing_store_scroll_full_offset_add):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_set):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_zoom_weak_smooth_scale_set):
+        (ewk_tiled_backing_store_update):
+        (ewk_tiled_backing_store_updates_process_pre_set):
+        (ewk_tiled_backing_store_updates_process_post_set):
+        (ewk_tiled_backing_store_updates_process):
+        (ewk_tiled_backing_store_updates_clear):
+        (ewk_tiled_backing_store_contents_resize):
+        (ewk_tiled_backing_store_disabled_update_set):
+        (ewk_tiled_backing_store_flush):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        (ewk_tiled_backing_store_pre_render_cancel):
+        (ewk_tiled_backing_store_disable_render):
+        (ewk_tiled_backing_store_enable_render):
+        (ewk_tiled_backing_store_process_entire_queue_set):
+        * ewk/ewk_tiled_backing_store.h: Added.
+        * ewk/ewk_tiled_matrix.c: Added.
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_resize):
+        (ewk_tile_matrix_unused_cache_get):
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_exact_exists):
+        (ewk_tile_matrix_tile_nearest_get):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_put):
+        (ewk_tile_matrix_tile_update):
+        (ewk_tile_matrix_tile_update_full):
+        (ewk_tile_matrix_tile_updates_clear):
+        (_ewk_tile_matrix_slicer_setup):
+        (ewk_tile_matrix_update):
+        (ewk_tile_matrix_updates_process):
+        (ewk_tile_matrix_updates_clear):
+        (ewk_tile_matrix_dbg):
+        (ewk_tile_matrix_freeze):
+        (ewk_tile_matrix_thaw):
+        * ewk/ewk_tiled_matrix.h: Added.
+        * ewk/ewk_tiled_model.c: Added.
+        (_ewk_tile_account_get):
+        (_ewk_tile_account_allocated):
+        (_ewk_tile_account_freed):
+        (ewk_tile_accounting_dbg):
+        (_ewk_tile_paint_rgb888):
+        (_ewk_tile_paint_rgb565):
+        (_ewk_tile_paint):
+        (ewk_tile_new):
+        (ewk_tile_free):
+        (ewk_tile_show):
+        (ewk_tile_hide):
+        (ewk_tile_visible_get):
+        (ewk_tile_update_full):
+        (ewk_tile_update_area):
+        (ewk_tile_updates_process):
+        (ewk_tile_updates_clear):
+        (ewk_tile_unused_cache_new):
+        (ewk_tile_unused_cache_lock_area):
+        (ewk_tile_unused_cache_unlock_area):
+        (ewk_tile_unused_cache_free):
+        (ewk_tile_unused_cache_clear):
+        (ewk_tile_unused_cache_ref):
+        (ewk_tile_unused_cache_unref):
+        (ewk_tile_unused_cache_max_set):
+        (ewk_tile_unused_cache_max_get):
+        (ewk_tile_unused_cache_used_get):
+        (ewk_tile_unused_cache_flush):
+        (ewk_tile_unused_cache_auto_flush):
+        (ewk_tile_unused_cache_dirty):
+        (ewk_tile_unused_cache_freeze):
+        (ewk_tile_unused_cache_thaw):
+        (ewk_tile_unused_cache_tile_get):
+        (ewk_tile_unused_cache_tile_put):
+        (ewk_tile_unused_cache_dbg):
+        * ewk/ewk_tiled_model.h: Added.
+        * ewk/ewk_tiled_private.h: Added.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        (_ewk_view_smart_pre_render_relative_radius):
+        (_ewk_view_zoom_animator_cb):
+        (_ewk_view_smart_disable_render):
+        (_ewk_view_smart_enable_render):
+        (ewk_view_base_smart_set):
+        (ewk_view_pre_render_region):
+        (ewk_view_pre_render_relative_radius):
+        (ewk_view_enable_render):
+        (ewk_view_disable_render):
+        (ewk_view_scroll):
+        (ewk_view_did_first_visually_nonempty_layout):
+        (ewk_view_dispatch_did_finish_loading):
+        (ewk_view_transition_to_commited_for_newpage):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_tiled.c: Added.
+        (_ewk_view_tiled_render_cb):
+        (_ewk_view_tiled_updates_process_pre):
+        (_ewk_view_tiled_smart_backing_store_add):
+        (_ewk_view_tiled_contents_size_changed_cb):
+        (_ewk_view_tiled_smart_add):
+        (_ewk_view_tiled_smart_scrolls_process):
+        (_ewk_view_tiled_smart_repaints_process):
+        (_ewk_view_tiled_smart_contents_resize):
+        (_ewk_view_tiled_smart_zoom_set):
+        (_ewk_view_tiled_smart_zoom_weak_set):
+        (_ewk_view_tiled_smart_zoom_weak_smooth_scale_set):
+        (_ewk_view_tiled_smart_flush):
+        (_ewk_view_tiled_smart_pre_render_region):
+        (_ewk_view_tiled_smart_pre_render_relative_radius):
+        (_ewk_view_tiled_smart_pre_render_cancel):
+        (_ewk_view_tiled_smart_disable_render):
+        (_ewk_view_tiled_smart_enable_render):
+        (ewk_view_tiled_smart_set):
+        (_ewk_view_tiled_smart_class_new):
+        (ewk_view_tiled_add):
+        (ewk_view_tiled_unused_cache_get):
+        (ewk_view_tiled_unused_cache_set):
+        (ewk_view_tiled_process_entire_queue_set):
+
 2010-11-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Build fix.

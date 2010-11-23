@@ -63,9 +63,13 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_history.cpp
     efl/ewk/ewk_main.cpp
     efl/ewk/ewk_settings.cpp
+    efl/ewk/ewk_tiled_backing_store.c
+    efl/ewk/ewk_tiled_matrix.c
+    efl/ewk/ewk_tiled_model.c
     efl/ewk/ewk_util.cpp
     efl/ewk/ewk_view.cpp
     efl/ewk/ewk_view_single.c
+    efl/ewk/ewk_view_tiled.c
     efl/ewk/ewk_window_features.cpp
 )
 

@@ -94,6 +94,9 @@ struct _Ewk_View_Private_Data {
     } scrolls;
     unsigned int imh; /**< input method hints */
     struct {
+        Eina_Bool view_cleared:1;
+    } flags;
+    struct {
         const char* user_agent;
         const char* user_stylesheet;
         const char* encoding_default;
@@ -725,6 +728,12 @@ static void _ewk_view_smart_add(Evas_Object* o)
 
     evas_object_smart_member_add(sd->backing_store, o);
     evas_object_show(sd->backing_store);
+    evas_object_pass_events_set(sd->backing_store, EINA_TRUE);
+
+    sd->events_rect = evas_object_rectangle_add(sd->base.evas);
+    evas_object_color_set(sd->events_rect, 0, 0, 0, 0);
+    evas_object_smart_member_add(sd->events_rect, o);
+    evas_object_show(sd->events_rect);
 
     sd->main_frame = ewk_frame_add(sd->base.evas);
     if (!sd->main_frame) {
@@ -815,6 +824,7 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
             view->adjustViewSize();
         }
         evas_object_resize(sd->main_frame, w, h);
+        evas_object_resize(sd->events_rect, w, h);
         sd->changed.frame_rect = EINA_TRUE;
         sd->view.w = w;
         sd->view.h = h;
@@ -827,6 +837,7 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
     if (sd->changed.position && ((x != sd->view.x) || (y != sd->view.y))) {
         evas_object_move(sd->main_frame, x, y);
         evas_object_move(sd->backing_store, x, y);
+        evas_object_move(sd->events_rect, x, y);
         sd->changed.frame_rect = EINA_TRUE;
         sd->view.x = x;
         sd->view.y = y;
@@ -848,6 +859,25 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
         view->frameRectsChanged(); /* force tree to get position from root */
         sd->changed.frame_rect = EINA_FALSE;
     }
+}
+
+static void _ewk_view_smart_show(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    if (evas_object_clipees_get(sd->base.clipper))
+        evas_object_show(sd->base.clipper);
+    evas_object_show(sd->backing_store);
+}
+
+static void _ewk_view_smart_hide(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    evas_object_hide(sd->base.clipper);
+    evas_object_hide(sd->backing_store);
 }
 
 static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data* sd, int w, int h)
@@ -894,6 +924,13 @@ static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* sd, Evas
 {
     WRN("not supported by engine. sd=%p area=%d,%d+%dx%d, zoom=%f",
         sd, x, y, w, h, zoom);
+    return EINA_FALSE;
+}
+
+static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data* sd, unsigned int n, float zoom)
+{
+    WRN("not supported by engine. sd=%p, n=%u zoom=%f",
+        sd, n, zoom);
     return EINA_FALSE;
 }
 
@@ -954,6 +991,7 @@ static Eina_Bool _ewk_view_zoom_animator_cb(void* data)
         || (now < priv->animated_zoom.time.start)) {
         _ewk_view_zoom_animated_finish(sd);
         ewk_view_zoom_set(sd->self, priv->animated_zoom.zoom.end, cx, cy);
+        sd->api->sc.calculate(sd->self);
         return EINA_FALSE;
     }
 
@@ -989,6 +1027,18 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Ob
     WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewport_arguments, desktop_width, device_width, device_height, device_dpi, available_size);
 
     return attributes;
+}
+
+static Eina_Bool _ewk_view_smart_disable_render(Ewk_View_Smart_Data *sd)
+{
+    WRN("not supported by engine. sd=%p", sd);
+    return EINA_FALSE;
+}
+
+static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data *sd)
+{
+    WRN("not supported by engine. sd=%p", sd);
+    return EINA_FALSE;
 }
 
 /**
@@ -1030,13 +1080,18 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->sc.resize = _ewk_view_smart_resize;
     api->sc.move = _ewk_view_smart_move;
     api->sc.calculate = _ewk_view_smart_calculate;
+    api->sc.show = _ewk_view_smart_show;
+    api->sc.hide = _ewk_view_smart_hide;
     api->sc.data = EWK_VIEW_TYPE_STR; /* used by type checking */
 
     api->contents_resize = _ewk_view_smart_contents_resize;
     api->zoom_set = _ewk_view_smart_zoom_set;
     api->flush = _ewk_view_smart_flush;
     api->pre_render_region = _ewk_view_smart_pre_render_region;
+    api->pre_render_relative_radius = _ewk_view_smart_pre_render_relative_radius;
     api->pre_render_cancel = _ewk_view_smart_pre_render_cancel;
+    api->disable_render = _ewk_view_smart_disable_render;
+    api->enable_render = _ewk_view_smart_enable_render;
 
     api->focus_in = _ewk_view_smart_focus_in;
     api->focus_out = _ewk_view_smart_focus_out;
@@ -2171,9 +2226,18 @@ Eina_Bool ewk_view_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
 Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->pre_render_region, EINA_FALSE);
-    float cur_zoom = ewk_frame_zoom_get(sd->main_frame);
+    float cur_zoom;
     Evas_Coord cw, ch;
+
+    /* When doing animated zoom it's not possible to call pre-render since it
+     * would screw up parameters that animation is currently using
+     */
+    if (priv->animated_zoom.animator)
+        return EINA_FALSE;
+
+    cur_zoom = ewk_frame_zoom_get(sd->main_frame);
 
     if (cur_zoom < 0.00001)
         return EINA_FALSE;
@@ -2203,6 +2267,35 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y,
 }
 
 /**
+ * Hint engine to pre-render region, given n extra cols/rows
+ *
+ * This is an alternative method to ewk_view_pre_render_region(). It does not
+ * make sense in all engines and therefore it might not be implemented at all.
+ *
+ * It's only useful if engine divide the area being rendered in smaller tiles,
+ * forming a grid. Then, browser could call this function to pre-render @param n
+ * rows/cols involving the current viewport.
+ *
+ * @param o view to ask pre-render on.
+ * @param n number of cols/rows that must be part of the region pre-rendered
+ *
+ * @see ewk_view_pre_render_region()
+ */
+Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* o, unsigned int n)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->pre_render_relative_radius, EINA_FALSE);
+    float cur_zoom;
+
+    if (priv->animated_zoom.animator)
+        return EINA_FALSE;
+
+    cur_zoom = ewk_frame_zoom_get(sd->main_frame);
+    return sd->api->pre_render_relative_radius(sd, n, cur_zoom);
+}
+
+/**
  * Get input method hints
  *
  * @param o View.
@@ -2226,6 +2319,36 @@ void ewk_view_pre_render_cancel(Evas_Object* o)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->pre_render_cancel);
     sd->api->pre_render_cancel(sd);
+}
+
+/**
+  * Enable processing of update requests.
+  *
+  * @param o view to enable rendering.
+  *
+  * @return @c EINA_TRUE if render was enabled, @c EINA_FALSE
+            otherwise (errors, rendering suspension not supported).
+  */
+Eina_Bool ewk_view_enable_render(const Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->enable_render, EINA_FALSE);
+    return sd->api->enable_render(sd);
+}
+
+/**
+  * Disable processing of update requests.
+  *
+  * @param o view to disable rendering.
+  *
+  * @return @c EINA_TRUE if render was disabled, @c EINA_FALSE
+            otherwise (errors, rendering suspension not supported).
+  */
+Eina_Bool ewk_view_disable_render(const Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->disable_render, EINA_FALSE);
+    return sd->api->disable_render(sd);
 }
 
 const char* ewk_view_setting_user_agent_get(const Evas_Object* o)
@@ -3952,7 +4075,6 @@ void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     EINA_SAFETY_ON_TRUE_RETURN(!dx && !dy);
 
-    _ewk_view_scroll_add(priv, dx, dy, sx, sy, sw, sh, main_frame);
     _ewk_view_smart_changed(sd);
 }
 
@@ -4283,6 +4405,42 @@ float ewk_view_device_pixel_ratio_get(Evas_Object* o)
 
     return priv->settings.device_pixel_ratio;
 }
+
+void ewk_view_did_first_visually_nonempty_layout(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+    if (!priv->flags.view_cleared) {
+        ewk_view_frame_main_cleared(o);
+        ewk_view_enable_render(o);
+        priv->flags.view_cleared = EINA_TRUE;
+    }
+}
+
+/**
+ * @internal
+ * Dispatch finished loading.
+ *
+ * @param o view.
+ */
+void ewk_view_dispatch_did_finish_loading(Evas_Object *o)
+{
+    /* If we reach this point and rendering is still disabled, WebCore will not
+     * trigger the didFirstVisuallyNonEmptyLayout signal anymore. So, we
+     * forcefully re-enable the rendering.
+     */
+    ewk_view_did_first_visually_nonempty_layout(o);
+}
+
+void ewk_view_transition_to_commited_for_newpage(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+
+    ewk_view_disable_render(o);
+    priv->flags.view_cleared = EINA_FALSE;
+}
+
 
 /**
  * @internal

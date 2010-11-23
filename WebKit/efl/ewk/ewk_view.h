@@ -114,7 +114,11 @@ struct _Ewk_View_Smart_Class {
     void (*bg_color_set)(Ewk_View_Smart_Data *sd, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void (*flush)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*pre_render_region)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+    Eina_Bool (*pre_render_relative_radius)(Ewk_View_Smart_Data *sd, unsigned int n, float zoom);
     void (*pre_render_cancel)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*disable_render)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*enable_render)(Ewk_View_Smart_Data *sd);
+
     // event handling:
     //  - returns true if handled
     //  - if overridden, have to call parent method if desired
@@ -151,7 +155,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.
@@ -268,6 +272,7 @@ struct _Ewk_View_Smart_Data {
     Evas_Object *self; /**< reference to owner object */
     Evas_Object *main_frame; /**< reference to main frame object */
     Evas_Object *backing_store; /**< reference to backing store */
+    Evas_Object *events_rect; /**< rectangle that should receive mouse events */
     Ewk_View_Private_Data *_priv; /**< should never be accessed, c++ stuff */
     struct {
         Evas_Coord x, y, w, h; /**< last used viewport */
@@ -291,10 +296,36 @@ struct _Ewk_View_Smart_Data {
     } changed;
 };
 
+/**
+ * Cache (pool) that contains unused tiles for ewk_view_tiled.
+ *
+ * This cache will maintain unused tiles and flush them when the total
+ * memory exceeds the set amount when
+ * ewk_tile_unused_cache_auto_flush() or explicitly set value when
+ * ewk_tile_unused_cache_flush() is called.
+ *
+ * The tile may be shared among different ewk_view_tiled instances to
+ * group maximum unused memory resident in the system.
+ */
+typedef struct _Ewk_Tile_Unused_Cache Ewk_Tile_Unused_Cache;
+EAPI void   ewk_tile_unused_cache_max_set(Ewk_Tile_Unused_Cache *tuc, size_t max);
+EAPI size_t ewk_tile_unused_cache_max_get(const Ewk_Tile_Unused_Cache *tuc);
+EAPI size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc);
+EAPI size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes);
+EAPI void   ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc);
+
 EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
 EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
+EAPI Eina_Bool    ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api);
 
 EAPI Evas_Object *ewk_view_single_add(Evas *e);
+EAPI Evas_Object *ewk_view_tiled_add(Evas *e);
+
+EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o);
+EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache);
+
+// FIXME: this function should be removed later, when we find the best flag to use.
+EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag);
 
 EAPI void         ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h);
 EAPI void         ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
@@ -370,7 +401,10 @@ EAPI Eina_Bool    ewk_view_zoom_text_only_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
 
 EAPI Eina_Bool    ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+EAPI Eina_Bool    ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n);
 EAPI void         ewk_view_pre_render_cancel(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_enable_render(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_disable_render(const Evas_Object *o);
 
 EAPI unsigned int ewk_view_imh_get(Evas_Object *o);
 
