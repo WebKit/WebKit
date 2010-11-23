@@ -962,8 +962,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
 
-    if (isMainFrame && webPage->resizesToContentsEnabled())
+    if (isMainFrame && webPage->resizesToContentsEnabled()) {
+        m_frame->coreFrame()->view()->setDelegatesScrolling(true);
         m_frame->coreFrame()->view()->setPaintsEntireContents(true);
+    }
 
     // The HistoryController will update the scroll position later if needed.
     m_frame->coreFrame()->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));

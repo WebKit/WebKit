@@ -104,13 +104,18 @@ public:
     virtual void setCanHaveScrollbars(bool);
     bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarAlwaysOff || verticalScrollbarMode() != ScrollbarAlwaysOff; }
 
-    virtual bool delegatesScrolling() const { return false; }
     virtual bool avoidScrollbarCreation() const { return false; }
 
     // By default you only receive paint events for the area that is visible. In the case of using a
     // tiled backing store, this function can be set, so that the view paints the entire contents.
     bool paintsEntireContents() const { return m_paintsEntireContents; }
     void setPaintsEntireContents(bool);
+
+    // By default programmatic scrolling is handled by WebCore and not by the UI application.
+    // In the case of using a tiled backing store, this mode can be set, so that the scroll requests
+    // are delegated to the UI application.
+    bool delegatesScrolling() const { return m_delegatesScrolling; }
+    void setDelegatesScrolling(bool);
 
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
@@ -307,6 +312,7 @@ private:
     bool m_useFixedLayout;
 
     bool m_paintsEntireContents;
+    bool m_delegatesScrolling;
 
     void init();
     void destroy();

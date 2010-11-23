@@ -1,3 +1,16 @@
+2010-11-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Adapt to setShouldDelegateScrolling not being a real setting anymore.
+        We now similarily to setUseFixedLayout and setPaintEntireContents
+        set it on the FrameView wen transitioning to a new page.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2010-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

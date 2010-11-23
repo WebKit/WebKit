@@ -1,3 +1,16 @@
+2010-11-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Adapt to setShouldDelegateScrolling not being a real setting anymore.
+        We now similarily to setUseFixedLayout and setPaintEntireContents
+        set it on the FrameView wen transitioning to a new page, etc.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
 2010-11-22  Adam Roben  <aroben@apple.com>
 
         Use paths relative to $WebKitVSPropsRedirectionDir to access shared .vsprops files

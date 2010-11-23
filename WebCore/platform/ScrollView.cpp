@@ -53,6 +53,7 @@ ScrollView::ScrollView()
     , m_drawPanScrollIcon(false)
     , m_useFixedLayout(false)
     , m_paintsEntireContents(false)
+    , m_delegatesScrolling(false)
 {
     platformInit();
 }
@@ -199,6 +200,11 @@ bool ScrollView::canBlitOnScroll() const
 void ScrollView::setPaintsEntireContents(bool paintsEntireContents)
 {
     m_paintsEntireContents = paintsEntireContents;
+}
+
+void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
+{
+    m_delegatesScrolling = delegatesScrolling;
 }
 
 #if !PLATFORM(GTK)

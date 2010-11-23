@@ -170,9 +170,6 @@ namespace WebCore {
         void setShouldPrintBackgrounds(bool);
         bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }
 
-        void setShouldDelegateScrolling(bool);
-        bool shouldDelegateScrolling() const { return m_shouldDelegateScrolling; }
-
         void setTextAreasAreResizable(bool);
         bool textAreasAreResizable() const { return m_textAreasAreResizable; }
 
@@ -379,7 +376,6 @@ namespace WebCore {
         bool m_javaScriptCanOpenWindowsAutomatically : 1;
         bool m_javaScriptCanAccessClipboard : 1;
         bool m_shouldPrintBackgrounds : 1;
-        bool m_shouldDelegateScrolling : 1;
         bool m_textAreasAreResizable : 1;
 #if ENABLE(DASHBOARD_SUPPORT)
         bool m_usesDashboardBackwardCompatibilityMode : 1;
