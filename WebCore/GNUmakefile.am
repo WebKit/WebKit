@@ -2400,6 +2400,8 @@ webcore_sources += \
 	WebCore/platform/MIMETypeRegistry.h \
 	WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	WebCore/platform/mock/DeviceOrientationClientMock.h \
+	WebCore/platform/mock/GeolocationClientMock.cpp \
+	WebCore/platform/mock/GeolocationClientMock.h \
 	WebCore/platform/mock/GeolocationServiceMock.cpp \
 	WebCore/platform/mock/GeolocationServiceMock.h \
 	WebCore/platform/mock/SpeechInputClientMock.cpp \

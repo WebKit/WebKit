@@ -30154,6 +30154,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\mock\GeolocationClientMock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\mock\GeolocationClientMock.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\mock\GeolocationServiceMock.cpp"
 					>
 				</File>

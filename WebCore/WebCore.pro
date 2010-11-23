@@ -1195,6 +1195,7 @@ SOURCES += \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
+    platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.cpp \
     platform/mock/SpeechInputClientMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
@@ -2039,6 +2040,7 @@ HEADERS += \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceOrientationClientMock.h \
+    platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
     platform/graphics/BitmapImage.h \

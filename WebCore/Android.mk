@@ -578,6 +578,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/image-decoders/gif/GIFImageReader.cpp \
 	\
 	platform/mock/DeviceOrientationClientMock.cpp \
+	platform/mock/GeolocationClientMock.cpp \
 	platform/mock/GeolocationServiceMock.cpp \
 	platform/mock/SpeechInputClientMock.cpp \
 	\

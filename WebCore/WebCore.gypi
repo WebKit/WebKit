@@ -3359,6 +3359,8 @@
             'platform/MIMETypeRegistry.h',
             'platform/mock/DeviceOrientationClientMock.cpp',
             'platform/mock/DeviceOrientationClientMock.h',
+            'platform/mock/GeolocationClientMock.cpp',
+            'platform/mock/GeolocationClientMock.h',
             'platform/mock/GeolocationServiceMock.cpp',
             'platform/mock/GeolocationServiceMock.h',
             'platform/mock/SpeechInputClientMock.cpp',
