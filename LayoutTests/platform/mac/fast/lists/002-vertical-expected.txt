@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 36x584
         RenderBlock {UL} at (0,0) size 36x584
           RenderListItem {LI} at (0,40) size 18x544
-            RenderListMarker at (0,488) size 18x7: bullet
+            RenderListMarker at (0,-17) size 18x7: bullet
             RenderInline {A} at (0,0) size 18x39 [color=#0000EE]
               RenderText {#text} at (0,505) size 18x39
                 text run at (0,505) width 39: "Home"
           RenderListItem {LI} at (18,40) size 18x544
-            RenderListMarker at (0,470) size 18x7: bullet
+            RenderListMarker at (0,-17) size 18x7: bullet
             RenderInline {A} at (0,0) size 18x57 [color=#0000EE]
               RenderText {#text} at (0,487) size 18x57
                 text run at (0,487) width 57: "Archives"

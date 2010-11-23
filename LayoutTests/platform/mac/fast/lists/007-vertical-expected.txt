@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 520: "The top padding on this unordered list has been set to 25 pixels, which will require"
             text run at (18,0) width 191: "some extra test in order to test."
         RenderListItem {LI} at (36,50) size 72x534 [bgcolor=#FFFFFF] [border: (25px solid #008000) none]
-          RenderListMarker at (0,8) size 18x7: bullet
+          RenderListMarker at (0,-17) size 18x7: bullet
           RenderText {#text} at (0,50) size 72x473
             text run at (0,50) width 473: "Another list item might not be such a bad idea, either, considering that such"
             text run at (18,50) width 239: "things do need to be double-checked. "
