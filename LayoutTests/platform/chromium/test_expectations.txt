@@ -3209,5 +3209,5 @@ BUG49736 : fast/speech/speech-button-ignore-generated-events.html = TIMEOUT
 BUG49967 MAC : fast/text/font-size-zero.html = TEXT
 
 // Was introduced by ap http://trac.webkit.org/changeset/72590
-BUG_LOISLO LINUX WIN MAC : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEST
+BUG_LOISLO LINUX WIN MAC : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 
