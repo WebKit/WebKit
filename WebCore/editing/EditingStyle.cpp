@@ -30,6 +30,7 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSValueKeywords.h"
 #include "Frame.h"
 #include "RenderStyle.h"
 #include "SelectionController.h"
@@ -141,6 +142,33 @@ bool EditingStyle::isEmpty() const
     return !m_mutableStyle || m_mutableStyle->isEmpty();
 }
 
+bool EditingStyle::textDirection(WritingDirection& writingDirection) const
+{
+    RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+    if (!unicodeBidi)
+        return false;
+
+    ASSERT(unicodeBidi->isPrimitiveValue());
+    int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+    if (unicodeBidiValue == CSSValueEmbed) {
+        RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
+        ASSERT(!direction || direction->isPrimitiveValue());
+        if (!direction)
+            return false;
+
+        writingDirection = static_cast<CSSPrimitiveValue*>(direction.get())->getIdent() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+
+        return true;
+    }
+
+    if (unicodeBidiValue == CSSValueNormal) {
+        writingDirection = NaturalWritingDirection;
+        return true;
+    }
+
+    return false;
+}
+
 void EditingStyle::setStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
 {
     m_mutableStyle = style;
@@ -175,7 +203,7 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
 
 void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
 {
-    if (!node || !node->parentNode())
+    if (!node || !node->parentNode() || !m_mutableStyle)
         return;
     RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
     RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
@@ -192,12 +220,23 @@ void EditingStyle::removeNonEditingProperties()
         m_mutableStyle = copyEditingProperties(m_mutableStyle.get());
 }
 
-void EditingStyle::prepareToApplyAt(const Position& position)
+void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)
 {
+    if (!m_mutableStyle)
+        return;
+
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
     RefPtr<EditingStyle> style = EditingStyle::create(position);
+
+    RefPtr<CSSValue> unicodeBidi;
+    RefPtr<CSSValue> direction;
+    if (shouldPreserveWritingDirection == PreserveWritingDirection) {
+        unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
+    }
+
     style->m_mutableStyle->diff(m_mutableStyle.get());
 
     // if alpha value is zero, we don't add the background color.
@@ -207,14 +246,23 @@ void EditingStyle::prepareToApplyAt(const Position& position)
         ExceptionCode ec;
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor, ec);
     }
+
+    if (unicodeBidi) {
+        ASSERT(unicodeBidi->isPrimitiveValue());
+        m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
+        if (direction) {
+            ASSERT(direction->isPrimitiveValue());
+            m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
+        }
+    }
 }
 
 PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position& position)
 {
     RefPtr<EditingStyle> editingStyle = EditingStyle::create(position);
-    RefPtr<CSSMutableStyleDeclaration> typingStyle = position.node()->document()->frame()->selection()->typingStyle();
-    if (typingStyle)
-        editingStyle->style()->merge(copyEditingProperties(typingStyle.get()).get());
+    RefPtr<EditingStyle> typingStyle = position.node()->document()->frame()->selection()->typingStyle();
+    if (typingStyle && typingStyle->style())
+        editingStyle->style()->merge(copyEditingProperties(typingStyle->style()).get());
     return editingStyle;
 }
     

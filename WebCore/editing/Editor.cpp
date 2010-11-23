@@ -616,24 +616,11 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
     }
 
     if (m_frame->selection()->isCaret()) {
-        RefPtr<CSSMutableStyleDeclaration> typingStyle = m_frame->selection()->typingStyle();
-        if (typingStyle) {
-            RefPtr<CSSValue> unicodeBidi = typingStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-            if (unicodeBidi) {
-                ASSERT(unicodeBidi->isPrimitiveValue());
-                int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
-                if (unicodeBidiValue == CSSValueEmbed) {
-                    RefPtr<CSSValue> direction = typingStyle->getPropertyCSSValue(CSSPropertyDirection);
-                    ASSERT(!direction || direction->isPrimitiveValue());
-                    if (direction) {
-                        hasNestedOrMultipleEmbeddings = false;
-                        return static_cast<CSSPrimitiveValue*>(direction.get())->getIdent() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
-                    }
-                } else if (unicodeBidiValue == CSSValueNormal) {
-                    hasNestedOrMultipleEmbeddings = false;
-                    return NaturalWritingDirection;
-                }
-            }
+        RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
+        WritingDirection direction;
+        if (typingStyle && typingStyle->textDirection(direction)) {
+            hasNestedOrMultipleEmbeddings = false;
+            return direction;
         }
         node = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
     }
@@ -3027,9 +3014,10 @@ void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction edi
 
     // Calculate the current typing style.
     RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-    if (m_frame->selection()->typingStyle()) {
-        m_frame->selection()->typingStyle()->merge(mutableStyle.get());
-        mutableStyle = m_frame->selection()->typingStyle();
+    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
+    if (typingStyle && typingStyle->style()) {
+        typingStyle->style()->merge(mutableStyle.get());
+        mutableStyle = typingStyle->style();
     }
 
     RefPtr<CSSValue> unicodeBidi;
@@ -3089,7 +3077,7 @@ PassRefPtr<CSSMutableStyleDeclaration> Editor::selectionComputedStyle(bool& shou
     if (!m_frame->selection()->typingStyle())
         return mutableStyle;
 
-    RefPtr<EditingStyle> typingStyle = EditingStyle::create(m_frame->selection()->typingStyle());
+    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
     typingStyle->removeNonEditingProperties();
     typingStyle->prepareToApplyAt(position);
     mutableStyle->merge(typingStyle->style());
@@ -3173,13 +3161,14 @@ RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
     if (!position.node())
         return 0;
 
-    if (!m_frame->selection()->typingStyle())
+    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
+    if (!typingStyle || !typingStyle->style())
         return position.node()->renderer()->style();
 
     RefPtr<Element> styleElement = m_frame->document()->createElement(spanTag, false);
 
     ExceptionCode ec = 0;
-    String styleText = m_frame->selection()->typingStyle()->cssText() + " display: inline";
+    String styleText = typingStyle->style()->cssText() + " display: inline";
     styleElement->setAttribute(styleAttr, styleText.impl(), ec);
     ASSERT(!ec);
 

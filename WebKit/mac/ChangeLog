@@ -1,3 +1,19 @@
+2010-11-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        SelectionController::typingStyle() should return EditingStyle*
+        https://bugs.webkit.org/show_bug.cgi?id=49813
+
+        Changed the return value of SelectionController::typingStyle() to EditingStyle*.
+        Also added SelectionController::copyTypingStyle() to copy the typing style
+        as an instance of CSSMutableStyleDeclaration.
+
+        No tests are added since this is no behavioral change.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _typingStyle]): Calls SelectionController::copyTypingStyle()
+
 2010-11-19  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Sam Weinig

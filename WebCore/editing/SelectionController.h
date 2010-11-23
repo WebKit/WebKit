@@ -160,7 +160,8 @@ public:
 
     void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
 
-    CSSMutableStyleDeclaration* typingStyle() const;
+    EditingStyle* typingStyle() const;
+    PassRefPtr<CSSMutableStyleDeclaration> copyTypingStyle() const;
     void setTypingStyle(PassRefPtr<EditingStyle>);
     void clearTypingStyle();
 
@@ -233,9 +234,16 @@ private:
     bool m_caretPaint;
 };
 
-inline CSSMutableStyleDeclaration* SelectionController::typingStyle() const
+inline EditingStyle* SelectionController::typingStyle() const
 {
-    return m_typingStyle ? m_typingStyle->style() : 0;
+    return m_typingStyle.get();
+}
+
+inline PassRefPtr<CSSMutableStyleDeclaration> SelectionController::copyTypingStyle() const
+{
+    if (!m_typingStyle || !m_typingStyle->style())
+        return 0;
+    return m_typingStyle->style()->copy();
 }
 
 inline void SelectionController::clearTypingStyle()

@@ -190,26 +190,11 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
     setEndingSelection(forcedEndingSelection);
 
     // Handle the case where there is a typing style.
-    RefPtr<CSSMutableStyleDeclaration> typingStyle = document()->frame()->selection()->typingStyle();
-    RefPtr<CSSComputedStyleDeclaration> endingStyle = endPosition.computedStyle();
-    RefPtr<CSSValue> unicodeBidi;
-    RefPtr<CSSValue> direction;
-    if (typingStyle) {
-        unicodeBidi = typingStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-        direction = typingStyle->getPropertyCSSValue(CSSPropertyDirection);
+    if (RefPtr<EditingStyle> typingStyle = document()->frame()->selection()->typingStyle()) {
+        typingStyle->prepareToApplyAt(endPosition, EditingStyle::PreserveWritingDirection);
+        if (!typingStyle->isEmpty())
+            applyStyle(typingStyle->style());
     }
-    endingStyle->diff(typingStyle.get());
-    if (typingStyle && unicodeBidi) {
-        ASSERT(unicodeBidi->isPrimitiveValue());
-        typingStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
-        if (direction) {
-            ASSERT(direction->isPrimitiveValue());
-            typingStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
-        }
-    }
-
-    if (typingStyle && typingStyle->length())
-        applyStyle(typingStyle.get());
 
     if (!selectInsertedText)
         setEndingSelection(VisibleSelection(endingSelection().end(), endingSelection().affinity()));
