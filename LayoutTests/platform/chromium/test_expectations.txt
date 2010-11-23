@@ -3213,3 +3213,6 @@ BUG49736 : fast/speech/input-onspeechchange-event.html = TEXT
 BUG49736 : fast/speech/input-text-language-tag.html = TEXT
 BUG49736 : fast/speech/input-text-speechbutton.html = TEXT
 BUG49736 : fast/speech/speech-button-ignore-generated-events.html = TEXT
+
+// Disable font-size-zero test for mac platform. The problem was introduced at r72567.
+BUG49967 MAC : fast/text/font-size-zero.html = TEXT
