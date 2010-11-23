@@ -4257,11 +4257,6 @@ a.worker-item {
     cursor: default;
 }
 
-.styles-section .properties .inactive {
-    opacity: 0.75;
-    background-color: rgb(212, 212, 212);
-}
-
 .styles-section .header {
     white-space: nowrap;
     -webkit-background-origin: padding;
@@ -4372,7 +4367,7 @@ a.worker-item {
     z-index: 1;
 }
 
-.styles-section .properties .overloaded, .styles-section .properties .disabled {
+.styles-section .properties .overloaded, .styles-section .properties .inactive, .styles-section .properties .disabled {
     text-decoration: line-through;
 }
 
