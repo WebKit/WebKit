@@ -263,13 +263,12 @@ static void test_dom_document_garbage_collection(DomDocumentFixture* fixture, gc
     WebKitDOMElement* iframe = webkit_dom_document_get_element_by_id(document, "iframe");
     g_assert(iframe);
 
-    /* FIXME: IFrame APIs have the 'i' in the wrong place */
     webkit_dom_element_set_attribute(iframe, "src", "data:<html><head></head></html>", NULL);
 
     while (g_main_context_pending(NULL))
         g_main_context_iteration(NULL, FALSE);
 
-    WebKitDOMDocument* iframeDocument = webkit_dom_htmli_frame_element_get_content_document(WEBKIT_DOM_HTMLI_FRAME_ELEMENT(iframe));
+    WebKitDOMDocument* iframeDocument = webkit_dom_html_iframe_element_get_content_document(WEBKIT_DOM_HTML_IFRAME_ELEMENT(iframe));
     g_assert(iframeDocument);
     head = webkit_dom_document_get_head(iframeDocument);
     g_assert(head);

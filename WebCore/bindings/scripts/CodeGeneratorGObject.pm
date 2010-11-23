@@ -110,6 +110,7 @@ sub FixUpDecamelizedName {
     # FIXME: try to merge this somehow with the fixes in ClassNameToGobjectType
     $classname =~ s/x_path/xpath/;
     $classname =~ s/web_kit/webkit/;
+    $classname =~ s/htmli_frame/html_iframe/;
 
     return $classname;
 }
@@ -118,8 +119,8 @@ sub ClassNameToGObjectType {
     my $className = shift;
     my $CLASS_NAME = uc(decamelize($className));
     # Fixup: with our prefix being 'WebKitDOM' decamelize can't get
-    # WebKitDOMCSS right, so we have to fix it manually (and there
-    # might be more like this in the future)
+    # WebKitDOMCSS and similar names right, so we have to fix it
+    # manually.
     $CLASS_NAME =~ s/DOMCSS/DOM_CSS/;
     $CLASS_NAME =~ s/DOMHTML/DOM_HTML/;
     $CLASS_NAME =~ s/DOMDOM/DOM_DOM/;
@@ -127,6 +128,7 @@ sub ClassNameToGObjectType {
     $CLASS_NAME =~ s/DOMX_PATH/DOM_XPATH/;
     $CLASS_NAME =~ s/DOM_WEB_KIT/DOM_WEBKIT/;
     $CLASS_NAME =~ s/DOMUI/DOM_UI/;
+    $CLASS_NAME =~ s/HTMLI_FRAME/HTML_IFRAME/;
     return $CLASS_NAME;
 }
 
