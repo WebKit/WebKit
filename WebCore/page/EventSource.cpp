@@ -120,6 +120,9 @@ void EventSource::connect()
 
 void EventSource::endRequest()
 {
+    if (!m_requestInFlight)
+        return;
+
     m_requestInFlight = false;
 
     if (!m_failSilently)
