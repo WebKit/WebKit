@@ -1,3 +1,12 @@
+2010-11-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Set correct preprocessor definitions
+        https://bugs.webkit.org/show_bug.cgi?id=49887
+
+        * wtf/Platform.h:
+
 2010-11-22  Adam Roben  <aroben@apple.com>
 
         Use paths relative to $WebKitVSPropsRedirectionDir to access shared .vsprops files
