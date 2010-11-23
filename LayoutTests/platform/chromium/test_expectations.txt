@@ -1079,9 +1079,6 @@ BUG10338 LINUX : fast/events/updateLayoutForHitTest.html = FAIL
 // Layout totally different -- wrong font selected?
 BUG10340 LINUX : fast/frames/viewsource-attribute.html = FAIL
 
-// Linux flaky: sometimes I get scrollbars and sometimes not.
-BUG10341 WIN LINUX : fast/lists/001.html = IMAGE+TEXT
-
 // We fail to load a file URL with a port number -- how does this work on
 // Windows?
 BUG10342 LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
@@ -1274,7 +1271,7 @@ BUG23498 MAC : fast/inline/inline-continuation-borders.html = IMAGE
 BUG23498 MAC : fast/inline/long-wrapped-line.html = IMAGE
 BUG23498 MAC : fast/inline-block/inline-block-vertical-align.html = IMAGE
 BUG23498 MAC : fast/layers/scroll-rect-to-visible.html = IMAGE
-BUG23498 MAC : fast/lists/001.html = IMAGE
+BUG23498 MAC LINUX : fast/lists/001.html = IMAGE
 BUG23498 MAC : fast/lists/008.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
@@ -1917,7 +1914,7 @@ BUG24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Started happening somewhere around http://trac.webkit.org/changeset/48989.
 BUG23955 MAC : fast/css/last-of-type-pseudo-class.html = IMAGE
-BUG23955 LINUX WIN : fast/css/last-of-type-pseudo-class.html = IMAGE+TEXT
+BUG23955 LINUX : fast/css/last-of-type-pseudo-class.html = IMAGE
 
 // WebKit update: 49190:49206
 BUG_JPARENT LINUX DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
@@ -3210,4 +3207,7 @@ BUG49736 : fast/speech/speech-button-ignore-generated-events.html = TEXT
 
 // Disable font-size-zero test for mac platform. The problem was introduced at r72567.
 BUG49967 MAC : fast/text/font-size-zero.html = TEXT
+
+// Was introduced by ap http://trac.webkit.org/changeset/72590
+BUG_LOISLO LINUX WIN MAC : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEST
 
