@@ -1,3 +1,16 @@
+2010-11-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Use WTF::StringHasher directly in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=49893
+
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::Hash::hash):
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierUCharBufferTranslator::hash):
+
 2010-11-22  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Sam Weinig.

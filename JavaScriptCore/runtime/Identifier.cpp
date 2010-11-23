@@ -89,7 +89,7 @@ bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned length)
 struct IdentifierCStringTranslator {
     static unsigned hash(const char* c)
     {
-        return StringImpl::computeHash(c);
+        return WTF::StringHasher::createHash<char>(c);
     }
 
     static bool equal(StringImpl* r, const char* s)
@@ -149,7 +149,7 @@ struct UCharBuffer {
 struct IdentifierUCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
-        return StringImpl::computeHash(buf.s, buf.length);
+        return WTF::StringHasher::createHash<UChar>(buf.s, buf.length);
     }
 
     static bool equal(StringImpl* str, const UCharBuffer& buf)

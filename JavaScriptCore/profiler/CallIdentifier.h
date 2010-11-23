@@ -62,7 +62,7 @@ namespace JSC {
                     key.m_url.impl()->hash(),
                     key.m_lineNumber
                 };
-                return StringImpl::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
+                return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
             }
 
             static bool equal(const CallIdentifier& a, const CallIdentifier& b) { return a == b; }
