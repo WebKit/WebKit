@@ -308,7 +308,7 @@ public:
 
     QMenu *createStandardContextMenu();
 
-    void setUserPermission(QWebFrame* frame, Feature feature, PermissionPolicy policy);
+    void setFeaturePermission(QWebFrame* frame, Feature feature, PermissionPolicy policy);
 
     QStringList supportedContentTypes() const;
     bool supportsContentType(const QString& mimeType) const;
