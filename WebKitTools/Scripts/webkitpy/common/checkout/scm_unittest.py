@@ -803,6 +803,10 @@ class GitTest(SCMTest):
         os.chdir(self.untracking_checkout_path)
         self.assertRaises(ScriptError, self.untracking_scm.remote_branch_ref)
 
+    def test_multiple_remotes(self):
+        run_command(['git', 'config', '--add', 'svn-remote.svn.fetch', 'trunk:remote1'])
+        run_command(['git', 'config', '--add', 'svn-remote.svn.fetch', 'trunk:remote2'])
+        self.assertEqual(self.tracking_scm.remote_branch_ref(), 'remote1')
 
 class GitSVNTest(SCMTest):
 

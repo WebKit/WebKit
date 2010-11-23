@@ -1,3 +1,18 @@
+2010-11-22  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        update scm to work with different remote branches
+        https://bugs.webkit.org/show_bug.cgi?id=49949
+
+        This works if there are multiple svn tracking branches
+        and/or if the tracking branch is refs/remots/origin/master
+        instead of refs/remotes/trunk which is the direction we're trying
+        to head since that makes fetches faster.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-11-22  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

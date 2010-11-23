@@ -597,7 +597,8 @@ class Git(SCM):
     @classmethod
     def read_git_config(cls, key):
         # FIXME: This should probably use cwd=self.checkout_root.
-        return run_command(["git", "config", key],
+        # Pass --get-all for cases where the config has multiple values
+        return run_command(["git", "config", "--get-all", key],
             error_handler=Executive.ignore_error).rstrip('\n')
 
     @staticmethod
@@ -854,19 +855,17 @@ class Git(SCM):
 
     def remote_branch_ref(self):
         # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
+        remote_branch_refs = Git.read_git_config('svn-remote.svn.fetch')
+        if not remote_branch_refs:
+            remote_master_ref = 'refs/remotes/origin/master'
+            if not self._branch_ref_exists(remote_master_ref):
+                raise ScriptError(message="Can't find a branch to diff against. svn-remote.svn.fetch is not in the git config and %s does not exist" % remote_master_ref)
+            return remote_master_ref
 
-        # FIXME: This should so something like: Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
-        # but that doesn't work if the git repo is tracking multiple svn branches.
-        remote_branch_refs = [
-            'refs/remotes/trunk',  # A git-svn checkout as per http://trac.webkit.org/wiki/UsingGitWithWebKit.
-            'refs/remotes/origin/master',  # A git clone of git://git.webkit.org/WebKit.git that is not tracking svn.
-        ]
-
-        for ref in remote_branch_refs:
-            if self._branch_ref_exists(ref):
-                return ref
-
-        raise ScriptError(message="Can't find a branch to diff against. %s branches do not exist." % " and ".join(remote_branch_refs))
+        # FIXME: What's the right behavior when there are multiple svn-remotes listed?
+        # For now, just use the first one.
+        first_remote_branch_ref = remote_branch_refs.split('\n')[0]
+        return first_remote_branch_ref.split(':')[1]
 
     def commit_locally_with_message(self, message):
         self.run(['git', 'commit', '--all', '-F', '-'], input=message)
