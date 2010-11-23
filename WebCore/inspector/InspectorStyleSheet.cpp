@@ -444,12 +444,27 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
                 property->setNumber("startOffset", propertyEntry.range.start);
                 property->setNumber("endOffset", propertyEntry.range.end);
 
+                // Parsed property overrides any property with the same name. Non-parsed property overrides
+                // previous non-parsed property with the same name (if any).
+                bool shouldInactivate = false;
                 HashMap<String, RefPtr<InspectorObject> >::iterator activeIt = propertyNameToPreviousActiveProperty.find(name);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
+                    if (propertyEntry.parsedOk)
+                        shouldInactivate = true;
+                    else {
+                        bool previousParsedOk;
+                        bool success = activeIt->second->getBoolean("parsedOk", &previousParsedOk);
+                        if (success && !previousParsedOk)
+                            shouldInactivate = true;
+                    }
+                } else
+                    propertyNameToPreviousActiveProperty.set(name, property);
+
+                if (shouldInactivate) {
                     activeIt->second->setString("status", "inactive");
                     activeIt->second->setString("shorthandName", "");
+                    propertyNameToPreviousActiveProperty.set(name, property);
                 }
-                propertyNameToPreviousActiveProperty.set(name, property);
             } else {
                 property->setBoolean("implicit", m_style->isPropertyImplicit(name));
                 property->setString("status", "style");

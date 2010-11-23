@@ -29,7 +29,8 @@ body: []
 ['height':'100% !important' is-important] @[109-133] active
 ['colorz':'"!important"' non-parsed] @[138-159] active
 ['important':'!important' non-parsed] @[164-185] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+['color':'yellow'] @[190-204] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
 body.main1: []
@@ -103,6 +104,7 @@ body {
     height: 100% !important;
     colorz: "!important";
     important:!important;
+    color: yellow;
     color: "badcolor" ! important /* good property with strange value */;
 }
 
@@ -133,7 +135,8 @@ body: []
 ['height':'100% !important' is-important] @[109-133] active
 ['colorz':'"!important"' non-parsed] @[138-159] active
 ['important':'!important' non-parsed] @[164-185] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+['color':'yellow'] @[190-204] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
 body.main1: []
@@ -198,7 +201,7 @@ StyleSheet: 'body.mainpage {    text-decoration: strikethrough;    badproperty: 
 
 rule
 body.mainpage: []
-['text-decoration':'strikethrough'] @[4-35] active
+['text-decoration':'strikethrough' non-parsed] @[4-35] active
 ['badproperty':'2badvalue2' non-parsed] @[39-63] active
 
 rule
@@ -211,7 +214,7 @@ StyleSheet: 'html *, body[foo="bar"] {    text-decoration: strikethrough;    bad
 
 rule
 html *, body[foo="bar"]: []
-['text-decoration':'strikethrough'] @[4-35] active
+['text-decoration':'strikethrough' non-parsed] @[4-35] active
 ['badproperty':'2badvalue2' non-parsed] @[39-63] active
 
 rule
@@ -263,7 +266,8 @@ body: []
 ['height':'100% !important' is-important] @[109-133] active
 ['colorz':'"!important"' non-parsed] @[138-159] active
 ['important':'!important' non-parsed] @[164-185] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important] @[190-259] active
+['color':'yellow'] @[190-204] active
+['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
 html *, body[foo="bar"]: []

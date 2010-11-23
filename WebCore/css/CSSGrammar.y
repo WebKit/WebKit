@@ -1294,11 +1294,9 @@ declaration:
             p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_numParsedProperties;
             $$ = p->parseValue($1, $5);
-            if (!$$) {
-                if (static_cast<int>(p->m_numParsedProperties) == oldParsedProperties)
-                    isPropertyParsed = true;
+            if (!$$)
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
-            } else
+            else
                 isPropertyParsed = true;
             delete p->m_valueList;
             p->m_valueList = 0;

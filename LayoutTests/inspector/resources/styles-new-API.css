@@ -13,6 +13,7 @@ body {
     height: 100% !important;
     colorz: "!important";
     important:!important;
+    color: yellow;
     color: "badcolor" ! important /* good property with strange value */;
 }
 
