@@ -41,15 +41,12 @@
 
 namespace WebCore {
 
-static long long spatialDistance(FocusDirection, const IntRect&, const IntRect&);
-static IntRect renderRectRelativeToRootDocument(RenderObject*);
 static RectsAlignment alignmentForRects(FocusDirection, const IntRect&, const IntRect&, const IntSize& viewSize);
 static bool areRectsFullyAligned(FocusDirection, const IntRect&, const IntRect&);
 static bool areRectsPartiallyAligned(FocusDirection, const IntRect&, const IntRect&);
 static bool areRectsMoreThanFullScreenApart(FocusDirection direction, const IntRect& curRect, const IntRect& targetRect, const IntSize& viewSize);
 static bool isRectInDirection(FocusDirection, const IntRect&, const IntRect&);
 static void deflateIfOverlapped(IntRect&, IntRect&);
-static bool checkNegativeCoordsForNode(Node*, const IntRect&);
 static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect& rect);
 static void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& startingRect, const IntRect& potentialRect, IntPoint& exitPoint, IntPoint& entryPoint);
 
@@ -68,88 +65,6 @@ FocusCandidate::FocusCandidate(Node* n)
 bool isSpatialNavigationEnabled(const Frame* frame)
 {
     return (frame && frame->settings() && frame->settings()->isSpatialNavigationEnabled());
-}
-
-void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& candidate)
-{
-    RenderObject* startRender = start->renderer();
-    if (!startRender) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    RenderObject* destRender = candidate.node->renderer();
-    if (!destRender) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    IntRect curRect = renderRectRelativeToRootDocument(startRender);
-    IntRect targetRect  = renderRectRelativeToRootDocument(destRender);
-
-    // The bounding rectangle of two consecutive nodes can overlap. In such cases,
-    // deflate both.
-    deflateIfOverlapped(curRect, targetRect);
-
-    // If empty rects or negative width or height, bail out.
-    if (curRect.isEmpty() || targetRect.isEmpty()
-     || targetRect.width() <= 0 || targetRect.height() <= 0) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    // Negative coordinates can be used if node is scrolled up offscreen.
-    if (!checkNegativeCoordsForNode(start, curRect)) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    if (!checkNegativeCoordsForNode(candidate.node, targetRect)) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    if (!isRectInDirection(direction, curRect, targetRect)) {
-        candidate.distance = maxDistance();
-        return;
-    }
-
-    // The distance between two nodes is not to be considered alone when evaluating/looking
-    // for the best focus candidate node. Alignment of rects can be also a good point to be
-    // considered in order to make the algorithm to behavior in a more intuitive way.
-    IntSize viewSize = candidate.node->document()->page()->mainFrame()->view()->visibleContentRect().size();
-    candidate.alignment = alignmentForRects(direction, curRect, targetRect, viewSize);
-    candidate.distance = spatialDistance(direction, curRect, targetRect);
-}
-
-// FIXME: This function does not behave correctly with transformed frames.
-static IntRect renderRectRelativeToRootDocument(RenderObject* render)
-{
-    ASSERT(render && render->node());
-
-    IntRect rect = render->node()->getRect();
-
-    // In cases when the |render|'s associated node is in a scrollable inner
-    // document, we only consider its scrollOffset if it is not offscreen.
-    Node* node = render->node();
-    Document* mainDocument = node->document()->page()->mainFrame()->document();
-    bool considerScrollOffset = !(hasOffscreenRect(node) && node->document() != mainDocument);
-
-    if (considerScrollOffset) {
-        if (FrameView* frameView = render->node()->document()->view())
-            rect.move(-frameView->scrollOffset());
-    }
-
-    // Handle nested frames.
-    for (Frame* frame = render->document()->frame(); frame; frame = frame->tree()->parent()) {
-        if (Element* element = static_cast<Element*>(frame->ownerElement())) {
-            do {
-                rect.move(element->offsetLeft(), element->offsetTop());
-            } while ((element = element->offsetParent()));
-        }
-    }
-
-    return rect;
 }
 
 static RectsAlignment alignmentForRects(FocusDirection direction, const IntRect& curRect, const IntRect& targetRect, const IntSize& viewSize)
@@ -328,118 +243,6 @@ static inline bool rightOf(const IntRect& a, const IntRect& b)
     return a.x() > b.right();
 }
 
-// * a = Current focused node's rect.
-// * b = Focus candidate node's rect.
-static long long spatialDistance(FocusDirection direction, const IntRect& a, const IntRect& b)
-{
-    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-
-    if (direction == FocusDirectionLeft) {
-        // #1  |--|
-        //
-        // #2  |--|  |--|
-        //
-        // #3  |--|
-
-        x1 = a.x();
-        x2 = b.right();
-
-        if (below(a, b)) {
-            // #1 The a rect is below b.
-            y1 = a.y();
-            y2 = b.bottom();
-        } else if (below(b, a)) {
-            // #3 The b rect is below a.
-            y1 = a.bottom();
-            y2 = b.y();
-        } else {
-            // #2 Both b and a share some common y's.
-            y1 = 0;
-            y2 = 0;
-        }
-    } else if (direction == FocusDirectionRight) {
-        //        |--|  #1
-        //
-        //  |--|  |--|  #2
-        //
-        //        |--|  #3
-
-        x1 = a.right();
-        x2 = b.x();
-
-        if (below(a, b)) {
-            // #1 The b rect is above a.
-            y1 = a.y();
-            y2 = b.bottom();
-        } else if (below(b, a)) {
-            // #3 The b rect is below a.
-            y1 = a.bottom();
-            y2 = b.y();
-        } else {
-            // #2 Both b and a share some common y's.
-            y1 = 0;
-            y2 = 0;
-        }
-    } else if (direction == FocusDirectionUp) {
-        //
-        //   #1    #2    #3
-        //
-        //  |--|  |--|  |--|
-        //
-        //        |--|
-
-        y1 = a.y();
-        y2 = b.bottom();
-
-        if (rightOf(a, b)) {
-            // #1 The b rect is to the left of a.
-            x1 = a.x();
-            x2 = b.right();
-        } else if (rightOf(b, a)) {
-            // #3 The b rect is to the right of a.
-            x1 = a.right();
-            x2 = b.x();
-        } else {
-            // #2 Both b and a share some common x's.
-            x1 = 0;
-            x2 = 0;
-        }
-    } else if (direction == FocusDirectionDown) {
-        //        |--|
-        //
-        //  |--|  |--|  |--|
-        //
-        //   #1    #2    #3
-
-        y1 = a.bottom();
-        y2 = b.y();
-
-        if (rightOf(a, b)) {
-            // #1 The b rect is to the left of a.
-            x1 = a.x();
-            x2 = b.right();
-        } else if (rightOf(b, a)) {
-            // #3 The b rect is to the right of a
-            x1 = a.right();
-            x2 = b.x();
-        } else {
-            // #2 Both b and a share some common x's.
-            x1 = 0;
-            x2 = 0;
-        }
-    }
-
-    long long dx = x1 - x2;
-    long long dy = y1 - y2;
-
-    long long distance = (dx * dx) + (dy * dy);
-
-    if (distance < 0)
-        distance *= -1;
-
-    return distance;
-}
-
 static bool isRectInDirection(FocusDirection direction, const IntRect& curRect, const IntRect& targetRect)
 {
     switch (direction) {
@@ -572,26 +375,6 @@ bool scrollInDirection(Node* container, FocusDirection direction)
     return false;
 }
 
-void scrollIntoView(Element* element)
-{
-    // NOTE: Element's scrollIntoView method could had been used here, but
-    // it is preferable to inflate |element|'s bounding rect a bit before
-    // scrolling it for accurate reason.
-    // Element's scrollIntoView method does not provide this flexibility.
-    IntRect bounds = element->getRect();
-    bounds.inflate(fudgeFactor());
-    element->renderer()->enclosingLayer()->scrollRectToVisible(bounds);
-}
-
-bool isInRootDocument(Node* node)
-{
-    if (!node)
-        return false;
-
-    Document* rootDocument = node->document()->page()->mainFrame()->document();
-    return node->document() == rootDocument;
-}
-
 static void deflateIfOverlapped(IntRect& a, IntRect& b)
 {
     if (!a.intersects(b) || a.contains(b) || b.contains(a))
@@ -607,26 +390,6 @@ static void deflateIfOverlapped(IntRect& a, IntRect& b)
         b.inflate(deflateFactor);
 }
 
-static bool checkNegativeCoordsForNode(Node* node, const IntRect& curRect)
-{
-    ASSERT(node || node->renderer());
-
-    if (curRect.x() >= 0 && curRect.y() >= 0)
-        return true;
-
-    bool canBeScrolled = false;
-
-    RenderObject* renderer = node->renderer();
-    for (; renderer; renderer = renderer->parent()) {
-        if (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()) {
-            canBeScrolled = true;
-            break;
-        }
-    }
-
-    return canBeScrolled;
-}
-
 bool isScrollableContainerNode(const Node* node)
 {
     if (!node)
@@ -638,26 +401,6 @@ bool isScrollableContainerNode(const Node* node)
     }
 
     return false;
-}
-
-bool isNodeDeepDescendantOfDocument(Node* node, Document* baseDocument)
-{
-    if (!node || !baseDocument)
-        return false;
-
-    bool descendant = baseDocument == node->document();
-
-    Element* currentElement = static_cast<Element*>(node);
-    while (!descendant) {
-        Element* documentOwner = currentElement->document()->ownerElement();
-        if (!documentOwner)
-            break;
-
-        descendant = documentOwner->document() == baseDocument;
-        currentElement = documentOwner;
-    }
-
-    return descendant;
 }
 
 Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direction, Node* node)
@@ -877,7 +620,7 @@ void distanceDataForNode(FocusDirection direction, FocusCandidate& current, Focu
     candidate.alignment = alignmentForRects(direction, currentRect, nodeRect, viewSize);
 }
 
-bool canBeScrolledIntoView(FocusDirection direction, FocusCandidate& candidate)
+bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candidate)
 {
     ASSERT(candidate.node && hasOffscreenRect(candidate.node));
     IntRect candidateRect = candidate.rect;

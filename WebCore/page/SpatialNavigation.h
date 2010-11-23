@@ -122,12 +122,9 @@ struct FocusCandidate {
     IntRect rect;
 };
 
-void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& candidate);
 bool scrollInDirection(Frame*, FocusDirection);
 bool scrollInDirection(Node* container, FocusDirection);
-void scrollIntoView(Element*);
 bool hasOffscreenRect(Node*, FocusDirection direction = FocusDirectionNone);
-bool isInRootDocument(Node*);
 bool isScrollableContainerNode(const Node*);
 bool isNodeDeepDescendantOfDocument(Node*, Document*);
 Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, Node* node);
@@ -136,7 +133,7 @@ bool canScrollInDirection(FocusDirection, const Frame*);
 IntRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
 IntRect frameRectInAbsoluteCoordinates(Frame*);
 void distanceDataForNode(FocusDirection, FocusCandidate& current, FocusCandidate& candidate);
-bool canBeScrolledIntoView(FocusDirection, FocusCandidate&);
+bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
 IntRect virtualRectForDirection(FocusDirection, const IntRect& startingRect);
 } // namspace WebCore
 
