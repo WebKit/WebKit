@@ -50,8 +50,8 @@ WebPage::WebPage(QObject* parent)
 
     connect(networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
             this, SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
-    connect(this, SIGNAL(requestPermissionFromUser(QWebFrame*, QWebPage::Feature)), this, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
-    connect(this, SIGNAL(cancelRequestsForPermission(QWebFrame*, QWebPage::Feature)), this, SLOT(cancelRequestsForPermission(QWebFrame*, QWebPage::Feature)));
+    connect(this, SIGNAL(featurePermissionRequested(QWebFrame*, QWebPage::Feature)), this, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
+    connect(this, SIGNAL(featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)), this, SLOT(featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)));
 }
 
 void WebPage::applyProxy()
@@ -172,7 +172,7 @@ void WebPage::requestPermission(QWebFrame* frame, QWebPage::Feature feature)
     setFeaturePermission(frame, feature, PermissionGrantedByUser);
 }
 
-void WebPage::cancelRequestsForPermission(QWebFrame*, QWebPage::Feature)
+void WebPage::featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)
 {
 }
 

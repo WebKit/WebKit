@@ -65,7 +65,7 @@ void GeolocationPermissionClientQt::requestGeolocationPermissionForFrame(QWebFra
     m_pendingPermissionRequests.insert(webFrame, listener);
 
     QWebPage* page = webFrame->page();
-    emit page->requestPermissionFromUser(webFrame, QWebPage::Geolocation);
+    emit page->featurePermissionRequested(webFrame, QWebPage::Geolocation);
 }
 
 
@@ -74,7 +74,7 @@ void GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame(Q
     m_pendingPermissionRequests.remove(webFrame);
 
     QWebPage* page = webFrame->page();
-    emit page->cancelRequestsForPermission(webFrame, QWebPage::Geolocation);
+    emit page->featurePermissionRequestCanceled(webFrame, QWebPage::Geolocation);
 }
 
 void GeolocationPermissionClientQt::setPermission(QWebFrame* webFrame, QWebPage::PermissionPolicy permission)

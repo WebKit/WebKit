@@ -5,6 +5,24 @@
         [Qt] Review the setUserPermission & friends API
         https://bugs.webkit.org/show_bug.cgi?id=46810
 
+        Renamed requestPermissionFromUser to featurePermissionRequested
+        and cancelRequestsForPermission to featurePermissionRequestCanceled.
+
+        * Api/qwebpage.h:
+        * WebCoreSupport/GeolocationPermissionClientQt.cpp:
+        (WebCore::GeolocationPermissionClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::cancelRequestsForPermission):
+
+2010-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Review the setUserPermission & friends API
+        https://bugs.webkit.org/show_bug.cgi?id=46810
+
         Rename setUserPermission to setFeaturePermission
 
         * Api/qwebpage.cpp:
