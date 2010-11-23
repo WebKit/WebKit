@@ -90,7 +90,7 @@ class TestResultsUploader:
         content_type, data = _encode_multipart_form_data(attrs, file_objs)
         headers = {"Content-Type": content_type}
         request = urllib2.Request(url, data, headers)
-        urllib2.urlopen(request, timeout=60)
+        urllib2.urlopen(request)
 
     def upload(self, params, files, timeout_seconds):
         file_objs = []
