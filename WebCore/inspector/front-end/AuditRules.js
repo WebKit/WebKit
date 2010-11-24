@@ -326,7 +326,9 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     if (!unusedRules.length)
                         continue;
 
-                    var url = styleSheet.sourceURL ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
+                    var resource = WebInspector.resourceManager.resourceForURL(styleSheet.sourceURL);
+                    var isInlineBlock = resource && resource.type == WebInspector.Resource.Type.Document;
+                    var url = !isInlineBlock ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
