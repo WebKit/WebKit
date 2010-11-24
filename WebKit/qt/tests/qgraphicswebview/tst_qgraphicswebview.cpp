@@ -36,6 +36,7 @@ private slots:
     void focusInputTypes();
     void crashOnSetScaleBeforeSetUrl();
     void widgetsRenderingThroughCache();
+    void receivesFocusInOnShow();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -259,6 +260,58 @@ void tst_QGraphicsWebView::focusInputTypes()
     delete view;
 }
 
+class FocusPage : public QWebPage {
+public:
+    FocusPage(QObject* parent = 0);
+
+    bool gotFocus() const;
+
+protected:
+    bool event(QEvent* e);
+
+private:
+    bool m_focus;
+};
+
+FocusPage::FocusPage(QObject *parent)
+    : QWebPage(parent), m_focus(false)
+{
+}
+
+bool FocusPage::event(QEvent *e)
+{
+    if (e->type() == QEvent::FocusIn)
+        m_focus = true;
+    return QWebPage::event(e);
+}
+
+bool FocusPage::gotFocus() const
+{
+    return m_focus;
+}
+
+void tst_QGraphicsWebView::receivesFocusInOnShow()
+{
+    QGraphicsWebView webView;
+    webView.setHtml("<body><input type=text autofocus=autofocus></input></body>");
+    FocusPage page;
+    webView.setPage(&page);
+
+    for (int i = 0; i < 3; ++i) {
+        QGraphicsView view;
+        QGraphicsScene* scene = new QGraphicsScene(&view);
+        view.setScene(scene);
+        scene->addItem(&webView);
+        view.setGeometry(QRect(0, 0, 500, 500));
+
+        view.show();
+        QTest::qWaitForWindowShown(&view);
+
+        QVERIFY(page.gotFocus());
+
+        scene->removeItem(&webView);
+    }
+}
 
 
 QTEST_MAIN(tst_QGraphicsWebView)

@@ -53,7 +53,8 @@ public:
     QGraphicsWebViewPrivate(QGraphicsWebView* parent)
         : q(parent)
         , page(0)
-        , resizesToContents(false) {}
+        , resizesToContents(false)
+        , currentScene(0) {}
 
     virtual ~QGraphicsWebViewPrivate();
 
@@ -75,6 +76,7 @@ public:
     QGraphicsWebView* q;
     QWebPage* page;
     bool resizesToContents;
+    QGraphicsScene* currentScene;
 
     QGraphicsItemOverlay* overlay() const
     {
@@ -252,6 +254,11 @@ QGraphicsWebView::QGraphicsWebView(QGraphicsItem* parent)
 #if ENABLE(TILED_BACKING_STORE)
     QObject::connect(this, SIGNAL(scaleChanged()), this, SLOT(_q_scaleChanged()));
 #endif
+
+    if (scene()) {
+        d->currentScene = scene();
+        d->currentScene->installEventFilter(this);
+    }
 }
 
 /*!
@@ -308,6 +315,20 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 
 /*! \reimp
 */
+bool QGraphicsWebView::eventFilter(QObject* object, QEvent* event)
+{
+    if (object == d->currentScene
+        && (event->type() == QEvent::FocusIn
+            || event->type() == QEvent::FocusOut)) {
+        QFocusEvent* focusEvent = static_cast<QFocusEvent*>(event);
+        if (focusEvent->reason() == Qt::ActiveWindowFocusReason)
+            d->page->event(event);
+    }
+    return false;
+}
+
+/*! \reimp
+*/
 bool QGraphicsWebView::sceneEvent(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
@@ -341,6 +362,14 @@ QVariant QGraphicsWebView::itemChange(GraphicsItemChange change, const QVariant&
             QEvent event(QEvent::CursorChange);
             QApplication::sendEvent(this, &event);
             return value;
+        }
+    case ItemSceneHasChanged: {
+            QGraphicsScene* newScene = qVariantValue<QGraphicsScene*>(value);
+            if (d->currentScene)
+                d->currentScene->removeEventFilter(this);
+            d->currentScene = newScene;
+            if (d->currentScene)
+                d->currentScene->installEventFilter(this);
         }
     default:
         break;
