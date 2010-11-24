@@ -27,8 +27,7 @@ PASS webkitIDBCursor.PREV is 2
 PASS webkitIDBCursor.PREV_NO_DUPLICATE is 3
 PASS webkitIDBTransaction.READ_WRITE is 0
 PASS webkitIDBTransaction.READ_ONLY is 1
-PASS webkitIDBTransaction.SNAPSHOT_READ is 2
-PASS webkitIDBTransaction.VERSION_CHANGE is 3
+PASS webkitIDBTransaction.VERSION_CHANGE is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

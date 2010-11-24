@@ -64,8 +64,10 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     }
 
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction.get(), ec);
-    if (!objectStore)
+    if (!objectStore) {
+        // FIXME: ASSERT(ec) once UNKNOWN_ERR is not 0.
         return 0;
+    }
     return IDBObjectStore::create(objectStore.release(), m_setVersionTransaction.get());
 }
 

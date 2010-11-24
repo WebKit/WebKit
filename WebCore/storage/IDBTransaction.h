@@ -54,8 +54,7 @@ public:
     enum Mode {
         READ_WRITE = 0,
         READ_ONLY = 1,
-        SNAPSHOT_READ = 2,
-        VERSION_CHANGE = 3
+        VERSION_CHANGE = 2
     };
 
     unsigned short mode() const;
