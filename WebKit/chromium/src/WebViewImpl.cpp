@@ -139,6 +139,27 @@
 
 using namespace WebCore;
 
+namespace {
+
+GraphicsContext3D::Attributes getCompositorContextAttributes()
+{
+    // Explicitly disable antialiasing for the compositor. As of the time of
+    // this writing, the only platform that supported antialiasing for the
+    // compositor was Mac OS X, because the on-screen OpenGL context creation
+    // code paths on Windows and Linux didn't yet have multisampling support.
+    // Mac OS X essentially always behaves as though it's rendering offscreen.
+    // Multisampling has a heavy cost especially on devices with relatively low
+    // fill rate like most notebooks, and the Mac implementation would need to
+    // be optimized to resolve directly into the IOSurface shared between the
+    // GPU and browser processes. For these reasons and to avoid platform
+    // disparities we explicitly disable antialiasing.
+    GraphicsContext3D::Attributes attributes;
+    attributes.antialias = false;
+    return attributes;
+}
+
+} // anonymous namespace
+
 namespace WebKit {
 
 // Change the text zoom level by kTextSizeMultiplierRatio each time the user
@@ -2376,7 +2397,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
     RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
-        context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         if (context)
             context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
     }
@@ -2513,8 +2534,7 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
         else if (m_temporaryOnscreenGraphicsContext3D)
             context = m_temporaryOnscreenGraphicsContext3D.get();
         else {
-            GraphicsContext3D::Attributes attributes;
-            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
             if (m_temporaryOnscreenGraphicsContext3D)
                 m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
             context = m_temporaryOnscreenGraphicsContext3D.get();

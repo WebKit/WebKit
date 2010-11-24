@@ -1,3 +1,15 @@
+2010-11-24  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Disable antialiasing for compositor
+        https://bugs.webkit.org/show_bug.cgi?id=50039
+
+        * src/WebViewImpl.cpp:
+        (WebCore::getCompositorContextAttributes):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::graphicsContext3D):
+
 2010-11-24  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
