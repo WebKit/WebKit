@@ -5,8 +5,10 @@ if (window.layoutTestController)
 else
     debug('This test can not be run without the LayoutTestController');
 
-window.addEventListener('deviceorientation', function() { } );
-window.location = "resources/event-after-navigation-new.html";
+document.body.onload = function() {
+    window.addEventListener('deviceorientation', function() { } );
+    window.location = "resources/event-after-navigation-new.html";
+}
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;
