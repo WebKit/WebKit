@@ -56,10 +56,6 @@ WebInspector.ResourcesPanel = function(database)
     this.applicationCacheListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Application Cache"), "ApplicationCache", "application-cache-storage-tree-item");
     this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
 
-    this.locallyModifiedListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Locally Modified"), "LocallyModified", "frame-storage-tree-item");
-    this.sidebarTree.appendChild(this.locallyModifiedListTreeElement);
-    this.locallyModifiedListTreeElement.hidden = true;
-
     if (Preferences.fileSystemEnabled) {
         this.fileSystemListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("File System"), "FileSystem", "file-system-storage-tree-item");
         this.sidebarTree.appendChild(this.fileSystemListTreeElement);
@@ -78,7 +74,6 @@ WebInspector.ResourcesPanel = function(database)
     this._cookieViews = {};
     this._origins = {};
     this._domains = {};
-    this._locallyModifiedResources = {};
 
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
@@ -149,7 +144,6 @@ WebInspector.ResourcesPanel.prototype = {
         this._domStorage = [];
 
         this._cookieViews = {};
-        this._locallyModifiedResources = {};
         this._fileSystemView = null;
         
         this._applicationCacheView = null;
@@ -160,7 +154,6 @@ WebInspector.ResourcesPanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
         this.applicationCacheListTreeElement.removeChildren();
-        this.locallyModifiedListTreeElement.removeChildren();
         if (Preferences.fileSystemEnabled)
             this.fileSystemListTreeElement.removeChildren();
         this.storageViews.removeChildren();
@@ -311,20 +304,6 @@ WebInspector.ResourcesPanel.prototype = {
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
     },
 
-    addLocallyModifiedRevision: function(url, resourceType, content)
-    {
-        this.locallyModifiedListTreeElement.hidden = false;
-
-        var newRevision = new WebInspector.LocallyModifiedRevisionTreeElement(this, url, resourceType, content);
-        var lastRevision = this._locallyModifiedResources[url];
-        this._locallyModifiedResources[url] = newRevision;
-
-        if (lastRevision)
-            lastRevision.becomeLogEntry(newRevision);
-        else
-            this.locallyModifiedListTreeElement.appendChild(newRevision);
-    },
-
     selectDatabase: function(databaseId)
     {
         var database;
@@ -472,7 +451,7 @@ WebInspector.ResourcesPanel.prototype = {
     _innerShowView: function(view)
     {
         if (this.visibleView)
-            this.visibleView.detach();
+            this.visibleView.hide();
 
         view.show(this.storageViews);
         this.visibleView = view;
@@ -960,6 +939,7 @@ WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
     this._resource = resource;
     this._resource.addEventListener("errors-warnings-updated", this._errorsWarningsUpdated, this);
+    this._resource.addEventListener("content-changed", this._contentChanged, this);
     this.tooltip = resource.url;
 }
 
@@ -1070,6 +1050,44 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
         if (this._resource.errors)
             this._bubbleElement.addStyleClass("error");
+    },
+
+    _contentChanged: function(event)
+    {
+        var revisionResource = new WebInspector.Resource(null, this._resource.url);
+        revisionResource.type = this._resource.type;
+        revisionResource.loader = this._resource.loader;
+        if (this._resource.finished)
+            revisionResource.finished = true;
+        else {
+            function finished()
+            {
+                revisionResource.finished = true;
+            }
+            this._resource.addEventListener("finished", finished);
+        }
+        if (event.data.oldContent)
+            revisionResource.setInitialContent(event.data.oldContent);
+        this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revisionResource, event.data.oldContentTimestamp), 0);
+
+        var oldView = this._resource._resourcesView;
+        if (oldView) {
+            var scrollTop = oldView.scrollTop;
+            var newView = WebInspector.ResourceManager.createResourceView(this._resource);
+            var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
+
+            this._resource._resourcesView.detach();
+            delete this._resource._resourcesView;
+            this._resource._resourcesView = newView;
+
+            if (oldViewParentNode)
+                newView.show(oldViewParentNode);
+
+            if (oldView === this._storagePanel.visibleView)
+                this._storagePanel.visibleView = newView;
+            if (scrollTop)
+                newView.scrollTop = scrollTop;
+        }
     }
 }
 
@@ -1197,44 +1215,16 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.LocallyModifiedRevisionTreeElement = function(storagePanel, url, resourceType, content)
+WebInspector.ResourceRevisionTreeElement = function(storagePanel, resource, timestamp)
 {
-    var resource = new WebInspector.Resource(null, url);
-    resource.type = resourceType;
-    resource.content = content;
-
-    var timestamp = new Date();
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
-    this.tooltip = resource.url;
-    this.timestamp = timestamp;
+    var title = timestamp ? timestamp.toLocaleTimeString() : "(original)";
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, "resource-sidebar-tree-item resources-category-" + resource.category.name);
+    if (timestamp)
+        this.tooltip = timestamp.toLocaleString();
     this._resource = resource;
 }
 
-WebInspector.LocallyModifiedRevisionTreeElement.prototype = {
-    becomeLogEntry: function(newRevision)
-    {
-        var oldChildren = this.children.slice();
-        var oldExpanded = this.expanded;
-        var oldIndex = this.parent.children.indexOf(this);
-
-        this.removeChildren();
-        this.titleText = this.timestamp.toLocaleTimeString();
-        this.toLocaleString();
-        this.hasChildren = false;
-
-        this.parent.insertChild(newRevision, oldIndex);
-        this.parent.removeChild(this);
-
-        const oneMinute = 1000 * 60;
-        if (newRevision.timestamp - this.timestamp > oneMinute)
-            newRevision.appendChild(this);
-
-        for (var i = 0; i < oldChildren.length; ++i)
-            newRevision.appendChild(oldChildren[i]);
-        if (oldExpanded)
-            newRevision.expand();
-    },
-
+WebInspector.ResourceRevisionTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
@@ -1255,7 +1245,8 @@ WebInspector.LocallyModifiedRevisionTreeElement.prototype = {
         return true;
     }
 }
-WebInspector.LocallyModifiedRevisionTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+
+WebInspector.ResourceRevisionTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.FileSystemTreeElement = function(storagePanel, origin)
 {

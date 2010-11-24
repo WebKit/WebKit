@@ -625,6 +625,19 @@ WebInspector.Resource.prototype = {
 
     set content(content)
     {
+        var data = { oldContent: this._content, oldContentTimestamp: this._contentTimestamp };
+        this._content = content;
+        this._contentTimestamp = new Date();
+        this.dispatchEventToListeners("content-changed", data);
+    },
+
+    get contentTimestamp()
+    {
+        return this._contentTimestamp;
+    },
+
+    setInitialContent: function(content)
+    {
         this._content = content;
     },
 

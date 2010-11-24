@@ -113,7 +113,7 @@ module core {
         [notify] void didFinishLoading(out long identifier, out double finishTime);
         [notify] void didFailLoading(out long identifier, out double time, out String localizedDescription);
         [notify] void didLoadResourceFromMemoryCache(out double time, out Object resource);
-        [notify] void setOverrideContent(out long identifier, out String sourceString, out String type);
+        [notify] void setInitialContent(out long identifier, out String sourceString, out String type);
         [notify] void didCommitLoadForFrame(out Object frame, out Object loader);
         [notify] void frameDetachedFromParent(out unsigned long frameId);
 

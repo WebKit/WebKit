@@ -924,7 +924,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
         addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
 
     if (m_resourceAgent)
-        m_resourceAgent->setOverrideContent(identifier, sourceString, "XHR");
+        m_resourceAgent->setInitialContent(identifier, sourceString, "XHR");
 }
 
 void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
@@ -933,7 +933,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
         return;
 
     if (m_resourceAgent)
-        m_resourceAgent->setOverrideContent(identifier, sourceString, "Script");
+        m_resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
 void InspectorController::ensureSettingsLoaded()

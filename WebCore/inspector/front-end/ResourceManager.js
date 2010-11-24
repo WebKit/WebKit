@@ -39,7 +39,7 @@ WebInspector.ResourceManager = function()
         "didFinishLoading",
         "didFailLoading",
         "didLoadResourceFromMemoryCache",
-        "setOverrideContent",
+        "setInitialContent",
         "didCommitLoadForFrame",
         "frameDetachedFromParent",
         "didCreateWebSocket",
@@ -246,14 +246,14 @@ WebInspector.ResourceManager.prototype = {
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
 
-    setOverrideContent: function(identifier, sourceString, type)
+    setInitialContent: function(identifier, sourceString, type)
     {
         var resource = WebInspector.panels.network.resources[identifier];
         if (!resource)
             return;
 
         resource.type = WebInspector.Resource.Type[type];
-        resource.content = sourceString;
+        resource.setInitialContent(sourceString);
         WebInspector.panels.resources.refreshResource(resource);
         WebInspector.panels.network.refreshResource(resource);
     },

@@ -796,6 +796,7 @@ WebInspector.NetworkPanel.prototype = {
 
         if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource, resource._resourcesView))
             return;
+
         var newView = WebInspector.ResourceManager.createResourceView(resource);
 
         var oldView = resource._resourcesView;

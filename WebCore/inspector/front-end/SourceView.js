@@ -70,6 +70,16 @@ WebInspector.SourceView.prototype = {
             this.sourceFrame.resize();
     },
 
+    get scrollTop()
+    {
+        return this.sourceFrame.scrollTop;
+    },
+
+    set scrollTop(scrollTop)
+    {
+        this.sourceFrame.scrollTop = scrollTop;
+    },
+
     setupSourceFrameIfNeeded: function()
     {
         if (!this._frameNeedsSetup)
@@ -137,12 +147,13 @@ WebInspector.SourceView.prototype = {
         }
 
         var linesCountToShift = newContent.split("\n").length - 1;
-        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), lines.join("\n"), line, linesCountToShift, this._editLineComplete.bind(this), cancelEditingCallback);
+        var newContent = lines.join("\n");
+        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), newContent, line, linesCountToShift, this._editLineComplete.bind(this, newContent), cancelEditingCallback);
     },
 
-    _editLineComplete: function(newBody)
+    _editLineComplete: function(newContent)
     {
-        this.sourceFrame.updateContent(newBody);
+        this.resource.content = newContent;
     },
 
     _sourceIDForLine: function(line)

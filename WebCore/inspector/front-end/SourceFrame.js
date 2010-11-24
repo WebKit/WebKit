@@ -161,6 +161,17 @@ WebInspector.SourceFrame.prototype = {
         return this._textModel;
     },
 
+    get scrollTop()
+    {
+        return this._textViewer ? this._textViewer.element.scrollTop : 0;
+    },
+
+    set scrollTop(scrollTop)
+    {
+        if (this._textViewer)
+            this._textViewer.element.scrollTop = scrollTop;
+    },
+
     highlightLine: function(line)
     {
         if (this._textViewer)

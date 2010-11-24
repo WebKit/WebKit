@@ -1771,7 +1771,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // FIXME: this does not handle trailing comments.
         if (styleText.length && !/;\s*$/.test(styleText))
             styleText += ";";
-        this.property.setText(styleText, callback.bind(this));
+        this.property.setText(styleText, updateInterface, callback.bind(this));
     }
 }
 

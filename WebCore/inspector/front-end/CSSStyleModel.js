@@ -119,7 +119,7 @@ WebInspector.CSSStyleModel.prototype = {
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
             successCallback(rule, doesAffectSelectedNode);
-            this._styleSheetChanged(rule.id.styleSheetId);
+            this._styleSheetChanged(rule.id.styleSheetId, true);
         }
 
         function callback(nodeId, successCallback, failureCallback, newSelector, rulePayload)
@@ -140,7 +140,7 @@ WebInspector.CSSStyleModel.prototype = {
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
             successCallback(rule, doesAffectSelectedNode);
-            this._styleSheetChanged(rule.id.styleSheetId);
+            this._styleSheetChanged(rule.id.styleSheetId, true);
         }
 
         function callback(successCallback, failureCallback, selector, rulePayload)
@@ -155,9 +155,18 @@ WebInspector.CSSStyleModel.prototype = {
         InspectorBackend.addRule2(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));
     },
 
-    _styleSheetChanged: function(styleSheetId)
+    _styleSheetChanged: function(styleSheetId, majorChange)
     {
-        // FIXME: use InspectorBackend.getStyleSheetText2 here;
+        if (!majorChange || !styleSheetId)
+            return;
+
+        function callback(href, content)
+        {
+            var resource = WebInspector.resourceManager.resourceForURL(href);
+            if (resource)
+                resource.content = content;
+        }
+        InspectorBackend.getStyleSheetText2(styleSheetId, callback);
     }
 }
 
@@ -323,7 +332,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
                 userCallback(null);
             else {
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(payload));
-                WebInspector.cssModel._styleSheetChanged(this.id.styleSheetId);
+                WebInspector.cssModel._styleSheetChanged(this.id.styleSheetId, true);
             }
         }
 
@@ -433,7 +442,7 @@ WebInspector.CSSProperty.prototype = {
     },
 
     // Replaces "propertyName: propertyValue [!important];" in the stylesheet by an arbitrary propertyText.
-    setText: function(propertyText, userCallback)
+    setText: function(propertyText, majorChange, userCallback)
     {
         function callback(stylePayload)
         {
@@ -447,7 +456,7 @@ WebInspector.CSSProperty.prototype = {
             else {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 userCallback(style);
-                WebInspector.cssModel._styleSheetChanged(style.id.styleSheetId);
+                WebInspector.cssModel._styleSheetChanged(style.id.styleSheetId, majorChange);
             }
         }
 
@@ -480,7 +489,7 @@ WebInspector.CSSProperty.prototype = {
             else {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 userCallback(style);
-                WebInspector.cssModel._styleSheetChanged(this.ownerStyle.id.styleSheetId);
+                WebInspector.cssModel._styleSheetChanged(this.ownerStyle.id.styleSheetId, false);
             }
         }
 
@@ -532,7 +541,7 @@ WebInspector.CSSStyleSheet.prototype = {
                 userCallback(null);
             else {
                 userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));
-                WebInspector.cssModel._styleSheetChanged(this.id);
+                WebInspector.cssModel._styleSheetChanged(this.id, true);
             }
         }
 
