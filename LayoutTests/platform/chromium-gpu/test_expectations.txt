@@ -263,7 +263,10 @@ WONTFIX : compositing/images/direct-pdf-image.html = FAIL
 
 // Chromium does not support PDF or plugin content in layers right now.
 BUGWK47925 WIN LINUX : compositing/plugins/composited-plugin.html = FAIL
-BUG_LOISLO MAC : compositing/plugins/composited-plugin.html = CRASH
+BUGWK47925 MAC : compositing/plugins/composited-plugin.html = CRASH
+BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
+BUGWK47925 MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
+BUGWK47925 MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
 
 // The word "compositing" appears in Chromium's pixel results and not
 // in Safari's; this should probably be fixed.
@@ -349,7 +352,6 @@ BUGWK48020 LINUX DEBUG : compositing/geometry/object-clip-rects-assertion.html =
 
 // The following tests are failing on Mac.
 //BUGWK48029 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
-BUG_LOISLO MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
 BUGWK48029 MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-img.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-resize.html = TEXT
@@ -373,5 +375,3 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO : fast/canvas/canvas-drawImage-shadow.html = TEXT
 
-BUG_LOISLO MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
-BUG_LOISLO MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
