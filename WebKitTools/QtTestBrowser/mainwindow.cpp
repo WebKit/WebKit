@@ -103,6 +103,9 @@ void MainWindow::buildUI()
 
 void MainWindow::setPage(WebPage* page)
 {
+    if (page && m_page)
+        page->setUserAgent(m_page->userAgentForUrl(QUrl()));
+
     delete m_page;
     m_page = page;
 

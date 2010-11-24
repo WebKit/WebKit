@@ -1,3 +1,15 @@
+2010-11-24  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Make QtTestBrowser remember the selected user agent
+        https://bugs.webkit.org/show_bug.cgi?id=50021
+
+        Set user agent for a new page by using the old page's
+
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::setPage):
+
 2010-11-24 Patrick Gansterer <paroga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
