@@ -1,3 +1,22 @@
+2010-11-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix crashes in GTK+ bots. Use kit() instead of wrapFoo, otherwise
+        the DOM objects won't be in the cache and we'll ASSERT when
+        unreffing them.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldDeleteRange): use kit to get the
+        GObject wrapper for the DOM object.
+        (WebKit::EditorClient::shouldShowDeleteInterface): ditto.
+        (WebKit::EditorClient::shouldBeginEditing): ditto.
+        (WebKit::EditorClient::shouldEndEditing): ditto.
+        (WebKit::EditorClient::shouldInsertText): ditto.
+        (WebKit::EditorClient::shouldChangeSelectedRange): ditto.
+        (WebKit::EditorClient::shouldApplyStyle): ditto.
+        (WebKit::EditorClient::shouldInsertNode): ditto.
+
 2010-11-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
