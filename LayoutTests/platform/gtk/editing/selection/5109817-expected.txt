@@ -14,4 +14,5 @@ layer at (0,0) size 800x600
             text run at (29,0) width 44: "second"
         RenderText {#text} at (73,0) size 260x19
           text run at (73,0) width 260: " word in this sentence should be selected."
-caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body
+selection end:   position 6 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body
