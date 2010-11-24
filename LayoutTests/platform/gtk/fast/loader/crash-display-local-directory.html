@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title>Test crash on directory display</title>
+    <script>
+        function directoryTest() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var result = document.getElementById("result");
+
+            var directoryDocument = document.getElementById("myDirectory").contentDocument;
+            if (directoryDocument)
+              result.innerHTML = "PASS: Local directory loaded.";
+            else
+              result.innerHTML = "FAIL: Local directory cannot be listed.";
+        }
+    </script>
+</head>
+<body>
+    <p>This test is to see if a local directory index can be diplayed.</p>
+    <p id="result">
+        Test has not run.
+    </p>
+    <iframe id="myDirectory" src="resources/directory" width="600px" height="400px" onload="directoryTest()"/>
+</body>
+</html>
