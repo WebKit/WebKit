@@ -198,7 +198,11 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
                 p->restore();
             } else {
                 QFontMetrics fm(font);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+                QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string, -1, flags), fm.height());
+#else
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
+#endif
                 QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
@@ -215,7 +219,11 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
                 p->translate(-ctxShadow->offset());
             } else {
                 QFontMetrics fm(font);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+                QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string, -1, flags), fm.height());
+#else
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
+#endif
                 QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
