@@ -94,7 +94,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/CSSGrammar.h \
 	DerivedSources/WebCore/CSSPropertyNames.h \
 	DerivedSources/WebCore/CSSPropertyNames.cpp \
-	DerivedSources/WebCore/CSSPropertyNamesHash.h \
 	DerivedSources/WebCore/CSSValueKeywords.h \
 	DerivedSources/WebCore/CSSValueKeywords.cpp \
 	DerivedSources/WebCore/ColorData.cpp \
@@ -4579,7 +4578,6 @@ FEATURE_DEFINES += ENABLE_BLOB=1
 webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
 
-DerivedSources/WebCore/CSSPropertyNamesHash.h: DerivedSources/WebCore/CSSPropertyNames.cpp
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
