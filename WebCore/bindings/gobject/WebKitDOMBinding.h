@@ -24,8 +24,8 @@
 #ifndef WebKitDOMBinding_h
 #define WebKitDOMBinding_h
 
-#include <glib.h>
 #include "webkit/webkitdomdefines.h"
+#include <glib.h>
 
 namespace WebCore {
 class Node;
