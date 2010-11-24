@@ -1,3 +1,12 @@
+2010-11-24  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Remove API migration code which is no longer used.
+        https://bugs.webkit.org/show_bug.cgi?id=50013
+
+        * public/WebSpeechInputControllerMock.h:
+
 2010-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72628.
