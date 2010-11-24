@@ -1,3 +1,17 @@
+2010-11-24 Patrick Gansterer <paroga@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove Bakefile build system files
+        https://bugs.webkit.org/show_bug.cgi?id=49983
+
+        r53757 only removed the content, but not the files.
+        This patch removes that empty files.
+
+        * DumpRenderTree/wx/DumpRenderTree.bkl: Removed.
+        * wx/browser/browser.bkl: Removed.
+        * wx/build-wxwebkit: Removed.
+
 2010-11-23  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
