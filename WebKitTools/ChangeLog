@@ -1,3 +1,33 @@
+2010-11-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The WebKitWebView should expose a set of signals encapsulating the behavior of the EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=49143
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (createWebView): Call the new connectEditingCallbacks function.
+        * DumpRenderTree/gtk/EditingCallbacks.cpp: Added.
+        (dumpNodePath):
+        (dumpRange):
+        (insertActionString):
+        (selectionAffinityString):
+        (shouldBeginEditing):
+        (shouldEndEditing):
+        (shouldInsertNode):
+        (shouldInsertText):
+        (shouldDeleteRange):
+        (shouldShowDeleteInterfaceForElement):
+        (shouldChangeSelectedRange):
+        (shouldApplyStyle):
+        (editingBegan):
+        (userChangedContents):
+        (editingEnded):
+        (selectionChanged):
+        (connectEditingCallbacks):
+        * DumpRenderTree/gtk/EditingCallbacks.h: Added.
+        * GNUmakefile.am: Added EditingCallbacks.{h,cpp} to the source list.
+
 2010-11-24  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.

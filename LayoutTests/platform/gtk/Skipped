@@ -4588,107 +4588,6 @@ webarchive/test-xml-stylesheet.xml
 editing/input/scroll-viewport-page-up-down.html
 http/tests/plugins/plugin-document-has-focus.html
 
-# Tests that require editing callbacks (and possibly Glib DOM bindings)
-editing/text-iterator/thai-cursor-movement.html
-editing/undo/redo-style.html
-editing/undo/undo-indent.html
-editing/execCommand/indent-with-style.html
-editing/execCommand/4641880-1.html
-editing/execCommand/4641880-2.html
-editing/execCommand/create-list-from-range-selection.html
-editing/execCommand/create-list-with-hr.html
-editing/execCommand/find-after-replace.html
-editing/execCommand/findString-2.html
-editing/execCommand/findString.html
-editing/execCommand/format-block-from-range-selection.html
-editing/execCommand/format-block-with-braces.html
-editing/execCommand/format-block-with-trailing-br.html
-editing/execCommand/format-block.html
-editing/execCommand/hilitecolor.html
-editing/execCommand/indent-empty-root.html
-editing/execCommand/indent-list-item.html
-editing/execCommand/indent-selection.html
-editing/execCommand/insert-list-and-stitch.html
-editing/execCommand/insertHorizontalRule.html
-editing/execCommand/insertImage.html
-editing/execCommand/nsresponder-indent.html
-editing/execCommand/nsresponder-outdent.html
-editing/execCommand/outdent-selection.html
-editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
-editing/execCommand/print.html
-editing/execCommand/remove-formatting-2.html
-editing/execCommand/remove-formatting.html
-editing/execCommand/remove-list-from-range-selection.html
-editing/execCommand/remove-list-item-1.html
-editing/execCommand/selectAll.html
-editing/execCommand/createLink.html
-editing/execCommand/enabling-and-selection-2.html
-editing/execCommand/findString-diacriticals.html
-editing/execCommand/indent-nested-lists-1.html
-editing/execCommand/indent-nested-lists-2.html
-editing/execCommand/indent-nested-lists-3.html
-editing/execCommand/indent-nested-lists-4.html
-editing/execCommand/indent-nested-lists-5.html
-editing/execCommand/indent-nested-lists-6.html
-editing/execCommand/indent-nested-lists-7.html
-editing/execCommand/insertHTML.html
-editing/execCommand/outdent-blockquote-test1.html
-editing/execCommand/outdent-blockquote-test2.html
-editing/execCommand/outdent-blockquote-test3.html
-editing/execCommand/outdent-blockquote-test4.html
-editing/execCommand/outdent-nested-lists-1.html
-editing/execCommand/outdent-nested-lists-2.html
-editing/execCommand/outdent-nested-lists-3.html
-editing/execCommand/outdent-nested-lists-4.html
-editing/execCommand/queryCommandState-01.html
-editing/execCommand/remove-list-1.html
-editing/execCommand/remove-list-items.html
-editing/execCommand/switch-list-type.html
-editing/execCommand/unlink.html
-editing/selection/4947387.html
-editing/selection/5195166-2.html
-editing/selection/legal-positions.html
-editing/deleting/5546763.html
-editing/deleting/delete-all-text-in-text-field-assertion.html
-editing/deleting/delete-by-word-001.html
-editing/deleting/delete-by-word-002.html
-editing/deleting/delete-ligature-001.html
-editing/deleting/delete-ligature-002.html
-editing/deleting/delete-ligature-003.html
-editing/deleting/pruning-after-merge-1.html
-editing/deleting/skip-virama-001.html
-editing/inserting/insert-thai-characters-001.html
-editing/inserting/space-after-removeformat.html
-editing/pasteboard/4744008.html
-editing/pasteboard/5368833.html
-editing/pasteboard/copy-in-password-field.html
-editing/pasteboard/paste-into-anchor-text.html
-editing/pasteboard/paste-plaintext-user-select-none.html
-editing/pasteboard/paste-table-002.html
-editing/pasteboard/paste-text-013.html
-editing/selection/after-line-break.html
-editing/selection/anchor-focus1.html
-editing/selection/anchor-focus2.html
-editing/selection/anchor-focus3.html
-editing/selection/click-before-and-after-table.html
-editing/selection/extend-selection-bidi.html
-editing/selection/getRangeAt.html
-editing/selection/move-begin-end.html
-editing/selection/removeAllRanges.html
-editing/selection/select-all-textarea.html
-editing/selection/skip-non-editable-1.html
-editing/selection/skip-non-editable-2.html
-editing/selection/toString-1.html
-editing/selection/toString.html
-editing/style/remove-underline-from-stylesheet.html
-editing/pasteboard/drop-link.html
-editing/style/typing-style-003.html
-editing/style/style-3690704-fix.html
-editing/pasteboard/paste-table-001.html
-fast/forms/focus-selection-input.html
-fast/forms/focus-selection-textarea.html
-
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html
 fast/backgrounds/size/backgroundSize20.html
@@ -5136,6 +5035,7 @@ inspector/timeline-layout.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37613
 printing
+editing/execCommand/print.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37616
 fast/workers/shared-worker-frame-lifecycle.html
@@ -5487,6 +5387,7 @@ http/tests/security/drag-over-remote-content-iframe.html
 fast/events/drag-in-frames.html
 http/tests/misc/bubble-drag-events.html
 fast/events/content-changed-during-drop.html
+editing/pasteboard/drop-link.html
 
 # The feature was disabled due to a compatibility issue.
 # https://bugs.webkit.org/show_bug.cgi?id=40520

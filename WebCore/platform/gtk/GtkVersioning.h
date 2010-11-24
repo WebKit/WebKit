@@ -103,6 +103,10 @@ void gtk_adjustment_set_value(GtkAdjustment* adjusment, gdouble value);
 GdkDevice* getDefaultGDKPointerDevice(GdkWindow* window);
 GdkCursor* blankCursor();
 
+#if !GLIB_CHECK_VERSION(2, 28, 0)
+gboolean g_signal_accumulator_first_wins(GSignalInvocationHint* invocationHint, GValue* returnAccumulator, const GValue* handlerReturn, gpointer data);
+#endif
+
 G_END_DECLS
 
 #endif // GtkVersioning_h

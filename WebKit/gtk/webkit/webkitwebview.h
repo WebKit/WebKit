@@ -73,6 +73,19 @@ typedef enum
     WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED
 } WebKitWebViewViewMode;
 
+typedef enum
+{
+    WEBKIT_SELECTION_AFFINITY_UPSTREAM,
+    WEBKIT_SELECTION_AFFINITY_DOWNSTREAM,
+} WebKitSelectionAffinity;
+
+typedef enum
+{
+    WEBKIT_INSERT_ACTION_TYPED,
+    WEBKIT_INSERT_ACTION_PASTED,
+    WEBKIT_INSERT_ACTION_DROPPED,
+} WebKitInsertAction;
+
 struct _WebKitWebView {
     GtkContainer parent_instance;
 
@@ -137,12 +150,12 @@ struct _WebKitWebViewClass {
 
     void                       (* undo)                   (WebKitWebView        *web_view);
     void                       (* redo)                   (WebKitWebView        *web_view);
+    gboolean                   (* should_allow_editing_action) (WebKitWebView   *web_view);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
 };
 
 WEBKIT_API GType

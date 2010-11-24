@@ -1,3 +1,35 @@
+2010-11-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The WebKitWebView should expose a set of signals encapsulating the behavior of the EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=49143
+
+        Add signals that encapsulate the functionality of the Mac EditingDelegate. These signals
+        are private for now, but DRT consumes them to produce proper output for editing tests.
+        After some time, these may be part of the public API.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldDeleteRange): Fire the appropriate editing signal.
+        (WebKit::EditorClient::shouldShowDeleteInterface): Ditto.
+        (WebKit::EditorClient::shouldBeginEditing): Ditto.
+        (WebKit::EditorClient::shouldEndEditing): Ditto.
+        (WebKit::kit): Added helper function.
+        (WebKit::EditorClient::shouldInsertText): Fire the appropriate editing signal.
+        (WebKit::EditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::EditorClient::shouldApplyStyle): Ditto.
+        (WebKit::EditorClient::didBeginEditing): Ditto.
+        (WebKit::EditorClient::respondToChangedContents): Ditto.
+        (WebKit::EditorClient::respondToChangedSelection): Ditto.
+        (WebKit::EditorClient::didEndEditing): Ditto.
+        (WebKit::EditorClient::shouldInsertNode): Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_real_should_allow_editing_action): Added this default signal
+        callback which explicitly allows cancellable editing actions.
+        (webkit_web_view_class_init): Add new editing signal declarations to the view.
+        * webkit/webkitwebview.h:
+        * webkitmarshal.list: Added some new marshaling definitions.
+
 2010-11-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r72499.

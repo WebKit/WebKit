@@ -33,6 +33,7 @@
 #include "DumpRenderTree.h"
 
 #include "AccessibilityController.h"
+#include "EditingCallbacks.h"
 #include "EventSender.h"
 #include "GCController.h"
 #include "GOwnPtr.h"
@@ -1022,6 +1023,7 @@ static WebKitWebView* createWebView()
                      "signal::frame-created", frameCreatedCallback, 0,
 
                      NULL);
+    connectEditingCallbacks(view);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(view);
     g_object_connect(G_OBJECT(inspector),
