@@ -39,11 +39,7 @@ class MockFileSystem(object):
         Args:
             files: a dict of filenames -> file contents. A file contents
                 value of None is used to indicate that the file should
-                not exist (even if standalone is False).
-            standalone: If True, only the files listed in _files_ exist.
-                If False, the object will pass through read calls to the
-                underlying filesystem. Writes are never passed through.
-
+                not exist.
         """
         self.files = files
 
@@ -53,7 +49,16 @@ class MockFileSystem(object):
         return False
 
     def join(self, *comps):
-        return '/'.join(comps)
+        # os.path.join ignores trailing slashes on components (i.e.
+        # join('foo/', 'bar') and join('foo', 'bar') produce the same result),
+        # we emulate that behavior.
+        trimmed_comps = []
+        for comp in comps:
+            if len(comp) and comp[-1] == '/':
+                trimmed_comps.append(comp[0:-1])
+            else:
+                trimmed_comps.append(comp)
+        return '/'.join(trimmed_comps)
 
     def maybe_make_directory(self, *path):
         # FIXME: Implement such that subsequent calls to isdir() work?

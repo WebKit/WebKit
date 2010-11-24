@@ -73,7 +73,7 @@
     </label>
   </span>
 
-  <a id="test-link">View test</a>
+  <a id="test-link" target="_blank">View test</a>
 
   <span id="nav-buttons">
     <button id="previous-test">&laquo;</button>
@@ -121,9 +121,20 @@
 
 <div id="footer">
   <label>State: <span id="state"></span></label>
+  <label>Existing baselines: <span id="current-baselines"></span></label>
+  <label>
+    Baseline target:
+    <select id="baseline-target"></select>
+  </label>
+  <label>
+    Move current baselines to:
+    <select id="baseline-move-to">
+      <option value="none">Nowhere (replace)</option>
+    </select>
+  </label>
 
-  <!-- Add a dummy <button> node so that this lines up with the text on the left -->
-  <button style="visibility: hidden"></button>
+  <!-- Add a dummy <button> node so that this lines up with the text on the right -->
+  <button style="visibility: hidden; padding-left: 0; padding-right: 0;"></button>
 
   <div id="action-buttons">
     <span id="toggle-queue" class="link">Queue</span>

@@ -109,7 +109,8 @@ a, .link {
   margin-right: 1em;
 }
 
-#header label span {
+#header label span,
+#footer label span {
   color: #fff;
   font-weight: bold;
 }

@@ -143,13 +143,16 @@ RebaselineQueue.prototype.rebaseline = function()
 
 RebaselineQueue.prototype._rebaselineTest = function(testName)
 {
+    var baselineTarget = getSelectValue('baseline-target');
+    var baselineMoveTo = getSelectValue('baseline-move-to');
+
     // FIXME: actually rebaseline
-    log('Rebaselining ' + testName + '...');
+    log('Rebaselining ' + testName + ' for platform ' + baselineTarget + '...');
     var test = results.tests[testName];
     this._removeTest(testName);
     this._inProgressRebaselineCount--;
     test.state = STATE_REBASELINE_SUCCEEDED;
     updateState();
     log('Rebaselined add test with state ' + test.state + ' to queue',
-        log.SUCCESS);    
+        log.SUCCESS);
 };

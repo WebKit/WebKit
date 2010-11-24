@@ -86,6 +86,20 @@ function main()
         }
     });
 
+    loadText('/platforms.json', function(text) {
+        var platforms = JSON.parse(text);
+        platforms.platforms.forEach(function(platform) {
+            var platformOption = document.createElement('option');
+            platformOption.value = platform;
+            platformOption.textContent = platform;
+  
+            var targetOption = platformOption.cloneNode(true);
+            targetOption.selected = platform == platforms.defaultPlatform;
+            $('baseline-target').appendChild(targetOption);
+            $('baseline-move-to').appendChild(platformOption.cloneNode(true));
+        });
+    });
+
     loadText('/results.json', function(text) {
         results = JSON.parse(text);
         displayResults();
@@ -235,6 +249,37 @@ function selectTest()
         $('text-outputs').style.display = 'none';
     }
 
+    var currentBaselines = $('current-baselines');
+    currentBaselines.textContent = '';
+    var baselines = results.tests[selectedTest].baselines;
+    var testName = selectedTest.split('.').slice(0, -1).join('.');
+    for (var platform in baselines) {
+        if (currentBaselines.firstChild) {
+            currentBaselines.appendChild(document.createTextNode('; '));
+        }
+        currentBaselines.appendChild(document.createTextNode(platform + ' ('));
+        for (var i = 0, extension; extension = baselines[platform][i]; i++) {
+            if (i != 0) {
+                currentBaselines.appendChild(document.createTextNode(', '));
+            }
+            var link = document.createElement('a');
+            var baselinePath = '';
+            if (platform != 'base') {
+                baselinePath += 'platform/' + platform + '/';
+            }
+            baselinePath += testName + '-expected' + extension;
+            link.href = getTracUrl(baselinePath);
+            if (extension == '.checksum') {
+                link.textContent = 'chk';
+            } else {
+                link.textContent = extension.substring(1);
+            }
+            link.target = '_blank';
+            currentBaselines.appendChild(link);
+        }
+        currentBaselines.appendChild(document.createTextNode(')'));
+    }
+
     updateState();
     loupe.hide();
 
@@ -265,8 +310,7 @@ function updateState()
     $('next-test').disabled = testIndex == testCount - 1;
     $('previous-test').disabled = testIndex == 0;
 
-    $('test-link').href =
-        'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
+    $('test-link').href = getTracUrl(testName);
 
     var state = results.tests[testName].state;
     $('state').className = state;

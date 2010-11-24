@@ -87,3 +87,8 @@ function toggle(id)
         toggler.className = 'link';
     }
 }
+
+function getTracUrl(layoutTestPath)
+{
+  return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + layoutTestPath;
+}

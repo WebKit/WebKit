@@ -1,3 +1,28 @@
+2010-11-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: list current baselines and platforms
+        https://bugs.webkit.org/show_bug.cgi?id=49991
+        
+        List existing baselines (with Trac links) for tests.
+        
+        Add dropdowns for choosing with platform baselines to target (and what
+        to do with existing ones).
+
+        Also fix MockFileSystem.join to behave more like os.path.join (unit
+        test was ending up with two consecutive slashes in a layout test
+        path).        
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/queue.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/util.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py: Added.
+
 2010-11-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
