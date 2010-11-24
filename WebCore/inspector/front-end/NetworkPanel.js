@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2008, 2009 Anthony Ricaud <rik@webkit.org>
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -641,27 +641,11 @@ WebInspector.NetworkPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-
         this._refreshIfNeeded();
 
-        var visibleView = this.visibleView;
-        if (this.visibleResource) {
-            this.visibleView.headersVisible = true;
+        if (this.visibleView)
             this.visibleView.show(this._viewsContainerElement);
-        } else if (visibleView)
-            visibleView.show();
 
-        // Hide any views that are visible that are not this panel's current visible view.
-        // This can happen when a ResourceView is visible in the Scripts panel then switched
-        // to the this panel.
-        var resourcesLength = this._resources.length;
-        for (var i = 0; i < resourcesLength; ++i) {
-            var resource = this._resources[i];
-            var view = resource._resourcesView;
-            if (!view || view === visibleView)
-                continue;
-            view.visible = false;
-        }
         this._dataGrid.updateWidths();
         this._positionSummaryBar();
     },
@@ -694,13 +678,6 @@ WebInspector.NetworkPanel.prototype = {
     performSearch: function(query)
     {
         WebInspector.Panel.prototype.performSearch.call(this, query);
-    },
-
-    get visibleView()
-    {
-        if (this.visibleResource)
-            return this.visibleResource._resourcesView;
-        return null;
     },
 
     refresh: function()
@@ -829,8 +806,6 @@ WebInspector.NetworkPanel.prototype = {
 
         resource._resourcesView = newView;
 
-        newView.headersVisible = oldView.headersVisible;
-
         if (oldViewParentNode)
             newView.show(oldViewParentNode);
 
@@ -856,22 +831,15 @@ WebInspector.NetworkPanel.prototype = {
 
         this._toggleViewingResourceMode();
 
-        if (this.visibleResource && this.visibleResource._resourcesView)
-            this.visibleResource._resourcesView.hide();
-
-        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
-        view.headersVisible = true;
-        view.show(this._viewsContainerElement);
-
-        if (line) {
-            view.selectContentTab();
-            if (view.revealLine)
-                view.revealLine(line);
-            if (view.highlightLine)
-                view.highlightLine(line);
+        if (this.visibleView) {
+            this.visibleView.detach();
+            delete this.visibleView;
         }
 
-        this.visibleResource = resource;
+        var view = new WebInspector.NetworkItemView(resource);
+        view.show(this._viewsContainerElement);
+        this.visibleView = view;
+
         this.updateSidebarWidth();
     },
 
@@ -879,9 +847,10 @@ WebInspector.NetworkPanel.prototype = {
     {
         this.element.removeStyleClass("viewing-resource");
 
-        if (this.visibleResource && this.visibleResource._resourcesView)
-            this.visibleResource._resourcesView.hide();
-        delete this.visibleResource;
+        if (this.visibleView) {
+            this.visibleView.detach();
+            delete this.visibleView;
+        }
 
         if (this._lastSelectedGraphTreeElement)
             this._lastSelectedGraphTreeElement.select(true);

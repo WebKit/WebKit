@@ -213,11 +213,9 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
 
-        if (this.visibleView) {
-            if (this.visibleView instanceof WebInspector.ResourceView)
-                this.visibleView.headersVisible = false;
+        if (this.visibleView)
             this.visibleView.show(this.viewsContainerElement);
-        }
+
         if (this._attachDebuggerWhenShown) {
             InspectorBackend.enableDebugger(false);
             delete this._attachDebuggerWhenShown;
@@ -598,10 +596,9 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         var view;
-        if (scriptOrResource instanceof WebInspector.Resource) {
+        if (scriptOrResource instanceof WebInspector.Resource)
             view = WebInspector.ResourceManager.resourceViewForResource(scriptOrResource);
-            view.headersVisible = false;
-        } else if (scriptOrResource instanceof WebInspector.Script)
+        else if (scriptOrResource instanceof WebInspector.Script)
             view = this.scriptViewForScript(scriptOrResource);
 
         if (!view)

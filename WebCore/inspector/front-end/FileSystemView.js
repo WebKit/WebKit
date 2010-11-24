@@ -125,12 +125,12 @@ WebInspector.FileSystemView.prototype = {
     },
     _selectFileSystemTab: function()
     {
-        this._tabbedPane.selectTabById("persistent");
+        this._tabbedPane.selectTab("persistent");
     },
     
     selectTemporaryFileSystemTab: function()
     {
-        this._tabbedPane.selectTabById("temp");
+        this._tabbedPane.selectTab("temp");
     },
 
     _revealPersistentFolderInOS: function()

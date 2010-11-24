@@ -33,7 +33,7 @@ WebInspector.SourceView = function(resource)
     this.element.addStyleClass("source");
 
     var canEditScripts = WebInspector.panels.scripts && WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
-    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null, this._continueToLine.bind(this));
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null, this._continueToLine.bind(this));
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }
@@ -50,9 +50,8 @@ WebInspector.SourceView.prototype = {
     show: function(parentElement)
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
+        this.setupSourceFrameIfNeeded();
         this.sourceFrame.visible = true;
-        if (this.localSourceFrame)
-            this.localSourceFrame.visible = true;
         this.resize();
     },
 
@@ -62,8 +61,6 @@ WebInspector.SourceView.prototype = {
         if (!this._frameNeedsSetup)
             this.sourceFrame.clearLineHighlight();
         WebInspector.View.prototype.hide.call(this);
-        if (this.localSourceFrame)
-            this.localSourceFrame.visible = false;
         this._currentSearchResultIndex = -1;
     },
 
@@ -71,9 +68,6 @@ WebInspector.SourceView.prototype = {
     {
         if (this.sourceFrame)
             this.sourceFrame.resize();
-        if (this.localSourceFrame)
-            this.localSourceFrame.resize();
-        WebInspector.ResourceView.prototype.resize.call(this);
     },
 
     setupSourceFrameIfNeeded: function()
@@ -81,20 +75,13 @@ WebInspector.SourceView.prototype = {
         if (!this._frameNeedsSetup)
             return;
 
-        this.attach();
-
         delete this._frameNeedsSetup;
         this.resource.requestContent(this._contentLoaded.bind(this));
     },
 
-    hasContentTab: function()
+    hasContent: function()
     {
         return true;
-    },
-
-    contentTabSelected: function()
-    {
-        this.setupSourceFrameIfNeeded();
     },
 
     _contentLoaded: function(content)
@@ -206,25 +193,6 @@ WebInspector.SourceView.prototype = {
         }
 
         findSearchMatches.call(this, query, finishedCallback);
-    },
-
-    updateLocalContent: function(content, mimeType)
-    {
-        if (!this.localContentElement) {
-            this.localContentElement = document.createElement("div");
-            this.localContentElement.className = "resource-view-content";
-            this.tabbedPane.appendTab("local", WebInspector.UIString("Local"), this.localContentElement, this.selectLocalContentTab.bind(this));
-            this.localSourceFrame = new WebInspector.SourceFrame(this.localContentElement, this._addBreakpoint.bind(this), null, this._continueToLine.bind(this));
-        }
-        this.localSourceFrame.setContent(mimeType, content, "");
-    },
-
-    selectLocalContentTab: function()
-    {
-        this.tabbedPane.selectTabById("local");
-        this.localSourceFrame.visible = true;
-        if ("resize" in this)
-            this.resize();
     },
 
     jumpToFirstSearchResult: function()

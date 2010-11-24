@@ -64750,6 +64750,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CookiesTable.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CookieParser.js"
 					>
 				</File>
@@ -64906,6 +64910,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkItemView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NetworkPanel.js"
 					>
 				</File>
@@ -64967,6 +64975,14 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceCategory.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourceCookiesView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourceHeadersView.js"
 					>
 				</File>
 				<File

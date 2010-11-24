@@ -104,11 +104,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
 
-        if (this.visibleView instanceof WebInspector.ResourceView) {
-            // SourceViews are shared between the panels.
-            this.visibleView.headersVisible = false;
+        if (this.visibleView instanceof WebInspector.ResourceView)
             this.visibleView.show(this.storageViews);
-        }
 
         if (this._initializedDefaultSelection)
             return;
@@ -379,7 +376,6 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (line) {
             var view = WebInspector.ResourceManager.resourceViewForResource(resource);
-            view.selectContentTab();
             if (view.revealLine)
                 view.revealLine(line);
             if (view.highlightLine)
@@ -391,7 +387,6 @@ WebInspector.ResourcesPanel.prototype = {
     _showResourceView: function(resource)
     {
         var view = WebInspector.ResourceManager.resourceViewForResource(resource);
-        view.headersVisible = false;
         this._innerShowView(view);
     },
 

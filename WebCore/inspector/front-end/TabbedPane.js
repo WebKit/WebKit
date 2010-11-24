@@ -32,62 +32,55 @@ WebInspector.TabbedPane = function(element)
 {
     this.element = element || document.createElement("div");
     this.element.addStyleClass("tabbed-pane");
-    this.tabsElement = this.element.createChild("div", "tabbed-pane-header");
-    this.contentElement = this.element.createChild("div", "tabbed-pane-content");
-
-    this._tabObjects = {};
+    this._tabsElement = this.element.createChild("div", "tabbed-pane-header");
+    this._contentElement = this.element.createChild("div", "tabbed-pane-content");
+    this._tabs = {};
 }
 
 WebInspector.TabbedPane.prototype = {
-    appendTab: function(id, tabTitle, content, tabClickListener)
+    appendTab: function(id, tabTitle, view)
     {
         var tabElement = document.createElement("li");
         tabElement.textContent = tabTitle;
-        tabElement.addEventListener("click", tabClickListener, false);
-        this.tabsElement.appendChild(tabElement);
-        var tabObject = { tab: tabElement };
-        if (content instanceof HTMLElement) {
-            tabObject.element = content;
-            this.contentElement.appendChild(content);
-        }
-        else {
-            this.contentElement.appendChild(content.element);
-            tabObject.view = content;
-        }
-        this._tabObjects[id] = tabObject;
+        tabElement.addEventListener("click", this.selectTab.bind(this, id, true), false);
+
+        this._tabsElement.appendChild(tabElement);
+        this._contentElement.appendChild(view.element);
+
+        this._tabs[id] = { tabElement: tabElement, view: view }
     },
 
-    hasTab: function(tabId)
+    selectTab: function(id, userGesture)
     {
-        return tabId in this._tabObjects;
-    },
-     
-    selectTabById: function(tabId)
-    {
-        for (var id in this._tabObjects) {
-            if (id === tabId)
-                this._showTab(this._tabObjects[id]);
-            else
-                this._hideTab(this._tabObjects[id]);
+        if (!(id in this._tabs))
+            return false;
+
+        if (this._currentTab) {
+            this._hideTab(this._currentTab)
+            delete this._currentTab;
         }
-        return this.hasTab(tabId);
+
+        var tab = this._tabs[id];
+        this._showTab(tab);
+        this._currentTab = tab;
+        if (userGesture) {
+            var event = {tabId: id};
+            this.dispatchEventToListeners("tab-selected", event);
+        }
+        return true;
     },
 
-    _showTab: function(tabObject)
+    _showTab: function(tab)
     {
-        tabObject.tab.addStyleClass("selected");
-        if (tabObject.element)
-            tabObject.element.removeStyleClass("hidden");
-        else
-            tabObject.view.visible = true;
+        tab.tabElement.addStyleClass("selected");
+        tab.view.show(this._contentElement);
     },
 
-    _hideTab: function(tabObject)
+    _hideTab: function(tab)
     {
-        tabObject.tab.removeStyleClass("selected");
-        if (tabObject.element)
-            tabObject.element.addStyleClass("hidden");
-        else
-            tabObject.view.visible = false;
+        tab.tabElement.removeStyleClass("selected");
+        tab.view.visible = false;
     }
 }
+
+WebInspector.TabbedPane.prototype.__proto__ = WebInspector.Object.prototype;

@@ -34,26 +34,33 @@ WebInspector.ImageView = function(resource)
 }
 
 WebInspector.ImageView.prototype = {
-    hasContentTab: function()
+    hasContent: function()
     {
         return true;
     },
 
-    contentTabSelected: function()
+    show: function(parentElement)
+    {
+        WebInspector.ResourceView.prototype.show.call(this, parentElement);
+        this._createContentIfNeeded();
+    },
+
+    _createContentIfNeeded: function()
     {
         if (this._container)
             return;
-        this._container = document.createElement("div");
-        this._container.className = "image";
-        this.contentElement.appendChild(this._container);
+
+        var imageContainer = document.createElement("div");
+        imageContainer.className = "image";
+        this.element.appendChild(imageContainer);
 
         var imagePreviewElement = document.createElement("img");
         imagePreviewElement.addStyleClass("resource-image-view");
-        this._container.appendChild(imagePreviewElement);
+        imageContainer.appendChild(imagePreviewElement);
 
         this._container = document.createElement("div");
         this._container.className = "info";
-        this.contentElement.appendChild(this._container);
+        this.element.appendChild(this._container);
 
         var imageNameElement = document.createElement("h1");
         imageNameElement.className = "title";

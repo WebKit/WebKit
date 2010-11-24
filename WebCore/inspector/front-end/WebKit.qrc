@@ -21,6 +21,7 @@
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
     <file>CookieParser.js</file>
+    <file>CookiesTable.js</file>
     <file>CSSCompletions.js</file>
     <file>CSSStyleModel.js</file>
     <file>Database.js</file>
@@ -55,6 +56,7 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>NetworkItemView.js</file>
     <file>NetworkPanel.js</file>
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
@@ -70,6 +72,8 @@
     <file>RemoteObject.js</file>
     <file>Resource.js</file>
     <file>ResourceCategory.js</file>
+    <file>ResourceCookiesView.js</file>
+    <file>ResourceHeadersView.js</file>
     <file>ResourceManager.js</file>
     <file>ResourceView.js</file>
     <file>ResourcesPanel.js</file>
