@@ -1,50 +1,114 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {html} at (0,0) size 800x86
-    RenderBody {body} at (8,16) size 784x54
-      RenderBlock {p} at (0,0) size 784x19
-        RenderInline {math} at (0,0) size 23x19
-          RenderText {#text} at (0,0) size 0x0
-          RenderInline {mfenced} at (0,0) size 23x19
-            RenderInline {mi} at (0,0) size 8x19
-              RenderText {#text} at (0,0) size 8x19
-                text run at (0,0) width 8: "x"
-            RenderInline {mi} at (0,0) size 8x19
-              RenderText {#text} at (8,0) size 8x19
-                text run at (8,0) width 8: "y"
-            RenderInline {mi} at (0,0) size 7x19
-              RenderText {#text} at (16,0) size 7x19
-                text run at (16,0) width 7: "z"
-          RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 800x141
+  RenderBlock {html} at (0,0) size 800x141
+    RenderBody {body} at (8,16) size 784x109
+      RenderBlock {p} at (0,0) size 784x31
+        RenderBlock {math} at (0,0) size 50x31
+          RenderBlock {mfenced} at (1,0) size 48x31
+            RenderBlock {mfenced} at (1,0) size 8x31
+            RenderInline {mi} at (0,0) size 7x25
+              RenderText {#text} at (9,0) size 7x25
+                text run at (9,0) width 7: "x"
+            RenderBlock {mfenced} at (16,4) size 5x16
+              RenderBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-4) size 4x25
+                  text run at (0,-4) width 4: ","
+            RenderInline {mi} at (0,0) size 7x25
+              RenderText {#text} at (21,0) size 7x25
+                text run at (21,0) width 7: "y"
+            RenderBlock {mfenced} at (28,4) size 5x16
+              RenderBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-4) size 4x25
+                  text run at (0,-4) width 4: ","
+            RenderInline {mi} at (0,0) size 6x25
+              RenderText {#text} at (33,0) size 6x25
+                text run at (33,0) width 6: "z"
+            RenderBlock {mfenced} at (39,0) size 8x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,35) size 784x19
-        RenderInline {math} at (0,0) size 49x19
-          RenderText {#text} at (0,0) size 0x0
-          RenderInline {mo} at (0,0) size 5x19
-            RenderText {#text} at (0,0) size 5x19
-              text run at (0,0) width 5: "("
-          RenderText {#text} at (5,0) size 4x19
-            text run at (5,0) width 4: " "
-          RenderInline {mi} at (0,0) size 8x19
-            RenderText {#text} at (9,0) size 8x19
-              text run at (9,0) width 8: "x"
-          RenderInline {mo} at (0,0) size 4x19
-            RenderText {#text} at (17,0) size 4x19
-              text run at (17,0) width 4: ","
-          RenderInline {mi} at (0,0) size 8x19
-            RenderText {#text} at (21,0) size 8x19
-              text run at (21,0) width 8: "y"
-          RenderInline {mo} at (0,0) size 4x19
-            RenderText {#text} at (29,0) size 4x19
-              text run at (29,0) width 4: ","
-          RenderInline {mi} at (0,0) size 7x19
-            RenderText {#text} at (33,0) size 7x19
-              text run at (33,0) width 7: "z"
-          RenderText {#text} at (40,0) size 4x19
-            text run at (40,0) width 4: " "
-          RenderInline {mo} at (0,0) size 5x19
-            RenderText {#text} at (44,0) size 5x19
-              text run at (44,0) width 5: ")"
-          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,47) size 784x62
+        RenderBlock {math} at (0,0) size 48x62
+          RenderBlock {mo} at (1,0) size 8x31
+          RenderInline {mi} at (0,0) size 7x25
+            RenderText {#text} at (9,0) size 7x25
+              text run at (9,0) width 7: "x"
+          RenderBlock {mo} at (16,4) size 5x16
+            RenderBlock {mo} at (0,0) size 4x16
+              RenderText {mo} at (0,-4) size 4x25
+                text run at (0,-4) width 4: ","
+          RenderInline {mi} at (0,0) size 7x25
+            RenderText {#text} at (21,0) size 7x25
+              text run at (21,0) width 7: "y"
+          RenderBlock {mo} at (28,4) size 5x16
+            RenderBlock {mo} at (0,0) size 4x16
+              RenderText {mo} at (0,-4) size 4x25
+                text run at (0,-4) width 4: ","
+          RenderInline {mi} at (0,0) size 6x25
+            RenderText {#text} at (33,0) size 6x25
+              text run at (33,0) width 6: "z"
+          RenderBlock {mo} at (1,31) size 8x31
         RenderText {#text} at (0,0) size 0x0
+layer at (10,16) size 7x10 scrollHeight 15
+  RenderBlock {mfenced} at (0,0) size 7x10
+layer at (10,26) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,36) size 7x11 scrollHeight 14
+  RenderBlock {mfenced} at (0,20) size 7x11
+layer at (48,16) size 7x10 scrollHeight 15
+  RenderBlock {mfenced} at (0,0) size 7x10
+layer at (48,26) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (48,36) size 7x11 scrollHeight 14
+  RenderBlock {mfenced} at (0,20) size 7x11
+layer at (9,63) size 7x10 scrollHeight 15
+  RenderBlock {mo} at (0,0) size 7x10
+layer at (9,73) size 7x10 scrollHeight 14
+  RenderBlock {mo} at (0,10) size 7x10
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (9,83) size 7x11 scrollHeight 14
+  RenderBlock {mo} at (0,20) size 7x11
+layer at (9,94) size 7x10 scrollHeight 15
+  RenderBlock {mo} at (0,0) size 7x10
+layer at (9,104) size 7x10 scrollHeight 14
+  RenderBlock {mo} at (0,10) size 7x10
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (9,114) size 7x11 scrollHeight 14
+  RenderBlock {mo} at (0,20) size 7x11
+layer at (10,17) size 7x14 backgroundClip at (10,16) size 7x10 clip at (10,16) size 7x10 outlineClip at (10,16) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239B}"
+layer at (10,33) size 7x14 backgroundClip at (10,36) size 7x11 clip at (10,36) size 7x11 outlineClip at (10,36) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239D}"
+layer at (48,17) size 7x14 backgroundClip at (48,16) size 7x10 clip at (48,16) size 7x10 outlineClip at (48,16) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239E}"
+layer at (48,33) size 7x14 backgroundClip at (48,36) size 7x11 clip at (48,36) size 7x11 outlineClip at (48,36) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{23A0}"
+layer at (9,64) size 7x14 backgroundClip at (9,63) size 7x10 clip at (9,63) size 7x10 outlineClip at (9,63) size 7x10
+  RenderBlock (relative positioned) {mo} at (0,0) size 7x11
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239B}"
+layer at (9,80) size 7x14 backgroundClip at (9,83) size 7x11 clip at (9,83) size 7x11 outlineClip at (9,83) size 7x11
+  RenderBlock (relative positioned) {mo} at (0,0) size 7x11
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239D}"
+layer at (9,95) size 7x14 backgroundClip at (9,94) size 7x10 clip at (9,94) size 7x10 outlineClip at (9,94) size 7x10
+  RenderBlock (relative positioned) {mo} at (0,0) size 7x11
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239E}"
+layer at (9,111) size 7x14 backgroundClip at (9,114) size 7x11 clip at (9,114) size 7x11 outlineClip at (9,114) size 7x11
+  RenderBlock (relative positioned) {mo} at (0,0) size 7x11
+    RenderText {mo} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{23A0}"
