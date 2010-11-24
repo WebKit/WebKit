@@ -140,8 +140,6 @@ protected:
 
     virtual bool sceneEvent(QEvent*);
 
-    virtual bool eventFilter(QObject*, QEvent*);
-
 private:
     Q_PRIVATE_SLOT(d, void _q_doLoadFinished(bool success))
 #if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
