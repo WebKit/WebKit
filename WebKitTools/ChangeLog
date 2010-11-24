@@ -1,3 +1,21 @@
+2010-11-23  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        This patch cleans up the logic used to shard tests into groups a
+        bit and adds the --worker-model flag to NRWT. The flag is only
+        used at the moment to control whether to run single-threaded or
+        not, but eventually will also allow toggling between threads and
+        processes.
+
+        Also add a minor cleanup with _test_is_slow(), which just
+        eliminates some repetition and gives slightly better encapsulation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49773
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-11-23  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

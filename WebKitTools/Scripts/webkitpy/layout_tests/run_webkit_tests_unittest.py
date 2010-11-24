@@ -72,6 +72,8 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
         args.extend(['--platform', 'test'])
     if not record_results:
         args.append('--no-record-results')
+    if not '--child-processes' in extra_args:
+        args.extend(['--worker-model', 'inline'])
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
@@ -92,21 +94,30 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False):
     args = ['--no-record-results']
     if not '--platform' in extra_args:
         args.extend(['--platform', 'test'])
+    if not '--child-processes' in extra_args:
+        args.extend(['--worker-model', 'inline'])
     args.extend(extra_args)
     if not tests_included:
         args.extend(['passes',
                      'http/tests',
                      'websocket/tests',
                      'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(args)
-    user = MockUser()
-    if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options, user=user)
-    buildbot_output = array_stream.ArrayStream()
-    regular_output = array_stream.ArrayStream()
-    res = run_webkit_tests.run(port_obj, options, parsed_args,
-                               buildbot_output=buildbot_output,
-                               regular_output=regular_output)
+
+    try:
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        options, parsed_args = run_webkit_tests.parse_args(args)
+        user = MockUser()
+        if not port_obj:
+            port_obj = port.get(port_name=options.platform, options=options,
+                                user=user)
+        buildbot_output = array_stream.ArrayStream()
+        regular_output = array_stream.ArrayStream()
+        res = run_webkit_tests.run(port_obj, options, parsed_args,
+                                   buildbot_output=buildbot_output,
+                                   regular_output=regular_output)
+    finally:
+        oc.restore_output()
     return (res, buildbot_output, regular_output, user)
 
 
@@ -116,7 +127,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
         '--print', 'nothing',
         '--platform', 'test',
         '--no-record-results',
-        '--child-processes', '1']
+        '--worker-model', 'inline']
     args.extend(extra_args)
     if not tests_included:
         # Not including http tests since they get run out of order (that
@@ -360,7 +371,22 @@ class MainTest(unittest.TestCase):
         test_port = get_port_for_run(base_args)
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
 
+    def test_worker_model__inline(self):
+        self.assertTrue(passing_run(['--worker-model', 'inline']))
+
+    def test_worker_model__threads(self):
+        self.assertTrue(passing_run(['--worker-model', 'threads']))
+
+    def test_worker_model__processes(self):
+        self.assertRaises(SystemExit, logging_run,
+                          ['--worker-model', 'processes'])
+
+    def test_worker_model__unknown(self):
+        self.assertRaises(SystemExit, logging_run,
+                          ['--worker-model', 'unknown'])
+
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
+
 
 
 def _mocked_open(original_open, file_list):
@@ -454,20 +480,10 @@ class TestRunnerTest(unittest.TestCase):
         html = runner._results_html(["test_path"], {}, "Title", override_time="time")
         self.assertEqual(html, expected_html)
 
-    def queue_to_list(self, queue):
-        queue_list = []
-        while(True):
-            try:
-                queue_list.append(queue.get_nowait())
-            except Queue.Empty:
-                break
-        return queue_list
-
-    def test_get_test_file_queue(self):
-        # Test that _get_test_file_queue in run_webkit_tests.TestRunner really
+    def test_shard_tests(self):
+        # Test that _shard_tests in run_webkit_tests.TestRunner really
         # put the http tests first in the queue.
         runner = TestRunnerWrapper(port=Mock(), options=Mock(), printer=Mock())
-        runner._options.experimental_fully_parallel = False
 
         test_list = [
           "LayoutTests/websocket/tests/unicode.htm",
@@ -488,18 +504,15 @@ class TestRunnerTest(unittest.TestCase):
           'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html',
         ])
 
-        runner._options.child_processes = 1
-        test_queue_for_single_thread = runner._get_test_file_queue(test_list)
-        runner._options.child_processes = 2
-        test_queue_for_multi_thread = runner._get_test_file_queue(test_list)
-
-        single_thread_results = self.queue_to_list(test_queue_for_single_thread)
-        multi_thread_results = self.queue_to_list(test_queue_for_multi_thread)
+        # FIXME: Ideally the HTTP tests don't have to all be in one shard.
+        single_thread_results = runner._shard_tests(test_list, False)
+        multi_thread_results = runner._shard_tests(test_list, True)
 
         self.assertEqual("tests_to_http_lock", single_thread_results[0][0])
         self.assertEqual(expected_tests_to_http_lock, set(single_thread_results[0][1]))
         self.assertEqual("tests_to_http_lock", multi_thread_results[0][0])
         self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
+
 
 class DryrunTest(unittest.TestCase):
     # FIXME: it's hard to know which platforms are safe to test; the

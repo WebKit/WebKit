@@ -485,7 +485,7 @@ class TestRunner:
         """Returns the appropriate TestInput object for the file. Mostly this
         is used for looking up the timeout value (in ms) to use for the given
         test."""
-        if self._expectations.has_modifier(test_file, test_expectations.SLOW):
+        if self._test_is_slow(test_file):
             return TestInput(test_file, self._options.slow_time_out_ms)
         return TestInput(test_file, self._options.time_out_ms)
 
@@ -495,23 +495,30 @@ class TestRunner:
         split_path = test_file.split(os.sep)
         return 'http' in split_path or 'websocket' in split_path
 
-    def _get_test_file_queue(self, test_files):
-        """Create the thread safe queue of lists of (test filenames, test URIs)
-        tuples. Each TestShellThread pulls a list from this queue and runs
-        those tests in order before grabbing the next available list.
+    def _test_is_slow(self, test_file):
+        return self._expectations.has_modifier(test_file,
+                                               test_expectations.SLOW)
 
-        Shard the lists by directory. This helps ensure that tests that depend
-        on each other (aka bad tests!) continue to run together as most
-        cross-tests dependencies tend to occur within the same directory.
+    def _shard_tests(self, test_files, use_real_shards):
+        """Groups tests into batches.
+        This helps ensure that tests that depend on each other (aka bad tests!)
+        continue to run together as most cross-tests dependencies tend to
+        occur within the same directory. If use_real_shards is false, we
+        put each (non-HTTP/websocket) test into its own shard for maximum
+        concurrency instead of trying to do any sort of real sharding.
 
         Return:
-          The Queue of lists of TestInput objects.
+            A list of lists of TestInput objects.
         """
+        # FIXME: when we added http locking, we changed how this works such
+        # that we always lump all of the HTTP threads into a single shard.
+        # That will slow down experimental-fully-parallel, but it's unclear
+        # what the best alternative is completely revamping how we track
+        # when to grab the lock.
 
         test_lists = []
         tests_to_http_lock = []
-        if (self._options.experimental_fully_parallel or
-            self._is_single_threaded()):
+        if not use_real_shards:
             for test_file in test_files:
                 test_input = self._get_test_input_for_file(test_file)
                 if self._test_requires_lock(test_file):
@@ -550,10 +557,7 @@ class TestRunner:
             tests_to_http_lock.reverse()
             test_lists.insert(0, ("tests_to_http_lock", tests_to_http_lock))
 
-        filename_queue = Queue.Queue()
-        for item in test_lists:
-            filename_queue.put(item)
-        return filename_queue
+        return test_lists
 
     def _contains_tests(self, subdir):
         for test_file in self._test_files:
@@ -568,25 +572,29 @@ class TestRunner:
         Return:
           The list of threads.
         """
-        filename_queue = self._get_test_file_queue(test_files)
+        num_workers = self._num_workers()
+        test_lists = self._shard_tests(test_files,
+            num_workers > 1 and not self._options.experimental_fully_parallel)
+        filename_queue = Queue.Queue()
+        for item in test_lists:
+            filename_queue.put(item)
 
         # Instantiate TestShellThreads and start them.
         threads = []
-        for worker_number in xrange(int(self._options.child_processes)):
+        for worker_number in xrange(num_workers):
             thread = dump_render_tree_thread.TestShellThread(self._port,
                 self._options, worker_number,
                 filename_queue, self._result_queue)
-            if self._is_single_threaded():
-                thread.run_in_main_thread(self, result_summary)
-            else:
+            if num_workers > 1:
                 thread.start()
+            else:
+                thread.run_in_main_thread(self, result_summary)
             threads.append(thread)
 
         return threads
 
-    def _is_single_threaded(self):
-        """Returns whether we should run all the tests in the main thread."""
-        return int(self._options.child_processes) == 1
+    def _num_workers(self):
+        return int(self._options.child_processes)
 
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
@@ -602,9 +610,8 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
-        # FIXME: We should use webkitpy.tool.grammar.pluralize here.
         plural = ""
-        if not self._is_single_threaded():
+        if self._num_workers() > 1:
             plural = "s"
         self._printer.print_update('Starting %s%s ...' %
                                    (self._port.driver_name(), plural))
@@ -924,12 +931,13 @@ class TestRunner:
                        (self._options.time_out_ms,
                         self._options.slow_time_out_ms))
 
-        if self._is_single_threaded():
+        if self._num_workers() == 1:
             p.print_config("Running one %s" % self._port.driver_name())
         else:
             p.print_config("Running %s %ss in parallel" %
                            (self._options.child_processes,
                             self._port.driver_name()))
+        p.print_config("Worker model: %s" % self._options.worker_model)
         p.print_config("")
 
     def _print_expected_results_of_type(self, result_summary,
@@ -1044,8 +1052,7 @@ class TestRunner:
         for test_tuple in individual_test_timings:
             filename = test_tuple.filename
             is_timeout_crash_or_slow = False
-            if self._expectations.has_modifier(filename,
-                                               test_expectations.SLOW):
+            if self._test_is_slow(filename):
                 is_timeout_crash_or_slow = True
                 slow_tests.append(test_tuple)
 
@@ -1360,8 +1367,11 @@ def run(port, options, args, regular_output=sys.stderr,
 def _set_up_derived_options(port_obj, options):
     """Sets the options values that depend on other options values."""
 
+    if options.worker_model == 'inline':
+        if options.child_processes and int(options.child_processes) > 1:
+            _log.warning("--worker-model=inline overrides --child-processes")
+        options.child_processes = "1"
     if not options.child_processes:
-        # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
                                                  str(port_obj.default_child_processes()))
 
@@ -1584,6 +1594,10 @@ def parse_args(args=None):
         optparse.make_option("--child-processes",
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
+        optparse.make_option("--worker-model", action="store",
+                             default="threads",
+                             help="controls worker model. Valid values are "
+                             "'inline' and 'threads' (default)."),
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),
@@ -1641,14 +1655,18 @@ def parse_args(args=None):
 
     options, args = option_parser.parse_args(args)
 
-    return options, args
+    if options.worker_model not in ('inline', 'threads'):
+        option_parser.error("unsupported value for --worker-model: %s" %
+                            options.worker_model)
 
+    return options, args
 
 
 def main():
     options, args = parse_args()
     port_obj = port.get(options.platform, options)
     return run(port_obj, options, args)
+
 
 if '__main__' == __name__:
     try:
