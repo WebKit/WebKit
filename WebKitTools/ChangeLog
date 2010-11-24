@@ -1,5 +1,13 @@
 2010-11-24  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
+        Unreviewed.
+
+        Add my other email address to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2010-11-24  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
         Reviewed by Csaba Osztrogonác.
 
         Make build-webkit --minimal build with ENABLE_INSPECTOR=0
