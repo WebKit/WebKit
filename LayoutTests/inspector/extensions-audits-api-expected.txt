@@ -1,6 +1,5 @@
 Tests audits support in WebInspector Extensions API
 
-Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAuditsAPI
@@ -11,6 +10,7 @@ Added audit category, result dump follows:
         removeListener : <function>
     }
 }
+  Extension audits
 category.onAuditStarted fired, results dump follows:
 {
     url : <function>
@@ -34,6 +34,5 @@ category.onAuditStarted fired, results dump follows:
     expanded : false
     addChild : <function>
 }
-  Extension audits
 All tests done.
 

@@ -35,23 +35,22 @@ WebInspector.ExtensionServer = function()
     this._subscribers = {};
     this._status = new WebInspector.ExtensionStatus();
 
-    this._registerHandler("subscribe", this._onSubscribe.bind(this));
-    this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
-    this._registerHandler("getResources", this._onGetResources.bind(this));
-    this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
-    this._registerHandler("getPageTimings", this._onGetPageTimings.bind(this));
+    this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
+    this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
     this._registerHandler("createSidebarPane", this._onCreateSidebar.bind(this));
     this._registerHandler("createWatchExpressionSidebarPane", this._onCreateWatchExpressionSidebarPane.bind(this));
-    this._registerHandler("log", this._onLog.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
+    this._registerHandler("getHAR", this._onGetHAR.bind(this));
+    this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
+    this._registerHandler("log", this._onLog.bind(this));
+    this._registerHandler("reload", this._onReload.bind(this));
     this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
-    this._registerHandler("setSidebarExpanded", this._onSetSidebarExpansion.bind(this));
     this._registerHandler("setWatchSidebarContent", this._onSetWatchSidebarContent.bind(this));
-
-    this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
-    this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
     this._registerHandler("stopAuditCategoryRun", this._onStopAuditCategoryRun.bind(this));
+    this._registerHandler("subscribe", this._onSubscribe.bind(this));
+    this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
+
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
@@ -62,14 +61,14 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("panel-shown-" + panelName);
     },
 
-    notifyObjectSelected: function(panelId, objectType, objectId)
+    notifyObjectSelected: function(panelId, objectId)
     {
-        this._postNotification("panel-objectSelected-" + panelId, objectType, objectId);
+        this._postNotification("panel-objectSelected-" + panelId, objectId);
     },
 
     notifyResourceFinished: function(resource)
     {
-        this._postNotification("resource-finished", this._convertResource(resource));
+        this._postNotification("resource-finished", resource.identifier, (new WebInspector.HAREntry(resource)).build());
     },
 
     notifySearchAction: function(panelId, action, searchString)
@@ -77,9 +76,14 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("panel-search-" + panelId, action, searchString);
     },
 
-    notifyInspectedPageLoaded: function()
+    notifyPageLoaded: function(milliseconds)
     {
-        this._postNotification("inspectedPageLoaded");
+        this._postNotification("inspectedPageLoaded", milliseconds);
+    },
+
+    notifyPageDOMContentLoaded: function(milliseconds)
+    {
+        this._postNotification("inspectedPageDOMContentLoaded", milliseconds);
     },
 
     notifyInspectedURLChanged: function()
@@ -106,15 +110,6 @@ WebInspector.ExtensionServer.prototype = {
     stopAuditRun: function(auditRun)
     {
         delete this._clientObjects[auditRun.id];
-    },
-
-    _convertResource: function(resource)
-    {
-        return {
-            id: resource.identifier,
-            type: WebInspector.Resource.Type.toString(resource.type),
-            har: (new WebInspector.HAREntry(resource)).build(),
-        };
     },
 
     _postNotification: function(type, details)
@@ -156,7 +151,7 @@ WebInspector.ExtensionServer.prototype = {
         // shouldn't be hit unless someone is bypassing the API.
         if (id in this._clientObjects || id in WebInspector.panels)
             return this._status.E_EXISTS(id);
-        var panel = new WebInspector.ExtensionPanel(id, message.label, message.icon);
+        var panel = new WebInspector.ExtensionPanel(id, message.title, message.icon);
         this._clientObjects[id] = panel;
 
         var toolbarElement = document.getElementById("toolbar");
@@ -216,17 +211,6 @@ WebInspector.ExtensionServer.prototype = {
         sidebar.bodyElement.firstChild.style.height = message.height;
     },
 
-    _onSetSidebarExpansion: function(message)
-    {
-        var sidebar = this._clientObjects[message.id];
-        if (!sidebar)
-            return this._status.E_NOTFOUND(message.id);
-        if (message.expanded)
-            sidebar.expand();
-        else
-            sidebar.collapse();
-    },
-
     _onSetWatchSidebarContent: function(message)
     {
         var sidebar = this._clientObjects[message.id];
@@ -241,6 +225,12 @@ WebInspector.ExtensionServer.prototype = {
     _onLog: function(message)
     {
         WebInspector.log(message.message);
+    },
+
+    _onReload: function()
+    {
+        InspectorBackend.reloadPage();
+        return this._status.OK();
     },
 
     _onEvaluateOnInspectedPage: function(message, port)
@@ -286,66 +276,32 @@ WebInspector.ExtensionServer.prototype = {
         port.postMessage({ command: "callback", requestId: requestId, result: result });
     },
 
-    _onGetResources: function(request)
+    _onGetHAR: function(request)
     {
-        function resourceWrapper(id)
-        {
-            return WebInspector.extensionServer._convertResource(WebInspector.networkResources[id]);
-        }
-
-        var response;
-        if (request.id)
-            response = WebInspector.networkResources[request.id] ? resourceWrapper(request.id) : this._status.E_NOTFOUND(request.id);
-        else
-            response = Object.keys(WebInspector.networkResources).map(resourceWrapper);
-        return response;
+        var harLog = new WebInspector.HARLog();
+        harLog.includeResourceIds = true;
+        return harLog.build();
     },
 
     _onGetResourceContent: function(message, port)
     {
-        var ids;
-        var response = [];
-
-        function onContentAvailable(id, content, encoded)
+        function onContentAvailable(content, encoded)
         {
-            var resourceContent = {
-                id: id,
+            var response = {
                 encoding: encoded ? "base64" : "",
                 content: content
             };
-            response.push(resourceContent);
-            if (response.length === ids.length)
-                this._dispatchCallback(message.requestId, port, response);
-        }
-
-        if (typeof message.ids === "number")
-            ids = [ message.ids ];
-        else if (message.ids instanceof Array)
-            ids = message.ids;
-        else
-            return this._status.E_BADARGTYPE("message.ids", "Array", typeof message.ids);
-
-        for (var i = 0; i < ids.length; ++i) {
-            var id = ids[i];
-            var resource = WebInspector.networkResources[id];
- 
-            if (!resource)
-                response.push(this._status.E_NOTFOUND(id));
-            else
-                resource.requestContent(onContentAvailable.bind(this, id));
-        }
-        if (response.length === ids.length)
             this._dispatchCallback(message.requestId, port, response);
-    },
-
-    _onGetPageTimings: function()
-    {
-        return (new WebInspector.HARLog()).buildMainResourceTimings();
+        }
+        var resource = WebInspector.networkResources[message.id];
+        if (!resource)
+            return this._status.E_NOTFOUND(message.id);
+        resource.requestContent(onContentAvailable.bind(this));
     },
 
     _onAddAuditCategory: function(request)
     {
-        var category = new WebInspector.ExtensionAuditCategory(request.id, request.displayName, request.ruleCount);
+        var category = new WebInspector.ExtensionAuditCategory(request.id, request.displayName, request.resultCount);
         if (WebInspector.panels.audits.getCategory(category.id))
             return this._status.E_EXISTS(category.id);
         this._clientObjects[request.id] = category;
@@ -409,8 +365,8 @@ WebInspector.ExtensionServer.prototype = {
         }
         var platformAPI = WebInspector.buildPlatformExtensionAPI ? WebInspector.buildPlatformExtensionAPI() : "";
         return "(function(){ " +
-            "var private = {};" +
-            "(" + WebInspector.commonExtensionSymbols.toString() + ")(private);" +
+            "var apiPrivate = {};" +
+            "(" + WebInspector.commonExtensionSymbols.toString() + ")(apiPrivate);" +
             "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
             "webInspector.resources.Types = " + JSON.stringify(resourceTypes) + ";" +
             platformAPI +

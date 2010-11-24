@@ -1,23 +1,15 @@
 CONSOLE MESSAGE: line 669: [object HTMLParagraphElement]
 Tests WebInspector extension API
 
-Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testOnResourceFinished
-Got callback, arguments dump follows:
-{
-    0 : {
-        id : <number>
-        type : "other"
-        har : <object>
-    }
-}
+onFinished fired
 RUNNING TEST: extension_testOnSelectionChanged
-Got callback, arguments dump follows:
-{
-    0 : "DOMNode"
-    1 : undefined
-}
+onSelectionChanged fired
+RUNNING TEST: extension_testPageLoadEvents
+onDOMContentLoaded fired: number
+onLoaded fired: number
+Page reloaded.
 All tests done.
 

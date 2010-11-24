@@ -2,10 +2,10 @@ function fetchTests()
 {
     function callback(result)
     {
-         window.eval(result.value);
+         window.eval(result);
          runTests();
     }
-    webInspector.inspectedWindow.evaluate("extensionFunctions()", callback);
+    webInspector.inspectedWindow.eval("extensionFunctions()", callback);
 }
 
 function runTests()
@@ -25,9 +25,8 @@ function runTests()
 
 function onTestsDone()
 {
-    output("All tests done.", function() {
-        top.postMessage("extension-tests-done","*");
-    });
+    output("All tests done.");
+    top.postMessage({ command: "extension-tests-done" }, "*");
 }
 
 function runTest(test, name)
@@ -49,7 +48,8 @@ function dispatchOnFrontend(message, callback)
     }
     var channel = new MessageChannel();
     channel.port1.start();
-    channel.port1.addEventListener("message", callbackWrapper, false);
+    if (callback)
+        channel.port1.addEventListener("message", callbackWrapper, false);
     top.postMessage(message, [ channel.port2 ], "*");
 }
 

@@ -1,12 +1,9 @@
 Tests audits support in WebInspector Extensions API
 
-Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAudits
 Added audit category.
-category.onAuditStarted fired
-failedCategory.onAuditStarted fired, throwing exception
   Extension audits
     Failed rule (42)
      this rule always fails
@@ -25,5 +22,7 @@ failedCategory.onAuditStarted fired, throwing exception
     Passed rule
      this rule always passes ok
   Extension audits that fail
+category.onAuditStarted fired
+failedCategory.onAuditStarted fired, throwing exception
 All tests done.
 

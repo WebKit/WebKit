@@ -38,9 +38,15 @@ InspectorTest.addResult = function(text)
     if (resultsSynchronized)
         addResultToPage(text);
     else {
+        clearResults();
         for (var i = 0; i < results.length; ++i)
             addResultToPage(results[i]);
         resultsSynchronized = true;
+    }
+
+    function clearResults()
+    {
+        InspectorTest.evaluateInPage("Array.prototype.forEach.call(document.body.querySelectorAll('div.output'), function(node) { node.parentNode.removeChild(node); })");
     }
 
     function addResultToPage(text)
@@ -87,8 +93,10 @@ InspectorTest.reloadPageIfNeeded = function(callback)
     if (!InspectorTest._pageWasReloaded) {
         InspectorTest._pageWasReloaded = true;
         InspectorTest.reloadPage(callback);
-    } else
-        callback();
+    } else {
+        if (callback)
+            callback();
+    }
 }
 
 InspectorTest.pageReloaded = function()
@@ -229,7 +237,7 @@ function didEvaluateForTestInFrontend(callId)
 function output(text)
 {
     var outputElement = document.createElement("div");
-    outputElement.id = "output";
+    outputElement.className = "output";
     outputElement.style.whiteSpace = "pre";
     outputElement.appendChild(document.createTextNode(text));
     outputElement.appendChild(document.createElement("br"));

@@ -14,42 +14,23 @@ p { font-family: 'test'; }
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
-function extension_testGetAllResources(nextTest)
+function extension_testGetHAR(nextTest)
 {
-    function compareResources(a, b)
+    function compareEntries(a, b)
     {
-        return a.har.request.url.toLowerCase().localeCompare(b.har.request.url.toLowerCase());
+        return a.request.url.toLowerCase().localeCompare(b.request.url.toLowerCase());
     }
 
-    function onResource(result)
+    function onHAR(result)
     {
-        var resources = result.sort(compareResources);
+        result.entries.sort(compareEntries);
 
-        for (var i = 0; i < resources.length; ++i)
-            output("resource: " + resources[i].har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1") + ", type: " + resources[i].type);
+        for (var i = 0; i < result.entries.length; ++i)
+            output("resource: " + result.entries[i].request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
     extension_doXHR(function() {
-        webInspector.resources.getAll(callbackAndNextTest(onResource, nextTest));
+        webInspector.resources.getHAR(callbackAndNextTest(onHAR, nextTest));
     });
-}
-
-function extension_testGetInvalidResource(nextTest)
-{
-    function onResource(result)
-    {
-        output("Attempted to retrieve invalid resource: " + JSON.stringify(result));
-    }
-    webInspector.resources.get(2128506, callbackAndNextTest(onResource, nextTest));
-}
-
-function extension_testGetPageTimings(nextTest)
-{
-    function onTimings(result)
-    {
-        output("Got callback from getPageTimings, pageTimings dump follows");
-        dumpObject(result, { onContentLoad: 1, onLoad: 1 });
-    }
-    webInspector.resources.getPageTimings(callbackAndNextTest(onTimings, nextTest));
 }
 
 function doXHR()
@@ -61,14 +42,14 @@ function doXHR()
 
 function extension_doXHR(callback)
 {
-    webInspector.inspectedWindow.evaluate("doXHR()", callback);
+    webInspector.inspectedWindow.eval("doXHR()", callback);
 }
 
 function extension_testResourceNotification(nextTest)
 {
     function onResourceFinished(resource)
     {
-        output("Resource finished: " + resource.har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+        output("Resource finished: " + resource.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
 
     webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
@@ -77,42 +58,43 @@ function extension_testResourceNotification(nextTest)
 
 function extension_getResourceByUrl(urls, callback)
 {
-    function onGotResources(response)
+    function onHAR(response)
     {
-        var ids = [];
-        for (var i = 0; i < response.length; ++i) {
+        var entries = response.entries;
+        for (var i = 0; i < entries.length; ++i) {
             for (var url = 0; url < urls.length; ++url) {
-                if (urls[url].test(response[i].har.request.url))
-                    ids.push(response[i].id);
+                if (urls[url].test(entries[i].request.url)) {
+                    callback(entries[i]);
+                    return;
+                }
             }
         }
-        callback(ids);
     }
-    webInspector.resources.getAll(onGotResources);
+    webInspector.resources.getHAR(onHAR);
 }
 
-function extension_onResourceBodies(response)
+function extension_onResourceBody(content, encoding)
 {
-    function compareBodies(a, b)
-    {
-        return ((a.response && a.response.content) || "").localeCompare((b.response && b.response.content) || "");
-    }
-    dumpObject(response, { id: 1 });
+    dumpObject(Array.prototype.slice.call(arguments));
 }
 
 function extension_testGetResourceContent(nextTest)
 {
-    extension_getResourceByUrl([/audits-style1.css$/], function(ids) {
-        webInspector.resources.getContent(ids[0], callbackAndNextTest(extension_onResourceBodies, nextTest));
+    extension_getResourceByUrl([/audits-style1.css$/], function(resource) {
+        resource.getContent(callbackAndNextTest(extension_onResourceBody, nextTest));
     });
 }
 
-function extension_testGetResourceContent(nextTest)
+function extension_testGetResourceContentEncoded(nextTest)
 {
-    extension_getResourceByUrl([/abe.png$/, /missing-image.png$/, /audits-style1.css$/ ], function(ids) {
-        ids.push(2126506); // Non-existent resource id.
-        webInspector.resources.getContent(ids, callbackAndNextTest(extension_onResourceBodies, nextTest));
+    extension_getResourceByUrl([/abe.png$/ ], function(resource) {
+        resource.getContent(callbackAndNextTest(extension_onResourceBody, nextTest));
     });
+}
+
+var test = function()
+{
+    InspectorTest.reloadPage(InspectorTest.runExtensionTests);
 }
 
 </script>

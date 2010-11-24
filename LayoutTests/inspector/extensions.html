@@ -11,7 +11,7 @@ function extension_testCreatePanel(nextTest)
         output("Panel created");
         dumpObject(panel);
     }
-    webInspector.panels.create("Test Panel", "extension-panel.html", "extension-panel.png", callbackAndNextTest(onPanelCreated, nextTest));
+    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", callbackAndNextTest(onPanelCreated, nextTest));
     output("done createPanel");
 }
 
@@ -22,12 +22,12 @@ function extension_testCreateSidebar(nextTest)
         output("Sidebar created");
         dumpObject(sidebar);
     }
-    webInspector.panels.scripts.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
+    webInspector.panels.elements.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
 }
 
 function extension_dumpSidebarContent(nextTest)
 {
-    dispatchOnFrontend("dump-sidebar-content", nextTest);
+    dispatchOnFrontend({ command: "dump-sidebar-content" }, nextTest);
 }
 
 function extension_testExtensionWatchSidebarObject(nextTest)
@@ -48,7 +48,7 @@ function extension_testExtensionWatchSidebarObject(nextTest)
             f7: 42
         });
     }
-    webInspector.panels.scripts.createWatchExpressionSidebarPane("Watch Test: Object", onSidebarCreated);
+    webInspector.panels.elements.createWatchExpressionSidebarPane("Watch Test: Object", onSidebarCreated);
 }
 
 function extension_testExtensionWatchSidebarExpression(nextTest)
@@ -74,7 +74,7 @@ function extension_testExtensionWatchSidebarExpression(nextTest)
         }
         sidebar.setExpression("(" + expression.toString() + ")();", "title");
     }
-    webInspector.panels.scripts.createWatchExpressionSidebarPane("Watch Test: Expression", onSidebarCreated);
+    webInspector.panels.elements.createWatchExpressionSidebarPane("Watch Test: Expression", onSidebarCreated);
 }
 
 </script>

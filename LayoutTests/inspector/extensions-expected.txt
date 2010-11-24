@@ -1,18 +1,11 @@
 Tests WebInspector extension API
 
-Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testCreatePanel
 done createPanel
 Panel created
 {
-    onSelectionChanged : {
-        addListener : <function>
-        removeListener : <function>
-    }
-    createSidebarPane : <function>
-    createWatchExpressionSidebarPane : <function>
     onSearch : {
         addListener : <function>
         removeListener : <function>
@@ -22,10 +15,9 @@ RUNNING TEST: extension_testCreateSidebar
 Sidebar created
 {
     setHeight : <function>
-    setExpanded : <function>
 }
 RUNNING TEST: extension_testExtensionWatchSidebarExpression
-Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[26]f10: function () {}__proto__: Object
+Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[18]f10: function () {}__proto__: Object
 RUNNING TEST: extension_testExtensionWatchSidebarObject
 Watch sidebar created, callback arguments dump follows:
 {
@@ -37,7 +29,6 @@ Watch sidebar created, callback arguments dump follows:
         setExpression : <function>
         setObject : <function>
         setHeight : <function>
-        setExpanded : <function>
     }
 }
 Sidebar content: f0: "object"f1: undefinedf2: nullf3: { }f4: [0]f5: [3]f6: {...}f7: 42

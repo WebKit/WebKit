@@ -1,6 +1,5 @@
 Tests public interface of WebInspector Extensions API
 
-Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAPI
@@ -9,6 +8,10 @@ RUNNING TEST: extension_testAPI
         addCategory : <function>
     }
     inspectedWindow : {
+        onDOMContentLoaded : {
+            addListener : <function>
+            removeListener : <function>
+        }
         onLoaded : {
             addListener : <function>
             removeListener : <function>
@@ -17,29 +20,17 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
-        onDOMContentLoaded : {
-            addListener : <function>
-            removeListener : <function>
-        }
         reload : <function>
-        evaluate : <function>
+        eval : <function>
     }
     panels : {
         elements : {
+            createSidebarPane : <function>
+            createWatchExpressionSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>
                 removeListener : <function>
             }
-            createSidebarPane : <function>
-            createWatchExpressionSidebarPane : <function>
-        }
-        scripts : {
-            onSelectionChanged : {
-                addListener : <function>
-                removeListener : <function>
-            }
-            createSidebarPane : <function>
-            createWatchExpressionSidebarPane : <function>
         }
         create : <function>
     }
@@ -59,10 +50,7 @@ RUNNING TEST: extension_testAPI
             WebSocket : "websocket"
             Other : "other"
         }
-        getAll : <function>
-        get : <function>
-        getPageTimings : <function>
-        getContent : <function>
+        getHAR : <function>
     }
     onReset : {
         addListener : <function>

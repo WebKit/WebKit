@@ -1,18 +1,12 @@
 function extension_runAudits(callback)
 {
-    function onMessage(event)
-    {
-        if (event.data === "audits-complete")
-            callback();
-    }
-    window.addEventListener("message", onMessage, false);
-    top.postMessage("run-audits", "*");
+    dispatchOnFrontend({ command: "run-audits" }, callback);
 }
 
 // runs in front-end
 var initialize_ExtensionsAuditsTest = function()
 {
-    InspectorTest.startExtensionAudits = function() 
+    InspectorTest.startExtensionAudits = function(message, port)
     {
         const launcherView = WebInspector.panels.audits._launcherView;
         launcherView._selectAllClicked(false);
@@ -27,11 +21,10 @@ var initialize_ExtensionsAuditsTest = function()
         function onAuditsDone()
         {
             InspectorTest.collectAuditResults();
-            for (var i = 0; i < frames.length; ++i)
-                frames[i].postMessage("audits-complete", "*");
+            port.postMessage("");
         }
-
         InspectorTest._addSniffer(WebInspector.panels.audits, "_auditFinishedCallback", onAuditsDone, true);
+
         launcherView._launchButtonClicked();
     }
 }
@@ -41,4 +34,3 @@ var test = function()
     InspectorTest.dispatchOnMessage("run-audits", InspectorTest.startExtensionAudits);
     InspectorTest.runExtensionTests();
 }
-

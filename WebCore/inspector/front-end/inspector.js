@@ -1231,6 +1231,7 @@ WebInspector.domContentEventFired = function(time)
     this.panels.audits.mainResourceDOMContentTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceDOMContentTime = time;
+    this.extensionServer.notifyPageDOMContentLoaded((time - WebInspector.mainResource.startTime) * 1000);
     this.mainResourceDOMContentTime = time;
 }
 
@@ -1239,6 +1240,7 @@ WebInspector.loadEventFired = function(time)
     this.panels.audits.mainResourceLoadTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceLoadTime = time;
+    this.extensionServer.notifyPageLoaded((time - WebInspector.mainResource.startTime) * 1000);
     this.mainResourceLoadTime = time;
 }
 
@@ -1403,7 +1405,6 @@ WebInspector.didCommitLoad = function()
 {
     // Cleanup elements panel early on inspected page refresh.
     WebInspector.setDocument(null);
-    this.extensionServer.notifyInspectedPageLoaded();
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)

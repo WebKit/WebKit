@@ -2,14 +2,13 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script type="text/javascript">
-function output(message, callback)
+function output(message)
 {
-    webInspector.inspectedWindow.evaluate("output(unescape('" + escape(message) + "'));", callback);
+    top.postMessage({ command: "output", text: message }, "*");
 }
 
 output("Started extension.");
 </script>
-
 <script src="extension-main.js"></script>
 </head>
 </html>

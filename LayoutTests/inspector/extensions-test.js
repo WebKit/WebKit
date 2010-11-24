@@ -21,43 +21,50 @@ InspectorTest.dispatchOnMessage = function(messageId, callback, recurring)
 {
     function onMessage(event)
     {
-        if (event.data !== messageId)
+        if (typeof(event.data) !== "object" || event.data.command !== messageId)
             return;
         if (!recurring)
             window.removeEventListener("message", onMessage, false);
-        callback();
-        if (event.ports && event.ports[0])
-            event.ports[0].postMessage("");
+        var port = event.ports && event.ports[0];
+        if (callback(event.data, port) && port)
+            port.postMessage("");
     }
     window.addEventListener("message", onMessage, false);
 }
 
 InspectorTest.runExtensionTests = function()
 {
-    function addExtension(callback)
-    {
-        InjectedScriptAccess.getDefault().evaluate("location.href", "console", function(result) {
-            var extensionURL = result.description.replace(/\/[^/]*$/, "/resources/extension-main.html");
-            WebInspector.addExtensions([{ startPage: extensionURL }]);
-            if (callback)
-                callback();
-        });
-    } 
-    InspectorTest.dispatchOnMessage("extension-tests-done", function() {
-        InspectorTest.completeTest();
+    InjectedScriptAccess.getDefault().evaluate("location.href", "console", function(result) {
+        var extensionURL = result.description.replace(/\/[^/]*$/, "/resources/extension-main.html");
+        WebInspector.addExtensions([{ startPage: extensionURL }]);
     });
-    InspectorTest.reloadPageIfNeeded(addExtension);
 }
 
-InspectorTest.dumpSidebarContent = function()
+InspectorTest.dispatchOnMessage("extension-tests-done", InspectorTest.completeTest, true);
+
+function extensionOutput(message)
 {
-    var sidebarPanes = WebInspector.panels.scripts.sidebarPanes;
+    InspectorTest.addResult(message.text);
+}
+InspectorTest.dispatchOnMessage("output", extensionOutput, true);
+
+function dumpSidebarContent()
+{
+    var sidebarPanes = WebInspector.panels.elements.sidebarPanes;
     // the sidebar of interest is presumed to always be last.
     var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
     InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
+    return true;
 }
+InspectorTest.dispatchOnMessage("dump-sidebar-content", dumpSidebarContent, true);
 
-InspectorTest.dispatchOnMessage("dump-sidebar-content", InspectorTest.dumpSidebarContent, true);
+function reloadPage(data, port)
+{
+    InspectorTest.reloadPage(function() {
+        port.postMessage("");
+    });
+}
+InspectorTest.dispatchOnMessage("reload", reloadPage, true);
 
 }
 

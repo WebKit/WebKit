@@ -4,26 +4,46 @@
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
-function extension_callback(nondetermenisticProps)
-{
-    output("Got callback, arguments dump follows:");
-    dumpObject(Array.prototype.slice.call(arguments, 1), nondetermenisticProps);
-}
 
 function extension_testOnSelectionChanged(nextTest)
 {
-    webInspector.panels.elements.onSelectionChanged.addListener(callbackAndNextTest(bind(extension_callback, null, null), nextTest));
-    webInspector.inspectedWindow.evaluate("inspect(document.body.children[0])");
+    function onSelectionChanged()
+    {
+        webInspector.panels.elements.onSelectionChanged.removeListener(onSelectionChanged);
+        output("onSelectionChanged fired");
+        nextTest();
+    }
+    webInspector.panels.elements.onSelectionChanged.addListener(onSelectionChanged);
+    webInspector.inspectedWindow.eval("inspect(document.body.children[0])");
 }
 
 function extension_testOnResourceFinished(nextTest)
 {
-    var nondetermenisticProps = {
-        har: 1,
-        id: 1
-    };
-    webInspector.resources.onFinished.addListener(callbackAndNextTest(bind(extension_callback, null, nondetermenisticProps), nextTest));
-    webInspector.inspectedWindow.evaluate("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
+    function onFinished()
+    {
+        webInspector.resources.onFinished.removeListener(onFinished);
+        output("onFinished fired");
+        nextTest();
+    }
+    webInspector.resources.onFinished.addListener(onFinished);
+    webInspector.inspectedWindow.eval("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
+}
+
+function extension_testPageLoadEvents(nextTest)
+{
+    var callbackCount = 0;
+    webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {
+        output("onDOMContentLoaded fired: " + typeof time);
+    });
+    webInspector.inspectedWindow.onLoaded.addListener(function(time) {
+        output("onLoaded fired: " + typeof time);
+        if (++callbackCount > 1)
+            nextTest();
+    });
+    dispatchOnFrontend({ command: "reload" }, function() {
+        if (++callbackCount > 1)
+            nextTest();
+    });
 }
 
 </script>

@@ -189,6 +189,7 @@ WebInspector.HAREntry._toMilliseconds = function(time)
 
 WebInspector.HARLog = function()
 {
+    this.includeResourceIds = false;
 }
 
 WebInspector.HARLog.prototype = {
@@ -203,7 +204,7 @@ WebInspector.HARLog.prototype = {
                 version: webKitVersion ? webKitVersion[1] : "n/a"
             },
             pages: this._buildPages(),
-            entries: Object.keys(WebInspector.networkResources).map(this._convertResource)
+            entries: Object.keys(WebInspector.networkResources).map(this._convertResource.bind(this))
         }
     },
 
@@ -229,7 +230,10 @@ WebInspector.HARLog.prototype = {
 
     _convertResource: function(id)
     {
-        return (new WebInspector.HAREntry(WebInspector.networkResources[id])).build();
+        var entry = (new WebInspector.HAREntry(WebInspector.networkResources[id])).build();
+        if (this.includeResourceIds)
+            entry._resourceId = id;
+        return entry;
     },
 
     _pageEventTime: function(time)
