@@ -737,28 +737,16 @@ BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 // Tests differences from switching to webkit.org's test netscape plugin rather
 // than chromium's old forked copy.  We can remove the PASS on these once we
 // switch.
-BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH PASS
-BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
-BUG_TONY WIN : plugins/mouse-events.html = TEXT PASS
-BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT PASS
-BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT PASS
+BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
+BUGWK48655 : plugins/js-from-destroy.html = CRASH
+BUG_TONY WIN : plugins/mouse-events.html = TEXT
+BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT
+BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin is currently named
 // WebKitTestNetscapePlugin because the fork in the Chromium repo is named
 // TestNetscapePlugin.  Once the internal plugin is removed, we'll be able to
 // fix the plugin names.
 BUG_TONY : plugins/plugin-javascript-access.html = TEXT PASS
-
-// These are tests that will start passing once we switch to webkit.org's
-// test plugin.
-BUG50704 : plugins/document-open.html = TIMEOUT PASS
-BUG64260 WIN LINUX : plugins/reentrant-update-widget-positions.html = TIMEOUT PASS
-BUG64260 WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT PASS
-BUG64260 WIN : plugins/mouse-events-fixedpos.html = TEXT PASS
-BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT PASS
-BUG38578 : plugins/override-node-method.html = TEXT PASS
-BUG29018 : plugins/reloadplugins-no-pages.html = TEXT PASS
-BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT PASS
-BUG35387 : plugins/update-widgets-crash.html = TIMEOUT PASS
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
