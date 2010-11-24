@@ -615,9 +615,7 @@ public:
 
     Call call(RegisterID target)
     {
-        m_assembler.blx(target);
-        JmpSrc jmpSrc;
-        return Call(jmpSrc, Call::None);
+        return Call(m_assembler.blx(target), Call::None);
     }
 
     void call(Address address)

@@ -624,16 +624,14 @@ namespace JSC {
         JmpSrc blx(int rm, Condition cc = AL)
         {
 #if WTF_ARM_ARCH_AT_LEAST(5)
-            int s = m_buffer.uncheckedSize();
             emitInst(static_cast<ARMWord>(cc) | BLX, 0, 0, RM(rm));
 #else
             ASSERT(rm != 14);
             ensureSpace(2 * sizeof(ARMWord), 0);
             mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
-            int s = m_buffer.uncheckedSize();
             bx(rm, cc);
 #endif
-            return JmpSrc(s);
+            return JmpSrc(m_buffer.uncheckedSize());
         }
 
         static ARMWord lsl(int reg, ARMWord value)
@@ -711,10 +709,9 @@ namespace JSC {
         JmpSrc loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
         {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
-            int s = m_buffer.uncheckedSize();
+            m_jumps.append(m_buffer.uncheckedSize() | (useConstantPool & 0x1));
             ldr_un_imm(rd, InvalidBranchTarget, cc);
-            m_jumps.append(s | (useConstantPool & 0x1));
-            return JmpSrc(s);
+            return JmpSrc(m_buffer.uncheckedSize());
         }
 
         JmpSrc jmp(Condition cc = AL, int useConstantPool = 0)
@@ -800,51 +797,55 @@ namespace JSC {
         }
 
         // Linkers
+        static intptr_t getAbsoluteJumpAddress(void* base, int offset = 0)
+        {
+            return reinterpret_cast<intptr_t>(base) + offset - sizeof(ARMWord);
+        }
 
         void linkJump(JmpSrc from, JmpDst to)
         {
-            ARMWord* insn = reinterpret_cast<ARMWord*>(m_buffer.data()) + (from.m_offset / sizeof(ARMWord));
+            ARMWord* insn = reinterpret_cast<ARMWord*>(getAbsoluteJumpAddress(m_buffer.data(), from.m_offset));
             ARMWord* addr = getLdrImmAddressOnPool(insn, m_buffer.poolAddress());
             *addr = static_cast<ARMWord>(to.m_offset);
         }
 
         static void linkJump(void* code, JmpSrc from, void* to)
         {
-            patchPointerInternal(reinterpret_cast<intptr_t>(code) + from.m_offset, to);
+            patchPointerInternal(getAbsoluteJumpAddress(code, from.m_offset), to);
         }
 
         static void relinkJump(void* from, void* to)
         {
-            patchPointerInternal(reinterpret_cast<intptr_t>(from) - sizeof(ARMWord), to);
+            patchPointerInternal(getAbsoluteJumpAddress(from), to);
         }
 
         static void linkCall(void* code, JmpSrc from, void* to)
         {
-            patchPointerInternal(reinterpret_cast<intptr_t>(code) + from.m_offset, to);
+            patchPointerInternal(getAbsoluteJumpAddress(code, from.m_offset), to);
         }
 
         static void relinkCall(void* from, void* to)
         {
-            patchPointerInternal(reinterpret_cast<intptr_t>(from) - sizeof(ARMWord), to);
+            patchPointerInternal(getAbsoluteJumpAddress(from), to);
         }
 
         // Address operations
 
         static void* getRelocatedAddress(void* code, JmpSrc jump)
         {
-            return reinterpret_cast<void*>(reinterpret_cast<ARMWord*>(code) + jump.m_offset / sizeof(ARMWord) + 1);
+            return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + jump.m_offset);
         }
 
         static void* getRelocatedAddress(void* code, JmpDst label)
         {
-            return reinterpret_cast<void*>(reinterpret_cast<ARMWord*>(code) + label.m_offset / sizeof(ARMWord));
+            return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + label.m_offset);
         }
 
         // Address differences
 
         static int getDifferenceBetweenLabels(JmpDst from, JmpSrc to)
         {
-            return (to.m_offset + sizeof(ARMWord)) - from.m_offset;
+            return to.m_offset - from.m_offset;
         }
 
         static int getDifferenceBetweenLabels(JmpDst from, JmpDst to)
@@ -854,7 +855,7 @@ namespace JSC {
 
         static unsigned getCallReturnOffset(JmpSrc call)
         {
-            return call.m_offset + sizeof(ARMWord);
+            return call.m_offset;
         }
 
         // Handle immediates
