@@ -892,87 +892,8 @@ WebInspector.NetworkPanel.prototype = {
 
     _showPopover: function(anchor)
     {
-        var tableElement = document.createElement("table");
         var resource = anchor.parentElement.resource;
-        var rows = [];
-
-        function addRow(title, start, end, color)
-        {
-            var row = {};
-            row.title = title;
-            row.start = start;
-            row.end = end;
-            rows.push(row);
-        }
-
-        if (resource.timing.proxyStart !== -1)
-            addRow(WebInspector.UIString("Proxy"), resource.timing.proxyStart, resource.timing.proxyEnd);
-
-        if (resource.timing.dnsStart !== -1)
-            addRow(WebInspector.UIString("DNS Lookup"), resource.timing.dnsStart, resource.timing.dnsEnd);
-
-        if (resource.timing.connectStart !== -1) {
-            if (resource.connectionReused)
-                addRow(WebInspector.UIString("Blocking"), resource.timing.connectStart, resource.timing.connectEnd);
-            else {
-                var connectStart = resource.timing.connectStart;
-                // Connection includes DNS, subtract it here.
-                if (resource.timing.dnsStart !== -1)
-                    connectStart += resource.timing.dnsEnd - resource.timing.dnsStart;
-                addRow(WebInspector.UIString("Connecting"), connectStart, resource.timing.connectEnd);
-            }
-        }
-
-        if (resource.timing.sslStart !== -1)
-            addRow(WebInspector.UIString("SSL"), resource.timing.sslStart, resource.timing.sslEnd);
-
-        var sendStart = resource.timing.sendStart;
-        if (resource.timing.sslStart !== -1)
-            sendStart += resource.timing.sslEnd - resource.timing.sslStart;
-        
-        addRow(WebInspector.UIString("Sending"), resource.timing.sendStart, resource.timing.sendEnd);
-        addRow(WebInspector.UIString("Waiting"), resource.timing.sendEnd, resource.timing.receiveHeadersEnd);
-        addRow(WebInspector.UIString("Receiving"), (resource.responseReceivedTime - resource.timing.requestTime) * 1000, (resource.endTime - resource.timing.requestTime) * 1000);
-
-        const chartWidth = 200;
-        var total = (resource.endTime - resource.timing.requestTime) * 1000;
-        var scale = chartWidth / total;
-
-        for (var i = 0; i < rows.length; ++i) {
-            var tr = document.createElement("tr");
-            tableElement.appendChild(tr);
-
-            var td = document.createElement("td");
-            td.textContent = rows[i].title;
-            tr.appendChild(td);
-
-            td = document.createElement("td");
-            td.width = chartWidth + "px";
-
-            var row = document.createElement("div");
-            row.className = "network-timing-row";
-            td.appendChild(row);
-
-            var bar = document.createElement("span");
-            bar.className = "network-timing-bar";
-            bar.style.left = scale * rows[i].start + "px";
-            bar.style.right = scale * (total - rows[i].end) + "px";
-            bar.style.backgroundColor = rows[i].color;
-            bar.textContent = "\u200B"; // Important for 0-time items to have 0 width.
-            row.appendChild(bar);
-
-            var title = document.createElement("span");
-            title.className = "network-timing-bar-title";
-            if (total - rows[i].end < rows[i].start)
-                title.style.right = (scale * (total - rows[i].end) + 3) + "px";
-            else
-                title.style.left = (scale * rows[i].start + 3) + "px";
-            title.textContent = Number.millisToString(rows[i].end - rows[i].start);
-            row.appendChild(title);
-
-            tr.appendChild(td);
-        }
-
+        var tableElement = WebInspector.ResourceTimingView.createTimingTable(resource);
         var popover = new WebInspector.Popover(tableElement);
         popover.show(anchor);
         return popover;

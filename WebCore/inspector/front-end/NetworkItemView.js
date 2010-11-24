@@ -46,6 +46,12 @@ WebInspector.NetworkItemView = function(resource)
         this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), this._contentView);
     }
     this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
+
+    if (Preferences.showTimingTab) {
+        var timingView = new WebInspector.ResourceTimingView(resource);
+        this._tabbedPane.appendTab("timing", WebInspector.UIString("Timing"), timingView);
+    }
+
     this._tabbedPane.addEventListener("tab-selected", this._tabSelected, this);
 }
 

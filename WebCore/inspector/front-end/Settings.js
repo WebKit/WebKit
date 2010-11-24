@@ -47,6 +47,7 @@ var Preferences = {
     resourceExportEnabled: false,
     fileSystemEnabled: false,
     useDataURLForResourceImageIcons: true,
+    showTimingTab: false,
     debugMode: false
 }
 

@@ -637,6 +637,7 @@
     height: 31px;
     padding-top: 8px;
     padding-left: 25px;
+    white-space: nowrap;
 }
 
 #network-views.small .network-item-view .tabbed-pane-header {
@@ -746,4 +747,64 @@
 .resource-cookies-view .data-grid .row-group {
     font-weight: bold;
     font-size: 11px;
+}
+
+.resource-timing-view {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    padding: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    color: rgb(30, 30, 30);
+}
+
+.resource-timing-view table {
+    border-spacing: 21px 0;
+}
+
+.resource-timing-view .network-timing-bar {
+    opacity: 1;
+}
+
+.resource-timing-view .network-timing-bar.proxy {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(239, 228, 176)), to(rgb(139, 128, 76)));
+    border-left: 1px solid rgb(139, 128, 76);
+}
+
+.resource-timing-view .network-timing-bar.dns {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(153, 208, 216)), to(rgb(81, 174, 189)));
+    border-left: 1px solid rgb(81, 174, 189);
+}
+
+.resource-timing-view .network-timing-bar.connecting {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(203, 232, 145)), to(rgb(160, 214, 56)));
+    border-left: 1px solid rgb(160, 214, 56);
+}
+
+.resource-timing-view .network-timing-bar.ssl {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(21, 232, 145)), to(rgb(216, 149, 132)));
+    border-left: 1px solid rgb(216, 149, 132);
+}
+
+.resource-timing-view .network-timing-bar.sending {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(232, 192, 182)), to(rgb(216, 147, 130)));
+    border-left: 1px solid rgb(216, 147, 130);
+}
+
+.resource-timing-view .network-timing-bar.waiting {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(188, 179, 208)), to(rgb(141, 125, 175)));
+    border-left: 1px solid rgb(141, 125, 175);
+}
+
+.resource-timing-view .network-timing-bar.receiving {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(214, 214, 214)), to(rgb(182, 182, 182)));
+    border-left: 1px solid rgb(182, 182, 182);
+}
+
+.resource-timing-view.visible {
+    display: block;
 }

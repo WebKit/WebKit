@@ -299,8 +299,10 @@ WebInspector.Resource.prototype = {
 
     set timing(x)
     {
-        if (!this._cached)
+        if (!this._cached) {
             this._timing = x;
+            this.dispatchEventToListeners("timing changed");
+        }
     },
 
     get mimeType()

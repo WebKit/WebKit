@@ -47,6 +47,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.onlineDetectionEnabled = false;
     Preferences.nativeInstrumentationEnabled = true;
     Preferences.fileSystemEnabled = false;
+    Preferences.showTimingTab = true;
 })();
 
 var devtools = devtools || {};
