@@ -5629,9 +5629,6 @@ fast/images/webp-image-decoding.html
 # https://bugs.webkit.org/show_bug.cgi?id=47832
 http/tests/inspector/console-xhr-logging.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=47727
-mathml/presentation
-
 # This test passes locally, but does not pass on the bots. Perhaps
 # it is an issue with the version of Cairo on the bots.
 # https://bugs.webkit.org/show_bug.cgi?id=49052
