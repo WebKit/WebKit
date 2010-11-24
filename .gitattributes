@@ -252,6 +252,15 @@ WebKit/win/WebKit.vcproj/WebKit.sln -crlf
 WebKit/win/WebKit.vcproj/WebKit.submit.sln -crlf
 WebKit/win/WebKit.vcproj/WebKit.vcproj -crlf
 WebKit/win/WebKit.vcproj/WebKitGUID.vcproj -crlf
+WebKit2/win/WebKit2.vcproj -crlf
+WebKit2/win/WebKit2Apple.vsprops -crlf
+WebKit2/win/WebKit2CFLite.vsprops -crlf
+WebKit2/win/WebKit2Common.vsprops -crlf
+WebKit2/win/WebKit2DirectX.vsprops -crlf
+WebKit2/win/WebKit2Generated.vcproj -crlf
+WebKit2/win/WebKit2GeneratedCommon.vsprops -crlf
+WebKit2/win/WebKit2WebProcess.vcproj -crlf
+WebKit2/win/WebKit2WebProcessCommon.vsprops -crlf
 WebKitLibraries/win/tools/vsprops/WinCairo.vsprops -crlf
 WebKitLibraries/win/tools/vsprops/cURL.vsprops -crlf
 WebKitLibraries/win/tools/vsprops/debug_wincairo.vsprops -crlf

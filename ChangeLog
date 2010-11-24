@@ -1,3 +1,12 @@
+2010-11-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Levin.
+
+        Add WebKit2 VisualStudio files to .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=49969
+
+        * .gitattributes:
+
 2010-11-19  Mihai Parparita  <mihaip@chromium.org>
 
         Add recent upstream Chromium dependencies to .gitignore.
