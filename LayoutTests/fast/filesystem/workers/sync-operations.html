@@ -1,15 +1,17 @@
 <html>
 <head>
-<script src="../resources/fs-worker-common.js"></script>
-<script src="../resources/fs-worker-test-pre.js"></script>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/fs-worker-test-util.js"></script>
 </head>
 <body>
-<p id="description">This tests running multiple sync filesystem operations in Worker.</p>
+<p id="description"></p>
 <div id="console"></div>
 <script>
 startWorker('../resources/sync-operations.js');
+window.successfullyParsed = true;
 </script>
-<script src="../resources/fs-worker-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
 

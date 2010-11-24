@@ -1,11 +1,13 @@
-This tests returning File from FileEntry in workers.
+[Worker] Obtaining File from FileEntry.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
 
 Starting worker: ../resources/file-from-file-entry.js
-Description: Obtaining File from FileEntry.
-PASS: testFile.name is testFileEntry.name
-PASS: testFile.type is 'text/plain'
-PASS: testFile.size is 0
-DONE
+PASS [Worker] testFile.name is testFileEntry.name
+PASS [Worker] testFile.type is 'text/plain'
+PASS [Worker] testFile.size is 0
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

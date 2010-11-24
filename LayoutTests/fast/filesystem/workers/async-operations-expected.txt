@@ -1,15 +1,17 @@
-This tests running multiple async filesystem operations in Worker.
+[Worker] Test making multiple async FileSystem operations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
 
 Starting worker: ../resources/async-operations.js
-Description: Test making multiple async FileSystem operations.
-requested FileSystem.
-Got FileSystem:file__0:Temporary
-Starting async test stage 1.
-Starting async test stage 2.
-Verifying the FileSystem status.
-PASS: "/a,/b,/c,/d2,/e,/f" is "/a,/b,/c,/d2,/e,/f"
-PASS: dirsCount is 3
-DONE
+[Worker] requested FileSystem.
+[Worker] Got FileSystem:file__0:Temporary
+[Worker] Starting async test stage 1.
+[Worker] Starting async test stage 2.
+[Worker] Verifying the FileSystem status.
+PASS [Worker] "/a,/b,/c,/d2,/e,/f" is "/a,/b,/c,/d2,/e,/f"
+PASS [Worker] dirsCount is 3
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

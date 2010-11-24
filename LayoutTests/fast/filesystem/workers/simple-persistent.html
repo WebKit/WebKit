@@ -1,14 +1,16 @@
 <html>
 <head>
-<script src="../resources/fs-worker-common.js"></script>
-<script src="../resources/fs-worker-test-pre.js"></script>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/fs-worker-test-util.js"></script>
 </head>
 <body>
-<p id="description">This tests requesting PERSISTENT FileSystem in Worker.</p>
+<p id="description"></p>
 <div id="console"></div>
 <script>
 startWorker('../resources/simple-persistent.js');
+window.successfullyParsed = true;
 </script>
-<script src="../resources/fs-worker-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
