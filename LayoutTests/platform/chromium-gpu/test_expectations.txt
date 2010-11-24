@@ -260,8 +260,10 @@ BUGWK47924 MAC : compositing/iframes/composited-iframe-alignment.html = TIMEOUT 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX : compositing/color-matching/pdf-image-match.html = FAIL
 WONTFIX : compositing/images/direct-pdf-image.html = FAIL
+
 // Chromium does not support PDF or plugin content in layers right now.
-BUGWK47925 : compositing/plugins/composited-plugin.html = FAIL
+BUGWK47925 WIN LINUX : compositing/plugins/composited-plugin.html = FAIL
+BUG_LOISLO MAC : compositing/plugins/composited-plugin.html = CRASH
 
 // The word "compositing" appears in Chromium's pixel results and not
 // in Safari's; this should probably be fixed.
@@ -346,7 +348,8 @@ BUGWK48018 LINUX DEBUG : compositing/geometry/outline-change.html = FAIL PASS
 BUGWK48020 LINUX DEBUG : compositing/geometry/object-clip-rects-assertion.html = FAIL
 
 // The following tests are failing on Mac.
-BUGWK48029 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+//BUGWK48029 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+BUG_LOISLO MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
 BUGWK48029 MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-img.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-resize.html = TEXT
