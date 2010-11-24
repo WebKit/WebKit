@@ -710,39 +710,55 @@ BUG6139 : fast/forms/select-writing-direction-natural.html = FAIL
 // Plugin tests
 // -----------------------------------------------------------------
 BUG21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
-// Webkit patch http://trac.webkit.org/changeset/64323 modify the test
-BUG50704 : plugins/document-open.html = TIMEOUT
 BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 BUG10351 MAC : plugins/inner-html-display-none.html = FAIL
-BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
+BUGWK48164 MAC LINUX : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
 BUG38353 : plugins/keyboard-events.html = TEXT
 BUG10351 MAC : plugins/mouse-events.html = FAIL
-BUG32864 : plugins/mouse-events-fixedpos.html = TEXT
+BUG32864 MAC LINUX : plugins/mouse-events-fixedpos.html = TEXT
 BUG35822 : plugins/npruntime/browser-object-identity.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUG21901 : plugins/npruntime/enumerate.html = TEXT
 BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
 BUG50910 : plugins/npruntime/remove-property.html = TEXT
-BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
-BUG38578 : plugins/override-node-method.html = TEXT
 BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
-// Due to not building TestNetscapePlugin.cpp.
-BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
-// Needs to implement NPN_reloadPlugins and add reloadPluginNoPages &
-// reloadPluginAndPages to plugin object.
-BUG29018 : plugins/reloadplugins-no-pages.html = TEXT
-BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT
+BUG35387 MAC : plugins/reentrant-update-widget-positions.html = TIMEOUT
 BUG38392 : plugins/resize-from-plugin.html = TEXT
 // Times out after http://trac.webkit.org/changeset/62739/
 BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
-BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
 BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
+
+// Tests differences from switching to webkit.org's test netscape plugin rather
+// than chromium's old forked copy.  We can remove the PASS on these once we
+// switch.
+BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH PASS
+BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
+BUG_TONY WIN : plugins/mouse-events.html = TEXT PASS
+BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT PASS
+BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT PASS
+// This test is failing because the plugin is currently named
+// WebKitTestNetscapePlugin because the fork in the Chromium repo is named
+// TestNetscapePlugin.  Once the internal plugin is removed, we'll be able to
+// fix the plugin names.
+BUG_TONY : plugins/plugin-javascript-access.html = TEXT PASS
+
+// These are tests that will start passing once we switch to webkit.org's
+// test plugin.
+BUG50704 : plugins/document-open.html = TIMEOUT PASS
+BUG64260 WIN LINUX : plugins/reentrant-update-widget-positions.html = TIMEOUT PASS
+BUG64260 WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT PASS
+BUG64260 WIN : plugins/mouse-events-fixedpos.html = TEXT PASS
+BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT PASS
+BUG38578 : plugins/override-node-method.html = TEXT PASS
+BUG29018 : plugins/reloadplugins-no-pages.html = TEXT PASS
+BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT PASS
+BUG35387 : plugins/update-widgets-crash.html = TIMEOUT PASS
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release

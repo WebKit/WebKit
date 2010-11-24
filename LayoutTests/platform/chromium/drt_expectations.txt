@@ -74,29 +74,6 @@ BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edg
 
 BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
-// Tests differences from switching to webkit.org's test netscape plugin rather
-// than chromium's old forked copy.
-BUG_DRT : plugins/document-open.html = PASS
-BUG_DRT WIN LINUX : plugins/reentrant-update-widget-positions.html = PASS
-BUG_DRT WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
-BUG_DRT WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = PASS
-BUGWK48655 : plugins/js-from-destroy.html = CRASH
-BUG_DRT WIN : plugins/mouse-events.html = TEXT
-BUG_DRT WIN : plugins/mouse-events-fixedpos.html = PASS
-BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT
-BUG_DRT : plugins/npruntime/round-trip-npobject.html = PASS
-BUG_DRT : plugins/override-node-method.html = PASS
-BUG_DRT WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
-BUG_DRT : plugins/reloadplugins-no-pages.html = PASS
-BUG_DRT : plugins/reloadplugins-and-pages.html = PASS
-BUG_DRT : plugins/update-widgets-crash.html = PASS
-
-// This test is failing because the plugin is currently named
-// WebKitTestNetscapePlugin because the fork in the Chromium repo is named
-// TestNetscapePlugin.  Once the internal plugin is removed, this will be
-// fixed.
-BUG_DRT : plugins/plugin-javascript-access.html = TEXT
-
 // Not investigated.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
