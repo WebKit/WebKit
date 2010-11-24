@@ -103,8 +103,8 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False):
                      'websocket/tests',
                      'failures/expected/*'])
 
+    oc = outputcapture.OutputCapture()
     try:
-        oc = outputcapture.OutputCapture()
         oc.capture_output()
         options, parsed_args = run_webkit_tests.parse_args(args)
         user = MockUser()
@@ -226,7 +226,7 @@ class MainTest(unittest.TestCase):
     def test_keyboard_interrupt(self):
         # Note that this also tests running a test marked as SKIP if
         # you specify it explicitly.
-        self.assertRaises(KeyboardInterrupt, passing_run,
+        self.assertRaises(KeyboardInterrupt, logging_run,
             ['failures/expected/keyboard.html'], tests_included=True)
 
     def test_last_results(self):
@@ -378,11 +378,11 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--worker-model', 'threads']))
 
     def test_worker_model__processes(self):
-        self.assertRaises(SystemExit, logging_run,
+        self.assertRaises(ValueError, logging_run,
                           ['--worker-model', 'processes'])
 
     def test_worker_model__unknown(self):
-        self.assertRaises(SystemExit, logging_run,
+        self.assertRaises(ValueError, logging_run,
                           ['--worker-model', 'unknown'])
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
@@ -466,7 +466,8 @@ class TestRunnerTest(unittest.TestCase):
         mock_port.relative_test_filename = lambda name: name
         mock_port.filename_to_uri = lambda name: name
 
-        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(), printer=Mock())
+        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(),
+            printer=Mock(), message_broker=Mock())
         expected_html = u"""<html>
   <head>
     <title>Layout Test Results (time)</title>
@@ -483,7 +484,8 @@ class TestRunnerTest(unittest.TestCase):
     def test_shard_tests(self):
         # Test that _shard_tests in run_webkit_tests.TestRunner really
         # put the http tests first in the queue.
-        runner = TestRunnerWrapper(port=Mock(), options=Mock(), printer=Mock())
+        runner = TestRunnerWrapper(port=Mock(), options=Mock(),
+            printer=Mock(), message_broker=Mock())
 
         test_list = [
           "LayoutTests/websocket/tests/unicode.htm",
