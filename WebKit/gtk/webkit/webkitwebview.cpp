@@ -4877,7 +4877,7 @@ webkit_web_view_get_dom_document(WebKitWebView* webView)
     if (!doc)
         return 0;
 
-    return static_cast<WebKitDOMDocument*>(kit(doc));
+    return kit(doc);
 }
 
 /**

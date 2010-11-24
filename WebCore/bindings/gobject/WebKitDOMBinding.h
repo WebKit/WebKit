@@ -25,6 +25,7 @@
 #define WebKitDOMBinding_h
 
 #include <glib.h>
+#include "webkit/webkitdomdefines.h"
 
 namespace WebCore {
 class Node;
@@ -34,10 +35,10 @@ class EventTarget;
 } // namespace WebCore
 
 namespace WebKit {
-gpointer kit(WebCore::Node* node);
-gpointer kit(WebCore::Element* element);
-gpointer kit(WebCore::Event* event);
-gpointer kit(WebCore::EventTarget* target);
+WebKitDOMNode* kit(WebCore::Node* node);
+WebKitDOMElement* kit(WebCore::Element* element);
+WebKitDOMEvent* kit(WebCore::Event* event);
+WebKitDOMEventTarget* kit(WebCore::EventTarget* target);
 } // namespace WebKit
 
 #endif // WebKitDOMBinding_h

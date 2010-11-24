@@ -985,7 +985,7 @@ sub GenerateFunction {
     bool ok = item->${functionSigName}(${callImplParams}${exceptions});
     if (ok)
     {
-        ${returnType} res = static_cast<${returnType}>(WebKit::kit($returnParamName));
+        ${returnType} res = WebKit::kit($returnParamName);
         return res;
     }
 EOF
@@ -1040,7 +1040,7 @@ EOF
     if ($returnType ne "void" && !$functionHasCustomReturn) {
         if ($functionSigType ne "DOMObject") {
             if ($returnValueIsGDOMType) {
-                push(@cBody, "    ${returnType} res = static_cast<${returnType}>(WebKit::kit(g_res.get()));\n");
+                push(@cBody, "    ${returnType} res = WebKit::kit(g_res.get());\n");
             }
         }
         if ($functionSigType eq "DOMObject") {
@@ -1252,7 +1252,7 @@ EOF
 
     if ($className ne "WebKitDOMNode") {
         $text = << "EOF";
-    gpointer
+    ${className}*
     kit(WebCore::${interfaceName}* node);
 
 EOF
@@ -1350,14 +1350,14 @@ sub Generate {
         my $converter = << "EOF";
 namespace WebKit {
     
-gpointer kit(WebCore::$interfaceName* obj)
+${className}* kit(WebCore::$interfaceName* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return ret;
+        return static_cast<${className}*>(ret);
 
-    return DOMObjectCache::put(obj, WebKit::wrap${interfaceName}(obj));
+    return static_cast<${className}*>(DOMObjectCache::put(obj, WebKit::wrap${interfaceName}(obj)));
 }
     
 } // namespace WebKit //

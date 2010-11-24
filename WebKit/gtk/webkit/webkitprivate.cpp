@@ -173,7 +173,7 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 
     if (result.innerNonSharedNode())
-        node = static_cast<WebKitDOMNode*>(kit(result.innerNonSharedNode()));
+        node = kit(result.innerNonSharedNode());
 
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
                                                "link-uri", linkURI.get(),
