@@ -1,3 +1,14 @@
+2010-11-24  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix uninitialized variable in QGraphicsWKViewPrivate
+
+        Always initialize QGWKVP::m_isChangingScale in the constructor.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKViewPrivate::QGraphicsWKViewPrivate):
+
 2010-11-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.

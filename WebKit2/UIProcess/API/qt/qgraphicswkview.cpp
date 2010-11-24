@@ -336,6 +336,7 @@ void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)
 QGraphicsWKViewPrivate::QGraphicsWKViewPrivate(QGraphicsWKView* view)
     : q(view)
     , m_scaleCommitTimer(RunLoop::current(), this, &QGraphicsWKViewPrivate::commitScale)
+    , m_isChangingScale(false)
 {
 }
 
