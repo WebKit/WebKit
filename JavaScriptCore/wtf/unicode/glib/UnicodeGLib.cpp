@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2008 Jürg Billeter <j@bitron.ch>
  *  Copyright (C) 2008 Dominik Röttsches <dominik.roettsches@access-company.com>
+ *  Copyright (C) 2010 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,6 +22,11 @@
 
 #include "config.h"
 #include "UnicodeGLib.h"
+
+#include <wtf/Vector.h>
+#include <wtf/unicode/UTF8.h>
+
+#define UTF8_IS_SURROGATE(character) (character >= 0x10000 && character <= 0x10FFFF)
 
 namespace WTF {
 namespace Unicode {
@@ -43,100 +49,71 @@ UChar32 foldCase(UChar32 ch)
     return *ucs4Result;
 }
 
-int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
+static int getUTF16LengthFromUTF8(const gchar* utf8String, int length)
+{
+    int utf16Length = 0;
+    const gchar* inputString = utf8String;
+
+    while ((utf8String + length - inputString > 0) && *inputString) {
+        gunichar character = g_utf8_get_char(inputString);
+
+        utf16Length += UTF8_IS_SURROGATE(character) ? 2 : 1;
+        inputString = g_utf8_next_char(inputString);
+    }
+
+    return utf16Length;
+}
+
+typedef gchar* (*UTF8CaseFunction)(const gchar*, gssize length);
+
+static int convertCase(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error, UTF8CaseFunction caseFunction)
 {
     *error = false;
-    GOwnPtr<GError> gerror;
 
-    GOwnPtr<char> utf8src;
-    utf8src.set(g_utf16_to_utf8(src, srcLength, 0, 0, &gerror.outPtr()));
-    if (gerror) {
+    // Allocate a buffer big enough to hold all the characters.
+    Vector<char> buffer(srcLength * 3);
+    char* utf8Target = buffer.data();
+    const UChar* utf16Source = src;
+    ConversionResult conversionResult = convertUTF16ToUTF8(&utf16Source, utf16Source + srcLength, &utf8Target, utf8Target + buffer.size(), true);
+    if (conversionResult != conversionOK) {
         *error = true;
         return -1;
     }
+    buffer.shrink(utf8Target - buffer.data());
 
-    GOwnPtr<char> utf8result;
-    utf8result.set(g_utf8_casefold(utf8src.get(), -1));
+    GOwnPtr<char> utf8Result(caseFunction(buffer.data(), buffer.size()));
+    long utf8ResultLength = strlen(utf8Result.get());
 
-    long utf16resultLength = -1;
-    GOwnPtr<UChar> utf16result;
-    utf16result.set(g_utf8_to_utf16(utf8result.get(), -1, 0, &utf16resultLength, &gerror.outPtr()));
-    if (gerror) {
+    // Calculate the destination buffer size.
+    int realLength = getUTF16LengthFromUTF8(utf8Result.get(), utf8ResultLength);
+    if (realLength > resultLength) {
         *error = true;
-        return -1;
+        return realLength;
     }
 
-    if (utf16resultLength > resultLength) {
+    // Convert the result to UTF-16.
+    UChar* utf16Target = result;
+    const char* utf8Source = utf8Result.get();
+    conversionResult = convertUTF8ToUTF16(&utf8Source, utf8Source + utf8ResultLength, &utf16Target, utf16Target + resultLength, true);
+    long utf16ResultLength = utf16Target - result;
+    if (conversionResult != conversionOK)
         *error = true;
-        return utf16resultLength;
-    }
-    memcpy(result, utf16result.get(), utf16resultLength * sizeof(UChar));
 
-    return utf16resultLength;
+    return utf16ResultLength <= 0 ? -1 : utf16ResultLength;
+}
+int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
+{
+    return convertCase(result, resultLength, src, srcLength, error, g_utf8_casefold);
 }
 
 int toLower(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
 {
-    *error = false;
-    GOwnPtr<GError> gerror;
-
-    GOwnPtr<char> utf8src;
-    utf8src.set(g_utf16_to_utf8(src, srcLength, 0, 0, &gerror.outPtr()));
-    if (gerror) {
-        *error = true;
-        return -1;
-    }
-
-    GOwnPtr<char> utf8result;
-    utf8result.set(g_utf8_strdown(utf8src.get(), -1));
-
-    long utf16resultLength = -1;
-    GOwnPtr<UChar> utf16result;
-    utf16result.set(g_utf8_to_utf16(utf8result.get(), -1, 0, &utf16resultLength, &gerror.outPtr()));
-    if (gerror) {
-        *error = true;
-        return -1;
-    }
-
-    if (utf16resultLength > resultLength) {
-        *error = true;
-        return utf16resultLength;
-    }
-    memcpy(result, utf16result.get(), utf16resultLength * sizeof(UChar));
-
-    return utf16resultLength;
+    return convertCase(result, resultLength, src, srcLength, error, g_utf8_strdown);
 }
 
 int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
 {
-    *error = false;
-    GOwnPtr<GError> gerror;
-
-    GOwnPtr<char> utf8src;
-    utf8src.set(g_utf16_to_utf8(src, srcLength, 0, 0, &gerror.outPtr()));
-    if (gerror) {
-        *error = true;
-        return -1;
-    }
-
-    GOwnPtr<char> utf8result;
-    utf8result.set(g_utf8_strup(utf8src.get(), -1));
-
-    long utf16resultLength = -1;
-    GOwnPtr<UChar> utf16result;
-    utf16result.set(g_utf8_to_utf16(utf8result.get(), -1, 0, &utf16resultLength, &gerror.outPtr()));
-    if (gerror) {
-        *error = true;
-        return -1;
-    }
-
-    if (utf16resultLength > resultLength) {
-        *error = true;
-        return utf16resultLength;
-    }
-    memcpy(result, utf16result.get(), utf16resultLength * sizeof(UChar));
-
-    return utf16resultLength;
+    return convertCase(result, resultLength, src, srcLength, error, g_utf8_strup);
 }
 
 Direction direction(UChar32 c)

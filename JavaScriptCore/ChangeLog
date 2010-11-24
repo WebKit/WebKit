@@ -1,3 +1,29 @@
+2010-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Optimize foldCase, toLower and toUpper methods in glib unicode backend
+        https://bugs.webkit.org/show_bug.cgi?id=48625
+
+        GLib methods use UTF-8 strings, so we have to convert from UTF-16 to
+        UTF-8 to perform the case operations and then convert back the result to
+        UTF-16. GLib conversion methods return a new allocated string, so we
+        have to memcpy the result into the destination buffer too. Using our
+        own methods to convert between UTF-8 and UTF-16 from wtf/unicode/UTF8.h
+        we don't need such memcpy, since they take an already allocated buffer
+        rather than returning a new one. There's another optimization for the
+        case when the destination buffer is not large enough. In that case,
+        methods should return the expected destination buffer size and are
+        called again with a new buffer. We can avoid the conversion to UTF-16 by
+        pre-calculating the required size for the destination buffer.
+
+        * wtf/unicode/glib/UnicodeGLib.cpp:
+        (WTF::Unicode::getUTF16LengthFromUTF8):
+        (WTF::Unicode::convertCase):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+
 2010-11-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Sam Weinig.
