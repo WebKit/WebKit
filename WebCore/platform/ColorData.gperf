@@ -1,3 +1,9 @@
+%{
+#include "HashTools.h"
+#include <string.h>
+
+namespace WebCore {
+%}
 %struct-type
 struct NamedColor;
 %omit-struct-type
@@ -160,3 +166,10 @@ white, 0xffffffff
 whitesmoke, 0xfff5f5f5
 yellow, 0xffffff00
 yellowgreen, 0xff9acd32
+%%
+const struct NamedColor* findColor(register const char* str, register unsigned int len)
+{
+    return ColorDataHash::findColorImpl(str, len);
+}
+
+} // namespace WebCore
