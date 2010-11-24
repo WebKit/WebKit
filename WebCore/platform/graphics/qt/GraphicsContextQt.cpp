@@ -104,6 +104,8 @@ QPainter::CompositionMode GraphicsContext::toQtCompositionMode(CompositeOperator
         return QPainter::CompositionMode_SourceOver;
     case CompositePlusLighter:
         return QPainter::CompositionMode_Plus;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     return QPainter::CompositionMode_SourceOver;
@@ -118,6 +120,8 @@ static inline Qt::PenCapStyle toQtLineCap(LineCap lc)
         return Qt::RoundCap;
     case SquareCap:
         return Qt::SquareCap;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     return Qt::FlatCap;
@@ -132,9 +136,11 @@ static inline Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
         return Qt::RoundJoin;
     case BevelJoin:
         return Qt::BevelJoin;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
-    return Qt::MiterJoin;
+    return Qt::SvgMiterJoin;
 }
 
 static Qt::PenStyle toQPenStyle(StrokeStyle style)
@@ -152,8 +158,9 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
     case DashedStroke:
         return Qt::DashLine;
         break;
+    default:
+        ASSERT_NOT_REACHED();
     }
-    qWarning("couldn't recognize the pen style");
     return Qt::NoPen;
 }
 
@@ -164,8 +171,9 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
         return Qt::OddEvenFill;
     case RULE_NONZERO:
         return Qt::WindingFill;
+    default:
+        ASSERT_NOT_REACHED();
     }
-    qDebug("Qt: unrecognized wind rule!");
     return Qt::OddEvenFill;
 }
 
