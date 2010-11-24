@@ -3630,7 +3630,7 @@ bool CSSParser::parseFontFaceSrc()
             // There are two allowed functions: local() and format().
             CSSParserValueList* args = val->function->args.get();
             if (args && args->size() == 1) {
-                if (equalIgnoringCase(val->function->name, "local(") && !expectComma) {
+                if (equalIgnoringCase(val->function->name, "local(") && !expectComma && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT)) {
                     expectComma = true;
                     allowFormat = false;
                     CSSParserValue* a = args->current();
