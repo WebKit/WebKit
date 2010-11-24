@@ -495,19 +495,15 @@ void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
 
-    bool dumpAsText = gLayoutTestController->dumpAsText();
     if (dumpTree) {
         char* result = 0;
         gchar* responseMimeType = webkit_web_frame_get_response_mime_type(mainFrame);
 
-        dumpAsText = g_str_equal(responseMimeType, "text/plain");
+        if (g_str_equal(responseMimeType, "text/plain")) {
+            gLayoutTestController->setDumpAsText(true);        
+            gLayoutTestController->setGeneratePixelResults(false);
+        }
         g_free(responseMimeType);
-
-        // Test can request controller to be dumped as text even
-        // while test's response mime type is not text/plain.
-        // Overriding this behavior with dumpAsText being false is a bad idea.
-        if (dumpAsText)
-            gLayoutTestController->setDumpAsText(dumpAsText);
 
         if (gLayoutTestController->dumpAsText())
             result = dumpFramesAsText(mainFrame);

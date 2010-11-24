@@ -907,14 +907,15 @@ void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
 
-    bool dumpAsText = gLayoutTestController->dumpAsText();
     if (dumpTree) {
         NSString *resultString = nil;
         NSData *resultData = nil;
         NSString *resultMimeType = @"text/plain";
 
-        dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
-        gLayoutTestController->setDumpAsText(dumpAsText);
+        if ([[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"]) {
+            gLayoutTestController->setDumpAsText(true);
+            gLayoutTestController->setGeneratePixelResults(false);
+        }
         if (gLayoutTestController->dumpAsText()) {
             resultString = dumpFramesAsText(mainFrame);
         } else if (gLayoutTestController->dumpAsPDF()) {
