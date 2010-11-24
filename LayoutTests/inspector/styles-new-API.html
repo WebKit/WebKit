@@ -1,7 +1,7 @@
 <html>
 <head>
 
-<link rel="stylesheet" href="resources/styles-new-API.css" -->
+<link rel="stylesheet" href="resources/styles-new-API.css">
 
 <script src="../http/tests/inspector/inspector-test.js"></script>
 <script src="elements-tests.js"></script>
@@ -112,17 +112,11 @@ function frontend_changeSelector(testController, styleSheet)
     {
         testController.results.push("");
         testController.results.push("=== After selector set ===");
-        frontend_loadAndDumpStyleSheet(testController, frontend_parentStyleSheetId(rule.ruleId), frontend_setStyleText.bind(null, testController));
+        frontend_loadAndDumpStyleSheet(testController, rule.ruleId.styleSheetId, frontend_setStyleText.bind(null, testController));
     }
 
     InspectorBackend.setRuleSelector2(styleSheet.rules[0].ruleId, "html *, body[foo=\"bar\"]", didSetSelector.bind(null, testController));
 }
-
-function frontend_parentStyleSheetId(ruleOrStyleId)
-{
-    return ruleOrStyleId.substring(0, ruleOrStyleId.indexOf(':'));
-}
-
 
 function frontend_setStyleText(testController, styleSheet)
 {
@@ -130,7 +124,7 @@ function frontend_setStyleText(testController, styleSheet)
     {
         testController.results.push("");
         testController.results.push("=== After style text set ===");
-        frontend_loadAndDumpStyleSheet(testController, frontend_parentStyleSheetId(style.styleId), frontend_addRule.bind(null, testController));
+        frontend_loadAndDumpStyleSheet(testController, style.styleId.styleSheetId, frontend_addRule.bind(null, testController));
     }
 
     InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "", true);

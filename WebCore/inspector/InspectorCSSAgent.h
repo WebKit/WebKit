@@ -65,10 +65,11 @@ public:
     void getComputedStyleForNode2(long nodeId, RefPtr<InspectorValue>* style);
     void getAllStyles2(RefPtr<InspectorArray>* styles);
     void getStyleSheet2(const String& styleSheetId, RefPtr<InspectorValue>* result);
+    void getStyleSheetText2(const String& styleSheetId, String* url, String* result);
     void setStyleSheetText2(const String& styleSheetId, const String& text);
-    void setPropertyText2(const String& styleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result);
-    void toggleProperty2(const String& styleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result);
-    void setRuleSelector2(const String& ruleId, const String& selector, RefPtr<InspectorValue>* result);
+    void setPropertyText2(const RefPtr<InspectorObject>& styleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result);
+    void toggleProperty2(const RefPtr<InspectorObject>& styleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result);
+    void setRuleSelector2(const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorValue>* result);
     void addRule2(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result);
     void getSupportedCSSProperties(RefPtr<InspectorArray>* result);
     void querySelectorAll(const long nodeId, const String& selector, RefPtr<InspectorArray>* result);

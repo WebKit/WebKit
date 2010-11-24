@@ -51,28 +51,43 @@ class Node;
 
 class InspectorCSSId {
 public:
-    static InspectorCSSId createFromParts(const String& styleSheetId, const String& ordinal) { return InspectorCSSId(styleSheetId + ":" + ordinal); }
-
     InspectorCSSId() { }
-    explicit InspectorCSSId(const String& id)
+
+    explicit InspectorCSSId(RefPtr<InspectorObject> value)
     {
-        id.split(':', m_idParts);
-        ASSERT(m_idParts.size() == 2);
+        if (!value->getString("styleSheetId", &m_styleSheetId))
+            return;
+        
+        RefPtr<InspectorValue> ordinalValue = value->get("ordinal");
+        if (!ordinalValue || !ordinalValue->asNumber(&m_ordinal))
+            m_styleSheetId = "";
     }
 
-    const String& styleSheetId() const { ASSERT(m_idParts.size() == 2); return m_idParts.at(0); }
-    const String& ordinal() const { ASSERT(m_idParts.size() == 2); return m_idParts.at(1); }
-    bool isEmpty() const { return m_idParts.isEmpty(); }
-    String asString() const
+    InspectorCSSId(const String& styleSheetId, unsigned ordinal)
+        : m_styleSheetId(styleSheetId)
+        , m_ordinal(ordinal)
+    {
+    }
+
+    bool isEmpty() const { return m_styleSheetId.isEmpty(); }
+
+    const String& styleSheetId() const { return m_styleSheetId; }
+    unsigned ordinal() const { return m_ordinal; }
+
+    PassRefPtr<InspectorValue> asInspectorValue() const
     {
         if (isEmpty())
-            return String();
+            return InspectorValue::null();
 
-        return m_idParts.at(0) + ":" + m_idParts.at(1);
+        RefPtr<InspectorObject> result = InspectorObject::create();
+        result->setString("styleSheetId", m_styleSheetId);
+        result->setNumber("ordinal", m_ordinal);
+        return result.release();
     }
 
 private:
-    Vector<String> m_idParts;
+    String m_styleSheetId;
+    unsigned m_ordinal;
 };
 
 struct InspectorStyleProperty {
@@ -156,7 +171,8 @@ public:
     InspectorStyleSheet(const String& id, CSSStyleSheet* pageStyleSheet, const String& origin, const String& documentURL);
     virtual ~InspectorStyleSheet();
 
-    const String& id() const { return m_id; }
+    String id() const { return m_id; }
+    String finalURL() const;
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet; }
     void reparseStyleSheet(const String&);
     bool setText(const String&);
@@ -169,12 +185,12 @@ public:
     bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);
     bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable);
 
+    virtual bool text(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
 
 protected:
     bool canBind() const { return m_origin != "userAgent" && m_origin != "user"; }
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
-    virtual bool text(String* result) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
@@ -221,10 +237,10 @@ public:
     }
 
     InspectorStyleSheetForInlineStyle(const String& id, Element* element, const String& origin);
-    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, id.ordinal() == "0"); return inlineStyle(); }
+    virtual bool text(String* result) const;
+    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
 protected:
-    virtual bool text(String* result) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const { return 0; }

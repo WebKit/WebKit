@@ -214,7 +214,7 @@ void InspectorCSSAgent::getStylesForNode2(long nodeId, RefPtr<InspectorValue>* r
         if (parentElement->style() && parentElement->style()->length()) {
             InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement);
             if (styleSheet)
-                parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId::createFromParts(styleSheet->id(), "0"))));
+                parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
         }
 
         CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
@@ -276,6 +276,15 @@ void InspectorCSSAgent::getStyleSheet2(const String& styleSheetId, RefPtr<Inspec
     *styleSheetObject = inspectorStyleSheet->buildObjectForStyleSheet();
 }
 
+void InspectorCSSAgent::getStyleSheetText2(const String& styleSheetId, String* url, String* result)
+{
+    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
+    if (!inspectorStyleSheet)
+        return;
+    *url = inspectorStyleSheet->finalURL();
+    inspectorStyleSheet->text(result);
+}
+
 void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const String& text)
 {
     InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
@@ -287,7 +296,7 @@ void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const Str
         inspectorStyleSheet->reparseStyleSheet(text);
 }
 
-void InspectorCSSAgent::setPropertyText2(const String& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::setPropertyText2(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -301,7 +310,7 @@ void InspectorCSSAgent::setPropertyText2(const String& fullStyleId, long propert
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::toggleProperty2(const String& fullStyleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::toggleProperty2(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -315,7 +324,7 @@ void InspectorCSSAgent::toggleProperty2(const String& fullStyleId, long property
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::setRuleSelector2(const String& fullRuleId, const String& selector, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::setRuleSelector2(const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());
