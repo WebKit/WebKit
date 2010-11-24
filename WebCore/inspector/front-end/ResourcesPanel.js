@@ -56,12 +56,16 @@ WebInspector.ResourcesPanel = function(database)
     this.applicationCacheListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Application Cache"), "ApplicationCache", "application-cache-storage-tree-item");
     this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
 
+    this.locallyModifiedListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Locally Modified"), "LocallyModified", "frame-storage-tree-item");
+    this.sidebarTree.appendChild(this.locallyModifiedListTreeElement);
+    this.locallyModifiedListTreeElement.hidden = true;
+
     if (Preferences.fileSystemEnabled) {
         this.fileSystemListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("File System"), "FileSystem", "file-system-storage-tree-item");
         this.sidebarTree.appendChild(this.fileSystemListTreeElement);
         this.fileSystemListTreeElement.expand();
     }
-       
+
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
@@ -74,6 +78,7 @@ WebInspector.ResourcesPanel = function(database)
     this._cookieViews = {};
     this._origins = {};
     this._domains = {};
+    this._locallyModifiedResources = {};
 
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
@@ -147,7 +152,7 @@ WebInspector.ResourcesPanel.prototype = {
         this._domStorage = [];
 
         this._cookieViews = {};
-        
+        this._locallyModifiedResources = {};
         this._fileSystemView = null;
         
         this._applicationCacheView = null;
@@ -158,6 +163,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
         this.applicationCacheListTreeElement.removeChildren();
+        this.locallyModifiedListTreeElement.removeChildren();
         if (Preferences.fileSystemEnabled)
             this.fileSystemListTreeElement.removeChildren();
         this.storageViews.removeChildren();
@@ -306,6 +312,20 @@ WebInspector.ResourcesPanel.prototype = {
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
         else
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
+    },
+
+    addLocallyModifiedRevision: function(url, resourceType, content)
+    {
+        this.locallyModifiedListTreeElement.hidden = false;
+
+        var newRevision = new WebInspector.LocallyModifiedRevisionTreeElement(this, url, resourceType, content);
+        var lastRevision = this._locallyModifiedResources[url];
+        this._locallyModifiedResources[url] = newRevision;
+
+        if (lastRevision)
+            lastRevision.becomeLogEntry(newRevision);
+        else
+            this.locallyModifiedListTreeElement.appendChild(newRevision);
     },
 
     selectDatabase: function(databaseId)
@@ -457,7 +477,7 @@ WebInspector.ResourcesPanel.prototype = {
     _innerShowView: function(view)
     {
         if (this.visibleView)
-            this.visibleView.hide();
+            this.visibleView.detach();
 
         view.show(this.storageViews);
         this.visibleView = view;
@@ -813,7 +833,8 @@ WebInspector.BaseStorageTreeElement.prototype = {
     set titleText(titleText)
     {
         this._titleText = titleText;
-        this.titleElement.textContent = this._titleText;
+        if (this.titleElement)
+            this.titleElement.textContent = this._titleText;
     },
 
     isEventWithinDisclosureTriangle: function()
@@ -1180,6 +1201,66 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
     }
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+
+WebInspector.LocallyModifiedRevisionTreeElement = function(storagePanel, url, resourceType, content)
+{
+    var resource = new WebInspector.Resource(null, url);
+    resource.type = resourceType;
+    resource.content = content;
+
+    var timestamp = new Date();
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
+    this.tooltip = resource.url;
+    this.timestamp = timestamp;
+    this._resource = resource;
+}
+
+WebInspector.LocallyModifiedRevisionTreeElement.prototype = {
+    becomeLogEntry: function(newRevision)
+    {
+        var oldChildren = this.children.slice();
+        var oldExpanded = this.expanded;
+        var oldIndex = this.parent.children.indexOf(this);
+
+        this.removeChildren();
+        this.titleText = this.timestamp.toLocaleTimeString();
+        this.toLocaleString();
+        this.hasChildren = false;
+
+        this.parent.insertChild(newRevision, oldIndex);
+        this.parent.removeChild(this);
+
+        const oneMinute = 1000 * 60;
+        if (newRevision.timestamp - this.timestamp > oneMinute)
+            newRevision.appendChild(this);
+
+        for (var i = 0; i < oldChildren.length; ++i)
+            newRevision.appendChild(oldChildren[i]);
+        if (oldExpanded)
+            newRevision.expand();
+    },
+
+    onattach: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
+        this.listItemElement.draggable = true;
+        this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+    },
+
+    onselect: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        this._storagePanel._showResourceView(this._resource);
+    },
+
+    _ondragstart: function(event)
+    {
+        event.dataTransfer.setData("text/plain", this._resource.content);
+        event.dataTransfer.effectAllowed = "copy";
+        return true;
+    }
+}
+WebInspector.LocallyModifiedRevisionTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.FileSystemTreeElement = function(storagePanel, origin)
 {
