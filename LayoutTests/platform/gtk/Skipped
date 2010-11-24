@@ -668,7 +668,6 @@ editing/deleting/delete-br-009.html
 editing/deleting/delete-br-011.html
 editing/deleting/delete-br-012.html
 editing/deleting/delete-br-in-last-table-cell.html
-editing/deleting/delete-by-word-002.html
 editing/deleting/delete-character-001.html
 editing/deleting/delete-first-list-item.html
 editing/deleting/delete-hr.html
@@ -4652,6 +4651,8 @@ editing/selection/5195166-2.html
 editing/selection/legal-positions.html
 editing/deleting/5546763.html
 editing/deleting/delete-all-text-in-text-field-assertion.html
+editing/deleting/delete-by-word-001.html
+editing/deleting/delete-by-word-002.html
 editing/deleting/delete-ligature-001.html
 editing/deleting/delete-ligature-002.html
 editing/deleting/delete-ligature-003.html
