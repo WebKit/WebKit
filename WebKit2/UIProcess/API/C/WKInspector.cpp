@@ -25,6 +25,8 @@
 
 #include "WKInspector.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
 
@@ -104,3 +106,5 @@ void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
 {
     toImpl(inspectorRef)->togglePageProfiling();
 }
+
+#endif // ENABLE(INSPECTOR)

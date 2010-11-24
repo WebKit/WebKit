@@ -26,6 +26,8 @@
 #ifndef WebInspector_h
 #define WebInspector_h
 
+#if ENABLE(INSPECTOR)
+
 #include "Connection.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -80,5 +82,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspector_h

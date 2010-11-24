@@ -26,6 +26,8 @@
 #ifndef WebInspectorClient_h
 #define WebInspectorClient_h
 
+#if ENABLE(INSPECTOR)
+
 #include <WebCore/InspectorClient.h>
 
 namespace WebKit {
@@ -38,7 +40,7 @@ public:
         : m_page(page)
     {
     }
-    
+
 private:
     virtual void inspectorDestroyed();
 
@@ -56,5 +58,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspectorClient_h

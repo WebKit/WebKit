@@ -175,7 +175,7 @@ bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrame* frame)
 
 void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
     Frame* coreFrame = QWebFramePrivate::core(frame);
     InspectorController* controller = coreFrame->page()->inspectorController();
     if (!controller)

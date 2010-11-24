@@ -66,6 +66,7 @@ ScriptProfileNode* ScriptProfile::head() const
     return m_profile->head();
 }
 
+#if ENABLE(INSPECTOR)
 static PassRefPtr<InspectorObject> buildInspectorObjectFor(const JSC::ProfileNode* node)
 {
     RefPtr<InspectorObject> result = InspectorObject::create();
@@ -94,6 +95,7 @@ PassRefPtr<InspectorObject> ScriptProfile::buildInspectorObjectForHead() const
 {
     return buildInspectorObjectFor(m_profile->head());
 }
+#endif
 
 } // namespace WebCore
 

@@ -30,7 +30,7 @@
 #include "config.h"
 #include "InspectorDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
@@ -335,4 +335,4 @@ void InspectorDebuggerAgent::breakProgram(DebuggerEventType type, PassRefPtr<Ins
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)

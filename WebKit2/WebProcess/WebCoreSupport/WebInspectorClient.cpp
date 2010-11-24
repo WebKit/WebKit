@@ -25,6 +25,8 @@
 
 #include "WebInspectorClient.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "WebInspectorFrontendClient.h"
 #include "WebInspector.h"
 #include "WebPage.h"
@@ -80,3 +82,5 @@ bool WebInspectorClient::sendMessageToFrontend(const String& message)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)

@@ -26,6 +26,8 @@
 #ifndef WebInspectorProxy_h
 #define WebInspectorProxy_h
 
+#if ENABLE(INSPECTOR)
+
 #include "APIObject.h"
 #include "Connection.h"
 #include <wtf/Forward.h>
@@ -80,9 +82,11 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
+#if ENABLE(INSPECTOR)
     // Implemented in generated WebInspectorProxyMessageReceiver.cpp
     void didReceiveWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+#endif
 
 private:
     WebInspectorProxy(WebPageProxy* page);
@@ -112,5 +116,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspectorProxy_h

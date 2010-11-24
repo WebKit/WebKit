@@ -152,10 +152,12 @@ WKFrameRef WKPageGetFocusedFrame(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->focusedFrame());
 }
 
+#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->inspector());
 }
+#endif
 
 double WKPageGetEstimatedProgress(WKPageRef pageRef)
 {

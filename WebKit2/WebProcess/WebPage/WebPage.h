@@ -108,7 +108,10 @@ public:
 
     InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+
+#if ENABLE(INSPECTOR)
     WebInspector* inspector();
+#endif
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
@@ -345,7 +348,9 @@ private:
     FindController m_findController;
     RefPtr<PageOverlay> m_pageOverlay;
 
+#if ENABLE(INSPECTOR)
     OwnPtr<WebInspector> m_inspector;
+#endif
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;
 

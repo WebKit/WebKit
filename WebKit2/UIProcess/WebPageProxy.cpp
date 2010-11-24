@@ -215,10 +215,12 @@ void WebPageProxy::close()
 
     m_customUserAgent = String();
 
+#if ENABLE(INSPECTOR)
     if (m_inspector) {
         m_inspector->invalidate();
         m_inspector = 0;
     }
+#endif
 
     m_pageTitle = String();
     m_toolTip = String();
@@ -681,11 +683,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         return;
     }
 
+#if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
         if (WebInspectorProxy* inspector = this->inspector())
             inspector->didReceiveWebInspectorProxyMessage(connection, messageID, arguments);
         return;
     }
+#endif
 
     didReceiveWebPageProxyMessage(connection, messageID, arguments);
 }
@@ -697,11 +701,13 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
         return;
     }
 
+#if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
         if (WebInspectorProxy* inspector = this->inspector())
             inspector->didReceiveSyncWebInspectorProxyMessage(connection, messageID, arguments, reply);
         return;
     }
+#endif
 
     // FIXME: Do something with reply.
     didReceiveSyncWebPageProxyMessage(connection, messageID, arguments, reply);
@@ -1156,6 +1162,8 @@ void WebPageProxy::didDraw()
 
 // Inspector
 
+#if ENABLE(INSPECTOR)
+
 WebInspectorProxy* WebPageProxy::inspector()
 {
     if (isClosed() || !isValid())
@@ -1164,6 +1172,8 @@ WebInspectorProxy* WebPageProxy::inspector()
         m_inspector = WebInspectorProxy::create(this);
     return m_inspector.get();
 }
+
+#endif
 
 // BackForwardList
 
@@ -1442,10 +1452,12 @@ void WebPageProxy::processDidCrash()
 
     m_mainFrame = 0;
 
+#if ENABLE(INSPECTOR)
     if (m_inspector) {
         m_inspector->invalidate();
         m_inspector = 0;
     }
+#endif
 
     m_customUserAgent = String();
     m_pageTitle = String();

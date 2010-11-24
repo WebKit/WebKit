@@ -30,7 +30,7 @@
 #include "config.h"
 #include "InspectorProfilerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "Console.h"
 #include "InspectorController.h"
@@ -259,4 +259,4 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)

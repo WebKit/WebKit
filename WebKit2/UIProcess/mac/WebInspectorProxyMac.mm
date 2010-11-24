@@ -25,6 +25,8 @@
 
 #import "WebInspectorProxy.h"
 
+#if ENABLE(INSPECTOR)
+
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WebPageProxy.h"
@@ -54,3 +56,5 @@ String WebInspectorProxy::inspectorPageURL() const
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)

@@ -120,7 +120,9 @@ public:
 
     WebBackForwardList* backForwardList() { return m_backForwardList.get(); }
 
+#if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
+#endif
 
     void setPageClient(PageClient*);
     void initializeContextMenuClient(const WKPageContextMenuClient*);
@@ -362,7 +364,7 @@ private:
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
     void didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state);
-    
+
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
     void didGetContentsAsString(const String&, uint64_t);
@@ -374,7 +376,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing, DrawingAreaBase::DrawingAreaInfo&);
-#endif    
+#endif
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
@@ -392,7 +394,9 @@ private:
 
     String m_customUserAgent;
 
+#if ENABLE(INSPECTOR)
     RefPtr<WebInspectorProxy> m_inspector;
+#endif
 
     HashMap<uint64_t, RefPtr<ContentsAsStringCallback> > m_contentsAsStringCallbacks;
     HashMap<uint64_t, RefPtr<FrameSourceCallback> > m_frameSourceCallbacks;

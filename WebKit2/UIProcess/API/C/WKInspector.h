@@ -28,6 +28,8 @@
 
 #include <WebKit2/WKBase.h>
 
+#if ENABLE(INSPECTOR)
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
@@ -62,5 +64,7 @@ WK_EXPORT void WKInspectorTogglePageProfiling(WKInspectorRef inspector);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // WKInspector_h
