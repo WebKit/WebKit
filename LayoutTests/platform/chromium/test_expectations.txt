@@ -3197,6 +3197,9 @@ BUG49736 : fast/speech/input-text-language-tag.html = TIMEOUT
 BUG49736 : fast/speech/input-text-speechbutton.html = TIMEOUT
 BUG49736 : fast/speech/speech-button-ignore-generated-events.html = TIMEOUT
 
+// Disable font-size-zero test for mac platform. The problem was introduced at r72567.
+BUG49967 MAC : fast/text/font-size-zero.html = TEXT
+
 // Was introduced by ap http://trac.webkit.org/changeset/72590
 BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 
