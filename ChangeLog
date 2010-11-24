@@ -1,3 +1,13 @@
+2010-11-24  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add files which Chromium port generates to .gitignore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49943
+
+        * .gitignore:
+
 2010-11-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Levin.

@@ -60,6 +60,10 @@ WebKit/chromium/webkit/
 WebKit/chromium/printing/
 WebKit/chromium/depot_tools/
 
+# Ignore files that Chromium port generates
+/Makefile.chromium
+/out
+
 # Ignore compiled java tests:
 LayoutTests/java/*.class
 
