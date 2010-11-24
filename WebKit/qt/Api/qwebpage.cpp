@@ -1080,7 +1080,13 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         }
     }
 
-    if (!ev->commitString().isEmpty())
+    if (node && ev->replacementLength() > 0) {
+        int cursorPos = frame->selection()->extent().offsetInContainerNode();
+        int start = cursorPos + ev->replacementStart();
+        setSelectionRange(node, start, start + ev->replacementLength());
+        // Commit regardless of whether commitString is empty, to get rid of selection.
+        editor->confirmComposition(ev->commitString());
+    } else if (!ev->commitString().isEmpty())
         editor->confirmComposition(ev->commitString());
     else if (!hasSelection && !ev->preeditString().isEmpty())
         editor->setComposition(ev->preeditString(), underlines, 0, 0);
