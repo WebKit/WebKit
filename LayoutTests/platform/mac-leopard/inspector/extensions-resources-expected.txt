@@ -4,50 +4,26 @@ Tests WebInspector extension API
 Page reloaded.
 Started extension.
 Running tests...
-RUNNING TEST: extension_testGetAllResources
-resource: .../tests/inspector/inspector-test2.js, type: script
-resource: .../LayoutTests/inspector/extensions-resources.html, type: document
-resource: .../LayoutTests/inspector/extensions-resources.html, type: xhr
-resource: .../LayoutTests/inspector/extensions-test.js, type: script
-resource: .../inspector/resources/abe.png, type: image
-resource: .../inspector/resources/Ahem.ttf, type: font
-resource: .../inspector/resources/audits-style1.css, type: stylesheet
-resource: .../inspector/resources/missing-image.png, type: other
-RUNNING TEST: extension_testGetInvalidResource
-Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found: %s","details":[2128506],"isError":true}
-RUNNING TEST: extension_testGetPageTimings
-Got callback from getPageTimings, pageTimings dump follows
-{
-    onContentLoad : <number>
-    onLoad : <number>
-}
+RUNNING TEST: extension_testGetHAR
+resource: .../tests/inspector/inspector-test2.js
+resource: .../LayoutTests/inspector/extensions-resources.html
+resource: .../LayoutTests/inspector/extensions-resources.html
+resource: .../LayoutTests/inspector/extensions-test.js
+resource: .../inspector/resources/abe.png
+resource: .../inspector/resources/Ahem.ttf
+resource: .../inspector/resources/audits-style1.css
+resource: .../inspector/resources/missing-image.png
 RUNNING TEST: extension_testGetResourceContent
 {
-    0 : {
-        code : "E_NOTFOUND"
-        description : "Object not found: %s"
-        details : {
-            0 : 2126506
-        }
-        isError : true
-    }
-    1 : {
-        id : <number>
-        encoding : ""
-        content : ".some-style {
+    0 : ".some-style {
     vertical-align: middle;
 }"
-    }
-    2 : {
-        id : <number>
-        encoding : "base64"
-        content : ""
-    }
-    3 : {
-        id : <number>
-        encoding : "base64"
-        content : ""
-    }
+    1 : ""
+}
+RUNNING TEST: extension_testGetResourceContentEncoded
+{
+    0 : ""
+    1 : "base64"
 }
 RUNNING TEST: extension_testResourceNotification
 Resource finished: .../LayoutTests/inspector/extensions-resources.html
