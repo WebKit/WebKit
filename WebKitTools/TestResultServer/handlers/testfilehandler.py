@@ -198,12 +198,12 @@ class Upload(webapp.RequestHandler):
             if ((incremental and filename == "results.json") or
                 (filename == "incremental_results.json")):
                 # Merge incremental json results.
-                saved_file = JsonResults.update(master, builder, test_type, file.value)
+                update_succeeded = JsonResults.update(master, builder, test_type, file.value)
             else:
-                saved_file = TestFile.update(
+                update_succeeded = TestFile.update(
                     master, builder, test_type, file.filename, file.value)
 
-            if not saved_file:
+            if not update_succeeded:
                 errors.append(
                     "Upload failed, master: %s, builder: %s, test_type: %s, name: %s." %
                     (master, builder, test_type, file.filename))

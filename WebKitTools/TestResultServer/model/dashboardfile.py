@@ -85,14 +85,16 @@ class DashboardFile(db.Model):
     def update_file(cls, name):
         data = cls.grab_file_from_svn(name)
         if not data:
-            return None
+            return False
 
         logging.info("Got file from SVN.")
 
         files = cls.get_files(name)
         if not files:
             logging.info("No existing file, added as new file.")
-            return cls.add_file(name, data)
+            if cls.add_file(name, data):
+                return True
+            return False
 
         logging.debug("Updating existing file.")
         file = files[0]
@@ -102,7 +104,7 @@ class DashboardFile(db.Model):
 
         logging.info("Dashboard file replaced, name: %s.", name)
 
-        return file
+        return True
 
     @classmethod
     def delete_file(cls, name):

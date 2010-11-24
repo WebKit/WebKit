@@ -45,7 +45,7 @@ JSON_RESULTS_PASS = "P"
 JSON_RESULTS_NO_DATA = "N"
 JSON_RESULTS_MIN_TIME = 1
 JSON_RESULTS_VERSION = 3
-JSON_RESULTS_MAX_BUILDS = 1500
+JSON_RESULTS_MAX_BUILDS = 750
 JSON_RESULTS_MAX_BUILDS_SMALL = 200
 
 
@@ -406,12 +406,10 @@ class JsonResults(object):
             Large TestFile object if update succeeds or
             None on failure.
         """
-        small_file = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE_SMALL, JSON_RESULTS_MAX_BUILDS_SMALL)
-        large_file = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE, JSON_RESULTS_MAX_BUILDS)
+        small_file_updated = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE_SMALL, JSON_RESULTS_MAX_BUILDS_SMALL)
+        large_file_updated = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE, JSON_RESULTS_MAX_BUILDS)
 
-        if small_file and large_file:
-            return large_file
-        return None
+        return small_file_updated and large_file_updated
 
     @classmethod
     def update_file(cls, master, builder, test_type, incremental, filename, num_runs):
@@ -433,9 +431,9 @@ class JsonResults(object):
             logging.info(
                 "Update failed, master: %s, builder: %s, test_type: %s, name: %s." %
                 (master, builder, test_type, filename))
-            return None
+            return False
 
-        return file
+        return True
 
     @classmethod
     def get_test_list(cls, builder, json_file_data):

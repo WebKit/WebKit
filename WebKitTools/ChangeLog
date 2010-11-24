@@ -1,3 +1,18 @@
+2010-11-24  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] improve memory usage for test results server and store fewer runs
+        https://bugs.webkit.org/show_bug.cgi?id=50035
+
+        Store fewer runs and don't pass full files around when we only need bools.
+        Greatly improves error rates on test-results.appspot.com.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * TestResultServer/handlers/testfilehandler.py:
+        * TestResultServer/model/dashboardfile.py:
+        * TestResultServer/model/jsonresults.py:
+
 2010-11-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

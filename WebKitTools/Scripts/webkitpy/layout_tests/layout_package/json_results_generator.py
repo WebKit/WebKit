@@ -80,7 +80,7 @@ class TestResult(object):
 class JSONResultsGeneratorBase(object):
     """A JSON results generator for generic tests."""
 
-    MAX_NUMBER_OF_BUILD_RESULTS_TO_LOG = 1500
+    MAX_NUMBER_OF_BUILD_RESULTS_TO_LOG = 750
     # Min time (seconds) that will be added to the JSON.
     MIN_TIME = 1
     JSON_PREFIX = "ADD_RESULTS("
