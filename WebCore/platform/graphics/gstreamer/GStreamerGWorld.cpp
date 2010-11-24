@@ -87,6 +87,9 @@ bool GStreamerGWorld::enterFullscreen()
     GOwnPtr<GstElement> videoSink;
     g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
+    GstElement* valve = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoValve");
+
+    g_object_set(valve, "drop-probability", 1.0, NULL);
 
     // Add and link a queue, ffmpegcolorspace and sink in the bin.
     gst_bin_add_many(GST_BIN(videoSink.get()), platformVideoSink, videoScale, colorspace, queue, NULL);
@@ -157,6 +160,10 @@ void GStreamerGWorld::exitFullscreen()
     GstElement* queue = gst_bin_get_by_name(GST_BIN(videoSink.get()), "queue");
     GstElement* colorspace = gst_bin_get_by_name(GST_BIN(videoSink.get()), "colorspace");
     GstElement* videoScale = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoScale");
+
+    GstElement* valve = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoValve");
+
+    g_object_set(valve, "drop-probability", 0.0, NULL);
 
     // Get pads to unlink and remove.
     GstPad* srcPad = gst_element_get_static_pad(tee, m_dynamicPadName);

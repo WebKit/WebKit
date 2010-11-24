@@ -1412,6 +1412,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     m_videoSinkBin = gst_bin_new("sink");
     GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
     GstElement* queue = gst_element_factory_make("queue", 0);
+    GstElement* identity = gst_element_factory_make("identity", "videoValve");
 
     // Take ownership.
     g_object_ref_sink(m_videoSinkBin);
@@ -1421,7 +1422,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     // internal video sink. For fullscreen we create an autovideosink
     // and initially block the data flow towards it and configure it
 
-    gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, NULL);
+    gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, identity, NULL);
 
     // Link a new src pad from tee to queue1.
     GstPad* srcPad = gst_element_get_request_pad(videoTee, "src%d");
@@ -1445,7 +1446,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
         }
     } else {
         gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
-        gst_element_link(queue, m_webkitVideoSink);
+        gst_element_link_many(queue, identity, m_webkitVideoSink, NULL);
     }
 
     // Add a ghostpad to the bin so it can proxy to tee.
