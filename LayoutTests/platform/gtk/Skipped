@@ -5562,3 +5562,6 @@ fast/profiler/throw-exception-from-eval.html
 # https://bugs.webkit.org/show_bug.cgi?id=49964
 fast/canvas/canvas-fillPath-shadow.html
 fast/canvas/canvas-strokePath-shadow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=47727
+mathml/presentation
