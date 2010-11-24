@@ -170,9 +170,10 @@ void TiledDrawingAreaTile::updateFromChunk(UpdateChunk* updateChunk, float)
 #ifdef TILE_DEBUG_LOG
     qDebug() << "tile updated id=" << ID() << " rect=" << QRect(updateChunkRect);
 #endif
-    if (updateChunkRect.size() == m_proxy->tileSize())
-        m_backBuffer = QPixmap::fromImage(image);
-    else {
+    if (updateChunkRect.size() == m_proxy->tileSize()) {
+        // Make a deep copy of the image since it's in shared memory.
+        m_backBuffer = QPixmap::fromImage(image.copy());
+    } else {
         if (m_backBuffer.isNull())
             m_backBuffer = m_buffer.isNull() ? QPixmap(m_proxy->tileSize()) : m_buffer;
         QPainter painter(&m_backBuffer);

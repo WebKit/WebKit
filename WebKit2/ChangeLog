@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt][WK2] Make deep copies of tile images
+
+        We need the tile images we get from UpdateChunk::createImage() to persist,
+        so we should take a copy() of them.
+
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::updateFromChunk):
+
+2010-11-24  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt] Fix uninitialized variable in QGraphicsWKViewPrivate
 
         Always initialize QGWKVP::m_isChangingScale in the constructor.
