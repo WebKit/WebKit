@@ -58,11 +58,8 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
     } else
         gtk_container_foreach(GTK_CONTAINER(m_popup.get()), reinterpret_cast<GtkCallback>(menuRemoveItem), this);
 
-    int x = 0;
-    int y = 0;
-    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(view->hostWindow()->platformPageClient()));
-    if (window)
-        gdk_window_get_origin(window, &x, &y);
+    int x, y;
+    gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(view->hostWindow()->platformPageClient())), &x, &y);
     m_menuPosition = view->contentsToWindow(rect.location());
     m_menuPosition = IntPoint(m_menuPosition.x() + x, m_menuPosition.y() + y + rect.height());
     m_indexMap.clear();
