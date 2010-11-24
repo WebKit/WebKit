@@ -230,6 +230,7 @@ namespace WebCore {
         AtomicString m_defaultNamespace;
 
         // tokenizer methods and data
+        bool m_inStyleRuleOrDeclaration;
         SourceRange m_selectorListRange;
         SourceRange m_ruleBodyRange;
         SourceRange m_propertyRange;

@@ -141,6 +141,7 @@ CSSParser::CSSParser(bool strictParsing)
     , m_hasFontFaceOnlyValues(false)
     , m_hadSyntacticallyValidCSSRule(false)
     , m_defaultNamespace(starAtom)
+    , m_inStyleRuleOrDeclaration(false)
     , m_selectorListRange(0, 0)
     , m_ruleBodyRange(0, 0)
     , m_propertyRange(UINT_MAX, UINT_MAX)
@@ -341,6 +342,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const 
     if (styleSourceData) {
         m_currentRuleData = CSSRuleSourceData::create();
         m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
+        m_inStyleRuleOrDeclaration = true;
     }
 
     setupParser("@-webkit-decls{", string, "} ");
@@ -368,6 +370,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const 
     if (styleSourceData) {
         *styleSourceData = m_currentRuleData->styleSourceData.release();
         m_currentRuleData = 0;
+        m_inStyleRuleOrDeclaration = false;
     }
     return ok;
 }
@@ -5474,6 +5477,7 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
             m_ruleRangeMap->set(result, m_currentRuleData.release());
             m_currentRuleData = CSSRuleSourceData::create();
             m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
+            m_inStyleRuleOrDeclaration = false;
         }
     }
     resetSelectorListMarks();
@@ -5627,6 +5631,7 @@ void CSSParser::markRuleBodyStart()
         ++offset; // Skip the rule body opening brace.
     if (offset > m_ruleBodyRange.start)
         m_ruleBodyRange.start = offset;
+    m_inStyleRuleOrDeclaration = true;
 }
 
 void CSSParser::markRuleBodyEnd()
@@ -5638,11 +5643,15 @@ void CSSParser::markRuleBodyEnd()
 
 void CSSParser::markPropertyStart()
 {
+    if (!m_inStyleRuleOrDeclaration)
+        return;
     m_propertyRange.start = yytext - m_data;
 }
 
 void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
 {
+    if (!m_inStyleRuleOrDeclaration)
+        return;
     unsigned offset = yytext - m_data;
     if (*yytext == ';') // Include semicolon into the property text.
         ++offset;

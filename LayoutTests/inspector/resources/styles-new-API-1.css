@@ -9,6 +9,13 @@
 #absent-id {
 }
 
+@font-face {
+    font-family: 'TheFont';
+    src: url('font.url');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     property: imported-media-screen-stylesheet;
 }
