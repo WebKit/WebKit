@@ -3189,3 +3189,5 @@ BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 
+BUGCR64401 WIN : fast/filesystem/op-copy.html = TEXT
+
