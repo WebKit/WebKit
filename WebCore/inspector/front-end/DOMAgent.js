@@ -379,7 +379,6 @@ WebInspector.DOMAgent.prototype = {
             this.document = new WebInspector.DOMDocument(this, this._window, payload);
             this._idToDOMNode[payload.id] = this.document;
             this._bindNodes(this.document.children);
-            WebInspector.breakpointManager.restoreDOMBreakpoints();
         } else
             this.document = null;
         WebInspector.panels.elements.setDocument(this.document);

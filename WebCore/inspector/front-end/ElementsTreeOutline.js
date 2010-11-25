@@ -765,9 +765,9 @@ WebInspector.ElementsTreeElement.prototype = {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
 
-            function handlerFunction(nodeId, breakType)
+            function handlerFunction(path, breakType)
             {
-                WebInspector.breakpointManager.createDOMBreakpoint(nodeId, breakType);
+                WebInspector.breakpointManager.createDOMBreakpoint(path, breakType);
                 WebInspector.panels.elements.sidebarPanes.domBreakpoints.expand();
             }
             var node = this.representedObject;
@@ -776,7 +776,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 var label = WebInspector.domBreakpointTypeContextMenuLabel(type);
                 var breakpoint = node.breakpoints[type];
                 if (!breakpoint)
-                    var handler = handlerFunction.bind(this, node.id, type);
+                    var handler = handlerFunction.bind(this, node.path(), type);
                 else
                     var handler = breakpoint.remove.bind(breakpoint);
                 contextMenu.appendCheckboxItem(label, handler, !!breakpoint);

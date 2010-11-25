@@ -169,9 +169,6 @@ WebInspector.ElementsPanel.prototype = {
         this.recentlyModifiedNodes = [];
 
         delete this.currentQuery;
-
-        if (Preferences.nativeInstrumentationEnabled)
-            this.sidebarPanes.domBreakpoints.reset();
     },
 
     setDocument: function(inspectedRootDocument)
