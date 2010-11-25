@@ -171,6 +171,38 @@ function addAgainFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
+    result = evalAndLog("store.add({x: 'othervalue'}, null)");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addWithNullKeyFailure;
+}
+
+function addWithNullKeyFailure()
+{
+    debug("addWithNullKeyFailre():");
+    verifyErrorEvent(event);
+    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    result = evalAndLog("store.add({x: null}, 'validkey')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addWithNullIndexFailure;
+}
+
+function addWithNullIndexFailure()
+{
+    debug("addWithNullIndexFailure():");
+    verifyErrorEvent(event);
+    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
     result = evalAndLog("store.get('key')");
     verifyResult(result);
     result.onsuccess = getSuccess;

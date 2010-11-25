@@ -211,12 +211,20 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied."));
         return;
     }
+    if (key->type() == IDBKey::NullType) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "NULL key is not allowed."));
+        return;
+    }
 
     Vector<RefPtr<IDBKey> > indexKeys;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
         RefPtr<IDBKey> key = fetchKeyFromKeyPath(value.get(), it->second->keyPath());
         if (!key) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "The key could not be fetched from an index's keyPath."));
+            return;
+        }
+        if (key->type() == IDBKey::NullType) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is NULL."));
             return;
         }
         if (!it->second->addingKeyAllowed(key.get())) {

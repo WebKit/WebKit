@@ -16,7 +16,7 @@ if (window.layoutTestController)
  
 // In order of how it should be sorted by IndexedDB.
 window.testData = [
-    null,
+    1,
     2,
     3,
     10,
@@ -70,6 +70,7 @@ function addData()
     result = evalAndLog("objectStore.add('', testData[nextToAdd])");
     verifyResult(result);
     result.onsuccess = ++window.nextToAdd < testData.length ? addData : scheduleTests;
+    result.onerror = unexpectedErrorCallback;
 }
 
 function scheduleTests()

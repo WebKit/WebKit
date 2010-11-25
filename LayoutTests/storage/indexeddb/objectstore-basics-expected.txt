@@ -137,6 +137,48 @@ PASS event.target.readyState is event.target.DONE
 PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
 db.transaction()
 store = transaction.objectStore('storeName')
+store.add({x: 'othervalue'}, null)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+addWithNullKeyFailre():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+db.transaction()
+store = transaction.objectStore('storeName')
+store.add({x: null}, 'validkey')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+addWithNullIndexFailure():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+db.transaction()
+store = transaction.objectStore('storeName')
 store.get('key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
