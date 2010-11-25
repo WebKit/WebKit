@@ -1,3 +1,9 @@
+2010-11-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Roll chromium 67004:67404.
+
+        * DEPS:
+
 2010-11-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
