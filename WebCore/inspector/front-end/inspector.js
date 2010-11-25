@@ -1375,6 +1375,8 @@ WebInspector.reset = function()
 
     this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
+
+    this.breakpointManager.restoreBreakpoints();
 }
 
 WebInspector.resetProfilesPanel = function()
@@ -1403,7 +1405,6 @@ WebInspector.didCommitLoad = function()
 {
     // Cleanup elements panel early on inspected page refresh.
     WebInspector.setDocument(null);
-    this.breakpointManager.restoreBreakpoints();
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)

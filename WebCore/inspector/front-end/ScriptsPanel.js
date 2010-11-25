@@ -456,8 +456,15 @@ WebInspector.ScriptsPanel.prototype = {
         this._sourceIDMap = {};
 
         this.sidebarPanes.watchExpressions.refreshExpressions();
-        if (!preserveItems)
+        if (!preserveItems) {
+            this.sidebarPanes.jsBreakpoints.reset();
+            if (Preferences.nativeInstrumentationEnabled) {
+                this.sidebarPanes.domBreakpoints.reset();
+                this.sidebarPanes.xhrBreakpoints.reset();
+                this.sidebarPanes.eventListenerBreakpoints.reset();
+            }
             this.sidebarPanes.workers.reset();
+        }
     },
 
     get visibleView()

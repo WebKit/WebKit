@@ -35,12 +35,10 @@ WebInspector.BreakpointsSidebarPane = function(title)
     this.emptyElement.textContent = WebInspector.UIString("No Breakpoints");
 
     this.bodyElement.appendChild(this.emptyElement);
-
-    WebInspector.breakpointManager.addEventListener("reset", this._reset, this);
 }
 
 WebInspector.BreakpointsSidebarPane.prototype = {
-    _reset: function()
+    reset: function()
     {
         this.listElement.removeChildren();
         if (this.listElement.parentElement) {
@@ -259,7 +257,6 @@ WebInspector.EventListenerBreakpointsSidebarPane = function()
     this.bodyElement.appendChild(this.categoriesElement);
 
     WebInspector.breakpointManager.addEventListener("event-listener-breakpoint-added", this._breakpointAdded, this);
-    WebInspector.breakpointManager.addEventListener("reset", this._reset, this);
 
     this._breakpointItems = {};
     this._createCategory("Keyboard", "listener", ["keydown", "keyup", "keypress", "textInput"]);
@@ -386,7 +383,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         categoryItem.checkbox.indeterminate = hasEnabled && hasDisabled;
     },
 
-    _reset: function()
+    reset: function()
     {
         for (var eventName in this._breakpointItems) {
             var breakpointItem = this._breakpointItems[eventName];
