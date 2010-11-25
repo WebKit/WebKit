@@ -74,10 +74,26 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
         break;
     }
 
-    result.devicePixelRatio = float(deviceDPI / 160.0);
+    switch (int(args.targetDensityDpi)) {
+    case ViewportArguments::ValueDeviceDPI:
+        args.targetDensityDpi = deviceDPI;
+        break;
+    case ViewportArguments::ValueLowDPI:
+        args.targetDensityDpi = 120;
+        break;
+    case ViewportArguments::ValueAuto:
+    case ViewportArguments::ValueMediumDPI:
+        args.targetDensityDpi = 160;
+        break;
+    case ViewportArguments::ValueHighDPI:
+        args.targetDensityDpi = 240;
+        break;
+    }
+
+    result.devicePixelRatio = float(deviceDPI / args.targetDensityDpi);
 
     // Resolve non-'auto' width and height to pixel values.
-    if (deviceDPI != 1.0) {
+    if (result.devicePixelRatio != 1.0) {
         availableWidth /= result.devicePixelRatio;
         availableHeight /= result.devicePixelRatio;
         deviceWidth /= result.devicePixelRatio;
