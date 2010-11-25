@@ -36,3 +36,4 @@ function runTest(fileEntry, fileWriter) {
 
 var jsTestIsAsync = true;
 setupAndRunTest(1024, 'file-writer-truncate-extend', runTest);
+var successfullyParsed = true;
