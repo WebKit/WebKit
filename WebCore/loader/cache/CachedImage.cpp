@@ -55,7 +55,6 @@ CachedImage::CachedImage(const String& url)
     : CachedResource(url, ImageResource)
     , m_image(0)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
-    , m_httpStatusCodeErrorOccurred(false)
 {
     setStatus(Unknown);
 }
@@ -64,7 +63,6 @@ CachedImage::CachedImage(Image* image)
     : CachedResource(String(), ImageResource)
     , m_image(image)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
-    , m_httpStatusCodeErrorOccurred(false)
 {
     setStatus(Cached);
     setLoading(false);
@@ -307,7 +305,7 @@ void CachedImage::error(CachedResource::Status status)
 {
     clear();
     setStatus(status);
-    ASSERT(errorOccurred() || httpStatusCodeErrorOccurred());
+    ASSERT(errorOccurred());
     m_data.clear();
     notifyObservers();
     setLoading(false);

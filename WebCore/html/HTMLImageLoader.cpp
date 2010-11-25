@@ -48,7 +48,7 @@ HTMLImageLoader::~HTMLImageLoader()
 void HTMLImageLoader::dispatchLoadEvent()
 {
     bool errorOccurred = image()->errorOccurred();
-    if (!errorOccurred && image()->httpStatusCodeErrorOccurred())
+    if (!errorOccurred && image()->response().httpStatusCode() >= 400)
         errorOccurred = element()->hasTagName(HTMLNames::objectTag); // An <object> considers a 404 to be an error and should fire onerror.
     element()->dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, false, false));
 }
@@ -65,8 +65,9 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
     Element* elem = element();
     ImageLoader::notifyFinished(cachedImage);
 
+    bool loadError = cachedImage->errorOccurred() || cachedImage->response().httpStatusCode() >= 400;
 #if USE(JSC)
-    if (!cachedImage->errorOccurred() && !cachedImage->httpStatusCodeErrorOccurred()) {
+    if (!loadError) {
         if (!elem->inDocument()) {
             JSC::JSGlobalData* globalData = JSDOMWindowBase::commonJSGlobalData();
             globalData->heap.reportExtraMemoryCost(cachedImage->encodedSize());
@@ -74,7 +75,7 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
     }
 #endif
 
-    if ((cachedImage->errorOccurred() || cachedImage->httpStatusCodeErrorOccurred()) && elem->hasTagName(HTMLNames::objectTag))
+    if (loadError && elem->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();
 }
 

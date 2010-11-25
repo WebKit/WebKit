@@ -67,8 +67,8 @@ public:
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual void error(CachedResource::Status);
     
-    virtual void httpStatusCodeError() { m_httpStatusCodeErrorOccurred = true; }
-    bool httpStatusCodeErrorOccurred() const { return m_httpStatusCodeErrorOccurred; }
+    // For compatibility, images keep loading even if there are HTTP errors.
+    virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
 
     void checkNotify();
     
@@ -97,7 +97,6 @@ private:
 
     RefPtr<Image> m_image;
     Timer<CachedImage> m_decodedDataDeletionTimer;
-    bool m_httpStatusCodeErrorOccurred;
 };
 
 }
