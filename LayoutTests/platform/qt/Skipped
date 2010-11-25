@@ -5354,3 +5354,7 @@ fast/profiler/throw-exception-from-eval.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+
+# [Qt] plugins/keyboard-events.html fails after r72717
+# https://bugs.webkit.org/show_bug.cgi?id=50050
+plugins/keyboard-events.html
