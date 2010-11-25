@@ -42,8 +42,7 @@ public:
     enum LoadMode {
         LoadNormal,
         LoadDeferred,
-        LoadResuming,
-        LoadSynchronously
+        LoadResuming
     };
 
     QNetworkReplyHandler(ResourceHandle *handle, LoadMode);
@@ -58,7 +57,7 @@ public:
 signals:
     void processQueuedItems();
 
-public slots:
+private slots:
     void finish();
     void sendResponseIfNeeded();
     void forwardData();

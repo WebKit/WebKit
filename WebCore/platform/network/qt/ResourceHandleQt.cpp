@@ -69,18 +69,14 @@ public:
     ResourceError resourceError() const { return m_error; }
     Vector<char> data() const { return m_data; }
 
-    void setReplyFinished(bool finished) { m_replyFinished = finished; }
-
 private:
     ResourceResponse m_response;
     ResourceError m_error;
     Vector<char> m_data;
     QEventLoop m_eventLoop;
-    bool m_replyFinished;
 };
 
 WebCoreSynchronousLoader::WebCoreSynchronousLoader()
-        : m_replyFinished(false)
 {
 }
 
@@ -96,15 +92,13 @@ void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data,
 
 void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*, double)
 {
-    if (!m_replyFinished)
-        m_eventLoop.exit();
+    m_eventLoop.exit();
 }
 
 void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     m_error = error;
-    if (!m_replyFinished)
-        m_eventLoop.exit();
+    m_eventLoop.exit();
 }
 
 void WebCoreSynchronousLoader::waitForCompletion()
@@ -207,17 +201,9 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         d->m_firstRequest.setURL(urlWithCredentials);
     }
     d->m_context = context;
-    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::LoadSynchronously);
+    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::LoadNormal);
 
-    QNetworkReply* reply = d->m_job->reply();
-    // When using synchronous calls, we are finished when reaching this point.
-    if (reply->isFinished()) {
-        syncLoader.setReplyFinished(true);
-        d->m_job->forwardData();
-        d->m_job->finish();
-    } else {
-        syncLoader.waitForCompletion();
-    }
+    syncLoader.waitForCompletion();
     error = syncLoader.resourceError();
     data = syncLoader.data();
     response = syncLoader.resourceResponse();
