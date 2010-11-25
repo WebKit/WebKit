@@ -4594,7 +4594,7 @@ DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCo
 	mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
 
 # DOCTYPE strings
-DerivedSources/WebCore/DocTypeStrings.h: DerivedSources/WebCore/HashTools.cpp
+DerivedSources/WebCore/HashTools.h: DerivedSources/WebCore/DocTypeStrings.cpp
 DerivedSources/WebCore/DocTypeStrings.cpp: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
@@ -4648,8 +4648,8 @@ DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arra
 	$(AM_V_GEN)$(PERL) $< $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # HTML tag and attribute names
-DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSourceWebCore/HTMLElementFactory.cpp
-DerivedSourceWebCore/HTMLElementFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.h
+DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.cpp
+DerivedSources/WebCore/HTMLElementFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.h
 DerivedSources/WebCore/HTMLElementFactory.h: DerivedSources/WebCore/HTMLNames.cpp
 DerivedSources/WebCore/HTMLNames.cpp: DerivedSources/WebCore/HTMLNames.h
 if HTML_FLAGS
@@ -4695,10 +4695,12 @@ IDL_PATH := \
 
 vpath %.idl = $(IDL_PATH)
 
-DerivedSources/WebCore/JS%.h: DerivedSources/WebCore/JS%.cpp
+# This does not appear to work correctly with gnumake unless
+# it includes an empty command list (the semicolon).
+DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
 .SECONDARY:
-DerivedSources/WebCore/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
+DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS $<
 
 EXTRA_DIST += \
