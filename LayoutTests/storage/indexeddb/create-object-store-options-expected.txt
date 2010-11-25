@@ -16,6 +16,9 @@ result = db.setVersion('version 1')
 Deleted all object stores.
 db.createObjectStore('a', {keyPath: 'a'})
 db.createObjectStore('b')
+db.createObjectStore('c', {autoIncrement: true});
+PASS Exception thrown
+PASS code is webkitIDBDatabaseException.UNKNOWN_ERR
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
 trans.objectStore('a').put({'a': 0})
 trans.objectStore('b').put({'a': 0}, 0)

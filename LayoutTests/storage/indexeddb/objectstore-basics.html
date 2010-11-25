@@ -142,6 +142,30 @@ function addData()
     var transaction = evalAndLog("transaction = db.transaction()");
     transaction.onabort = unexpectedAbortCallback;
     window.store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    debug("Try to insert data with a Date key:");
+    // FIXME: This should work in the future.
+    try {
+        debug("store.add({x: 'foo'}, new Date())");
+        store.add({x: 'foo'}, new Date());
+        testFailed("Passing a Date as key argument should have thrown.");
+    } catch (err) {
+        testPassed("Exception thrown");
+        code = err.code;
+        shouldBe("code", "DOMException.TYPE_MISMATCH_ERR");
+    }
+
+    // FIXME: This should work in the future.
+    debug("Try to insert data where key path yields a Date key:");
+    result = evalAndLog("store.add({x: new Date()}, 'foo')");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addKeyPathYieldingDateFailure;
+}
+
+function addKeyPathYieldingDateFailure()
+{
+    testPassed("Adding data where key path yielded Date key resulted in error.");
+
     result = evalAndLog("store.add({x: 'value'}, 'key')");
     verifyResult(result);
     result.onsuccess = addSuccess;

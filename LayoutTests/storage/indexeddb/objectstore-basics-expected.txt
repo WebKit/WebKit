@@ -97,6 +97,13 @@ PASS store.indexNames.item(1) is null
 PASS store.indexNames.item(100) is null
 transaction = db.transaction()
 store = transaction.objectStore('storeName')
+Try to insert data with a Date key:
+store.add({x: 'foo'}, new Date())
+PASS Exception thrown
+PASS code is DOMException.TYPE_MISMATCH_ERR
+Try to insert data where key path yields a Date key:
+store.add({x: new Date()}, 'foo')
+PASS Adding data where key path yielded Date key resulted in error.
 store.add({x: 'value'}, 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

@@ -45,7 +45,8 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
         return IDBKey::create(value->Int32Value());
     if (value->IsString())
         return IDBKey::create(v8ValueToWebCoreString(value));
-    // FIXME: Implement dates.
+    if (value->IsDate())
+        return 0; // Signals type error. FIXME: Implement dates.
 
     return 0; // Signals type error.
 }
