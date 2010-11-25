@@ -1,3 +1,18 @@
+2010-11-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium][Windows] TestShell flakily crashes with EventSender.contextClick()
+        https://bugs.webkit.org/show_bug.cgi?id=50052
+        
+        makeStringArrayImpl() assumed wtf::StringImpl data is
+        null-terminated. But it is not.
+        Changed the code to pass the string length explicitly instead of
+        making it computed by v8::String::New().
+
+        * src/WebBindings.cpp:
+        (WebKit::makeStringArrayImpl):
+
 2010-11-24  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
