@@ -28,48 +28,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileError_h
-#define FileError_h
+#ifndef FileWriterBase_h
+#define FileWriterBase_h
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM)
 
-#include <wtf/PassRefPtr.h>
+#include "AsyncFileWriterClient.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class FileError : public RefCounted<FileError> {
+class AsyncFileWriter;
+class Blob;
+
+typedef int ExceptionCode;
+
+class FileWriterBase : public RefCounted<FileWriterBase> {
 public:
-    enum ErrorCode {
-        OK = 0,
-        NOT_FOUND_ERR = 1,
-        SECURITY_ERR = 2,
-        ABORT_ERR = 3,
-        NOT_READABLE_ERR = 4,
-        ENCODING_ERR = 5,
-        NO_MODIFICATION_ALLOWED_ERR = 6,
-        INVALID_STATE_ERR = 7,
-        SYNTAX_ERR = 8,
-        INVALID_MODIFICATION_ERR = 9,
-        QUOTA_EXCEEDED_ERR = 10,
-        TYPE_MISMATCH_ERR = 11,
-        PATH_EXISTS_ERR = 12,
-    };
+    virtual ~FileWriterBase();
+    void initialize(PassOwnPtr<AsyncFileWriter>, long long length);
 
-    static PassRefPtr<FileError> create(ErrorCode code) { return adoptRef(new FileError(code)); }
+    long long position() const
+    {
+        return m_position;
+    }
+    long long length() const
+    {
+        return m_length;
+    }
 
-    ErrorCode code() const { return m_code; }
+protected:
+    FileWriterBase();
+
+    AsyncFileWriter* writer()
+    {
+        return m_writer.get();
+    }
+
+    void setPosition(long long position)
+    {
+        m_position = position;
+    }
+
+    void setLength(long long length)
+    {
+        m_length = length;
+    }
+
+    void seekInternal(long long position);
 
 private:
-    FileError(ErrorCode code)
-        : m_code(code)
-    { }
+    friend class WTF::RefCounted<FileWriterBase>;
 
-    ErrorCode m_code;
+    OwnPtr<AsyncFileWriter> m_writer;
+    long long m_position;
+    long long m_length;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(FILE_SYSTEM)
 
-#endif // FileError_h
+#endif // FileWriterBase_h

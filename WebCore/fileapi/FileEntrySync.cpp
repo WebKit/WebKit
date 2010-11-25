@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "File.h"
+#include "FileWriterSync.h"
 
 namespace WebCore {
 
@@ -45,6 +46,11 @@ FileEntrySync::FileEntrySync(PassRefPtr<DOMFileSystemBase> fileSystem, const Str
 PassRefPtr<File> FileEntrySync::file(ExceptionCode& ec)
 {
     return filesystem()->createFile(this, ec);
+}
+
+PassRefPtr<FileWriterSync> FileEntrySync::createWriter(ExceptionCode& ec)
+{
+    return filesystem()->createWriter(this, ec);
 }
 
 }

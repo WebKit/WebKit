@@ -3065,6 +3065,8 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileSystemCallback.h \
         fileapi/FileSystemCallbacks.h \
         fileapi/FileWriter.h \
+        fileapi/FileWriterBase.h \
+        fileapi/FileWriterBaseCallback.h \
         fileapi/FileWriterCallback.h \
         fileapi/FileWriterClient.h \
         fileapi/FileWriterSync.h \
@@ -3097,6 +3099,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileEntrySync.cpp \
         fileapi/FileSystemCallbacks.cpp \
         fileapi/FileWriter.cpp \
+        fileapi/FileWriterBase.cpp \
         fileapi/FileWriterSync.cpp \
         fileapi/LocalFileSystem.cpp \
         platform/AsyncFileSystem.cpp

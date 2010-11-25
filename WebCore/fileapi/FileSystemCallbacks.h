@@ -49,8 +49,8 @@ class EntryArray;
 class EntryCallback;
 struct FileMetadata;
 class FileSystemCallback;
-class FileWriter;
-class FileWriterCallback;
+class FileWriterBase;
+class FileWriterBaseCallback;
 class MetadataCallback;
 class ScriptExecutionContext;
 class VoidCallback;
@@ -133,15 +133,15 @@ private:
     RefPtr<MetadataCallback> m_successCallback;
 };
 
-class FileWriterCallbacks : public FileSystemCallbacksBase {
+class FileWriterBaseCallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<FileWriterCallbacks> create(PassRefPtr<FileWriter>, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
+    static PassOwnPtr<FileWriterBaseCallbacks> create(PassRefPtr<FileWriterBase>, PassRefPtr<FileWriterBaseCallback>, PassRefPtr<ErrorCallback>);
     virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long length);
 
 private:
-    FileWriterCallbacks(PassRefPtr<FileWriter>, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
-    RefPtr<FileWriter> m_fileWriter;
-    RefPtr<FileWriterCallback> m_successCallback;
+    FileWriterBaseCallbacks(PassRefPtr<FileWriterBase>, PassRefPtr<FileWriterBaseCallback>, PassRefPtr<ErrorCallback>);
+    RefPtr<FileWriterBase> m_fileWriter;
+    RefPtr<FileWriterBaseCallback> m_successCallback;
 };
 
 class VoidCallbacks : public FileSystemCallbacksBase {

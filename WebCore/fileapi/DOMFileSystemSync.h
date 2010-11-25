@@ -40,6 +40,7 @@ namespace WebCore {
 class DirectoryEntrySync;
 class File;
 class FileEntrySync;
+class FileWriterSync;
 
 typedef int ExceptionCode;
 
@@ -57,6 +58,7 @@ public:
     PassRefPtr<DirectoryEntrySync> root();
 
     PassRefPtr<File> createFile(const FileEntrySync*, ExceptionCode&);
+    PassRefPtr<FileWriterSync> createWriter(const FileEntrySync*, ExceptionCode&);
 
 private:
     DOMFileSystemSync(const String& name, PassOwnPtr<AsyncFileSystem>);

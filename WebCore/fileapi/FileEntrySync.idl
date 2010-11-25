@@ -36,5 +36,6 @@ module storage {
         NoStaticTables
     ] FileEntrySync : EntrySync {
         File file() raises (FileException);
+        FileWriterSync createWriter() raises (FileException);
     };
 }

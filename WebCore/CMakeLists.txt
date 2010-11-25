@@ -1695,6 +1695,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileEntrySync.cpp
         fileapi/FileSystemCallbacks.cpp
         fileapi/FileWriter.cpp
+        fileapi/FileWriterBase.cpp
         fileapi/FileWriterSync.cpp
         fileapi/LocalFileSystem.cpp
         platform/AsyncFileSystem.cpp

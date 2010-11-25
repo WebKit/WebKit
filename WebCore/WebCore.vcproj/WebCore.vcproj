@@ -49147,6 +49147,17 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileWriterBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriterBase.h"
+				>
+			<File
+				RelativePath="..\fileapi\FileWriterBaseCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileWriterCallback.h"
 				>
 			</File>

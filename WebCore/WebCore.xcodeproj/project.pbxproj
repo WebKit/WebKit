@@ -975,6 +975,9 @@
 		46700ED0127B96CB00F5D5D6 /* FileWriterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */; };
 		46700ED1127B96CB00F5D5D6 /* FileWriterSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
+		46BC724E129B104C0071C07E /* FileWriterBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BC724B129B104C0071C07E /* FileWriterBase.cpp */; };
+		46BC724F129B104C0071C07E /* FileWriterBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BC724C129B104C0071C07E /* FileWriterBase.h */; };
+		46BC7250129B104C0071C07E /* FileWriterBaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BC724D129B104C0071C07E /* FileWriterBaseCallback.h */; };
 		46BD16E30B279473001F0839 /* noneCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46BD16E20B279473001F0839 /* noneCursor.png */; };
 		46D4F2490AF97E810035385A /* cellCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2460AF97E810035385A /* cellCursor.png */; };
 		46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2470AF97E810035385A /* contextMenuCursor.png */; };
@@ -7079,6 +7082,9 @@
 		46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWriterSync.cpp; path = fileapi/FileWriterSync.cpp; sourceTree = "<group>"; };
 		46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterSync.h; path = fileapi/FileWriterSync.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
+		46BC724B129B104C0071C07E /* FileWriterBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWriterBase.cpp; path = fileapi/FileWriterBase.cpp; sourceTree = "<group>"; };
+		46BC724C129B104C0071C07E /* FileWriterBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterBase.h; path = fileapi/FileWriterBase.h; sourceTree = "<group>"; };
+		46BC724D129B104C0071C07E /* FileWriterBaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterBaseCallback.h; path = fileapi/FileWriterBaseCallback.h; sourceTree = "<group>"; };
 		46BD16E20B279473001F0839 /* noneCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noneCursor.png; sourceTree = "<group>"; };
 		46D4F2460AF97E810035385A /* cellCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cellCursor.png; sourceTree = "<group>"; };
 		46D4F2470AF97E810035385A /* contextMenuCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = contextMenuCursor.png; sourceTree = "<group>"; };
@@ -15156,6 +15162,9 @@
 				976D6C70122B8A3D001FD1F7 /* FileThreadTask.h */,
 				976D6C71122B8A3D001FD1F7 /* FileWriter.cpp */,
 				976D6C72122B8A3D001FD1F7 /* FileWriter.h */,
+				46BC724B129B104C0071C07E /* FileWriterBase.cpp */,
+				46BC724C129B104C0071C07E /* FileWriterBase.h */,
+				46BC724D129B104C0071C07E /* FileWriterBaseCallback.h */,
 				893C47A61238908B002B3D86 /* FileWriterCallback.h */,
 				46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */,
 				46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */,
@@ -21377,6 +21386,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
+				46BC724F129B104C0071C07E /* FileWriterBase.h in Headers */,
+				46BC7250129B104C0071C07E /* FileWriterBaseCallback.h in Headers */,
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,
 				E1AD141E1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h in Headers */,
@@ -23966,6 +23977,7 @@
 				75415D55129AB2D2003AD669 /* JSSpeechInputEvent.cpp in Sources */,
 				75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */,
 				75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */,
+				46BC724E129B104C0071C07E /* FileWriterBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

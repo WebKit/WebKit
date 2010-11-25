@@ -46,20 +46,11 @@ namespace WebCore {
 FileWriter::FileWriter(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_readyState(INIT)
-    , m_position(0)
     , m_startedWriting(false)
     , m_bytesWritten(0)
     , m_bytesToWrite(0)
     , m_truncateLength(-1)
 {
-}
-
-void FileWriter::initialize(PassOwnPtr<AsyncFileWriter> writer, long long length)
-{
-    ASSERT(!m_writer);
-    ASSERT(length >= 0);
-    m_writer = writer;
-    m_length = length;
 }
 
 FileWriter::~FileWriter()
@@ -81,15 +72,15 @@ bool FileWriter::canSuspend() const
 
 void FileWriter::stop()
 {
-    if (m_writer && m_readyState == WRITING)
-        m_writer->abort();
+    if (writer() && m_readyState == WRITING)
+        writer()->abort();
     m_blobBeingWritten.clear();
     m_readyState = DONE;
 }
 
 void FileWriter::write(Blob* data, ExceptionCode& ec)
 {
-    ASSERT(m_writer);
+    ASSERT(writer());
     if (m_readyState == WRITING) {
         setError(FileError::INVALID_STATE_ERR, ec);
         return;
@@ -104,12 +95,12 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
     m_startedWriting = false;
     m_bytesWritten = 0;
     m_bytesToWrite = data->size();
-    m_writer->write(m_position, data);
+    writer()->write(position(), data);
 }
 
 void FileWriter::seek(long long position, ExceptionCode& ec)
 {
-    ASSERT(m_writer);
+    ASSERT(writer());
     if (m_readyState == WRITING) {
         setError(FileError::INVALID_STATE_ERR, ec);
         return;
@@ -117,18 +108,12 @@ void FileWriter::seek(long long position, ExceptionCode& ec)
 
     m_bytesWritten = 0;
     m_bytesToWrite = 0;
-    if (position > m_length)
-        position = m_length;
-    else if (position < 0)
-        position = m_length + position;
-    if (position < 0)
-        position = 0;
-    m_position = position;
+    seekInternal(position);
 }
 
 void FileWriter::truncate(long long position, ExceptionCode& ec)
 {
-    ASSERT(m_writer);
+    ASSERT(writer());
     if (m_readyState == WRITING || position < 0) {
         setError(FileError::INVALID_STATE_ERR, ec);
         return;
@@ -137,19 +122,19 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
     m_bytesWritten = 0;
     m_bytesToWrite = 0;
     m_truncateLength = position;
-    m_writer->truncate(position);
+    writer()->truncate(position);
 }
 
 void FileWriter::abort(ExceptionCode& ec)
 {
-    ASSERT(m_writer);
+    ASSERT(writer());
     if (m_readyState != WRITING) {
         setError(FileError::INVALID_STATE_ERR, ec);
         return;
     }
 
     m_error = FileError::create(FileError::ABORT_ERR);
-    m_writer->abort();
+    writer()->abort();
 }
 
 void FileWriter::didWrite(long long bytes, bool complete)
@@ -162,9 +147,9 @@ void FileWriter::didWrite(long long bytes, bool complete)
     }
     m_bytesWritten += bytes;
     ASSERT((m_bytesWritten == m_bytesToWrite) || !complete);
-    m_position += bytes;
-    if (m_position > m_length)
-        m_length = m_position;
+    setPosition(position() + bytes);
+    if (position() > length())
+        setLength(position());
     fireEvent(eventNames().progressEvent);
     if (complete) {
         m_blobBeingWritten.clear();
@@ -178,9 +163,9 @@ void FileWriter::didTruncate()
 {
     ASSERT(m_truncateLength >= 0);
     fireEvent(eventNames().writestartEvent);
-    m_length = m_truncateLength;
-    if (m_position > m_length)
-        m_position = m_length;
+    setLength(m_truncateLength);
+    if (position() > length())
+        setPosition(length());
     m_truncateLength = -1;
     fireEvent(eventNames().writeEvent);
     m_readyState = DONE;

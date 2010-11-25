@@ -34,8 +34,9 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "ActiveDOMObject.h"
+#include "FileError.h"
+#include "FileWriterBase.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -43,37 +44,32 @@ class Blob;
 
 typedef int ExceptionCode;
 
-// FIXME: This is an empty shell waiting for implementation.
-class FileWriterSync : public RefCounted<FileWriterSync>, public ActiveDOMObject {
+class FileWriterSync : public FileWriterBase, public AsyncFileWriterClient {
 public:
-    static PassRefPtr<FileWriterSync> create(ScriptExecutionContext* context)
+    static PassRefPtr<FileWriterSync> create()
     {
-        return adoptRef(new FileWriterSync(context));
+        return adoptRef(new FileWriterSync());
     }
     virtual ~FileWriterSync();
 
-    void write(Blob* data, ExceptionCode&);
+    // FileWriterBase
+    void write(Blob*, ExceptionCode&);
     void seek(long long position, ExceptionCode&);
     void truncate(long long length, ExceptionCode&);
 
-    long long position() const { return m_position; }
-    long long length() const { return m_length; }
-
-    // ActiveDOMObject
-    virtual bool canSuspend() const;
-    virtual bool hasPendingActivity() const;
-    virtual void stop();
-
-    using RefCounted<FileWriterSync>::ref;
-    using RefCounted<FileWriterSync>::deref;
+    // AsyncFileWriterClient, via FileWriterBase
+    void didWrite(long long bytes, bool complete);
+    void didTruncate();
+    void didFail(FileError::ErrorCode);
 
 private:
-    FileWriterSync(ScriptExecutionContext*);
+    FileWriterSync();
+    void prepareForWrite();
 
-    friend class RefCounted<FileWriterSync>;
-
-    long long m_position;
-    long long m_length;
+    FileError::ErrorCode m_error;
+#ifndef NDEBUG
+    bool m_complete;
+#endif
 };
 
 } // namespace WebCore

@@ -34,46 +34,109 @@
 
 #include "FileWriterSync.h"
 
+#include "AsyncFileWriter.h"
+#include "Blob.h"
+#include "FileException.h"
+
 namespace WebCore {
 
-void FileWriterSync::write(Blob*, ExceptionCode&)
+void FileWriterSync::write(Blob* data, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED(); // FIXME: Not implemented yet.
+    ASSERT(writer());
+    ASSERT(m_complete);
+    ec = 0;
+    if (!data) {
+        ec = FileException::TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    prepareForWrite();
+    writer()->write(position(), data);
+    writer()->waitForOperationToComplete();
+    ASSERT(m_complete);
+    ec = FileException::ErrorCodeToExceptionCode(m_error);
+    if (ec)
+        return;
+    setPosition(position() + data->size());
+    if (position() > length())
+        setLength(position());
 }
 
-void FileWriterSync::seek(long long, ExceptionCode&)
+void FileWriterSync::seek(long long position, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED(); // FIXME: Not implemented yet.
+    ASSERT(writer());
+    ASSERT(m_complete);
+    ec = 0;
+    seekInternal(position);
 }
 
-void FileWriterSync::truncate(long long, ExceptionCode&)
+void FileWriterSync::truncate(long long offset, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED(); // FIXME: Not implemented yet.
+    ASSERT(writer());
+    ASSERT(m_complete);
+    ec = 0;
+    if (offset < 0) {
+        ec = FileException::INVALID_STATE_ERR;
+        return;
+    }
+    prepareForWrite();
+    writer()->truncate(offset);
+    writer()->waitForOperationToComplete();
+    ASSERT(m_complete);
+    ec = FileException::ErrorCodeToExceptionCode(m_error);
+    if (ec)
+        return;
+    if (offset < position())
+        setPosition(offset);
+    setLength(offset);
 }
 
-bool FileWriterSync::canSuspend() const
+void FileWriterSync::didWrite(long long bytes, bool complete)
 {
-    // FIXME: It is not currently possible to suspend a FileWriterSync, so pages with FileWriter can not go into page cache.
-    return false;
+    ASSERT(m_error == FileError::OK);
+    ASSERT(!m_complete);
+#ifndef NDEBUG
+    m_complete = complete;
+#else
+    ASSERT_UNUSED(complete, complete);
+#endif
 }
 
-bool FileWriterSync::hasPendingActivity() const
+void FileWriterSync::didTruncate()
 {
-    return ActiveDOMObject::hasPendingActivity();
+    ASSERT(m_error == FileError::OK);
+    ASSERT(!m_complete);
+#ifndef NDEBUG
+    m_complete = true;
+#endif
 }
 
-void FileWriterSync::stop()
+void FileWriterSync::didFail(FileError::ErrorCode error)
+{
+    ASSERT(m_error == FileError::OK);
+    m_error = error;
+    ASSERT(!m_complete);
+#ifndef NDEBUG
+    m_complete = true;
+#endif
+}
+
+FileWriterSync::FileWriterSync()
+    : m_error(FileError::OK)
+#ifndef NDEBUG
+    , m_complete(true)
+#endif
 {
 }
 
-
-FileWriterSync::FileWriterSync(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
-    , m_position(0)
-    , m_length(0)
+void FileWriterSync::prepareForWrite()
 {
+    ASSERT(m_complete);
+    m_error = FileError::OK;
+#ifndef NDEBUG
+    m_complete = false;
+#endif
 }
-
 
 FileWriterSync::~FileWriterSync()
 {

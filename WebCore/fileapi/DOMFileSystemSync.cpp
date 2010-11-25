@@ -35,10 +35,18 @@
 
 #include "DOMFilePath.h"
 #include "DirectoryEntrySync.h"
+#include "ErrorCallback.h"
 #include "File.h"
 #include "FileEntrySync.h"
+#include "FileError.h"
+#include "FileException.h"
+#include "FileSystemCallbacks.h"
+#include "FileWriterBaseCallback.h"
+#include "FileWriterSync.h"
 
 namespace WebCore {
+
+class FileWriterBase;
 
 PassRefPtr<DOMFileSystemSync> DOMFileSystemSync::create(DOMFileSystemBase* fileSystem)
 {
@@ -64,6 +72,99 @@ PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, E
     ec = 0;
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
     return File::create(platformPath);
+}
+
+namespace {
+
+class ReceiveFileWriterCallback : public FileWriterBaseCallback {
+public:
+    static PassRefPtr<ReceiveFileWriterCallback> create()
+    {
+        return adoptRef(new ReceiveFileWriterCallback());
+    }
+
+    bool handleEvent(FileWriterBase* fileWriterBase)
+    {
+#ifndef NDEBUG
+        m_fileWriterBase = fileWriterBase;
+#else
+        ASSERT_UNUSED(fileWriterBase, fileWriterBase);
+#endif
+        return true;
+    }
+
+#ifndef NDEBUG
+    FileWriterBase* fileWriterBase()
+    {
+        return m_fileWriterBase;
+    }
+#endif
+
+private:
+    ReceiveFileWriterCallback()
+#ifndef NDEBUG
+        : m_fileWriterBase(0)
+#endif
+    {
+    }
+
+#ifndef NDEBUG
+    FileWriterBase* m_fileWriterBase;
+#endif
+};
+
+class LocalErrorCallback : public ErrorCallback {
+public:
+    static PassRefPtr<LocalErrorCallback> create()
+    {
+        return adoptRef(new LocalErrorCallback());
+    }
+
+    bool handleEvent(FileError* error)
+    {
+        m_error = error;
+        return true;
+    }
+
+    FileError* error()
+    {
+        return m_error.get();
+    }
+
+private:
+    LocalErrorCallback()
+    {
+    }
+    RefPtr<FileError> m_error;
+};
+
+}
+
+PassRefPtr<FileWriterSync> DOMFileSystemSync::createWriter(const FileEntrySync* fileEntry, ExceptionCode& ec)
+{
+    ASSERT(fileEntry);
+    ec = 0;
+
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
+
+    RefPtr<FileWriterSync> fileWriter = FileWriterSync::create();
+    RefPtr<ReceiveFileWriterCallback> successCallback = ReceiveFileWriterCallback::create();
+    RefPtr<LocalErrorCallback> errorCallback = LocalErrorCallback::create();
+
+    OwnPtr<FileWriterBaseCallbacks> callbacks = FileWriterBaseCallbacks::create(fileWriter, successCallback, errorCallback);
+    m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
+    if (!m_asyncFileSystem->waitForOperationToComplete()) {
+        ec = FileException::ABORT_ERR;
+        return 0;
+    }
+    if (errorCallback->error()) {
+        ASSERT(!successCallback->fileWriterBase());
+        ec = FileException::ErrorCodeToExceptionCode(errorCallback->error()->code());
+        return 0;
+    }
+    ASSERT(successCallback->fileWriterBase());
+    ASSERT(static_cast<FileWriterSync*>(successCallback->fileWriterBase()) == fileWriter.get());
+    return fileWriter;
 }
 
 }

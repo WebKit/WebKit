@@ -1466,9 +1466,12 @@ webcore_sources += \
 	WebCore/fileapi/FileThread.cpp \
 	WebCore/fileapi/FileThread.h \
 	WebCore/fileapi/FileThreadTask.h \
-	WebCore/fileapi/FileWriterCallback.h \
 	WebCore/fileapi/FileWriter.cpp \
 	WebCore/fileapi/FileWriter.h \
+	WebCore/fileapi/FileWriterBase.cpp \
+	WebCore/fileapi/FileWriterBase.h \
+	WebCore/fileapi/FileWriterBaseCallback.h \
+	WebCore/fileapi/FileWriterCallback.h \
 	WebCore/fileapi/FileWriterSync.cpp \
 	WebCore/fileapi/FileWriterSync.h \
 	WebCore/fileapi/Flags.h \

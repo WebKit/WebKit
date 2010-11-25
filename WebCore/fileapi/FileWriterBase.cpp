@@ -28,48 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileError_h
-#define FileError_h
+#include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "FileWriterBase.h"
+
+#include "AsyncFileWriter.h"
+#include "Blob.h"
+#include "ExceptionCode.h"
+#include "FileError.h"
+#include "FileException.h"
+#include "ProgressEvent.h"
 
 namespace WebCore {
 
-class FileError : public RefCounted<FileError> {
-public:
-    enum ErrorCode {
-        OK = 0,
-        NOT_FOUND_ERR = 1,
-        SECURITY_ERR = 2,
-        ABORT_ERR = 3,
-        NOT_READABLE_ERR = 4,
-        ENCODING_ERR = 5,
-        NO_MODIFICATION_ALLOWED_ERR = 6,
-        INVALID_STATE_ERR = 7,
-        SYNTAX_ERR = 8,
-        INVALID_MODIFICATION_ERR = 9,
-        QUOTA_EXCEEDED_ERR = 10,
-        TYPE_MISMATCH_ERR = 11,
-        PATH_EXISTS_ERR = 12,
-    };
+FileWriterBase::~FileWriterBase()
+{
+}
 
-    static PassRefPtr<FileError> create(ErrorCode code) { return adoptRef(new FileError(code)); }
+void FileWriterBase::initialize(PassOwnPtr<AsyncFileWriter> writer, long long length)
+{
+    ASSERT(!m_writer);
+    ASSERT(length >= 0);
+    m_writer = writer;
+    m_length = length;
+}
 
-    ErrorCode code() const { return m_code; }
+FileWriterBase::FileWriterBase()
+    : m_position(0)
+{
+}
 
-private:
-    FileError(ErrorCode code)
-        : m_code(code)
-    { }
-
-    ErrorCode m_code;
-};
+void FileWriterBase::seekInternal(long long position)
+{
+    if (position > m_length)
+        position = m_length;
+    else if (position < 0)
+        position = m_length + position;
+    if (position < 0)
+        position = 0;
+    m_position = position;
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-
-#endif // FileError_h
+#endif // ENABLE(FILE_SYSTEM)
