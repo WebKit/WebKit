@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <string>
 
 using namespace std;
@@ -261,6 +262,13 @@ webkit_test_plugin_print(NPP /*instance*/, NPPrint* /*platformPrint*/)
 {
 }
 
+static char keyEventToChar(XKeyEvent* event)
+{
+    char c = ' ';
+    XLookupString(event, &c, sizeof(c), 0, 0);
+    return c;
+}
+
 static int16_t
 webkit_test_plugin_handle_event(NPP instance, void* event)
 {
@@ -278,10 +286,10 @@ webkit_test_plugin_handle_event(NPP instance, void* event)
             pluginLog(instance, "mouseDown at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
             break;
         case KeyRelease:
-            pluginLog(instance, "keyUp '%c'", evt->xkey.keycode);
+            pluginLog(instance, "keyUp '%c'", keyEventToChar(&evt->xkey));
             break;
         case KeyPress:
-            pluginLog(instance, "keyDown '%c'", evt->xkey.keycode);
+            pluginLog(instance, "keyDown '%c'", keyEventToChar(&evt->xkey));
             break;
         case MotionNotify:
         case EnterNotify:

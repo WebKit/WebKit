@@ -282,7 +282,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     xEvent.xkey.subwindow = 0; // we have no child window
     xEvent.xkey.time = event->timeStamp();
     xEvent.xkey.state = gdkEvent->state; // GdkModifierType mirrors xlib state masks
-    xEvent.xkey.keycode = gdkEvent->keyval;
+    xEvent.xkey.keycode = gdkEvent->hardware_keycode;
     xEvent.xkey.same_screen = true;
 
     // NOTE: As the XEvents sent to the plug-in are synthesized and there is not a native window

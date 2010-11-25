@@ -1,3 +1,18 @@
+2010-11-24  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Windowless plugins gets broken key input
+        https://bugs.webkit.org/show_bug.cgi?id=49927
+
+        Convert the XEvent::keycode to ASCII before printing it. Not
+        doing this was causing false positive in 
+        plugins/keyboard-events.html.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (keycode_to_char):
+        (webkit_test_plugin_handle_event):
+
 2010-11-24  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Antonio Gomes.
