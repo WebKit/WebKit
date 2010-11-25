@@ -1,3 +1,17 @@
+2010-11-24  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Html autofocus not working with QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=43169
+
+        Tell the scene to set the webview item as the currently
+        focused item. This makes the input field with autofocus get
+        focus as it should.
+
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+
 2010-11-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
