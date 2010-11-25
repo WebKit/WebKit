@@ -28,7 +28,6 @@
 
 #include "PlatformString.h"
 #include <v8.h>
-#include <wtf/NonCopyable.h>
 
 namespace WebCore {
 
