@@ -74,6 +74,7 @@ module test {
 
         void serializedValue(in SerializedScriptValue serializedArg);
         void idbKey(in IDBKey key);
+        void optionsObject(in OptionsObject oo, in [Optional] OptionsObject ooo);
 
         // Exceptions
         void methodWithException() raises(DOMException);

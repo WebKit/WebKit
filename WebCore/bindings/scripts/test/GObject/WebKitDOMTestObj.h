@@ -77,6 +77,9 @@ WEBKIT_API void
 webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key);
 
 WEBKIT_API void
+webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMOptionsObject* oo, WebKitDOMOptionsObject* ooo);
+
+WEBKIT_API void
 webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError **error);
 
 

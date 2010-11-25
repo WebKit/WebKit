@@ -56,12 +56,18 @@ void IDBDatabase::setSetVersionTransaction(IDBTransactionBackendInterface* trans
     m_setVersionTransaction = transaction;
 }
 
-PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, ExceptionCode& ec)
+PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const OptionsObject& options, ExceptionCode& ec)
 {
     if (!m_setVersionTransaction) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
+
+    String keyPath;
+    options.getKeyString("keyPath", keyPath);
+    bool autoIncrement = false;
+    options.getKeyBool("autoIncrement", autoIncrement);
+    // FIXME: Look up evictable and pass that on as well.
 
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction.get(), ec);
     if (!objectStore) {

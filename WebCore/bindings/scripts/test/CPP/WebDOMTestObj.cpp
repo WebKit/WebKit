@@ -24,9 +24,11 @@
 #include "HTMLNames.h"
 #include "IDBKey.h"
 #include "KURL.h"
+#include "OptionsObject.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
 #include "WebDOMIDBKey.h"
+#include "WebDOMOptionsObject.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
@@ -660,6 +662,14 @@ void WebDOMTestObj::idbKey(const WebDOMIDBKey& key)
         return;
 
     impl()->idbKey(toWebCore(key));
+}
+
+void WebDOMTestObj::optionsObject(const WebDOMOptionsObject& oo, const WebDOMOptionsObject& ooo)
+{
+    if (!impl())
+        return;
+
+    impl()->optionsObject(toWebCore(oo), toWebCore(ooo));
 }
 
 void WebDOMTestObj::methodWithException()

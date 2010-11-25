@@ -35,6 +35,7 @@
 #import "DOMEventInternal.h"
 #import "DOMIDBKeyInternal.h"
 #import "DOMNodeInternal.h"
+#import "DOMOptionsObjectInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
 #import "DOMlogInternal.h"
@@ -45,6 +46,7 @@
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
+#import "OptionsObject.h"
 #import "SerializedScriptValue.h"
 #import "TestObj.h"
 #import "ThreadCheck.h"
@@ -531,6 +533,12 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->idbKey(core(key));
+}
+
+- (void)optionsObject:(DOMOptionsObject *)oo ooo:(DOMOptionsObject *)ooo
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->optionsObject(core(oo), core(ooo));
 }
 
 - (void)methodWithException

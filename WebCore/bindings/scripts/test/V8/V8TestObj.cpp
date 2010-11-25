@@ -25,6 +25,7 @@
 #include "HTMLNames.h"
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
+#include "OptionsObject.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -727,6 +728,20 @@ static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.optionsObject");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(OptionsObject, oo, args[0]);
+    if (args.Length() <= 1) {
+        imp->optionsObject(oo);
+        return v8::Handle<v8::Value>();
+    }
+    EXCEPTION_BLOCK(OptionsObject, ooo, args[1]);
+    imp->optionsObject(oo, ooo);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithException");
@@ -1201,6 +1216,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"objMethod", TestObjInternal::objMethodCallback},
     {"serializedValue", TestObjInternal::serializedValueCallback},
     {"idbKey", TestObjInternal::idbKeyCallback},
+    {"optionsObject", TestObjInternal::optionsObjectCallback},
     {"methodWithException", TestObjInternal::methodWithExceptionCallback},
     {"customMethod", V8TestObj::customMethodCallback},
     {"customMethodWithArgs", V8TestObj::customMethodWithArgsCallback},

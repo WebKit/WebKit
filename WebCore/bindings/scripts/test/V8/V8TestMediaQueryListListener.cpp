@@ -57,7 +57,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListene
 {
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
         0, 0,
-        TestMediaQueryListListenerCallbacks, sizeof(TestMediaQueryListListenerCallbacks) / sizeof(*TestMediaQueryListListenerCallbacks));
+        TestMediaQueryListListenerCallbacks, WTF_ARRAY_LENGTH(TestMediaQueryListListenerCallbacks));
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     

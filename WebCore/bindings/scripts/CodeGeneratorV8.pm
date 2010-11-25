@@ -2805,6 +2805,7 @@ sub GetNativeType
     return "Node*" if $type eq "EventTarget" and $isParameter;
     return "double" if $type eq "Date";
     return "ScriptValue" if $type eq "DOMObject";
+    return "OptionsObject" if $type eq "OptionsObject";
 
     return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
 
@@ -2886,6 +2887,11 @@ sub JSValueToNative
         $implIncludes{"IDBBindingUtilities.h"} = 1;
         $implIncludes{"IDBKey.h"} = 1;
         return "createIDBKeyFromValue($value)";
+    }
+
+    if ($type eq "OptionsObject") {
+        $implIncludes{"OptionsObject.h"} = 1;
+        return $value;
     }
 
     if ($type eq "DOMObject") {
@@ -3033,6 +3039,7 @@ my %non_wrapper_types = (
     'NodeFilter' => 1,
     'EventListener' => 1,
     'IDBKey' => 1,
+    'OptionsObject' => 1,
     'Date' => 1,
     'MediaQueryListListener' => 1
 );

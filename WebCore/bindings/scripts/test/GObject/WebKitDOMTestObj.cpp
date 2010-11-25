@@ -23,6 +23,7 @@
 
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "JSMainThreadExecState.h"
@@ -31,6 +32,8 @@
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMIDBKey.h"
 #include "webkit/WebKitDOMIDBKeyPrivate.h"
+#include "webkit/WebKitDOMOptionsObject.h"
+#include "webkit/WebKitDOMOptionsObjectPrivate.h"
 #include "webkit/WebKitDOMSerializedScriptValue.h"
 #include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestObj.h"
@@ -208,6 +211,27 @@ webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key)
         g_return_if_fail(converted_key);
     }
     item->idbKey(converted_key);
+}
+
+void
+webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMOptionsObject* oo, WebKitDOMOptionsObject* ooo)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(oo);
+    g_return_if_fail(ooo);
+    WebCore::OptionsObject * converted_oo = NULL;
+    if (oo != NULL) {
+        converted_oo = WebKit::core(oo);
+        g_return_if_fail(converted_oo);
+    }
+    WebCore::OptionsObject * converted_ooo = NULL;
+    if (ooo != NULL) {
+        converted_ooo = WebKit::core(ooo);
+        g_return_if_fail(converted_ooo);
+    }
+    item->optionsObject(converted_oo, converted_ooo);
 }
 
 void

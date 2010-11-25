@@ -745,6 +745,8 @@
             'bindings/v8/ChildThreadDOMData.h',
             'bindings/v8/IDBBindingUtilities.cpp',
             'bindings/v8/IDBBindingUtilities.h',
+            'bindings/v8/OptionsObject.cpp',
+            'bindings/v8/OptionsObject.h',
             'bindings/v8/custom/V8CanvasPixelArrayCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferViewCustom.h',
             'bindings/v8/custom/V8ArrayBufferCustom.cpp',

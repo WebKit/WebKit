@@ -25,6 +25,7 @@
 
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
 #include "TestInterface.h"

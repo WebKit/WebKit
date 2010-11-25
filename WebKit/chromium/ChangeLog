@@ -1,3 +1,13 @@
+2010-11-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add exception code to WebIDBTransaction::objectStore
+        https://bugs.webkit.org/show_bug.cgi?id=50030
+
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::objectStore):
+
 2010-11-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

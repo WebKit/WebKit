@@ -32,7 +32,7 @@ module storage {
         readonly attribute DOMString version;
         readonly attribute DOMStringList objectStores;
 
-        IDBObjectStore createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement)
+        IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
         void removeObjectStore(in DOMString name)
             raises (IDBDatabaseException);

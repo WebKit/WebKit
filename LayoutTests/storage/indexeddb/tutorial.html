@@ -150,13 +150,25 @@ function onSetVersion()
     // a number attribute and at least one sibling). You can even go wild and say
     // "foo[0][2].bar[0].baz.test[1][2][3]". It's possible this will change in the future though.
     //
-    // If you set autoIncrement (the third optional parameter), IndexedDB will generate a key
+    // If you set autoIncrement (another optional parameter), IndexedDB will generate a key
     // for your entry automatically. And if you have a keyPath set, it'll set the value at
     // the location of the keyPath _in the database_ (i.e. it will not modify the value you pass
     // in to put/add). Unfortunately autoIncrement is not yet implemented in Chromium/WebKit.
     //
+    // Another optional parameter, "evictable" is not yet implemented. When it is, it'll hint
+    // which data should be deleted first if the browser decides this origin is using too much
+    // storage. (The alternative is that it'll suggest the user delete everything from the
+    // origin, so it's in your favor to set it approperately!) This is great for when you have
+    // some absolutely critical data (like unset emails) and a bunch of less critical, (but
+    // maybe still important!) data.
+    //
+    // All of these options can be passed into createObjectStore via its (optional) second
+    // parameter. So, if you wanted to define all, You'd do {keyPath: "something",
+    // evictable: true, autoIncrement: true}. You can also pass in subsets of all three or
+    // omit the object (since it's optional).
+    //
     // Let's now create an objectStore for people. We'll supply a key path in this case.
-    var objectStore = db.createObjectStore("people", "id");
+    var objectStore = db.createObjectStore("people", {keyPath: "id"});
 
     // Notice that it returned synchronously. The rule of thumb is that any call that touches (in
     // any way) keys or values is asynchronous and any other call (besides setVersion and open) are
