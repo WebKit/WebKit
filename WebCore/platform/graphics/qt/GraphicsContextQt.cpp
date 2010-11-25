@@ -466,8 +466,10 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         polygon[i] = points[i];
 
     QPainter* p = m_data->p();
-    p->save();
+
+    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, shouldAntialias);
+
     if (m_data->hasShadow()) {
         p->save();
         p->translate(m_data->shadow.offset());
@@ -482,7 +484,8 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         p->restore();
     }
     p->drawConvexPolygon(polygon);
-    p->restore();
+
+    p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
 
 void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialiased)
