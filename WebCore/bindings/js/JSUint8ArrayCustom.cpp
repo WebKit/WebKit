@@ -27,9 +27,9 @@
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
-#include "JSArrayBufferViewHelper.h"
 #include "JSUint8Array.h"
 
+#include "JSArrayBufferViewHelper.h"
 #include "Uint8Array.h"
 
 using namespace JSC;
@@ -54,7 +54,7 @@ JSC::JSValue JSUint8Array::set(JSC::ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSUint8ArrayConstructor::constructJSUint8Array(ExecState* exec)
 {
     JSUint8ArrayConstructor* jsConstructor = static_cast<JSUint8ArrayConstructor*>(exec->callee());
-    RefPtr<Uint8Array> array = static_cast<Uint8Array*>(constructArrayBufferView<Uint8Array, unsigned char>(exec).get());
+    RefPtr<Uint8Array> array = constructArrayBufferView<Uint8Array, unsigned char>(exec);
     if (!array.get())
         // Exception has already been thrown.
         return JSValue::encode(JSValue());

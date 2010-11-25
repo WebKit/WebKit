@@ -21,6 +21,7 @@ var __skip__ = {
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     "WebGLRenderingContext" : 1,
     "ArrayBuffer" : 1,
+    "DataView" : 1,
     "Int8Array" : 1,
     "Uint8Array" : 1,
     "Int16Array" : 1,

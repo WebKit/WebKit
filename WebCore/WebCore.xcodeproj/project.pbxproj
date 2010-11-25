@@ -767,6 +767,11 @@
 		2E75841F12779ADA0062628B /* FileReaderLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */; };
 		2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E94F439119207DA00B7F75D /* JSFileReader.cpp */; };
 		2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F43A119207DA00B7F75D /* JSFileReader.h */; };
+		2E97CCEA12939CB800C5C8FF /* DataView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E97CCE712939CB800C5C8FF /* DataView.cpp */; };
+		2E97CCEB12939CB800C5C8FF /* DataView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E97CCE812939CB800C5C8FF /* DataView.h */; };
+		2E97CCF71293A43A00C5C8FF /* JSDataViewCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E97CCF61293A43A00C5C8FF /* JSDataViewCustom.cpp */; };
+		2E97CE6F1293AD6B00C5C8FF /* JSDataView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E97CE6D1293AD6B00C5C8FF /* JSDataView.cpp */; };
+		2E97CE701293AD6B00C5C8FF /* JSDataView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E97CE6E1293AD6B00C5C8FF /* JSDataView.h */; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
 		2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */; };
 		2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */; };
@@ -6857,6 +6862,12 @@
 		2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderLoaderClient.h; path = fileapi/FileReaderLoaderClient.h; sourceTree = "<group>"; };
 		2E94F439119207DA00B7F75D /* JSFileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReader.cpp; sourceTree = "<group>"; };
 		2E94F43A119207DA00B7F75D /* JSFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReader.h; sourceTree = "<group>"; };
+		2E97CCE712939CB800C5C8FF /* DataView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataView.cpp; path = canvas/DataView.cpp; sourceTree = "<group>"; };
+		2E97CCE812939CB800C5C8FF /* DataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataView.h; path = canvas/DataView.h; sourceTree = "<group>"; };
+		2E97CCE912939CB800C5C8FF /* DataView.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DataView.idl; path = canvas/DataView.idl; sourceTree = "<group>"; };
+		2E97CCF61293A43A00C5C8FF /* JSDataViewCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataViewCustom.cpp; sourceTree = "<group>"; };
+		2E97CE6D1293AD6B00C5C8FF /* JSDataView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataView.cpp; sourceTree = "<group>"; };
+		2E97CE6E1293AD6B00C5C8FF /* JSDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataView.h; sourceTree = "<group>"; };
 		2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoaderClient.h; path = workers/WorkerScriptLoaderClient.h; sourceTree = "<group>"; };
 		2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobResourceHandle.cpp; sourceTree = "<group>"; };
 		2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobResourceHandle.h; sourceTree = "<group>"; };
@@ -12631,6 +12642,9 @@
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
 				A00B721911DE6427008AB9FF /* CheckedInt.h */,
+				2E97CCE712939CB800C5C8FF /* DataView.cpp */,
+				2E97CCE812939CB800C5C8FF /* DataView.h */,
+				2E97CCE912939CB800C5C8FF /* DataView.idl */,
 				49EECDCD10503C2300099FAB /* Float32Array.cpp */,
 				49EECDCE10503C2300099FAB /* Float32Array.h */,
 				49EECDCF10503C2300099FAB /* Float32Array.idl */,
@@ -15321,6 +15335,8 @@
 				BC77D1660FF19F550070887B /* JSDataGridColumn.h */,
 				BC77D1670FF19F550070887B /* JSDataGridColumnList.cpp */,
 				BC77D1680FF19F550070887B /* JSDataGridColumnList.h */,
+				2E97CE6D1293AD6B00C5C8FF /* JSDataView.cpp */,
+				2E97CE6E1293AD6B00C5C8FF /* JSDataView.h */,
 				2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */,
 				2E0888D31148848A00AF4265 /* JSDOMFormData.h */,
 				4ACBC0C812713D0A0094F9B2 /* JSDOMSettableTokenList.cpp */,
@@ -17100,6 +17116,7 @@
 				E1AD14E71297377400ACA989 /* JSCSSStyleRuleCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				BC77D1510FF19C730070887B /* JSDataGridColumnListCustom.cpp */,
+				2E97CCF61293A43A00C5C8FF /* JSDataViewCustom.cpp */,
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
 				33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */,
 				31FB1A6B120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp */,
@@ -21403,6 +21420,8 @@
 				75415D56129AB2D2003AD669 /* JSSpeechInputEvent.h in Headers */,
 				75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */,
 				75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */,
+				2E97CCEB12939CB800C5C8FF /* DataView.h in Headers */,
+				2E97CE701293AD6B00C5C8FF /* JSDataView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23978,6 +23997,9 @@
 				75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */,
 				75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */,
 				46BC724E129B104C0071C07E /* FileWriterBase.cpp in Sources */,
+				2E97CCEA12939CB800C5C8FF /* DataView.cpp in Sources */,
+				2E97CCF71293A43A00C5C8FF /* JSDataViewCustom.cpp in Sources */,
+				2E97CE6F1293AD6B00C5C8FF /* JSDataView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

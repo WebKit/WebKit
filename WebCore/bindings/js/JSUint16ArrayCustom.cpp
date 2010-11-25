@@ -27,9 +27,9 @@
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
-#include "JSArrayBufferViewHelper.h"
 #include "JSUint16Array.h"
 
+#include "JSArrayBufferViewHelper.h"
 #include "Uint16Array.h"
 
 using namespace JSC;
@@ -54,7 +54,7 @@ JSC::JSValue JSUint16Array::set(JSC::ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSUint16ArrayConstructor::constructJSUint16Array(ExecState* exec)
 {
     JSUint16ArrayConstructor* jsConstructor = static_cast<JSUint16ArrayConstructor*>(exec->callee());
-    RefPtr<Uint16Array> array = static_cast<Uint16Array*>(constructArrayBufferView<Uint16Array, unsigned short>(exec).get());
+    RefPtr<Uint16Array> array = constructArrayBufferView<Uint16Array, unsigned short>(exec);
     if (!array.get())
         // Exception has already been thrown.
         return JSValue::encode(JSValue());

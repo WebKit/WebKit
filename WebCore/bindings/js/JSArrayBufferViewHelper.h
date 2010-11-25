@@ -86,16 +86,33 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
 // Template function used by XXXArrayConstructors.
 // If this returns 0, it will already have thrown a JavaScript exception.
 template<class C, typename T>
-PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
+PassRefPtr<C> constructArrayBufferViewWithArrayBufferArgument(JSC::ExecState* exec)
+{
+    RefPtr<ArrayBuffer> buffer = toArrayBuffer(exec->argument(0));
+    if (!buffer)
+        return 0;
+
+    unsigned offset = (exec->argumentCount() > 1) ? exec->argument(1).toUInt32(exec) : 0;
+    if ((buffer->byteLength() - offset) % sizeof(T))
+        throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
+    unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
+    if (exec->argumentCount() > 2)
+        length = exec->argument(2).toUInt32(exec);
+    RefPtr<C> array = C::create(buffer, offset, length);
+    if (!array)
+        setDOMException(exec, INDEX_SIZE_ERR);
+    return array;
+}
+
+template<class C, typename T>
+PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
 {
     // There are 3 constructors:
     //
     //  1) (in int size)
     //  2) (in ArrayBuffer buffer, [Optional] in int offset, [Optional] in unsigned int length)
     //  3) (in sequence<T>) - This ends up being a JS "array-like" object
-    //
-    RefPtr<C> arrayObject;
-    
+    //    
     // For the 0 args case, just create a zero-length view. We could
     // consider raising a SyntaxError for this case, but not all
     // JavaScript DOM bindings can distinguish between "new
@@ -112,20 +129,10 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
     }
 
     if (exec->argument(0).isObject()) {
-        RefPtr<ArrayBuffer> buffer = toArrayBuffer(exec->argument(0));
-        if (buffer) {
-            unsigned offset = (exec->argumentCount() > 1) ? exec->argument(1).toUInt32(exec) : 0;
-            if ((buffer->byteLength() - offset) % sizeof(T))
-                throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
-            unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
-            if (exec->argumentCount() > 2)
-                length = exec->argument(2).toUInt32(exec);
-            PassRefPtr<ArrayBufferView> array = C::create(buffer, offset, length);
-            if (!array)
-                setDOMException(exec, INDEX_SIZE_ERR);
-            return array;
-        }
-        
+        RefPtr<C> view = constructArrayBufferViewWithArrayBufferArgument<C, T>(exec);
+        if (view)
+            return view;
+    
         JSC::JSObject* array = asObject(exec->argument(0));
         unsigned length = array->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
         void* tempValues;
@@ -142,14 +149,14 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
             values.get()[i] = static_cast<T>(v.toNumber(exec));
         }
         
-        PassRefPtr<ArrayBufferView> result = C::create(values.get(), length);
+        RefPtr<C> result = C::create(values.get(), length);
         if (!result)
             setDOMException(exec, INDEX_SIZE_ERR);
         return result;
     }
-    
+
     int length = exec->argument(0).toInt32(exec);
-    PassRefPtr<ArrayBufferView> result;
+    RefPtr<C> result;
     if (length >= 0)
         result = C::create(static_cast<unsigned>(length));
     if (!result)

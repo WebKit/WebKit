@@ -28,17 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef V8ArrayBufferViewCustom_h
+#define V8ArrayBufferViewCustom_h
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
 #include "ArrayBuffer.h"
 
-#include "V8Binding.h"
 #include "V8ArrayBuffer.h"
+#include "V8Binding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+// Template function used by the ArrayBufferView*Constructor callbacks.
+template<class ArrayClass, class ElementType>
+v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Arguments& args, WrapperTypeInfo* type, v8::ExternalArrayType arrayType, bool hasIndexer)
+{
+    ArrayBuffer* buf = V8ArrayBuffer::toNative(args[0]->ToObject());
+    if (!buf)
+        return throwError("Could not convert argument 0 to a ArrayBuffer");
+    bool ok;
+    uint32_t offset = 0;
+    int argLen = args.Length();
+    if (argLen > 1) {
+        offset = toUInt32(args[1], ok);
+        if (!ok)
+            return throwError("Could not convert argument 1 to a number");
+    }
+    if ((buf->byteLength() - offset) % sizeof(ElementType))
+        return throwError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.", V8Proxy::RangeError);
+    uint32_t length = (buf->byteLength() - offset) / sizeof(ElementType);
+    if (argLen > 2) {
+        length = toUInt32(args[2], ok);
+        if (!ok)
+            return throwError("Could not convert argument 2 to a number");
+    }
+
+    RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
+    if (!array) {
+        V8Proxy::setDOMException(INDEX_SIZE_ERR);
+        return notHandledByInterceptor();
+    }
+    // Transform the holder into a wrapper object for the array.
+    V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
+    if (hasIndexer)
+        args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
+    return toV8(array.release(), args.Holder());
+}
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
 template<class ArrayClass, class ElementType>
@@ -48,7 +85,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         return throwError("DOM object constructor cannot be called as a function.");
 
     int argLen = args.Length();
-    if (argLen == 0) {
+    if (!argLen) {
         // This happens when we return a previously constructed
         // ArrayBufferView, e.g. from the call to <Type>Array.slice().
         // The V8DOMWrapper will set the internal pointer in the
@@ -83,36 +120,8 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     // See whether the first argument is a ArrayBuffer.
-    if (V8ArrayBuffer::HasInstance(args[0])) {
-        ArrayBuffer* buf = V8ArrayBuffer::toNative(args[0]->ToObject());
-        if (!buf)
-            return throwError("Could not convert argument 0 to a ArrayBuffer");
-        bool ok;
-        uint32_t offset = 0;
-        if (argLen > 1) {
-            offset = toUInt32(args[1], ok);
-            if (!ok)
-                return throwError("Could not convert argument 1 to a number");
-        }
-        if ((buf->byteLength() - offset) % sizeof(ElementType))
-            return throwError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.", V8Proxy::RangeError);
-        uint32_t length = (buf->byteLength() - offset) / sizeof(ElementType);
-        if (argLen > 2) {
-            length = toUInt32(args[2], ok);
-            if (!ok)
-                return throwError("Could not convert argument 2 to a number");
-        }
-
-        RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
-        if (!array) {
-            V8Proxy::setDOMException(INDEX_SIZE_ERR);
-            return notHandledByInterceptor();
-        }
-        // Transform the holder into a wrapper object for the array.
-        V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
-        args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
-        return toV8(array.release(), args.Holder());
-    }
+    if (V8ArrayBuffer::HasInstance(args[0]))
+      return constructWebGLArrayWithArrayBufferArgument<ArrayClass, ElementType>(args, type, arrayType, true);
 
     uint32_t len = 0;
     v8::Handle<v8::Object> srcArray;
@@ -201,3 +210,5 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 }
 
 #endif // ENABLE(3D_CANVAS)
+
+#endif // V8ArrayBufferViewCustom_h

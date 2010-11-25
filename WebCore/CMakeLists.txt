@@ -293,6 +293,7 @@ SET(WebCore_IDL_FILES
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/CanvasRenderingContext.idl
+    html/canvas/DataView.idl
     html/canvas/Float32Array.idl
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl

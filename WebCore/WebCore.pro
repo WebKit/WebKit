@@ -3700,6 +3700,7 @@ HEADERS += \
         html/canvas/WebGLActiveInfo.h \
         html/canvas/ArrayBuffer.h \
         html/canvas/ArrayBufferView.h \
+        html/canvas/DataView.h \
         html/canvas/WebGLBuffer.h \
         html/canvas/Int8Array.h \
         html/canvas/WebGLContextAttributes.h \
@@ -3724,6 +3725,7 @@ HEADERS += \
     !v8 {
         SOURCES += \
                 bindings/js/JSArrayBufferCustom.cpp \
+                bindings/js/JSDataViewCustom.cpp \
                 bindings/js/JSInt8ArrayCustom.cpp \
                 bindings/js/JSFloat32ArrayCustom.cpp \
                 bindings/js/JSInt32ArrayCustom.cpp \
@@ -3738,6 +3740,7 @@ SOURCES += \
         html/canvas/WebGLObject.cpp \
         html/canvas/ArrayBuffer.cpp \
         html/canvas/ArrayBufferView.cpp \
+        html/canvas/DataView.cpp \
         html/canvas/WebGLBuffer.cpp \
         html/canvas/Int8Array.cpp \
         html/canvas/WebGLContextAttributes.cpp \

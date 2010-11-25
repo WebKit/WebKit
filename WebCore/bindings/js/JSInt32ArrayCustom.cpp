@@ -27,10 +27,10 @@
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
-#include "JSArrayBufferViewHelper.h"
 #include "JSInt32Array.h"
 
 #include "Int32Array.h"
+#include "JSArrayBufferViewHelper.h"
 
 using namespace JSC;
 
@@ -54,7 +54,7 @@ JSC::JSValue JSInt32Array::set(JSC::ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSInt32ArrayConstructor::constructJSInt32Array(ExecState* exec)
 {
     JSInt32ArrayConstructor* jsConstructor = static_cast<JSInt32ArrayConstructor*>(exec->callee());
-    RefPtr<Int32Array> array = static_cast<Int32Array*>(constructArrayBufferView<Int32Array, int>(exec).get());
+    RefPtr<Int32Array> array = constructArrayBufferView<Int32Array, int>(exec);
     if (!array.get())
         // Exception has already been thrown.
         return JSValue::encode(JSValue());

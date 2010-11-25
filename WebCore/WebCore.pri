@@ -182,6 +182,7 @@ IDL_BINDINGS += \
     fileapi/MetadataCallback.idl \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
+    html/canvas/DataView.idl \
     html/canvas/Int8Array.idl \
     html/canvas/Float32Array.idl \
     html/canvas/CanvasGradient.idl \

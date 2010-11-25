@@ -19,6 +19,7 @@ for (var x in constructorNames) {
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     if (name == "WebGLRenderingContext" ||
         name == "ArrayBuffer" ||
+        name == "DataView" ||
         name == "Int8Array" ||
         name == "Uint8Array" ||
         name == "Int16Array" ||

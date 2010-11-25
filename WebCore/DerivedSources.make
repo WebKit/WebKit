@@ -76,6 +76,7 @@ DOM_CLASSES = \
     WebGLActiveInfo \
     ArrayBufferView \
     ArrayBuffer \
+    DataView \
     WebGLBuffer \
     Int8Array \
     WebGLContextAttributes \

@@ -61,6 +61,7 @@ function constructorNamesForWindow(globalObject)
         // Ignore these properties because they do not exist in all implementations. They will be tested separately
         if (type == "WebGLRenderingContextConstructor" || 
             type == "ArrayBufferConstructor" ||
+            type == "DataViewConstructor" ||
             type =="Float32ArrayConstructor" ||
             type =="Int8ArrayConstructor" ||
             type =="Int16ArrayConstructor" ||
