@@ -163,7 +163,7 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(href, content)
         {
             var resource = WebInspector.resourceManager.resourceForURL(href);
-            if (resource)
+            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
                 resource.content = content;
         }
         InspectorBackend.getStyleSheetText2(styleSheetId, callback);

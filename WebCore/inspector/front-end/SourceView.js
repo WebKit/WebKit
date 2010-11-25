@@ -80,6 +80,7 @@ WebInspector.SourceView.prototype = {
         this.sourceFrame.scrollTop = scrollTop;
     },
 
+
     setupSourceFrameIfNeeded: function()
     {
         if (!this._frameNeedsSetup)

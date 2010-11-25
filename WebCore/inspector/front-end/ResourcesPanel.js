@@ -64,6 +64,7 @@ WebInspector.ResourcesPanel = function(database)
 
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
+    this.storageViews.className = "diff-container";
     this.element.appendChild(this.storageViews);
 
     this.storageViewStatusBarItemsContainer = document.createElement("div");
@@ -100,7 +101,7 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
 
         if (this.visibleView instanceof WebInspector.ResourceView)
-            this.visibleView.show(this.storageViews);
+            this._showResourceView(this.visibleView.resource);
 
         if (this._initializedDefaultSelection)
             return;
@@ -366,7 +367,44 @@ WebInspector.ResourcesPanel.prototype = {
     _showResourceView: function(resource)
     {
         var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+
+        // Consider rendering diff markup here.
+        if (resource._baseRevision && resource.content && view instanceof WebInspector.SourceView) {
+            function callback(baseContent)
+            {
+                if (baseContent)
+                    this._applyDiffMarkup(view, baseContent, resource.content);
+            }
+            resource._baseRevision.requestContent(callback.bind(this));
+        }
         this._innerShowView(view);
+    },
+
+    _applyDiffMarkup: function(view, baseContent, newContent) {
+        var oldLines = baseContent.split("\n");
+        var newLines = newContent.split("\n");
+
+        var diff = Array.diff(oldLines, newLines);
+
+        var diffData = {};
+        diffData.added = [];
+        diffData.removed = [];
+        diffData.changed = [];
+
+        var offset = 0;
+        var right = diff.right;
+        for (var i = 0; i < right.length; ++i) {
+            if (typeof right[i] === "string") {
+                if (right.length > i + 1 && right[i + 1].row === i + 1 - offset)
+                    diffData.changed.push(i);
+                else {
+                    diffData.added.push(i);
+                    offset++;
+                }
+            } else
+                offset = i - right[i].row;
+        }
+        view.sourceFrame.markDiff(diffData);
     },
 
     showDatabase: function(database, tableName)
@@ -1066,11 +1104,16 @@ WebInspector.FrameResourceTreeElement.prototype = {
             }
             this._resource.addEventListener("finished", finished);
         }
+
+        if (!this._resource._baseRevision)
+            this._resource._baseRevision = revisionResource;
+        else
+            revisionResource._baseRevision = this._resource._baseRevision;
+
         if (event.data.oldContent)
             revisionResource.setInitialContent(event.data.oldContent);
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revisionResource, event.data.oldContentTimestamp), 0);
 
-        
         var oldView = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
         if (oldView) {
             var newView = WebInspector.ResourceManager.recreateResourceView(this._resource);
