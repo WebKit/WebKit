@@ -126,7 +126,6 @@ def print_options():
     ]
 
 
-
 def parse_print_options(print_options, verbose, child_processes,
                         is_fully_parallel):
     """Parse the options provided to --print and dedup and rank them.

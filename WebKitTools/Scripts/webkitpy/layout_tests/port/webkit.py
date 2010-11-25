@@ -46,8 +46,6 @@ import operator
 import tempfile
 import shutil
 
-from webkitpy.common.system.executive import Executive
-
 import webkitpy.common.system.ospath as ospath
 import webkitpy.layout_tests.layout_package.test_output as test_output
 import webkitpy.layout_tests.port.base as base
@@ -185,9 +183,8 @@ class WebKitPort(base.Port):
         # This port doesn't require any specific configuration.
         pass
 
-    def create_driver(self, image_path, options):
-        return WebKitDriver(self, image_path, options,
-                            executive=self._executive)
+    def create_driver(self, worker_number):
+        return WebKitDriver(self, worker_number)
 
     def test_base_platform_names(self):
         # At the moment we don't use test platform names, but we have
@@ -389,40 +386,36 @@ class WebKitPort(base.Port):
 class WebKitDriver(base.Driver):
     """WebKit implementation of the DumpRenderTree interface."""
 
-    def __init__(self, port, image_path, options, executive=Executive()):
+    def __init__(self, port, worker_number):
+        self._worker_number = worker_number
         self._port = port
-        self._image_path = image_path
-        self._executive = executive
         self._driver_tempdir = tempfile.mkdtemp(prefix='DumpRenderTree-')
 
     def __del__(self):
         shutil.rmtree(self._driver_tempdir)
 
-    def _driver_args(self):
-        driver_args = []
+    def cmd_line(self):
+        cmd = self._command_wrapper(self._port.get_option('wrapper'))
+        cmd += [self._port._path_to_driver(), '-']
 
-        if self._image_path:
-            driver_args.append('--pixel-tests')
+        if self._port.get_option('pixel_tests'):
+            cmd.append('--pixel-tests')
 
         if self._port.get_option('use_drt'):
             if self._port.get_option('accelerated_compositing'):
-                driver_args.append('--enable-accelerated-compositing')
+                cmd.append('--enable-accelerated-compositing')
 
             if self._port.get_option('accelerated_2d_canvas'):
-                driver_args.append('--enable-accelerated-2d-canvas')
+                cmd.append('--enable-accelerated-2d-canvas')
 
-        return driver_args
+        return cmd
 
     def start(self):
-        command = self._command_wrapper(self._port.get_option('wrapper'))
-        command += [self._port._path_to_driver(), '-']
-        command += self._driver_args()
-
         environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         environment['DUMPRENDERTREE_TEMP'] = self._driver_tempdir
         self._server_process = server_process.ServerProcess(self._port,
-            "DumpRenderTree", command, environment)
+            "DumpRenderTree", self.cmd_line(), environment)
 
     def poll(self):
         return self._server_process.poll()

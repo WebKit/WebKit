@@ -37,12 +37,20 @@ mock_options = mocktool.MockOptions(results_directory='layout-test-results',
                                     use_apache=True,
                                     configuration='Release')
 
+# FIXME: This should be used for all ports, not just WebKit Mac. See
+# https://bugs.webkit.org/show_bug.cgi?id=50043 .
 
 class PortTestCase(unittest.TestCase):
     """Tests the WebKit port implementation."""
     def make_port(self, options=mock_options):
         """Override in subclass."""
         raise NotImplementedError()
+
+    def test_driver_cmd_line(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertTrue(len(port.driver_cmd_line()))
 
     def test_http_server(self):
         port = self.make_port()

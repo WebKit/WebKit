@@ -139,8 +139,8 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
     test_batches = []
 
     class RecordingTestDriver(TestDriver):
-        def __init__(self, port, image_path, options):
-            TestDriver.__init__(self, port, image_path, options, executive=None)
+        def __init__(self, port, worker_number):
+            TestDriver.__init__(self, port, worker_number)
             self._current_test_batch = None
 
         def poll(self):
@@ -159,8 +159,8 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
             return TestDriver.run_test(self, test_input)
 
     class RecordingTestPort(TestPort):
-        def create_driver(self, image_path, options):
-            return RecordingTestDriver(self, image_path, options)
+        def create_driver(self, worker_number):
+            return RecordingTestDriver(self, worker_number)
 
     recording_port = RecordingTestPort(options=options, user=user)
     logging_run(extra_args=args, port_obj=recording_port, tests_included=True)

@@ -897,6 +897,8 @@ class TestRunner:
             p.print_config("Running %s %ss in parallel" %
                            (self._options.child_processes,
                             self._port.driver_name()))
+        p.print_config('Command line: ' +
+                       ' '.join(self._port.driver_cmd_line()))
         p.print_config("Worker model: %s" % self._options.worker_model)
         p.print_config("")
 
@@ -1571,7 +1573,7 @@ def parse_args(args=None):
         #      Number of times to run the set of tests (e.g. ABCABCABC)
         optparse.make_option("--print-last-failures", action="store_true",
             default=False, help="Print the tests in the last run that "
-            "had unexpected failures (or passes)."),
+            "had unexpected failures (or passes) and then exit."),
         optparse.make_option("--retest-last-failures", action="store_true",
             default=False, help="re-test the tests in the last run that "
             "had unexpected failures (or passes)."),

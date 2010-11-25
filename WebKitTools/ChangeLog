@@ -1,3 +1,36 @@
+2010-11-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt - clean up create_driver interface and print out the
+        command line used for DumpRenderTree/TestShell.
+
+        This patch adds a driver_cmd_line() call to the Port class in
+        order to retrive the command line to print it out (as part of
+        --print config).
+
+        In addition, this patch cleans up the Port.create_driver()
+        signature and the Driver constructor interface to take a worker
+        number and no longer require the image_path argument (Chromium's
+        drivers now synthesize the image_path from the worker number
+        internally).
+
+        https://bugs.webkit.org/show_bug.cgi?id=49934
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-11-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

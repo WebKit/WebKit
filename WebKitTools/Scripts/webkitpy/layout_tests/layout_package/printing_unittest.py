@@ -78,8 +78,9 @@ class TestUtilityFunctions(unittest.TestCase):
         self.assertTrue(options is not None)
 
     def test_parse_print_options(self):
-        def test_switches(args, verbose, child_processes, is_fully_parallel,
-                          expected_switches_str):
+        def test_switches(args, expected_switches_str,
+                          verbose=False, child_processes=1,
+                          is_fully_parallel=False):
             options, args = get_options(args)
             if expected_switches_str:
                 expected_switches = set(expected_switches_str.split(','))
@@ -92,28 +93,23 @@ class TestUtilityFunctions(unittest.TestCase):
             self.assertEqual(expected_switches, switches)
 
         # test that we default to the default set of switches
-        test_switches([], False, 1, False,
-                      printing.PRINT_DEFAULT)
+        test_switches([], printing.PRINT_DEFAULT)
 
         # test that verbose defaults to everything
-        test_switches([], True, 1, False,
-                      printing.PRINT_EVERYTHING)
+        test_switches([], printing.PRINT_EVERYTHING, verbose=True)
 
         # test that --print default does what it's supposed to
-        test_switches(['--print', 'default'], False, 1, False,
-                      printing.PRINT_DEFAULT)
+        test_switches(['--print', 'default'], printing.PRINT_DEFAULT)
 
         # test that --print nothing does what it's supposed to
-        test_switches(['--print', 'nothing'], False, 1, False,
-                      None)
+        test_switches(['--print', 'nothing'], None)
 
         # test that --print everything does what it's supposed to
-        test_switches(['--print', 'everything'], False, 1, False,
-                      printing.PRINT_EVERYTHING)
+        test_switches(['--print', 'everything'], printing.PRINT_EVERYTHING)
 
         # this tests that '--print X' overrides '--verbose'
-        test_switches(['--print', 'actual'], True, 1, False,
-                      'actual')
+        test_switches(['--print', 'actual'], 'actual', verbose=True)
+
 
 
 class  Testprinter(unittest.TestCase):

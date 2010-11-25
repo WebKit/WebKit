@@ -226,8 +226,8 @@ class TestPort(base.Port):
     def setup_test_run(self):
         pass
 
-    def create_driver(self, image_path, options):
-        return TestDriver(self, image_path, options, executive=None)
+    def create_driver(self, worker_number):
+        return TestDriver(self, worker_number)
 
     def start_http_server(self):
         pass
@@ -281,11 +281,11 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
 class TestDriver(base.Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
 
-    def __init__(self, port, image_path, options, executive):
+    def __init__(self, port, worker_number):
         self._port = port
-        self._image_path = image_path
-        self._executive = executive
-        self._image_written = False
+
+    def cmd_line(self):
+        return ['None']
 
     def poll(self):
         return True

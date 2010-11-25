@@ -384,6 +384,11 @@ class Port(object):
         # valid test and by printing.py to determine if baselines exist.
         return self._filesystem.exists(path)
 
+    def driver_cmd_line(self):
+        """Prints the DRT command line that will be used."""
+        driver = self.create_driver(0)
+        return driver.cmd_line()
+
     def update_baseline(self, path, data, encoding):
         """Updates the baseline for a test.
 
@@ -511,7 +516,7 @@ class Port(object):
         results_filename in a users' browser."""
         return self._user.open_url(results_filename)
 
-    def create_driver(self, image_path, options):
+    def create_driver(self, worker_number):
         """Return a newly created base.Driver subclass for starting/stopping
         the test driver."""
         raise NotImplementedError('Port.create_driver')
@@ -741,7 +746,7 @@ class Port(object):
 
     def _path_to_driver(self, configuration=None):
         """Returns the full path to the test driver (DumpRenderTree)."""
-        raise NotImplementedError('Port.path_to_driver')
+        raise NotImplementedError('Port._path_to_driver')
 
     def _path_to_webcore_library(self):
         """Returns the full path to a built copy of WebCore."""
@@ -804,19 +809,14 @@ class Port(object):
 class Driver:
     """Abstract interface for the DumpRenderTree interface."""
 
-    def __init__(self, port, png_path, options, executive):
+    def __init__(self, port, worker_number):
         """Initialize a Driver to subsequently run tests.
 
         Typically this routine will spawn DumpRenderTree in a config
         ready for subsequent input.
 
         port - reference back to the port object.
-        png_path - an absolute path for the driver to write any image
-            data for a test (as a PNG). If no path is provided, that
-            indicates that pixel test results will not be checked.
-        options - command line options argument from optparse
-        executive - reference to the process-wide Executive object
-
+        worker_number - identifier for a particular worker/driver instance
         """
         raise NotImplementedError('Driver.__init__')
 

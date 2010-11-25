@@ -44,7 +44,6 @@ import tempfile
 import time
 import webbrowser
 
-from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_output
@@ -176,6 +175,8 @@ class ChromiumPort(base.Port):
         return result
 
     def driver_name(self):
+        if self._options.use_drt:
+            return "DumpRenderTree"
         return "test_shell"
 
     def path_from_chromium_base(self, *comps):
@@ -213,13 +214,11 @@ class ChromiumPort(base.Port):
         if os.path.exists(cachedir):
             shutil.rmtree(cachedir)
 
-    def create_driver(self, image_path, options):
+    def create_driver(self, worker_number):
         """Starts a new Driver and returns a handle to it."""
-        if options.use_drt and sys.platform == 'darwin':
-            return webkit.WebKitDriver(self, image_path, options,
-                                       executive=self._executive)
-        return ChromiumDriver(self, image_path, options,
-                              executive=self._executive)
+        if self.get_option('use_drt') and sys.platform == 'darwin':
+            return webkit.WebKitDriver(self, worker_number)
+        return ChromiumDriver(self, worker_number)
 
     def start_helper(self):
         helper_path = self._path_to_helper()
@@ -360,48 +359,50 @@ class ChromiumPort(base.Port):
 class ChromiumDriver(base.Driver):
     """Abstract interface for test_shell."""
 
-    def __init__(self, port, image_path, options, executive=Executive()):
+    def __init__(self, port, worker_number):
         self._port = port
-        self._options = options
-        self._image_path = image_path
-        self._executive = executive
+        self._worker_number = worker_number
+        self._image_path = None
+        if self._port.get_option('pixel_tests'):
+            self._image_path = os.path.join(
+                self._port.get_option('results_directory'),
+                'png_result%s.png' % self._worker_number)
 
-    def _driver_args(self):
-        driver_args = []
-        if self._image_path:
+    def cmd_line(self):
+        cmd = self._command_wrapper(self._port.get_option('wrapper'))
+        cmd.append(self._port._path_to_driver())
+        if self._port.get_option('pixel_tests'):
             # See note above in diff_image() for why we need _convert_path().
-            driver_args.append("--pixel-tests=" +
-                               self._port._convert_path(self._image_path))
+            cmd.append("--pixel-tests=" +
+                       self._port._convert_path(self._image_path))
 
         if self._port.get_option('use_drt'):
-            driver_args.append('--test-shell')
+            cmd.append('--test-shell')
         else:
-            driver_args.append('--layout-tests')
+            cmd.append('--layout-tests')
 
         if self._port.get_option('startup_dialog'):
-            driver_args.append('--testshell-startup-dialog')
+            cmd.append('--testshell-startup-dialog')
 
         if self._port.get_option('gp_fault_error_box'):
-            driver_args.append('--gp-fault-error-box')
+            cmd.append('--gp-fault-error-box')
 
-        if self._options.js_flags is not None:
-            driver_args.append('--js-flags="' + self._options.js_flags + '"')
+        if self._port.get_option('js_flags') is not None:
+            cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
 
-        if self._options.multiple_loads is not None and self._options.multiple_loads > 0:
-            driver_args.append('--multiple-loads=' + str(self._options.multiple_loads))
+        if self._port.get_option('multiple_loads') > 0:
+            cmd.append('--multiple-loads=' + str(self._port.get_option('multiple_loads')))
 
         if self._port.get_option('accelerated_compositing'):
-            driver_args.append('--enable-accelerated-compositing')
+            cmd.append('--enable-accelerated-compositing')
 
         if self._port.get_option('accelerated_2d_canvas'):
-            driver_args.append('--enable-accelerated-2d-canvas')
-        return driver_args
+            cmd.append('--enable-accelerated-2d-canvas')
+        return cmd
 
     def start(self):
         # FIXME: Should be an error to call this method twice.
-        cmd = self._command_wrapper(self._port.get_option('wrapper'))
-        cmd.append(self._port._path_to_driver())
-        cmd += self._driver_args()
+        cmd = self.cmd_line()
 
         # We need to pass close_fds=True to work around Python bug #2320
         # (otherwise we can hang when we kill DumpRenderTree when we are running
@@ -551,4 +552,4 @@ class ChromiumDriver(base.Driver):
                 if self._proc.poll() is None:
                     _log.warning('stopping test driver timed out, '
                                  'killing it')
-                    self._executive.kill_process(self._proc.pid)
+                    self._port._executive.kill_process(self._proc.pid)

@@ -95,18 +95,19 @@ class DryRunPort(object):
     def stop_websocket_server(self):
         pass
 
-    def create_driver(self, image_path, options):
-        return DryrunDriver(self, image_path, options, executive=None)
+    def create_driver(self, worker_number):
+        return DryrunDriver(self, worker_number)
 
 
 class DryrunDriver(base.Driver):
     """Dryrun implementation of the DumpRenderTree / Driver interface."""
 
-    def __init__(self, port, image_path, options, executive):
+    def __init__(self, port, worker_number):
         self._port = port
-        self._image_path = image_path
-        self._executive = executive
-        self._layout_tests_dir = None
+        self._worker_number = worker_number
+
+    def cmd_line(self):
+        return ['None']
 
     def poll(self):
         return None

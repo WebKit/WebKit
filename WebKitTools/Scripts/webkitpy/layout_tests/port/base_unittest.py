@@ -258,7 +258,7 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port.baseline_search_path)
         self.assertVirtual(port.check_build, None)
         self.assertVirtual(port.check_image_diff)
-        self.assertVirtual(port.create_driver, None, None)
+        self.assertVirtual(port.create_driver, 0)
         self.assertVirtual(port.diff_image, None, None)
         self.assertVirtual(port.path_to_test_expectations_file)
         self.assertVirtual(port.test_platform_name)
@@ -282,7 +282,7 @@ class VirtualTest(unittest.TestCase):
 
     def test_virtual_driver_method(self):
         self.assertRaises(NotImplementedError, base.Driver, base.Port(),
-                          "", None, None)
+                          0)
 
     def test_virtual_driver_methods(self):
         class VirtualDriver(base.Driver):

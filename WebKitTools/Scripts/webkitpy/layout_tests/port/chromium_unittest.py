@@ -42,7 +42,8 @@ class ChromiumDriverTest(unittest.TestCase):
 
     def setUp(self):
         mock_port = Mock()
-        self.driver = chromium.ChromiumDriver(mock_port, image_path=None, options=None)
+        mock_port.get_option = lambda option_name: ''
+        self.driver = chromium.ChromiumDriver(mock_port, worker_number=0)
 
     def test_test_shell_command(self):
         expected_command = "test.html 2 checksum\n"

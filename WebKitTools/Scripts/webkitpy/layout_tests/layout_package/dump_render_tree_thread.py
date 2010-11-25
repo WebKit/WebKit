@@ -171,7 +171,6 @@ class SingleTestThread(threading.Thread):
           port: object implementing port-specific hooks
           options: command line argument object from optparse
           worker_number: worker number for tests
-              (FIXME: this should be passed to port.create_driver()).
           worker_name: for logging
           test_input: Object containing the test filename and timeout
           test_types: A list of TestType objects to run the test output
@@ -195,8 +194,7 @@ class SingleTestThread(threading.Thread):
     def _covered_run(self):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
-        self._driver = self._port.create_driver(self._test_args.png_path,
-                                                self._options)
+        self._driver = self._port.create_driver(self._worker_number)
         self._driver.start()
         self._test_result = _run_single_test(self._port, self._options,
                                              self._test_input, self._test_types,
@@ -292,12 +290,6 @@ class TestShellThread(WatchableThread):
     def _get_test_args(self, worker_number):
         """Returns the tuple of arguments for tests and for DumpRenderTree."""
         test_args = test_type_base.TestArguments()
-        test_args.png_path = None
-        if self._options.pixel_tests:
-            png_path = os.path.join(self._options.results_directory,
-                                    "png_result%s.png" %
-                                    self._worker_number)
-            test_args.png_path = png_path
         test_args.new_baseline = self._options.new_baseline
         test_args.reset_results = self._options.reset_results
 
@@ -543,9 +535,8 @@ class TestShellThread(WatchableThread):
         """
         # poll() is not threadsafe and can throw OSError due to:
         # http://bugs.python.org/issue1731717
-        if (not self._driver or self._driver.poll() is not None):
-            self._driver = self._port.create_driver(self._test_args.png_path,
-                                                    self._options)
+        if not self._driver or self._driver.poll() is not None:
+            self._driver = self._port.create_driver(self._worker_number)
             self._driver.start()
 
     def _start_servers_with_lock(self):
