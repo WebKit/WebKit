@@ -24,6 +24,7 @@
 #include "ApplicationCacheStorage.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"

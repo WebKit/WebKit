@@ -26,6 +26,7 @@
 
 #include "Console.h"
 #include "DumpRenderTreeSupportGtk.h"
+#include "Element.h"
 #include "FileSystem.h"
 #include "FileChooser.h"
 #include "FloatRect.h"
