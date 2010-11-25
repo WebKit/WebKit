@@ -45,6 +45,10 @@ using namespace WebCore;
 
 - (id)initWithUserData:(WebKit::APIObject*)userData
 {
+    self = [super init];
+    if (!self)
+        return nil;
+    
     _webUserData = userData;
     return self;
 }

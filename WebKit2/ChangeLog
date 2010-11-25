@@ -1,5 +1,14 @@
 2010-11-24  Brady Eidson  <beidson@apple.com>
 
+        Reviewed implicitly by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50042
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WebUserDataWrapper initWithUserData:WebKit::]): Do the proper self = [super init] dance here.
+
+2010-11-24  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Dan Bernstein.
 
         More of <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=50042
