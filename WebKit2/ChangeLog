@@ -1,3 +1,39 @@
+2010-11-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        More of <rdar://problem/8613727> and https://bugs.webkit.org/show_bug.cgi?id=50042
+        WK2 Context Menu Items need a user data object and a client callback for selection.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        (WKContextMenuItemGetUserData):
+        (WKContextMenuItemSetUserData):
+        * Shared/API/c/WKContextMenuItem.h:
+
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::userData):
+        (WebKit::WebContextMenuItem::setUserData):
+        * Shared/WebContextMenuItem.h:
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::userData):
+        (WebKit::WebContextMenuItemData::setUserData):
+        * Shared/WebContextMenuItemData.h:
+
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::customContextMenuItemSelected): Added for WK2 apps to get a callback.
+        * UIProcess/WebPageContextMenuClient.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WebUserDataWrapper initWithUserData:WebKit::]): Add an "APIObject" user data wrapper class to associate with the NSMenuItem.
+        (-[WebUserDataWrapper WebKit::]):
+        (-[WebMenuTarget forwardContextMenuAction:]): Include the user data object in the created ContextMenuItemData.
+        (WebKit::nsMenuItemVector):
+
 2010-11-24  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

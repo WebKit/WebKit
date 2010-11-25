@@ -25,6 +25,7 @@
 
 #include "WebContextMenuItemData.h"
 
+#include "APIObject.h"
 #include "ArgumentCoders.h"
 #include "Arguments.h"
 #include <wtf/text/CString.h>
@@ -87,6 +88,16 @@ ContextMenuItem WebContextMenuItemData::core() const
     return ContextMenuItem(m_action, m_title, m_enabled, m_checked, subMenuItems);
 }
 
+APIObject* WebContextMenuItemData::userData() const
+{
+    return m_userData.get();
+}
+
+void WebContextMenuItemData::setUserData(APIObject* userData)
+{
+    m_userData = userData;
+}
+    
 void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), static_cast<uint32_t>(m_action), m_title, m_checked, m_enabled, m_submenu));

@@ -205,11 +205,13 @@ enum {
 
 // ContextMenu client
 typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKTypeRef userData, const void* clientInfo);
+typedef void (*WKPageCustomContextMenuItemSelectedCallback)(WKPageRef page, WKContextMenuItemRef contextMenuItem, const void* clientInfo);
 
 struct WKPageContextMenuClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKPageGetContextMenuFromProposedContextMenuCallback                 getContextMenuFromProposedMenu;
+    WKPageCustomContextMenuItemSelectedCallback                         customContextMenuItemSelected;
 };
 typedef struct WKPageContextMenuClient WKPageContextMenuClient;
 

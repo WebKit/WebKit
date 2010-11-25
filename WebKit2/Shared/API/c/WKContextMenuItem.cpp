@@ -88,3 +88,13 @@ WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef itemRef)
 {
     return toAPI(toImpl(itemRef)->submenuItemsAsImmutableArray().leakRef());
 }
+
+WKTypeRef WKContextMenuItemGetUserData(WKContextMenuItemRef itemRef)
+{
+    return toAPI(toImpl(itemRef)->userData());
+}
+
+void WKContextMenuItemSetUserData(WKContextMenuItemRef itemRef, WKTypeRef userDataRef)
+{
+    toImpl(itemRef)->setUserData(toImpl(userDataRef));
+}

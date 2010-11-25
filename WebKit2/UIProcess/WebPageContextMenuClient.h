@@ -39,6 +39,7 @@ class WebPageProxy;
 class WebPageContextMenuClient : public APIClient<WKPageContextMenuClient> {
 public:
     bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, APIObject* userData);
+    void customContextMenuItemSelected(WebPageProxy*, const WebContextMenuItemData&);
 };
 
 } // namespace WebKit

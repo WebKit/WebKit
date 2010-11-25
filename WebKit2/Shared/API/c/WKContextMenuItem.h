@@ -47,6 +47,9 @@ WK_EXPORT bool WKContextMenuItemGetEnabled(WKContextMenuItemRef);
 WK_EXPORT bool WKContextMenuItemGetChecked(WKContextMenuItemRef);
 WK_EXPORT WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef);
 
+WK_EXPORT WKTypeRef WKContextMenuItemGetUserData(WKContextMenuItemRef);
+WK_EXPORT void WKContextMenuItemSetUserData(WKContextMenuItemRef, WKTypeRef);
+
 #ifdef __cplusplus
 }
 #endif
