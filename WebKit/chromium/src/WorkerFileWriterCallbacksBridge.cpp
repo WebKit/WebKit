@@ -59,16 +59,21 @@ void WorkerFileWriterCallbacksBridge::notifyStop()
 
 void WorkerFileWriterCallbacksBridge::postWriteToMainThread(long long position, const KURL& data)
 {
+    ASSERT(!m_operationInProgress);
+    m_operationInProgress = true;
     dispatchTaskToMainThread(createCallbackTask(&writeOnMainThread, this, position, data));
 }
 
 void WorkerFileWriterCallbacksBridge::postTruncateToMainThread(long long length)
 {
+    ASSERT(!m_operationInProgress);
+    m_operationInProgress = true;
     dispatchTaskToMainThread(createCallbackTask(&truncateOnMainThread, this, length));
 }
 
 void WorkerFileWriterCallbacksBridge::postAbortToMainThread()
 {
+    ASSERT(m_operationInProgress);
     dispatchTaskToMainThread(createCallbackTask(&abortOnMainThread, this));
 }
 
@@ -121,14 +126,19 @@ void WorkerFileWriterCallbacksBridge::didTruncate()
     dispatchTaskToWorkerThread(createCallbackTask(&didTruncateOnWorkerThread, this));
 }
 
+static const char fileWriterOperationsMode[] = "fileWriterOperationsMode";
+
 WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge(const String& path, WorkerLoaderProxy* proxy, ScriptExecutionContext* scriptExecutionContext, AsyncFileWriterClient* client)
     : WorkerContext::Observer(static_cast<WorkerContext*>(scriptExecutionContext))
     , m_proxy(proxy)
     , m_workerContext(scriptExecutionContext)
     , m_clientOnWorkerThread(client)
     , m_writerDeleted(false)
+    , m_operationInProgress(false)
 {
     ASSERT(m_workerContext->isContextThread());
+    m_mode = fileWriterOperationsMode;
+    m_mode.append(String::number(static_cast<WorkerContext*>(scriptExecutionContext)->thread()->runLoop().createUniqueId()));
     postInitToMainThread(path);
 }
 
@@ -147,18 +157,25 @@ WorkerFileWriterCallbacksBridge::~WorkerFileWriterCallbacksBridge()
 void WorkerFileWriterCallbacksBridge::didWriteOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, long long length, bool complete)
 {
     ASSERT(bridge->m_workerContext->isContextThread());
+    ASSERT(bridge->m_operationInProgress);
+    if (complete)
+        bridge->m_operationInProgress = false;
     bridge->m_clientOnWorkerThread->didWrite(length, complete);
 }
 
 void WorkerFileWriterCallbacksBridge::didFailOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, WebFileError error)
 {
     ASSERT(bridge->m_workerContext->isContextThread());
+    ASSERT(bridge->m_operationInProgress);
+    bridge->m_operationInProgress = false;
     bridge->m_clientOnWorkerThread->didFail(static_cast<FileError::ErrorCode>(error));
 }
 
 void WorkerFileWriterCallbacksBridge::didTruncateOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge)
 {
     ASSERT(bridge->m_workerContext->isContextThread());
+    ASSERT(bridge->m_operationInProgress);
+    bridge->m_operationInProgress = false;
     bridge->m_clientOnWorkerThread->didTruncate();
 }
 
@@ -185,9 +202,19 @@ void WorkerFileWriterCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<Script
 void WorkerFileWriterCallbacksBridge::dispatchTaskToWorkerThread(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
     ASSERT(isMainThread());
-    m_proxy->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, this, task), WorkerRunLoop::defaultMode());
+    m_proxy->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, this, task), m_mode);
 }
 
+bool WorkerFileWriterCallbacksBridge::waitForOperationToComplete()
+{
+    while (m_operationInProgress) {
+        WorkerContext* context = static_cast<WorkerContext*>(m_workerContext);
+        if (context->thread()->runLoop().runInMode(context, m_mode) == MessageQueueTerminated)
+            return false;
+    }
+    return true;
 }
+
+} // namespace WebKit
 
 #endif // ENABLE(FILE_SYSTEM)

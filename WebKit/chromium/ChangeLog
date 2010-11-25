@@ -1,3 +1,26 @@
+2010-11-24  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Implement FileWriterSync
+        https://bugs.webkit.org/show_bug.cgi?id=49940
+
+        Added waitForOperationToComplete, delegating to the bridge.
+        * src/WorkerAsyncFileWriterChromium.cpp:
+        * src/WorkerAsyncFileWriterChromium.h:
+
+        Added waitForOperationToComplete and some debug-only code to make sure it's working properly.
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        (WebKit::WorkerFileWriterCallbacksBridge::postWriteToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postTruncateToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postAbortToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge):
+        (WebKit::WorkerFileWriterCallbacksBridge::didWriteOnWorkerThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::didFailOnWorkerThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::didTruncateOnWorkerThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::waitForOperationToComplete):
+        * src/WorkerFileWriterCallbacksBridge.h:
+
 2010-11-24  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

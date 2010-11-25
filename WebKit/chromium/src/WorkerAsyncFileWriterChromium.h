@@ -67,6 +67,8 @@ public:
     }
     ~WorkerAsyncFileWriterChromium();
     
+    bool waitForOperationToComplete();
+
     // FileWriter
     virtual void write(long long position, Blob* data);
     virtual void truncate(long long length);
