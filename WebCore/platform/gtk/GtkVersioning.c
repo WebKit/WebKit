@@ -263,7 +263,7 @@ gdk_pixbuf_get_from_surface(cairo_surface_t * surface,
 
 #endif // GTK_API_VERSION_2
 
-#if !GLIB_CHECK_VERSION(2, 28, 0)
+#if !GLIB_CHECK_VERSION(2, 27, 1)
 gboolean g_signal_accumulator_first_wins(GSignalInvocationHint *invocationHint, GValue *returnAccumulator, const GValue *handlerReturn, gpointer data)
 {
     g_value_copy(handlerReturn, returnAccumulator);
