@@ -662,7 +662,6 @@ BUG3273 : editing/selection/mixed-editability-10.html = TEXT
 BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
 
 // selection
-BUG10369 MAC : editing/selection/5109817.html = FAIL
 BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
 
 // We don't draw the spelling markers at all in test shell.
@@ -2047,9 +2046,6 @@ BUG27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 BUG28040 WIN MAC DEBUG : fast/body-propagation/overflow/003-xhtml.xhtml = PASS IMAGE+TEXT
 
 BUG28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
-
-// Need to add Chromium localized strings for the feature. Upstream r51172
-BUG28264 : fast/forms/validationMessage.html = FAIL
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
