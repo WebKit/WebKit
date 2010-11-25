@@ -790,27 +790,20 @@ WebInspector.NetworkPanel.prototype = {
 
         this._staleResources.push(resource);
         this._scheduleRefresh();
-
-        if (!resource || !resource._resourcesView)
+        
+        if (!resource)
             return;
 
-        if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource, resource._resourcesView))
+        var oldView = WebInspector.ResourceManager.existingResourceViewForResource(resource);
+        if (!oldView)
             return;
 
-        var newView = WebInspector.ResourceManager.createResourceView(resource);
+        if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource))
+            return;
 
-        var oldView = resource._resourcesView;
-        var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
-
-        resource._resourcesView.detach();
-        delete resource._resourcesView;
-
-        resource._resourcesView = newView;
-
-        if (oldViewParentNode)
-            newView.show(oldViewParentNode);
-
-        WebInspector.panels.scripts.viewRecreated(oldView, newView);
+        var newView = WebInspector.ResourceManager.recreateResourceView(resource);
+        if (this.visibleView === oldView)
+            this.visibleView = newView;
     },
 
     canShowSourceLine: function(url, line)

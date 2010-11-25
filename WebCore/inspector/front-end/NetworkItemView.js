@@ -35,15 +35,16 @@ WebInspector.NetworkItemView = function(resource)
     this.element.addStyleClass("network-item-view");
 
     this._headersView = new WebInspector.ResourceHeadersView(resource);
-    this._contentView = WebInspector.ResourceManager.resourceViewForResource(resource);
+    // Do not store reference to content view - it can be recreated.
+    var contentView = WebInspector.ResourceManager.resourceViewForResource(resource);
     this._cookiesView = new WebInspector.ResourceCookiesView(resource);
 
     this._tabbedPane = new WebInspector.TabbedPane(this.element);
     this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this._headersView);
-    if (this._contentView.hasContent()) {
+    if (contentView.hasContent()) {
         // Reusing this view, so hide it at first.
-        this._contentView.visible = false;
-        this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), this._contentView);
+        contentView.visible = false;
+        this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), contentView);
     }
     this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
 

@@ -445,8 +445,9 @@ WebInspector.ResourceManager.createResourceView = function(resource)
     }
 }
 
-WebInspector.ResourceManager.resourceViewTypeMatchesResource = function(resource, resourceView)
+WebInspector.ResourceManager.resourceViewTypeMatchesResource = function(resource)
 {
+    var resourceView = resource._resourcesView;
     switch (resource.category) {
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.stylesheets:
@@ -469,6 +470,28 @@ WebInspector.ResourceManager.resourceViewForResource = function(resource)
     if (!resource._resourcesView)
         resource._resourcesView = WebInspector.ResourceManager.createResourceView(resource);
     return resource._resourcesView;
+}
+
+WebInspector.ResourceManager.recreateResourceView = function(resource)
+{
+    var newView = WebInspector.ResourceManager.createResourceView(resource);
+
+    var oldView = resource._resourcesView;
+    var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
+    var scrollTop = oldView.scrollTop;
+
+    resource._resourcesView.detach();
+    delete resource._resourcesView;
+
+    resource._resourcesView = newView;
+
+    if (oldViewParentNode)
+        newView.show(oldViewParentNode);
+    if (scrollTop)
+        newView.scrollTop = scrollTop;
+
+    WebInspector.panels.scripts.viewRecreated(oldView, newView);
+    return newView;
 }
 
 WebInspector.ResourceManager.existingResourceViewForResource = function(resource)

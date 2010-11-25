@@ -1070,23 +1070,12 @@ WebInspector.FrameResourceTreeElement.prototype = {
             revisionResource.setInitialContent(event.data.oldContent);
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revisionResource, event.data.oldContentTimestamp), 0);
 
-        var oldView = this._resource._resourcesView;
+        
+        var oldView = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
         if (oldView) {
-            var scrollTop = oldView.scrollTop;
-            var newView = WebInspector.ResourceManager.createResourceView(this._resource);
-            var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
-
-            this._resource._resourcesView.detach();
-            delete this._resource._resourcesView;
-            this._resource._resourcesView = newView;
-
-            if (oldViewParentNode)
-                newView.show(oldViewParentNode);
-
+            var newView = WebInspector.ResourceManager.recreateResourceView(this._resource);
             if (oldView === this._storagePanel.visibleView)
                 this._storagePanel.visibleView = newView;
-            if (scrollTop)
-                newView.scrollTop = scrollTop;
         }
     }
 }
