@@ -1,3 +1,12 @@
+2010-11-25  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Updated Symbian DEF file for ARM target due to API changes
+        via committs r72600-72603 (see bug# 46810)
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-11-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling and Simon Hausmann.
