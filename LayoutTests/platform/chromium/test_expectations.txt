@@ -103,6 +103,8 @@ BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PAS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
+BUG32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
+
 BUG47937 WIN DEBUG : fast/parser/residual-style-hang.html = PASS TIMEOUT
 BUG47937 LINUX DEBUG SLOW : fast/parser/residual-style-hang.html = PASS
 BUG47937 MAC DEBUG : fast/parser/residual-style-hang.html = TIMEOUT
@@ -2155,7 +2157,6 @@ BUG31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
 // WebKit roll 52852 -> 52867
-BUG32018 : http/tests/websocket/tests/frame-lengths.html = PASS TIMEOUT
 BUG32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 
 // V8's implementation of getOwnPropertyNames has different results for built-in
