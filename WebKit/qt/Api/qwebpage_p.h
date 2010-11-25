@@ -188,6 +188,8 @@ public:
 
     QSize viewportSize;
     QSize fixedLayoutSize;
+    qreal pixelRatio;
+
     QWebHistory history;
     QWebHitTestResult hitTestResult;
 #ifndef QT_NO_CONTEXTMENU

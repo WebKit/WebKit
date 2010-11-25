@@ -1,3 +1,21 @@
+2010-11-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling and Simon Hausmann.
+
+        [Qt] Calculate the -webkit-pixel-radio using the device DPI.
+        http://webkit.org/b/50059
+
+        Also, update the documentation on what a DIP is and how to override
+        the device DPI in the case the system reports the wrong one (which
+        unfortunately is common on X11).
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::viewportAttributesForSize):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::scaleFactor):
+
 2010-11-24  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.

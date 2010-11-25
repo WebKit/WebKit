@@ -118,13 +118,12 @@ FloatRect ChromeClientQt::pageRect()
     return FloatRect(QRectF(QPointF(0, 0), m_webPage->viewportSize()));
 }
 
-
 float ChromeClientQt::scaleFactor()
 {
-    notImplemented();
-    return 1;
+    if (!m_webPage)
+        return 1;
+    return m_webPage->d->pixelRatio;
 }
-
 
 void ChromeClientQt::focus()
 {
