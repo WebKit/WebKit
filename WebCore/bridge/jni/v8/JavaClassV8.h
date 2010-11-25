@@ -49,7 +49,6 @@ public:
     JavaField* fieldNamed(const char* name) const;
 
 private:
-    const char* m_name;
     MethodListMap m_methods;
     FieldMap m_fields;
 };
