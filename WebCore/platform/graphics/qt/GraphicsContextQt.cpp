@@ -707,6 +707,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             if (shadow->m_type == ContextShadow::BlurShadow) {
                 QPainter* shadowPainter = shadow->beginShadowLayer(p, normalizedRect);
                 if (shadowPainter) {
+                    shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
                     shadowPainter->fillRect(normalizedRect, p->brush());
                     shadow->endShadowLayer(p);
                 }
