@@ -67,8 +67,10 @@ WebDOMStringList WebIDBDatabaseImpl::objectStoreNames() const
 WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_databaseBackend->createObjectStore(name, keyPath, autoIncrement, transaction.getIDBTransactionBackendInterface(), ec);
-    if (!objectStore)
+    if (!objectStore) {
+        ASSERT(ec);
         return 0;
+    }
     return new WebIDBObjectStoreImpl(objectStore);
 }
 
@@ -86,8 +88,10 @@ WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names
 {
     RefPtr<DOMStringList> nameList = PassRefPtr<DOMStringList>(names);
     RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->transaction(nameList.get(), mode, timeout, ec);
-    if (!transaction)
+    if (!transaction) {
+        ASSERT(ec);
         return 0;
+    }
     return new WebIDBTransactionImpl(transaction);
 }
 

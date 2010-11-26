@@ -48,7 +48,7 @@ class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBac
 public:
     virtual ~IDBTransactionBackendInterface() { }
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&) = 0;
     virtual unsigned short mode() const = 0;
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = 0) = 0;
     virtual void didCompleteTaskEvents() = 0;

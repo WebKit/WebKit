@@ -45,7 +45,7 @@ public:
     static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
     virtual ~IDBTransactionBackendImpl();
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
     virtual unsigned short mode() const { return m_mode; }
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask);
     virtual void didCompleteTaskEvents();

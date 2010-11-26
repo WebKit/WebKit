@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseException.h"
 #include "IDBTransactionCoordinator.h"
 #include "SQLiteDatabase.h"
 
@@ -50,6 +51,7 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores
     , m_taskEventTimer(this, &IDBTransactionBackendImpl::taskEventTimerFired)
     , m_pendingEvents(0)
 {
+    ASSERT(m_objectStoreNames);
     m_database->transactionCoordinator()->didCreateTransaction(this);
 }
 
@@ -59,11 +61,29 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
     ASSERT(m_state == Finished);
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(const String& name)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(const String& name, ExceptionCode& ec)
 {
-    if (m_state == Finished)
+    if (m_state == Finished) {
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
-    return m_database->objectStore(name);
+    }
+
+    // Does a linear search, but it really shouldn't be that slow in practice.
+    if (!m_objectStoreNames->isEmpty() && !m_objectStoreNames->contains(name)) {
+        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        return 0;
+    }
+
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_database->objectStore(name);
+    // FIXME: This is only necessary right now beacuse a setVersion transaction could modify things
+    //        between its creation (where another check occurs) and the .objectStore call.
+    //        There's a bug to make this impossible in the spec. When we make it impossible here, we
+    //        can remove this check.
+    if (!objectStore) {
+        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        return 0;
+    }
+    return objectStore.release();
 }
 
 bool IDBTransactionBackendImpl::scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask)

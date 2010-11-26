@@ -42,7 +42,7 @@ public:
     static PassRefPtr<IDBTransactionBackendInterface> create(PassOwnPtr<WebKit::WebIDBTransaction>);
     virtual ~IDBTransactionBackendProxy();
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
     virtual unsigned short mode() const;
     virtual void abort();
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task>);

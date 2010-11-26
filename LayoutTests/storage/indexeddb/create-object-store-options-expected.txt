@@ -19,7 +19,8 @@ db.createObjectStore('b')
 db.createObjectStore('c', {autoIncrement: true});
 PASS Exception thrown
 PASS code is webkitIDBDatabaseException.UNKNOWN_ERR
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+PASS trans.mode is webkitIDBTransaction.READ_WRITE
 trans.objectStore('a').put({'a': 0})
 trans.objectStore('b').put({'a': 0}, 0)
 trans.objectStore('a').get(0)

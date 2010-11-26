@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class DOMStringList;
+
 class OptionsObject {
 public:
     OptionsObject();
@@ -41,7 +43,9 @@ public:
 
     bool isUndefinedOrNull() const;
     bool getKeyBool(const String& key, bool& value) const;
+    bool getKeyInt32(const String& key, int32_t& value) const;
     bool getKeyString(const String& key, String& value) const;
+    PassRefPtr<DOMStringList> getKeyDOMStringList(const String& key) const;
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;

@@ -75,9 +75,9 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
-    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name);
+    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name, ec);
     if (!objectStoreBackend) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ASSERT(ec);
         return 0;
     }
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, m_backend.get());

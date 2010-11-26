@@ -1,0 +1,96 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's create and removeObjectStore");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+    testCreateAndRemove();
+    result = evalAndLog("result = db.setVersion('version 1')");
+    result.onsuccess = cleanDatabase;
+    result.onerror = unexpectedErrorCallback;
+    testCreateAndRemove();
+}
+
+function testCreateAndRemove()
+{
+    debug("Trying create");
+    try {
+        db.createObjectStore("some os");
+        testFailed("No exception thrown!");
+    } catch (e) {
+        code = e.code;
+        shouldBe("code", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    }
+    debug("Trying remove");
+    try {
+        db.createObjectStore("some os");
+        testFailed("No exception thrown!");
+    } catch (e) {
+        code = e.code;
+        shouldBe("code", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    }
+}
+
+function cleanDatabase()
+{
+    verifySuccessEvent(event);
+    deleteAllObjectStores(db, cleaned);
+}
+
+function cleaned()
+{
+    os = evalAndLog("db.createObjectStore('tmp')");
+    debug("Adding 'tmp' again");
+    try {
+        db.createObjectStore('tmp');
+        testFailed("No exception thrown!");
+    } catch (e) {
+        code = e.code;
+        shouldBe("code", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+    }
+    trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    req = evalAndLog("trans.objectStore('tmp').get(0)");
+    req.onsuccess = unexpectedSuccessCallback;
+    req.onerror = tryOnceMore;
+}
+
+function tryOnceMore()
+{
+    testCreateAndRemove();
+
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

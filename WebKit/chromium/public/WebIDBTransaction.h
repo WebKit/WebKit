@@ -48,13 +48,8 @@ public:
     }
     virtual WebIDBObjectStore* objectStore(const WebString& name, WebExceptionCode&)
     {
-        return objectStore(name);
-    }
-    // FIXME: Remove this after WebKit roll.
-    virtual WebIDBObjectStore* objectStore(const WebString& name)
-    {
-        WebExceptionCode ec;
-        return objectStore(name, ec);
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
     }
     virtual void abort() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void didCompleteTaskEvents() { WEBKIT_ASSERT_NOT_REACHED(); }

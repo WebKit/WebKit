@@ -207,23 +207,23 @@ function unexpectedAbort()
 function onSetVersionComplete()
 {
     // Lets create a new transaction and then not schedule any work on it to watch it abort itself.
-    // Transactions (besides those created with setVersion) are created synchronously. All three
-    // parameters are optional for transaction.
+    // Transactions (besides those created with setVersion) are created synchronously. Like
+    // createObjectStore, transaction optionally takes in an object with various optional parameters.
     //
-    // The first specifies which object stores to lock. The spec specifies "dynamic transactions"
-    // which don't require this and which have finer grained locks, but no one yet supports this and
-    // it may even be dropped from the first version of the spec, so I don't suggest you rely on it.
-    // Chromium/WebKit also does not yet support anything finer grained than database level locking,
-    // so in this tutorial we'll just pass in the empty array which means "lock the world".
+    // First of all is the parameter "objectStoreNames". If you pass in a string, we lock just that
+    // objectStore.  If you pass in an array, we lock those. Otherwise (for example, if you omit it
+    // or pass in null/undefined) we lock the whole database. By specifying locks over fewer
+    // objectStores you make it possible for browsers to run transactions concurrently. That said,
+    // Chromium/WebKit does not support this yet.
     //
-    // The second parameter specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
+    // Next is "mode" which specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
     // That's fine for this case, but later we'll ask for IDBTransaction.READ_WRITE. At the moment,
-    // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad. (Note that
-    // SNAPSHOT_READ will soon be removed from the spec.)
+    // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
     //
-    // The last parameter is the timeout length. At the moment, Chromium/WebKit defaults to 0 which
-    // means never, but it's possible we'll change this in the future, so set it if you really care.
-    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE, 0);
+    // Last is "timeout" which is measured in seconds. At the moment, Chromium/WebKit defaults to 0 which
+    // means never, but it's possible we'll change this in the future and other implementations may
+    // use something different, so set it if you really care.
+    window.currentTransaction = db.transaction({mode: IDBTransaction.READ_WRITE, timeout: 0});
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 
@@ -270,8 +270,10 @@ function unexpectedComplete()
 
 function onTransactionAborted()
 {
-    // Now let's make a real transaction and a person to our objectStore.
-    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE, 0);
+    // Now let's make a real transaction and a person to our objectStore. Just to show it's possible,
+    // we'll omit the objectStoreNames parameter which means we'll lock everything even though we only
+    // ever access "people".
+    window.currentTransaction = db.transaction({mode: IDBTransaction.READ_WRITE});
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -307,8 +309,9 @@ function onPutSuccess()
 function onPutTransactionComplete()
 {
     // OK, now let's query the people objectStore in a couple different ways. First up, let's try get.
-    // It simply takes in a key and returns a request whose result will be the value.
-    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE, 0);
+    // It simply takes in a key and returns a request whose result will be the value. Note that here
+    // we're passing in an array for objectStoreNames rather than a simple string.
+    window.currentTransaction = db.transaction({objectStoreNames: ["people"], mode: IDBTransaction.READ_WRITE, timeout: 0});
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
