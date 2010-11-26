@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
+#include "OptionsObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -36,41 +37,33 @@ namespace WebCore {
 
 class IDBKeyRange : public ThreadSafeShared<IDBKeyRange> {
 public:
-    // Keep in sync with what's in the .idl file.
-    enum Flags {
-        SINGLE = 0,
-        LEFT_OPEN = 1,
-        RIGHT_OPEN = 2,
-        LEFT_BOUND = 4,
-        RIGHT_BOUND = 8,
-    };
-
-    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, unsigned short flags)
+    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen)
     {
-        return adoptRef(new IDBKeyRange(left, right, flags));
+        return adoptRef(new IDBKeyRange(lower, upper, lowerOpen, upperOpen));
     }
-
     ~IDBKeyRange() { }
 
 
-    PassRefPtr<IDBKey> left() const { return m_left; }
-    PassRefPtr<IDBKey> right() const { return m_right; }
-    unsigned short flags() const { return m_flags; }
+    PassRefPtr<IDBKey> lower() const { return m_lower; }
+    PassRefPtr<IDBKey> upper() const { return m_upper; }
+    bool lowerOpen() const { return m_lowerOpen; }
+    bool upperOpen() const { return m_upperOpen; }
 
-    String leftWhereClauseComparisonOperator() const;
-    String rightWhereClauseComparisonOperator() const;
+    String lowerWhereClauseComparisonOperator() const;
+    String upperWhereClauseComparisonOperator() const;
 
     static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value);
-    static PassRefPtr<IDBKeyRange> leftBound(PassRefPtr<IDBKey> bound, bool open = false);
-    static PassRefPtr<IDBKeyRange> rightBound(PassRefPtr<IDBKey> bound, bool open = false);
-    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft = false, bool openRight = false);
+    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, bool open = false);
+    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, bool open = false);
+    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, const OptionsObject& = OptionsObject());
 
 private:
-    IDBKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, unsigned short flags);
+    IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen);
 
-    RefPtr<IDBKey> m_left;
-    RefPtr<IDBKey> m_right;
-    unsigned short m_flags;
+    RefPtr<IDBKey> m_lower;
+    RefPtr<IDBKey> m_upper;
+    bool m_lowerOpen;
+    bool m_upperOpen;
 };
 
 } // namespace WebCore

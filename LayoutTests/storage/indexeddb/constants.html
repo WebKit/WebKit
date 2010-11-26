@@ -16,12 +16,6 @@ if (window.layoutTestController)
 
 function test()
 {
-    shouldBe("webkitIDBKeyRange.SINGLE", "0");
-    shouldBe("webkitIDBKeyRange.LEFT_OPEN", "1");
-    shouldBe("webkitIDBKeyRange.RIGHT_OPEN", "2");
-    shouldBe("webkitIDBKeyRange.LEFT_BOUND", "4");
-    shouldBe("webkitIDBKeyRange.RIGHT_BOUND", "8");
-
     shouldBe("webkitIDBDatabaseException.UNKNOWN_ERR", "1");
     shouldBe("webkitIDBDatabaseException.NON_TRANSIENT_ERR", "1");
     shouldBe("webkitIDBDatabaseException.NOT_FOUND_ERR", "2");

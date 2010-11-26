@@ -17,67 +17,68 @@ if (window.layoutTestController)
 function checkSingleKeyRange(value)
 {
     keyRange = evalAndLog("webkitIDBKeyRange.only(" + value + ")");
-    shouldBe("keyRange.left", "" + value);
-    shouldBe("keyRange.right", "" + value);
-    shouldBe("keyRange.flags", "keyRange.SINGLE");
+    shouldBe("keyRange.lower", "" + value);
+    shouldBe("keyRange.upper", "" + value);
+    shouldBeFalse("keyRange.lowerOpen");
+    shouldBeFalse("keyRange.upperOpen");
 }
 
-function checkLeftBoundKeyRange(value, open)
+function checkLowerBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.leftBound(" + value + "," + open + ")");
-    shouldBe("keyRange.left", "" + value);
-    shouldBeNull("keyRange.right");
-    shouldBe("keyRange.flags", open ? "keyRange.LEFT_OPEN | keyRange.LEFT_BOUND" : "keyRange.LEFT_BOUND");
+    keyRange = evalAndLog("webkitIDBKeyRange.lowerBound(" + value + "," + open + ")");
+    shouldBe("keyRange.lower", "" + value);
+    if (open === undefined)
+        open = false;
+    shouldBe("keyRange.lowerOpen", "" + open);
+    shouldBeNull("keyRange.upper");
+    shouldBeFalse("keyRange.upperOpen");
 }
 
-function checkRightBoundKeyRange(value, open)
+function checkUpperBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.rightBound(" + value + "," + open + ")");
-    shouldBe("keyRange.right", "" + value);
-    shouldBeNull("keyRange.left");
-    shouldBe("keyRange.flags", open ? "keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND" : "keyRange.RIGHT_BOUND");
+    keyRange = evalAndLog("webkitIDBKeyRange.upperBound(" + value + "," + open + ")");
+    shouldBe("keyRange.upper", "" + value);
+    if (open === undefined)
+        open = false;
+    shouldBe("keyRange.upperOpen", "" + open);
+    shouldBeNull("keyRange.lower");
+    shouldBeFalse("keyRange.lowerOpen");
 }
 
-function checkBoundKeyRange(left, right, openLeft, openRight)
+function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + left + "," + right + "," + openLeft + "," + openRight + ")");
-    shouldBe("keyRange.left", "" + left);
-    shouldBe("keyRange.right", "" + right);
-    leftFlags = keyRange.flags & (keyRange.LEFT_OPEN | keyRange.LEFT_BOUND);
-    shouldBe("leftFlags", openLeft ? "keyRange.LEFT_OPEN | keyRange.LEFT_BOUND" : "keyRange.LEFT_BOUND");
-    rightFlags = keyRange.flags & (keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND);
-    shouldBe("rightFlags", openRight ? "keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND" : "keyRange.RIGHT_BOUND");
+    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + lower + "," + upper + ", {lowerOpen: " + lowerOpen + ", upperOpen:" + upperOpen + "})");
+    shouldBe("keyRange.lower", "" + lower);
+    shouldBe("keyRange.upper", "" + upper);
+    if (lowerOpen === undefined)
+        lowerOpen = false;
+    if (upperOpen === undefined)
+        upperOpen = false;
+    shouldBe("keyRange.lowerOpen", "" + lowerOpen);
+    shouldBe("keyRange.upperOpen", "" + upperOpen);
 }
 
 function test()
 {
-    shouldBeTrue("'SINGLE' in webkitIDBKeyRange");
-    shouldBeTrue("'LEFT_OPEN' in webkitIDBKeyRange");
-    shouldBeTrue("'RIGHT_OPEN' in webkitIDBKeyRange");
-    shouldBeTrue("'LEFT_BOUND' in webkitIDBKeyRange");
-    shouldBeTrue("'RIGHT_BOUND' in webkitIDBKeyRange");
-    shouldBeFalse("'left' in webkitIDBKeyRange");
-    shouldBeFalse("'right' in webkitIDBKeyRange");
-    shouldBeFalse("'flags' in webkitIDBKeyRange");
+    shouldBeFalse("'lower' in webkitIDBKeyRange");
+    shouldBeFalse("'upper' in webkitIDBKeyRange");
+    shouldBeFalse("'lowerOpen' in webkitIDBKeyRange");
+    shouldBeFalse("'upperOpen' in webkitIDBKeyRange");
     shouldBeTrue("'only' in webkitIDBKeyRange");
-    shouldBeTrue("'leftBound' in webkitIDBKeyRange");
-    shouldBeTrue("'rightBound' in webkitIDBKeyRange");
+    shouldBeTrue("'lowerBound' in webkitIDBKeyRange");
+    shouldBeTrue("'upperBound' in webkitIDBKeyRange");
     shouldBeTrue("'bound' in webkitIDBKeyRange");
 
     debug("");
 
     var instance = evalAndLog("instance = webkitIDBKeyRange.only(1)");
-    shouldBeTrue("'SINGLE' in instance");
-    shouldBeTrue("'LEFT_OPEN' in instance");
-    shouldBeTrue("'RIGHT_OPEN' in instance");
-    shouldBeTrue("'LEFT_BOUND' in instance");
-    shouldBeTrue("'RIGHT_BOUND' in instance");
-    shouldBeTrue("'left' in instance");
-    shouldBeTrue("'right' in instance");
-    shouldBeTrue("'flags' in instance");
+    shouldBeTrue("'lower' in instance");
+    shouldBeTrue("'upper' in instance");
+    shouldBeTrue("'lowerOpen' in instance");
+    shouldBeTrue("'upperOpen' in instance");
     shouldBeFalse("'only' in instance");
-    shouldBeFalse("'leftBound' in instance");
-    shouldBeFalse("'rightBound' in instance");
+    shouldBeFalse("'lowerBound' in instance");
+    shouldBeFalse("'upperBound' in instance");
     shouldBeFalse("'bound' in instance");
 
     debug("");
@@ -85,19 +86,19 @@ function test()
     checkSingleKeyRange(1);
     checkSingleKeyRange("'a'");
 
-    checkLeftBoundKeyRange(10, true);
-    checkLeftBoundKeyRange(11, false);
-    checkLeftBoundKeyRange(12);
-    checkLeftBoundKeyRange("'aa'", true);
-    checkLeftBoundKeyRange("'ab'", false);
-    checkLeftBoundKeyRange("'ac'");
+    checkLowerBoundKeyRange(10, true);
+    checkLowerBoundKeyRange(11, false);
+    checkLowerBoundKeyRange(12);
+    checkLowerBoundKeyRange("'aa'", true);
+    checkLowerBoundKeyRange("'ab'", false);
+    checkLowerBoundKeyRange("'ac'");
 
-    checkRightBoundKeyRange(20, true);
-    checkRightBoundKeyRange(21, false);
-    checkRightBoundKeyRange(22);
-    checkRightBoundKeyRange("'ba'", true);
-    checkRightBoundKeyRange("'bb'", false);
-    checkRightBoundKeyRange("'bc'");
+    checkUpperBoundKeyRange(20, true);
+    checkUpperBoundKeyRange(21, false);
+    checkUpperBoundKeyRange(22);
+    checkUpperBoundKeyRange("'ba'", true);
+    checkUpperBoundKeyRange("'bb'", false);
+    checkUpperBoundKeyRange("'bc'");
 
     checkBoundKeyRange(30, 40);
     checkBoundKeyRange(31, 41, false, false);
@@ -121,16 +122,16 @@ function test()
     }
 
     try {
-        debug("Passing an invalid key into rightBound([])");
-        webkitIDBKeyRange.rightBound([]);
+        debug("Passing an invalid key into upperBound([])");
+        webkitIDBKeyRange.upperBound([]);
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
  
     try {
-        debug("Passing an invalid key into leftBound([])");
-        webkitIDBKeyRange.leftBound([]);
+        debug("Passing an invalid key into lowerBound([])");
+        webkitIDBKeyRange.lowerBound([]);
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());

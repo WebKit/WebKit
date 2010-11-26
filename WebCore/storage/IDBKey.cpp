@@ -105,7 +105,7 @@ String IDBKey::whereSyntax(String qualifiedTableName) const
     return "";
 }
 
-String IDBKey::leftCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
+String IDBKey::lowerCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
 {
     switch (m_type) {
     case StringType:
@@ -122,7 +122,7 @@ String IDBKey::leftCursorWhereFragment(String comparisonOperator, String qualifi
     return "";
 }
 
-String IDBKey::rightCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
+String IDBKey::upperCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
 {
     switch (m_type) {
     case StringType:

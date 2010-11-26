@@ -159,11 +159,11 @@ function runNextTest()
  
     var keyRange;
     if (lower !== null && upper !== null)
-        keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
+        keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], {lowerOpen: lowerIsOpen, upperOpen: upperIsOpen});
     else if (lower !== null)
-        keyRange = webkitIDBKeyRange.leftBound(testData[lower], lowerIsOpen);
+        keyRange = webkitIDBKeyRange.lowerBound(testData[lower], lowerIsOpen);
     else
-        keyRange = webkitIDBKeyRange.rightBound(testData[upper], upperIsOpen);
+        keyRange = webkitIDBKeyRange.upperBound(testData[upper], upperIsOpen);
  
     var request = objectStore.openCursor({range: keyRange, direction: ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV});
     request.onsuccess = cursorIteration;

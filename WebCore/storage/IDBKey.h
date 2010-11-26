@@ -78,8 +78,8 @@ public:
 
     bool isEqual(IDBKey* other);
     String whereSyntax(String qualifiedTableName = "") const;
-    String leftCursorWhereFragment(String comparisonOperator, String qualifiedTableName = "");
-    String rightCursorWhereFragment(String comparisonOperator, String qualifiedTableName = "");
+    String lowerCursorWhereFragment(String comparisonOperator, String qualifiedTableName = "");
+    String upperCursorWhereFragment(String comparisonOperator, String qualifiedTableName = "");
     int bind(SQLiteStatement& query, int column) const;
     void bindWithNulls(SQLiteStatement& query, int baseColumn) const;
 

@@ -395,9 +395,9 @@ function onIndexGetSuccess()
     // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
     // the onsuccess conditions.
     var lname = event.source;
-    lname.openCursor({range: IDBKeyRange.leftBound("Doe", false), direction: IDBCursor.NEXT_NO_DUPLICATE});
+    lname.openCursor({range: IDBKeyRange.lowerBound("Doe", false), direction: IDBCursor.NEXT_NO_DUPLICATE});
     lname.openCursor({direction: IDBCursor.PREV_NO_DUPLICATE});
-    lname.openCursor({range: IDBKeyRange.rightBound("ZZZZ")});
+    lname.openCursor({range: IDBKeyRange.upperBound("ZZZZ")});
     lname.openCursor({range: IDBKeyRange.only("Doe"), direction: IDBCursor.PREV});
     lname.openCursor();
     lname.openKeyCursor();
@@ -411,7 +411,8 @@ function onIndexGetSuccess()
 function onAllDone()
 {
     log("Everything worked!");
-    layoutTestController.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 // The way setVersion is supposed to work:

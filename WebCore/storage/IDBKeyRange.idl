@@ -28,22 +28,16 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBKeyRange {
-        // Keep in sync with what's in the .h file.
-        const unsigned short SINGLE = 0;
-        const unsigned short LEFT_OPEN = 1;
-        const unsigned short RIGHT_OPEN = 2;
-        const unsigned short LEFT_BOUND = 4;
-        const unsigned short RIGHT_BOUND = 8;
-
-        readonly attribute IDBKey left;
-        readonly attribute IDBKey right;
-        readonly attribute unsigned short flags;
+        readonly attribute IDBKey lower;
+        readonly attribute IDBKey upper;
+        readonly attribute boolean lowerOpen;
+        readonly attribute boolean upperOpen;
 
         // FIXME: Make ClassMethod work for JSC as well.
         [ClassMethod] IDBKeyRange only(in IDBKey value);
-        [ClassMethod] IDBKeyRange leftBound(in IDBKey bound, in [Optional] boolean open);
-        [ClassMethod] IDBKeyRange rightBound(in IDBKey bound, in [Optional] boolean open);
-        [ClassMethod] IDBKeyRange bound(in IDBKey left, in IDBKey right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
+        [ClassMethod] IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open);
+        [ClassMethod] IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open);
+        [ClassMethod] IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] OptionsObject options);
     };
 
 }

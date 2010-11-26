@@ -3,11 +3,6 @@ Test IndexedDB's constants.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS webkitIDBKeyRange.SINGLE is 0
-PASS webkitIDBKeyRange.LEFT_OPEN is 1
-PASS webkitIDBKeyRange.RIGHT_OPEN is 2
-PASS webkitIDBKeyRange.LEFT_BOUND is 4
-PASS webkitIDBKeyRange.RIGHT_BOUND is 8
 PASS webkitIDBDatabaseException.UNKNOWN_ERR is 1
 PASS webkitIDBDatabaseException.NON_TRANSIENT_ERR is 1
 PASS webkitIDBDatabaseException.NOT_FOUND_ERR is 2

@@ -41,14 +41,22 @@ public:
     ~WebIDBKeyRange() { reset(); }
 
     WebIDBKeyRange(const WebIDBKeyRange& keyRange) { assign(keyRange); }
-    WebIDBKeyRange(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags) { assign(left, right, flags); }
+    WebIDBKeyRange(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen) { assign(lower, upper, lowerOpen, upperOpen); }
 
+    // FIXME: Remove next 3 methods after next roll.
+    WebIDBKeyRange(const WebIDBKey& lower, const WebIDBKey& upper, unsigned short flags) { assign(lower, upper, flags); }
+    WEBKIT_API void assign(const WebIDBKey& lower, const WebIDBKey& upper, unsigned short flags);
+    WEBKIT_API unsigned short flags() const;
     WEBKIT_API WebIDBKey left() const;
     WEBKIT_API WebIDBKey right() const;
-    WEBKIT_API unsigned short flags() const;
+
+    WEBKIT_API WebIDBKey lower() const;
+    WEBKIT_API WebIDBKey upper() const;
+    WEBKIT_API bool lowerOpen() const;
+    WEBKIT_API bool upperOpen() const;
 
     WEBKIT_API void assign(const WebIDBKeyRange&);
-    WEBKIT_API void assign(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags);
+    WEBKIT_API void assign(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen);
     WEBKIT_API void reset();
 
 #if WEBKIT_IMPLEMENTATION

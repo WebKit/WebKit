@@ -73,13 +73,13 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
                  + (objectCursor ? "ObjectStoreData.value " : "ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
                  + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id WHERE ";
 
-    bool leftBound = range && (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE);
-    bool rightBound = range && (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE);
+    bool lowerBound = range && range->lower();
+    bool upperBound = range && range->upper();
     
-    if (leftBound)
-        sql += range->left()->leftCursorWhereFragment(range->leftWhereClauseComparisonOperator(), "IndexData.");
-    if (rightBound)
-        sql += range->right()->rightCursorWhereFragment(range->rightWhereClauseComparisonOperator(), "IndexData.");
+    if (lowerBound)
+        sql += range->lower()->lowerCursorWhereFragment(range->lowerWhereClauseComparisonOperator(), "IndexData.");
+    if (upperBound)
+        sql += range->upper()->upperCursorWhereFragment(range->upperWhereClauseComparisonOperator(), "IndexData.");
     sql += "IndexData.indexId = ? ORDER BY ";
 
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(untypedDirection);
@@ -93,10 +93,10 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
     int indexColumn = 1;
-    if (leftBound)
-        indexColumn += range->left()->bind(*query, indexColumn);
-    if (rightBound)
-        indexColumn += range->right()->bind(*query, indexColumn);
+    if (lowerBound)
+        indexColumn += range->lower()->bind(*query, indexColumn);
+    if (upperBound)
+        indexColumn += range->upper()->bind(*query, indexColumn);
     query->bindInt64(indexColumn, index->id());
 
     if (query->step() != SQLResultRow) {

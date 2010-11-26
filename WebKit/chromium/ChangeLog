@@ -1,3 +1,25 @@
+2010-11-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Make IDBKeyRange match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=50105
+
+        Remove flags and instead add two booleans for being open.
+        Change left to lower and right to upper everywhere.
+
+        * public/WebIDBKeyRange.h:
+        (WebKit::WebIDBKeyRange::WebIDBKeyRange):
+        * src/WebIDBKeyRange.cpp:
+        (WebKit::WebIDBKeyRange::assign):
+        (WebKit::WebIDBKeyRange::left):
+        (WebKit::WebIDBKeyRange::right):
+        (WebKit::WebIDBKeyRange::lower):
+        (WebKit::WebIDBKeyRange::upper):
+        (WebKit::WebIDBKeyRange::lowerOpen):
+        (WebKit::WebIDBKeyRange::upperOpen):
+        (WebKit::WebIDBKeyRange::flags):
+
 2010-11-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
