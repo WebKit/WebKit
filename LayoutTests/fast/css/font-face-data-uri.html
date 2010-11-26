@@ -45,13 +45,13 @@ var trialCount = 0;
 function warmUpAndTest()
 {
     document.body.offsetTop; // Force layout.
-    if (trialCount > 10 || document.getElementById("ref0").offsetWidth == document.getElementById("test0").offsetWidth) {
+    if (trialCount > 20 || document.getElementById("ref0").offsetWidth == document.getElementById("test0").offsetWidth) {
         // Font has been loaded (or the wait limit has been exceeded). Now run the test.
         testMain();
         return;
     }
     trialCount++;
-    window.setTimeout(warmUpAndTest, 1);
+    window.setTimeout(warmUpAndTest, 10);
 }
 
 if (window.layoutTestController)
