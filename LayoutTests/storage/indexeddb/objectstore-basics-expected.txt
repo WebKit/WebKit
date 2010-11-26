@@ -101,6 +101,10 @@ Try to insert data with a Date key:
 store.add({x: 'foo'}, new Date())
 PASS Exception thrown
 PASS code is DOMException.TYPE_MISMATCH_ERR
+Try to insert a value not handled by structured clone:
+store.add({x: 'bar', y: document.getElementById('console')}, 'bar')
+PASS Exception thrown
+PASS code is DOMException.NOT_SUPPORTED_ERR
 Try to insert data where key path yields a Date key:
 store.add({x: new Date()}, 'foo')
 PASS Adding data where key path yielded Date key resulted in error.

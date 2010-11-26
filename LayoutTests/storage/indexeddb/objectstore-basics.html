@@ -155,6 +155,17 @@ function addData()
         shouldBe("code", "DOMException.TYPE_MISMATCH_ERR");
     }
 
+    debug("Try to insert a value not handled by structured clone:");
+    try {
+        debug("store.add({x: 'bar', y: document.getElementById('console')}, 'bar')");
+        store.add({x: 'bar', y: document.getElementById('console')}, 'bar');
+        testFailed("Passing a DOM node as value should have thrown.");
+    } catch (err) {
+        testPassed("Exception thrown");
+        code = err.code;
+        shouldBe("code", "DOMException.NOT_SUPPORTED_ERR");
+    }
+
     // FIXME: This should work in the future.
     debug("Try to insert data where key path yields a Date key:");
     result = evalAndLog("store.add({x: new Date()}, 'foo')");
