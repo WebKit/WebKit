@@ -5128,11 +5128,11 @@ int CSSParser::lex(void* yylvalWithoutType)
         length--;
     case DEGS:
     case RADS:
-    case KHERZ:
+    case KHERTZ:
     case REMS:
         length--;
     case MSECS:
-    case HERZ:
+    case HERTZ:
     case EMS:
     case EXS:
     case PXS:
