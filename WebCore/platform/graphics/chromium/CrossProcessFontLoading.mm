@@ -181,11 +181,10 @@ MemoryActivatedFont::~MemoryActivatedFont()
 //   that was picked in the end.  The caller is responsible for calling
 //   CFRelease() on this parameter when done with it.
 // * fontID - on output, the ID corresponding to nsFont.
-void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFont, CGFontRef& cgFont, ATSUFontID& fontID)
+void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFont, CGFontRef& cgFont)
 {
     outNSFont = nsFont;
     cgFont = CTFontCopyGraphicsFont(toCTFontRef(outNSFont), 0);
-    MemoryActivatedFont* memFont = 0;
     if (OutOfProcessFontLoadingEnabled() && outNSFont && cgFont && isLastResortFont(cgFont)) {
         // Release old CGFontRef since it points at the LastResort font which we don't want.
         CFRelease(cgFont);
@@ -205,12 +204,6 @@ void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFo
             outNSFont = [NSFont fontWithName:@"Times" size:fontSize];
             cgFont = CTFontCopyGraphicsFont(toCTFontRef(outNSFont), 0);
         }
-    }
-    
-    if (memFont) {
-        fontID = m_inMemoryFont->atsFontRef();
-    } else {
-        fontID = CTFontGetPlatformFont(toCTFontRef(outNSFont), 0);
     }
 }
 

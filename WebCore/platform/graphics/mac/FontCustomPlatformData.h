@@ -37,9 +37,12 @@ class FontPlatformData;
 class SharedBuffer;
 
 struct FontCustomPlatformData : Noncopyable {
-    FontCustomPlatformData(ATSFontContainerRef container, ATSFontRef atsFont, CGFontRef cgFont)
-    : m_atsContainer(container), m_atsFont(atsFont), m_cgFont(cgFont)
-    {}
+    FontCustomPlatformData(ATSFontContainerRef container, CGFontRef cgFont)
+        : m_atsContainer(container)
+        , m_cgFont(cgFont)
+    {
+    }
+
     ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, FontRenderingMode = NormalRenderingMode);
@@ -47,11 +50,10 @@ struct FontCustomPlatformData : Noncopyable {
     static bool supportsFormat(const String&);
 
     ATSFontContainerRef m_atsContainer;
-    ATSFontRef m_atsFont;
     CGFontRef m_cgFont;
 };
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer);
+FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);
 
 }
 

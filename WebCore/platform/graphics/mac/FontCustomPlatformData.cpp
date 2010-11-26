@@ -40,7 +40,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontRenderingMode)
 {
-    return FontPlatformData(m_cgFont, (ATSUFontID)m_atsFont, size, bold, italic, orientation);
+    return FontPlatformData(m_cgFont, size, bold, italic, orientation);
 }
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
@@ -66,7 +66,6 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 #endif
 
     ATSFontContainerRef containerRef = 0;
-    ATSFontRef fontRef = 0;
 
     RetainPtr<CGFontRef> cgFontRef;
 
@@ -93,6 +92,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
         return 0;
     }
     
+    ATSFontRef fontRef = 0;
     ATSFontFindFromContainer(containerRef, kATSOptionFlagsDefault, 1, &fontRef, NULL);
     if (!fontRef) {
         ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
@@ -111,7 +111,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
 #endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
-    return new FontCustomPlatformData(containerRef, fontRef, cgFontRef.releaseRef());
+    return new FontCustomPlatformData(containerRef, cgFontRef.releaseRef());
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

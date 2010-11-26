@@ -63,7 +63,6 @@ class FontPlatformData {
         : m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
         , m_orientation(orientation)
-        , m_atsuFontID(0)
         , m_size(size)
         , m_font(0)
 #ifdef BUILDING_ON_TIGER
@@ -75,11 +74,10 @@ class FontPlatformData {
 
     FontPlatformData(NSFont *nsFont, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal);
     
-    FontPlatformData(CGFontRef cgFont, ATSUFontID fontID, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
+    FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
         : m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
         , m_orientation(orientation)
-        , m_atsuFontID(fontID)
         , m_size(size)
         , m_font(0)
         , m_cgFont(cgFont)
@@ -103,7 +101,6 @@ class FontPlatformData {
     bool m_syntheticOblique;
     FontOrientation m_orientation;
 
-    ATSUFontID m_atsuFontID;
     float m_size;
 
     unsigned hash() const
@@ -118,7 +115,7 @@ class FontPlatformData {
     bool operator==(const FontPlatformData& other) const
     { 
         return m_font == other.m_font && m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique && 
-               m_cgFont == other.m_cgFont && m_size == other.m_size && m_atsuFontID == other.m_atsuFontID && m_orientation == other.m_orientation;
+               m_cgFont == other.m_cgFont && m_size == other.m_size && m_orientation == other.m_orientation;
     }
 
     NSFont *font() const { return m_font; }
@@ -149,8 +146,7 @@ private:
     // * outNSFont - The font that was actually loaded, for the Chromium port this may be different than nsFont.
     // The caller is responsible for calling CFRelease() on this parameter when done with it.
     // * cgFont - CGFontRef representing the input font at the specified point size.
-    // * fontID - ID of loaded font.
-    void loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFont, CGFontRef& cgFont, ATSUFontID& fontID);
+    void loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFont, CGFontRef& cgFont);
 
     NSFont *m_font;
 

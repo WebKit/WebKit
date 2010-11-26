@@ -48,8 +48,8 @@ void SimpleFontData::checkShapesArabic() const
     ASSERT(!m_checkedShapesArabic);
 
     m_checkedShapesArabic = true;
-    
-    ATSUFontID fontID = m_platformData.m_atsuFontID;
+
+    ATSUFontID fontID = m_platformData.ctFont() ? CTFontGetPlatformFont(m_platformData.ctFont(), 0) : 0;
     if (!fontID) {
         LOG_ERROR("unable to get ATSUFontID for %@", m_platformData.font());
         return;

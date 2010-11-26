@@ -31,15 +31,13 @@
 namespace WebCore {
 
 #if PLATFORM(MAC)
-void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFontRef& cgFont, ATSUFontID& fontID)
+void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFontRef& cgFont)
 {
     outNSFont = nsFont;
 #ifndef BUILDING_ON_TIGER
     cgFont = CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0);
-    fontID = CTFontGetPlatformFont(toCTFontRef(nsFont), 0);
 #else
     cgFont = wkGetCGFontFromNSFont(nsFont);
-    fontID = wkGetNSFontATSUFontId(nsFont);
 #endif
 }
 #endif  // PLATFORM(MAC)
@@ -60,7 +58,7 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBol
     ASSERT_ARG(nsFont, nsFont);
 
     CGFontRef cgFont = 0;
-    loadFont(nsFont, size, m_font, cgFont, m_atsuFontID);
+    loadFont(nsFont, size, m_font, cgFont);
 
     m_orientation = orientation;
 
@@ -82,7 +80,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;
     m_cgFont = f.m_cgFont;
-    m_atsuFontID = f.m_atsuFontID;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
     m_orientation = f.m_orientation;
     m_CTFont = f.m_CTFont;
@@ -103,7 +100,6 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;
     m_cgFont = f.m_cgFont;
-    m_atsuFontID = f.m_atsuFontID;
     if (m_font == f.m_font)
         return *this;
     if (f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1))
@@ -136,7 +132,7 @@ void FontPlatformData::setFont(NSFont *font)
     
     CGFontRef cgFont = 0;
     NSFont* loadedFont = 0;
-    loadFont(m_font, m_size, loadedFont, cgFont, m_atsuFontID);
+    loadFont(m_font, m_size, loadedFont, cgFont);
     
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     // If loadFont replaced m_font with a fallback font, then release the
