@@ -141,9 +141,11 @@ WebInspector.ResourceManager.prototype = {
         var resource = this._resourcesById[identifier];
         if (!resource)
             return;
-        this._updateResourceWithResponse(resource, response);
-        resource.type = WebInspector.Resource.Type[resourceType];
+
         resource.responseReceivedTime = time;
+        resource.type = WebInspector.Resource.Type[resourceType];
+
+        this._updateResourceWithResponse(resource, response);
 
         WebInspector.panels.network.refreshResource(resource);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
@@ -198,8 +200,8 @@ WebInspector.ResourceManager.prototype = {
         if (!resource)
             return;
 
-        resource.finished = true;
         resource.endTime = finishTime;
+        resource.finished = true;
 
         WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceFinished(resource);

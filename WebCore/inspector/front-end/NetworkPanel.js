@@ -72,6 +72,8 @@ WebInspector.NetworkPanel = function()
         this._setLargerResources(WebInspector.settings.resourcesLargeRows);
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+    // Enable faster hint.
+    this._popoverHelper.setTimeout(100);
 
     this.calculator = new WebInspector.NetworkTransferTimeCalculator();
     this._filter(this._filterAllElement, false);
@@ -903,6 +905,8 @@ WebInspector.NetworkPanel.prototype = {
             this.sidebarElement.style.right = 0;
             this.sidebarElement.style.removeProperty("width");
             this._summaryBarElement.style.removeProperty("width");
+            if (this._dataGrid.selectedNode)
+                this._dataGrid.selectedNode.selected = false;
         }
 
         if (this._briefGrid) {
@@ -1272,16 +1276,19 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._sizeCell = this._createDivInTD("size");
         this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
+        this._nameCell.addEventListener("click", this.select.bind(this), false);
     },
 
     select: function()
     {
-        WebInspector.DataGridNode.prototype.select.apply(this, arguments);
         this._panel._showResource(this._resource);
+        WebInspector.DataGridNode.prototype.select.apply(this, arguments);
     },
 
     get selectable()
     {
+        if (!this._panel._viewingResourceMode)
+            return false;
         if (!this._panel._hiddenCategories.all)
             return true;
         if (this._panel._hiddenCategories[this._resource.category.name])
@@ -1303,7 +1310,6 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._graphElement = document.createElement("div");
         this._graphElement.className = "network-graph-side";
-        this._graphElement.addEventListener("mouseover", this._refreshLabelPositions.bind(this), false);
 
         this._barAreaElement = document.createElement("div");
         //    this._barAreaElement.className = "network-graph-bar-area hidden";
@@ -1319,6 +1325,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._barRightElement.className = "network-graph-bar";
         this._barAreaElement.appendChild(this._barRightElement);
 
+
         this._labelLeftElement = document.createElement("div");
         this._labelLeftElement.className = "network-graph-label waiting";
         this._barAreaElement.appendChild(this._labelLeftElement);
@@ -1326,6 +1333,8 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._labelRightElement = document.createElement("div");
         this._labelRightElement.className = "network-graph-label";
         this._barAreaElement.appendChild(this._labelRightElement);
+
+        this._graphElement.addEventListener("mouseover", this._refreshLabelPositions.bind(this), false);
 
         this._timelineCell = document.createElement("td");
         this._timelineCell.className = "timeline-column";
@@ -1469,8 +1478,6 @@ WebInspector.NetworkDataGridNode.prototype = {
     refreshGraph: function(calculator)
     {
         var percentages = calculator.computeBarGraphPercentages(this._resource);
-        var labels = calculator.computeBarGraphLabels(this._resource);
-
         this._percentages = percentages;
 
         this._barAreaElement.removeStyleClass("hidden");
@@ -1486,6 +1493,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._barLeftElement.style.setProperty("right", (100 - percentages.end) + "%");
         this._barRightElement.style.setProperty("left", percentages.middle + "%");
 
+        var labels = calculator.computeBarGraphLabels(this._resource);
         this._labelLeftElement.textContent = labels.left;
         this._labelRightElement.textContent = labels.right;
 

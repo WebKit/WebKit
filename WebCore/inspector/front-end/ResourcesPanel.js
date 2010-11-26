@@ -1023,8 +1023,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _ondragstart: function(event)
     {
-        event.dataTransfer.setData("text/plain", this._resource.url);
-        event.dataTransfer.setData("text/uri-list", this._resource.url + "\r\n");
+        event.dataTransfer.setData("text/plain", this._resource.content);
         event.dataTransfer.effectAllowed = "copy";
         return true;
     },

@@ -26,7 +26,6 @@
     line-height: 17px;
     height: 37px;
     border-right: 1px solid rgb(210, 210, 210);
-    -webkit-user-select: none;
     vertical-align: middle;
 }
 
@@ -72,6 +71,11 @@
 
 .network-sidebar .data-grid td.name-column {
     font-weight: bold;
+    cursor: pointer;
+}
+
+.network.panel:not(.viewing-resource) .network-sidebar td.name-column:hover {
+    text-decoration: underline;
 }
 
 .network-sidebar .data-grid td.method-column,
@@ -366,7 +370,7 @@
 
 .network-timing-row {
     position: relative;
-    height: 12px;
+    height: 16px;
 }
 
 .network-timing-bar {
@@ -374,10 +378,14 @@
     background-color: red;
     border-left: 1px solid red;
     opacity: 0.4;
+    top: 0;
+    bottom: 0;
 }
 
 .network-timing-bar-title {
     position: absolute;
+    color: black;
+    top: 1px;
 }
 
 .network-dim-cell {
@@ -759,7 +767,7 @@
     padding: 6px;
     font-weight: bold;
     font-size: 11px;
-    color: rgb(30, 30, 30);
+    color: rgb(30%, 30%, 30%);
 }
 
 .resource-timing-view table {

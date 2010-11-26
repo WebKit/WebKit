@@ -163,11 +163,6 @@ WebInspector.Resource.prototype = {
 
     get responseReceivedTime()
     {
-        if (this.timing && this.timing.requestTime) {
-            // Calculate responseReceivedTime from timing data for better accuracy.
-            // Timing's requestTime is a baseline in seconds, rest of the numbers there are ticks in millis.
-            return this.timing.requestTime + this.timing.receiveHeadersEnd / 1000.0;
-        }
         return this._responseReceivedTime || -1;
     },
 
@@ -183,13 +178,15 @@ WebInspector.Resource.prototype = {
 
     set endTime(x)
     {
-        // In case of fast load (or in case of cached resources), endTime on network stack
-        // can be less then m_responseReceivedTime measured in WebCore. Normalize it here,
-        // prefer actualEndTime to m_responseReceivedTime.
-        if (x < this.responseReceivedTime)
-            this.responseReceivedTime = x;
-
-        this._endTime = x;
+        if (this.timing && this.timing.requestTime) {
+            // Check against accurate responseReceivedTime.
+            this._endTime = Math.max(x, this.responseReceivedTime);
+        } else {
+            // Prefer endTime since it might be from the network stack.
+            this._endTime = x;
+            if (this._responseReceivedTime > x)
+                this._responseReceivedTime = x;
+        }
     },
 
     get duration()
@@ -300,6 +297,11 @@ WebInspector.Resource.prototype = {
     set timing(x)
     {
         if (!this._cached) {
+            // Take startTime and responseReceivedTime from timing data for better accuracy.
+            // Timing's requestTime is a baseline in seconds, rest of the numbers there are ticks in millis.
+            this._startTime = x.requestTime;
+            this._responseReceivedTime = x.requestTime + x.receiveHeadersEnd / 1000.0;
+
             this._timing = x;
             this.dispatchEventToListeners("timing changed");
         }
