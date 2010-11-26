@@ -586,10 +586,11 @@ static bool startHttp(ResourceHandle* handle)
 
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
+    else
+        g_signal_connect(soupMessage, "content-sniffed", G_CALLBACK(contentSniffedCallback), handle);
 
     g_signal_connect(soupMessage, "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(soupMessage, "got-headers", G_CALLBACK(gotHeadersCallback), handle);
-    g_signal_connect(soupMessage, "content-sniffed", G_CALLBACK(contentSniffedCallback), handle);
     d->m_gotChunkHandler = g_signal_connect(soupMessage, "got-chunk", G_CALLBACK(gotChunkCallback), handle);
 
 #ifdef HAVE_LIBSOUP_2_29_90

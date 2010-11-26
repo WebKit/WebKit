@@ -151,6 +151,13 @@ conditional_get_ready_cb (SoupSession *session, SoupMessage *msg, gpointer user_
 			g_simple_async_result_set_op_res_gpointer (simple, httpstream, g_object_unref);
 
 			soup_message_got_headers (helper->original);
+
+			/* FIXME: Uncomment this when this becomes part of libsoup
+			 * if (!soup_message_disables_feature(helper->original, SOUP_TYPE_CONTENT_SNIFFER)) {
+			 * 	const gchar *content_type = soup_message_headers_get_content_type (msg->response_headers, NULL);
+			 * 	soup_message_content_sniffed (helper->original, content_type, NULL);
+			 * }
+			 */
 			content_type = soup_message_headers_get_content_type (msg->response_headers, NULL);
 			soup_message_content_sniffed (helper->original, content_type, NULL);
 
@@ -215,6 +222,13 @@ send_async_cb (gpointer data)
 
 		/* Issue signals  */
 		soup_message_got_headers (helper->http->priv->msg);
+
+		/* FIXME: Uncomment this when this becomes part of libsoup
+		 * if (!soup_message_disables_feature(helper->http->priv->msg, SOUP_TYPE_CONTENT_SNIFFER)) {
+		 *	const gchar *content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
+		 *	soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
+		 * }
+		 */
 		content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
 		soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
 
@@ -225,6 +239,7 @@ send_async_cb (gpointer data)
 		g_object_unref (simple);
 	}
 
+	g_object_unref (helper->http);
 	g_slice_free (SendAsyncHelper, helper);
 
 	return FALSE;
@@ -256,7 +271,7 @@ webkit_soup_request_http_send_async (WebKitSoupRequest          *request,
 			   the signals must be also emitted
 			   asynchronously */
 			SendAsyncHelper *helper = g_slice_new (SendAsyncHelper);
-			helper->http = http;
+			helper->http = g_object_ref (http);
 			helper->callback = callback;
 			helper->user_data = user_data;
 			g_timeout_add (0, send_async_cb, helper);
