@@ -57,8 +57,8 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, con
     RefPtr<IDBKeyRange> keyRange = options.getKeyKeyRange("range");
 
     // Converted to an unsigned short.
-    int64_t direction = defaultDirection;
-    options.getKeyInteger("direction", direction);
+    int32_t direction = defaultDirection;
+    options.getKeyInt32("direction", direction);
     if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
         ec = IDBDatabaseException::CONSTRAINT_ERR;
@@ -77,8 +77,8 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     RefPtr<IDBKeyRange> keyRange = options.getKeyKeyRange("range");
 
     // Converted to an unsigned short.
-    int64_t direction = defaultDirection;
-    options.getKeyInteger("direction", direction);
+    int32_t direction = defaultDirection;
+    options.getKeyInt32("direction", direction);
     if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
         ec = IDBDatabaseException::CONSTRAINT_ERR;
