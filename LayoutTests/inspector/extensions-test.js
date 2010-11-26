@@ -48,13 +48,15 @@ function extensionOutput(message)
 }
 InspectorTest.dispatchOnMessage("output", extensionOutput, true);
 
-function dumpSidebarContent()
+function dumpSidebarContent(message, port)
 {
     var sidebarPanes = WebInspector.panels.elements.sidebarPanes;
     // the sidebar of interest is presumed to always be last.
     var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
-    InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
-    return true;
+    InspectorTest.runAfterPendingDispatches(function() {
+        InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
+        port.postMessage("");
+    });
 }
 InspectorTest.dispatchOnMessage("dump-sidebar-content", dumpSidebarContent, true);
 
