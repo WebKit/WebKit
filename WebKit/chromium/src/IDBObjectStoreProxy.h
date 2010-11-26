@@ -48,11 +48,11 @@ public:
 
     virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void remove(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void deleteFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
     PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*, ExceptionCode&);
     PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&);
-    void removeIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
+    void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 

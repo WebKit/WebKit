@@ -210,7 +210,7 @@ PASS event.target.readyState is event.target.DONE
 
 PASS event.result.x is "value"
 store = event.source
-store.remove('key')
+store.delete('key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -232,7 +232,7 @@ PASS event.result is null
 store = event.source
 Passing an invalid key into store.get().
 PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-Passing an invalid key into store.remove().
+Passing an invalid key into store.delete().
 PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
 Passing an invalid key into store.add().
 PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17

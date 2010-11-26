@@ -34,7 +34,7 @@ module storage {
 
         IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
-        void removeObjectStore(in DOMString name)
+        void deleteObjectStore(in DOMString name)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest setVersion(in DOMString version)
             raises (IDBDatabaseException);

@@ -88,12 +88,12 @@ void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPt
     m_webIDBObjectStore->put(value, key, addOnly, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreProxy::remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreProxy::deleteFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBObjectStore->remove(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
+    m_webIDBObjectStore->deleteFunction(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -115,12 +115,12 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& na
     return IDBIndexBackendProxy::create(index);
 }
 
-void IDBObjectStoreProxy::removeIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreProxy::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBObjectStore->removeIndex(name, *transactionProxy->getWebIDBTransaction(), ec);
+    m_webIDBObjectStore->deleteIndex(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
 void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)

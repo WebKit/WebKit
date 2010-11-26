@@ -94,10 +94,10 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::remove(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->remove(key, request, m_transaction.get(), ec);
+    m_objectStore->deleteFunction(key, request, m_transaction.get(), ec);
     if (ec)
         return 0;
     return request;
@@ -124,9 +124,9 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     return IDBIndex::create(index.release(), m_transaction.get());
 }
 
-void IDBObjectStore::removeIndex(const String& name, ExceptionCode& ec)
+void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 {
-    m_objectStore->removeIndex(name, m_transaction.get(), ec);
+    m_objectStore->deleteIndex(name, m_transaction.get(), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)

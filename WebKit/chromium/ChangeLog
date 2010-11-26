@@ -1,3 +1,32 @@
+2010-11-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBDatabase and IDBObjectStore remove* methods should be renamed to delete*
+        https://bugs.webkit.org/show_bug.cgi?id=50113
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::deleteObjectStore):
+        (WebKit::WebIDBDatabase::removeObjectStore):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::remove):
+        (WebKit::WebIDBObjectStore::deleteFunction):
+        (WebKit::WebIDBObjectStore::deleteIndex):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::deleteObjectStore):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::deleteFunction):
+        (WebCore::IDBObjectStoreProxy::deleteIndex):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::deleteObjectStore):
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::deleteFunction):
+        (WebKit::WebIDBObjectStoreImpl::deleteIndex):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-11-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

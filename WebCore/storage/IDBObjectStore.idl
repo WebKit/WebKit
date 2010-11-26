@@ -36,7 +36,7 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] IDBKey key)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest remove(in IDBKey key)
+        [CallWith=ScriptExecutionContext, ImplementationFunction=deleteFunction] IDBRequest delete(in IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
             raises (IDBDatabaseException);
@@ -46,7 +46,7 @@ module storage {
             raises (IDBDatabaseException);
         IDBIndex index(in DOMString name)
             raises (IDBDatabaseException);
-        void removeIndex(in DOMString name)
+        void deleteIndex(in DOMString name)
             raises (IDBDatabaseException);
     };
 }

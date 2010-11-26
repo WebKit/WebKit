@@ -64,7 +64,7 @@ public:
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, ExceptionCode& ec) { return transaction(context, OptionsObject(), ec); }
 
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const OptionsObject&, ExceptionCode&);
-    void removeObjectStore(const String& name, ExceptionCode&);
+    void deleteObjectStore(const String& name, ExceptionCode&);
     PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const OptionsObject&, ExceptionCode&);
     void close();

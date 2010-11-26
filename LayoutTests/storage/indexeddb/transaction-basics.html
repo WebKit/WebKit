@@ -61,8 +61,8 @@ function addRemoveIDBObjects()
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
     var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
 
-    evalAndLog("db.removeObjectStore('storeFail')");
-    evalAndLog("store.removeIndex('indexFail')");
+    evalAndLog("db.deleteObjectStore('storeFail')");
+    evalAndLog("store.deleteIndex('indexFail')");
 
     trans.abort();
 }
@@ -86,8 +86,8 @@ function addRemoveAddIDBObjects()
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
     var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
 
-    evalAndLog("db.removeObjectStore('storeFail')");
-    evalAndLog("store.removeIndex('indexFail')");
+    evalAndLog("db.deleteObjectStore('storeFail')");
+    evalAndLog("store.deleteIndex('indexFail')");
 
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
     var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
@@ -160,8 +160,8 @@ function removeIDBObjects()
     trans.oncomplete = unexpectedCompleteCallback;
 
     var store = evalAndLog("store = trans.objectStore('storeFail')");
-    evalAndLog("store.removeIndex('indexFail')");
-    evalAndLog("db.removeObjectStore('storeFail')");
+    evalAndLog("store.deleteIndex('indexFail')");
+    evalAndLog("db.deleteObjectStore('storeFail')");
 
     trans.abort();
 }

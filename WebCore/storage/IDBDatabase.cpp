@@ -87,14 +87,14 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     return IDBObjectStore::create(objectStore.release(), m_setVersionTransaction.get());
 }
 
-void IDBDatabase::removeObjectStore(const String& name, ExceptionCode& ec)
+void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 {
     if (!m_setVersionTransaction) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
 
-    m_backend->removeObjectStore(name, m_setVersionTransaction.get(), ec);
+    m_backend->deleteObjectStore(name, m_setVersionTransaction.get(), ec);
 }
 
 PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)

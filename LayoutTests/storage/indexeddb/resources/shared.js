@@ -103,7 +103,7 @@ function evalAndExpectException(cmd, expected)
 function deleteAllObjectStores(db, onfinished)
 {
     while (db.objectStoreNames.length)
-        db.removeObjectStore(db.objectStoreNames.item(0));
+        db.deleteObjectStore(db.objectStoreNames.item(0));
 
     debug("Deleted all object stores.");
     onfinished();

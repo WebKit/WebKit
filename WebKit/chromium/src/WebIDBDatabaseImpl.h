@@ -50,7 +50,7 @@ public:
     virtual WebDOMStringList objectStoreNames() const;
 
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
-    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
+    virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&);
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&);
     virtual void close();

@@ -182,7 +182,7 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
     if (!objectStore) {
@@ -191,7 +191,7 @@ void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactio
     }
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreInternal, database, objectStore, transaction),
+    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::deleteObjectStoreInternal, database, objectStore, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
@@ -199,7 +199,7 @@ void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactio
     m_objectStores.remove(name);
 }
 
-void IDBDatabaseBackendImpl::removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     doDelete(database->sqliteDatabase(), "DELETE FROM ObjectStores WHERE id = ?", objectStore->id());
     doDelete(database->sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStore->id());

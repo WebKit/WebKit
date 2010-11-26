@@ -74,9 +74,9 @@ WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(const WebString& name, 
     return new WebIDBObjectStoreImpl(objectStore);
 }
 
-void WebIDBDatabaseImpl::removeObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+void WebIDBDatabaseImpl::deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_databaseBackend->removeObjectStore(name, transaction.getIDBTransactionBackendInterface(), ec);
+    m_databaseBackend->deleteObjectStore(name, transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode& ec)

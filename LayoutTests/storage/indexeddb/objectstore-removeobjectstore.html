@@ -10,7 +10,7 @@
 <div id="console"></div>
 <script>
 
-description("Test IndexedDB's webkitIDBObjectStore.removeObjectStore().");
+description("Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
@@ -76,18 +76,18 @@ function addIndex()
 
     result = evalAndLog("db.setVersion('new version')");
     verifyResult(result);
-    result.onsuccess = removeObjectStore;
+    result.onsuccess = deleteObjectStore;
     result.onerror = unexpectedErrorCallback;
 }
 
-function removeObjectStore()
+function deleteObjectStore()
 {
     verifySuccessEvent(event);
     window.trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    evalAndLog("db.removeObjectStore('storeName')");
+    evalAndLog("db.deleteObjectStore('storeName')");
     createObjectStoreAgain();
 }
 

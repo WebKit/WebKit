@@ -275,16 +275,16 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     callbacks->onSuccess(key.get());
 }
 
-void IDBObjectStoreBackendImpl::remove(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::removeInternal, objectStore, key, callbacks)))
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteInternal, objectStore, key, callbacks)))
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-void IDBObjectStoreBackendImpl::removeInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
 {
     SQLiteStatement query(objectStore->sqliteDatabase(), "DELETE FROM ObjectStoreData " + whereClause(key.get()));
     bool ok = query.prepare() == SQLResultOk;
@@ -365,7 +365,7 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBObjectStoreBackendImpl::removeIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
     if (!index) {
@@ -375,7 +375,7 @@ void IDBObjectStoreBackendImpl::removeIndex(const String& name, IDBTransactionBa
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexInternal, objectStore, index, transactionPtr),
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal, objectStore, index, transactionPtr),
                                    createCallbackTask(&IDBObjectStoreBackendImpl::addIndexToMap, objectStore, index))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
@@ -383,7 +383,7 @@ void IDBObjectStoreBackendImpl::removeIndex(const String& name, IDBTransactionBa
     m_indexes.remove(name);
 }
 
-void IDBObjectStoreBackendImpl::removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     doDelete(objectStore->sqliteDatabase(), "DELETE FROM Indexes WHERE id = ?", index->id());
     doDelete(objectStore->sqliteDatabase(), "DELETE FROM IndexData WHERE indexId = ?", index->id());

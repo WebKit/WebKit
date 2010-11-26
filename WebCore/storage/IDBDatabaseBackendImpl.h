@@ -59,7 +59,7 @@ public:
     virtual PassRefPtr<DOMStringList> objectStoreNames() const;
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void removeObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* objectStoreNames, unsigned short mode, unsigned long timeout, ExceptionCode&);
     virtual void close();
@@ -73,7 +73,7 @@ private:
     void loadObjectStores();
 
     static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
     static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
 
     // These are used as setVersion transaction abort tasks.
