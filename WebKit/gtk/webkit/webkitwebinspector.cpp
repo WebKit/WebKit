@@ -32,6 +32,7 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "webkit/WebKitDOMNodePrivate.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 
@@ -496,6 +497,23 @@ void webkit_web_inspector_show(WebKitWebInspector* webInspector)
         return;
 
     priv->page->inspectorController()->show();
+}
+
+/**
+ * webkit_web_inspector_inspect_node:
+ * @web_inspector: the #WebKitWebInspector that will do the inspection
+ * @node: the #WebKitDOMNode to inspect
+ *
+ * Causes the Web Inspector to inspect the given node.
+ *
+ * Since: 1.3.7
+ */
+void webkit_web_inspector_inspect_node(WebKitWebInspector* webInspector, WebKitDOMNode* node)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_INSPECTOR(webInspector));
+    g_return_if_fail(WEBKIT_DOM_IS_NODE(node));
+
+    webInspector->priv->page->inspectorController()->inspect(core(node));
 }
 
 /**
