@@ -3173,9 +3173,6 @@ BUG_JPARENT WIN DEBUG : inspector/styles-disable-then-delete.html = PASS TIMEOUT
 
 BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
 
-// Test added with http://trac.webkit.org/changeset/72504 needs better expectations for Chromium.
-BUGWK4989 WIN LINUX : fast/css/font-face-data-uri.html = TEXT
-
 // Disable font-size-zero test for mac platform. The problem was introduced at r72567.
 BUG49967 MAC : fast/text/font-size-zero.html = TEXT
 
