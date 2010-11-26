@@ -26,8 +26,11 @@
 #include "config.h"
 #include "IDBObjectStore.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
 #include "IDBAny.h"
+#include "IDBDatabaseException.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
@@ -35,9 +38,9 @@
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
+
+static const unsigned short defaultDirection = IDBCursor::NEXT;
 
 IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransactionBackendInterface* transaction)
     : m_objectStore(idbObjectStore)
@@ -100,8 +103,11 @@ PassRefPtr<IDBRequest> IDBObjectStore::remove(ScriptExecutionContext* context, P
     return request;
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, bool unique, ExceptionCode& ec)
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const OptionsObject& options, ExceptionCode& ec)
 {
+    bool unique = false;
+    options.getKeyBool("unique", unique);
+
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, m_transaction.get(), ec);
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
@@ -123,8 +129,19 @@ void IDBObjectStore::removeIndex(const String& name, ExceptionCode& ec)
     m_objectStore->removeIndex(name, m_transaction.get(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)
 {
+    RefPtr<IDBKeyRange> range = options.getKeyKeyRange("range");
+
+    // Converted to an unsigned short.
+    int64_t direction = defaultDirection;
+    options.getKeyInteger("direction", direction);
+    if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
+        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
+        ec = IDBDatabaseException::CONSTRAINT_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_objectStore->openCursor(range, direction, request, m_transaction.get(), ec);
     if (ec)

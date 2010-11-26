@@ -73,7 +73,7 @@ function createObjectStore()
 function createIndex()
 {
     debug("createIndex():");
-    var index = evalAndLog("index = store.createIndex('indexName', 'x', true)"); // true == unique requirement.
+    var index = evalAndLog("index = store.createIndex('indexName', 'x', {unique: true})"); // true == unique requirement.
     shouldBeTrue("index !== null");
     shouldBeTrue("store.indexNames.contains('indexName')");
     index = evalAndLog("index = store.index('indexName')");

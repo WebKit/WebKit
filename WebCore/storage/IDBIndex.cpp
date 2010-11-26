@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorBackendInterface.h"
+#include "IDBDatabaseException.h"
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
@@ -36,6 +37,8 @@
 #include "IDBTransactionBackendInterface.h"
 
 namespace WebCore {
+
+static const unsigned short defaultDirection = IDBCursor::NEXT;
 
 IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend, IDBTransactionBackendInterface* transaction)
     : m_backend(backend)
@@ -49,8 +52,19 @@ IDBIndex::~IDBIndex()
 {
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)
 {
+    RefPtr<IDBKeyRange> keyRange = options.getKeyKeyRange("range");
+
+    // Converted to an unsigned short.
+    int64_t direction = defaultDirection;
+    options.getKeyInteger("direction", direction);
+    if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
+        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
+        ec = IDBDatabaseException::CONSTRAINT_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->openCursor(keyRange, direction, request, m_transaction.get(), ec);
     if (ec)
@@ -58,8 +72,19 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)
 {
+    RefPtr<IDBKeyRange> keyRange = options.getKeyKeyRange("range");
+
+    // Converted to an unsigned short.
+    int64_t direction = defaultDirection;
+    options.getKeyInteger("direction", direction);
+    if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
+        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
+        ec = IDBDatabaseException::CONSTRAINT_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->openKeyCursor(keyRange, direction, request, m_transaction.get(), ec);
     if (ec)

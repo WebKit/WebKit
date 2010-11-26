@@ -30,6 +30,11 @@
 #include "V8Binding.h"
 #include <limits>
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBKeyRange.h"
+#include "V8IDBKeyRange.h"
+#endif
+
 namespace WebCore {
 
 OptionsObject::OptionsObject()
@@ -115,6 +120,22 @@ PassRefPtr<DOMStringList> OptionsObject::getKeyDOMStringList(const String& key) 
     }
     return ret.release();
 }
+
+#if ENABLE(INDEXED_DATABASE)
+
+PassRefPtr<IDBKeyRange> OptionsObject::getKeyKeyRange(const String& key) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return 0;
+
+    if (!V8IDBKeyRange::HasInstance(v8Value))
+        return 0;
+
+    return V8IDBKeyRange::toNative(v8::Handle<v8::Object>::Cast(v8Value));
+}
+
+#endif
 
 bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
 {

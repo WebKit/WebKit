@@ -54,7 +54,7 @@ Ask for an index that doesn't exist:
 index = store.index('asdf')
 PASS Exception thrown.
 createIndex():
-index = store.createIndex('indexName', 'x', true)
+index = store.createIndex('indexName', 'x', {unique: true})
 PASS index !== null is true
 PASS store.indexNames.contains('indexName') is true
 index = store.index('indexName')

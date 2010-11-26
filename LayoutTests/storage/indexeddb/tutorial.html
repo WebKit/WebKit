@@ -342,7 +342,7 @@ function onGetSuccess()
     // return unique entires (only applies to indexes with unique set to false), PREV to move backwards,
     // and PREV_NO_DUPLICATE.
     var keyRange = IDBKeyRange.bound(1, 3, true, false);
-    var request = people.openCursor(keyRange, IDBCursor.NEXT);
+    var request = people.openCursor({range: keyRange, direction: IDBCursor.NEXT});
     request.onsuccess = onObjectStoreCursor;
     request.onerror = unexpectedError;
 }
@@ -395,10 +395,10 @@ function onIndexGetSuccess()
     // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
     // the onsuccess conditions.
     var lname = event.source;
-    lname.openCursor(IDBKeyRange.leftBound("Doe", false), IDBCursor.NEXT_NO_DUPLICATE);
-    lname.openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
-    lname.openCursor(IDBKeyRange.rightBound("ZZZZ"));
-    lname.openCursor(IDBKeyRange.only("Doe"), IDBCursor.PREV);
+    lname.openCursor({range: IDBKeyRange.leftBound("Doe", false), direction: IDBCursor.NEXT_NO_DUPLICATE});
+    lname.openCursor({direction: IDBCursor.PREV_NO_DUPLICATE});
+    lname.openCursor({range: IDBKeyRange.rightBound("ZZZZ")});
+    lname.openCursor({range: IDBKeyRange.only("Doe"), direction: IDBCursor.PREV});
     lname.openCursor();
     lname.openKeyCursor();
 

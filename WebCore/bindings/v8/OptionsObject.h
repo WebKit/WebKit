@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class DOMStringList;
+class IDBKeyRange;
 
 class OptionsObject {
 public:
@@ -46,6 +47,7 @@ public:
     bool getKeyInt32(const String& key, int32_t& value) const;
     bool getKeyString(const String& key, String& value) const;
     PassRefPtr<DOMStringList> getKeyDOMStringList(const String& key) const;
+    PassRefPtr<IDBKeyRange> getKeyKeyRange(const String& key) const;
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;
