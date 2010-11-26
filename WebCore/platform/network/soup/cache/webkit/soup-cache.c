@@ -1306,7 +1306,13 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 
 	/* TODO */
 
-	/* 4. The presented request and stored response are free from
+	/* 4. The request is a conditional request issued by the client.
+	 */
+	if (soup_message_headers_get (msg->request_headers, "If-Modified-Since") ||
+	    soup_message_headers_get (msg->request_headers, "If-None-Match"))
+		return WEBKIT_SOUP_CACHE_RESPONSE_STALE;
+
+	/* 5. The presented request and stored response are free from
 	 * directives that would prevent its use.
 	 */
 
@@ -1355,7 +1361,7 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 		}
 	}
 
-	/* 5. The stored response is either: fresh, allowed to be
+	/* 6. The stored response is either: fresh, allowed to be
 	 * served stale or succesfully validated
 	 */
 	/* TODO consider also proxy-revalidate & s-maxage */
