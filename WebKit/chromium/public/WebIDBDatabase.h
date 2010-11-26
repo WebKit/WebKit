@@ -47,9 +47,9 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
+    // FIXME: remove after roll.
     virtual WebString description() const
     {
-        WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
     virtual WebString version() const

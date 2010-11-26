@@ -18,9 +18,9 @@ testCount = 0;
 function test()
 {
     if (testCount++ == 0)
-        result = evalAndLog("webkitIndexedDB.open('name', 'description')");
+        result = evalAndLog("webkitIndexedDB.open('name')");
     else
-        result = evalAndLog("webkitIndexedDB.open('name2', 'description2')");
+        result = evalAndLog("webkitIndexedDB.open('name2')");
     verifyResult(result);
     result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;

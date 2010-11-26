@@ -54,7 +54,7 @@ public:
     void removeIDBDatabaseBackend(const String& uniqueIdentifier);
     void removeSQLiteDatabase(const String& uniqueIdentifier);
 
-    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
 
     static String databaseFileName(SecurityOrigin*);
 

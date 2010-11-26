@@ -3,7 +3,7 @@ Verify that queuing up several commands works (and they all fire).
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name', 'description')
+webkitIndexedDB.open('name')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

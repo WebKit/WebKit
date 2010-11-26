@@ -54,11 +54,6 @@ WebString WebIDBDatabaseImpl::name() const
     return m_databaseBackend->name();
 }
 
-WebString WebIDBDatabaseImpl::description() const
-{
-    return m_databaseBackend->description();
-}
-
 WebString WebIDBDatabaseImpl::version() const
 {
     return m_databaseBackend->version();

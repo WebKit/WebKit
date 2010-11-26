@@ -70,7 +70,7 @@ function start()
     // "addEventListener" if you'd like, but I'm using the simpler = syntax. Only one or the other
     // will fire. You're guaranteed that they won't fire until control is returned from JavaScript
     // execution.
-    var request = indexedDB.open("myDB", "This is a description of the database."); // Chromium/WebKit doesn't yet require the description, but it will soon.
+    var request = indexedDB.open("myDB");
     request.onsuccess = onOpen;
     request.onerror = unexpectedError;
 }

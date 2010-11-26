@@ -45,7 +45,7 @@ public:
     virtual ~IDBFactoryBackendProxy();
 
     PassRefPtr<DOMStringList> databases(void) const;
-    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
 
 private:
     IDBFactoryBackendProxy();

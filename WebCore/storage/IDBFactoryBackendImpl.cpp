@@ -122,14 +122,12 @@ static bool createTables(SQLiteDatabase& sqliteDatabase)
     return true;
 }
 
-void IDBFactoryBackendImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
+void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
 {
     String fileIdentifier = securityOrigin->databaseIdentifier();
     String uniqueIdentifier = fileIdentifier + "@" + name;
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
-        if (!description.isNull())
-            it->second->setDescription(description); // The description may have changed.
         callbacks->onSuccess(it->second);
         return;
     }
@@ -150,7 +148,7 @@ void IDBFactoryBackendImpl::open(const String& name, const String& description, 
         m_sqliteDatabaseMap.set(fileIdentifier, sqliteDatabase.get());
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, sqliteDatabase.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
     callbacks->onSuccess(databaseBackend.get());
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }

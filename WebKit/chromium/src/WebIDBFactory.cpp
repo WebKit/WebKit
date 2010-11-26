@@ -44,10 +44,4 @@ WebString WebIDBFactory::databaseFileName(const WebSecurityOrigin& origin)
     return IDBFactoryBackendImpl::databaseFileName(origin.get());
 }
 
-WebString WebIDBFactory::databaseFileName(const WebString& name, const WebSecurityOrigin& origin)
-{
-    UNUSED_PARAM(name);
-    return databaseFileName(origin);
-}
-
 }
