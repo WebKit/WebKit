@@ -56,30 +56,30 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
 
 RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    if (hasLocalName(MathMLNames::mrowTag))
+    if (hasLocalName(mrowTag))
         return new (arena) RenderMathMLRow(this);
-    else if (hasLocalName(MathMLNames::msubTag))
+    if (hasLocalName(msubTag))
         return new (arena) RenderMathMLSubSup(this);
-    else if (hasLocalName(MathMLNames::msupTag))
+    if (hasLocalName(msupTag))
         return new (arena) RenderMathMLSubSup(this);
-    else if (hasLocalName(MathMLNames::msubsupTag))
+    if (hasLocalName(msubsupTag))
         return new (arena) RenderMathMLSubSup(this);
-    else if (hasLocalName(MathMLNames::moverTag))
+    if (hasLocalName(moverTag))
         return new (arena) RenderMathMLUnderOver(this);
-    else if (hasLocalName(MathMLNames::munderTag))
+    if (hasLocalName(munderTag))
         return new (arena) RenderMathMLUnderOver(this);
-    else if (hasLocalName(MathMLNames::munderoverTag))
+    if (hasLocalName(munderoverTag))
         return new (arena) RenderMathMLUnderOver(this);
-    else if (hasLocalName(MathMLNames::mfracTag))
+    if (hasLocalName(mfracTag))
         return new (arena) RenderMathMLFraction(this);
-    else if (hasLocalName(MathMLNames::msqrtTag))
+    if (hasLocalName(msqrtTag))
         return new (arena) RenderMathMLSquareRoot(this);
-    else if (hasLocalName(MathMLNames::mrootTag))
+    if (hasLocalName(mrootTag))
         return new (arena) RenderMathMLRoot(this);
-    else if (hasLocalName(MathMLNames::mfencedTag))
+    if (hasLocalName(mfencedTag))
         return new (arena) RenderMathMLFenced(this);
-    else
-        return new (arena) RenderMathMLBlock(this);
+
+    return new (arena) RenderMathMLBlock(this);
 }
 
 }
