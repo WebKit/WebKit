@@ -1015,7 +1015,7 @@ void ScrollView::removePanScrollIcon()
     hostWindow()->invalidateContentsAndWindow(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
-#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL)
+#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(EFL)
 
 void ScrollView::platformInit()
 {
