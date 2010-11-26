@@ -49,7 +49,7 @@ class ImageLayerChromium : public ContentLayerChromium {
 public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
-    virtual void updateContentsIfDirty();
+    virtual void updateContents();
     virtual bool drawsContent() { return m_contents; }
 
     void setContents(Image* image);

@@ -102,7 +102,7 @@ void PluginLayerChromium::setTextureId(unsigned id)
     m_textureId = id;
 }
 
-void PluginLayerChromium::updateContentsIfDirty()
+void PluginLayerChromium::updateContents()
 {
 }
 

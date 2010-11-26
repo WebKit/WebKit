@@ -36,7 +36,6 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
 #include "RenderLayerBacking.h"
 
 #if PLATFORM(SKIA)
@@ -124,7 +123,12 @@ ContentLayerChromium::~ContentLayerChromium()
 void ContentLayerChromium::cleanupResources()
 {
     LayerChromium::cleanupResources();
-    m_contentsTexture.clear();
+    if (layerRenderer()) {
+        if (m_contentsTexture) {
+            layerRenderer()->deleteLayerTexture(m_contentsTexture);
+            m_contentsTexture = 0;
+        }
+    }
 }
 
 bool ContentLayerChromium::requiresClippedUpdateRect() const
@@ -164,7 +168,7 @@ void ContentLayerChromium::calculateClippedUpdateRect(IntRect& dirtyRect, IntRec
     drawRect = layerOriginTransform.mapRect(dirtyRect);
 }
 
-void ContentLayerChromium::updateContentsIfDirty()
+void ContentLayerChromium::updateContents()
 {
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
     if (!backing || backing->paintingGoesToWindow())
@@ -179,7 +183,6 @@ void ContentLayerChromium::updateContentsIfDirty()
     IntRect updateRect;
     IntSize requiredTextureSize;
     IntSize bitmapSize;
-    IntRect boundsRect(IntPoint(0, 0), m_bounds);
 
     // FIXME: Remove this test when tiled layers are implemented.
     if (requiresClippedUpdateRect()) {
@@ -197,11 +200,6 @@ void ContentLayerChromium::updateContentsIfDirty()
             return;
         }
 
-        // If the texture needs to be reallocated then we must redraw the entire
-        // contents of the layer.
-        if (!m_contentsTexture || !m_contentsTexture->isValid(requiredTextureSize, GraphicsContext3D::RGBA))
-            dirtyRect = boundsRect;
-
         // If the portion of the large layer that's visible hasn't changed
         // then we don't need to update it, _unless_ its contents have changed
         // in which case we only update the dirty bits.
@@ -218,10 +216,11 @@ void ContentLayerChromium::updateContentsIfDirty()
         }
     } else {
         dirtyRect = IntRect(m_dirtyRect);
+        IntRect boundsRect(IntPoint(0, 0), m_bounds);
         requiredTextureSize = m_bounds;
         // If the texture needs to be reallocated then we must redraw the entire
         // contents of the layer.
-        if (!m_contentsTexture || !m_contentsTexture->isValid(requiredTextureSize, GraphicsContext3D::RGBA))
+        if (requiredTextureSize != m_allocatedTextureSize)
             dirtyRect = boundsRect;
         else {
             // Clip the dirtyRect to the size of the layer to avoid drawing
@@ -290,27 +289,35 @@ void ContentLayerChromium::updateContentsIfDirty()
 #error "Need to implement for your platform."
 #endif
 
+    unsigned textureId = m_contentsTexture;
+    if (!textureId)
+        textureId = layerRenderer()->createLayerTexture();
+
     if (pixels)
-        updateTextureRect(pixels, requiredTextureSize, updateRect);
+        updateTextureRect(pixels, bitmapSize, requiredTextureSize, updateRect, textureId);
 }
 
-void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& requiredTextureSize, const IntRect& updateRect)
+void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmapSize, const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId)
 {
     if (!pixels)
         return;
 
     GraphicsContext3D* context = layerRendererContext();
-    if (!m_contentsTexture)
-        m_contentsTexture = LayerTexture::create(context, layerRenderer()->textureManager());
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
 
-    if (!m_contentsTexture->reserve(requiredTextureSize, GraphicsContext3D::RGBA)) {
-        m_skipsDraw = true;
-        return;
+    // If the texture id or size changed since last time then we need to tell GL
+    // to re-allocate a texture.
+    if (m_contentsTexture != textureId || requiredTextureSize != m_allocatedTextureSize) {
+        ASSERT(bitmapSize == requiredTextureSize);
+        GLC(context, context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, requiredTextureSize.width(), requiredTextureSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
+
+        m_contentsTexture = textureId;
+        m_allocatedTextureSize = requiredTextureSize;
+    } else {
+        ASSERT(updateRect.width() <= m_allocatedTextureSize.width() && updateRect.height() <= m_allocatedTextureSize.height());
+        ASSERT(updateRect.width() == bitmapSize.width() && updateRect.height() == bitmapSize.height());
+        GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
     }
-
-    m_contentsTexture->bindTexture();
-
-    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
 
     m_dirtyRect.setSize(FloatSize());
     // Large layers always stay dirty, because they need to update when the content rect changes.
@@ -323,12 +330,11 @@ void ContentLayerChromium::draw()
         return;
 
     ASSERT(layerRenderer());
-
     const ContentLayerChromium::SharedValues* sv = layerRenderer()->contentLayerSharedValues();
     ASSERT(sv && sv->initialized());
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    m_contentsTexture->bindTexture();
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_contentsTexture));
     layerRenderer()->useShader(sv->contentShaderProgram());
     GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
 
@@ -346,7 +352,6 @@ void ContentLayerChromium::draw()
                          drawOpacity(), sv->shaderMatrixLocation(),
                          sv->shaderAlphaLocation());
     }
-    m_contentsTexture->unreserve();
 }
 
 }

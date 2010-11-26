@@ -56,9 +56,9 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
         layerRendererContext()->deleteTexture(m_textureId);
 }
 
-void Canvas2DLayerChromium::updateContentsIfDirty()
+void Canvas2DLayerChromium::updateContents()
 {
-    if (!m_contentsDirty || !m_drawingBuffer)
+    if (!m_drawingBuffer)
         return;
     if (m_textureChanged) { // We have to generate a new backing texture.
         GraphicsContext3D* context = layerRendererContext();

@@ -50,11 +50,8 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 {
 }
 
-void WebGLLayerChromium::updateContentsIfDirty()
+void WebGLLayerChromium::updateContents()
 {
-    if (!m_contentsDirty)
-        return;
-
     GraphicsContext3D* rendererContext = layerRendererContext();
     ASSERT(m_context);
     if (m_textureChanged) {

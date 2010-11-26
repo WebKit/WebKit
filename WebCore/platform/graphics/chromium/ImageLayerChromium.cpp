@@ -36,7 +36,6 @@
 
 #include "Image.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
 
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
@@ -72,7 +71,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::updateContentsIfDirty()
+void ImageLayerChromium::updateContents()
 {
     ASSERT(layerRenderer());
 
@@ -80,11 +79,12 @@ void ImageLayerChromium::updateContentsIfDirty()
     if (requiresClippedUpdateRect()) {
         // Use the base version of updateContents which draws a subset of the
         // image to a bitmap, as the pixel contents can't be uploaded directly.
-        ContentLayerChromium::updateContentsIfDirty();
+        ContentLayerChromium::updateContents();
         return;
     }
 
     void* pixels = 0;
+    IntSize requiredTextureSize;
     IntSize bitmapSize;
 
     NativeImagePtr nativeImage = m_contents->nativeImageForCurrentFrame();
@@ -93,33 +93,22 @@ void ImageLayerChromium::updateContentsIfDirty()
     // The layer contains an Image.
     NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(nativeImage);
     const SkBitmap* skiaBitmap = skiaImage;
-    bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
+    requiredTextureSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
     ASSERT(skiaBitmap);
+
+    SkAutoLockPixels lock(*skiaBitmap);
+    SkBitmap::Config skiaConfig = skiaBitmap->config();
+    // FIXME: do we need to support more image configurations?
+    if (skiaConfig == SkBitmap::kARGB_8888_Config) {
+        pixels = skiaBitmap->getPixels();
+        bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
+    }
 #elif PLATFORM(CG)
     // NativeImagePtr is a CGImageRef on Mac OS X.
     int width = CGImageGetWidth(nativeImage);
     int height = CGImageGetHeight(nativeImage);
-    bitmapSize = IntSize(width, height);
-#endif
-
-    // Clip the dirty rect to the bitmap dimensions.
-    IntRect dirtyRect(m_dirtyRect);
-    dirtyRect.intersect(IntRect(IntPoint(0, 0), bitmapSize));
-
-    if (!m_contentsTexture || !m_contentsTexture->isValid(bitmapSize, GraphicsContext3D::RGBA))
-        dirtyRect = IntRect(IntPoint(0, 0), bitmapSize);
-    else if (!m_contentsDirty) {
-        m_contentsTexture->reserve(bitmapSize, GraphicsContext3D::RGBA);
-        return;
-    }
-
-#if PLATFORM(SKIA)
-    SkAutoLockPixels lock(*skiaBitmap);
-    SkBitmap::Config skiaConfig = skiaBitmap->config();
-    // FIXME: do we need to support more image configurations?
-    if (skiaConfig == SkBitmap::kARGB_8888_Config)
-        pixels = skiaBitmap->getPixels();
-#elif PLATFORM(CG)
+    requiredTextureSize = IntSize(width, height);
+    bitmapSize = requiredTextureSize;
     // FIXME: we should get rid of this temporary copy where possible.
     int tempRowBytes = width * 4;
     Vector<uint8_t> tempVector;
@@ -156,8 +145,16 @@ void ImageLayerChromium::updateContentsIfDirty()
 #error "Need to implement for your platform."
 #endif
 
+    unsigned textureId = m_contentsTexture;
+    if (!textureId)
+        textureId = layerRenderer()->createLayerTexture();
+
+    // Clip the dirty rect to the bitmap dimensions.
+    IntRect dirtyRect(m_dirtyRect);
+    dirtyRect.intersect(IntRect(IntPoint(0, 0), bitmapSize));
+
     if (pixels)
-        updateTextureRect(pixels, bitmapSize,  dirtyRect);
+        updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId);
 }
 
 }

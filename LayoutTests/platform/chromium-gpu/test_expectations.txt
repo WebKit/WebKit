@@ -361,11 +361,6 @@ BUGWK48029 MAC : compositing/tiling/huge-layer-with-layer-children-resize.html =
 BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = CRASH
 
-// These tests are too slow with our MESA backend.  We can re-enable when we have
-// bots running tests on real hardware.
-BUGWK49629 SKIP : compositing/lots-of-img-layers.html = PASS
-BUGWK49629 SKIP : compositing/lots-of-img-layers-with-opacity.html = PASS
-
 BUG57431 WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
 BUG57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html = TEXT
 BUG58534 WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT

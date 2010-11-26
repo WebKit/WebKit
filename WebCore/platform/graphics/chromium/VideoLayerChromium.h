@@ -45,7 +45,7 @@ public:
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
                                                  VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
-    virtual void updateContentsIfDirty();
+    virtual void updateContents();
     virtual bool drawsContent() { return true; }
     virtual void draw();
 

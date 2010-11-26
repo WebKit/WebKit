@@ -46,7 +46,7 @@ public:
     static PassRefPtr<Canvas2DLayerChromium> create(DrawingBuffer*, GraphicsLayerChromium* owner);
     virtual ~Canvas2DLayerChromium();
     virtual bool drawsContent() { return true; }
-    virtual void updateContentsIfDirty();
+    virtual void updateContents();
 
     void setTextureChanged();
     unsigned textureId() const;
