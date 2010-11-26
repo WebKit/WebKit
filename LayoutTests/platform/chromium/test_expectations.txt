@@ -3161,6 +3161,7 @@ BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // Seems like it started failing with r72364.
 BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
+BUG_LEVIN WIN : svg/custom/use-infinite-recursion.svg = IMAGE PASS
 
 BUG_LEVIN LINUX MAC : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE
 BUG_LEVIN WIN : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE PASS
@@ -3183,4 +3184,6 @@ BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 
 BUGCR64401 WIN : fast/filesystem/op-copy.html = TEXT
+
+BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
 
