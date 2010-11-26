@@ -296,7 +296,7 @@ WebInspector.Resource.prototype = {
 
     set timing(x)
     {
-        if (!this._cached) {
+        if (x && !this._cached) {
             // Take startTime and responseReceivedTime from timing data for better accuracy.
             // Timing's requestTime is a baseline in seconds, rest of the numbers there are ticks in millis.
             this._startTime = x.requestTime;
