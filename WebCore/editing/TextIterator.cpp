@@ -473,7 +473,7 @@ bool TextIterator::handleTextNode()
             handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
             if (m_firstLetterText) {
                 String firstLetter = m_firstLetterText->text();
-                emitText(m_node, m_firstLetterText, m_offset, firstLetter.length());
+                emitText(m_node, m_firstLetterText, m_offset, m_offset + firstLetter.length());
                 m_firstLetterText = 0;
                 m_textBox = 0;
                 return false;
