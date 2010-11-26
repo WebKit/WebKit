@@ -57,7 +57,7 @@ public:
     // Implement the IDL
     String name() const { return m_backend->name(); }
     String version() const { return m_backend->version(); }
-    PassRefPtr<DOMStringList> objectStores() const { return m_backend->objectStores(); }
+    PassRefPtr<DOMStringList> objectStoreNames() const { return m_backend->objectStoreNames(); }
 
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, OptionsObject(), ec); }

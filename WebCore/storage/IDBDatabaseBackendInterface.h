@@ -52,7 +52,7 @@ public:
 
     virtual String name() const = 0;
     virtual String version() const = 0;
-    virtual PassRefPtr<DOMStringList> objectStores() const = 0;
+    virtual PassRefPtr<DOMStringList> objectStoreNames() const = 0;
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void removeObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;

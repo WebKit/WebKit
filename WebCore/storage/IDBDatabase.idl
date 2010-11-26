@@ -30,7 +30,7 @@ module storage {
     ] IDBDatabase {
         readonly attribute DOMString name;
         readonly attribute DOMString version;
-        readonly attribute DOMStringList objectStores;
+        readonly attribute DOMStringList objectStoreNames;
 
         IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);

@@ -47,7 +47,7 @@ public:
 
     virtual WebString name() const;
     virtual WebString version() const;
-    virtual WebDOMStringList objectStores() const;
+    virtual WebDOMStringList objectStoreNames() const;
 
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void removeObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);

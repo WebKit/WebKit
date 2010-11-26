@@ -33,8 +33,8 @@ function setData()
     webkitIndexedDB.open("someDB", "some description").onsuccess = function() {
         event.result.setVersion("some version").onsuccess = function() {
             var db = event.source;
-            while (db.objectStores.length)
-                db.removeObjectStore(db.objectStores[0]);
+            while (db.objectStoreNames.length)
+                db.removeObjectStore(db.objectStoreNames[0]);
             db.createObjectStore("test").put("value", "key").onsuccess = function() {
                 status("Value set", "green");
             }

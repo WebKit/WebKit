@@ -49,7 +49,7 @@ function createObjectStore()
 {
     debug("createObjectStore():");
     window.store = evalAndLog("store = db.createObjectStore('storeName', null)");
-    var storeNames = evalAndLog("storeNames = db.objectStores");
+    var storeNames = evalAndLog("storeNames = db.objectStoreNames");
 
     shouldBeEqualToString("store.name", "storeName");
     shouldBeNull("store.keyPath");

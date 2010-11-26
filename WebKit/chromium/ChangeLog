@@ -1,3 +1,22 @@
+2010-11-26  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Rename IDBDatabase.objectStores to objectStoreNames
+        https://bugs.webkit.org/show_bug.cgi?id=50102
+
+        Rename as per the spec: http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#database-interface
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::objectStores):
+        (WebKit::WebIDBDatabase::objectStoreNames):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::objectStoreNames):
+        * src/IDBDatabaseProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::objectStoreNames):
+        * src/WebIDBDatabaseImpl.h:
+
 2010-11-26  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

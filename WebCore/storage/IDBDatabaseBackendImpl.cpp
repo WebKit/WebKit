@@ -115,7 +115,7 @@ SQLiteDatabase& IDBDatabaseBackendImpl::sqliteDatabase() const
     return m_sqliteDatabase->db();
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStores() const
+PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
@@ -213,8 +213,8 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
 {
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<DOMStringList> objectStores = DOMStringList::create();
-    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStores.get(), IDBTransaction::VERSION_CHANGE, 0, this);
+    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, 0, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
@@ -234,10 +234,10 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(transaction);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, ExceptionCode&)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStoreNames, unsigned short mode, unsigned long timeout, ExceptionCode&)
 {
     // FIXME: Return not allowed err if close has been called.
-    return IDBTransactionBackendImpl::create(objectStores, mode, timeout, this);
+    return IDBTransactionBackendImpl::create(objectStoreNames, mode, timeout, this);
 }
 
 void IDBDatabaseBackendImpl::close()

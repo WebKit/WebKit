@@ -79,17 +79,17 @@ PASS event.target.readyState is event.target.DONE
 
 PASS db.version is "version b"
 PASS db.name is "name"
-PASS db.objectStores is []
-PASS db.objectStores.length is 0
-PASS db.objectStores.contains('') is false
-PASS db.objectStores[0] is null
-PASS db.objectStores.item(0) is null
+PASS db.objectStoreNames is []
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames[0] is null
+PASS db.objectStoreNames.item(0) is null
 db.createObjectStore("test123")
-PASS db.objectStores is ['test123']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('') is false
-PASS db.objectStores.contains('test456') is false
-PASS db.objectStores.contains('test123') is true
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
 db.setVersion("version c")
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -109,20 +109,20 @@ PASS event.target.readyState is event.target.DONE
 
 PASS db.version is "version c"
 PASS db.name is "name"
-PASS db.objectStores is ['test123']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('') is false
-PASS db.objectStores.contains('test456') is false
-PASS db.objectStores.contains('test123') is true
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
 db.createObjectStore("test456")
 setVersionTrans = event.result
 PASS setVersionTrans !== null is true
 PASS db.version is "version b"
-PASS db.objectStores is ['test123']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('') is false
-PASS db.objectStores.contains('test456') is false
-PASS db.objectStores.contains('test123') is true
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

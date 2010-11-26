@@ -68,11 +68,11 @@ function createObjectStore()
     verifySuccessEvent(event);
     shouldBeEqualToString("db.version", "version b");
     shouldBeEqualToString("db.name", "name");
-    shouldBe("db.objectStores", "[]");
-    shouldBe("db.objectStores.length", "0");
-    shouldBe("db.objectStores.contains('')", "false");
-    shouldBeNull("db.objectStores[0]");
-    shouldBeNull("db.objectStores.item(0)");
+    shouldBe("db.objectStoreNames", "[]");
+    shouldBe("db.objectStoreNames.length", "0");
+    shouldBe("db.objectStoreNames.contains('')", "false");
+    shouldBeNull("db.objectStoreNames[0]");
+    shouldBeNull("db.objectStoreNames.item(0)");
 
     objectStore = evalAndLog('db.createObjectStore("test123")');
     checkObjectStore();
@@ -81,11 +81,11 @@ function createObjectStore()
 
 function checkObjectStore()
 {
-    shouldBe("db.objectStores", "['test123']");
-    shouldBe("db.objectStores.length", "1");
-    shouldBe("db.objectStores.contains('')", "false");
-    shouldBe("db.objectStores.contains('test456')", "false");
-    shouldBe("db.objectStores.contains('test123')", "true");
+    shouldBe("db.objectStoreNames", "['test123']");
+    shouldBe("db.objectStoreNames.length", "1");
+    shouldBe("db.objectStoreNames.contains('')", "false");
+    shouldBe("db.objectStoreNames.contains('test456')", "false");
+    shouldBe("db.objectStoreNames.contains('test123')", "true");
 }
 
 function commitAndContinue()

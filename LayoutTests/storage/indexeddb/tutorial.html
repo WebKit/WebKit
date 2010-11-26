@@ -121,8 +121,8 @@ function onSetVersion()
     currentTransaction.onabort = unexpectedAbort;
 
     // Delete existing object stores.
-    while (db.objectStores.length)
-        db.removeObjectStore(db.objectStores[0]);
+    while (db.objectStoreNames.length)
+        db.removeObjectStore(db.objectStoreNames[0]);
 
     // Now that we have a blank slate, let's create an objectStore. An objectStore is simply an
     // ordered mapping of keys to values. We can iterate through ranges of keys or do individual
@@ -227,9 +227,9 @@ function onSetVersionComplete()
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 
-    // Verify that "people" is the only object store in existance. The objectStores attribute is
+    // Verify that "people" is the only object store in existance. The objectStoreNames attribute is
     // a DOMStringList which is somewhat like an array.
-    var objectStoreList = db.objectStores;
+    var objectStoreList = db.objectStoreNames;
     if (objectStoreList.length != 1
         || !objectStoreList.contains("people")
         || objectStoreList.item(0) != "people"

@@ -37,12 +37,12 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 Deleted all object stores.
-PASS window.db.objectStores is []
-PASS window.db.objectStores.length is 0
-PASS window.db.objectStores.contains('storeFail') is false
-PASS window.db.objectStores is []
-PASS window.db.objectStores.length is 0
-PASS window.db.objectStores.contains('storeFail') is false
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
 result = startSetVersion('version fail')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -67,9 +67,9 @@ store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
 db.removeObjectStore('storeFail')
 store.removeIndex('indexFail')
-PASS window.db.objectStores is []
-PASS window.db.objectStores.length is 0
-PASS window.db.objectStores.contains('storeFail') is false
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
 result = startSetVersion('version fail')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -96,9 +96,9 @@ db.removeObjectStore('storeFail')
 store.removeIndex('indexFail')
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
-PASS window.db.objectStores is []
-PASS window.db.objectStores.length is 0
-PASS window.db.objectStores.contains('storeFail') is false
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
 result = startSetVersion('version fail')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -121,9 +121,9 @@ trans = event.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
-PASS db.objectStores is ['storeFail']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('storeFail') is true
+PASS db.objectStoreNames is ['storeFail']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('storeFail') is true
 result = startSetVersion('version fail')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -147,9 +147,9 @@ PASS trans !== null is true
 store = trans.objectStore('storeFail')
 store.removeIndex('indexFail')
 db.removeObjectStore('storeFail')
-PASS db.objectStores is ['storeFail']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('storeFail') is true
+PASS db.objectStoreNames is ['storeFail']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('storeFail') is true
 db.setVersion('new version')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

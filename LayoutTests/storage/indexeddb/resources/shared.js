@@ -90,8 +90,8 @@ function unexpectedCompleteCallback()
 // FIXME: remove the onfinished parameter.
 function deleteAllObjectStores(db, onfinished)
 {
-    while (db.objectStores.length)
-        db.removeObjectStore(db.objectStores.item(0));
+    while (db.objectStoreNames.length)
+        db.removeObjectStore(db.objectStoreNames.item(0));
 
     debug("Deleted all object stores.");
     onfinished();

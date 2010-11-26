@@ -45,7 +45,7 @@ PASS trans !== null is true
 Deleted all object stores.
 createObjectStore():
 store = db.createObjectStore('storeName', null)
-storeNames = db.objectStores
+storeNames = db.objectStoreNames
 PASS store.name is "storeName"
 PASS store.keyPath is null
 PASS storeNames.contains('storeName') is true

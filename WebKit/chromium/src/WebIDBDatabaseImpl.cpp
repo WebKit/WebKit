@@ -59,9 +59,9 @@ WebString WebIDBDatabaseImpl::version() const
     return m_databaseBackend->version();
 }
 
-WebDOMStringList WebIDBDatabaseImpl::objectStores() const
+WebDOMStringList WebIDBDatabaseImpl::objectStoreNames() const
 {
-    return m_databaseBackend->objectStores();
+    return m_databaseBackend->objectStoreNames();
 }
 
 WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec)

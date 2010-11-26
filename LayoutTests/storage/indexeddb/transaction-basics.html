@@ -182,16 +182,16 @@ function startSetVersion(versionName)
 
 function checkMetadataEmpty()
 {
-    shouldBe("window.db.objectStores", "[]");
-    shouldBe("window.db.objectStores.length", "0");
-    shouldBe("window.db.objectStores.contains('storeFail')", "false");
+    shouldBe("window.db.objectStoreNames", "[]");
+    shouldBe("window.db.objectStoreNames.length", "0");
+    shouldBe("window.db.objectStoreNames.contains('storeFail')", "false");
 }
 
 function checkMetadataExistingObjectStore()
 {
-    shouldBe("db.objectStores", "['storeFail']");
-    shouldBe("db.objectStores.length", "1");
-    shouldBe("db.objectStores.contains('storeFail')", "true");
+    shouldBe("db.objectStoreNames", "['storeFail']");
+    shouldBe("db.objectStoreNames.length", "1");
+    shouldBe("db.objectStoreNames.contains('storeFail')", "true");
 }
 
 function setNewVersion()

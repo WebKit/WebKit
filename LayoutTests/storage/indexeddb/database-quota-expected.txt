@@ -55,15 +55,15 @@ PASS event.target.readyState is event.target.DONE
 
 PASS db.version is "new version"
 PASS db.name is "name"
-PASS db.objectStores is []
-PASS db.objectStores.length is 0
-PASS db.objectStores.contains('') is false
+PASS db.objectStoreNames is []
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('') is false
 db.createObjectStore("test123")
-PASS db.objectStores is ['test123']
-PASS db.objectStores.length is 1
-PASS db.objectStores.contains('') is false
-PASS db.objectStores.contains('test456') is false
-PASS db.objectStores.contains('test123') is true
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
 trans = db.transaction()
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
