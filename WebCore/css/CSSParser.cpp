@@ -2846,16 +2846,21 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty()
     return 0;
 }
 
-void CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
+bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
 {
     parseFillPosition(value1, value2);
 
     // now get z
-    if (m_valueList->current() && validUnit(m_valueList->current(), FLength, m_strict))
-        value3 = CSSPrimitiveValue::create(m_valueList->current()->fValue,
-                                         (CSSPrimitiveValue::UnitTypes)m_valueList->current()->unit);
-    if (value3)
-        m_valueList->next();
+    if (m_valueList->current()) {
+        if (validUnit(m_valueList->current(), FLength, m_strict)) {
+            value3 = CSSPrimitiveValue::create(m_valueList->current()->fValue,
+                                             (CSSPrimitiveValue::UnitTypes)m_valueList->current()->unit);
+            m_valueList->next();
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 
 bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result)
@@ -5013,7 +5018,8 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int
 
     switch (propId) {
         case CSSPropertyWebkitTransformOrigin:
-            parseTransformOriginShorthand(value, value2, value3);
+            if (!parseTransformOriginShorthand(value, value2, value3))
+                return false;
             // parseTransformOriginShorthand advances the m_valueList pointer
             break;
         case CSSPropertyWebkitTransformOriginX: {
