@@ -55,8 +55,6 @@ CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
-BASE_DIR = $$PWD
-
 symbian {
     INCLUDEPATH += $$PWD/include/QtWebKit
 } else {
