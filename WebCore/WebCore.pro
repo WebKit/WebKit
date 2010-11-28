@@ -1710,6 +1710,7 @@ HEADERS += \
     editing/EditCommand.h \
     editing/EditingStyle.h \
     editing/EditingBehavior.h \
+    editing/EditingBoundary.h \
     editing/Editor.h \
     editing/FormatBlockCommand.h \
     editing/htmlediting.h \

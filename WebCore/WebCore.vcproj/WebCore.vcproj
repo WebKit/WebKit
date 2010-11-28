@@ -46167,6 +46167,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\EditingBoundary.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\DeleteButtonController.cpp"
 				>
 				<FileConfiguration

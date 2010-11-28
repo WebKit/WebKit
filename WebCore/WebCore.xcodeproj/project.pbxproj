@@ -903,6 +903,7 @@
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
 		3888F6EE128C9889000CA8E0 /* InspectorFileSystemAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3888F6EC128C9889000CA8E0 /* InspectorFileSystemAgent.cpp */; };
 		3888F6EF128C9889000CA8E0 /* InspectorFileSystemAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3888F6ED128C9889000CA8E0 /* InspectorFileSystemAgent.h */; };
+		3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC648B1129E146500C3EB25 /* EditingBoundary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
 		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
 		410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */; };
@@ -7010,6 +7011,7 @@
 		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
 		3888F6EC128C9889000CA8E0 /* InspectorFileSystemAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFileSystemAgent.cpp; sourceTree = "<group>"; };
 		3888F6ED128C9889000CA8E0 /* InspectorFileSystemAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFileSystemAgent.h; sourceTree = "<group>"; };
+		3AC648B1129E146500C3EB25 /* EditingBoundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBoundary.h; sourceTree = "<group>"; };
 		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
@@ -14600,6 +14602,7 @@
 				93309D95099E64910056E581 /* EditCommand.h */,
 				4F1534DD11B532EC0021FD86 /* EditingBehavior.h */,
 				4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */,
+				3AC648B1129E146500C3EB25 /* EditingBoundary.h */,
 				9BAB6C6B12550631001626D4 /* EditingStyle.cpp */,
 				9BAB6C6A12550631001626D4 /* EditingStyle.h */,
 				4B3043CA0AE0373B00A82647 /* Editor.cpp */,
@@ -19604,6 +19607,7 @@
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
 				4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */,
 				4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */,
+				3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */,
 				9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */,
 				6550B6A4099DF0270090D781 /* EditingText.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,

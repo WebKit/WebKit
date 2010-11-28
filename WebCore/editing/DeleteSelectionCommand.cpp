@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "EditingBoundary.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -739,8 +740,8 @@ void DeleteSelectionCommand::doApply()
     EAffinity affinity = m_selectionToDelete.affinity();
     
     Position downstreamEnd = m_selectionToDelete.end().downstream();
-    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), Position::CanCrossEditingBoundary)
-            && isEndOfParagraph(m_selectionToDelete.visibleEnd(), Position::CanCrossEditingBoundary)
+    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), CanCrossEditingBoundary)
+            && isEndOfParagraph(m_selectionToDelete.visibleEnd(), CanCrossEditingBoundary)
             && !lineBreakExistsAtVisiblePosition(m_selectionToDelete.visibleEnd());
     if (m_needPlaceholder) {
         // Don't need a placeholder when deleting a selection that starts just before a table

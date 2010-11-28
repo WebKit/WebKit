@@ -780,7 +780,7 @@ VisiblePosition nextSentencePosition(const VisiblePosition &c)
     return c.honorEditableBoundaryAtOrBefore(next);
 }
 
-VisiblePosition startOfParagraph(const VisiblePosition& c, Position::EditingBoundaryCrossingRule boundaryCrossingRule)
+VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
     Position p = c.deepEquivalent();
     Node *startNode = p.node();
@@ -798,7 +798,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, Position::EditingBoun
 
     Node *n = startNode;
     while (n) {
-        if (boundaryCrossingRule == Position::CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
+        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
             break;
         RenderObject *r = n->renderer();
         if (!r) {
@@ -839,7 +839,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, Position::EditingBoun
     return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
-VisiblePosition endOfParagraph(const VisiblePosition &c, Position::EditingBoundaryCrossingRule boundaryCrossingRule)
+VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossingRule boundaryCrossingRule)
 {    
     if (c.isNull())
         return VisiblePosition();
@@ -858,7 +858,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, Position::EditingBounda
 
     Node *n = startNode;
     while (n) {
-        if (boundaryCrossingRule == Position::CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
+        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
             break;
         RenderObject *r = n->renderer();
         if (!r) {
@@ -914,12 +914,12 @@ bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
     return a.isNotNull() && startOfParagraph(a) == startOfParagraph(b);
 }
 
-bool isStartOfParagraph(const VisiblePosition &pos, Position::EditingBoundaryCrossingRule boundaryCrossingRule)
+bool isStartOfParagraph(const VisiblePosition &pos, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
     return pos.isNotNull() && pos == startOfParagraph(pos, boundaryCrossingRule);
 }
 
-bool isEndOfParagraph(const VisiblePosition &pos, Position::EditingBoundaryCrossingRule boundaryCrossingRule)
+bool isEndOfParagraph(const VisiblePosition &pos, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
     return pos.isNotNull() && pos == endOfParagraph(pos, boundaryCrossingRule);
 }

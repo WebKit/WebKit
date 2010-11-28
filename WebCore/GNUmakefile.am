@@ -1323,6 +1323,7 @@ webcore_sources += \
 	WebCore/editing/EditCommand.h \
 	WebCore/editing/EditingBehavior.h \
 	WebCore/editing/EditingBehaviorTypes.h \
+	WebCore/editing/EditingBoundary.h \
 	WebCore/editing/EditingStyle.cpp \
 	WebCore/editing/EditingStyle.h \
 	WebCore/editing/EditorCommand.cpp \
