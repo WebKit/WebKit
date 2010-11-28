@@ -30,6 +30,7 @@ use strict;
 use Cwd qw(abs_path realpath);
 use File::Find;
 use File::Basename;
+use File::Path qw(mkpath);
 use File::Spec::Functions;
 
 my $srcRoot = realpath(File::Spec->catfile(dirname(abs_path($0)), "../.."));
@@ -81,8 +82,10 @@ sub collectFameworkHeaderPaths {
 }
 
 sub createForwardingHeadersForFramework {
+    my $targetDirectory = File::Spec->catfile($outputDirectory, $framework);
+    mkpath($targetDirectory);
     foreach my $header (@frameworkHeaders) {
-        my $forwardingHeaderPath = File::Spec->catfile($outputDirectory, $framework, basename($header));
+        my $forwardingHeaderPath = File::Spec->catfile($targetDirectory, basename($header));
         my $expectedIncludeStatement = "#include \"$header\"";
         my $foundIncludeStatement = 0;
         $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");

@@ -36,10 +36,6 @@ SBOX_CHECK = $$(_SBOX_DIR)
 
 
 DIRS = \
-    $$OUTPUT_DIR/include/JavaScriptCore \
-    $$OUTPUT_DIR/include/WebCore \
-    $$OUTPUT_DIR/include/WebKit2 \
-    $$OUTPUT_DIR/WebKit2/generated \
     $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt
 
 for(DIR, DIRS) {
