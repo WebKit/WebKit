@@ -208,14 +208,14 @@ EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 
 EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
-    StopWatch stopWatch;
     UString fileName = exec->argument(0).toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    GlobalObject* globalObject = new (&exec->globalData()) GlobalObject(Vector<UString>());
 
+    StopWatch stopWatch;
     stopWatch.start();
     evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
     stopWatch.stop();
@@ -245,10 +245,15 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+
+    StopWatch stopWatch;
+    stopWatch.start();
     Completion result = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName));
+    stopWatch.stop();
+
     if (result.complType() == Throw)
         throwError(exec, result.value());
-    return JSValue::encode(result.value());
+    return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
 #if ENABLE(SAMPLING_FLAGS)

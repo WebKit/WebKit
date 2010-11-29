@@ -35,10 +35,9 @@ for (var j = 0; j < tests.length; j++) {
     var testName = suitePath + "/" + tests[j] + ".js";
     var startTime = new Date;
     if (testName.indexOf('parse-only') >= 0)
-        checkSyntax(testName);
+        times[j] = checkSyntax(testName);
     else
-        load(testName);
-    times[j] = new Date() - startTime;
+        times[j] = run(testName);
     gc();
 }
 

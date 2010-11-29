@@ -1,3 +1,13 @@
+2010-11-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improved accuracy of command-line SunSpider.
+
+        * resources/sunspider-standalone-driver.js: Use the returned number of
+        elapsed milliseconds from "run" and "checkSyntax" instead of measuring
+        ourselves, for slightly more accurate numbers.
+
 2010-09-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,20 @@
+2010-11-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improved accuracy of command-line SunSpider.
+
+        * jsc.cpp:
+        (functionRun): Changed the "run" function to run a given test in
+        its own global object. Previously, all tests ran in the same global
+        object, which created name conflicts, and made globals from previous
+        tests artificially survive into later tests.
+        
+        Also changed "run" to return the elapsed milliseconds when running a
+        given test, for slightly more accurate numbers.
+
+        (functionCheckSyntax): Ditto on returning elapsed milliseconds.
+
 2010-11-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Andreas Kling.
