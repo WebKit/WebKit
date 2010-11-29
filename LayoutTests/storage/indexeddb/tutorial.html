@@ -113,7 +113,7 @@ function onOpen()
 function onSetVersion()
 {
     // We are now in a setVersion transaction. Such a transaction is the only place where one
-    // can add or remove indexes and objectStores. The result (property of event) is an
+    // can add or delete indexes and objectStores. The result (property of event) is an
     // IDBTransaction object that has "complete", "abort", and "timeout" event handlers which tell
     // us when the transaction has committed, aborted, or timed out.
     window.currentTransaction = event.result;
@@ -122,7 +122,7 @@ function onSetVersion()
 
     // Delete existing object stores.
     while (db.objectStoreNames.length)
-        db.removeObjectStore(db.objectStoreNames[0]);
+        db.deleteObjectStore(db.objectStoreNames[0]);
 
     // Now that we have a blank slate, let's create an objectStore. An objectStore is simply an
     // ordered mapping of keys to values. We can iterate through ranges of keys or do individual
@@ -182,9 +182,8 @@ function onSetVersion()
     var fname = objectStore.createIndex("fname", "fname", false);
     var lname = objectStore.createIndex("lname", "lname", false);
 
-    // Note that if you wanted to delete these indexes, you can either call objectStore.removeIndex
-    // or simply delete the objectStores that own the indexes. (Note that removeObjectStore and
-    // removeIndex may be changed to deleteObjectStore and deleteIndex in the future.)
+    // Note that if you wanted to delete these indexes, you can either call objectStore.deleteIndex
+    // or simply delete the objectStores that own the indexes.
     //
     // If we wanted to, we could populate the objectStore with some data here or do anything else
     // allowed in a normal (i.e. non-setVersion) transaction. This is useful so that data migrations
@@ -290,7 +289,7 @@ function onTransactionAborted()
     people.put({fname: 'Jane', lname: 'Doe', id: 2}).onerror = unexpectedError;
     people.put({fname: 'Philip', lname: 'Fry', id: 3}).onerror = unexpectedError;
 
-    // Not shown here are the .remove method (which is soon to be renamed .delete) and .add (which is
+    // Not shown here are the .delete method and .add (which is
     // like .put except that it fires an onerror if the element already exists).
 }
 
