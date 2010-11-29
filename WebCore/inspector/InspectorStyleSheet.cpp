@@ -986,6 +986,9 @@ bool InspectorStyleSheet::originalStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 {
+    if (m_origin == "user" || m_origin == "user-agent")
+        return false;
+
     if (!m_pageStyleSheet || !ownerDocument())
         return false;
 
