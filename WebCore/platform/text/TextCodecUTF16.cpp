@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,8 +117,13 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
 
 CString TextCodecUTF16::encode(const UChar* characters, size_t length, UnencodableHandling)
 {
-    if (length > numeric_limits<size_t>::max() / 2)
-        CRASH();
+    // We need to be sure we can double the length without overflowing.
+    // Since the passed-in length is the length of an actual existing
+    // character buffer, each character is two bytes, and we know
+    // the buffer doesn't occupy the entire address space, we can
+    // assert here that doubling the length does not overflow size_t
+    // and there's no need for a runtime check.
+    ASSERT(length <= numeric_limits<size_t>::max() / 2);
 
     char* bytes;
     CString string = CString::newUninitialized(length * 2, bytes);

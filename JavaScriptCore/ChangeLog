@@ -1,3 +1,14 @@
+2010-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Remove a couple unneeded overflow checks
+        https://bugs.webkit.org/show_bug.cgi?id=49816
+
+        * wtf/text/CString.cpp:
+        (WTF::CString::init): Use an ASSERT instead of
+        an overflow check with CRASH.
+
 2010-11-29  Adam Roben  <aroben@apple.com>
 
         Robustify react-to-vsprops-changes.py against changes to its location

@@ -49,8 +49,11 @@ void CString::init(const char* str, size_t length)
     if (!str)
         return;
 
-    if (length >= numeric_limits<size_t>::max())
-        CRASH();
+    // We need to be sure we can add 1 to length without overflowing.
+    // Since the passed-in length is the length of an actual existing
+    // string, and we know the string doesn't occupy the entire address
+    // space, we can assert here and there's no need for a runtime check.
+    ASSERT(length < numeric_limits<size_t>::max());
 
     m_buffer = CStringBuffer::create(length + 1);
     memcpy(m_buffer->mutableData(), str, length); 
