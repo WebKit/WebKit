@@ -27,18 +27,24 @@
 
 #include "Document.h"
 #include "FloatPoint.h"
+#include <limits>
 #include "SVGPointList.h"
 #include <wtf/ASCIICType.h>
 
 namespace WebCore {
+
+template <typename FloatType> static inline bool isValidRange(const FloatType& x)
+{
+    static const FloatType max = std::numeric_limits<FloatType>::max();
+    return x >= -max && x <= max;
+}
 
 // We use this generic parseNumber function to allow the Path parsing code to work 
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
 template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, const UChar* end, FloatType& number, bool skip)
 {
-    int exponent;
-    FloatType integer, decimal, frac;
+    FloatType integer, decimal, frac, exponent;
     int sign, expsign;
     const UChar* start = ptr;
 
@@ -73,6 +79,9 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
             integer += multiplier * static_cast<FloatType>(*(ptrScanIntPart--) - '0');
             multiplier *= 10;
         }
+        // Bail out early if this overflows.
+        if (!isValidRange(integer))
+            return false;
     }
 
     if (ptr < end && *ptr == '.') { // read the decimals
@@ -104,17 +113,24 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
             return false;
 
         while (ptr < end && *ptr >= '0' && *ptr <= '9') {
-            exponent *= 10;
+            exponent *= static_cast<FloatType>(10);
             exponent += *ptr - '0';
             ptr++;
         }
+        // Make sure exponent is valid.
+        if (!isValidRange(exponent) || exponent > std::numeric_limits<FloatType>::max_exponent)
+            return false;
     }
 
     number = integer + decimal;
     number *= sign;
 
     if (exponent)
-        number *= static_cast<FloatType>(pow(10.0, expsign * exponent));
+        number *= static_cast<FloatType>(pow(10.0, expsign * static_cast<int>(exponent)));
+
+    // Don't return Infinity() or NaN().
+    if (!isValidRange(number))
+        return false;
 
     if (start == ptr)
         return false;
