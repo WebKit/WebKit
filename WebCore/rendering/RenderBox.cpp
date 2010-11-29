@@ -452,11 +452,9 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads)
 
 IntRect RenderBox::applyLayerTransformToRect(const IntRect& rect) const
 {
-    if (layer() && layer()->hasTransform()) {
+    if (hasLayer() && layer()->hasTransform()) {
         TransformationMatrix transform;
-        transform.makeIdentity();
         transform.translate(rect.x(), rect.y());
-        layer()->updateTransform();
         transform.multLeft(layer()->currentTransform());
         return transform.mapRect(IntRect(0, 0, rect.width(), rect.height()));
     }
@@ -466,6 +464,13 @@ IntRect RenderBox::applyLayerTransformToRect(const IntRect& rect) const
 IntRect RenderBox::transformedFrameRect() const
 {
     return applyLayerTransformToRect(frameRect());
+}
+
+void RenderBox::updateLayerTransform()
+{
+    // Transform-origin depends on box size, so we need to update the layer transform after layout.
+    if (hasLayer())
+        layer()->updateTransform();
 }
 
 IntRect RenderBox::absoluteContentBox() const

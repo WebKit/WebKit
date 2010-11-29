@@ -80,6 +80,7 @@ void RenderReplaced::layout()
 
     m_overflow.clear();
     addShadowOverflow();
+    updateLayerTransform();
     
     repainter.repaintAfterLayout();
     setNeedsLayout(false);

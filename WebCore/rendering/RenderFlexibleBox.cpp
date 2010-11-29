@@ -278,6 +278,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
 
     statePusher.pop();
 
+    updateLayerTransform();
+
     if (view()->layoutState()->m_pageHeight)
         setPageY(view()->layoutState()->pageY(y()));
 

@@ -310,8 +310,6 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
 
     updateVisibilityStatus();
 
-    updateTransform();
-
     if (flags & UpdatePagination)
         updatePagination();
     else
