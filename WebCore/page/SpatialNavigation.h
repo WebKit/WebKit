@@ -105,10 +105,12 @@ struct FocusCandidate {
         , parentDistance(maxDistance())
         , alignment(None)
         , parentAlignment(None)
+        , isOffscreen(true)
+        , isOffscreenAfterScrolling(true)
     {
     }
 
-    FocusCandidate(Node* n);
+    FocusCandidate(Node* n, FocusDirection);
     bool isNull() const { return !node; }
     bool inScrollableContainer() const { return node && enclosingScrollableBox; }
     Document* document() const { return node ? node->document() : 0; }
@@ -120,6 +122,8 @@ struct FocusCandidate {
     RectsAlignment alignment;
     RectsAlignment parentAlignment;
     IntRect rect;
+    bool isOffscreen;
+    bool isOffscreenAfterScrolling;
 };
 
 bool scrollInDirection(Frame*, FocusDirection);

@@ -51,7 +51,7 @@ static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect& rec
 static void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& startingRect, const IntRect& potentialRect, IntPoint& exitPoint, IntPoint& entryPoint);
 
 
-FocusCandidate::FocusCandidate(Node* n)
+FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
     : node(n)
     , enclosingScrollableBox(0)
     , distance(maxDistance())
@@ -59,6 +59,8 @@ FocusCandidate::FocusCandidate(Node* n)
     , alignment(None)
     , parentAlignment(None)
     , rect(nodeRectInAbsoluteCoordinates(n, true /* ignore border */))
+    , isOffscreen(hasOffscreenRect(n))
+    , isOffscreenAfterScrolling(hasOffscreenRect(n, direction))
 {
 }
 
@@ -622,7 +624,7 @@ void distanceDataForNode(FocusDirection direction, FocusCandidate& current, Focu
 
 bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candidate)
 {
-    ASSERT(candidate.node && hasOffscreenRect(candidate.node));
+    ASSERT(candidate.node && candidate.isOffscreen);
     IntRect candidateRect = candidate.rect;
     for (Node* parentNode = candidate.node->parent(); parentNode; parentNode = parentNode->parent()) {
         IntRect parentRect = nodeRectInAbsoluteCoordinates(parentNode);

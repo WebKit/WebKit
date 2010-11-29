@@ -422,7 +422,7 @@ void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& start
         return;
 
     // Ignore off screen child nodes of containers that do not scroll (overflow:hidden)
-    if (hasOffscreenRect(candidate.node) && !canBeScrolledIntoView(direction, candidate))
+    if (candidate.isOffscreen && !canBeScrolledIntoView(direction, candidate))
         return;
 
     FocusCandidate current;
@@ -431,7 +431,7 @@ void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& start
     if (candidate.distance == maxDistance())
         return;
 
-    if (hasOffscreenRect(candidate.node, direction) && candidate.alignment < Full)
+    if (candidate.isOffscreenAfterScrolling && candidate.alignment < Full)
         return;
 
     if (closest.isNull()) {
@@ -439,7 +439,7 @@ void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& start
         return;
     }
 
-    IntRect intersectionRect = intersection(nodeRectInAbsoluteCoordinates(candidate.node, true), nodeRectInAbsoluteCoordinates(closest.node, true));
+    IntRect intersectionRect = intersection(candidate.rect, closest.rect);
     if (!intersectionRect.isEmpty()) {
         // If 2 nodes are intersecting, do hit test to find which node in on top.
         int x = intersectionRect.x() + intersectionRect.width() / 2;
@@ -479,7 +479,7 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
         if (!node->isKeyboardFocusable(event) && !node->isFrameOwnerElement() && !canScrollInDirection(direction, node))
             continue;
 
-        FocusCandidate candidate(node);
+        FocusCandidate candidate(node, direction);
         candidate.enclosingScrollableBox = container;
         updateFocusCandidateIfNeeded(direction, startingRect, candidate, closest);
     }
@@ -515,7 +515,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         // updateFocusCandidateIfNeeded() will never consider such an iframe as a candidate.
         ASSERT(frameElement->contentFrame());
 
-        if (hasOffscreenRect(focusCandidate.node, direction)) {
+        if (focusCandidate.isOffscreenAfterScrolling) {
             scrollInDirection(focusCandidate.node->document(), direction);
             return true;
         }
@@ -532,7 +532,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         return true;
     }
     if (canScrollInDirection(direction, focusCandidate.node)) {
-        if (hasOffscreenRect(focusCandidate.node, direction)) {
+        if (focusCandidate.isOffscreenAfterScrolling) {
             scrollInDirection(focusCandidate.node, direction);
             return true;
         }
@@ -543,7 +543,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
             startingRect = nodeRectInAbsoluteCoordinates(focusedNode, true);
         return advanceFocusDirectionallyInContainer(focusCandidate.node, startingRect, direction, event);
     }
-    if (hasOffscreenRect(focusCandidate.node, direction)) {
+    if (focusCandidate.isOffscreenAfterScrolling) {
         Node* container = focusCandidate.enclosingScrollableBox;
         scrollInDirection(container, direction);
         return true;
