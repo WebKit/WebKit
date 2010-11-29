@@ -33,6 +33,7 @@
 
 #include "InspectorValues.h"
 #include "V8Binding.h"
+#include <v8.h>
 #include <v8-profiler.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -50,50 +51,29 @@ unsigned int ScriptHeapSnapshot::uid() const
     return m_snapshot->GetUid();
 }
 
-static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::HeapGraphNode* root)
-{
-    v8::HandleScope scope;
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    RefPtr<InspectorObject> lowLevels = InspectorObject::create();
-    RefPtr<InspectorObject> entries = InspectorObject::create();
-    RefPtr<InspectorObject> children = InspectorObject::create();
-    for (int i = 0, count = root->GetChildrenCount(); i < count; ++i) {
-        const v8::HeapGraphNode* node = root->GetChild(i)->GetToNode();
-        if (node->GetType() == v8::HeapGraphNode::kInternal) {
-            RefPtr<InspectorObject> lowLevel = InspectorObject::create();
-            lowLevel->setNumber("count", node->GetInstancesCount());
-            lowLevel->setNumber("size", node->GetSelfSize());
-            lowLevel->setString("type", toWebCoreString(node->GetName()));
-            lowLevels->setObject(toWebCoreString(node->GetName()), lowLevel);
-        } else if (node->GetInstancesCount()) {
-            RefPtr<InspectorObject> entry = InspectorObject::create();
-            entry->setString("constructorName", toWebCoreString(node->GetName()));
-            entry->setNumber("count", node->GetInstancesCount());
-            entry->setNumber("size", node->GetSelfSize());
-            entries->setObject(toWebCoreString(node->GetName()), entry);
-        } else {
-            RefPtr<InspectorObject> entry = InspectorObject::create();
-            entry->setString("constructorName", toWebCoreString(node->GetName()));
-            for (int j = 0, count = node->GetChildrenCount(); j < count; ++j) {
-                const v8::HeapGraphEdge* v8Edge = node->GetChild(j);
-                const v8::HeapGraphNode* v8Child = v8Edge->GetToNode();
-                RefPtr<InspectorObject> child = InspectorObject::create();
-                child->setString("constructorName", toWebCoreString(v8Child->GetName()));
-                child->setNumber("count", v8Edge->GetName()->ToInteger()->Value());
-                entry->setObject(String::number(reinterpret_cast<unsigned long long>(v8Child)), child);
-            }
-            children->setObject(String::number(reinterpret_cast<unsigned long long>(node)), entry);
-        }
-    }
-    result->setObject("lowlevels", lowLevels);
-    result->setObject("entries", entries);
-    result->setObject("children", children);
-    return result.release();
-}
+namespace {
 
-PassRefPtr<InspectorObject> ScriptHeapSnapshot::buildInspectorObjectForHead() const
+class OutputStreamAdapter : public v8::OutputStream {
+public:
+    OutputStreamAdapter(ScriptHeapSnapshot::OutputStream* output)
+        : m_output(output) { }
+    void EndOfStream() { m_output->Close(); }
+    int GetChunkSize() { return 10240; }
+    WriteResult WriteAsciiChunk(char* data, int size)
+    {
+        m_output->Write(String(data, size));
+        return kContinue;
+    }
+private:
+    ScriptHeapSnapshot::OutputStream* m_output;
+};
+
+} // namespace
+
+void ScriptHeapSnapshot::writeJSON(ScriptHeapSnapshot::OutputStream* stream)
 {
-    return buildInspectorObjectFor(m_snapshot->GetRoot());
+    OutputStreamAdapter outputStream(stream);
+    m_snapshot->Serialize(&outputStream, v8::HeapSnapshot::kJSON);
 }
 
 } // namespace WebCore

@@ -27,6 +27,154 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+WebInspector.HeapSnapshotEdgesIterator = function(snapshot, edges)
+{
+    this._snapshot = snapshot;
+    this._edges = edges;
+    this._edgeIndex = 0;
+}
+
+WebInspector.HeapSnapshotEdgesIterator.prototype = {
+    get done()
+    {
+        return this._edgeIndex >= this._edges.length;
+    },
+
+    get isElement()
+    {
+        return this._getType() === this._snapshot._edgeElementType;
+    },
+
+    get isHidden()
+    {
+        return this._getType() === this._snapshot._edgeHiddenType;
+    },
+
+    get name()
+    {
+        return this.isElement || this.isHidden ? this._getNameOrIndex() : this._snapshot._strings[this._getNameOrIndex()];
+    },
+
+    next: function()
+    {
+        this._edgeIndex += this._snapshot._edgeFieldsCount;
+    },
+
+    get node()
+    {
+        return new WebInspector.HeapSnapshotNodeWrapper(this._snapshot, this.nodeIndex);
+    },
+
+    get nodeIndex()
+    {
+        return this._edges[this._edgeIndex + this._snapshot._edgeToNodeOffset];
+    },
+
+    _getNameOrIndex: function()
+    {
+        return this._edges[this._edgeIndex + this._snapshot._edgeNameOffset];
+    },
+
+    _getType: function()
+    {
+        return this._edges[this._edgeIndex + this._snapshot._edgeTypeOffset];
+    }
+};
+
+WebInspector.HeapSnapshotNodeWrapper = function(snapshot, nodeIndex)
+{
+    this._snapshot = snapshot;
+    this._nodes = snapshot._nodes;
+    this._nodeIndex = nodeIndex;
+}
+
+WebInspector.HeapSnapshotNodeWrapper.prototype = {
+    get edges()
+    {
+        return new WebInspector.HeapSnapshotEdgesIterator(this._snapshot, this._getEdges());
+    },
+
+    get edgesCount()
+    {
+        return this._nodes[this._nodeIndex + this._snapshot._edgesCountOffset];
+    },
+
+    get instancesCount()
+    {
+        return this._nodes[this._nodeIndex + this._snapshot._nodeInstancesCountOffset];
+    },
+
+    get isHidden()
+    {
+        return this._getType() === this._snapshot._nodeHiddenType;
+    },
+
+    get name()
+    {
+        return this._snapshot._strings[this._getName()];
+    },
+
+    get selfSize()
+    {
+        return this._nodes[this._nodeIndex + this._snapshot._nodeSelfSizeOffset]; 
+    },
+
+    _getName: function()
+    {
+        return this._nodes[this._nodeIndex + this._snapshot._nodeNameOffset]; 
+    },
+
+    _getEdges: function()
+    {
+        var firstEdgeIndex = this._nodeIndex + this._snapshot._firstEdgeOffset;
+        return this._nodes.slice(firstEdgeIndex, firstEdgeIndex + this.edgesCount * this._snapshot._edgeFieldsCount);
+    },
+
+    _getType: function()
+    {
+        return this._nodes[this._nodeIndex + this._snapshot._nodeTypeOffset];
+    }
+};
+
+WebInspector.HeapSnapshot = function(profile)
+{
+    this._profile = profile;
+    this._nodes = profile.nodes;
+    this._strings = profile.strings;
+
+    this._init();
+}
+
+WebInspector.HeapSnapshot.prototype = {
+    _init: function()
+    {
+        this._metaNodeIndex = 0;
+        this._rootNodeIndex = 1;
+        var meta = this._nodes[this._metaNodeIndex];
+        this._nodeTypeOffset = meta.fields.indexOf("type");
+        this._nodeNameOffset = meta.fields.indexOf("name");
+        this._nodeIdOffset = meta.fields.indexOf("id");
+        this._nodeInstancesCountOffset = this._nodeIdOffset;
+        this._nodeSelfSizeOffset = meta.fields.indexOf("self_size");
+        this._edgesCountOffset = meta.fields.indexOf("children_count");
+        this._firstEdgeOffset = meta.fields.indexOf("children");
+        this._nodeTypes = meta.types[this._nodeTypeOffset];
+        this._nodeHiddenType = this._nodeTypes.indexOf("hidden");
+        var edgesMeta = meta.types[this._firstEdgeOffset];
+        this._edgeFieldsCount = edgesMeta.fields.length;
+        this._edgeTypeOffset = edgesMeta.fields.indexOf("type");
+        this._edgeNameOffset = edgesMeta.fields.indexOf("name_or_index");
+        this._edgeToNodeOffset = edgesMeta.fields.indexOf("to_node");
+        this._edgeTypes = edgesMeta.types[this._edgeTypeOffset];
+        this._edgeElementType = this._edgeTypes.indexOf("element");
+        this._edgeHiddenType = this._edgeTypes.indexOf("hidden");
+    },
+
+    get rootEdges()
+    {
+        return (new WebInspector.HeapSnapshotNodeWrapper(this, this._rootNodeIndex)).edges;
+    }
+};
 
 WebInspector.HeapSnapshotView = function(parent, profile)
 {
@@ -94,6 +242,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item status-bar-item");
     this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
 
+    this._loadedCallbacks = [];
     this._loadProfile(this.profile, profileCallback.bind(this));
 
     function profileCallback(profile)
@@ -290,6 +439,14 @@ WebInspector.HeapSnapshotView.prototype = {
         this._updateSummaryGraph();
     },
 
+    snapshotLoaded: function(uid, loadedSnapshot)
+    {
+        if (!this._loadedCallbacks[uid])
+            return;
+        this._loadedCallbacks[uid](loadedSnapshot);
+        delete this._loadedCallbacks[uid];
+    },
+
     _changeBase: function()
     {
         if (this.baseSnapshot.uid === this._getProfiles()[this.baseSelectElement.selectedIndex].uid)
@@ -332,15 +489,17 @@ WebInspector.HeapSnapshotView.prototype = {
             return;
         }
 
-        InspectorBackend.getProfile(profile.typeId, profile.uid, loadedCallback.bind(this));
+        this._loadedCallbacks[profile.uid] = processLoadedSnapshot.bind(this);
+        InspectorBackend.getProfile(profile.typeId, profile.uid);
 
-        function loadedCallback(loadedSnapshot) {
-            profile.children = loadedSnapshot.head.children;
-            profile.entries = loadedSnapshot.head.entries;
-            profile.lowlevels = loadedSnapshot.head.lowlevels;
+        function processLoadedSnapshot(loadedSnapshot)
+        {
+            var snapshot = this._convertSnapshot(loadedSnapshot);
+            profile.children = snapshot.children;
+            profile.entries = snapshot.entries;
+            profile.lowlevels = snapshot.lowlevels;
             this._prepareProfile(profile);
             profile._loaded = true;
-            this.parent.updateProfile(profile);
             callback(profile);
         }
     },
@@ -384,6 +543,26 @@ WebInspector.HeapSnapshotView.prototype = {
         this.refreshShowAsPercents();
     },
 
+    _convertSnapshot: function(loadedSnapshot)
+    {
+        var snapshot = new WebInspector.HeapSnapshot(loadedSnapshot);
+        var result = {lowlevels: {}, entries: {}, children: {}};
+        for (var rootEdges = snapshot.rootEdges; !rootEdges.done; rootEdges.next()) {
+            var node = rootEdges.node;
+            if (node.isHidden)
+                result.lowlevels[node.name] = {count: node.instancesCount, size: node.selfSize, type: node.name};
+            else if (node.instancesCount)
+                result.entries[node.name] = {constructorName: node.name, count: node.instancesCount, size: node.selfSize};
+            else {
+                var entry = {constructorName: node.name};
+                for (var edges = node.edges; !edges.done; edges.next())
+                    entry[edges.nodeIndex] = {constructorName: edges.node.name, count: edges.name};
+                result.children[rootEdges.nodeIndex] = entry;
+            }
+        }
+        return result;
+    },
+
     _prepareProfile: function(profile)
     {
         for (var profileEntry in profile.entries)
@@ -392,12 +571,12 @@ WebInspector.HeapSnapshotView.prototype = {
 
         for (var addr in profile.children) {
             var retainer = profile.children[addr];
-            var retainerId = retainer.constructorName + ':' + addr;
+            var retainerId = retainer.constructorName + ":" + addr;
             for (var childAddr in retainer) {
-                if (childAddr === 'constructorName') continue;
+                if (childAddr === "constructorName") continue;
                 var item = retainer[childAddr];
-                var itemId = item.constructorName + ':' + childAddr;
-                if ((item.constructorName === 'Object' || item.constructorName === 'Array')) {
+                var itemId = item.constructorName + ":" + childAddr;
+                if ((item.constructorName === "Object" || item.constructorName === "Array")) {
                     if (!(itemId in profile.clusters))
                         profile.clusters[itemId] = { constructorName: itemId, retainers: {} };
                     mergeRetainers(profile.clusters[itemId], item);
@@ -412,7 +591,7 @@ WebInspector.HeapSnapshotView.prototype = {
                entry.retainers[retainer.constructorName] = { constructorName: retainer.constructorName, count: 0, clusters: {} };
             var retainerEntry = entry.retainers[retainer.constructorName];
             retainerEntry.count += item.count;
-            if (retainer.constructorName === 'Object' || retainer.constructorName === 'Array')
+            if (retainer.constructorName === "Object" || retainer.constructorName === "Array")
                 retainerEntry.clusters[retainerId] = true;
         }
     },
@@ -438,7 +617,7 @@ WebInspector.HeapSnapshotView.prototype = {
         var sortAscending = this.dataGrid.sortOrder === "ascending";
         var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
         var sortProperty = {
-            cons: ["cons", null],
+            cons: ["constructorName", null],
             count: ["count", null],
             size: ["size", "count"],
             countDelta: this.showCountDeltaAsPercent ? ["countDeltaPercent", null] : ["countDelta", null],

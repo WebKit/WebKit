@@ -38,17 +38,22 @@ namespace WebCore {
 
 class ScriptHeapSnapshot : public RefCounted<ScriptHeapSnapshot> {
 public:
-    virtual ~ScriptHeapSnapshot() {}
+    class OutputStream {
+    public:
+        virtual ~OutputStream() { }
+        virtual void Write(const String& chunk) = 0;
+        virtual void Close() = 0;
+    };
+
+    virtual ~ScriptHeapSnapshot() { }
 
     String title() const { return ""; }
     unsigned int uid() const { return 0; }
 
-#if ENABLE(INSPECTOR)
-    PassRefPtr<InspectorObject> buildInspectorObjectForHead() const { return InspectorObject::create(); }
-#endif
+    void writeJSON(OutputStream*) { }
 
 private:
-    ScriptHeapSnapshot() {}
+    ScriptHeapSnapshot() { }
 };
 
 } // namespace WebCore

@@ -58,10 +58,12 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [notify] void addProfileHeader(out Object header);
+        [notify] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
         [notify] void attachDebuggerWhenShown();
         [notify] void debuggerWasEnabled();
         [notify] void debuggerWasDisabled();
         [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+        [notify] void finishHeapSnapshot(out unsigned long uid);
         [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
         [notify] void pausedScript(out Object details);
         [notify] void profilerWasEnabled();

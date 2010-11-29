@@ -1545,6 +1545,16 @@ WebInspector.setRecordingProfile = function(isProfiling)
     this.panels.profiles.updateProfileTypeButtons();
 }
 
+WebInspector.addHeapSnapshotChunk = function(uid, chunk)
+{
+    this.panels.profiles.addHeapSnapshotChunk(uid, chunk);
+}
+
+WebInspector.finishHeapSnapshot = function(uid)
+{
+    this.panels.profiles.finishHeapSnapshot(uid);
+}
+
 WebInspector.drawLoadingPieChart = function(canvas, percent) {
     var g = canvas.getContext("2d");
     var darkColor = "rgb(122, 168, 218)";

@@ -156,6 +156,21 @@ void InspectorProfilerAgent::getProfileHeaders(RefPtr<InspectorArray>* headers)
         (*headers)->pushObject(createSnapshotHeader(*it->second));
 }
 
+namespace {
+
+class OutputStream : public ScriptHeapSnapshot::OutputStream {
+public:
+    OutputStream(InspectorFrontend* frontend, unsigned long uid)
+        : m_frontend(frontend), m_uid(uid) { }
+    void Write(const String& chunk) { m_frontend->addHeapSnapshotChunk(m_uid, chunk); }
+    void Close() { m_frontend->finishHeapSnapshot(m_uid); }
+private:
+    InspectorFrontend* m_frontend;
+    unsigned long m_uid;
+};
+
+} // namespace
+
 void InspectorProfilerAgent::getProfile(const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject)
 {
     if (type == CPUProfileType) {
@@ -167,8 +182,12 @@ void InspectorProfilerAgent::getProfile(const String& type, unsigned uid, RefPtr
     } else if (type == HeapProfileType) {
         HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
         if (it != m_snapshots.end()) {
-            *profileObject = createSnapshotHeader(*it->second);
-            (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
+            RefPtr<ScriptHeapSnapshot> snapshot = it->second;
+            *profileObject = createSnapshotHeader(*snapshot);
+            if (m_frontend) {
+                OutputStream stream(m_frontend, uid);
+                snapshot->writeJSON(&stream);
+            }
         }
     }
 }
