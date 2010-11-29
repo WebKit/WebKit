@@ -6875,10 +6875,12 @@ void CSSStyleSelector::loadPendingImages()
             }
             
             case CSSPropertyWebkitBoxReflect: {
-                const NinePieceImage& maskImage = m_style->boxReflect()->mask();
-                if (maskImage.image() && maskImage.image()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
-                    m_style->boxReflect()->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.slices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                if (StyleReflection* reflection = m_style->boxReflect()) {
+                    const NinePieceImage& maskImage = reflection->mask();
+                    if (maskImage.image() && maskImage.image()->isPendingImage()) {
+                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
+                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.slices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                    }
                 }
                 break;
             }
