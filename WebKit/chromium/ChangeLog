@@ -1,3 +1,9 @@
+2010-11-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove Build directory that was erroneously added in r72103.
+
+        * Build: Removed.
+
 2010-11-29  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Darin Fisher.
