@@ -656,6 +656,11 @@ private:
 
     Element* ancestorElement() const;
 
+    // Use Node::parentNode as the consistent way of querying a parent node.
+    // This method is made private to ensure a compiler error on call sites that
+    // don't follow this rule.
+    using TreeShared<ContainerNode>::parent;
+
     void trackForDebugging();
 
     Document* m_document;

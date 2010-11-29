@@ -119,7 +119,7 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String&, String& resultS
     RefPtr<XSLStyleSheet> stylesheet = m_stylesheet;
     if (!stylesheet && m_stylesheetRootNode) {
         Node* node = m_stylesheetRootNode.get();
-        stylesheet = XSLStyleSheet::createForXSLTProcessor(node->parent() ? node->parent() : node,
+        stylesheet = XSLStyleSheet::createForXSLTProcessor(node->parentNode() ? node->parentNode() : node,
             node->document()->url().string(),
             node->document()->url()); // FIXME: Should we use baseURL here?
 
