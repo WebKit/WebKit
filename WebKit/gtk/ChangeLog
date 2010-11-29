@@ -2,6 +2,21 @@
 
         Reviewed by Xan Lopez.
 
+        [Gtk] Tooltips should be fully keyboard accessible
+        https://bugs.webkit.org/show_bug.cgi?id=25525
+
+        Position the tooltip under the current focused element when the
+        tooltip has been triggered using the keyboard.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_query_tooltip):
+        (webkit_web_view_show_help):
+        (webkit_web_view_class_init):
+
+2010-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Tooltips not shown when scrolling
         https://bugs.webkit.org/show_bug.cgi?id=50143
 

@@ -1654,6 +1654,34 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(widget);
 
+    if (keyboard_mode) {
+        WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+
+        // Get the title of the current focused element.
+        Frame* coreFrame = core(webView)->focusController()->focusedOrMainFrame();
+        if (!coreFrame)
+            return FALSE;
+
+        Node* node = getFocusedNode(coreFrame);
+        if (!node)
+            return FALSE;
+
+        for (Node* titleNode = node; titleNode; titleNode = titleNode->parentNode()) {
+            if (titleNode->isElementNode()) {
+                String title = static_cast<Element*>(titleNode)->title();
+                if (!title.isEmpty()) {
+                    GdkRectangle area = coreFrame->view()->contentsToWindow(node->getRect());
+                    gtk_tooltip_set_tip_area(tooltip, &area);
+                    gtk_tooltip_set_text(tooltip, title.utf8().data());
+
+                    return TRUE;
+                }
+            }
+        }
+
+        return FALSE;
+    }
+
     if (priv->tooltipText.length() > 0) {
         if (!keyboard_mode) {
             if (!priv->tooltipArea.isEmpty()) {
@@ -1667,6 +1695,14 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
     }
 
     return FALSE;
+}
+
+static gboolean webkit_web_view_show_help(GtkWidget* widget, GtkWidgetHelpType help_type)
+{
+    if (help_type == GTK_WIDGET_HELP_TOOLTIP)
+        gtk_widget_set_has_tooltip(widget, TRUE);
+
+    return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->show_help(widget, help_type);
 }
 #endif
 
@@ -2741,6 +2777,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->drag_data_received = webkit_web_view_drag_data_received;
 #if GTK_CHECK_VERSION(2, 12, 0)
     widgetClass->query_tooltip = webkit_web_view_query_tooltip;
+    widgetClass->show_help = webkit_web_view_show_help;
 #endif
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
