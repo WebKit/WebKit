@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS regexp01.toString() is "1235"
 PASS regexp01a.toString() is "123 5"
-PASS regexp01b.toString() is "1-3 5"
-PASS regexp01c.toString() is "1-3 5"
+PASS /[1\s-35]+/.exec("21-3 54"); threw exception SyntaxError: Invalid regular expression: invalid range in character class.
+PASS /[1-\s35]+/.exec("21-3 54"); threw exception SyntaxError: Invalid regular expression: invalid range in character class.
 PASS regexp01d.toString() is "123 5"
 PASS regexp01e.toString() is "123 5"
 PASS regexp01f.toString() is "-3"

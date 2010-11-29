@@ -617,9 +617,7 @@ FAILED TO COMPILE
     aaa: PASS
 
 /[\d-z]+/
-    12-34z: PASS
-    *** Failers
-    aaa: PASS
+FAILED TO COMPILE
 
 /\x5c/
 FAILED TO COMPILE
@@ -2598,18 +2596,10 @@ FAILED TO COMPILE
     abbab: PASS
 
 /^[a-\d]/
-    abcde: PASS
-    -things: PASS
-    0digit: PASS
-    *** Failers
-    bcdef: PASS
+FAILED TO COMPILE
 
 /^[\d-a]/
-    abcde: PASS
-    -things: PASS
-    0digit: PASS
-    *** Failers
-    bcdef: PASS
+FAILED TO COMPILE
 
 /[[:space:]]+/
     > 	

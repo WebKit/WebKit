@@ -9,10 +9,11 @@ shouldBe('regexp01.toString()', '"1235"');
 // range it is no longer a range - hyphens should now match, two should not.
 var regexp01a = /[\s1-35]+/.exec("-123 54");
 shouldBe('regexp01a.toString()', '"123 5"');
-var regexp01b = /[1\s-35]+/.exec("21-3 54");
-shouldBe('regexp01b.toString()', '"1-3 5"');
-var regexp01c = /[1-\s35]+/.exec("21-3 54"); // This was a cricial case; the '-' m_isPendingDash wasn't being reset properly, causing the '35' to be treated like a range '3-5'.
-shouldBe('regexp01c.toString()', '"1-3 5"');
+
+// These are invalid ranges.
+shouldThrow('/[1\\s-35]+/.exec("21-3 54");');
+shouldThrow('/[1-\\s35]+/.exec("21-3 54");');
+
 var regexp01d = /[1-3\s5]+/.exec("-123 54");
 shouldBe('regexp01d.toString()', '"123 5"');
 var regexp01e = /[1-35\s5]+/.exec("-123 54");

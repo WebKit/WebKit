@@ -1,3 +1,18 @@
+2010-11-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 48100 - YARR allows what seems like a bogus character-class range
+
+        Per ECMA-262 character classes containing character ranges containing
+        character classes are invalid, eg:
+            /[\d-x]/
+            /[x-\d]/
+            /[\d-\d]/
+        These should throw a syntax error.
+
+        * yarr/RegexParser.h:
+
 2010-11-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

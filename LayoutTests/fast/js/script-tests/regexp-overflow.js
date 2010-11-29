@@ -17,7 +17,7 @@ shouldBe('/(x){0,2}/.exec("").toString()', '","');
 shouldBe('/[\u00A1]{4,6}/.exec("\u00A1\u00A1\u00A1\u00A1").toString()', '"\u00A1\u00A1\u00A1\u00A1"');
 shouldBe('/[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}/.exec("\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1").toString()', '"\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1"');
 
-shouldBe('/{([\\D-\\ca]]„£µ+?)}|[[\\B-\\u00d4]√π- ]]]{0,3}/i.exec("B√π- ]]").toString()', '"B√π- ]],"');
+shouldBe('/{([\\D\\-\\ca]]„£µ+?)}|[[\\B-\\u00d4]√π- ]]]{0,3}/i.exec("B√π- ]]").toString()', '"B√π- ]],"');
 shouldBe('/|[x\\B-\\u00b5]/i.exec("").toString()', '""');
 
 var complexPattern = "";
