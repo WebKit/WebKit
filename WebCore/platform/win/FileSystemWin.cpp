@@ -134,10 +134,7 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    String fileName = pathGetFileName(path);
-    String dirName = String(path);
-    dirName.truncate(dirName.length() - pathGetFileName(path).length());
-    return dirName;
+    return path.left(path.length() - pathGetFileName(path).length());
 }
 
 static String bundleName()
