@@ -92,14 +92,20 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, int ID)
     ASSERT(it != runLoop->m_activeTimers.end());
     TimerBase* timer = it->second;
 
-    // FIMXE: Support repeating timers.
-    timer->stop();
+    if (!timer->m_isRepeating) {
+        // Stop the timer (calling stop would need another hash table lookup).
+        runLoop->m_activeTimers.remove(it);
+        runLoop->m_timerObject->killTimer(timer->m_ID);
+        timer->m_ID = 0;
+    }
+
     timer->fired();
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop* runLoop)
     : m_runLoop(runLoop)
     , m_ID(0)
+    , m_isRepeating(false)
 {
 }
 
@@ -108,11 +114,11 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::start(double nextFireInterval, double /*repeatInterval*/)
+void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
-    // FIMXE: Support repeating timers.
     stop();
     int millis = static_cast<int>(nextFireInterval * 1000);
+    m_isRepeating = repeat;
     m_ID = m_runLoop->m_timerObject->startTimer(millis);
     ASSERT(m_ID);
     m_runLoop->m_activeTimers.set(m_ID, this);

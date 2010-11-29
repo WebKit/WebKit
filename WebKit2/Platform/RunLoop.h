@@ -54,8 +54,8 @@ public:
         TimerBase(RunLoop*);
         virtual ~TimerBase();
 
-        void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
-        void startOneShot(double interval) { start(interval, 0); }
+        void startRepeating(double repeatInterval) { start(repeatInterval, true); }
+        void startOneShot(double interval) { start(interval, false); }
 
         void stop();
         bool isActive() const;
@@ -63,19 +63,21 @@ public:
         virtual void fired() = 0;
 
     private:
-        void start(double nextFireInterval, double repeatInterval);
+        void start(double nextFireInterval, bool repeat);
 
         RunLoop* m_runLoop;
 
 #if PLATFORM(WIN)
         static void timerFired(RunLoop*, uint64_t ID);
         uint64_t m_ID;
+        bool m_isRepeating;
 #elif PLATFORM(MAC)
         static void timerFired(CFRunLoopTimerRef, void*);
         CFRunLoopTimerRef m_timer;
 #elif PLATFORM(QT)
         static void timerFired(RunLoop*, int ID);
         int m_ID;
+        bool m_isRepeating;
 #endif
     };
 

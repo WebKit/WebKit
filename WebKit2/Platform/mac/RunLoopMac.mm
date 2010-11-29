@@ -104,12 +104,13 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::start(double nextFireInterval, double repeatInterval)
+void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
     if (m_timer)
         stop();
 
     CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
+    CFTimeInterval repeatInterval = repeat ? nextFireInterval : 0;
     m_timer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + nextFireInterval, repeatInterval, 0, 0, timerFired, &context);
     CFRunLoopAddTimer(m_runLoop->m_runLoop, m_timer, kCFRunLoopCommonModes);
 }

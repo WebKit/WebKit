@@ -1,3 +1,31 @@
+2010-11-29  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WK2] Support repeating timers
+        https://bugs.webkit.org/show_bug.cgi?id=50024
+
+        Added boolean member for TimerBase on PLATFORM(WIN)
+        and PLATFORM(QT) to be able to differentiate between
+        repeating and one shot operating mode. Change the confusing
+        signature of TimerBase::start: use a bool for selecting
+        operating mode.
+        * Platform/RunLoop.h:
+        (RunLoop::TimerBase::startRepeating):
+        (RunLoop::TimerBase::startOneShot):
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::TimerBase::start):
+        * Platform/qt/RunLoopQt.cpp:
+        (RunLoop::TimerBase::timerFired): Only stop the timer if it
+        is not in repeating mode.
+        (RunLoop::TimerBase::TimerBase): 
+        (RunLoop::TimerBase::start):
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::TimerBase::timerFired):  Only stop the timer if it
+        is not in repeating mode.
+        (RunLoop::TimerBase::TimerBase):
+        (RunLoop::TimerBase::start):
+
 2010-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
