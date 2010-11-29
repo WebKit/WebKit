@@ -126,7 +126,13 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
             FrameLoader::reportLocalLoadFailed(cachedResourceLoader->document()->frame(), url.string());
         return 0;
     }
-    
+
+    if (resource && resource->type() != type) {
+        LOG(ResourceLoading, "Cache::requestResource found a cache resource with matching url but different type, evicting and loading with new type.");
+        evict(resource);
+        resource = 0;
+    }
+
     if (!resource) {
         LOG(ResourceLoading, "CachedResource for '%s' wasn't found in cache. Creating it", url.string().latin1().data());
         // The resource does not exist. Create it.
@@ -155,11 +161,6 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
             resource->setInCache(false);
             resource->setCachedResourceLoader(cachedResourceLoader);
         }
-    }
-
-    if (resource->type() != type) {
-        LOG(ResourceLoading, "MemoryCache::requestResource cannot use cached resource for '%s' due to type mismatch", url.string().latin1().data());
-        return 0;
     }
 
     if (!disabled()) {
