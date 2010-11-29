@@ -3194,3 +3194,4 @@ BUGCR64401 WIN : fast/filesystem/op-copy.html = TEXT
 
 BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
 
+BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-fillRect-shadow.html = TEXT
