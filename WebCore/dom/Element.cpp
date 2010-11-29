@@ -1741,7 +1741,8 @@ bool Element::isSpellCheckingEnabled() const
             break;
         }
 
-        element = element->parentElement();
+        ContainerNode* parent = const_cast<Element*>(element)->parentOrHostNode();
+        element = (parent && parent->isElementNode()) ? toElement(parent) : 0;
     }
 
     return true;

@@ -49,7 +49,6 @@ private:
     virtual bool isMouseFocusable() const { return false; } 
     virtual bool isShadowNode() const { return m_shadowParent.get(); }
     virtual ContainerNode* shadowParentNode() { return m_shadowParent.get(); }
-    virtual bool isSpellCheckingEnabled() const;
     void setShadowParentNode(HTMLElement* shadowParent) { m_shadowParent = shadowParent; }
 
     RefPtr<HTMLElement> m_shadowParent;

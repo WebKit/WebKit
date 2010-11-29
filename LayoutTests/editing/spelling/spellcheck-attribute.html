@@ -6,6 +6,7 @@
 <body>
 <p>This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.</p>
 <div id="testRoot">
+
 <div spellcheck="true">
 <label>1.1.</label><input id="test1_1" type="text"></input><br/>
 <label>1.2.</label><input id="test1_2" type="text" spellcheck="true"></input><br/>
@@ -22,6 +23,24 @@
 <label>2.5.</label><input id="test2_5" type="text" spellcheck></input><br/>
 <label>2.6.</label><input id="test2_6" type="text"></input><br/>
 </div>
+
+<div spellcheck="true">
+<label>3.1.</label><input id="test3_1" type="search"></input><br/>
+<label>3.2.</label><input id="test3_2" type="search" spellcheck="true"></input><br/>
+<label>3.3.</label><input id="test3_3" type="search" spellcheck="false"></input><br/>
+<label>3.4.</label><input id="test3_4" type="search" spellcheck="InvalidValue"></input><br/>
+<label>3.5.</label><input id="test3_5" type="search" spellcheck></input><br/>
+<label>3.6.</label><input id="test3_6" type="search"></input><br/>
+</div>
+<div spellcheck="false">
+<label>4.1.</label><input id="test4_1" type="search"></input><br/>
+<label>4.2.</label><input id="test4_2" type="search" spellcheck="true"></input><br/>
+<label>4.3.</label><input id="test4_3" type="search" spellcheck="false"></input><br/>
+<label>4.4.</label><input id="test4_4" type="search" spellcheck="InvalidValue"></input><br/>
+<label>4.5.</label><input id="test4_5" type="search" spellcheck></input><br/>
+<label>4.6.</label><input id="test4_6" type="search"></input><br/>
+</div>
+
 </div>
 <pre id="console"></pre>
 <script>
@@ -40,6 +59,7 @@ function testTypingInvalidWord(id, shouldBeMarked) {
         log("FAIL:" + id);
 }
 
+// For type="text".
 testTypingInvalidWord('test1_1', true);
 testTypingInvalidWord('test1_2', true);
 testTypingInvalidWord('test1_3', false);
@@ -52,6 +72,20 @@ testTypingInvalidWord('test2_3', false);
 testTypingInvalidWord('test2_4', false);
 testTypingInvalidWord('test2_5', true);
 testTypingInvalidWord('test2_6', false);
+
+// For type="search".
+testTypingInvalidWord('test3_1', true);
+testTypingInvalidWord('test3_2', true);
+testTypingInvalidWord('test3_3', false);
+testTypingInvalidWord('test3_4', true);
+testTypingInvalidWord('test3_5', true);
+testTypingInvalidWord('test3_6', true);
+testTypingInvalidWord('test4_1', false);
+testTypingInvalidWord('test4_2', true);
+testTypingInvalidWord('test4_3', false);
+testTypingInvalidWord('test4_4', false);
+testTypingInvalidWord('test4_5', true);
+testTypingInvalidWord('test4_6', false);
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
