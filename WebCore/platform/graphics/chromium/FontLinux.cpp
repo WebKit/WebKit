@@ -341,7 +341,6 @@ void TextRunWalker::setPadding(int padding)
     // amount to each space. The last space gets the smaller amount, if
     // any.
     unsigned numWordBreaks = 0;
-    bool isRTL = m_iterateBackwards;
 
     for (unsigned i = 0; i < m_item.stringLength; i++) {
         if (isWordBreak(i))
@@ -524,7 +523,7 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
                 // Whitespace must be laid out in logical order, so when inserting
                 // spaces in RTL (but iterating in LTR order) we must insert spaces
                 // _before_ the next glyph.
-                if (i + 1 >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
+                if (static_cast<unsigned>(i + 1) >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
                     position += m_letterSpacing;
 
                 position += determineWordBreakSpacing(logClustersIndex);
@@ -541,7 +540,7 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
                 position += truncateFixedPointToInteger(m_item.advances[i]);
         }
     } else {
-        for (int i = 0; i < m_item.num_glyphs; ++i) {
+        for (size_t i = 0; i < m_item.num_glyphs; ++i) {
             m_glyphs16[i] = m_item.glyphs[i];
             double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
             m_xPositions[i] = m_offsetX + position + offsetX;
@@ -556,7 +555,7 @@ void TextRunWalker::setGlyphXPositions(bool isRTL)
             if (m_item.attributes[i].clusterStart)
                 advance += m_letterSpacing;
 
-            while (logClustersIndex < m_item.item.length && logClusters()[logClustersIndex] == i)
+            while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && logClusters()[logClustersIndex] == i)
                 logClustersIndex++;
 
             position += advance;
@@ -708,7 +707,7 @@ static int glyphIndexForXPositionInScriptRun(const TextRunWalker& walker, int x)
         for (glyphIndex = walker.length() - 1; glyphIndex >= 0; --glyphIndex) {
             // When iterating LTR over RTL text, we must include the whitespace
             // _before_ the glyph, so no + 1 here.
-            if (x < (walker.length() - glyphIndex) * letterSpacing + truncateFixedPointToInteger(advances[glyphIndex]))
+            if (x < (static_cast<int>(walker.length()) - glyphIndex) * letterSpacing + truncateFixedPointToInteger(advances[glyphIndex]))
                 break;
             x -= truncateFixedPointToInteger(advances[glyphIndex]);
         }
