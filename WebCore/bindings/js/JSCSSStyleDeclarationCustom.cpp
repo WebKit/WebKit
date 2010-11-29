@@ -47,6 +47,9 @@ void JSCSSStyleDeclaration::markChildren(MarkStack& markStack)
     CSSStyleDeclaration* declaration = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
+    if (CSSRule* parentRule = declaration->parentRule())
+        markDOMObjectWrapper(markStack, globalData, parentRule);
+
     if (declaration->isMutableStyleDeclaration()) {
         CSSMutableStyleDeclaration* mutableDeclaration = static_cast<CSSMutableStyleDeclaration*>(declaration);
         CSSMutableStyleDeclaration::const_iterator end = mutableDeclaration->end();
