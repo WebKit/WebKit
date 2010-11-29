@@ -143,6 +143,8 @@ WebInspector.Color.prototype = {
             format = this.format;
 
         switch (format) {
+            case "original":
+                return this.value;
             case "rgb":
                 return "rgb(" + this.rgb.join(", ") + ")";
             case "rgba":
@@ -324,7 +326,7 @@ WebInspector.Color.prototype = {
                     throw "unknown color name";
             } else if (match[4]) { // hsl
                 this.format = "hsl";
-                var hsl = match[4].replace(/%g/, "").split(/\s*,\s*/);
+                var hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
                 this.hsl = hsl;
                 this.rgb = this._hslToRGB(hsl);
                 this.hex = this._rgbToHex(this.rgb);
