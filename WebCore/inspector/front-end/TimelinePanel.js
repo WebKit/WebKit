@@ -961,7 +961,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     contentHelper._appendLinkRow(WebInspector.UIString("Script"), this.data.url, this.data.lineNumber);
                 break;
             case recordTypes.Paint:
-                contentHelper._appendTextRow(WebInspector.UIString("Location"), WebInspector.UIString("%d × %d", this.data.x, this.data.y));
+                contentHelper._appendTextRow(WebInspector.UIString("Location"), WebInspector.UIString("(%d, %d)", this.data.x, this.data.y));
                 contentHelper._appendTextRow(WebInspector.UIString("Dimensions"), WebInspector.UIString("%d × %d", this.data.width, this.data.height));
             case recordTypes.RecalculateStyles: // We don't want to see default details.
                 break;
