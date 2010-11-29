@@ -1,5 +1,16 @@
 2010-11-29  Adam Roben  <aroben@apple.com>
 
+        Robustify react-to-vsprops-changes.py against changes to its location
+        or the location of the .vsprops files
+
+        Suggested by John Sullivan.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        Removed file_modification_times.
+        (main): Use glob.glob to find the .vsprops files and assert that we found some.
+
+2010-11-29  Adam Roben  <aroben@apple.com>
+
         Touch wtf/Platform.h whenever any .vsprops file changes
 
         This will cause all files to be recompiled, which will make changes to
