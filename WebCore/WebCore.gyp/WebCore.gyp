@@ -245,6 +245,9 @@
           '../platform/mac',
           '../platform/text/mac',
         ],
+        # enable -Wall and -Werror, just for Linux builds for now
+        # FIXME: Also enable this for Linux/Windows after verifying no warnings
+        'chromium_code': 1,
       }],
       ['OS=="win"', {
         'webcore_include_dirs': [
@@ -253,10 +256,6 @@
           '../platform/text/win',
           '../platform/win',
         ],
-      },{
-        # enable -Wall and -Werror, just for Mac and Linux builds for now
-        # FIXME: Also enable this for Windows after verifying no warnings
-        'chromium_code': 1,
       }],
       ['OS=="win" and buildtype=="Official"', {
         # On windows official release builds, we try to preserve symbol space.
