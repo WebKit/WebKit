@@ -143,7 +143,7 @@ CGAffineTransform WKGetUserToBaseCTM(CGContextRef);
 void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
 #else
 typedef void *WKGlyphVectorRef;
-OSStatus WKConvertCharToGlyphs(void *styleGroup, const UniChar *characters, unsigned numCharacters, WKGlyphVectorRef glyphs);
+OSStatus WKConvertCharToGlyphs(void *styleGroup, const UniChar* characters, unsigned numCharacters, WKGlyphVectorRef glyphs);
 OSStatus WKGetATSStyleGroup(ATSUStyle fontStyle, void **styleGroup);
 void WKReleaseStyleGroup(void *group);
 OSStatus WKInitializeGlyphVector(int count, WKGlyphVectorRef glyphs);
@@ -334,6 +334,25 @@ void WKSyncSurfaceToView(NSView *view);
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
+#endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+typedef enum {
+    WKSandboxExtensionTypeReadOnly,
+    WKSandboxExtensionTypeWriteOnly,    
+    WKSandboxExtensionTypeReadWrite,
+} WKSandboxExtensionType;
+typedef struct __WKSandboxExtension *WKSandboxExtensionRef;
+
+WKSandboxExtensionRef WKSandboxExtensionCreate(const char* path, WKSandboxExtensionType type);
+void WKSandboxExtensionDestroy(WKSandboxExtensionRef sandboxExtension);
+
+bool WKSandboxExtensionConsume(WKSandboxExtensionRef sandboxExtension);
+bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
+
+const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
+WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
+
 #endif
 
 #ifdef __cplusplus

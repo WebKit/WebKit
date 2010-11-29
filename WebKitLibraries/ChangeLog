@@ -1,3 +1,11 @@
+2010-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Simon Fraser.
+
+        WebKitSystemInterface.h piece of r72438.
+
+        * WebKitSystemInterface.h:
+
 2010-11-22  Adam Roben  <aroben@apple.com>
 
         Use paths relative to $WebKitVSPropsRedirectionDir to access shared .vsprops files
