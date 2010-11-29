@@ -28,7 +28,7 @@ module audio {
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] AudioBufferSourceNode : AudioSourceNode {
-        attribute [Custom] AudioBuffer buffer;
+        attribute [JSCCustomSetter] AudioBuffer buffer;
 
         readonly attribute AudioGain gain;
         readonly attribute AudioParam playbackRate;
