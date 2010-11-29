@@ -1,0 +1,18 @@
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="div"
+|   "
+"
+|   <div>
+|     <span>
+|       id="text"
+|       "The following paragraph break should be selected on OS X.<#selection-caret>"
+|   "
+"
+|   <br>
+|   "
+"
+| "
+"
