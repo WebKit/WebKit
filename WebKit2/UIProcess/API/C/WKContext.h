@@ -78,6 +78,7 @@ typedef WKStringRef (*WKContextDownloadDecideDestinationWithSuggestedFilenameCal
 typedef void (*WKContextDownloadDidCreateDestinationCallback)(WKContextRef context, WKDownloadRef download, WKStringRef path, const void *clientInfo);
 typedef void (*WKContextDownloadDidFinishCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 typedef void (*WKContextDownloadDidFailCallback)(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void *clientInfo);
+typedef void (*WKContextDownloadDidCancel)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 typedef void (*WKContextDownloadProcessDidCrashCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 
 struct WKContextDownloadClient {
@@ -91,6 +92,7 @@ struct WKContextDownloadClient {
     WKContextDownloadDidCreateDestinationCallback                       didCreateDestination;
     WKContextDownloadDidFinishCallback                                  didFinish;
     WKContextDownloadDidFailCallback                                    didFail;
+    WKContextDownloadDidCancel                                          didCancel;
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
 };
 typedef struct WKContextDownloadClient WKContextDownloadClient;

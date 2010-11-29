@@ -30,6 +30,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceResponse.h>
+#include "DataReference.h"
 #include "NotImplemented.h"
 #include "WebPage.h"
 
@@ -143,6 +144,14 @@ void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, 
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
                                                             
     setOriginalURLForDownload(initiatingPage, m_nsURLDownload.get(), initialRequest);
+}
+
+void Download::cancel()
+{
+    [m_nsURLDownload.get() cancel];
+
+    RetainPtr<NSData> resumeData = [m_nsURLDownload.get() resumeData];
+    didCancel(CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]));
 }
 
 void Download::platformInvalidate()
@@ -262,8 +271,13 @@ void Download::platformInvalidate()
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
-    if (_download)
-        _download->didFail(error);
+    if (!_download)
+        return;
+
+    RetainPtr<NSData> resumeData = [download resumeData];
+    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
+
+    _download->didFail(error, dataReference);
 }
 
 @end

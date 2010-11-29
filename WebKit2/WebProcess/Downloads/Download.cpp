@@ -26,6 +26,7 @@
 #include "Download.h"
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "DownloadProxyMessages.h"
 #include "DownloadManager.h"
 #include "SandboxExtension.h"
@@ -110,9 +111,18 @@ void Download::didFinish()
     DownloadManager::shared().downloadFinished(this);
 }
 
-void Download::didFail(const WebCore::ResourceError& error)
+void Download::didFail(const ResourceError& error, const CoreIPC::DataReference& resumeData)
 {
-    send(Messages::DownloadProxy::DidFail(error));
+    send(Messages::DownloadProxy::DidFail(error, resumeData));
+
+    if (m_sandboxExtension)
+        m_sandboxExtension->invalidate();
+    DownloadManager::shared().downloadFinished(this);
+}
+
+void Download::didCancel(const CoreIPC::DataReference& resumeData)
+{
+    send(Messages::DownloadProxy::DidCancel(resumeData));
 
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();

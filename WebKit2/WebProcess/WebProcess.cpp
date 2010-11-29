@@ -548,4 +548,9 @@ void WebProcess::clearApplicationCache()
 #endif
 }
 
+void WebProcess::cancelDownload(uint64_t downloadID)
+{
+    DownloadManager::shared().cancelDownload(downloadID);
+}
+
 } // namespace WebKit

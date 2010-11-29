@@ -41,6 +41,7 @@ namespace WebCore {
 namespace WebKit {
 
 class WebContext;
+class WebData;
 
 class DownloadProxy : public APIObject {
 public:
@@ -51,6 +52,9 @@ public:
 
     uint64_t downloadID() const { return m_downloadID; }
     const WebCore::ResourceRequest& request() const { return m_request; }
+    WebData* resumeData() const { return m_resumeData.get(); }
+
+    void cancel();
 
     void invalidate();
     void processDidClose();
@@ -71,10 +75,13 @@ private:
     void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle);
     void didCreateDestination(const String& path);
     void didFinish();
-    void didFail(const WebCore::ResourceError&);
+    void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
+    void didCancel(const CoreIPC::DataReference& resumeData);
 
     WebContext* m_webContext;
     uint64_t m_downloadID;
+
+    RefPtr<WebData> m_resumeData;
     WebCore::ResourceRequest m_request;
 };
 

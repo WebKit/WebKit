@@ -28,5 +28,6 @@ messages -> DownloadProxy {
     DecideDestinationWithSuggestedFilename(String filename) -> (String destination, bool allowOverwrite, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     DidCreateDestination(WTF::String path)
     DidFinish()
-    DidFail(WebCore::ResourceError error)
+    DidFail(WebCore::ResourceError error, CoreIPC::DataReference resumeData)
+    DidCancel(CoreIPC::DataReference resumeData)
 }

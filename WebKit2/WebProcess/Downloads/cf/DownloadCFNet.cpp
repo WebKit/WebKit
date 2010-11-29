@@ -41,6 +41,11 @@ void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const R
     notImplemented();
 }
 
+void Download::cancel()
+{
+    notImplemented();
+}
+
 void Download::platformInvalidate()
 {
     notImplemented();

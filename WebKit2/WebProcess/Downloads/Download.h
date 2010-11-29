@@ -42,6 +42,10 @@ class WKDownloadAsDelegate;
 #endif
 #endif
 
+namespace CoreIPC {
+    class DataReference;
+}
+
 namespace WebCore {
     class ResourceError;
     class ResourceHandle;
@@ -66,6 +70,7 @@ public:
 
     void start(WebPage* initiatingWebPage);
     void startWithHandle(WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceRequest& initialRequest, const WebCore::ResourceResponse&);
+    void cancel();
 
     uint64_t downloadID() const { return m_downloadID; }
 
@@ -76,7 +81,8 @@ public:
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
     void didCreateDestination(const String& path);
     void didFinish();
-    void didFail(const WebCore::ResourceError&);
+    void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
+    void didCancel(const CoreIPC::DataReference& resumeData);
 
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);

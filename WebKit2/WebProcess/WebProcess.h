@@ -112,6 +112,8 @@ private:
     void platformClearResourceCaches();
     void clearApplicationCache();
 
+    void cancelDownload(uint64_t downloadID);
+
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didClose(CoreIPC::Connection*);

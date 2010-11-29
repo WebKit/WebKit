@@ -25,8 +25,10 @@
 
 #include "DownloadProxy.h"
 
-#include "NotImplemented.h"
+#include "DataReference.h"
 #include "WebContext.h"
+#include "WebData.h"
+#include "WebProcessMessages.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,6 +56,14 @@ DownloadProxy::DownloadProxy(WebContext* webContext)
 DownloadProxy::~DownloadProxy()
 {
     ASSERT(!m_webContext);
+}
+
+void DownloadProxy::cancel()
+{
+    if (!m_webContext)
+        return;
+
+    m_webContext->process()->send(Messages::WebProcess::CancelDownload(m_downloadID), 0);
 }
 
 void DownloadProxy::invalidate()
@@ -134,12 +144,32 @@ void DownloadProxy::didFinish()
     m_webContext->downloadFinished(this);
 }
 
-void DownloadProxy::didFail(const ResourceError& error)
+static PassRefPtr<WebData> createWebData(const CoreIPC::DataReference& data)
+{
+    if (data.isEmpty())
+        return 0;
+
+    return WebData::create(data.data(), data.size());
+}
+
+void DownloadProxy::didFail(const ResourceError& error, const CoreIPC::DataReference& resumeData)
 {
     if (!m_webContext)
         return;
 
+    m_resumeData = createWebData(resumeData);
+
     m_webContext->downloadClient().didFail(m_webContext, this, error);
+
+    // This can cause the DownloadProxy object to be deleted.
+    m_webContext->downloadFinished(this);
+}
+
+void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
+{
+    m_resumeData = createWebData(resumeData);
+
+    m_webContext->downloadClient().didCancel(m_webContext, this);
 
     // This can cause the DownloadProxy object to be deleted.
     m_webContext->downloadFinished(this);

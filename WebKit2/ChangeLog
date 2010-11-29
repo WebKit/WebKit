@@ -1,3 +1,75 @@
+2010-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Should be able to pause and resume downloads
+        https://bugs.webkit.org/show_bug.cgi?id=50185
+        <rdar://problem/8691135>
+
+        * UIProcess/API/C/WKContext.h:
+        Add didCancel callback.
+
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadGetResumeData):
+        (WKDownloadCancel):
+        Call the respective DownloadProxy member functions.
+
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::cancel):
+        Send Cancel to the WebProcess.
+
+        (WebKit::DownloadProxy::didFail):
+        This now takes a resumeData reference.
+
+        (WebKit::DownloadProxy::didCancel):
+        Set the resume data and call didCancel.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::resumeData):
+        Return the resume data.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add DidCancel message, Add resume data to DidFail.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didCancel):
+        Call the didCancel context client function.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didFail):
+        This now takes a resume data argument as well.
+        
+        (WebKit::Download::didCancel):
+        Send DidCancel.
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::cancelDownload):
+        Look up the download and cancel it.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::cancel):
+        Add stub.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::cancel):
+        Cancel the download.
+
+        (-[WKDownloadAsDelegate download:didFailWithError:]):
+        Pass the resume data along.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::cancel):
+        Add stub.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::cancelDownload):
+        Ask the download manager to cancel the download.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Add CancelDownload message.
+
 2010-11-29  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Roben.

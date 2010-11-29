@@ -39,6 +39,8 @@ extern "C" {
 WK_EXPORT WKTypeID WKDownloadGetTypeID();
 
 WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
+WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
+WK_EXPORT void WKDownloadCancel(WKDownloadRef download);
 
 #ifdef __cplusplus
 }
