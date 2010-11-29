@@ -11,6 +11,26 @@ if (window.layoutTestController && window.eventSender) {
                 eventSender.zoomPageIn();
         }
 
-        layoutTestController.notifyDone();
+        if (window.postZoomCallback) {
+            window.setTimeout(function() {
+                window.postZoomCallback();
+                completeDynamicTest();
+            }, 0);
+        } else {
+            layoutTestController.notifyDone();
+        }
     }, 0);
+}
+
+function completeDynamicTest() {
+    var script = document.createElement("script");
+
+    script.onload = function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    };
+
+    script.src = "../../../fast/js/resources/js-test-post.js";
+    successfullyParsed = true;
+    document.body.appendChild(script);
 }

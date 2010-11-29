@@ -1912,9 +1912,9 @@ PassRefPtr<ClientRect> Range::getBoundingClientRect() const
     if (quads.isEmpty())
         return ClientRect::create();
 
-    IntRect result;
+    FloatRect result;
     for (size_t i = 0; i < quads.size(); ++i)
-        result.unite(quads[i].enclosingBoundingBox());
+        result.unite(quads[i].boundingBox());
 
     return ClientRect::create(result);
 }

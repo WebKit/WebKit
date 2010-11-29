@@ -1002,14 +1002,6 @@ inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
     return adjustForAbsoluteZoom(value, renderer->style());
 }
 
-inline void adjustIntRectForAbsoluteZoom(IntRect& rect, RenderObject* renderer)
-{
-    rect.setX(adjustForAbsoluteZoom(rect.x(), renderer));
-    rect.setY(adjustForAbsoluteZoom(rect.y(), renderer));
-    rect.setWidth(adjustForAbsoluteZoom(rect.width(), renderer));
-    rect.setHeight(adjustForAbsoluteZoom(rect.height(), renderer));
-}
-
 inline FloatPoint adjustFloatPointForAbsoluteZoom(const FloatPoint& point, RenderObject* renderer)
 {
     // The result here is in floats, so we don't need the truncation hack from the integer version above.
@@ -1025,6 +1017,15 @@ inline void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* render
     quad.setP2(adjustFloatPointForAbsoluteZoom(quad.p2(), renderer));
     quad.setP3(adjustFloatPointForAbsoluteZoom(quad.p3(), renderer));
     quad.setP4(adjustFloatPointForAbsoluteZoom(quad.p4(), renderer));
+}
+
+inline void adjustFloatRectForAbsoluteZoom(FloatRect& rect, RenderObject* renderer)
+{
+    RenderStyle* style = renderer->style();
+    rect.setX(adjustFloatForAbsoluteZoom(rect.x(), style));
+    rect.setY(adjustFloatForAbsoluteZoom(rect.y(), style));
+    rect.setWidth(adjustFloatForAbsoluteZoom(rect.width(), style));
+    rect.setHeight(adjustFloatForAbsoluteZoom(rect.height(), style));
 }
 
 } // namespace WebCore

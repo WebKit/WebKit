@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css">
 <script src="../../js/resources/js-test-pre.js"></script>
 <style>
+body {
+    font: 16px Ahem;
+}
+
 .bbox {
     position:absolute;
     outline: 5px solid rgba(255, 0, 0, .75);
@@ -31,6 +35,7 @@
     position:absolute;
     left: 500px;
 }
+
 #testArea {
     width: 300px;
 }
@@ -56,15 +61,34 @@
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
+    else
+        alert("WARNING:\nThis test may show bogus FAILures if not run in DumpRenderTree, due to platform-specific differences in font metrics.");
+
+    function testClientRect(rect, expectedRect)
+    {
+        shouldBeEqualToString("rect.left.toFixed(3)", expectedRect.left.toFixed(3));
+        shouldBeEqualToString("rect.top.toFixed(3)", expectedRect.top.toFixed(3));
+        shouldBeEqualToString("rect.width.toFixed(3)", expectedRect.width.toFixed(3));
+        shouldBeEqualToString("rect.height.toFixed(3)", expectedRect.height.toFixed(3));
+        if (rect.right == Math.round(rect.right))
+            shouldBe("rect.right", "rect.left + rect.width");
+        else
+            shouldBe("Math.abs(rect.left + rect.width - rect.right) < 0.001", "true");
+        if (rect.bottom == Math.round(rect.bottom))
+            shouldBe("rect.bottom", "rect.top + rect.height");
+        else
+            shouldBe("Math.abs(rect.top + rect.height - rect.bottom) < 0.001", "true");
+        debug("");
+    }
 
     function addBBoxOverClientRect(rect)
     {
         var bbox = document.createElement('div');
         bbox.className = "bbox";
         var style = "";
-        style += "left: "   + rect.left + "px;";
-        style += "top: "    + rect.top + "px;";
-        style += "width: "  + (rect.right - rect.left) + "px;";
+        style += "left: " + rect.left + "px;";
+        style += "top: " + rect.top + "px;";
+        style += "width: " + (rect.right - rect.left) + "px;";
         style += "height: " + (rect.bottom - rect.top) + "px;";
         bbox.setAttribute("style", style);
         document.documentElement.appendChild(bbox);
@@ -77,52 +101,41 @@
         addBBoxOverClientRect(range.getBoundingClientRect());
     }
 
-    // Test 1
+    var expectedResults = [
+        /*1*/  { left: 8, top: 8, width: 400, height: 400 },
+        /*2*/  { left: 8, top: 452, width: 400, height: 376 },
+        /*3*/  { left: 8, top: 1044, width: 400, height: 96 },
+        /*4*/  { left: -14.574, top: 1329.947, width: 504.009, height: 535.849 },
+    ];
+
     debug("Test 1")
     var range1 = document.createRange();
     range1.selectNode(document.getElementById('test1'));
     show(range1);
-    rect = range1.getBoundingClientRect()
-    shouldBe("rect.left", "8");
-    shouldBe("rect.top", "8");
-    shouldBe("rect.width", "400");
-    shouldBe("rect.height", "160");
+    rect = range1.getBoundingClientRect();
+    testClientRect(rect, expectedResults[1 - 1]);
 
-    // Test 2
     debug("Test 2")
     var range2 = document.createRange();
     range2.selectNodeContents(document.getElementById('test2'));
     show(range2);
-    rect = range2.getBoundingClientRect()
-    shouldBe("rect.left", "8");
-    shouldBe("rect.top", "215");
-    shouldBe("rect.width", "398");
-    shouldBe("rect.height", "138");
+    rect = range2.getBoundingClientRect();
+    testClientRect(rect, expectedResults[2 - 1]);
 
-
-    // Test 3
     debug("Test 3")
     var range3 = document.createRange();
     range3.setStart(document.getElementById('test3').firstChild, 100);
     range3.setEnd(document.getElementById('test3').lastChild, 150);
     show(range3);
     rect = range3.getBoundingClientRect()
-    shouldBe("rect.left", "8");
-    shouldBe("rect.top", "451");
-    shouldBe("rect.width", "398");
-    shouldBe("rect.height", "58");
+    testClientRect(rect, expectedResults[3 - 1]);
 
-
-    // Test 4
     debug("Test 4")
     var range4 = document.createRange();
     range4.selectNodeContents(document.getElementById('test4'));
     show(range4);
     rect = range4.getBoundingClientRect()
-    shouldBe("rect.left", "76");
-    shouldBe("rect.top", "578");
-    shouldBe("rect.width", "361");
-    shouldBe("rect.height", "343");
+    testClientRect(rect, expectedResults[4 - 1]);
 
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');

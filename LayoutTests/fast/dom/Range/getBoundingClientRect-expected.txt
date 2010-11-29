@@ -1,23 +1,35 @@
 Test 1
-PASS rect.left is 8
-PASS rect.top is 8
-PASS rect.width is 400
-PASS rect.height is 160
+PASS rect.left.toFixed(3) is "8.000"
+PASS rect.top.toFixed(3) is "8.000"
+PASS rect.width.toFixed(3) is "400.000"
+PASS rect.height.toFixed(3) is "400.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
 Test 2
-PASS rect.left is 8
-PASS rect.top is 215
-PASS rect.width is 398
-PASS rect.height is 138
+PASS rect.left.toFixed(3) is "8.000"
+PASS rect.top.toFixed(3) is "452.000"
+PASS rect.width.toFixed(3) is "400.000"
+PASS rect.height.toFixed(3) is "376.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
 Test 3
-PASS rect.left is 8
-PASS rect.top is 451
-PASS rect.width is 398
-PASS rect.height is 58
+PASS rect.left.toFixed(3) is "8.000"
+PASS rect.top.toFixed(3) is "1044.000"
+PASS rect.width.toFixed(3) is "400.000"
+PASS rect.height.toFixed(3) is "96.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
 Test 4
-PASS rect.left is 76
-PASS rect.top is 578
-PASS rect.width is 361
-PASS rect.height is 343
+PASS rect.left.toFixed(3) is "-14.574"
+PASS rect.top.toFixed(3) is "1329.947"
+PASS rect.width.toFixed(3) is "504.009"
+PASS rect.height.toFixed(3) is "535.849"
+PASS Math.abs(rect.left + rect.width - rect.right) < 0.001 is true
+PASS Math.abs(rect.top + rect.height - rect.bottom) < 0.001 is true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

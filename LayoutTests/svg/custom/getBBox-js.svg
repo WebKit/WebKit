@@ -33,7 +33,7 @@
                     rect.setAttribute("visibility", "hidden");
                     g.appendChild(rect);
                     if (rect.getBBox().width > 0 && rect.getBBox().height > 0) {
-                    textNode.data = "Passed";
+                        textNode.data = "Passed";
                     }
                 }
             }

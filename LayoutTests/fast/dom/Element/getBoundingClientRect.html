@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css">
 <script src="../../js/resources/js-test-pre.js"></script>
 <style>
+    body {
+        font: 16px Ahem;
+    }
+
     #base {
         width: 300px;
         height: 100px;
@@ -61,12 +65,12 @@
     }
 
     .bbox {
-        position:absolute;
+        position: absolute;
         outline: 5px solid rgba(255, 0, 0, .75);
     }
 
     #console {
-        position:absolute;
+        position: absolute;
         left: 500px;
     }
 </style>
@@ -95,26 +99,18 @@
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
+    else
+        alert("WARNING:\nThis test may show bogus FAILures if not run in DumpRenderTree, due to platform-specific differences in font metrics.");
 
-    var testRect;
     function testClientRect(toTest, expectedRect)
     {
-        testRect = toTest;
-        
-        debug("testRect.top " + testRect.top);
-        debug("testRect.left " + testRect.left);
-        debug("testRect.width " + testRect.width);
-        debug("testRect.height " + testRect.height);
-        debug("testRect.bottom " + testRect.bottom);
-        debug("testRect.right " + testRect.right);
-        debug("");
-
-        shouldBe("testRect.top", String(expectedRect.top));
-        shouldBe("testRect.left", String(expectedRect.left));
-        shouldBe("testRect.width", String(expectedRect.width));
-        shouldBe("testRect.height", String(expectedRect.height));
-        shouldBe("testRect.bottom", "testRect.top + testRect.height");
-        shouldBe("testRect.right", "testRect.left + testRect.width");
+        rect = toTest;
+        shouldBeEqualToString("rect.left.toFixed(3)", expectedRect.left.toFixed(3));
+        shouldBeEqualToString("rect.top.toFixed(3)", expectedRect.top.toFixed(3));
+        shouldBeEqualToString("rect.width.toFixed(3)", expectedRect.width.toFixed(3));
+        shouldBeEqualToString("rect.height.toFixed(3)", expectedRect.height.toFixed(3));
+        shouldBe("rect.right", "rect.left + rect.width");
+        shouldBe("rect.bottom", "rect.top + rect.height");
         debug("");
     }
 
@@ -123,9 +119,9 @@
         var bbox = document.createElement('div');
         bbox.className = "bbox";
         var style = "";
-        style += "left: "   + rect.left + "px;";
-        style += "top: "    + rect.top + "px;";
-        style += "width: "  + (rect.right - rect.left) + "px;";
+        style += "left: " + rect.left + "px;";
+        style += "top: " + rect.top + "px;";
+        style += "width: " + (rect.right - rect.left) + "px;";
         style += "height: " + (rect.bottom - rect.top) + "px;";
         bbox.setAttribute("style", style);
         document.documentElement.appendChild(bbox);
@@ -134,26 +130,26 @@
     var fail = undefined;
 
     var expectedResults = [
-        /*1*/  { top: 42, left: 8, width: 300, height: 100 },
-        /*2*/  { top: 192, left: 8, width: 320, height: 120 },
-        /*3*/  { top: 362, left: 18, width: 300, height: 100 },
-        /*4*/  { top: 491, left: 37, width: 142, height: 142 },
-        /*5*/  { top: 662, left: 8, width: 300, height: 240 },
-        /*6*/  { top: fail, left: fail, width: fail, height: fail },
-        /*7*/  { top: 1236, left: 8, width: 299, height: 180 },
-        /*8*/  { top: 1466, left: 8, width: 300, height: 46 },
-        /*9*/  { top: 1562, left: 8, width: 300, height: 64 },
-        /*10*/ { top: 1678, left: 8, width: 300, height: 20 },
-        /*11*/ { top: 1774, left: 10, width: 147, height: 20 },
-        /*12*/ { top: 1868, left: 8, width: 100, height: 100 },
-        /*13*/ { top: 2104, left: 8, width: 180, height: 18 },
-        /*14*/ { top: 2172, left: 8, width: 200, height: 236 },
-        /*15*/ { top: 2458, left: 8, width: 0, height: 0 }
+        /*1*/  { left: 8, top: 40, width: 300, height: 100 },
+        /*2*/  { left: 8, top: 188, width: 320, height: 120 },
+        /*3*/  { left: 18, top: 356, width: 300, height: 100 },
+        /*4*/  { left: 37.289, top: 483.289, width: 141.421, height: 141.421 },
+        /*5*/  { left: 8, top: 652, width: 300, height: 374 },
+        /*6*/  { left: fail, top: fail, width: fail, height: fail },
+        /*7*/  { left: 8, top: 1490, width: 288, height: 464 },
+        /*8*/  { left: 8, top: 2002, width: 300, height: 74 },
+        /*9*/  { left: 8, top: 2140, width: 300, height: 90 },
+        /*10*/ { left: 8, top: 2280, width: 300, height: 34 },
+        /*11*/ { left: 10, top: 2402, width: 147, height: 34 },
+        /*12*/ { left: 8, top: 2538, width: 100, height: 100 },
+        /*13*/ { left: 8, top: 2789, width: 260, height: 16 },
+        /*14*/ { left: 8, top: 2869, width: 300, height: 232 },
+        /*15*/ { left: 8, top: 3165, width: 0, height: 0 }
     ];
 
     function test(number, element)
     {
-        debug("Client bounding rect for #" + number);
+        debug("Test " + number);
 
         if (element.className.match("knownFailure")) {
             debug("Known failure. Skipping.");

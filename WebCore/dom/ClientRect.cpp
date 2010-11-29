@@ -38,4 +38,9 @@ ClientRect::ClientRect(const IntRect& rect)
 {
 }
 
+ClientRect::ClientRect(const FloatRect& rect)
+    : m_rect(rect)
+{
+}
+
 } // namespace WebCore
