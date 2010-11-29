@@ -151,6 +151,10 @@ gchar* attributeSetToString(AtkAttributeSet* attributeSet)
 
 JSStringRef AccessibilityUIElement::allAttributes()
 {
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
+    ASSERT(ATK_IS_OBJECT(m_element));
     return JSStringCreateWithUTF8CString(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element))));
 }
 
