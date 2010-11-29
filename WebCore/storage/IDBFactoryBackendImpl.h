@@ -56,8 +56,6 @@ public:
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
 
-    static String databaseFileName(SecurityOrigin*);
-
 private:
     IDBFactoryBackendImpl();
 
