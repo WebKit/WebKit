@@ -33,12 +33,25 @@
 
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wincrypt.h>
+#include <windows.h>
 #include <wtf/text/CString.h>
 
-#include <windows.h>
-#include <wincrypt.h>
-
 namespace WebCore {
+
+static size_t reverseFindPathSeparator(const String& path, unsigned start = UINT_MAX)
+{
+    size_t positionSlash = path.reverseFind('/', start);
+    size_t positionBackslash = path.reverseFind('\\', start);
+
+    if (positionSlash == notFound)
+        return positionBackslash;
+
+    if (positionBackslash == notFound)
+        return positionSlash;
+
+    return std::max(positionSlash, positionBackslash);
+}
 
 static bool getFileInfo(const String& path, BY_HANDLE_FILE_INFORMATION& fileInfo)
 {
@@ -133,14 +146,14 @@ CString fileSystemRepresentation(const String&)
 
 bool makeAllDirectories(const String& path)
 {
-    int lastDivPos = std::max(path.reverseFind('/'), path.reverseFind('\\'));
-    int endPos = path.length();
-    if (lastDivPos == path.length() - 1) {
-        endPos -= 1;
-        lastDivPos = std::max(path.reverseFind('/', lastDivPos), path.reverseFind('\\', lastDivPos));
+    size_t lastDivPos = reverseFindPathSeparator(path);
+    unsigned endPos = path.length();
+    if (lastDivPos == endPos - 1) {
+        --endPos;
+        lastDivPos = reverseFindPathSeparator(path, lastDivPos);
     }
 
-    if (lastDivPos > 0) {
+    if (lastDivPos != notFound) {
         if (!makeAllDirectories(path.substring(0, lastDivPos)))
             return false;
     }
@@ -160,13 +173,18 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& path)
 {
-    return path.substring(std::max(path.reverseFind('/'), path.reverseFind('\\')) + 1);
+    size_t pos = reverseFindPathSeparator(path);
+    if (pos == notFound)
+        return path;
+    return path.substring(pos + 1);
 }
 
 String directoryName(const String& path)
 {
-    notImplemented();
-    return String();
+    size_t pos = reverseFindPathSeparator(path);
+    if (pos == notFound)
+        return String();
+    return path.left(pos);
 }
 
 CString openTemporaryFile(const char*, PlatformFileHandle& handle)
