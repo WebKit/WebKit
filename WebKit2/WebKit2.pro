@@ -5,6 +5,14 @@ CONFIG += depend_includepath
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
 
+CONFIG(standalone_package) {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
+} else {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
+}
+
 include($$PWD/../WebKit.pri)
 include($$PWD/../common.pri)
 include($$PWD/../WebCore/features.pri)
@@ -141,8 +149,8 @@ INCLUDEPATH = \
 
 INCLUDEPATH += \
     $$OUTPUT_DIR/include \
-    $$OUTPUT_DIR/WebCore/generated \
-    $$OUTPUT_DIR/WebKit2/generated
+    $$WC_GENERATED_SOURCES_DIR \
+    $$WEBKIT2_GENERATED_SOURCES_DIR
 
 
 PREFIX_HEADER = $$PWD/../WebKit2/WebKit2Prefix.h
@@ -151,34 +159,34 @@ QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 DEFINES += BUILDING_QT__
 
 WEBKIT2_GENERATED_HEADERS = \
-    $$OUTPUT_DIR/WebKit2/generated/DownloadProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/PluginControllerProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebContextMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebInspectorProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessProxyMessages.h
+    $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
-    $$OUTPUT_DIR/WebKit2/generated/DownloadProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/PluginControllerProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebContextMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebInspectorProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebProcessProxyMessageReceiver.cpp
+    $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessageReceiver.cpp
 
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \

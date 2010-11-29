@@ -3,15 +3,22 @@ TARGET = dummy
 
 CONFIG -= debug_and_release
 
-WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
-    $$OUTPUT_DIR/WebCore/generated/HTMLNames.h \
-    $$OUTPUT_DIR/WebCore/generated/JSCSSStyleDeclaration.h \
-    $$OUTPUT_DIR/WebCore/generated/JSDOMWindow.h \
-    $$OUTPUT_DIR/WebCore/generated/JSElement.h \
-    $$OUTPUT_DIR/WebCore/generated/JSHTMLElement.h \
-    $$OUTPUT_DIR/WebCore/generated/JSNode.h \
-    $$OUTPUT_DIR/WebCore/generated/JSRange.h \
+CONFIG(standalone_package) {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
+} else {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
+}
 
+WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
+    $$WC_GENERATED_SOURCES_DIR/HTMLNames.h \
+    $$WC_GENERATED_SOURCES_DIR/JSCSSStyleDeclaration.h \
+    $$WC_GENERATED_SOURCES_DIR/JSDOMWindow.h \
+    $$WC_GENERATED_SOURCES_DIR/JSElement.h \
+    $$WC_GENERATED_SOURCES_DIR/JSHTMLElement.h \
+    $$WC_GENERATED_SOURCES_DIR/JSNode.h \
+    $$WC_GENERATED_SOURCES_DIR/JSRange.h \
 
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
@@ -68,12 +75,12 @@ defineTest(addExtraCompiler) {
 
 defineReplace(message_header_generator_output) {
   FILENAME=$$basename(1)
-  return($$OUTPUT_DIR/WebKit2/generated/$$replace(FILENAME, ".messages.in","Messages.h"))
+  return($$WEBKIT2_GENERATED_SOURCES_DIR/$$replace(FILENAME, ".messages.in","Messages.h"))
 }
 
 defineReplace(message_receiver_generator_output) {
   FILENAME=$$basename(1)
-  return($$OUTPUT_DIR/WebKit2/generated/$$replace(FILENAME, ".messages.in","MessageReceiver.cpp"))
+  return($$WEBKIT2_GENERATED_SOURCES_DIR/$$replace(FILENAME, ".messages.in","MessageReceiver.cpp"))
 }
 
 VPATH = \

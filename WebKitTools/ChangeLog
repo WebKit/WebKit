@@ -1,3 +1,19 @@
+2010-11-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Allow pre-generation for package builds for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50139
+
+        Use a build variable for the generated directory path and set the
+        value based on CONFIG just like for WebKit1.
+
+        For non-package builds use a relative base path for the
+        genrated directory just like for WebKit1.
+
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+
 2010-11-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

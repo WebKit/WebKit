@@ -3,6 +3,8 @@ CONFIG -= app_bundle
 
 BASEDIR = $$PWD/../
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
+GENERATED_SOURCES_DIR = ../generated
+
 
 include(../../../WebKit.pri)
 
@@ -21,6 +23,7 @@ INCLUDEPATH += \
     $$BASEDIR/../../WebKit2/Shared \
     $$BASEDIR/../../WebKit2/UIProcess/API/qt \
     $$BASEDIR/../../WebKit2/UIProcess/API/cpp/qt \
+    $$GENERATED_SOURCES_DIR
 
 INCLUDEPATH += \
     $$OUTPUT_DIR/include \

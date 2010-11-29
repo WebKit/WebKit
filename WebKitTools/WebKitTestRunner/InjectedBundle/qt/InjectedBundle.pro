@@ -2,6 +2,14 @@ TEMPLATE = lib
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 
+CONFIG(standalone_package) {
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../../../WebCore/generated
+} else {
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../WebCore/generated
+}
+
+GENERATED_SOURCES_DIR = ../../generated
+
 SOURCES += \
     ../InjectedBundle.cpp \
     ../InjectedBundle.h \
@@ -17,9 +25,9 @@ SOURCES += \
     ../Bindings/JSWrapper.cpp \
     ActivateFontsQt.cpp \
     LayoutTestControllerQt.cpp \
-    $$OUTPUT_DIR/WebKitTools/WebKitTestRunner/generated/JSEventSendingController.cpp \
-    $$OUTPUT_DIR/WebKitTools/WebKitTestRunner/generated/JSGCController.cpp \
-    $$OUTPUT_DIR/WebKitTools/WebKitTestRunner/generated/JSLayoutTestController.cpp \
+    $$GENERATED_SOURCES_DIR/JSEventSendingController.cpp \
+    $$GENERATED_SOURCES_DIR/JSGCController.cpp \
+    $$GENERATED_SOURCES_DIR/JSLayoutTestController.cpp \
 
 HEADERS += \
     ../ActivateFonts.h \
@@ -50,11 +58,11 @@ INCLUDEPATH += \
     $$PWD/../../../../JavaScriptCore/wtf \
     $$PWD/../../../../WebKit2 \
     $$PWD/../../../../WebKit2/Shared \
-    $$OUTPUT_DIR/WebKitTools/WebKitTestRunner/generated
+    $$GENERATED_SOURCES_DIR
 
 INCLUDEPATH += \
     $$OUTPUT_DIR/include \
-    $$OUTPUT_DIR/WebCore/generated
+    $$WC_GENERATED_SOURCES_DIR
 
 PREFIX_HEADER = $$PWD/../../WebKitTestRunnerPrefix.h
 QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
