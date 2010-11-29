@@ -1415,7 +1415,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     GstElement* identity = gst_element_factory_make("identity", "videoValve");
 
     // Take ownership.
-    g_object_ref_sink(m_videoSinkBin);
+    gst_object_ref_sink(m_videoSinkBin);
 
     // Build a new video sink consisting of a bin containing a tee
     // (meant to distribute data to multiple video sinks) and our
