@@ -2634,7 +2634,7 @@ doneDispatching:
         if (event->bubbles()) {
             size_t size = ancestors.size();
             for (size_t i = 0; i < size; ++i) {
-                ancestors[i].node()->defaultEventHandler(event.get());
+                ancestors[i].defaultEventHandler(event.get());
                 ASSERT(!event->defaultPrevented());
                 if (event->defaultHandled())
                     goto doneWithDefault;

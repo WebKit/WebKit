@@ -36,6 +36,22 @@ var tests = {
         log('Mutation events should not propagate out of the shadow DOM', !mutationEventFired);
         textarea.parentNode.removeChild(textarea);
     },
+    defaultEventRetargeting: function()
+    {
+        var count = 0;
+        var label = document.body.appendChild(document.createElement('label'));
+        var searchInput = label.appendChild(document.createElement('input'));
+        searchInput.setAttribute('type', 'search');
+        searchInput.setAttribute('id', 'baz');
+        label.setAttribute('for', 'baz');
+        searchInput.addEventListener('click', function(e)
+        {
+            count++;
+        }, false);
+        clickOn(searchInput);
+        log("Events for default event handler should also be retargeted", count == 1);
+        label.parentNode.removeChild(label);
+    },
     eventInProgress: function()
     {
         var textInput = document.body.appendChild(document.createElement('input'));

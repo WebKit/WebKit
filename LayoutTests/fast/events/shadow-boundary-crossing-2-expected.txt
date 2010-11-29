@@ -3,5 +3,6 @@ Tests to ensure that shadow DOM boundary is not crossed during event propagation
 See bug 46015 for details.
 
 Mutation events should not propagate out of the shadow DOM: PASS
+Events for default event handler should also be retargeted: PASS
 Other events should be retargeted: PASS
 After event dispatch, the event object should not reveal shadow DOM: PASS
