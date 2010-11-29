@@ -100,13 +100,6 @@ BUG36620 : transforms/2d/hindi-rotated.html = IMAGE
 // Needs re-baselining.
 BUG42370 : svg/custom/image-rescale-scroll.html = FAIL
 
-// Require re-baseline:
-BUG49546 : svg/custom/svg-parse-overflow-1.html
-BUG49546 : svg/custom/svg-parse-overflow-2.html
-BUG49546 : svg/custom/svg-parse-overflow-3.html
-BUG49546 : svg/custom/svg-parse-overflow-4.html
-BUG49546 : svg/custom/svg-parse-overflow-5.html
-
 // These fail depending on order due to interactions with previous tests:
 BUG35006 : fast/dom/global-constructors.html = PASS TEXT
 BUG37007 : fast/tokenizer/doctype-search-reset.html = PASS TEXT
