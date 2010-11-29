@@ -13,7 +13,11 @@ def file_modification_times(directory):
 
 
 def main():
-    vsprops_directory = os.path.join(os.environ['WEBKITLIBRARIESDIR'], 'tools', 'vsprops')
+    # It's a little unfortunate that we're relying on the location of this
+    # script to find the top-level source directory.
+    top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+    vsprops_directory = os.path.join(top_level_directory, 'WebKitLibraries', 'win', 'tools', 'vsprops')
     newest_vsprops_time = max(file_modification_times(vsprops_directory))
 
     obj_directory = os.path.join(os.environ['WEBKITOUTPUTDIR'], 'obj')

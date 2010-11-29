@@ -1,3 +1,19 @@
+2010-11-29  Adam Roben  <aroben@apple.com>
+
+        Update react-to-vsprops-changes.py after r72555
+
+        .vsprops files are no longer accessed relative to $WebKitLibrariesDir.
+
+        Fixes <http://webkit.org/b/50166> REGRESSION (r72555):
+        react-to-vsprops-changes.py no longer works for people with a
+        non-default $WebKitLibrariesDir
+
+        Reviewed by John Sullivan.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        (main): Always look in WebKitLibraries/win for .vsprops files, not in
+        $WebKitLibrariesDir.
+
 2010-11-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
