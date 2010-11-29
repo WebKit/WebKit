@@ -226,10 +226,10 @@ public:
     // Returns true on success.
     virtual bool decodeAudioFileData(WebAudioBus* destinationBus, const char* audioFileData, size_t dataSize, double sampleRate) { return false; }
 
-    // Returns a localized string resource (with an optional numeric
-    // parameter value).
+    // Returns a localized string resource (with substitution parameters).
     virtual WebString queryLocalizedString(WebLocalizedString::Name) { return WebString(); }
-    virtual WebString queryLocalizedString(WebLocalizedString::Name, int numericValue) { return WebString(); }
+    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter) { return WebString(); }
+    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter1, const WebString& parameter2) { return WebString(); }
 
 
     // Sandbox ------------------------------------------------------------

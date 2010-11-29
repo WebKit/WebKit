@@ -1,3 +1,21 @@
+2010-11-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add substitution parameters to WebKitClient::queryLocalizedString()
+        https://bugs.webkit.org/show_bug.cgi?id=50053
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::queryLocalizedString): Add overload functions with
+          substitution string parameters, and remove the integer parameter overload.
+        * src/LocalizedStrings.cpp:
+        (WebCore::query): Add string parameter overloads, and remove the integer parameter overload.
+        (WebCore::multipleFileUploadText): Call the string parameter query().
+        (WebCore::validationMessageTooLongText): Pass the parameters to query().
+        (WebCore::validationMessageRangeUnderflowText): ditto.
+        (WebCore::validationMessageRangeOverflowText): ditto.
+        (WebCore::validationMessageStepMismatchText): ditto.
+
 2010-11-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove Build directory that was erroneously added in r72103.
