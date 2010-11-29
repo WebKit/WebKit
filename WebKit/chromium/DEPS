@@ -121,8 +121,6 @@ deps_os = {
   'win': {
     'third_party/cygwin':
       From('chromium_deps', 'src/third_party/cygwin'),
-    'third_party/python_24':
-      From('chromium_deps', 'src/third_party/python_24'),
     'third_party/ffmpeg/binaries/chromium/win/ia32':
       From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
     'third_party/lighttpd':

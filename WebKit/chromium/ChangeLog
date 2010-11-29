@@ -1,3 +1,9 @@
+2010-11-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove python_24 dependency, because it is no longer necessary.
+
+        * DEPS: Removed python_24 dependency.
+
 2010-11-29  Bernhard Bauer  <bauerb@chromium.org>
 
         Reviewed by Jeremy Orlow.
