@@ -2855,6 +2855,11 @@ media/media-captions.html
 # Test specific to QuickTime media engine
 media/video-does-not-loop.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=50155
+# crashes on GStreamer side when loading one of the media elements of
+# the test
+fast/events/tabindex-focus-blur-all.html
+
 # Tests in plugins/ directory
 #   Tests failing, need to implement NPP_HandleEvent() in TestNetscapePlugin
 plugins/embed-attributes-setting.html
