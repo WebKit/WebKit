@@ -1,3 +1,16 @@
+2010-11-29  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Web Inspector: [Chromium] Expose extension API to select a node in WebInspector
+        Added WebDevToolsAgent::inspect()
+        https://bugs.webkit.org/show_bug.cgi?id=49727
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::inspectNode):
+        * src/WebDevToolsAgentImpl.h:
+
 2010-11-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Remove python_24 dependency, because it is no longer necessary.

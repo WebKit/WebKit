@@ -75,6 +75,7 @@ public:
     virtual void didNavigate();
     virtual void dispatchOnInspectorBackend(const WebString& message);
     virtual void inspectElementAt(const WebPoint& point);
+    virtual void inspectNode(v8::Handle<v8::Value> node);
     virtual void evaluateInWebInspector(long callId, const WebString& script);
     virtual void setRuntimeProperty(const WebString& name, const WebString& value);
     virtual void setTimelineProfilingEnabled(bool enable);

@@ -33,6 +33,7 @@
 
 #include "DebuggerAgentImpl.h"
 #include "DebuggerAgentManager.h"
+#include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
@@ -44,6 +45,7 @@
 #include "ResourceResponse.h"
 #include "ScriptDebugServer.h"
 #include "V8Binding.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebDataSource.h"
@@ -74,6 +76,7 @@ using WebCore::ResourceRequest;
 using WebCore::ResourceResponse;
 using WTF::String;
 using WebCore::V8DOMWrapper;
+using WebCore::V8Node;
 using WebCore::V8Proxy;
 
 namespace WebKit {
@@ -241,6 +244,14 @@ void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
 {
     m_webViewImpl->inspectElementAt(point);
+}
+
+void WebDevToolsAgentImpl::inspectNode(v8::Handle<v8::Value> node)
+{
+    if (!V8Node::HasInstance(node))
+        V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR);
+    else
+        inspectorController()->inspect(V8Node::toNative(v8::Handle<v8::Object>::Cast(node)));
 }
 
 void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)
