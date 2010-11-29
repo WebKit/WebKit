@@ -1,5 +1,22 @@
 2010-11-29  Adam Roben  <aroben@apple.com>
 
+        Touch wtf/Platform.h whenever any .vsprops file changes
+
+        This will cause all files to be recompiled, which will make changes to
+        preprocessor macros (e.g., ENABLE_*) actually take effect.
+
+        Fixes <http://webkit.org/b/50167> Windows build fails when ENABLE_*
+        macros are changed (because not enough files are rebuilt)
+
+        Reviewed by John Sullivan.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        (main): Touch wtf/Platform.h if it's older than any .vsprops file. Also
+        added some comments and logging to make it clearer what the script is
+        doing and why.
+
+2010-11-29  Adam Roben  <aroben@apple.com>
+
         Update react-to-vsprops-changes.py after r72555
 
         .vsprops files are no longer accessed relative to $WebKitLibrariesDir.
