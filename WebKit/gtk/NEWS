@@ -1,4 +1,21 @@
 ================
+WebKitGTK+ 1.3.7
+================
+
+What's new in WebKitGTK+ 1.3.7?
+
+  - Fix error pages template's not being filled properly.
+  - Fix context menu activation through keyboard.
+  - Add automatic garbage collection for most GObject DOM objects (all
+    those that are actually in the DOM tree). This gets rid of most of
+    the leaks when using the bindings.
+  - Add an Inspector API to inspect a DOM node.
+  - Tons of a11y bugfixes.
+  - Tons of fixes for the in-tree SoupCache, should work much better
+    now.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.6
 ================
 
