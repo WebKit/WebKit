@@ -3097,9 +3097,7 @@ BUG61406 WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequ
 BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
 // Flaky: fails about 5% of the time.
-//BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
-// Now fails all the time on Win and Linux, see bug for details.
-BUG61655 WIN LINUX : security/block-test-no-port.html = TEXT
+BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 
 // Fails because of http://trac.webkit.org/changeset/71268
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
@@ -3158,8 +3156,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 // crashes on Windows.
 BUG63460 : editing/selection/context-menu-on-text.html = TEXT
 BUG63460 : editing/spelling/context-menu-suggestions.html = TEXT
-
-BUG61655 MAC : security/block-test-no-port.html = TEXT
 
 BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
