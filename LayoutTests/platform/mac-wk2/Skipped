@@ -1905,32 +1905,7 @@ fast/dom/nodesFromRect-inner-documents.html
 fast/dom/nodesFromRect-links-and-text.html
 
 # WebKitTestRunner needs layoutTestController.setSpatialNavigationEnabled
-fast/events/spatial-navigation/snav-1st-stop.html
-fast/events/spatial-navigation/snav-clipped-overflowed-content.html
-fast/events/spatial-navigation/snav-container-only-white-space.html
-fast/events/spatial-navigation/snav-container-white-space.html
-fast/events/spatial-navigation/snav-div-overflow-scrol-hidden.html
-fast/events/spatial-navigation/snav-div-scrollable-but-without-focusable-content.html
-fast/events/spatial-navigation/snav-fully-aligned-horizontally.html
-fast/events/spatial-navigation/snav-fully-aligned-vertically.html
-fast/events/spatial-navigation/snav-iframe-flattening-simple.html
-fast/events/spatial-navigation/snav-iframe-nested.html
-fast/events/spatial-navigation/snav-iframe-no-focusable-content.html
-fast/events/spatial-navigation/snav-iframe-no-scrollable-content.html
-fast/events/spatial-navigation/snav-iframe-recursive-offset-parent.html
-fast/events/spatial-navigation/snav-input.html
-fast/events/spatial-navigation/snav-multiple-select.html
-fast/events/spatial-navigation/snav-offscreen-content.html
-fast/events/spatial-navigation/snav-only-clipped-overflow-content.html
-fast/events/spatial-navigation/snav-radio-group.html
-fast/events/spatial-navigation/snav-radio.html
-fast/events/spatial-navigation/snav-simple-content-overflow.html
-fast/events/spatial-navigation/snav-single-select.html
-fast/events/spatial-navigation/snav-table-traversal.html
-fast/events/spatial-navigation/snav-textarea.html
-fast/events/spatial-navigation/snav-tiny-table-traversal.html
-fast/events/spatial-navigation/snav-z-index.html
-fast/events/spatial-navigation/snav-zero-margin-content.html
+fast/events/spatial-navigation
 
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
 printing/page-format-data-display-none.html
