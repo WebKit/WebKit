@@ -667,14 +667,17 @@ public:
             case PatternTerm::TypeParenthesesSubpattern:
                 // Note: for fixed once parentheses we will ensure at least the minimum is available; others are on their own.
                 term.frameLocation = currentCallFrameSize;
-                if ((term.quantityCount == 1) && !term.parentheses.isCopy) {
-                    if (term.quantityType == QuantifierFixedCount) {
-                        currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
-                        currentInputPosition += term.parentheses.disjunction->m_minimumSize;
-                    } else {
+                if (term.quantityCount == 1 && !term.parentheses.isCopy) {
+                    if (term.quantityType != QuantifierFixedCount)
                         currentCallFrameSize += RegexStackSpaceForBackTrackInfoParenthesesOnce;
-                        currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
-                    }
+                    currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
+                    // If quantity is fixed, then pre-check its minimum size.
+                    if (term.quantityType == QuantifierFixedCount)
+                        currentInputPosition += term.parentheses.disjunction->m_minimumSize;
+                    term.inputPosition = currentInputPosition;
+                } else if (term.parentheses.isTerminal) {
+                    currentCallFrameSize += RegexStackSpaceForBackTrackInfoParenthesesTerminal;
+                    currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
                     term.inputPosition = currentInputPosition;
                 } else {
                     term.inputPosition = currentInputPosition;
@@ -726,6 +729,33 @@ public:
     void setupOffsets()
     {
         setupDisjunctionOffsets(m_pattern.m_body, 0, 0);
+    }
+
+    // This optimization identifies sets of parentheses that we will never need to backtrack.
+    // In these cases we do not need to store state from prior iterations.
+    // We can presently avoid backtracking for:
+    //   * a set of parens at the end of the regular expression (last term in any of the alternatives of the main body disjunction).
+    //   * where the parens are non-capturing, and quantified unbounded greedy (*).
+    //   * where the parens do not contain any capturing subpatterns.
+    void checkForTerminalParentheses()
+    {
+        // This check is much too crude; should be just checking whether the candidate
+        // node contains nested capturing subpatterns, not the whole expression!
+        if (m_pattern.m_numSubpatterns)
+            return;
+
+        Vector<PatternAlternative*>& alternatives = m_pattern.m_body->m_alternatives;
+        for (unsigned i =0; i < alternatives.size(); ++i) {
+            Vector<PatternTerm>& terms = alternatives[i]->m_terms;
+            if (terms.size()) {
+                PatternTerm& term = terms.last();
+                if (term.type == PatternTerm::TypeParenthesesSubpattern
+                    && term.quantityType == QuantifierGreedy
+                    && term.quantityCount == UINT_MAX
+                    && !term.capture())
+                    term.parentheses.isTerminal = true;
+            }
+        }
     }
 
     void optimizeBOL()
@@ -930,6 +960,7 @@ const char* compileRegex(const UString& patternString, RegexPattern& pattern)
         ASSERT(numSubpatterns == pattern.m_numSubpatterns);
     }
 
+    constructor.checkForTerminalParentheses();
     constructor.optimizeBOL();
         
     constructor.setupOffsets();

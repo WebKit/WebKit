@@ -910,12 +910,7 @@ class RegexGenerator : private MacroAssembler {
         PatternDisjunction* disjunction = term.parentheses.disjunction;
         ASSERT(term.quantityCount == 1);
 
-        if (term.parentheses.isCopy) {
-            m_shouldFallBack = true;
-            return;
-        }
-
-        unsigned preCheckedCount = ((term.quantityCount == 1) && (term.quantityType == QuantifierFixedCount)) ? disjunction->m_minimumSize : 0;
+        unsigned preCheckedCount = (term.quantityType == QuantifierFixedCount) ? disjunction->m_minimumSize : 0;
 
         unsigned parenthesesFrameLocation = term.frameLocation;
         unsigned alternativeFrameLocation = parenthesesFrameLocation;
@@ -934,12 +929,12 @@ class RegexGenerator : private MacroAssembler {
             Jump nonGreedySkipParentheses;
             Label nonGreedyTryParentheses;
             if (term.quantityType == QuantifierGreedy)
-                storeToFrame(Imm32(1), parenthesesFrameLocation);
+                storeToFrame(index, parenthesesFrameLocation);
             else if (term.quantityType == QuantifierNonGreedy) {
-                storeToFrame(Imm32(0), parenthesesFrameLocation);
+                storeToFrame(Imm32(-1), parenthesesFrameLocation);
                 nonGreedySkipParentheses = jump();
                 nonGreedyTryParentheses = label();
-                storeToFrame(Imm32(1), parenthesesFrameLocation);
+                storeToFrame(index, parenthesesFrameLocation);
             }
 
             // store the match start index
@@ -957,6 +952,39 @@ class RegexGenerator : private MacroAssembler {
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
 
+            Jump success = (term.quantityType == QuantifierFixedCount) ?
+                jump() :
+                branch32(NotEqual, index, Address(stackPointerRegister, (parenthesesFrameLocation * sizeof(void*))));
+
+            // A failure AFTER the parens jumps here
+            Label backtrackFromAfterParens(this);
+
+            if (term.quantityType == QuantifierGreedy) {
+                // If this is -1 we have now tested with both with and without the parens.
+                loadFromFrame(parenthesesFrameLocation, indexTemporary);
+                state.jumpToBacktrack(branch32(Equal, indexTemporary, Imm32(-1)), this);
+            } else if (term.quantityType == QuantifierNonGreedy) {
+                // If this is -1 we have now tested without the parens, now test with.
+                loadFromFrame(parenthesesFrameLocation, indexTemporary);
+                branch32(Equal, indexTemporary, Imm32(-1)).linkTo(nonGreedyTryParentheses, this);
+            }
+
+            parenthesesState.plantJumpToBacktrackIfExists(this);
+            // A failure WITHIN the parens jumps here
+            parenthesesState.linkAlternativeBacktracks(this);
+            if (term.invertOrCapture)
+                store32(Imm32(-1), Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
+
+            if (term.quantityType == QuantifierGreedy)
+                storeToFrame(Imm32(-1), parenthesesFrameLocation);
+            else
+                state.jumpToBacktrack(jump(), this);
+
+            state.setBacktrackGenerated(backtrackFromAfterParens);
+            if (term.quantityType == QuantifierNonGreedy)
+                nonGreedySkipParentheses.link(this);
+            success.link(this);
+
             // store the match end index
             if (term.invertOrCapture) {
                 int inputOffset = state.inputOffset();
@@ -967,36 +995,6 @@ class RegexGenerator : private MacroAssembler {
                 } else
                     store32(index, Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
             }
-            Jump success = jump();
-
-            // A failure AFTER the parens jumps here
-            Label backtrackFromAfterParens(this);
-
-            if (term.quantityType == QuantifierGreedy) {
-                // If this is zero we have now tested with both with and without the parens.
-                loadFromFrame(parenthesesFrameLocation, indexTemporary);
-                state.jumpToBacktrack(branchTest32(Zero, indexTemporary), this);
-            } else if (term.quantityType == QuantifierNonGreedy) {
-                // If this is zero we have now tested with both with and without the parens.
-                loadFromFrame(parenthesesFrameLocation, indexTemporary);
-                branchTest32(Zero, indexTemporary).linkTo(nonGreedyTryParentheses, this);
-            }
-
-            parenthesesState.plantJumpToBacktrackIfExists(this);
-            // A failure WITHIN the parens jumps here
-            parenthesesState.linkAlternativeBacktracks(this);
-            if (term.invertOrCapture)
-                store32(Imm32(-1), Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
-
-            if (term.quantityType == QuantifierGreedy)
-                storeToFrame(Imm32(0), parenthesesFrameLocation);
-            else
-                state.jumpToBacktrack(jump(), this);
-
-            state.setBacktrackGenerated(backtrackFromAfterParens);
-            if (term.quantityType == QuantifierNonGreedy)
-                nonGreedySkipParentheses.link(this);
-            success.link(this);
         }
     }
 
@@ -1006,25 +1004,6 @@ class RegexGenerator : private MacroAssembler {
         PatternDisjunction* disjunction = parenthesesTerm.parentheses.disjunction;
         ASSERT(parenthesesTerm.type == PatternTerm::TypeParenthesesSubpattern);
         ASSERT(parenthesesTerm.quantityCount != 1); // Handled by generateParenthesesSingle.
-
-        // Capturing not yet implemented!
-        if (parenthesesTerm.invertOrCapture) {
-            m_shouldFallBack = true;
-            return;
-        }
-
-        // Quantification limit not yet implemented!
-        if (parenthesesTerm.quantityCount != 0xffffffff) {
-            m_shouldFallBack = true;
-            return;
-        }
-
-        // Need to reset nested subpatterns between iterations...
-        // for the minute this crude check rejects all patterns with any subpatterns!
-        if (m_pattern.m_numSubpatterns) {
-            m_shouldFallBack = true;
-            return;
-        }
 
         TermGenerationState parenthesesState(disjunction, state.checkedTotal);
 
@@ -1047,7 +1026,11 @@ class RegexGenerator : private MacroAssembler {
                 generateTerm(parenthesesState);
 
             // If we get here, we matched! If the index advanced then try to match more since limit isn't supported yet.
-            branch32(GreaterThan, index, Address(stackPointerRegister, (parenthesesTerm.frameLocation * sizeof(void*))), matchAgain);
+            branch32(NotEqual, index, Address(stackPointerRegister, (parenthesesTerm.frameLocation * sizeof(void*))), matchAgain);
+
+            // If we get here we matched, but we matched "" - cannot accept this alternative as is, so either backtrack,
+            // or fall through to try the next alternative if no backtrack is available.
+            parenthesesState.plantJumpToBacktrackIfExists(this);
 
             parenthesesState.linkAlternativeBacktracks(this);
             // We get here if the alternative fails to match - fall through to the next iteration, or out of the loop.
@@ -1180,17 +1163,12 @@ class RegexGenerator : private MacroAssembler {
             break;
 
         case PatternTerm::TypeParenthesesSubpattern:
-            if (term.quantityCount == 1) {
+            if (term.quantityCount == 1 && !term.parentheses.isCopy)
                 generateParenthesesSingle(state);
-                break;
-            } else if (state.isLastTerm() && state.isMainDisjunction()) { // Is this is the last term of the main disjunction?
-                // If this has a greedy quantifier, then it will never need to backtrack!
-                if (term.quantityType == QuantifierGreedy) {
-                    generateParenthesesGreedyNoBacktrack(state);
-                    break;
-                }
-            }
-            m_shouldFallBack = true;
+            else if (term.parentheses.isTerminal)
+                generateParenthesesGreedyNoBacktrack(state);
+            else
+                m_shouldFallBack = true;
             break;
 
         case PatternTerm::TypeParentheticalAssertion:

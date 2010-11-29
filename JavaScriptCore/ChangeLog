@@ -1,3 +1,89 @@
+2010-11-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 48101 - Yarr gives different results for /(?:a*?){2,}/
+
+        The test cases in the linked mozilla bug demostrate a couple of
+        problems in subpattern matching. These bugs lie in the optimized
+        cases - for matching parentheses with a quantity count of 1, and
+        for matching greedy quantified parentheses at the end of a regex
+        (which do not backtrack).
+
+        In both of these cases we are failing to correctly handle empty
+        matches. In the case of parenthese-single matches (quantity count
+        one) we are failing to test for empty matches at all. In the case
+        of terminal subpattern matches we do currenty check, however there
+        is a subtler bug here too. In the case of an empty match we will
+        presently immediately fall through to the next alternative (or
+        complete the regex match), whereas upon a failed match we should
+        be backtracking into the failing alternative, to give it a chance
+        to match further (e.g. consider /a??b?|a/.exec("ab") - upon first
+        attempting to match the first alternative this will match the empty
+        string - since a?? is non-greedy, however rather than moving on to
+        the second alternative we should be re-matching the first one, at
+        which point the non-greedy a?? will match, and as such the result
+        should be "ab", not "a").
+
+        Terminal sunpattern matching contains a second bug, too. The frame
+        location values in the subpattern should be being allocated with
+        the outer disjunction's frame (as we do for the parentheses-single
+        optimization). Consider the following three regexes:
+            /a*(?:b*)*c*/
+            /a*(?:b*)c*/
+            /a*(?:b*)*/
+        Considering only the frame location required by the atoms a,b, and
+        c, (ignoring space associated with the nested subpattern) the first
+        regex (a normal subpattern match) requires a frame size of 2 for
+        the outer disjunction, (to backtrack terms a & c), with each
+        iteration of the subpattern requiring a frame of size 1 (in order
+        to backtrack b). In the case of the second regex (where the
+        parentheses-single optimization will kick in) the outer frame must
+        be set up with a frame size of 3, since the outer frame will also
+        be used when running the nested subpattern. We will currently only
+        allocate a farme of size 1 for the outer disjuntion (to contain a),
+        howver the frame size should be 2 (since the subpattern will be
+        evaluated in the outer frame). In addition to failing to allocate
+        frame space the frame offsets are also presently invalid - in the
+        case of the last regex b's frame location will be set assuming it
+        to be the first term in the frame, whereas in this case b lies
+        after the term a, and should be taking a separate frame location.
+
+        In order to correctly allocate the frame for terminal subpattern
+        matches we must move this optimization back up from the JIT into
+        the compiler (and thus interpreter too), since this is where the
+        frame allocation takes place.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeOffsets):
+        (JSC::Yarr::RegexPatternConstructor::checkForTerminalParentheses):
+        (JSC::Yarr::compileRegex):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesTerminalEnd):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexInterpreter.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+        (JSC::Yarr::RegexGenerator::generateParenthesesGreedyNoBacktrack):
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+
 2010-11-24  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

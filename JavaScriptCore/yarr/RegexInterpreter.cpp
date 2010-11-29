@@ -60,7 +60,10 @@ public:
         uintptr_t begin;
     };
     struct BackTrackInfoParenthesesOnce {
-        uintptr_t inParentheses;
+        uintptr_t begin;
+    };
+    struct BackTrackInfoParenthesesTerminal {
+        uintptr_t begin;
     };
     struct BackTrackInfoParentheses {
         uintptr_t matchAmount;
@@ -631,11 +634,11 @@ public:
         switch (term.atom.quantityType) {
         case QuantifierGreedy: {
             // set this speculatively; if we get to the parens end this will be true.
-            backTrack->inParentheses = 1;
+            backTrack->begin = input.getPos();
             break;
         }
         case QuantifierNonGreedy: {
-            backTrack->inParentheses = 0;
+            backTrack->begin = notFound;
             context->term += term.atom.parenthesesWidth;
             return true;
         }
@@ -651,7 +654,7 @@ public:
         return true;
     }
 
-    bool matchParenthesesOnceEnd(ByteTerm& term, DisjunctionContext*)
+    bool matchParenthesesOnceEnd(ByteTerm& term, DisjunctionContext* context)
     {
         ASSERT(term.type == ByteTerm::TypeParenthesesSubpatternOnceEnd);
         ASSERT(term.atom.quantityCount == 1);
@@ -660,7 +663,12 @@ public:
             unsigned subpatternId = term.atom.subpatternId;
             output[(subpatternId << 1) + 1] = input.getPos() + term.inputPosition;
         }
-        return true;
+
+        if (term.atom.quantityType == QuantifierFixedCount)
+            return true;
+
+        BackTrackInfoParenthesesOnce* backTrack = reinterpret_cast<BackTrackInfoParenthesesOnce*>(context->frame + term.frameLocation);
+        return backTrack->begin != input.getPos();
     }
 
     bool backtrackParenthesesOnceBegin(ByteTerm& term, DisjunctionContext* context)
@@ -679,12 +687,12 @@ public:
         switch (term.atom.quantityType) {
         case QuantifierGreedy:
             // if we backtrack to this point, there is another chance - try matching nothing.
-            ASSERT(backTrack->inParentheses);
-            backTrack->inParentheses = 0;
+            ASSERT(backTrack->begin != notFound);
+            backTrack->begin = notFound;
             context->term += term.atom.parenthesesWidth;
             return true;
         case QuantifierNonGreedy:
-            ASSERT(backTrack->inParentheses);
+            ASSERT(backTrack->begin != notFound);
         case QuantifierFixedCount:
             break;
         }
@@ -701,15 +709,19 @@ public:
 
         switch (term.atom.quantityType) {
         case QuantifierGreedy:
-            if (!backTrack->inParentheses) {
+            if (backTrack->begin == notFound) {
                 context->term -= term.atom.parenthesesWidth;
                 return false;
             }
         case QuantifierNonGreedy:
-            if (!backTrack->inParentheses) {
-                // now try to match the parens; set this speculatively.
-                backTrack->inParentheses = 1;
+            if (backTrack->begin == notFound) {
+                backTrack->begin = input.getPos();
                 if (term.capture()) {
+                    // Technically this access to inputPosition should be accessing the begin term's
+                    // inputPosition, but for repeats other than fixed these values should be
+                    // the same anyway! (we don't pre-check for greedy or non-greedy matches.)
+                    ASSERT((&term - term.atom.parenthesesWidth)->type == ByteTerm::TypeParenthesesSubpatternOnceBegin);
+                    ASSERT((&term - term.atom.parenthesesWidth)->inputPosition == term.inputPosition);
                     unsigned subpatternId = term.atom.subpatternId;
                     output[subpatternId << 1] = input.getPos() + term.inputPosition;
                 }
@@ -720,6 +732,53 @@ public:
             break;
         }
 
+        return false;
+    }
+
+    bool matchParenthesesTerminalBegin(ByteTerm& term, DisjunctionContext* context)
+    {
+        ASSERT(term.type == ByteTerm::TypeParenthesesSubpatternTerminalBegin);
+        ASSERT(term.atom.quantityType == QuantifierGreedy);
+        ASSERT(term.atom.quantityCount == UINT_MAX);
+        ASSERT(!term.capture());
+
+        BackTrackInfoParenthesesTerminal* backTrack = reinterpret_cast<BackTrackInfoParenthesesTerminal*>(context->frame + term.frameLocation);
+        backTrack->begin = input.getPos();
+        return true;
+    }
+
+    bool matchParenthesesTerminalEnd(ByteTerm& term, DisjunctionContext* context)
+    {
+        ASSERT(term.type == ByteTerm::TypeParenthesesSubpatternTerminalEnd);
+
+        BackTrackInfoParenthesesTerminal* backTrack = reinterpret_cast<BackTrackInfoParenthesesTerminal*>(context->frame + term.frameLocation);
+        // Empty match is a failed match.
+        if (backTrack->begin == input.getPos())
+            return false;
+
+        // Successful match! Okay, what's next? - loop around and try to match moar!
+        context->term -= (term.atom.parenthesesWidth + 1);
+        return true;
+    }
+
+    bool backtrackParenthesesTerminalBegin(ByteTerm& term, DisjunctionContext* context)
+    {
+        ASSERT(term.type == ByteTerm::TypeParenthesesSubpatternTerminalBegin);
+        ASSERT(term.atom.quantityType == QuantifierGreedy);
+        ASSERT(term.atom.quantityCount == UINT_MAX);
+        ASSERT(!term.capture());
+
+        // If we backtrack to this point, we have failed to match this iteration of the parens.
+        // Since this is greedy / zero minimum a failed is also accepted as a match!
+        context->term += term.atom.parenthesesWidth;
+        return true;
+    }
+
+    bool backtrackParenthesesTerminalEnd(ByteTerm&, DisjunctionContext*)
+    {
+        // 'Terminal' parentheses are at the end of the regex, and as such a match past end
+        // should always be returned as a successful match - we should never becktrack to here.
+        ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -1171,6 +1230,14 @@ public:
             if (matchParenthesesOnceEnd(currentTerm(), context))
                 MATCH_NEXT();
             BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
+            if (matchParenthesesTerminalBegin(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
+            if (matchParenthesesTerminalEnd(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
         case ByteTerm::TypeParentheticalAssertionBegin:
             if (matchParentheticalAssertionBegin(currentTerm(), context))
                 MATCH_NEXT();
@@ -1282,6 +1349,14 @@ public:
                 BACKTRACK();
             case ByteTerm::TypeParenthesesSubpatternOnceEnd:
                 if (backtrackParenthesesOnceEnd(currentTerm(), context))
+                    MATCH_NEXT();
+                BACKTRACK();
+            case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
+                if (backtrackParenthesesTerminalBegin(currentTerm(), context))
+                    MATCH_NEXT();
+                BACKTRACK();
+            case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
+                if (backtrackParenthesesTerminalEnd(currentTerm(), context))
                     MATCH_NEXT();
                 BACKTRACK();
             case ByteTerm::TypeParentheticalAssertionBegin:
@@ -1445,8 +1520,38 @@ public:
         m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
     }
 
+    void atomParenthesesOnceBegin(unsigned subpatternId, bool capture, int inputPosition, unsigned frameLocation, unsigned alternativeFrameLocation)
+    {
+        int beginTerm = m_bodyDisjunction->terms.size();
+
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternOnceBegin, subpatternId, capture, inputPosition));
+        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
+        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+
+        m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
+        m_currentAlternativeIndex = beginTerm + 1;
+    }
+
+    void atomParenthesesTerminalBegin(unsigned subpatternId, bool capture, int inputPosition, unsigned frameLocation, unsigned alternativeFrameLocation)
+    {
+        int beginTerm = m_bodyDisjunction->terms.size();
+
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternTerminalBegin, subpatternId, capture, inputPosition));
+        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
+        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+
+        m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
+        m_currentAlternativeIndex = beginTerm + 1;
+    }
+
     void atomParenthesesSubpatternBegin(unsigned subpatternId, bool capture, int inputPosition, unsigned frameLocation, unsigned alternativeFrameLocation)
     {
+        // Errrk! - this is a little crazy, we initially generate as a TypeParenthesesSubpatternOnceBegin,
+        // then fix this up at the end! - simplifying this should make it much clearer.
+        // https://bugs.webkit.org/show_bug.cgi?id=50136
+
         int beginTerm = m_bodyDisjunction->terms.size();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternOnceBegin, subpatternId, capture, inputPosition));
@@ -1469,6 +1574,28 @@ public:
 
         m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
         m_currentAlternativeIndex = beginTerm + 1;
+    }
+
+    void atomParentheticalAssertionEnd(int inputPosition, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
+    {
+        unsigned beginTerm = popParenthesesStack();
+        closeAlternative(beginTerm + 1);
+        unsigned endTerm = m_bodyDisjunction->terms.size();
+
+        ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeParentheticalAssertionBegin);
+
+        bool invertOrCapture = m_bodyDisjunction->terms[beginTerm].invertOrCapture;
+        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
+
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParentheticalAssertionEnd, subpatternId, invertOrCapture, inputPosition));
+        m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
+        m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
+        m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
+
+        m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
+        m_bodyDisjunction->terms[endTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
     }
 
     unsigned popParenthesesStack()
@@ -1542,50 +1669,79 @@ public:
         m_bodyDisjunction->terms[endIndex].frameLocation = frameLocation;
     }
 
-    void atomParenthesesEnd(bool doInline, unsigned lastSubpatternId, int inputPosition, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType, unsigned callFrameSize = 0)
+    void atomParenthesesSubpatternEnd(unsigned lastSubpatternId, int inputPosition, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType, unsigned callFrameSize = 0)
     {
         unsigned beginTerm = popParenthesesStack();
         closeAlternative(beginTerm + 1);
         unsigned endTerm = m_bodyDisjunction->terms.size();
 
-        bool isAssertion = m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeParentheticalAssertionBegin;
+        ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeParenthesesSubpatternOnceBegin);
+
+        ByteTerm& parenthesesBegin = m_bodyDisjunction->terms[beginTerm];
+
+        bool invertOrCapture = parenthesesBegin.invertOrCapture;
+        unsigned subpatternId = parenthesesBegin.atom.subpatternId;
+
+        unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
+        ByteDisjunction* parenthesesDisjunction = new ByteDisjunction(numSubpatterns, callFrameSize);
+
+        parenthesesDisjunction->terms.append(ByteTerm::SubpatternBegin());
+        for (unsigned termInParentheses = beginTerm + 1; termInParentheses < endTerm; ++termInParentheses)
+            parenthesesDisjunction->terms.append(m_bodyDisjunction->terms[termInParentheses]);
+        parenthesesDisjunction->terms.append(ByteTerm::SubpatternEnd());
+
+        m_bodyDisjunction->terms.shrink(beginTerm);
+
+        m_allParenthesesInfo.append(parenthesesDisjunction);
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, invertOrCapture, inputPosition));
+
+        m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
+        m_bodyDisjunction->terms[beginTerm].frameLocation = frameLocation;
+    }
+
+    void atomParenthesesOnceEnd(int inputPosition, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
+    {
+        unsigned beginTerm = popParenthesesStack();
+        closeAlternative(beginTerm + 1);
+        unsigned endTerm = m_bodyDisjunction->terms.size();
+
+        ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeParenthesesSubpatternOnceBegin);
+
         bool invertOrCapture = m_bodyDisjunction->terms[beginTerm].invertOrCapture;
         unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
 
-        m_bodyDisjunction->terms.append(ByteTerm(isAssertion ? ByteTerm::TypeParentheticalAssertionEnd : ByteTerm::TypeParenthesesSubpatternOnceEnd, subpatternId, invertOrCapture, inputPosition));
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternOnceEnd, subpatternId, invertOrCapture, inputPosition));
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
-        if (doInline) {
-            m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
-            m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
-            m_bodyDisjunction->terms[endTerm].atom.quantityCount = quantityCount;
-            m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
-        } else {
-            ByteTerm& parenthesesBegin = m_bodyDisjunction->terms[beginTerm];
-            ASSERT(parenthesesBegin.type == ByteTerm::TypeParenthesesSubpatternOnceBegin);
+        m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
+        m_bodyDisjunction->terms[endTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
+    }
 
-            bool invertOrCapture = parenthesesBegin.invertOrCapture;
-            unsigned subpatternId = parenthesesBegin.atom.subpatternId;
+    void atomParenthesesTerminalEnd(int inputPosition, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
+    {
+        unsigned beginTerm = popParenthesesStack();
+        closeAlternative(beginTerm + 1);
+        unsigned endTerm = m_bodyDisjunction->terms.size();
 
-            unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
-            ByteDisjunction* parenthesesDisjunction = new ByteDisjunction(numSubpatterns, callFrameSize);
+        ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeParenthesesSubpatternTerminalBegin);
 
-            parenthesesDisjunction->terms.append(ByteTerm::SubpatternBegin());
-            for (unsigned termInParentheses = beginTerm + 1; termInParentheses < endTerm; ++termInParentheses)
-                parenthesesDisjunction->terms.append(m_bodyDisjunction->terms[termInParentheses]);
-            parenthesesDisjunction->terms.append(ByteTerm::SubpatternEnd());
+        bool invertOrCapture = m_bodyDisjunction->terms[beginTerm].invertOrCapture;
+        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
 
-            m_bodyDisjunction->terms.shrink(beginTerm);
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternTerminalEnd, subpatternId, invertOrCapture, inputPosition));
+        m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
+        m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
+        m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
-            m_allParenthesesInfo.append(parenthesesDisjunction);
-            m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, invertOrCapture, inputPosition));
-
-            m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
-            m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
-            m_bodyDisjunction->terms[beginTerm].frameLocation = frameLocation;
-        }
+        m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
+        m_bodyDisjunction->terms[endTerm].atom.quantityCount = quantityCount;
+        m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
     }
 
     void regexBegin(unsigned numSubpatterns, unsigned callFrameSize, bool onceThrough)
@@ -1680,24 +1836,27 @@ public:
 
                 case PatternTerm::TypeParenthesesSubpattern: {
                     unsigned disjunctionAlreadyCheckedCount = 0;
-                    if ((term.quantityCount == 1) && !term.parentheses.isCopy) {
-                        if (term.quantityType == QuantifierFixedCount) {
+                    if (term.quantityCount == 1 && !term.parentheses.isCopy) {
+                        unsigned alternativeFrameLocation = term.frameLocation;
+                        // For QuantifierFixedCount we pre-check the minimum size; for greedy/non-greedy we reserve a slot in the frame.
+                        if (term.quantityType == QuantifierFixedCount)
                             disjunctionAlreadyCheckedCount = term.parentheses.disjunction->m_minimumSize;
-                            unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
-                            atomParenthesesSubpatternBegin(term.parentheses.subpatternId, term.invertOrCapture, delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, term.frameLocation);
-                            emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, term.parentheses.disjunction->m_minimumSize);
-                            atomParenthesesEnd(true, term.parentheses.lastSubpatternId, delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType, term.parentheses.disjunction->m_callFrameSize);
-                        } else {
-                            unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
-                            atomParenthesesSubpatternBegin(term.parentheses.subpatternId, term.invertOrCapture, delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, term.frameLocation + RegexStackSpaceForBackTrackInfoParenthesesOnce);
-                            emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0);
-                            atomParenthesesEnd(true, term.parentheses.lastSubpatternId, delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType, term.parentheses.disjunction->m_callFrameSize);
-                        }
+                        else
+                            alternativeFrameLocation += RegexStackSpaceForBackTrackInfoParenthesesOnce;
+                        unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
+                        atomParenthesesOnceBegin(term.parentheses.subpatternId, term.invertOrCapture, delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, alternativeFrameLocation);
+                        emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
+                        atomParenthesesOnceEnd(delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType);
+                    } else if (term.parentheses.isTerminal) {
+                        unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
+                        atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.invertOrCapture, delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, term.frameLocation + RegexStackSpaceForBackTrackInfoParenthesesOnce);
+                        emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
+                        atomParenthesesTerminalEnd(delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType);
                     } else {
                         unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
                         atomParenthesesSubpatternBegin(term.parentheses.subpatternId, term.invertOrCapture, delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, 0);
                         emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0);
-                        atomParenthesesEnd(false, term.parentheses.lastSubpatternId, delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType, term.parentheses.disjunction->m_callFrameSize);
+                        atomParenthesesSubpatternEnd(term.parentheses.lastSubpatternId, delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType, term.parentheses.disjunction->m_callFrameSize);
                     }
                     break;
                 }
@@ -1710,7 +1869,7 @@ public:
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invertOrCapture, term.frameLocation, alternativeFrameLocation);
                     emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset, true);
-                    atomParenthesesEnd(true, term.parentheses.lastSubpatternId, 0, term.frameLocation, term.quantityCount, term.quantityType);
+                    atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityCount, term.quantityType);
                     break;
                 }
                 }
