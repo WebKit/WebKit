@@ -25,7 +25,7 @@ function log(message) {
         document.getElementById('test_script').src = "file:///foobar";
         
         script = document.createElement("script");
-        script.setAttribute("src", "resources/foobar");
+        script.setAttribute("src", "file:///foobar");
         document.body.appendChild(script);
     </script>
 </body>
