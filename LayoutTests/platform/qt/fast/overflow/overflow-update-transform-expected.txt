@@ -1,0 +1,14 @@
+layer at (0,0) size 784x634
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x634
+  RenderBlock {HTML} at (0,0) size 784x634
+    RenderBody {BODY} at (8,10) size 768x614
+layer at (18,10) size 302x302 clip at (19,11) size 284x284 scrollWidth 363 scrollHeight 363
+  RenderBlock {DIV} at (10,0) size 302x302 [border: (1px solid #000000)]
+layer at (18,322) size 302x302 clip at (19,323) size 284x284 scrollWidth 363 scrollHeight 363
+  RenderBlock {DIV} at (10,312) size 302x302 [border: (1px solid #000000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (19,11) size 300x300 backgroundClip at (19,11) size 284x284 clip at (19,11) size 284x284 outlineClip at (19,11) size 284x284
+  RenderBlock {DIV} at (1,1) size 300x300 [bgcolor=#C0C0C0]
+layer at (19,323) size 300x300 backgroundClip at (19,323) size 284x284 clip at (19,323) size 284x284 outlineClip at (19,323) size 284x284
+  RenderImage {IMG} at (1,1) size 300x300 [bgcolor=#C0C0C0]
