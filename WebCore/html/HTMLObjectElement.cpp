@@ -287,12 +287,8 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
     Frame* frame = document()->frame();
     if (!frame)
         return false;
-    
-    // Temporary Workaround for Gears plugin - see bug 24215 for details and bug 24346 to track removal.
-    // Gears expects the plugin to be instantiated even if display:none is set
-    // for the object element.
-    bool isGearsPlugin = equalIgnoringCase(getAttribute(typeAttr), "application/x-googlegears");
-    return isGearsPlugin || HTMLPlugInImageElement::rendererIsNeeded(style);
+
+    return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
 void HTMLObjectElement::insertedIntoDocument()
