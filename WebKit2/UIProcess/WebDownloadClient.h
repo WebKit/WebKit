@@ -50,6 +50,7 @@ public:
     void didCreateDestination(WebContext*, DownloadProxy*, const String& path);
     void didFinish(WebContext*, DownloadProxy*);
     void didFail(WebContext*, DownloadProxy*, const WebCore::ResourceError&);
+    void processDidCrash(WebContext*, DownloadProxy*);
 };
 
 } // namespace WebKit

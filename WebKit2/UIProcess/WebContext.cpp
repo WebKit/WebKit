@@ -197,8 +197,11 @@ void WebContext::processDidClose(WebProcessProxy* process)
     m_visitedLinkProvider.processDidClose();
 
     // Invalidate all outstanding downloads.
-    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it)
+    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
+        (*it)->processDidClose();
         (*it)->invalidate();
+    }
+
     m_downloads.clear();
 
     m_process = 0;
@@ -422,6 +425,14 @@ uint64_t WebContext::createDownloadProxy()
     m_downloads.set(downloadID, downloadProxy.release());
 
     return downloadID;
+}
+
+void WebContext::downloadFinished(DownloadProxy* downloadProxy)
+{
+    ASSERT(m_downloads.contains(downloadProxy->downloadID()));
+
+    downloadProxy->invalidate();
+    m_downloads.remove(downloadProxy->downloadID());
 }
 
 void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

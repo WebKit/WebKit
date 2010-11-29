@@ -1,3 +1,36 @@
+2010-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Downloads: When the web process crashes, call error callbacks for pending downloads
+        https://bugs.webkit.org/show_bug.cgi?id=50164
+        <rdar://problem/8691170>
+
+        * UIProcess/API/C/WKContext.h:
+        Add processDidCrash callback.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::~DownloadProxy):
+        Assert that the web context is null.
+
+        (WebKit::DownloadProxy::processDidClose):
+        Call the processDidCrash callback.
+
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        Call downloadFinished.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidClose):
+        Call processDidClose on all pending downloads.
+
+        (WebKit::WebContext::downloadFinished):
+        Remove the download proxy from the map.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::processDidCrash):
+        Call the processDidCrash callback function.
+
 2010-11-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -124,6 +124,7 @@ public:
     // Downloads.
     uint64_t createDownloadProxy();
     WebDownloadClient& downloadClient() { return m_downloadClient; }
+    void downloadFinished(DownloadProxy*);
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);

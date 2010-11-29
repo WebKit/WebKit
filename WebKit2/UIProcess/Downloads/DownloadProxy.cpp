@@ -53,12 +53,21 @@ DownloadProxy::DownloadProxy(WebContext* webContext)
 
 DownloadProxy::~DownloadProxy()
 {
+    ASSERT(!m_webContext);
 }
 
 void DownloadProxy::invalidate()
 {
     ASSERT(m_webContext);
     m_webContext = 0;
+}
+
+void DownloadProxy::processDidClose()
+{
+    if (!m_webContext)
+        return;
+
+    m_webContext->downloadClient().processDidCrash(m_webContext, this);
 }
 
 void DownloadProxy::didStart(const ResourceRequest& request)
@@ -120,6 +129,9 @@ void DownloadProxy::didFinish()
         return;
 
     m_webContext->downloadClient().didFinish(m_webContext, this);
+
+    // This can cause the DownloadProxy object to be deleted.
+    m_webContext->downloadFinished(this);
 }
 
 void DownloadProxy::didFail(const ResourceError& error)
@@ -128,6 +140,9 @@ void DownloadProxy::didFail(const ResourceError& error)
         return;
 
     m_webContext->downloadClient().didFail(m_webContext, this, error);
+
+    // This can cause the DownloadProxy object to be deleted.
+    m_webContext->downloadFinished(this);
 }
 
 } // namespace WebKit

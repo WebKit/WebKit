@@ -53,6 +53,7 @@ public:
     const WebCore::ResourceRequest& request() const { return m_request; }
 
     void invalidate();
+    void processDidClose();
 
     void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
