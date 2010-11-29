@@ -261,9 +261,6 @@ plugins/iframe-shims.html
 # machines.  I'll ask jnd to fix it once he's back from vacation.
 plugins/plugin-initiate-popup-window.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=47449
-fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
-
 # Requires WebP support.
 fast/images/webp-image-decoding.html
 
