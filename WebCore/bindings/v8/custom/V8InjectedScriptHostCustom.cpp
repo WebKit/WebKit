@@ -114,9 +114,8 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& scriptSource
       scriptHostWrapper,
       windowGlobal,
       v8::Number::New(id),
-      v8::String::New("v8")
     };
-    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 4, args);
+    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 3, args);
     v8::Local<v8::Object> injectedScript(v8::Object::Cast(*injectedScriptValue));
     return ScriptObject(inspectedScriptState, injectedScript);
 }
@@ -153,6 +152,18 @@ v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Argument
         return v8::Undefined();
 
     return toV8(node);
+}
+
+v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(const v8::Arguments& args)
+{
+    INC_STATS("InjectedScriptHost.internalConstructorName()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    if (!args[0]->IsObject())
+        return v8::Undefined();
+
+    return args[0]->ToObject()->GetConstructorName();
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const v8::Arguments& args)

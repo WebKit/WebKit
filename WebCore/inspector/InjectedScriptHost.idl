@@ -38,6 +38,7 @@ module core {
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
         long inspectedNode(in unsigned long num);
+        [Custom] DOMObject internalConstructorName(in DOMObject object);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [Custom] DOMObject currentCallFrame();

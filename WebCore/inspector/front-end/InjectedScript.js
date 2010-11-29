@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId, jsEngine) {
+var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
 var InjectedScript = function()
 {
@@ -427,9 +427,17 @@ InjectedScript.prototype = {
         switch (type) {
         case "object":
         case "node":
-            return this._className(obj);
+            var result = InjectedScriptHost.internalConstructorName(obj);
+            if (result === "Object") {
+                // In Chromium DOM wrapper prototypes will have Object as their constructor name,
+                // get the real DOM wrapper name from the constructor property.
+                var constructorName = obj.constructor && obj.constructor.name;
+                if (constructorName)
+                    return constructorName;
+            }
+            return result;
         case "array":
-            var className = this._className(obj);
+            var className = InjectedScriptHost.internalConstructorName(obj);
             if (typeof obj.length === "number")
                 className += "[" + obj.length + "]";
             return className;
@@ -453,25 +461,6 @@ InjectedScript.prototype = {
     {
         // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
         return "" + obj;
-    },
-
-    _className: function(obj)
-    {
-        // We can't use the same code for fetching class names of the dom bindings prototype chain.
-        // Both of the methods below result in "Object" names on the foreign engine bindings.
-        // I gave up and am using a check below to distinguish between the egine bingings.
-
-        if (jsEngine == "JSC") {
-            var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : this._toString(obj);
-            return str.replace(/^\[object (.*)\]$/i, "$1");
-        } else {
-            // V8
-            if (isFinite(obj.length) && typeof obj.callee === "function") {
-                // Arguments.constructor === Object in V8
-                return "Arguments";
-            }
-            return obj.constructor && obj.constructor.name || "Object";
-        }
     },
 
     _logEvent: function(event)

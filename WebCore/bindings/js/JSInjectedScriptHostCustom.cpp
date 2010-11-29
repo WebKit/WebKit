@@ -95,7 +95,6 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
     args.append(toJS(scriptState, globalObject, this));
     args.append(globalThisValue);
     args.append(jsNumber(id));
-    args.append(jsString(scriptState, String("JSC")));
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
     if (result.isObject())
         return ScriptObject(scriptState, result.getObject());
@@ -135,6 +134,15 @@ JSValue JSInjectedScriptHost::nodeForId(ExecState* exec)
 
     JSLock lock(SilenceAssertionsOnly);
     return toJS(exec, node);
+}
+
+JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    UString result = exec->argument(0).toThisObject(exec)->className();
+    return jsString(exec, result);
 }
 
 JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec)
