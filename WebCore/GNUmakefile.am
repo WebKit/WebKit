@@ -842,6 +842,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/JavaScriptCallFrame.cpp \
 	WebCore/bindings/js/JavaScriptCallFrame.h \
+	WebCore/bindings/js/OptionsObject.h \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptCachedFrameData.cpp \
@@ -1905,8 +1906,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorDOMAgent.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \
 	WebCore/inspector/InspectorDOMStorageResource.h \
-    WebCore/inspector/InspectorFileSystemAgent.cpp \
-    WebCore/inspector/InspectorFileSystemAgent.h \
+	WebCore/inspector/InspectorFileSystemAgent.cpp \
+	WebCore/inspector/InspectorFileSystemAgent.h \
 	WebCore/inspector/InspectorFrontendClient.h \
 	WebCore/inspector/InspectorFrontendClientLocal.cpp \
 	WebCore/inspector/InspectorFrontendClientLocal.h \
@@ -2274,6 +2275,7 @@ webcore_sources += \
 	WebCore/platform/FloatConversion.h \
 	WebCore/platform/GeolocationService.cpp \
 	WebCore/platform/GeolocationService.h \
+	WebCore/platform/HashTools.h \
 	WebCore/platform/graphics/BitmapImage.cpp \
 	WebCore/platform/graphics/BitmapImage.h \
 	WebCore/platform/graphics/Color.cpp \
@@ -2336,6 +2338,7 @@ webcore_sources += \
 	WebCore/platform/graphics/FloatRect.h \
 	WebCore/platform/graphics/FloatSize.cpp \
 	WebCore/platform/graphics/FloatSize.h \
+	WebCore/platform/graphics/FontBaseline.h \
 	WebCore/platform/graphics/FontCache.cpp \
 	WebCore/platform/graphics/FontCache.h \
 	WebCore/platform/graphics/Font.cpp \
@@ -2845,6 +2848,7 @@ webcore_sources += \
 	WebCore/rendering/ScrollBehavior.h \
 	WebCore/rendering/ShadowElement.cpp \
 	WebCore/rendering/ShadowElement.h \
+	WebCore/rendering/VerticalPositionCache.h \
 	WebCore/rendering/style/BorderData.h \
 	WebCore/rendering/style/BorderValue.h \
 	WebCore/rendering/style/CollapsedBorderValue.h \
@@ -4674,12 +4678,12 @@ DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
-DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorFrontend.h
-DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
-DerivedSources/WebCore/InspectorBackendDispatcher.cpp: DerivedSources/WebCore/InspectorBackendDispatcher.h
-DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendStub.js
-DerivedSources/WebCore/InspectorBackendStub.js: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+DerivedSources/WebCore/InspectorBackendDispatcher.cpp: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
+DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
+DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendStub.js
+DerivedSources/WebCore/InspectorBackendStub.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
+DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
 
 IDL_PATH := \
     $(WebCore)/bindings/js \
