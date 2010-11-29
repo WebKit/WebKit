@@ -1859,9 +1859,10 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 
         // Walk up the render tree to search for a node to focus.
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
+        // FIXME: Rework to use shadowParent. No need to traverse with the render tree.
         while (renderer) {
             node = renderer->node();
-            if (node && node->isFocusable()) {
+            if (node && node->isMouseFocusable()) {
                 // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a 
                 // node on mouse down if it's selected and inside a focused node. It will be 
                 // focused if the user does a mouseup over it, however, because the mouseup

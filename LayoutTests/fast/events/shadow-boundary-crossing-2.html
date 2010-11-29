@@ -21,6 +21,15 @@ function clickOn(element)
     eventSender.mouseUp();
 }
 
+
+function leapForward()
+{
+    if (!window.eventSender)
+        return;
+
+    eventSender.leapForward(1000);
+}
+
 var tests = {
     mutationEventPropagation: function()
     {
@@ -73,6 +82,21 @@ var tests = {
         clickOn(textInput);
         log('After event dispatch, the event object should not reveal shadow DOM', storedEvent && storedEvent.target == textInput);
         textInput.parentNode.removeChild(textInput);
+    },
+    focusEventPropagation: function()
+    {
+        var searchInput = document.body.appendChild(document.createElement('input'));
+        searchInput.setAttribute('type', 'search');
+        var count = 0;
+        searchInput.addEventListener('focus', function(evt)
+        {
+            count++;
+        });
+        clickOn(searchInput);
+        leapForward();
+        clickOn(searchInput);
+        log('Focusing same shadow DOM element repeatedly should not trigger multiple focus/blur events', count == 1);
+        searchInput.parentNode.removeChild(searchInput);
     }
 };
 

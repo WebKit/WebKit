@@ -1555,6 +1555,7 @@ void SelectionController::setFocusedNodeIfNeeded()
 
         // Walk up the render tree to search for a node to focus.
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
+        // FIXME: Combine with the same traversal code in EventHandle::dispatchMouseEvent.
         while (renderer) {
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
