@@ -3197,3 +3197,4 @@ BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
 
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-stylesheet.html = CRASH
+BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
