@@ -1,3 +1,16 @@
+2010-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixed a crash seen when using a PageAllocation to store itself.
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::systemDeallocate): Zero out m_base before unmapping
+        it, in case unmapping m_base unmaps the PageAllocation.
+
+        * wtf/BumpPointerAllocator.h:
+        (WTF::BumpPointerPool::destroy): Now this work-around isn't needed!
+
 2010-11-30  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Darin Adler.
