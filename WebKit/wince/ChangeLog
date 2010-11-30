@@ -1,3 +1,13 @@
+2010-11-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add WebView
+        https://bugs.webkit.org/show_bug.cgi?id=50216
+
+        * WebView.cpp: Added.
+        * WebView.h: Added.
+
 2010-11-13  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, build fix after r71541.
