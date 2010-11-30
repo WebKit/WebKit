@@ -1853,8 +1853,11 @@ void Document::clearAXObjectCache()
 {
     // clear cache in top document
     if (m_axObjectCache) {
-        delete m_axObjectCache;
+        // Clear the cache member variable before calling delete because attempts
+        // are made to access it during destruction.
+        AXObjectCache* axObjectCache = m_axObjectCache;
         m_axObjectCache = 0;
+        delete axObjectCache;
         return;
     }
     
