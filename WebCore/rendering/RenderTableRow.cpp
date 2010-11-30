@@ -145,6 +145,7 @@ void RenderTableRow::layout()
     }
 
     statePusher.pop();
+    // RenderTableSection::layoutRows will set our logical height and width later, so it calls updateLayerTransform().
     setNeedsLayout(false);
 }
 

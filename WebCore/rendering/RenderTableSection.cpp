@@ -492,6 +492,7 @@ int RenderTableSection::layoutRows(int toAdd)
             rowRenderer->setLocation(0, m_rowPos[r]);
             rowRenderer->setLogicalWidth(logicalWidth());
             rowRenderer->setLogicalHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
+            rowRenderer->updateLayerTransform();
         }
 
         for (int c = 0; c < nEffCols; c++) {

@@ -49,6 +49,7 @@ RenderReplica::~RenderReplica()
 void RenderReplica::layout()
 {
     setFrameRect(parentBox()->borderBoxRect());
+    updateLayerTransform();
     setNeedsLayout(false);
 }
 
