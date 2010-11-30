@@ -1,5 +1,12 @@
 2010-11-29  Dan Bernstein  <mitz@apple.com>
 
+        Windows DumpRenderTree build fix after r72887.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::findString): Added empty implementation.
+
+2010-11-29  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         DumpRenderTree changes for testing the text search API.
