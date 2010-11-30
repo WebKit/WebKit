@@ -588,6 +588,7 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
     for (unsigned i = 0, size = m_pageStyleSheet->length(); i < size; ++i)
         m_pageStyleSheet->remove(i);
     m_pageStyleSheet->parseString(text, m_pageStyleSheet->useStrictParsing());
+    m_pageStyleSheet->styleSheetChanged();
     m_inspectorStyles.clear();
 }
 

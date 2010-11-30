@@ -147,14 +147,28 @@ WebInspector.SourceView.prototype = {
                 lines.push(textModel.line(i));
         }
 
-        var linesCountToShift = newContent.split("\n").length - 1;
-        var newContent = lines.join("\n");
-        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), newContent, line, linesCountToShift, this._editLineComplete.bind(this, newContent), cancelEditingCallback);
+        var editData = {};
+        editData.sourceID = this._sourceIDForLine(line);
+        editData.content = lines.join("\n");
+        editData.line = line;
+        editData.linesCountToShift = newContent.split("\n").length - 1;
+
+        WebInspector.panels.scripts.editScriptSource(editData, this._editLineComplete.bind(this, editData), cancelEditingCallback);
     },
 
-    _editLineComplete: function(newContent)
+    _editLineComplete: function(editData, newContent)
     {
-        this.resource.content = newContent;
+        this.resource.setContent(newContent, this._revertEditLine.bind(this, editData));
+    },
+
+    _revertEditLine: function(editData, contentToRevertTo)
+    {
+        var newEditData = {};
+        newEditData.sourceID = editData.sourceID;
+        newEditData.content = editData.content;
+        newEditData.line = editData.line;
+        newEditData.linesCountToShift = -editData.linesCountToShift;
+        WebInspector.panels.scripts.editScriptSource(newEditData, this._editLineComplete.bind(this, newEditData));
     },
 
     _sourceIDForLine: function(line)

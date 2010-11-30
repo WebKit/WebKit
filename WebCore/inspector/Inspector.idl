@@ -216,7 +216,7 @@ module core {
         [handler=CSS] void getAllStyles2(out Array styleSheetIds);
         [handler=CSS] void getStyleSheet2(in String styleSheetId, out Value styleSheet);
         [handler=CSS] void getStyleSheetText2(in String styleSheetId, out String url, out String text);
-        [handler=CSS] void setStyleSheetText2(in String styleSheetId, in String text);
+        [handler=CSS] void setStyleSheetText2(in String styleSheetId, in String text, out boolean success);
         [handler=CSS] void setPropertyText2(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
         [handler=CSS] void toggleProperty2(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
         [handler=CSS] void setRuleSelector2(in Object ruleId, in String selector, out Value rule);

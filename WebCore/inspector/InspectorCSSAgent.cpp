@@ -285,14 +285,16 @@ void InspectorCSSAgent::getStyleSheetText2(const String& styleSheetId, String* u
     inspectorStyleSheet->text(result);
 }
 
-void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const String& text)
+void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const String& text, bool* success)
 {
     InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
-    if (!inspectorStyleSheet)
+    if (!inspectorStyleSheet) {
+        *success = false;
         return;
+    }
 
-    bool success = inspectorStyleSheet->setText(text);
-    if (success)
+    *success = inspectorStyleSheet->setText(text);
+    if (*success)
         inspectorStyleSheet->reparseStyleSheet(text);
 }
 

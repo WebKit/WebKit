@@ -369,13 +369,13 @@ WebInspector.ResourcesPanel.prototype = {
         var view = WebInspector.ResourceManager.resourceViewForResource(resource);
 
         // Consider rendering diff markup here.
-        if (resource._baseRevision && resource.content && view instanceof WebInspector.SourceView) {
+        if (resource.baseRevision && view instanceof WebInspector.SourceView) {
             function callback(baseContent)
             {
                 if (baseContent)
                     this._applyDiffMarkup(view, baseContent, resource.content);
             }
-            resource._baseRevision.requestContent(callback.bind(this));
+            resource.baseRevision.requestContent(callback.bind(this));
         }
         this._innerShowView(view);
     },
@@ -1091,28 +1091,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _contentChanged: function(event)
     {
-        var revisionResource = new WebInspector.Resource(null, this._resource.url);
-        revisionResource.type = this._resource.type;
-        revisionResource.loader = this._resource.loader;
-        if (this._resource.finished)
-            revisionResource.finished = true;
-        else {
-            function finished()
-            {
-                revisionResource.finished = true;
-            }
-            this._resource.addEventListener("finished", finished);
-        }
-
-        if (!this._resource._baseRevision)
-            this._resource._baseRevision = revisionResource;
-        else
-            revisionResource._baseRevision = this._resource._baseRevision;
-
-        if (event.data.oldContent)
-            revisionResource.setInitialContent(event.data.oldContent);
-        this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revisionResource, event.data.oldContentTimestamp), 0);
-
+        this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, event.data.revision), 0);
         var oldView = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
         if (oldView) {
             var newView = WebInspector.ResourceManager.recreateResourceView(this._resource);
@@ -1246,13 +1225,13 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.ResourceRevisionTreeElement = function(storagePanel, resource, timestamp)
+WebInspector.ResourceRevisionTreeElement = function(storagePanel, revision)
 {
-    var title = timestamp ? timestamp.toLocaleTimeString() : "(original)";
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, "resource-sidebar-tree-item resources-category-" + resource.category.name);
-    if (timestamp)
-        this.tooltip = timestamp.toLocaleString();
-    this._resource = resource;
+    var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : "(original)";
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, "resource-sidebar-tree-item resources-category-" + revision.category.name);
+    if (revision.timestamp)
+        this.tooltip = revision.timestamp.toLocaleString();
+    this._resource = revision;
 }
 
 WebInspector.ResourceRevisionTreeElement.prototype = {
@@ -1261,6 +1240,7 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
         this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
     },
 
     onselect: function()
@@ -1274,6 +1254,13 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         event.dataTransfer.setData("text/plain", this._resource.content);
         event.dataTransfer.effectAllowed = "copy";
         return true;
+    },
+
+    _handleContextMenuEvent: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._resource.revertToThis.bind(this._resource));
+        contextMenu.show(event);
     }
 }
 
