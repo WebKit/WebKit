@@ -1,3 +1,13 @@
+2010-11-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        m_hasNonEnumerableProperties is never initialized in Structure
+        https://bugs.webkit.org/show_bug.cgi?id=50266
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure): initialize member variable.
+
 2010-11-29  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix (part 1). Use correct environment variable syntax in cmd files.

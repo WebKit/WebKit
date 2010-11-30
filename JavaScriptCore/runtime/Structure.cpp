@@ -233,6 +233,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(false)
+    , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(anonymousSlotCount)
