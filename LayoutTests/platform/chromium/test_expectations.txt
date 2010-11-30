@@ -3195,5 +3195,12 @@ BUG50203 SKIP : fast/dom/horizontal-scrollbar-when-dir-change.html = FAIL
 
 BUGWK50188 : fast/overflow/overflow-update-transform.html = IMAGE
 
+BUGWK50206 : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
+BUGWK50206 : svg/carto.net/selectionlist.svg = IMAGE
+BUGWK50206 : svg/custom/image-small-width-height.svg = IMAGE
+
+// xji is rebaselining this.
+BUG_OJAN MAC : fast/block/basic/truncation-rtl.html = IMAGE
+
 BUGWK50204 WIN LINUX : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
 BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
