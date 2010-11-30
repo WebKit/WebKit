@@ -40,21 +40,21 @@
 		HeaderFileName="$(OutDir)\$(InputName).h"
 	/>
 	<Tool
-		Name="VCResourceCompilerTool"
-		Culture="1033"
-		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
+		Name="VCPostBuildEventTool"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCPreBuildEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot;"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCPreLinkEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot;"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
-		Name="VCPostBuildEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot;"
+		Name="VCResourceCompilerTool"
+		Culture="1033"
+		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
 	/>
 	<UserMacro
 		Name="ProductionBuild"

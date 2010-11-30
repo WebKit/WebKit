@@ -1,3 +1,10 @@
+2010-11-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix (part 2).
+        Define Visual Studio internal variables used in pre-build/pre-link/post-build commands in environment for separated cmd files.
+
+        * win/tools/vsprops/common.vsprops:
+
 2010-11-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
