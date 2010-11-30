@@ -1077,3 +1077,6 @@ fast/dom/horizontal-scrollbar-when-dir-change.html
 # https://bugs.webkit.org/show_bug.cgi?id=50204
 editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
+
+# Missing layoutTestController.findString()
+editing/text-iterator/findString.html
