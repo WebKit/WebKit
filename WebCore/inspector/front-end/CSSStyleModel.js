@@ -155,6 +155,11 @@ WebInspector.CSSStyleModel.prototype = {
         InspectorBackend.addRule2(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));
     },
 
+    setStyleSheetText: function(styleSheetId, newText)
+    {
+        InspectorBackend.setStyleSheetText2(styleSheetId, newText, this._styleSheetChanged.bind(this, styleSheetId, true));
+    },
+
     _styleSheetChanged: function(styleSheetId, majorChange)
     {
         if (!majorChange || !styleSheetId)
@@ -163,8 +168,10 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(href, content)
         {
             var resource = WebInspector.resourceManager.resourceForURL(href);
-            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
+            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet) {
+                resource.styleSheetId = styleSheetId;
                 resource.content = content;
+            }
         }
         InspectorBackend.getStyleSheetText2(styleSheetId, callback);
     }
@@ -531,20 +538,5 @@ WebInspector.CSSStyleSheet.prototype = {
     getText: function()
     {
         return this._text;
-    },
-
-    setText: function(newText, userCallback)
-    {
-        function callback(styleSheetPayload)
-        {
-            if (!styleSheetPayload)
-                userCallback(null);
-            else {
-                userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));
-                WebInspector.cssModel._styleSheetChanged(this.id, true);
-            }
-        }
-
-        InspectorBackend.setStyleSheetText2(this.id, newText, callback.bind(this));
     }
 }

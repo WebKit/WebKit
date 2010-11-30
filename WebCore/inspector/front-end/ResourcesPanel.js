@@ -1094,6 +1094,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         var revisionResource = new WebInspector.Resource(null, this._resource.url);
         revisionResource.type = this._resource.type;
         revisionResource.loader = this._resource.loader;
+        revisionResource.styleSheetId = this._resource.styleSheetId;
         if (this._resource.finished)
             revisionResource.finished = true;
         else {
@@ -1261,6 +1262,7 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
         this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
     },
 
     onselect: function()
@@ -1274,6 +1276,17 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         event.dataTransfer.setData("text/plain", this._resource.content);
         event.dataTransfer.effectAllowed = "copy";
         return true;
+    },
+
+    _handleContextMenuEvent: function(event)
+    {
+        if (!this._resource.styleSheetId)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu();
+        var itemAction = WebInspector.cssModel.setStyleSheetText.bind(WebInspector.cssModel, this._resource.styleSheetId, this._resource.content);
+        contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), itemAction);
+        contextMenu.show(event);
     }
 }
 
