@@ -1,3 +1,18 @@
+2010-11-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        All projects on Windows should use cmd files for build events
+        https://bugs.webkit.org/show_bug.cgi?id=50213
+
+        * win/WebKit2Common.vsprops:
+        * win/WebKit2WebProcessCommon.vsprops:
+        * win/WebKit2WebProcessPostBuild.cmd: Added.
+        * win/WebKit2WebProcessPreBuild.cmd: Added.
+        * win/WebKitPostBuild.cmd: Added.
+        * win/WebKitPreBuild.cmd: Added.
+        * win/WebKitPreLink.cmd: Added.
+
 2010-11-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.

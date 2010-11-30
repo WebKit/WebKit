@@ -1,3 +1,40 @@
+2010-11-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        All projects on Windows should use cmd files for build events
+        https://bugs.webkit.org/show_bug.cgi?id=50213
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginCommon.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginPostBuild.cmd: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginPreBuild.cmd: Added.
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops:
+        * DumpRenderTree/win/DumpRenderTreePostBuild.cmd: Added.
+        * DumpRenderTree/win/DumpRenderTreePreBuild.cmd: Added.
+        * DumpRenderTree/win/ImageDiffCommon.vsprops:
+        * DumpRenderTree/win/ImageDiffPostBuild.cmd: Added.
+        * DumpRenderTree/win/ImageDiffPreBuild.cmd: Added.
+        * MiniBrowser/Configurations/MiniBrowserCFLite.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserCoreFoundation.vsprops:
+        * MiniBrowser/MiniBrowserPostBuild.cmd: Added.
+        * MiniBrowser/MiniBrowserPreBuild.cmd: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops:
+        * TestWebKitAPI/win/TestWebKitAPIPostBuild.cmd: Added.
+        * TestWebKitAPI/win/TestWebKitAPIPreBuild.cmd: Added.
+        * WebKitAPITest/WebKitAPITestCommon.vsprops:
+        * WebKitAPITest/WebKitAPITestPostBuild.cmd: Added.
+        * WebKitAPITest/WebKitAPITestPreBuild.cmd: Added.
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops:
+        * WebKitTestRunner/win/InjectedBundlePostBuild.cmd: Added.
+        * WebKitTestRunner/win/InjectedBundlePreBuild.cmd: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerPostBuild.cmd: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerPreBuild.cmd: Added.
+        * WinLauncher/WinLauncherCommon.vsprops:
+        * WinLauncher/WinLauncherPostBuild.cmd: Added.
+        * WinLauncher/WinLauncherPreBuild.cmd: Added.
+
 2010-11-29  Dan Bernstein  <mitz@apple.com>
 
         GTK DumpRenderTree build fix after r72887.
