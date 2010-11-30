@@ -783,79 +783,88 @@ BUG26734 WIN SLOW : inspector/timeline-layout.html = TEXT PASS
 
 // These tests need to be changed to be platform independent.
 // These tests are skipped since they hang DRT and test_shell.
-BUG13907 SKIP : http/tests/media/remove-while-loading.html = TIMEOUT
-BUG13907 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
-BUG13907 SKIP : http/tests/media/video-play-stall.html = TIMEOUT
-BUG13907 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
+// BUG62964 : we should either enable or delete these testsvi
+BUG54465 BUG62964 SKIP : http/tests/media/remove-while-loading.html = TIMEOUT
+BUG54465 BUG62964 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
+BUG54465 BUG62964 SKIP : http/tests/media/video-play-stall.html = TIMEOUT
+BUG54465 BUG62964 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
 BUG13907 : http/tests/media/video-referer.html = PASS
-BUG13907 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
-BUG13907 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
-BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
-BUG13907 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
-BUG13907 : media/video-loop.html = PASS FAIL TIMEOUT
-BUG62995 WIN : http/tests/media/video-cookie.html = CRASH PASS TEXT TIMEOUT
-BUG13907 : http/tests/media/reload-after-dialog.html = CRASH PASS TIMEOUT
+BUG13907 BUG60355 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
+BUG13907 BUG60355 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
+BUG13907 BUG60355 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
+// KNOWNISSUE : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
+BUG59635 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
+// BUG59415 : setting SLOW in test_expectations.txt may fix the problem
+BUG13907 BUG59415 : media/video-loop.html = PASS FAIL TIMEOUT
 
 // These tests need to be changed to not rely on setTimeout().
-BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
-BUG13907 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
+BUG13907 BUG60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
+BUG13907 BUG60740 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
 
 // We sometimes emit an error from the same source element twice.
-BUG13907 : media/video-source-error.html = PASS FAIL TIMEOUT
+BUG13907 BUG59226 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
-BUG13907 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
+BUG13907 BUG59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
-BUG13907 BUG25375 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
+BUG25375 BUG59399 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
 // Seeks to the end of file, which results in ogg packets with no timestamps.
-BUG13907 : media/event-attributes.html = PASS FAIL TIMEOUT
+// KNOWNISSUE : fails because progress event is not published 
+BUG59675 BUG59263 : media/event-attributes.html = PASS FAIL TIMEOUT
 
 // The media time display isn't appearing.
-BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
+// KNOWNISSUE : Timebar is not scaled when video is zoomed
+BUG59704 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 
 // Flaky because of our new seeking algorithm.
-BUG50438 : media/controls-drag-timebar.html = PASS FAIL
+BUG50438 BUG20187 : media/controls-drag-timebar.html = PASS FAIL
 
 // The media time display is getting styled when it shouldn't be.
-BUG13907 : media/controls-styling.html = FAIL
+BUG13907 BUG60223 : media/controls-styling.html = FAIL
 
 // These tests are flaky with subtle pixel differences.
 BUG13907 LINUX MAC : media/video-zoom.html = IMAGE PASS
-BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
+BUG13907 BUG60744 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
 
 // These two tests started timing out after r66110.
 BUG13907 : media/video-controls-rendering.html = PASS FAIL TIMEOUT
-BUG13907 WIN RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
+BUG13907 BUG60746 WIN RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
 // Started failing in roll 66079:66240.
-BUG53660 WIN DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
+BUG53660 BUG60746 WIN DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
 // Behavior was changed by WebKit roll 69035:69062.
-BUG53660 MAC : media/video-transformed.html = IMAGE
-BUG53660 LINUX : media/video-transformed.html = IMAGE PASS
+BUG53660 BUG60746 MAC : media/video-transformed.html = IMAGE
+BUG53660 BUG60746 LINUX : media/video-transformed.html = IMAGE PASS
 
 
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
-BUG13907 : media/video-replaces-poster.html = IMAGE PASS
+// We should rewrite this test so that we wait for timeupdate event until the time is no less than 1. 
+BUG13907 BUG60244 : media/video-replaces-poster.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
+// TESTISSUE 
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
 
 // We haven't implemented the WebKit fullscreen extension.
+// UNIMPLEMENTED
 BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
 BUG16735 : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // We haven't implemented the WebKit captioning extension.
+// UNIMPLEMENTED
 BUG28301 : media/media-captions.html = TIMEOUT
 
 // We haven't implemented reverse audio/video playback.
+// UNIMPLEMENTED BUG33099 Implement reverse audio/video playback
 BUG33099 : media/video-reverse-play-duration.html = TIMEOUT
 BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
 
 // We haven't implemented video preloading and it passing is a false positive.
+// UNIMPLEMENTED
 BUG16482 : media/video-preload.html = PASS FAIL
 
 // Does not display courier for the letters, as the test requests.
@@ -2867,7 +2876,8 @@ BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 
-BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
+// BUG60845 : Adding the sleep  may improves the stablility
+BUGDPRANKE BUG60845 WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
@@ -2886,6 +2896,7 @@ BUG60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
+// UNIMPLEMENTED for chrome
 BUGWK45021 : media/context-menu-actions.html = TIMEOUT
 
 BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
@@ -2932,7 +2943,7 @@ BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 WIN LINUX DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT PASS
 
-BUG62738 WIN LINUX : media/video-size.html = PASS TEXT
+BUG62738 BUG60845 WIN LINUX : media/video-size.html = PASS TEXT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
