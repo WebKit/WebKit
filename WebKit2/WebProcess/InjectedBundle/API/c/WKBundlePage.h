@@ -28,6 +28,7 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKEvent.h>
+#include <WebKit2/WKFindOptions.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -208,6 +209,8 @@ WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePa
 
 WK_EXPORT bool WKBundlePageHasLocalDataForURL(WKBundlePageRef page, WKURLRef url);
 WK_EXPORT bool WKBundlePageCanHandleRequest(WKURLRequestRef request);
+
+WK_EXPORT bool WKBundlePageFindString(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
 
 #ifdef __cplusplus
 }

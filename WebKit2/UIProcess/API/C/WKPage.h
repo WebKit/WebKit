@@ -28,6 +28,7 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKEvent.h>
+#include <WebKit2/WKFindOptions.h>
 #include <WebKit2/WKGeometry.h>
 #include <WebKit2/WKNativeEvent.h>
 
@@ -271,18 +272,6 @@ WK_EXPORT void WKPageSetPageAndTextZoomFactors(WKPageRef page, double pageZoomFa
 
 WK_EXPORT void WKPageScaleWebView(WKPageRef page, double scale, WKPoint origin);
 WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
-
-// Find.
-enum {
-    kWKFindOptionsCaseInsensitive = 1 << 0,
-    kWKFindOptionsAtWordStarts = 1 << 1,
-    kWKFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
-    kWKFindOptionsBackwards = 1 << 3,
-    kWKFindOptionsWrapAround = 1 << 4,
-    kWKFindOptionsShowOverlay = 1 << 5,
-    kWKFindOptionsShowFindIndicator = 1 << 6
-};
-typedef uint32_t WKFindOptions;
 
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);

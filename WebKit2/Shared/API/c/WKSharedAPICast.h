@@ -29,9 +29,11 @@
 #include "WKBase.h"
 #include "WKContextMenuItemTypes.h"
 #include "WKEvent.h"
+#include "WKFindOptions.h"
 #include "WKGeometry.h"
 #include "WebError.h"
 #include "WebEvent.h"
+#include "WebFindOptions.h"
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -617,6 +619,28 @@ inline WKContextMenuItemType toAPI(WebCore::ContextMenuItemType type)
         ASSERT_NOT_REACHED();
         return kWKContextMenuItemTypeAction;
     }
+}
+
+inline FindOptions toFindOptions(WKFindOptions wkFindOptions)
+{
+    unsigned findOptions = 0;
+
+    if (wkFindOptions & kWKFindOptionsCaseInsensitive)
+        findOptions |= FindOptionsCaseInsensitive;
+    if (wkFindOptions & kWKFindOptionsAtWordStarts)
+        findOptions |= FindOptionsAtWordStarts;
+    if (wkFindOptions & kWKFindOptionsTreatMedialCapitalAsWordStart)
+        findOptions |= FindOptionsTreatMedialCapitalAsWordStart;
+    if (wkFindOptions & kWKFindOptionsBackwards)
+        findOptions |= FindOptionsBackwards;
+    if (wkFindOptions & kWKFindOptionsWrapAround)
+        findOptions |= FindOptionsWrapAround;
+    if (wkFindOptions & kWKFindOptionsShowOverlay)
+        findOptions |= FindOptionsShowOverlay;
+    if (wkFindOptions & kWKFindOptionsShowFindIndicator)
+        findOptions |= FindOptionsShowFindIndicator;
+
+    return static_cast<FindOptions>(findOptions);
 }
 
 } // namespace WebKit

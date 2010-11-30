@@ -156,3 +156,8 @@ bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
 {
     return WebPage::canHandleRequest(toImpl(requestRef)->resourceRequest());
 }
+
+bool WKBundlePageFindString(WKBundlePageRef pageRef, WKStringRef target, WKFindOptions findOptions)
+{
+    return toImpl(pageRef)->findStringFromInjectedBundle(toImpl(target)->string(), toFindOptions(findOptions));
+}

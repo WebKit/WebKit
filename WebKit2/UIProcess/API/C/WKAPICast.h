@@ -32,7 +32,6 @@
 #include "WKPage.h"
 #include "WKPreferencesPrivate.h"
 #include "WKSharedAPICast.h"
-#include "WebFindOptions.h"
 #include <WebCore/FrameLoaderTypes.h>
 
 namespace WebKit {
@@ -122,28 +121,6 @@ inline WKCacheModel toAPI(CacheModel cacheModel)
     }
     
     return kWKCacheModelDocumentViewer;
-}
-
-inline FindOptions toFindOptions(WKFindOptions wkFindOptions)
-{
-    unsigned findOptions = 0;
-
-    if (wkFindOptions & kWKFindOptionsCaseInsensitive)
-        findOptions |= FindOptionsCaseInsensitive;
-    if (wkFindOptions & kWKFindOptionsAtWordStarts)
-        findOptions |= FindOptionsAtWordStarts;
-    if (wkFindOptions & kWKFindOptionsTreatMedialCapitalAsWordStart)
-        findOptions |= FindOptionsTreatMedialCapitalAsWordStart;
-    if (wkFindOptions & kWKFindOptionsBackwards)
-        findOptions |= FindOptionsBackwards;
-    if (wkFindOptions & kWKFindOptionsWrapAround)
-        findOptions |= FindOptionsWrapAround;
-    if (wkFindOptions & kWKFindOptionsShowOverlay)
-        findOptions |= FindOptionsShowOverlay;
-    if (wkFindOptions & kWKFindOptionsShowFindIndicator)
-        findOptions |= FindOptionsShowFindIndicator;
-
-    return static_cast<FindOptions>(findOptions);
 }
 
 inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)

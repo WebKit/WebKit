@@ -1,3 +1,14 @@
+2010-11-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8710645> WebKitTestRunner needs layoutTestController.findString
+        https://bugs.webkit.org/show_bug.cgi?id=50238
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::findString): Added.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2010-11-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

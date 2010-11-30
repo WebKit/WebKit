@@ -1915,9 +1915,6 @@ fast/spatial-navigation
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
 printing/page-format-data-display-none.html
 
-# WebKitTestRunner needs layoutTestController.findString <http://webkit.org/b/50238>
-editing/text-iterator/findString.html
-
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
