@@ -58,6 +58,7 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
+BUG24182 SLOW WIN DEBUG : inspector/styles-disable-then-delete.html = PASS
 BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
@@ -2822,10 +2823,9 @@ BUGWK44961 : fast/notifications/notifications-click-event.html = TIMEOUT
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = FAIL
 
-// Flaky tests
 BUG54329 MAC : fast/forms/select-baseline.html = IMAGE
-BUG54330 MAC : fast/forms/input-spinbutton-capturing.html = TEXT
-BUG54331 MAC : fast/forms/input-number-events.html = TEXT
+BUG54330 MAC : fast/forms/input-spinbutton-capturing.html = TEXT PASS
+BUG54331 MAC : fast/forms/input-number-events.html = TEXT PASS
 BUG54333 WIN LINUX : fast/replaced/embed-display-none.html = PASS TIMEOUT
 BUG54334 LINUX : media/video-timeupdate-during-playback.html = PASS TIMEOUT
 BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
@@ -2924,7 +2924,7 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
 // New test added in 68808.
-BUGWK46940 WIN DEBUG : fast/dom/Window/window-screen-properties.html = TEXT
+BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
 
 // New test added in 68809
 BUGWK46941 WIN : fast/media/color-does-not-include-alpha.html = TEXT
@@ -3167,9 +3167,6 @@ BUG_LEVIN WIN : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE PASS
 // New test added with http://trac.webkit.org/changeset/72472
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
-// Debug only timeout, so no coverage from canaries, somewhere in r72395:72417.
-BUG_JPARENT WIN DEBUG : inspector/styles-disable-then-delete.html = PASS TIMEOUT
-
 BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
 
 // Disable font-size-zero test for mac platform. The problem was introduced at r72567.
@@ -3180,8 +3177,6 @@ BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
-
-BUGCR64401 WIN : fast/filesystem/op-copy.html = TEXT
 
 BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
 
@@ -3199,5 +3194,7 @@ BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 
 BUGWK50204 : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
 BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
+
+BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
