@@ -236,6 +236,19 @@ namespace WebCore {
         // Returns whether or not the client can render the composited layer,
         // regardless of the settings.
         virtual bool allowsAcceleratedCompositing() const { return true; }
+
+        enum CompositingTrigger {
+            ThreeDTransformTrigger = 1 << 0,
+            VideoTrigger = 1 << 1,
+            PluginTrigger = 1 << 2,
+            CanvasTrigger = 1 << 3,
+            AnimationTrigger = 1 << 4,
+            AllTriggers = 0xFFFFFFFF
+        };
+        typedef unsigned CompositingTriggerFlags;
+
+        // Returns a bitfield indicating conditions that can trigger the compositor.
+        virtual CompositingTriggerFlags allowedCompositingTriggers() const { return static_cast<CompositingTriggerFlags>(AllTriggers); }
 #endif
 
         virtual bool supportsFullscreenForNode(const Node*) { return false; }

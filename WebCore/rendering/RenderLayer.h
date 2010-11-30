@@ -288,7 +288,9 @@ public:
 
     // Returns true if the accelerated compositing is enabled
     bool hasAcceleratedCompositing() const;
-    
+
+    bool canRender3DTransforms() const;
+
     void updateLayerPosition();
     
     enum UpdateLayerPositionsFlag {

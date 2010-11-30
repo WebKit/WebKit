@@ -1,3 +1,20 @@
+2010-11-29  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Provide more fine grained control to ports over when to turn on accelerated
+        compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=49998
+
+        As part of this change, the old hasAcceleratedCompositing method on the ChromeClient
+        has now been replaced by allowedCompositingTriggers which returns a bitfield of
+        all the features which can trigger the compositor.
+
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::allowedCompositingTriggers):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2010-11-30  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Andreas Kling.
