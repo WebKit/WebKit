@@ -131,7 +131,8 @@ void RenderView::layout()
 
     // Reset overflow and then replace it with docWidth and docHeight.
     m_overflow.clear();
-    addLayoutOverflow(IntRect(0, 0, docWidth(), docHeight()));
+    int leftOverflow = docLeft();
+    addLayoutOverflow(IntRect(leftOverflow, 0, docWidth(leftOverflow), docHeight()));
 
     ASSERT(layoutDelta() == IntSize());
     ASSERT(m_layoutStateDisableCount == 0);
@@ -633,9 +634,15 @@ int RenderView::docHeight() const
     return h;
 }
 
-int RenderView::docWidth() const
+int RenderView::docLeft() const
 {
-    int w = rightmostPosition();
+    // Clip out left overflow in LTR page.
+    return style()->isLeftToRightDirection() ? 0 : std::min(0, leftmostPosition());
+}
+
+int RenderView::docWidth(int leftOverflow) const
+{
+    int w = style()->isLeftToRightDirection() ? rightmostPosition() : width() - leftOverflow;
 
     for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox()) {
         int dw = c->width() + c->marginLeft() + c->marginRight();

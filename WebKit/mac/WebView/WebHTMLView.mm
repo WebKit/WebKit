@@ -1198,8 +1198,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)_frameOrBoundsChanged
 {
+    WebView *webView = [self _webView];
+    WebDynamicScrollBarsView *scrollView = [[[webView mainFrame] frameView] _scrollView];
+
     NSPoint origin = [[self superview] bounds].origin;
-    if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
+    if (!NSEqualPoints(_private->lastScrollPosition, origin) && ![scrollView inProgramaticScroll]) {
         if (Frame* coreFrame = core([self _frame])) {
             if (FrameView* coreView = coreFrame->view()) {
 #ifndef BUILDING_ON_TIGER
@@ -1214,7 +1217,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     
         [_private->completionController endRevertingChange:NO moveLeft:NO];
         
-        WebView *webView = [self _webView];
         [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[self _frameView]];
     }
     _private->lastScrollPosition = origin;

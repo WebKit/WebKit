@@ -435,7 +435,16 @@ void FrameView::adjustViewSize()
     if (!root)
         return;
 
-    setContentsSize(IntSize(root->rightLayoutOverflow(), root->bottomLayoutOverflow()));
+    int prevScrollOriginX = scrollOriginX();
+    ScrollView::setScrollOriginX(-root->leftLayoutOverflow());
+    IntSize size = IntSize(root->rightLayoutOverflow() - root->leftLayoutOverflow(), root->bottomLayoutOverflow());
+    // Take care of the case when contents remain but the RenderView's direction has changed.
+    // In which case, we need to update scroller position, for example, from leftmost to
+    // rightmost when direction changes from left-to-right to right-to-left.
+    bool directionChanged = (!prevScrollOriginX || !scrollOriginX()) && (scrollOriginX() != prevScrollOriginX);
+    if (size == contentsSize() && directionChanged)
+        ScrollView::updateScrollbars();
+    setContentsSize(size);
 }
 
 void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode)

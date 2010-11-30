@@ -62,6 +62,15 @@ struct WebDynamicScrollBarsViewPrivate {
     bool alwaysHideVerticalScroller;
     bool horizontalScrollingAllowedButScrollerHidden;
     bool verticalScrollingAllowedButScrollerHidden;
+
+    // scrollOriginX is 0 for LTR page and is the negative of left layout overflow value for RTL page.
+    int scrollOriginX;
+
+    // Flag to indicate that the scrollbar thumb's initial position needs to
+    // be manually set.
+    bool setScrollbarThumbInitialPosition;
+
+    bool inProgrammaticScroll;
 };
 
 @implementation WebDynamicScrollBarsView
@@ -149,6 +158,11 @@ struct WebDynamicScrollBarsViewPrivate {
     return _private->verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
 }
 
+- (BOOL)inProgramaticScroll
+{
+    return _private->inProgrammaticScroll;
+}
+
 @end
 
 @implementation WebDynamicScrollBarsView (WebInternal)
@@ -199,6 +213,29 @@ struct WebDynamicScrollBarsViewPrivate {
         [[self horizontalScroller] setNeedsDisplay:!suppressed];
     }
 #endif
+}
+
+- (void)refreshInitialScrollbarPosition
+{
+    if (_private->setScrollbarThumbInitialPosition) {
+        NSView *documentView = [self documentView];
+        NSRect documentRect = [documentView bounds];
+
+        // If scrollOriginX is non-zero that means that there's a left overflow <=> this is an RTL document and thus
+        // the initial position of the horizontal scrollbar thumb should be on the right.
+        // FIXME: If knowledge of document directionality is ever propagated to the scroll view, it probably makes
+        // more sense to use the directionality directly in the below if statement, rather than doing so indirectly
+        // through scrollOriginX.
+        if (_private->scrollOriginX != 0) {
+            // The call to [NSView scrollPoint:] fires off notification the handler for which needs to know that
+            // we're setting the initial scroll position so it doesn't interpret this as a user action and
+            // fire off a JS event.
+            _private->inProgrammaticScroll = true;
+            [documentView scrollPoint:NSMakePoint(NSMaxX(documentRect) - NSWidth([self contentViewFrame]), 0)];
+            _private->inProgrammaticScroll = false;
+        }
+        _private->setScrollbarThumbInitialPosition = false;
+    }
 }
 
 static const unsigned cMaxUpdateScrollbarsPass = 2;
@@ -302,6 +339,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         _private->inUpdateScrollers = YES;
         [self setHasHorizontalScroller:newHasHorizontalScroller];
+        
+        // For RTL documents, we need to set the initial position of the
+        // horizontal scrollbar thumb to be on the right.
+        if (newHasHorizontalScroller)
+            _private->setScrollbarThumbInitialPosition = true;
+        
         _private->inUpdateScrollers = NO;
         needsLayout = YES;
     }
@@ -363,6 +406,11 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         [[self horizontalScroller] setNeedsDisplay:NO];
     }
 #endif
+
+    // The call to [NSView reflectScrolledClipView] sets the scrollbar thumb
+    // position to 0 (the left) when the view is initially displayed.
+    // This call updates the initial position correctly.
+    [self refreshInitialScrollbarPosition];
 
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
     NSView *documentView = [self documentView];
@@ -523,6 +571,24 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         return YES;
     
     return [super accessibilityIsIgnored];
+}
+
+- (void)setScrollOriginX:(int)scrollOriginX
+{
+    _private->scrollOriginX = scrollOriginX;
+    
+    id docView = [self documentView];
+    if (scrollOriginX != [docView bounds].origin.x) {
+        // "-[self scrollOriginX]" is equal to the left layout overflow.
+        // Make Document bounds origin x coordinate correspond to the left overflow so the entire canvas is covered by the document.
+        [docView setBoundsOrigin:NSMakePoint(-scrollOriginX, [docView bounds].origin.y)];
+    }
+
+}
+
+- (int)scrollOriginX
+{
+    return _private->scrollOriginX;
 }
 
 @end

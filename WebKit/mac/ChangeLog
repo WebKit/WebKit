@@ -1,3 +1,28 @@
+2010-11-29  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Right-to-left pages should be scrollable to reveal left overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=23556
+
+        Set and get the original x-axis scroll position and reset scroll position on HOME/END key press.
+        Modify WebFrameView to support setting the initial horizontal scroller's thumb position to the right for
+        pages with a left overflow.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView inProgramaticScroll]):
+        (-[WebDynamicScrollBarsView refreshInitialScrollbarPosition]):
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        (-[WebDynamicScrollBarsView setScrollOriginX:]):
+        (-[WebDynamicScrollBarsView scrollOriginX]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+
 2010-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

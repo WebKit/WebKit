@@ -536,6 +536,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (![self _isScrollable])
         return NO;
     NSPoint point = [[[self _scrollView] documentView] frame].origin;
+    point.x += [[self _scrollView] scrollOriginX];
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
@@ -547,6 +548,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         return NO;
     NSRect frame = [[[self _scrollView] documentView] frame];
     NSPoint point = NSMakePoint(frame.origin.x, NSMaxY(frame));
+    point.x += [[self _scrollView] scrollOriginX];
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 

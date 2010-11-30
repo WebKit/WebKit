@@ -54,6 +54,7 @@ ScrollView::ScrollView()
     , m_useFixedLayout(false)
     , m_paintsEntireContents(false)
     , m_delegatesScrolling(false)
+    , m_scrollOriginX(0)
 {
     platformInit();
 }
@@ -278,9 +279,22 @@ void ScrollView::setContentsSize(const IntSize& newSize)
 
 IntPoint ScrollView::maximumScrollPosition() const
 {
-    IntSize maximumOffset = contentsSize() - visibleContentRect().size();
+    IntPoint maximumOffset(contentsWidth() - visibleWidth() - m_scrollOriginX, contentsHeight() - visibleHeight());
     maximumOffset.clampNegativeToZero();
-    return IntPoint(maximumOffset.width(), maximumOffset.height());
+    return maximumOffset;
+}
+
+IntPoint ScrollView::minimumScrollPosition() const
+{
+    return IntPoint(-m_scrollOriginX, 0);
+}
+
+IntPoint ScrollView::adjustScrollPositionWithinRange(const IntPoint& scrollPoint) const
+{
+    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
+    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
+    newScrollPosition.clampNegativeToZero();
+    return newScrollPosition;
 }
 
 int ScrollView::scrollSize(ScrollbarOrientation orientation) const
@@ -303,7 +317,7 @@ void ScrollView::valueChanged(Scrollbar* scrollbar)
     IntSize newOffset = m_scrollOffset;
     if (scrollbar) {
         if (scrollbar->orientation() == HorizontalScrollbar)
-            newOffset.setWidth(scrollbar->value());
+            newOffset.setWidth(scrollbar->value() - m_scrollOriginX);
         else if (scrollbar->orientation() == VerticalScrollbar)
             newOffset.setHeight(scrollbar->value());
     }
@@ -348,8 +362,7 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     }
 #endif
 
-    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
-    newScrollPosition.clampNegativeToZero();
+    IntPoint newScrollPosition = adjustScrollPositionWithinRange(scrollPoint);
 
     if (newScrollPosition == scrollPosition())
         return;
@@ -470,10 +483,10 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         return;
 
     m_inUpdateScrollbars = true;
-    IntSize maxScrollPosition(contentsWidth() - visibleWidth(), contentsHeight() - visibleHeight());
-    IntSize scroll = desiredOffset.shrunkTo(maxScrollPosition);
-    scroll.clampNegativeToZero();
- 
+
+    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset.width(), desiredOffset.height()));
+    IntSize scroll(scrollPoint.x(), scrollPoint.y());
+
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
@@ -491,7 +504,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
-        m_horizontalScrollbar->setValue(scroll.width(), Scrollbar::NotFromScrollAnimator);
+        m_horizontalScrollbar->setValue(scroll.width() + m_scrollOriginX, Scrollbar::NotFromScrollAnimator);
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
     } 
@@ -1015,6 +1028,21 @@ void ScrollView::removePanScrollIcon()
     hostWindow()->invalidateContentsAndWindow(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
+void ScrollView::setScrollOriginX(int x)
+{
+    if (platformWidget())
+        platformSetScrollOriginX(x);
+
+    m_scrollOriginX = x;
+}
+
+void ScrollView::updateScrollbars()
+{
+    if (!platformWidget())
+        updateScrollbars(scrollOffset());
+    // FIXME: need corresponding functionality from platformWidget.
+}
+
 #if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(EFL)
 
 void ScrollView::platformInit()
@@ -1042,6 +1070,10 @@ void ScrollView::platformRemoveChild(Widget*)
 #if !PLATFORM(MAC)
 
 void ScrollView::platformSetScrollbarsSuppressed(bool)
+{
+}
+
+void ScrollView::platformSetScrollOriginX(int)
 {
 }
 

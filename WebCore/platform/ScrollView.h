@@ -160,6 +160,9 @@ public:
     IntPoint scrollPosition() const { return visibleContentRect().location(); }
     IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
     IntPoint maximumScrollPosition() const; // The maximum position we can be scrolled to.
+    IntPoint minimumScrollPosition() const; // The minimum position we can be scrolled to.
+    // Adjust the pass in scroll position within the minimum and maximum positions.
+    IntPoint adjustScrollPositionWithinRange(const IntPoint&) const; 
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
     
@@ -279,6 +282,10 @@ protected:
     // Scroll the content by invalidating everything.
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
 
+    void setScrollOriginX(int);
+    int scrollOriginX() { return m_scrollOriginX; }
+    void updateScrollbars();
+
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
@@ -314,6 +321,11 @@ private:
     bool m_paintsEntireContents;
     bool m_delegatesScrolling;
 
+    // m_scrollOriginX is 0 for LTR page. And it is negative of left layout
+    // overflow for RTL page. It is mainly used to set the horizontal scrollbar
+    // position for RTL page.
+    int m_scrollOriginX;
+
     void init();
     void destroy();
 
@@ -341,6 +353,8 @@ private:
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&, bool now);
     bool platformIsOffscreen() const;
+   
+    void platformSetScrollOriginX(int);
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:

@@ -147,7 +147,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint tempPoint = { max(0, scrollPoint.x()), max(0, scrollPoint.y()) }; // Don't use NSMakePoint to work around 4213314.
+    NSPoint tempPoint = { max(-[scrollView() scrollOriginX], scrollPoint.x()), max(0, scrollPoint.y()) };  // Don't use NSMakePoint to work around 4213314.
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -200,6 +200,13 @@ IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
 bool ScrollView::platformIsOffscreen() const
 {
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
+}
+
+void ScrollView::platformSetScrollOriginX(int x)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [scrollView() setScrollOriginX:x];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 } // namespace WebCore
