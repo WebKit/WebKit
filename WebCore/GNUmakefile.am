@@ -1332,6 +1332,7 @@ webcore_sources += \
 	WebCore/editing/EditorDeleteAction.h \
 	WebCore/editing/Editor.h \
 	WebCore/editing/EditorInsertAction.h \
+	WebCore/editing/FindOptions.h \
 	WebCore/editing/FormatBlockCommand.cpp \
 	WebCore/editing/FormatBlockCommand.h \
 	WebCore/editing/gtk/SelectionControllerGtk.cpp \

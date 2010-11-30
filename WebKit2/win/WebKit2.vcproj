@@ -552,6 +552,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebFindOptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebKeyboardEvent.cpp"
 				>
 			</File>

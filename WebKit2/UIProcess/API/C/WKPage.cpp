@@ -230,9 +230,9 @@ double WKPageGetViewScaleFactor(WKPageRef pageRef)
     return toImpl(pageRef)->viewScaleFactor();
 }
 
-void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxMatchCount)
+void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
-    toImpl(pageRef)->findString(toImpl(string)->string(), toFindDirection(findDirection), toFindOptions(findOptions), maxMatchCount);
+    toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);
 }
 
 void WKPageHideFindUI(WKPageRef pageRef)
@@ -240,9 +240,9 @@ void WKPageHideFindUI(WKPageRef pageRef)
     toImpl(pageRef)->hideFindUI();
 }
 
-void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, bool caseInsensitive, unsigned maxMatchCount)
+void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
-    toImpl(pageRef)->countStringMatches(toImpl(string)->string(), caseInsensitive, maxMatchCount);
+    toImpl(pageRef)->countStringMatches(toImpl(string)->string(), toFindOptions(options), maxMatchCount);
 }
 
 void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuClient* wkClient)

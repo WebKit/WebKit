@@ -70,7 +70,7 @@ extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether 
 extern NSString *WebElementMediaURLKey;          // NSURL of the media element
 
 // other WebElementDictionary keys
-extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indictating whether the link is live or not
+extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indicating whether the link is live or not
 extern NSString *WebElementIsInScrollBarKey;
 
 // One of the subviews of the WebView entered compositing mode.
@@ -96,6 +96,16 @@ typedef enum {
     WebInjectInTopFrameOnly
 } WebUserContentInjectedFrames;
 
+enum {
+    WebFindOptionsCaseInsensitive = 1 << 0,
+    WebFindOptionsAtWordStarts = 1 << 1,
+    WebFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    WebFindOptionsBackwards = 1 << 3,
+    WebFindOptionsWrapAround = 1 << 4,
+    WebFindOptionsStartInSelection = 1 << 5
+};
+typedef NSUInteger WebFindOptions;
+
 @interface WebController : NSTreeController {
     IBOutlet WebView *webView;
 }
@@ -114,18 +124,7 @@ typedef enum {
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 - (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 
-/*!
-@method searchFor:direction:caseSensitive:wrap:startInSelection:
- @abstract Searches a document view for a string and highlights the string if it is found.
- Starts the search from the current selection.  Will search across all frames.
- @param string The string to search for.
- @param forward YES to search forward, NO to seach backwards.
- @param caseFlag YES to for case-sensitive search, NO for case-insensitive search.
- @param wrapFlag YES to wrap around, NO to avoid wrapping.
- @param startInSelection YES to begin search in the selected text (useful for incremental searching), NO to begin search after the selected text.
- @result YES if found, NO if not found.
- */
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
+- (BOOL)findString:(NSString *)string options:(WebFindOptions)options;
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady;
 
@@ -182,8 +181,7 @@ typedef enum {
 // whether or not they implement the protocol. For now we'll just deal with HTML.
 // These methods are still in flux; don't rely on them yet.
 - (BOOL)canMarkAllTextMatches;
-- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
-- (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+- (WebNSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 
@@ -544,6 +542,24 @@ Could be worth adding to the API.
 
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin;
 - (float)_viewScaleFactor;
+
+// Deprecated. Use the methods in pending public above instead.
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
+- (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+
+/*!
+ @method searchFor:direction:caseSensitive:wrap:startInSelection:
+ @abstract Searches a document view for a string and highlights the string if it is found.
+ Starts the search from the current selection.  Will search across all frames.
+ @param string The string to search for.
+ @param forward YES to search forward, NO to seach backwards.
+ @param caseFlag YES to for case-sensitive search, NO for case-insensitive search.
+ @param wrapFlag YES to wrap around, NO to avoid wrapping.
+ @param startInSelection YES to begin search in the selected text (useful for incremental searching), NO to begin search after the selected text.
+ @result YES if found, NO if not found.
+ */
+// Deprecated. Use findString.
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
 
 @end
 

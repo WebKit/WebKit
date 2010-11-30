@@ -22,6 +22,7 @@
 #define Page_h
 
 #include "FrameLoaderTypes.h"
+#include "FindOptions.h"
 #include "PlatformString.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
@@ -198,8 +199,12 @@ namespace WebCore {
         void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
         bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
+        bool findString(const String&, FindOptions);
+        // FIXME: Switch callers over to the FindOptions version and retire this one.
         bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
-        unsigned int markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
+        unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned);
+        // FIXME: Switch callers over to the FindOptions version and retire this one.
+        unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
         void unmarkAllTextMatches();
 
 #if PLATFORM(MAC)

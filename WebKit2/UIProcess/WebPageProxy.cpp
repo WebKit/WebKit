@@ -607,9 +607,9 @@ void WebPageProxy::scaleWebView(double scale, const IntPoint& origin)
     process()->send(Messages::WebPage::ScaleWebView(scale, origin), m_pageID);
 }
 
-void WebPageProxy::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxMatchCount)
+void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    process()->send(Messages::WebPage::FindString(string, findDirection, findOptions, maxMatchCount), m_pageID);
+    process()->send(Messages::WebPage::FindString(string, options, maxMatchCount), m_pageID);
 }
 
 void WebPageProxy::hideFindUI()
@@ -617,9 +617,9 @@ void WebPageProxy::hideFindUI()
     process()->send(Messages::WebPage::HideFindUI(), m_pageID);
 }
 
-void WebPageProxy::countStringMatches(const String& string, bool caseInsensitive, unsigned maxMatchCount)
+void WebPageProxy::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    process()->send(Messages::WebPage::CountStringMatches(string, caseInsensitive, maxMatchCount), m_pageID);
+    process()->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
     
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptReturnValueCallback> prpCallback)

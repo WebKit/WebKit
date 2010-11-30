@@ -525,6 +525,16 @@ static NSCellStateValue kit(TriState state)
     return NSOffState;
 }
 
+static FindOptions coreOptions(WebFindOptions options)
+{
+    return (options & WebFindOptionsCaseInsensitive ? CaseInsensitive : 0)
+        | (options & WebFindOptionsAtWordStarts ? AtWordStarts : 0)
+        | (options & WebFindOptionsTreatMedialCapitalAsWordStart ? TreatMedialCapitalAsWordStart : 0)
+        | (options & WebFindOptionsBackwards ? Backwards : 0)
+        | (options & WebFindOptionsWrapAround ? WrapAround : 0)
+        | (options & WebFindOptionsStartInSelection ? StartInSelection : 0);
+}
+
 @implementation WebHTMLViewPrivate
 
 + (void)initialize
@@ -6198,10 +6208,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {
-    if (![string length])
-        return NO;
-    Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor()->findString(string, forward, caseFlag, wrapFlag, startInSelection);
+    return [self findString:string options:(forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (startInSelection ? WebFindOptionsStartInSelection : 0)];
 }
 
 @end
@@ -6221,17 +6228,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
 }
 
-- (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit
-{
-    return [self countMatchesForText:string caseSensitive:caseFlag limit:limit markMatches:YES];
-}
-
-- (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+- (NSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
 {
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return 0;
-    return coreFrame->editor()->countMatchesForText(string, caseFlag, limit, markMatches);
+    return coreFrame->editor()->countMatchesForText(string, coreOptions(options), limit, markMatches);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
@@ -6274,6 +6276,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     for (unsigned index = 0; index < count; ++index)
         [result addObject:[NSValue valueWithRect:rects[index]]];    
     return result;
+}
+
+- (BOOL)findString:(NSString *)string options:(WebFindOptions)options
+{
+    if (![string length])
+        return NO;
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->editor()->findString(string, coreOptions(options));
 }
 
 @end

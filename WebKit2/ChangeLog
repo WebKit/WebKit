@@ -1,3 +1,35 @@
+2010-11-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2 part of <rdar://problem/8650085> adding word-prefix search options to the text search API.
+        https://bugs.webkit.org/show_bug.cgi?id=50038
+        Based on a patch from Darin Adler.
+
+        * Shared/WebFindOptions.h: Renamed FindOptions.h to this to account for WebCore’s new private
+        FindOptions.h. Added and reordered FindOptions and rolled FindDirection into FindOptions.
+        * UIProcess/API/C/WKAPICast.h: Removed toFindDirection().
+        (WebKit::toFindOptions): Updated for new values.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageFindString): Removed separate WKFindDirection.
+        (WKPageCountStringMatches): Replaces caseInsensitive boolean with WKFindOptions.
+        * UIProcess/API/C/WKPage.h: Removed WKFindDirection and updated WKFindOptions.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findString): Removed separate FindDirection.
+        (WebKit::WebPageProxy::countStringMatches): Replaced caseInsensitive boolean with FindOptions.
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj: Updated for the header rename.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core): Added. Converts WebKit2 FindOptions to WebCore FindOptions.
+        (WebKit::FindController::countStringMatches): Changed to use FindOptions.
+        (WebKit::FindController::findString): Ditto.
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findString): Ditto.
+        (WebKit::WebPage::countStringMatches): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
 2010-11-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.

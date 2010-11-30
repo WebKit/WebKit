@@ -40,6 +40,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static WebCore::FindOptions core(FindOptions options)
+{
+    return (options & FindOptionsCaseInsensitive ? CaseInsensitive : 0)
+        | (options & FindOptionsAtWordStarts ? AtWordStarts : 0)
+        | (options & FindOptionsTreatMedialCapitalAsWordStart ? TreatMedialCapitalAsWordStart : 0)
+        | (options & FindOptionsBackwards ? Backwards : 0)
+        | (options & FindOptionsWrapAround ? WrapAround : 0);
+}
+
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
     , m_findPageOverlay(0)
@@ -51,9 +60,9 @@ FindController::~FindController()
 {
 }
 
-void FindController::countStringMatches(const String& string, bool caseInsensitive, unsigned maxMatchCount)
+void FindController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxMatchCount);
+    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount);
     m_webPage->corePage()->unmarkAllTextMatches();
 
     m_webPage->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount));
@@ -69,14 +78,11 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxMatchCount)
+void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
 {
     m_webPage->corePage()->unmarkAllTextMatches();
 
-    TextCaseSensitivity caseSensitivity = findOptions & FindOptionsCaseInsensitive ? TextCaseInsensitive : TextCaseSensitive;
-    bool found = m_webPage->corePage()->findString(string, caseSensitivity,
-                                                   findDirection == FindDirectionForward ? WebCore::FindDirectionForward : WebCore::FindDirectionBackward,
-                                                   findOptions & FindOptionsWrapAround);
+    bool found = m_webPage->corePage()->findString(string, core(options));
 
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
 
@@ -91,10 +97,10 @@ void FindController::findString(const String& string, FindDirection findDirectio
 
         m_webPage->send(Messages::WebPageProxy::DidFailToFindString(string));
     } else {
-        shouldShowOverlay = findOptions & FindOptionsShowOverlay;
+        shouldShowOverlay = options & FindOptionsShowOverlay;
 
         if (shouldShowOverlay) {
-            unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseSensitivity, false, maxMatchCount + 1);
+            unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
 
             // Check if we have more matches than allowed.
             if (matchCount > maxMatchCount) {
@@ -105,7 +111,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
             m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount));
         }
 
-        if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
+        if (!(options & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
             // Either we shouldn't show the find indicator, or we couldn't update it.
             hideFindIndicator();
         }

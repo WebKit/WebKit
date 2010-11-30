@@ -245,6 +245,7 @@ HEADERS += \
     Shared/WebError.h \
     Shared/WebEvent.h \
     Shared/WebEventConversion.h \
+    Shared/WebFindOptions.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \

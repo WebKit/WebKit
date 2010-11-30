@@ -33,6 +33,7 @@
 #include "EditingBehavior.h"
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
+#include "FindOptions.h"
 #include "SelectionController.h"
 
 #if PLATFORM(MAC) && !defined(__OBJC__)
@@ -307,7 +308,6 @@ public:
     // We should make these functions private when their callers in Frame are moved over here to Editor
     bool insideVisibleArea(const IntPoint&) const;
     bool insideVisibleArea(Range*) const;
-    PassRefPtr<Range> nextVisibleRange(Range*, const String&, bool forward, bool caseFlag, bool wrapFlag);
 
     void addToKillRing(Range*, bool prepend);
 
@@ -328,6 +328,8 @@ public:
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
 
     String selectedText() const;
+    bool findString(const String&, FindOptions);
+    // FIXME: Switch callers over to the FindOptions version and retire this one.
     bool findString(const String&, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection);
 
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
@@ -344,7 +346,7 @@ public:
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
-    unsigned countMatchesForText(const String&, bool caseFlag, unsigned limit, bool markMatches);
+    unsigned countMatchesForText(const String&, FindOptions, unsigned limit, bool markMatches);
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool);
 
@@ -398,8 +400,9 @@ private:
     void confirmComposition(const String&, bool preserveSelection);
     void setIgnoreCompositionSelectionChange(bool ignore);
 
-    PassRefPtr<Range> firstVisibleRange(const String&, bool caseFlag);
-    PassRefPtr<Range> lastVisibleRange(const String&, bool caseFlag);
+    PassRefPtr<Range> firstVisibleRange(const String&, FindOptions);
+    PassRefPtr<Range> lastVisibleRange(const String&, FindOptions);
+    PassRefPtr<Range> nextVisibleRange(Range*, const String&, FindOptions);
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
     void correctionPanelTimerFired(Timer<Editor>*);

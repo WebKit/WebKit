@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "DrawingAreaProxy.h"
-#include "FindOptions.h"
 #include "GenericCallback.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
@@ -36,6 +35,7 @@
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
+#include "WebFindOptions.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
@@ -208,9 +208,9 @@ public:
     double viewScaleFactor() const { return m_viewScaleFactor; }
 
     // Find.
-    void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
+    void findString(const String&, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
-    void countStringMatches(const String&, bool caseInsensitive, unsigned maxMatchCount);
+    void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
 
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);

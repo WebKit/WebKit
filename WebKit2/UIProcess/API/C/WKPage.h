@@ -274,22 +274,19 @@ WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
 
 // Find.
 enum {
-    kWKFindDirectionForward,
-    kWKFindDirectionBackward
-};
-typedef uint32_t WKFindDirection;
-
-enum {
     kWKFindOptionsCaseInsensitive = 1 << 0,
-    kWKFindOptionsWrapAround = 1 << 1,
-    kWKFindOptionsShowOverlay = 1 << 2,
-    kWKFindOptionsShowFindIndicator = 1 << 3
+    kWKFindOptionsAtWordStarts = 1 << 1,
+    kWKFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    kWKFindOptionsBackwards = 1 << 3,
+    kWKFindOptionsWrapAround = 1 << 4,
+    kWKFindOptionsShowOverlay = 1 << 5,
+    kWKFindOptionsShowFindIndicator = 1 << 6
 };
 typedef uint32_t WKFindOptions;
 
-WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxMatchCount);
+WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
-WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, bool caseInsensitive, unsigned maxMatchCount);
+WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 
 WK_EXPORT void WKPageSetPageContextMenuClient(WKPageRef page, const WKPageContextMenuClient* client);
 WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* client);

@@ -1399,6 +1399,7 @@
             'editing/EditorCommand.cpp',
             'editing/EditorDeleteAction.h',
             'editing/EditorInsertAction.h',
+            'editing/FindOptions.h',
             'editing/FormatBlockCommand.cpp',
             'editing/FormatBlockCommand.h',
             'editing/HTMLInterchange.cpp',

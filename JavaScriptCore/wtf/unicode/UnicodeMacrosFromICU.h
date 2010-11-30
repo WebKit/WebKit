@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 1999-2004, International Business Machines Corporation and others.  All Rights Reserved.
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
  *  Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *  Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
@@ -43,6 +44,22 @@
 #define U16_IS_SURROGATE(c) U_IS_SURROGATE(c)
 #define U16_IS_SURROGATE_LEAD(c) (((c)&0x400)==0)
 
+#define U16_GET(s, start, i, length, c) { \
+    (c)=(s)[i]; \
+    if(U16_IS_SURROGATE(c)) { \
+        uint16_t __c2; \
+        if(U16_IS_SURROGATE_LEAD(c)) { \
+            if((i)+1<(length) && U16_IS_TRAIL(__c2=(s)[(i)+1])) { \
+                (c)=U16_GET_SUPPLEMENTARY((c), __c2); \
+            } \
+        } else { \
+            if((i)-1>=(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+                (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
+            } \
+        } \
+    } \
+}
+
 #define U16_PREV(s, start, i, c) { \
     (c)=(s)[--(i)]; \
     if(U16_IS_TRAIL(c)) { \
@@ -51,6 +68,12 @@
             --(i); \
             (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
         } \
+    } \
+}
+
+#define U16_BACK_1(s, start, i) { \
+    if(U16_IS_TRAIL((s)[--(i)]) && (i)>(start) && U16_IS_LEAD((s)[(i)-1])) { \
+        --(i); \
     } \
 }
 
@@ -65,7 +88,12 @@
     } \
 }
 
+#define U16_FWD_1(s, i, length) { \
+    if(U16_IS_LEAD((s)[(i)++]) && (i)<(length) && U16_IS_TRAIL((s)[i])) { \
+        ++(i); \
+    } \
+}
+
 #define U_MASK(x) ((uint32_t)1<<(x))
 
 #endif
-

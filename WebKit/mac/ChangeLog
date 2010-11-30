@@ -1,3 +1,41 @@
+2010-11-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit Mac part of <rdar://problem/8650085> adding word-prefix search options to the text search API.
+        https://bugs.webkit.org/show_bug.cgi?id=50038
+        Based on a patch from Darin Adler.
+
+        * WebView/WebDocumentInternal.h: Removed -markAllMatchesForText:caseSensitive:limit: and
+        replaced -countMatchesForText:caseSensitive:limit:markMatches: with a WebFindOptions-based
+        method. Declared a WebDocumentOptionsSearching protocol with a new -findString:options:
+        method. Made WebHTMLView conform to the new protocol.
+        * WebView/WebHTMLView.mm:
+        (coreOptions): Added. Converts WebFindOptions to WebCore FindOptions.
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]): Changed to use
+        -findString:options:.
+        (-[WebHTMLView countMatchesForText:options:limit:markMatches:]): Changed to use WebFindOptions.
+        (-[WebHTMLView findString:options:]): Added. Calls through to WebCore::Editor::findString().
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView countMatchesForText:options:limit:markMatches:]): Changed to use WebFindOptions.
+        * WebView/WebView.mm:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]): Now calls through to
+        -countMatchesForText:options:highlight:limit:markMatches.
+        (-[WebView countMatchesForText:caseSensitive:highlight:limit:markMatches:]): Ditto.
+        (-[WebView searchFor:direction:caseSensitive:wrap:startInSelection:]): Now calls through to
+        -findString:options:.
+        (incrementFrame): Changed to use WebFindOptions.
+        (findString): Added this helper method that performs the search using the best supported
+        method for the document view.
+        (-[WebView findString:options:]): Changed -searchFor::::: into this.
+        (-[WebView canMarkAllTextMatches]):
+        (-[WebView countMatchesForText:options:highlight:limit:markMatches:]): Updated to use
+        WebFindOptions.
+        (-[WebView unmarkAllTextMatches]): Updated for change to incrementFrame.
+        (-[WebView rectsForTextMatches]): Ditto.
+        * WebView/WebViewPrivate.h: Added WebFindOptions, -findString:options:, and WebFindOptions version
+        of countMatchesForText:.
+
 2010-11-29  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by David Hyatt.

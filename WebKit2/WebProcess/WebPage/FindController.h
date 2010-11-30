@@ -26,8 +26,8 @@
 #ifndef FindController_h
 #define FindController_h
 
-#include "FindOptions.h"
 #include "PageOverlay.h"
+#include "WebFindOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -48,9 +48,9 @@ public:
     explicit FindController(WebPage*);
     virtual ~FindController();
 
-    void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
+    void findString(const String&, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
-    void countStringMatches(const String&, bool caseInsensitive, unsigned maxMatchCount);
+    void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     
     void hideFindIndicator();
 

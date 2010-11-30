@@ -45,30 +45,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
-static int endOfFirstWordBoundaryContext(const UChar* characters, int length)
-{
-    for (int i = 0; i < length; ) {
-        int first = i;
-        UChar32 ch;
-        U16_NEXT(characters, i, length, ch);
-        if (!requiresContextForWordBoundary(ch))
-            return first;
-    }
-    return length;
-}
-
-static int startOfLastWordBoundaryContext(const UChar* characters, int length)
-{
-    for (int i = length; i > 0; ) {
-        int last = i;
-        UChar32 ch;
-        U16_PREV(characters, 0, i, ch);
-        if (!requiresContextForWordBoundary(ch))
-            return last;
-    }
-    return 0;
-}
-
 enum BoundarySearchContextAvailability { DontHaveMoreContext, MayHaveMoreContext };
 
 typedef unsigned (*BoundarySearchFunction)(const UChar*, unsigned length, unsigned offset, BoundarySearchContextAvailability, bool& needMoreContext);

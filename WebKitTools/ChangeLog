@@ -1,3 +1,19 @@
+2010-11-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        DumpRenderTree changes for testing the text search API.
+        https://bugs.webkit.org/show_bug.cgi?id=50038
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (findStringCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::findString):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController find:]):
+
 2010-11-29  Johnny Ding  <jnd@chromium.org>
 
         Unreviewed: Add myself to the list of Committers.

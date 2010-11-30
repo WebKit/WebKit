@@ -1231,6 +1231,7 @@ SOURCES += \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \
+    platform/text/TextBoundaries.cpp \
     platform/text/TextCodec.cpp \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \
@@ -1712,6 +1713,7 @@ HEADERS += \
     editing/EditingBehavior.h \
     editing/EditingBoundary.h \
     editing/Editor.h \
+    editing/FindOptions.h \
     editing/FormatBlockCommand.h \
     editing/htmlediting.h \
     editing/HTMLInterchange.h \
@@ -2177,6 +2179,7 @@ HEADERS += \
     platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \
+    platform/text/TextBoundaries.h \
     platform/text/TextCodec.h \
     platform/text/TextCodecLatin1.h \
     platform/text/TextCodecUserDefined.h \

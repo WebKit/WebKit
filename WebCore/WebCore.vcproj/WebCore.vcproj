@@ -46583,6 +46583,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\FindOptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\FormatBlockCommand.cpp"
 				>
 				<FileConfiguration
