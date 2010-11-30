@@ -3198,3 +3198,17 @@ BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-stylesheet.html = CRASH
 BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
+
+BUGWK50188 : fast/layers/normal-flow-hit-test.html = IMAGE
+BUGWK50188 : fast/reflections/abs-position-in-reflection.html = IMAGE
+BUGWK50188 : fast/reflections/opacity-reflection-transform.html = IMAGE
+BUGWK50188 : fast/reflections/reflection-direction.html = IMAGE
+BUGWK50188 : fast/reflections/reflection-masks-opacity.html = IMAGE
+BUGWK50188 : fast/reflections/reflection-masks.html = IMAGE
+BUGWK50188 : fast/reflections/reflection-nesting.html = IMAGE
+BUGWK50188 : fast/reflections/reflection-overflow-hidden.html = IMAGE
+BUGWK50188 : fast/reflections/transparent-reflected-sublayers.html = IMAGE
+BUGWK50188 : fast/repaint/reflection-redraw.html = IMAGE
+BUGWK50188 : fast/repaint/reflection-repaint-test.html = IMAGE
+BUGWK50188 : fast/transforms/transform-table-row.html = IMAGE
+BUGWK50188 : fast/overflow/overflow-update-transform.html = MISSING
