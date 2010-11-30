@@ -97,8 +97,6 @@ BUG36620 : fast/text/stroking.html = IMAGE
 BUG36620 : media/audio-controls-rendering.html = IMAGE
 BUG36620 : transforms/2d/hindi-rotated.html = IMAGE
 
-// Needs re-baselining.
-BUG42370 : svg/custom/image-rescale-scroll.html = FAIL
 
 // These fail depending on order due to interactions with previous tests:
 BUG35006 : fast/dom/global-constructors.html = PASS TEXT

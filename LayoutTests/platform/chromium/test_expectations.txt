@@ -931,16 +931,6 @@ BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 // Also fail since WK roll 65859:65885
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 
-// May require re-baseline.
-BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
-
-// Some re-baselining will be needed.
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-1.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-2.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-3.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-4.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-5.html = FAIL
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
