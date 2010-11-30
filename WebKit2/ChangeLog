@@ -1,3 +1,9 @@
+2010-11-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix the Windows build by copying WKFindOptions.h into WebKitOutputDir with the other headers.
+
+        * win/WebKit2Generated.make:
+
 2010-11-30  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Windows build.
