@@ -23,12 +23,26 @@ BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 // Inspector-related failures
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
+BUG_DRT WIN : inspector/report-API-errors.html = CRASH
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // File API failures
-BUG48498 WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
+BUG48498 WIN : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT
+BUG_DRT WIN : fast/filesystem/async-operations.html = TIMEOUT
+BUG_DRT WIN : fast/filesystem/file-from-file-entry.html = TEXT
+BUG_DRT WIN : fast/filesystem/file-writer-truncate-extend.html = TIMEOUT
+BUG_DRT WIN : fast/filesystem/filesystem-reference.html = TEXT
+BUG_DRT WIN : fast/filesystem/flags-passing.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-copy.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-get-entry.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-get-parent.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-move.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-read-directory.html = TEXT TIMEOUT
+BUG_DRT WIN : fast/filesystem/op-remove.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-restricted-chars.html = TEXT
+BUG_DRT WIN : fast/filesystem/op-restricted-names.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -80,16 +94,16 @@ BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
-BUG_DRT LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
-BUG_DRT LINUX : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
+BUG_DRT WIN LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT IMAGE
+BUG_DRT WIN LINUX : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT IMAGE
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
 BUG_DRT LINUX : fast/forms/implicit-submission.html = CRASH
 BUG_DRT LINUX : fast/forms/select-double-onchange.html = CRASH
 BUG_DRT LINUX : fast/forms/select-script-onchange.html = CRASH
-BUG_DRT LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
-BUG_DRT LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
-BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUG_DRT LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE
+BUG_DRT WIN LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT IMAGE
+BUG_DRT WIN LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT IMAGE
+BUG_DRT WIN LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUG_DRT WIN LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE IMAGE+TEXT
 BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
 BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
@@ -99,8 +113,21 @@ BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_DRT MAC : svg/custom/selectSubString.html = TIMEOUT
 BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
 BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
+BUG_DRT WIN : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
+BUG_DRT WIN : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUG_DRT WIN : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUG_DRT WIN : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUG_DRT WIN : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUG_DRT WIN : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUG_DRT WIN : fast/forms/search-styled.html = IMAGE+TEXT
+BUG_DRT WIN : fast/repaint/4774354.html = TIMEOUT
+BUG_DRT WIN : fast/repaint/iframe-scroll-repaint.html = IMAGE
+BUG_DRT WIN : fast/ruby/nested-ruby.html = IMAGE
+BUG_DRT WIN : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUG_DRT WIN : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
+BUG_DRT WIN : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT
 
 // PASS with DRT though FAIL on test_shell
 BUG_AWESOME : platform/chromium/accessibility = PASS
