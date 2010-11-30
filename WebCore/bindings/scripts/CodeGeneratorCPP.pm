@@ -25,8 +25,6 @@
 
 package CodeGeneratorCPP;
 
-use File::stat;
-
 # Global Variables
 my $module = "";
 my $outputDir = "";

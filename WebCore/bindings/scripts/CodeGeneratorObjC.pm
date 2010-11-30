@@ -26,8 +26,6 @@
 
 package CodeGeneratorObjC;
 
-use File::stat;
-
 # Global Variables
 my $module = "";
 my $outputDir = "";

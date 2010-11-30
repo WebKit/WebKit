@@ -25,8 +25,6 @@
 
 package CodeGeneratorJS;
 
-use File::stat;
-
 my $module = "";
 my $outputDir = "";
 my $writeDependencies = 0;

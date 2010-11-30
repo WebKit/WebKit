@@ -27,7 +27,6 @@
 
 package CodeGeneratorV8;
 
-use File::stat;
 use Digest::MD5;
 
 my $module = "";
