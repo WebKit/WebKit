@@ -252,7 +252,7 @@ void QWebSecurityOrigin::removeLocalScheme(const QString& scheme)
 QStringList QWebSecurityOrigin::localSchemes()
 {
     QStringList list;
-    const URLSchemesMap& map = SchemeRegistry::localURLSchemes();
+    const URLSchemesMap& map = SchemeRegistry::localSchemes();
     URLSchemesMap::const_iterator end = map.end();
     for (URLSchemesMap::const_iterator i = map.begin(); i != end; ++i) {
         const QString scheme = *i;

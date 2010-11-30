@@ -38,10 +38,10 @@ class SchemeRegistry {
 public:
     static void registerURLSchemeAsLocal(const String&);
     static void removeURLSchemeRegisteredAsLocal(const String&);
-    static const URLSchemesMap& localURLSchemes();
+    static const URLSchemesMap& localSchemes();
 
-    static bool shouldTreatURLAsLocal(const String&);
     static bool shouldTreatURLSchemeAsLocal(const String&);
+    static bool deprecatedShouldTreatURLAsLocal(const String&);
 
     // Secure schemes do not trigger mixed content warnings. For example,
     // https and data are secure schemes because they cannot be corrupted by
@@ -51,7 +51,12 @@ public:
 
     static void registerURLSchemeAsNoAccess(const String&);
     static bool shouldTreatURLSchemeAsNoAccess(const String&);
-    
+
+    // Display-isolated schemes can only be displayed (in the sense of
+    // SecurityOrigin::canDisplay) by documents from the same scheme.
+    static void registerURLSchemeAsDisplayIsolated(const String&);
+    static bool shouldTreatURLSchemeAsDisplayIsolated(const String&);
+
     static void registerURLSchemeAsEmptyDocument(const String&);
     static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
 };

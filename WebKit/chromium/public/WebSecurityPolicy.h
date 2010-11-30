@@ -41,14 +41,20 @@ class WebURL;
 class WebSecurityPolicy {
 public:
     // Registers a URL scheme to be treated as a local scheme (i.e., with the
-    // same security rules as those applied to "file" URLs).  This means that
+    // same security rules as those applied to "file" URLs). This means that
     // normal pages cannot link to or access URLs of this scheme.
     WEBKIT_API static void registerURLSchemeAsLocal(const WebString&);
 
-    // Registers a URL scheme to be treated as a noAccess scheme.  This means
+    // Registers a URL scheme to be treated as a noAccess scheme. This means
     // that pages loaded with this URL scheme cannot access pages loaded with
     // any other URL scheme.
     WEBKIT_API static void registerURLSchemeAsNoAccess(const WebString&);
+
+    // Registers a URL scheme to be treated as display-isolated. This means
+    // that pages cannot display these URLs unless they are from the same
+    // scheme. For example, pages in other origin cannot create iframes or
+    // hyperlinks to URLs with the scheme.
+    WEBKIT_API static void registerURLSchemeAsDisplayIsolated(const WebString&);
 
     // Registers a URL scheme to not generate mixed content warnings when
     // included by an HTTPS page.
@@ -62,7 +68,7 @@ public:
         const WebURL& sourceOrigin, const WebString& destinationProtocol,
         const WebString& destinationHost, bool allowDestinationSubdomains);
     WEBKIT_API static void resetOriginAccessWhitelists();
-    
+
     // Returns whether the url should be allowed to see the referrer
     // based on their respective protocols.
     WEBKIT_API static bool shouldHideReferrer(const WebURL& url, const WebString& referrer);

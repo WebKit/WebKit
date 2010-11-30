@@ -1,3 +1,19 @@
+2010-11-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce the notion of a "display-isolated" URL scheme for use by Chrome-internal URLs
+        https://bugs.webkit.org/show_bug.cgi?id=50182
+
+        This patch adds a Chromium API for registering schemes as
+        display-isolated.  In a subsequent patch, I'll change the "chrome"
+        scheme in Chrome to be display isolated instead of local.  That will
+        prevent file URLs from linking to chrome URLs.
+
+        * public/WebSecurityPolicy.h:
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsDisplayIsolated):
+
 2010-11-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
