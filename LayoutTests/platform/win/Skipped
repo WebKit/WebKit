@@ -1078,5 +1078,5 @@ fast/dom/horizontal-scrollbar-when-dir-change.html
 editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
 
-# Missing layoutTestController.findString() http://webkit.org/b/52034
+# Missing layoutTestController.findString() http://webkit.org/b/50234
 editing/text-iterator/findString.html
