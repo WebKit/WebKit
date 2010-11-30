@@ -36,6 +36,7 @@
 #include "HTMLNames.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
