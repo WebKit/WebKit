@@ -1,3 +1,25 @@
+2010-11-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        JavaScriptCore projects on Windows should use cmd files for build events
+        https://bugs.webkit.org/show_bug.cgi?id=50193
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePostBuild.cmd: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePreBuild.cmd: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePreLink.cmd: Added.
+        * JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscPostBuild.cmd: Added.
+        * JavaScriptCore.vcproj/jsc/jscPreBuild.cmd: Added.
+        * JavaScriptCore.vcproj/jsc/jscPreLink.cmd: Added.
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiPostBuild.cmd: Added.
+        * JavaScriptCore.vcproj/testapi/testapiPreBuild.cmd: Added.
+        * JavaScriptCore.vcproj/testapi/testapiPreLink.cmd: Added.
+
 2010-11-29  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

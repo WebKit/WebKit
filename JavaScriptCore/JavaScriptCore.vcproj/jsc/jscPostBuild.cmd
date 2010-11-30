@@ -1,0 +1,23 @@
+if exist "$(WebKitOutputDir)\buildfailed" del "$(WebKitOutputDir)\buildfailed"
+
+mkdir 2>NUL "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt44.dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt44.dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt44$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt44$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\libicuin$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\libicuin$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\libicuuc$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\libicuuc$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt40.dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt40.dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt40$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt40$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icuin40$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icuin40$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icuuc40$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icuuc40$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt42.dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt42.dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icudt42$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icudt42$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icuin42$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icuin42$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\icuuc42$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\icuuc42$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\CoreFoundation.resources" xcopy /y /d /e /i "$(WebKitLibrariesDir)\bin\CoreFoundation.resources" "$(WebKitOutputDir)\bin\CoreFoundation.resources"
+if exist "$(WebKitLibrariesDir)\bin\pthreadVC2$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\pthreadVC2$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\objc$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\objc$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\ASL$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\ASL$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+if exist "$(WebKitLibrariesDir)\bin\libdispatch$(LibraryConfigSuffix).dll" xcopy /y /d "$(WebKitLibrariesDir)\bin\libdispatch$(LibraryConfigSuffix).dll" "$(WebKitOutputDir)\bin"
+
+cmd /c
