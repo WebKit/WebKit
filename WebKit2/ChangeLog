@@ -1,5 +1,37 @@
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Add a simple shim function for Debugger().
+        https://bugs.webkit.org/show_bug.cgi?id=50268
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initShouldCallRealDebugger):
+        We only want to call the real Debugger() function when USERBREAK is set.
+
+        (WebKit::shouldCallRealDebugger):
+        Return whether USERBREAK is set.
+        
+        (WebKit::PluginProcess::initializeShim):
+        Initialize the shim.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        Call PluginProcess::initializeShim.
+
+        * PluginProcess/mac/PluginProcessShim.cpp:
+        (WebKit::WebKitPluginProcessShimInitialize):
+        This now takes a struct of callbacks.
+
+        (WebKit::shimDebugger):
+        Call the shouldCallDebugger function. If it returns true, the real Debugger() function should be called.
+
+        * PluginProcess/mac/PluginProcessShim.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Pass the plug-in process shim in DYLD_INSERT_LIBRARIES when launching the plug-in process

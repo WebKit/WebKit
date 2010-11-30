@@ -47,6 +47,10 @@ namespace WebKit {
 
 int PluginProcessMain(const CommandLine& commandLine)
 {
+    // Unset DYLD_INSERT_LIBRARIES. We don't want our plug-in process shim to be loaded 
+    // by any child processes that the plug-in may launch.
+    unsetenv("DYLD_INSERT_LIBRARIES");
+
     String serviceName = commandLine["servicename"];
     if (serviceName.isEmpty())
         return EXIT_FAILURE;
@@ -71,6 +75,9 @@ int PluginProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
+    // Initialize the shim.
+    PluginProcess::shared().initializeShim();
+    
     // Initialize the plug-in process connection.
     PluginProcess::shared().initializeConnection(serverPort);
 

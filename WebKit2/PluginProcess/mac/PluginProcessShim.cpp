@@ -25,11 +25,32 @@
 
 #include "PluginProcessShim.h"
 
-extern "C" 
-void PluginProcessShimInitialize();
+#include <Carbon/Carbon.h>
+#include <mach-o/dyld-interposing.h>
+#include <stdio.h>
+
+namespace WebKit {
+
+extern "C" void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbacks);
+
+PluginProcessShimCallbacks pluginProcessShimCallbacks;
 
 __attribute__((visibility("default")))
-void PluginProcessShimInitialize()
+void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbacks)
 {
+    pluginProcessShimCallbacks = callbacks;
 }
 
+#ifndef __LP64__
+static void shimDebugger(void)
+{
+    if (!pluginProcessShimCallbacks.shouldCallRealDebugger())
+        return;
+    
+    Debugger();
+}
+
+DYLD_INTERPOSE(shimDebugger, Debugger);
+#endif
+
+} // namespace WebKit

@@ -151,6 +151,8 @@
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
+		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
+		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
 		1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA5889011EE70400061B882 /* NetscapePluginStream.h */; };
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
@@ -566,7 +568,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
+			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671;
 			remoteInfo = PluginProcessShim;
 		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
@@ -735,6 +737,7 @@
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMac.mm; sourceTree = "<group>"; };
 		1AA56F2811E92BC80061B882 /* PluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginController.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
 		1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginStream.cpp; sourceTree = "<group>"; };
@@ -1159,6 +1162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1286,6 +1290,7 @@
 			children = (
 				1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */,
 				1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */,
+				1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */,
 				1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */,
 				1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */,
 			);
@@ -2862,6 +2867,7 @@
 				EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */,
 				5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */,
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
+				1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

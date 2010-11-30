@@ -23,17 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessShim_h
-#define PluginProcessShim_h
+#if ENABLE(PLUGIN_PROCESS)
+ 
+#include "PluginProcess.h"
+
+#include "PluginProcessShim.h"
+#include <dlfcn.h>
 
 namespace WebKit {
 
-struct PluginProcessShimCallbacks {
-    bool (*shouldCallRealDebugger)();
-};
+static bool isUserbreakSet = false;
 
-typedef void (*PluginProcessShimInitializeFunc)(const PluginProcessShimCallbacks&);
-
+static void initShouldCallRealDebugger()
+{
+    char* var = getenv("USERBREAK");
+    
+    if (var)
+        isUserbreakSet = atoi(var);
 }
 
-#endif // PluginProcessShim_h
+static bool shouldCallRealDebugger()
+{
+    static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
+    pthread_once(&shouldCallRealDebuggerOnce, initShouldCallRealDebugger);
+    
+    return isUserbreakSet;
+}
+    
+void PluginProcess::initializeShim()
+{
+    const PluginProcessShimCallbacks callbacks = {
+        shouldCallRealDebugger,
+    };
+
+    PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
+    initFunc(callbacks);
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(PLUGIN_PROCESS)

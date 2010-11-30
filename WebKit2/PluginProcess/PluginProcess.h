@@ -47,8 +47,12 @@ public:
 
     NetscapePluginModule* netscapePluginModule() const { return m_pluginModule.get(); }
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
+    void initializeShim();
+
+#if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
+#endif
 #endif
 
 private:
