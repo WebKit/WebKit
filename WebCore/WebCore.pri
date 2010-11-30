@@ -172,6 +172,7 @@ IDL_BINDINGS += \
     fileapi/FileEntry.idl \
     fileapi/FileEntrySync.idl \
     fileapi/FileError.idl \
+    fileapi/FileException.idl \
     fileapi/FileList.idl \
     fileapi/FileReader.idl \
     fileapi/FileSystemCallback.idl \

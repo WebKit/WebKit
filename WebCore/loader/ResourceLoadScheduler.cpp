@@ -35,6 +35,7 @@
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "SubresourceLoader.h"
+#include <wtf/text/CString.h>
 
 #define REQUEST_MANAGEMENT_ENABLED 1
 

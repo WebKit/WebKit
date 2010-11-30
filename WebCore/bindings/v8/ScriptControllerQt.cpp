@@ -40,7 +40,7 @@ QScriptEngine* ScriptController::qtScriptEngine()
         v8::Context::Scope scope(v8Context);
         if (v8Context.IsEmpty())
             return 0;
-        m_qtScriptEngine = new QScriptEngine(QScriptEngine::AdoptCurrentContext);
+        m_qtScriptEngine = new QScriptEngine;
      }
      return m_qtScriptEngine.get();
 }

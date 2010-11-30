@@ -444,7 +444,7 @@ void V8GCController::gcEpilogue()
 
 void V8GCController::checkMemoryUsage()
 {
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(QT) && !OS(SYMBIAN)
     // These values are appropriate for Chromium only.
     const int lowUsageMB = 256;  // If memory usage is below this threshold, do not bother forcing GC.
     const int highUsageMB = 1024;  // If memory usage is above this threshold, force GC more aggresively.

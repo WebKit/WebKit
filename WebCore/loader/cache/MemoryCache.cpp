@@ -39,6 +39,7 @@
 #include "SecurityOrigin.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 

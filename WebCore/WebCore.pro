@@ -2,15 +2,19 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
-v8:exists($$[QT_INSTALL_PREFIX]/src/3rdparty/v8/include/v8.h) {
+V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
+
+v8:exists($${V8_DIR}/include/v8.h) {
     message(Using V8 with QtScript)
     QT += script
-    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/v8/include
+    INCLUDEPATH += $${V8_DIR}/include
 
     DEFINES *= V8_BINDING=1
     DEFINES += WTF_CHANGES=1
     DEFINES *= WTF_USE_V8=1
     DEFINES += USING_V8_SHARED
+
+    linux-*:LIBS += -lv8
 }
 
 symbian: {
