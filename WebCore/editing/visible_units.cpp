@@ -418,21 +418,6 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
 VisiblePosition startOfLine(const VisiblePosition& c)
 {
     VisiblePosition visPos = startPositionForLine(c);
-    
-    if (visPos.isNotNull()) {
-        // Make sure the start of line is not greater than the given input position.  Else use the previous position to 
-        // obtain start of line.  This condition happens when the input position is before the space character at the end 
-        // of a soft-wrapped non-editable line. In this scenario, startPositionForLine would incorrectly hand back a position
-        // greater than the input position.  This fix is to account for the discrepancy between lines with webkit-line-break:after-white-space 
-        // style versus lines without that style, which would break before a space by default. 
-        Position p = visPos.deepEquivalent();
-        if (p.deprecatedEditingOffset() > c.deepEquivalent().deprecatedEditingOffset() && p.node()->isSameNode(c.deepEquivalent().node())) {
-            visPos = c.previous();
-            if (visPos.isNull())
-                return VisiblePosition();
-            visPos = startPositionForLine(visPos);
-        }
-    }
 
     return c.honorEditableBoundaryAtOrAfter(visPos);
 }

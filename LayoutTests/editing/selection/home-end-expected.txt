@@ -116,12 +116,12 @@ Test 20, LTR:
   Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
   Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
 Test 20, RTL:
-  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 7]
-  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[7, 0]
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
 Test 21, LTR:
   Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
   Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
 Test 21, RTL:
-  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 7]
-  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[7, 0]
+  Moving forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[0, 8]
+  Moving backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[8, 0]
 
