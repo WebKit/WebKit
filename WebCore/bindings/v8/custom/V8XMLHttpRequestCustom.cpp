@@ -193,6 +193,13 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
             DOMFormData* domFormData = V8DOMFormData::toNative(object);
             ASSERT(domFormData);
             xmlHttpRequest->send(domFormData, ec);
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+        } else if (V8ArrayBuffer::HasInstance(arg)) {
+            v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
+            ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(object);
+            ASSERT(arrayBuffer);
+            xmlHttpRequest->send(arrayBuffer, ec);
+#endif
         } else
             xmlHttpRequest->send(toWebCoreStringWithNullCheck(arg), ec);
     }

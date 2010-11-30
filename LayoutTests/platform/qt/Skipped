@@ -285,6 +285,7 @@ fast/xmlhttprequest/xmlhttprequest-responsetype-abort.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-document.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-text.html
+http/tests/xmlhttprequest/send-array-buffer.html
 
 # Missing DRT ability to set accept cookie policy
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html

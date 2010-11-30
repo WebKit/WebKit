@@ -94,6 +94,9 @@ public:
     void send(const String&, ExceptionCode&);
     void send(Blob*, ExceptionCode&);
     void send(DOMFormData*, ExceptionCode&);
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+    void send(ArrayBuffer*, ExceptionCode&);
+#endif
     void abort();
     void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);

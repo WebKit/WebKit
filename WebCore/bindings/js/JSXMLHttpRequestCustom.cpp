@@ -124,6 +124,10 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(toBlob(val), ec);
         else if (val.inherits(&JSDOMFormData::s_info))
             impl()->send(toDOMFormData(val), ec);
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+        else if (val.inherits(&JSArrayBuffer::s_info))
+            impl()->send(toArrayBuffer(val), ec);
+#endif
         else
             impl()->send(ustringToString(val.toString(exec)), ec);
     }

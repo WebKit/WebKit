@@ -1109,6 +1109,7 @@ fast/xmlhttprequest/xmlhttprequest-responsetype-abort.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-document.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-text.html
+http/tests/xmlhttprequest/send-array-buffer.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30508
 # All these tests fail because WebKit does not work correctly with
