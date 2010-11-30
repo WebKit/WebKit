@@ -9851,62 +9851,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSKeyboardEvent.cpp"
 				>
 				<FileConfiguration
@@ -10128,6 +10072,86 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaList.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_LTCG|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaQueryList.h"
 				>
 			</File>
 			<File
@@ -46167,10 +46191,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\editing\EditingBoundary.h"
-				>
-			</File>
-			<File
 				RelativePath="..\editing\DeleteButtonController.cpp"
 				>
 				<FileConfiguration
@@ -46408,6 +46428,10 @@
 			</File>
 			<File
 				RelativePath="..\editing\EditingBehaviorTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\EditingBoundary.h"
 				>
 			</File>
 			<File
@@ -64770,11 +64794,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\CookiesTable.js"
+					RelativePath="..\inspector\front-end\CookieParser.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\CookieParser.js"
+					RelativePath="..\inspector\front-end\CookiesTable.js"
 					>
 				</File>
 				<File
@@ -64926,11 +64950,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\networkPanel.css"
+					RelativePath="..\inspector\front-end\NetworkItemView.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NetworkItemView.js"
+					RelativePath="..\inspector\front-end\networkPanel.css"
 					>
 				</File>
 				<File
