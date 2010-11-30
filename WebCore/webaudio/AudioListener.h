@@ -29,9 +29,9 @@
 #ifndef AudioListener_h
 #define AudioListener_h
 
+#include "FloatPoint3D.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector3.h>
 
 namespace WebCore {
 
@@ -45,27 +45,27 @@ public:
     }
 
     // Position
-    void setPosition(double x, double y, double z) { setPosition(Vector3(x, y, z)); }
-    void setPosition(const Vector3 &position) { m_position = position; }
-    const Vector3& position() const { return m_position; }
+    void setPosition(double x, double y, double z) { setPosition(FloatPoint3D(x, y, z)); }
+    void setPosition(const FloatPoint3D &position) { m_position = position; }
+    const FloatPoint3D& position() const { return m_position; }
 
     // Orientation
     void setOrientation(double x, double y, double z, double upX, double upY, double upZ)
     {
-        setOrientation(Vector3(x, y, z));
-        setUpVector(Vector3(upX, upY, upZ));
+        setOrientation(FloatPoint3D(x, y, z));
+        setUpVector(FloatPoint3D(upX, upY, upZ));
     }
-    void setOrientation(const Vector3 &orientation) { m_orientation = orientation; }
-    const Vector3& orientation() const { return m_orientation; }
+    void setOrientation(const FloatPoint3D &orientation) { m_orientation = orientation; }
+    const FloatPoint3D& orientation() const { return m_orientation; }
 
     // Up-vector
-    void setUpVector(const Vector3 &upVector) { m_upVector = upVector; }
-    const Vector3& upVector() const { return m_upVector; }
+    void setUpVector(const FloatPoint3D &upVector) { m_upVector = upVector; }
+    const FloatPoint3D& upVector() const { return m_upVector; }
 
     // Velocity
-    void setVelocity(double x, double y, double z) { setVelocity(Vector3(x, y, z)); }
-    void setVelocity(const Vector3 &velocity) { m_velocity = velocity; }
-    const Vector3& velocity() const { return m_velocity; }
+    void setVelocity(double x, double y, double z) { setVelocity(FloatPoint3D(x, y, z)); }
+    void setVelocity(const FloatPoint3D &velocity) { m_velocity = velocity; }
+    const FloatPoint3D& velocity() const { return m_velocity; }
 
     // Doppler factor
     void setDopplerFactor(double dopplerFactor) { m_dopplerFactor = dopplerFactor; }
@@ -79,11 +79,11 @@ private:
     AudioListener();
 
     // Position / Orientation
-    Vector3 m_position;
-    Vector3 m_orientation;
-    Vector3 m_upVector;
+    FloatPoint3D m_position;
+    FloatPoint3D m_orientation;
+    FloatPoint3D m_upVector;
 
-    Vector3 m_velocity;
+    FloatPoint3D m_velocity;
 
     double m_dopplerFactor;
     double m_speedOfSound;

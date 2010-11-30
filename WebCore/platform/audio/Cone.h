@@ -29,7 +29,7 @@
 #ifndef Cone_h
 #define Cone_h
 
-#include <wtf/Vector3.h>
+#include "FloatPoint3D.h"
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ public:
     ConeEffect();
 
     // Returns scalar gain for the given source/listener positions/orientations
-    double gain(Vector3 sourcePosition, Vector3 sourceOrientation, Vector3 listenerPosition);
+    double gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition);
 
     // Angles in degrees
     void setInnerAngle(double innerAngle) { m_innerAngle = innerAngle; }

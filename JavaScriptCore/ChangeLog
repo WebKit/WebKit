@@ -1,3 +1,12 @@
+2010-11-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Switch web audio code to use FloatPoint3D instead of Vector3
+        https://bugs.webkit.org/show_bug.cgi?id=50186
+
+        * wtf/Vector3.h: Removed.
+
 2010-11-29  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

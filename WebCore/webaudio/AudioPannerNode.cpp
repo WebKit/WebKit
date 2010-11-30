@@ -58,9 +58,9 @@ AudioPannerNode::AudioPannerNode(AudioContext* context, double sampleRate)
     m_distanceGain = AudioGain::create("distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioGain::create("coneGain", 1.0, 0.0, 1.0);
 
-    m_position = Vector3(0, 0, 0);
-    m_orientation = Vector3(1, 0, 0);
-    m_velocity = Vector3(0, 0, 0);
+    m_position = FloatPoint3D(0, 0, 0);
+    m_orientation = FloatPoint3D(1, 0, 0);
+    m_velocity = FloatPoint3D(0, 0, 0);
     
     setType(NodeTypePanner);
 
@@ -165,8 +165,8 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
     double azimuth = 0.0;
 
     // Calculate the source-listener vector
-    Vector3 listenerPosition = listener()->position();
-    Vector3 sourceListener = m_position - listenerPosition;
+    FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D sourceListener = m_position - listenerPosition;
 
     if (sourceListener.isZero()) {
         // degenerate case if source and listener are at the same point
@@ -178,26 +178,26 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
     sourceListener.normalize();
 
     // Align axes
-    Vector3 listenerFront = listener()->orientation();
-    Vector3 listenerUp = listener()->upVector();
-    Vector3 listenerRight = cross(listenerFront, listenerUp);
+    FloatPoint3D listenerFront = listener()->orientation();
+    FloatPoint3D listenerUp = listener()->upVector();
+    FloatPoint3D listenerRight = listenerFront.cross(listenerUp);
     listenerRight.normalize();
 
-    Vector3 listenerFrontNorm = listenerFront;
+    FloatPoint3D listenerFrontNorm = listenerFront;
     listenerFrontNorm.normalize();
 
-    Vector3 up = cross(listenerRight, listenerFrontNorm);
+    FloatPoint3D up = listenerRight.cross(listenerFrontNorm);
 
-    double upProjection = dot(sourceListener, up);
+    double upProjection = sourceListener.dot(up);
 
-    Vector3 projectedSource = sourceListener - upProjection * up;
+    FloatPoint3D projectedSource = sourceListener - upProjection * up;
     projectedSource.normalize();
 
-    azimuth = 180.0 * acos(dot(projectedSource, listenerRight)) / M_PI;
+    azimuth = 180.0 * acos(projectedSource.dot(listenerRight)) / M_PI;
     fixNANs(azimuth); // avoid illegal values
 
     // Source  in front or behind the listener
-    double frontBack = dot(projectedSource, listenerFrontNorm);
+    double frontBack = projectedSource.dot(listenerFrontNorm);
     if (frontBack < 0.0)
         azimuth = 360.0 - azimuth;
 
@@ -208,7 +208,7 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
         azimuth = 450.0 - azimuth;
 
     // Elevation
-    double elevation = 90.0 - 180.0 * acos(dot(sourceListener, up)) / M_PI;
+    double elevation = 90.0 - 180.0 * acos(sourceListener.dot(up)) / M_PI;
     fixNANs(azimuth); // avoid illegal values
 
     if (elevation > 90.0)
@@ -232,8 +232,8 @@ float AudioPannerNode::dopplerRate()
     if (dopplerFactor > 0.0) {
         double speedOfSound = listener()->speedOfSound();
 
-        const Vector3 &sourceVelocity = m_velocity;
-        const Vector3 &listenerVelocity = listener()->velocity();
+        const FloatPoint3D &sourceVelocity = m_velocity;
+        const FloatPoint3D &listenerVelocity = listener()->velocity();
 
         // Don't bother if both source and listener have no velocity
         bool sourceHasVelocity = !sourceVelocity.isZero();
@@ -241,13 +241,13 @@ float AudioPannerNode::dopplerRate()
 
         if (sourceHasVelocity || listenerHasVelocity) {
             // Calculate the source to listener vector
-            Vector3 listenerPosition = listener()->position();
-            Vector3 sourceToListener = m_position - listenerPosition;
+            FloatPoint3D listenerPosition = listener()->position();
+            FloatPoint3D sourceToListener = m_position - listenerPosition;
 
-            double sourceListenerMagnitude = sourceToListener.abs();
+            double sourceListenerMagnitude = sourceToListener.length();
 
-            double listenerProjection = dot(sourceToListener, listenerVelocity) / sourceListenerMagnitude;
-            double sourceProjection = dot(sourceToListener, sourceVelocity) / sourceListenerMagnitude;
+            double listenerProjection = sourceToListener.dot(listenerVelocity) / sourceListenerMagnitude;
+            double sourceProjection = sourceToListener.dot(sourceVelocity) / sourceListenerMagnitude;
 
             listenerProjection = -listenerProjection;
             sourceProjection = -sourceProjection;
@@ -272,9 +272,9 @@ float AudioPannerNode::dopplerRate()
 
 float AudioPannerNode::distanceConeGain()
 {
-    Vector3 listenerPosition = listener()->position();
+    FloatPoint3D listenerPosition = listener()->position();
 
-    double listenerDistance = distance(m_position, listenerPosition);
+    double listenerDistance = m_position.distanceTo(listenerPosition);
     double distanceGain = m_distanceEffect.gain(listenerDistance);
     
     m_distanceGain->setValue(static_cast<float>(distanceGain));
