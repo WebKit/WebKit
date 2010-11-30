@@ -1,5 +1,11 @@
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * PluginProcess/mac/PluginProcessShim.cpp:
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add a simple shim function for Debugger().
