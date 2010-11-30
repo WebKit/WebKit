@@ -949,8 +949,12 @@ void SelectElement::accessKeySetSelectedIndex(SelectElementData& data, Element* 
         else
             setSelectedIndex(data, element, index, false, true);
     }
- 
-    listBoxOnChange(data, element);
+
+    if (data.usesMenuList())
+        menuListOnChange(data, element);
+    else
+        listBoxOnChange(data, element);
+
     scrollToSelection(data, element);
 }
 
