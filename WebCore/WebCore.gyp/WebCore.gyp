@@ -245,9 +245,6 @@
           '../platform/mac',
           '../platform/text/mac',
         ],
-        # enable -Wall and -Werror, just for Linux builds for now
-        # FIXME: Also enable this for Linux/Windows after verifying no warnings
-        'chromium_code': 1,
       }],
       ['OS=="win"', {
         'webcore_include_dirs': [
@@ -256,6 +253,10 @@
           '../platform/text/win',
           '../platform/win',
         ],
+      },{
+        # enable -Wall and -Werror, just for Mac and Linux builds for now
+        # FIXME: Also enable this for Windows after verifying no warnings
+        'chromium_code': 1,
       }],
       ['OS=="win" and buildtype=="Official"', {
         # On windows official release builds, we try to preserve symbol space.
@@ -273,7 +274,7 @@
           '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8DerivedSources7.cpp',
           '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8DerivedSources8.cpp',
         ],
-      }]
+      }],
     ],
   },
   'targets': [
@@ -1337,6 +1338,11 @@
             # does not reference the Skia code that is used by Windows and Linux.
             ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
           ],
+        }],
+        ['(OS=="linux" or OS=="freebsd" or OS=="openbsd") and gcc_version==42', {
+          # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
+          # warnings about uninitialized this.7.
+          'cflags': ['-Wno-uninitialized'],
         }],
         ['OS!="linux" and OS!="freebsd"', {
           'sources/': [
