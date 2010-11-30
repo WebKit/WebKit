@@ -50,12 +50,12 @@ else
 
 all: $(DYLIB) $(PERL_MODULE)
 
-$(WRAPPER): DumpRenderTreeSupport_wrapTiger.c $(DUMPRENDERTREE)
+$(WRAPPER): DumpRenderTreeSupport_wrapPregenerated.c $(DUMPRENDERTREE)
 	mkdir -p $(WRAPPER_DIR)
-	cp DumpRenderTreeSupport_wrapTiger.c $(WRAPPER)
+	cp DumpRenderTreeSupport_wrapPregenerated.c $(WRAPPER)
 
-$(PERL_MODULE): DumpRenderTreeSupportTiger.pm $(DUMPRENDERTREE)
-	cp DumpRenderTreeSupportTiger.pm $(PERL_MODULE)
+$(PERL_MODULE): DumpRenderTreeSupportPregenerated.pm $(DUMPRENDERTREE)
+	cp DumpRenderTreeSupportPregenerated.pm $(PERL_MODULE)
 
 
 endif
