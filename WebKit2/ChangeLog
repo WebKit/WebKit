@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Pass the plug-in process shim in DYLD_INSERT_LIBRARIES when launching the plug-in process
+        https://bugs.webkit.org/show_bug.cgi?id=50262
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        Add an EnvironmentVariables class that allows for easy modification of the environment variables
+        passed to posix_spawn.
+
+        (WebKit::ProcessLauncher::launchProcess):
+        When spawning the plug-in process, insert the plug-in process shim.
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add plug-in process shim
         https://bugs.webkit.org/show_bug.cgi?id=50261
 
