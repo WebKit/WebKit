@@ -1,5 +1,11 @@
 2010-11-30  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Windows build.
+
+        * win/WebKit2.vcproj:
+
+2010-11-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Injected bundle support for <rdar://problem/8710645> WebKitTestRunner needs layoutTestController.findString

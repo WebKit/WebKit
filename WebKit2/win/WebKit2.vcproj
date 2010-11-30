@@ -428,10 +428,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\FindOptions.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\FontSmoothingLevel.h"
 				>
 			</File>
@@ -716,6 +712,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKEvent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKFindOptions.h"
 					>
 				</File>
 				<File
