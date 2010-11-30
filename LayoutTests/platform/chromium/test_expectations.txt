@@ -3195,6 +3195,3 @@ BUGWK50204 : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
 BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
-
-// satish is rebaselining.
-BUG_VITALYR : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
