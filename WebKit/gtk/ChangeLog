@@ -1,3 +1,17 @@
+2010-11-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Implement ROLE_COMBO_BOX
+        https://bugs.webkit.org/show_bug.cgi?id=25678
+
+        New test to check the implementation of the combo boxes.
+
+        * tests/testatk.c:
+        (testWebkitAtkComboBox): New test, checking that the roles and the
+        implemented interfaces for a combo box and its descendants work.
+        (main): Added the new unit test.
+
 2010-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
