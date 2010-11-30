@@ -3088,7 +3088,6 @@ sub ReturnNativeToJSValue
     my $indent = shift;
     my $type = GetTypeFromSignature($signature);
 
-    return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
     return "return v8Boolean($value)" if $type eq "boolean";
     return "return v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
 
@@ -3100,7 +3099,7 @@ sub ReturnNativeToJSValue
 
     return "return v8DateOrNull($value)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
-    return "return v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long";
+    return "return v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
     return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
     return "return $value.v8Value()" if $nativeType eq "ScriptValue";
 
