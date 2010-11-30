@@ -493,6 +493,7 @@
             '../css/quirks.css',
             '../css/view-source.css',
             '../css/themeChromiumLinux.css',
+            '../css/themeChromiumSkia.css',
             '../css/themeWin.css',
             '../css/themeWinQuirks.css',
             '../css/svg.css',
