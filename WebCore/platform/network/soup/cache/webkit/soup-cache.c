@@ -147,6 +147,8 @@ get_cacheability (WebKitSoupCache *cache, SoupMessage *msg)
 			soup_header_free_param_list (hash);
 			return WEBKIT_SOUP_CACHE_UNCACHEABLE;
 		}
+
+		soup_header_free_param_list (hash);
 	}
 
 	switch (msg->status_code) {
@@ -284,14 +286,12 @@ webkit_soup_cache_entry_set_freshness (WebKitSoupCacheEntry *entry, SoupMessage 
 {
 	const char *cache_control;
 	const char *expires, *date, *last_modified;
-	GHashTable *hash;
-
-	hash = NULL;
 
 	cache_control = soup_message_headers_get (entry->headers, "Cache-Control");
 	if (cache_control) {
 		const char *max_age, *s_maxage;
 		gint64 freshness_lifetime = 0;
+		GHashTable *hash;
 		WebKitSoupCachePrivate *priv = WEBKIT_SOUP_CACHE_GET_PRIVATE (cache);
 
 		hash = soup_header_parse_param_list (cache_control);
@@ -323,10 +323,9 @@ webkit_soup_cache_entry_set_freshness (WebKitSoupCacheEntry *entry, SoupMessage 
 			soup_header_free_param_list (hash);
 			return;
 		}
-	}
 
-	if (hash != NULL)
 		soup_header_free_param_list (hash);
+	}
 
 	/* If the 'Expires' response header is present, use its value
 	 * minus the value of the 'Date' response header
@@ -998,6 +997,7 @@ webkit_soup_cache_send_response (WebKitSoupCache *cache, SoupMessage *msg)
 
 	key = soup_message_get_cache_key (msg);
 	entry = g_hash_table_lookup (cache->priv->cache, key);
+	g_free (key);
 	g_return_val_if_fail (entry, NULL);
 
 	/* If we are told to send a response from cache any validation
@@ -1257,7 +1257,6 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 	char *key;
 	WebKitSoupCacheEntry *entry;
 	const char *cache_control;
-	GHashTable *hash;
 	gpointer value;
 	gboolean must_revalidate;
 	int max_age, max_stale, min_fresh;
@@ -1265,6 +1264,7 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 
 	key = soup_message_get_cache_key (msg);
 	entry = g_hash_table_lookup (cache->priv->cache, key);
+	g_free (key);
 
 	/* 1. The presented Request-URI and that of stored response
 	 * match
@@ -1321,10 +1321,10 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 
 	cache_control = soup_message_headers_get (msg->request_headers, "Cache-Control");
 	if (cache_control) {
-		hash = soup_header_parse_param_list (cache_control);
+		GHashTable *hash = soup_header_parse_param_list (cache_control);
 
 		if (g_hash_table_lookup_extended (hash, "no-store", NULL, NULL)) {
-			g_hash_table_destroy (hash);
+			soup_header_free_param_list (hash);
 			return WEBKIT_SOUP_CACHE_RESPONSE_STALE;
 		}
 
@@ -1348,7 +1348,7 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 		if (value)
 			min_fresh = (int)MIN (g_ascii_strtoll (value, NULL, 10), G_MAXINT32);
 
-		g_hash_table_destroy (hash);
+		soup_header_free_param_list (hash);
 
 		if (max_age != -1) {
 			guint current_age = webkit_soup_cache_entry_get_current_age (entry);
