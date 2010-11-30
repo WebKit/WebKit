@@ -5522,7 +5522,7 @@ fast/text/large-text-composed-char-dos.html
 # LayoutTestController::addUserScript not implemented for gtk
 plugins/plugin-document-load-prevented-userscript.html
 
-# Missing layoutTestController.findString()
+# Missing layoutTestController.findString() http://webkit.org/b/52037
 editing/text-iterator/findString.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46942

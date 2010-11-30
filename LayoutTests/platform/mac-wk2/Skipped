@@ -124,6 +124,7 @@ editing/selection/click-before-and-after-table.html
 editing/selection/click-in-focusable-link-should-not-clear-selection.html
 editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html
+editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/click-outside-editable-div.html
 editing/selection/click-start-of-line.html
 editing/selection/contains-boundaries.html
@@ -202,6 +203,7 @@ fast/dom/replaced-image-map.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-xy-properties.html
+fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dynamic/hover-style-recalc-crash.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/layer-hit-test-crash.html
@@ -325,6 +327,7 @@ fast/forms/25153.html
 fast/forms/access-key.html
 fast/forms/button-enter-click.html
 fast/forms/button-spacebar-click.html
+fast/forms/disabled-search-input.html
 fast/forms/display-none-in-onchange-keyboard.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
@@ -476,6 +479,7 @@ http/tests/navigation/redirect-preserves-referrer.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-drop-different-origin.html
+http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/listener/xss-window-onclick-addEventListener.html
 http/tests/security/listener/xss-window-onclick-shortcut.html
@@ -1010,6 +1014,7 @@ fast/canvas/webgl/object-deletion-behaviour.html
 fast/canvas/webgl/point-size.html
 fast/canvas/webgl/program-test.html
 fast/canvas/webgl/read-pixels-pack-alignment.html
+fast/canvas/webgl/read-pixels-test.html
 fast/canvas/webgl/renderbuffer-initialization.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html
@@ -1696,9 +1701,9 @@ plugins/netscape-plugin-setwindow-size-2.html
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
 editing/selection/5195166-1.html
+editing/selection/context-menu-text-selection.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
-
 
 # WebKitTestRunner needs layoutTestController.setWillSendRequestReturnsNull
 # <https://bugs.webkit.org/show_bug.cgi?id=42690>
@@ -1909,6 +1914,9 @@ fast/spatial-navigation
 
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
 printing/page-format-data-display-none.html
+
+# WebKitTestRunner needs layoutTestController.findString <http://webkit.org/b/50238>
+editing/text-iterator/findString.html
 
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
@@ -2124,6 +2132,7 @@ fast/replaced/applet-rendering-java-disabled.html
 
 # Unexplained failures
 canvas/philip/tests/2d.text.draw.fontface.notinpage.html
+fast/block/basic/truncation-rtl.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 fast/dom/css-cached-import-rule.html
 fast/dom/Document/open-with-pending-load.html
@@ -2132,6 +2141,8 @@ fast/dom/StyleSheet/detached-style-pi-2.xhtml
 fast/dom/StyleSheet/detached-style-pi.xhtml
 fast/dom/StyleSheet/detached-style.html
 fast/dom/Window/window-appendages-cleared.html
+fast/dom/horizontal-scrollbar-when-dir-change.html
+fast/dom/tab-in-right-alignment.html
 fast/dynamic/anchor-lock.html
 fast/events/simulated-key-state.html
 fast/forms/input-image-submit.html
@@ -2185,8 +2196,10 @@ http/tests/media/video-load-twice.html
 http/tests/misc/location-replace-crossdomain.html
 http/tests/misc/object-image-error-with-onload.html
 http/tests/misc/slow-loading-mask.html
+http/tests/misc/unloadable-script.html
 http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/back-send-referrer.html
+http/tests/navigation/document-location-onload.html
 http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
 http/tests/security/cross-frame-access-put.html
