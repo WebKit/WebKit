@@ -3176,6 +3176,9 @@ BUGCR64401 WIN : fast/filesystem/op-copy.html = TEXT
 BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
 
 BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-fillRect-shadow.html = TEXT
+BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-fillPath-shadow.html = TEXT
+BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
+BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 
 BUGCR64672 : fast/js/regexp-ranges-and-escaped-hyphens.html = TEXT
 BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
@@ -3199,3 +3202,8 @@ BUG_OJAN MAC : fast/block/basic/truncation-rtl.html = IMAGE+TEXT
 
 BUGWK50204 : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
 BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
+
+BUGCR64733 : editing/text-iterator/findString.html = TEXT
+
+// satish is rebaselining.
+BUG_VITALYR : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
