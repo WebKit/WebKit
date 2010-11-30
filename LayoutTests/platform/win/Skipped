@@ -1069,7 +1069,11 @@ plugins/iframe-shims.html
 # Requires WebP support.
 fast/images/webp-image-decoding.html
 
-
 #temporary skipped due to bug 50203.
 fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/horizontal-scrollbar-when-dir-change.html
+
+# REGRESSION(r72861): editing/selection/click-left-of-rtl-wrapping-text.html and modify-up-on-rtl-wrapping-text.html fail on all but Mac platform
+# https://bugs.webkit.org/show_bug.cgi?id=50204
+editing/selection/click-left-of-rtl-wrapping-text.html
+editing/selection/modify-up-on-rtl-wrapping-text.html
