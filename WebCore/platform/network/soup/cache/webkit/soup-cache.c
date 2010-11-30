@@ -1609,7 +1609,7 @@ webkit_soup_cache_load (WebKitSoupCache *cache)
 	g_free (filename);
 
 	variant_format = g_variant_type_new (WEBKIT_SOUP_CACHE_ENTRIES_FORMAT);
-	cache_variant = g_variant_new_from_data (variant_format, (const gchar *)contents, length, FALSE, NULL, NULL);
+	cache_variant = g_variant_new_from_data (variant_format, (const gchar *)contents, length, FALSE, g_free, contents);
 	g_variant_type_free (variant_format);
 
 	g_variant_get (cache_variant, WEBKIT_SOUP_CACHE_ENTRIES_FORMAT, &entries_iter);
