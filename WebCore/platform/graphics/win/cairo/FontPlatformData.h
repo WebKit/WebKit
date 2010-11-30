@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
+ * Copyright (C) 2010 Brent Fulgham <bfulgham@webkit.org>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +26,7 @@
 #ifndef FontPlatformDataCairoWin_h
 #define FontPlatformDataCairoWin_h
 
-#include "FontDescription.h"
+#include "FontOrientation.h"
 #include "GlyphBuffer.h"
 #include "RefCountedGDIHandle.h"
 #include "StringImpl.h"
@@ -36,6 +37,8 @@
 typedef struct HFONT__* HFONT;
 
 namespace WebCore {
+
+class FontDescription;
 
 class FontPlatformData {
 public:
@@ -73,6 +76,9 @@ public:
     void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
+
+    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 
     unsigned hash() const
