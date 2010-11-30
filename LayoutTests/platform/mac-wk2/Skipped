@@ -1905,7 +1905,7 @@ fast/dom/nodesFromRect-inner-documents.html
 fast/dom/nodesFromRect-links-and-text.html
 
 # WebKitTestRunner needs layoutTestController.setSpatialNavigationEnabled
-fast/events/spatial-navigation
+fast/spatial-navigation
 
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
 printing/page-format-data-display-none.html

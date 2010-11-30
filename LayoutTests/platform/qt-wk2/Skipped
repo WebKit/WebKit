@@ -2399,7 +2399,7 @@ svg/dynamic-updates
 fast/viewport
 
 # layoutTestController.setSpatialNavigationEnabled is unimplemented
-fast/events/spatial-navigation
+fast/spatial-navigation
 
 # eventSender.clearTouchPoints is unimplemented
 fast/events/touch

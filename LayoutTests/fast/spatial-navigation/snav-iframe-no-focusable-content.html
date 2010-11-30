@@ -1,0 +1,81 @@
+<html>
+  <!--
+    This test ensures the basic traversal correctness of Spatial Navigation
+    algorithm: iframes without any focusable content should be ignored.
+
+    * Pre-conditions:
+    1) DRT support for SNav enable/disable.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Focus moves from "start" to "end" bypassing the two iframes
+       in between them, once both have no focusable elements inside.
+  -->
+  <head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "start"],
+      ["Down", "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "end"],
+      ["Up"  , "start"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.setSpatialNavigationEnabled(true);
+      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      layoutTestController.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    window.onload = runTest;
+    </script>
+    <script src="js/resources/js-test-post.js"></script>
+  </head>
+  <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
+    <div><a id="start" href="a">a</a></div>
+
+    <iframe width="80" height="80" scrolling="auto" src="data:text/html,
+      <body>
+        <img width=120 height=200 src='resources/green.png'>
+      </body>
+    "></iframe><br>
+
+    <iframe scrolling="auto" src="data:text/html,
+      <body>
+        <img width=120 height=200 src='resources/green.png'>
+      </body>
+    "></iframe><br>
+
+    <a id="end" href="a">e</a>
+    <div id="console"></div>
+    This is to test that an iframe with no focusable content still scrolls
+  </body>
+</html>
