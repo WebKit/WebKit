@@ -254,7 +254,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode)
+void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path*)
 {
     ASSERT(object);
     ASSERT(context);

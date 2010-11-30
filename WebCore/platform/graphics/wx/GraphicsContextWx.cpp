@@ -337,7 +337,7 @@ void GraphicsContext::clipOut(const IntRect&)
     notImplemented();
 }
 
-void GraphicsContext::clipPath(WindRule)
+void GraphicsContext::clipPath(const Path&, WindRule)
 {
     notImplemented();
 }
@@ -533,28 +533,30 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return InterpolationDefault;
 }
 
-void GraphicsContext::fillPath()
+void GraphicsContext::fillPath(const Path& path)
 {
 #if USE(WXGC)
+    // FIXME: Be smarter about this.
+    beginPath();
+    addPath(path);
+
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)
         gc->FillPath(m_data->currentPath);
 #endif
 }
 
-void GraphicsContext::strokePath()
+void GraphicsContext::strokePath(const Path& path)
 {
 #if USE(WXGC)
+    // FIXME: Be smarter about this.
+    beginPath();
+    addPath(path);
+
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)
         gc->StrokePath(m_data->currentPath);
 #endif
-}
-
-void GraphicsContext::drawPath()
-{
-    fillPath();
-    strokePath();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)

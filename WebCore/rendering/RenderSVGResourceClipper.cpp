@@ -151,9 +151,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())
         clipPath.addRect(FloatRect());
-    context->beginPath();
-    context->addPath(clipPath);
-    context->clipPath(clipRule);
+    context->clipPath(clipPath, clipRule);
     return true;
 }
 

@@ -534,12 +534,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     Path glyphPath = identifier.pathData;
                     glyphPath.transform(glyphPathTransform);
 
-                    context->beginPath();
-                    context->addPath(glyphPath);
-
                     RenderStyle* style = run.referencingRenderObject() ? run.referencingRenderObject()->style() : 0;
                     if (activePaintingResource->applyResource(run.referencingRenderObject(), style, context, resourceMode))
-                        activePaintingResource->postApplyResource(run.referencingRenderObject(), context, resourceMode);
+                        activePaintingResource->postApplyResource(run.referencingRenderObject(), context, resourceMode, &glyphPath);
 
                     context->restore();
                 }

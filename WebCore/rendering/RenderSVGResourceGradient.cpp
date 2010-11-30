@@ -230,7 +230,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode)
+void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path* path)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
@@ -258,11 +258,11 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
 #else
         UNUSED_PARAM(object);
 #endif
-    } else {
+    } else if (path) {
         if (resourceMode & ApplyToFillMode)
-            context->fillPath();
+            context->fillPath(*path);
         else if (resourceMode & ApplyToStrokeMode)
-            context->strokePath();
+            context->strokePath(*path);
     }
 
     context->restore();

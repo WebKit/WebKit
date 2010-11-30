@@ -149,9 +149,8 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         graphicsContext.save();
         FloatRect outerPathRect = inflateRect(textRect, horizontalOutsetToCenterOfLightBorder, verticalOutsetToCenterOfLightBorder);
         graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor(), ColorSpaceSRGB);
-        graphicsContext.addPath(pathWithRoundedRect(outerPathRect, cornerRadius));
         graphicsContext.setFillColor(lightBorderColor(), ColorSpaceDeviceRGB);
-        graphicsContext.fillPath();
+        graphicsContext.fillPath(pathWithRoundedRect(outerPathRect, cornerRadius));
         graphicsContext.restore();
 
         graphicsContext.save();

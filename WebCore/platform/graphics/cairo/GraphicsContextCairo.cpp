@@ -531,42 +531,24 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::fillPath()
+void GraphicsContext::fillPath(const Path& path)
 {
     if (paintingDisabled())
         return;
 
     cairo_t* cr = m_data->cr;
-
-    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
+    setPathOnCairoContext(cr, path.platformPath()->context());
     fillCurrentCairoPath(this, m_common, cr);
 }
 
-void GraphicsContext::strokePath()
+void GraphicsContext::strokePath(const Path& path)
 {
     if (paintingDisabled())
         return;
 
     cairo_t* cr = m_data->cr;
-    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
+    setPathOnCairoContext(cr, path.platformPath()->context());
     strokeCurrentCairoPath(this, m_common, cr);
-}
-
-void GraphicsContext::drawPath()
-{
-    if (paintingDisabled())
-        return;
-
-    cairo_t* cr = m_data->cr;
-
-    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
-
-    cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    drawPathShadow(this, m_common, FillAndStroke);
-
-    setPlatformFill(this, cr, m_common);
-    setPlatformStroke(this, cr, m_common);
-    cairo_new_path(cr);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -607,12 +589,13 @@ void GraphicsContext::clip(const FloatRect& rect)
     m_data->clip(rect);
 }
 
-void GraphicsContext::clipPath(WindRule clipRule)
+void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
 {
     if (paintingDisabled())
         return;
 
     cairo_t* cr = m_data->cr;
+    setPathOnCairoContext(cr, path.platformPath()->context());
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
 }
@@ -992,25 +975,6 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
         return;
 
     cairo_set_operator(m_data->cr, toCairoOperator(op));
-}
-
-void GraphicsContext::beginPath()
-{
-    if (paintingDisabled())
-        return;
-
-    cairo_new_path(m_data->m_pendingPath.context());
-}
-
-void GraphicsContext::addPath(const Path& path)
-{
-    if (paintingDisabled())
-        return;
-
-    cairo_matrix_t currentMatrix;
-    cairo_get_matrix(m_data->cr, &currentMatrix);
-    cairo_set_matrix(m_data->m_pendingPath.context(), &currentMatrix);
-    appendWebCorePathToCairoContext(m_data->m_pendingPath.context(), path);
 }
 
 void GraphicsContext::clip(const Path& path)

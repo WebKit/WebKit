@@ -1064,7 +1064,6 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
             graphicsContext->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
             graphicsContext->clipOutRoundedRect(innerBorderRect, innerTopLeft, innerTopRight, innerBottomLeft, innerBottomRight);
             roundedPath.addRoundedRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
-            graphicsContext->addPath(roundedPath);
         }
     }
 
@@ -1805,13 +1804,10 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             } else
                 path.addRect(holeRect);
 
-            context->beginPath();
-            context->addPath(path);
-
             context->setFillRule(RULE_EVENODD);
             context->setFillColor(fillColor, s->colorSpace());
             context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
-            context->fillPath();
+            context->fillPath(path);
 
             context->restore();
         }

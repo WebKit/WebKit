@@ -68,7 +68,7 @@ private:
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
     bool acquirePaintingResource(GraphicsContext*&, RenderObject*, RenderStyle*);
-    void releasePaintingResource(GraphicsContext*&);
+    void releasePaintingResource(GraphicsContext*&, const Path*);
 
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);

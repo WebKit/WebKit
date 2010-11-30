@@ -420,10 +420,14 @@ void GraphicsContext::clipOut(const Path& p)
     platformContext()->canvas()->clipPath(path, SkRegion::kDifference_Op);
 }
 
-void GraphicsContext::clipPath(WindRule clipRule)
+void GraphicsContext::clipPath(const Path& pathToClip, WindRule clipRule)
 {
     if (paintingDisabled())
         return;
+
+    // FIXME: Be smarter about this.
+    beginPath();
+    addPath(pathToClip);
 
     SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
@@ -723,10 +727,14 @@ void GraphicsContext::drawRect(const IntRect& rect)
     platformContext()->drawRect(r);
 }
 
-void GraphicsContext::fillPath()
+void GraphicsContext::fillPath(const Path& pathToFill)
 {
     if (paintingDisabled())
         return;
+
+    // FIXME: Be smarter about this.
+    beginPath();
+    addPath(pathToFill);
 
     SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
@@ -1177,10 +1185,14 @@ void GraphicsContext::strokeArc(const IntRect& r, int startAngle, int angleSpan)
     platformContext()->canvas()->drawPath(path, paint);
 }
 
-void GraphicsContext::strokePath()
+void GraphicsContext::strokePath(const Path& pathToStroke)
 {
     if (paintingDisabled())
         return;
+
+    // FIXME: Be smarter about this.
+    beginPath();
+    addPath(pathToStroke);
 
     SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))
