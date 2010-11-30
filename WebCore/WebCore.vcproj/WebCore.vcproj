@@ -54938,6 +54938,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\generic\BindingDOMWindow.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\generic\BindingFrame.h"
 					>
 				</File>
@@ -55031,10 +55035,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\DOMObjectHashTableMap.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\DOMObjectWithSVGContext.h"
 					>
 				</File>
 				<File
@@ -55203,6 +55203,62 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\IDBBindingUtilities.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JavaScriptCallFrame.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JavaScriptCallFrame.h"
 					>
 				</File>
 				<File
@@ -56110,6 +56166,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCSSStyleDeclarationCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCSSStyleRuleCustom.cpp"
 					>
 					<FileConfiguration
@@ -56266,6 +56326,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCustomPositionCallback.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCustomPositionErrorCallback.cpp"
 					>
 					<FileConfiguration
@@ -56316,6 +56380,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomPositionErrorCallback.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSCustomSQLStatementErrorCallback.cpp"
@@ -58002,6 +58070,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSHistoryCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSHTMLAllCollectionCustom.cpp"
 					>
 					<FileConfiguration
@@ -58104,6 +58176,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLCanvasElementCustom.cpp"
@@ -58416,6 +58492,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLEmbedElementCustom.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLFormElementCustom.cpp"
@@ -58732,6 +58812,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLObjectElementCustom.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLOptionsCollectionCustom.cpp"
@@ -59316,6 +59400,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSLocationCustom.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSMainThreadExecState.cpp"
@@ -60434,6 +60522,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSStorageCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSStyleSheetCustom.cpp"
 					>
 					<FileConfiguration
@@ -60643,58 +60735,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSSVGPathSegCustom.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo_CFLite|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo_CFLite|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_LTCG|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGPathSegListCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -61274,6 +61314,58 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSWorkerCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSXMLHttpRequestCustom.cpp"
 					>
 					<FileConfiguration
@@ -61428,6 +61520,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\OptionsObject.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\ScheduledAction.cpp"
@@ -61706,6 +61802,62 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptDebugServer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptDebugServer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptEventListener.cpp"
 					>
 					<FileConfiguration
@@ -61894,6 +62046,70 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptProfile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptProfileNode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptProfiler.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptProfiler.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptSourceCode.h"
 					>
 				</File>
@@ -61955,10 +62171,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\ScriptState.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\ScriptString.h"
 					>
 				</File>
 				<File
@@ -62091,6 +62303,30 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\WorkerScriptController.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="scripts"
+				>
+				<File
+					RelativePath="..\bindings\scripts\CodeGenerator.pm"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\scripts\CodeGeneratorJS.pm"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\scripts\generate-bindings.pl"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\scripts\IDLParser.pm"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\scripts\IDLStructure.pm"
 					>
 				</File>
 			</Filter>
