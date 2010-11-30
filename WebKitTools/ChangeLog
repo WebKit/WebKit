@@ -1,3 +1,21 @@
+2010-11-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        config.webkit_base_dir returns a path with a trailing slash
+        https://bugs.webkit.org/show_bug.cgi?id=50197
+        
+        config.webkit_base_dir() should return a path without a trailing slash,
+        like all the other methods that return paths.
+        
+        Undoes MockFileSytem changes by r72640, since they're no longer
+        necessary for GetBaselinesTest to pass.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
 2010-11-30  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

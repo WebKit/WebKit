@@ -186,6 +186,7 @@ class ConfigTest(unittest.TestCase):
         c = config.Config(executive.Executive(), filesystem.FileSystem())
         base_dir = c.webkit_base_dir()
         self.assertTrue(base_dir)
+        self.assertNotEqual(base_dir[-1], '/')
 
         orig_cwd = os.getcwd()
         os.chdir(os.environ['HOME'])

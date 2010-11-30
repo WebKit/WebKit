@@ -49,16 +49,7 @@ class MockFileSystem(object):
         return False
 
     def join(self, *comps):
-        # os.path.join ignores trailing slashes on components (i.e.
-        # join('foo/', 'bar') and join('foo', 'bar') produce the same result),
-        # we emulate that behavior.
-        trimmed_comps = []
-        for comp in comps:
-            if len(comp) and comp[-1] == '/':
-                trimmed_comps.append(comp[0:-1])
-            else:
-                trimmed_comps.append(comp)
-        return '/'.join(trimmed_comps)
+        return '/'.join(comps)
 
     def maybe_make_directory(self, *path):
         # FIXME: Implement such that subsequent calls to isdir() work?
