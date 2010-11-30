@@ -742,7 +742,6 @@ BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = CRASH
 BUG_TONY WIN : plugins/mouse-events.html = TEXT
-BUGWK49036 : plugins/npruntime/get-int-identifier-special-values.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin is currently named
 // WebKitTestNetscapePlugin because the fork in the Chromium repo is named

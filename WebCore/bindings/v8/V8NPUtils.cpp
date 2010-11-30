@@ -53,9 +53,7 @@ void convertV8ObjectToNPVariant(v8::Local<v8::Value> object, NPObject* owner, NP
     if (object.IsEmpty())
         return;
 
-    if (object->IsInt32())
-        INT32_TO_NPVARIANT(object->NumberValue(), *result);
-    else if (object->IsNumber())
+    if (object->IsNumber())
         DOUBLE_TO_NPVARIANT(object->NumberValue(), *result);
     else if (object->IsBoolean())
         BOOLEAN_TO_NPVARIANT(object->BooleanValue(), *result);

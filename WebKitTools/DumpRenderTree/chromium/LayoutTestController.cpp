@@ -1174,7 +1174,7 @@ bool LayoutTestController::cppVariantToBool(const CppVariant& value)
 {
     if (value.isBool())
         return value.toBoolean();
-    if (value.isInt32())
+    if (value.isNumber())
         return value.toInt32();
     if (value.isString()) {
         string valueString = value.toString();
@@ -1189,7 +1189,7 @@ bool LayoutTestController::cppVariantToBool(const CppVariant& value)
 
 int32_t LayoutTestController::cppVariantToInt32(const CppVariant& value)
 {
-    if (value.isInt32())
+    if (value.isNumber())
         return value.toInt32();
     if (value.isString()) {
         string stringSource = value.toString();
@@ -1342,7 +1342,7 @@ void LayoutTestController::clearAllDatabases(const CppArgumentList& arguments, C
 void LayoutTestController::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if ((arguments.size() >= 1) && arguments[0].isInt32())
+    if ((arguments.size() >= 1) && arguments[0].isNumber())
         webkit_support::SetDatabaseQuota(arguments[0].toInt32());
 }
 
@@ -1444,7 +1444,7 @@ void LayoutTestController::setTimelineProfilingEnabled(const CppArgumentList& ar
 void LayoutTestController::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isInt32() || !arguments[1].isString())
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
     m_shell->drtDevToolsAgent()->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
 }
@@ -1527,7 +1527,7 @@ void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arg
 void LayoutTestController::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isInt32() || !arguments[1].isString())
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
     WebGeolocationServiceMock::setMockGeolocationError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
 }

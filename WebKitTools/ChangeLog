@@ -1,3 +1,18 @@
+2010-11-30  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] fix get-int-identifier-special-values.html using TestNetscapePlugIn
+        https://bugs.webkit.org/show_bug.cgi?id=49036
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Use IsNumber instead of IsInt32
+            for CppVariants.
+        (LayoutTestController::cppVariantToBool):
+        (LayoutTestController::cppVariantToInt32):
+        (LayoutTestController::setDatabaseQuota):
+        (LayoutTestController::evaluateInWebInspector):
+        (LayoutTestController::setMockGeolocationError):
+
 2010-11-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tony Chang.
