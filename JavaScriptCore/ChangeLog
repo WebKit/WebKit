@@ -1,3 +1,26 @@
+2010-11-29  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        when empty, clicking "down" on outer-spin-button returns "max value"
+        https://bugs.webkit.org/show_bug.cgi?id=45491
+
+        It is required to calculate UTC/DST offsets to retrieve the current local milliseconds for
+        date/time type inputs. WTF::currentTimeMS() returns a UTC time, and WTF::getLocalTime()
+        returns a struct tm, not milliseconds.
+
+        Calculating milliseconds from a struct tm is not simple since timegm() cannot be used in all
+        environments. This calculation is already done in calculateUTCOffset(), and complicated.
+        Duplicating this complicated calculation is unreasonable because of maintainability.
+        To achieve this without duplication, we must call calculate{UTC|DST}Offset in some way.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/DateMath.cpp: Changed calculateUTCOffset() and calculateDSTOffset() to external functions.
+        (WTF::calculateUTCOffset):
+        (WTF::calculateDSTOffset):
+        * wtf/DateMath.h:
+
 2010-11-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

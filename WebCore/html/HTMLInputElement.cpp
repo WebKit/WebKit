@@ -1859,37 +1859,113 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
 void HTMLInputElement::stepUpFromRenderer(int n)
 {
     // The differences from stepUp()/stepDown():
-    // If the current value is not a number, the value will be
-    //  - The value should be the minimum value if n > 0
-    //  - The value should be the maximum value if n < 0
+    //
+    // Difference 1: the current value
+    // If the current value is not a number, including empty, the current value is assumed as 0.
+    //   * If 0 is in-range, and matches to step value
+    //     - The value should be the +step if n > 0
+    //     - The value should be the -step if n < 0
+    //     If -step or +step is out of range, new value should be 0.
+    //   * If 0 is smaller than the minimum value
+    //     - The value should be the minimum value for any n
+    //   * If 0 is larger than the maximum value
+    //     - The value should be the maximum value for any n
+    //   * If 0 is in-range, but not matched to step value
+    //     - The value should be the larger matched value nearest to 0 if n > 0
+    //       e.g. <input type=number min=-100 step=3> -> 2
+    //     - The value should be the smaler matched value nearest to 0 if n < 0
+    //       e.g. <input type=number min=-100 step=3> -> -1
+    //   As for date/datetime-local/month/time/week types, the current value is assumed as "the current local date/time".
+    //   As for datetime type, the current value is assumed as "the current date/time in UTC".
     // If the current value is smaller than the minimum value:
     //  - The value should be the minimum value if n > 0
     //  - Nothing should happen if n < 0
     // If the current value is larger than the maximum value:
     //  - The value should be the maximum value if n < 0
     //  - Nothing should happen if n > 0
+    //
+    // Difference 2: clamping steps
+    // If the current value is not matched to step value:
+    // - The value should be the larger matched value nearest to 0 if n > 0
+    //   e.g. <input type=number value=3 min=-100 step=3> -> 5
+    // - The value should be the smaler matched value nearest to 0 if n < 0
+    //   e.g. <input type=number value=3 min=-100 step=3> -> 2
+    //
+    // n is assumed as -n if step < 0.
 
-    ASSERT(hasSpinButton());
-    if (!hasSpinButton())
+    ASSERT(hasSpinButton() || m_inputType->isRangeControl());
+    if (!hasSpinButton() && !m_inputType->isRangeControl())
         return;
     ASSERT(n);
     if (!n)
         return;
 
+    unsigned stepDecimalPlaces, baseDecimalPlaces;
+    double step, base;
+    // The value will be the default value after stepping for <input value=(empty/invalid) step="any" />
+    // FIXME: Not any changes after stepping, even if it is an invalid value, may be better.
+    // (e.g. Stepping-up for <input type="number" value="foo" step="any" /> => "foo")
+    if (equalIgnoringCase(getAttribute(stepAttr), "any"))
+        step = 0;
+    else if (!getAllowedValueStepWithDecimalPlaces(&step, &stepDecimalPlaces))
+        return;
+    base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
+    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+
+    int sign;
+    if (step > 0)
+        sign = n;
+    else if (step < 0)
+        sign = -n;
+    else
+        sign = 0;
+
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
     double current = m_inputType->parseToDouble(currentStringValue, nan);
-    if (!isfinite(current) || (n > 0 && current < m_inputType->minimum()) || (n < 0 && current > m_inputType->maximum()))
-        setValue(m_inputType->serialize(n > 0 ? m_inputType->minimum() : m_inputType->maximum()));
+    if (!isfinite(current)) {
+        ExceptionCode ec;
+        current = m_inputType->defaultValueForStepUp();
+        setValueAsNumber(current, ec);
+    }
+    if ((sign > 0 && current < m_inputType->minimum()) || (sign < 0 && current > m_inputType->maximum()))
+        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()));
     else {
         ExceptionCode ec;
-        stepUp(n, ec);
+        if (stepMismatch(currentStringValue)) {
+            ASSERT(step);
+            double newValue;
+            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+
+            if (sign < 0)
+                newValue = round((base + floor((current - base) / step) * step) * scale) / scale;
+            else if (sign > 0)
+                newValue = round((base + ceil((current - base) / step) * step) * scale) / scale;
+            else
+                newValue = current;
+
+            if (newValue < m_inputType->minimum())
+                newValue = m_inputType->minimum();
+            if (newValue > m_inputType->maximum())
+                newValue = m_inputType->maximum();
+
+            setValueAsNumber(newValue, ec);
+            current = newValue;
+            if (n > 1)
+                applyStep(n - 1, ec);
+            else if (n < -1)
+                applyStep(n + 1, ec);
+        } else
+            applyStep(n, ec);
     }
 
     if (currentStringValue != value()) {
         if (renderer() && renderer()->isTextField())
             toRenderTextControl(renderer())->setChangedSinceLastChangeEvent(true);
-        dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+        if (m_inputType->isRangeControl())
+            dispatchFormControlChangeEvent();
+        else
+            dispatchEvent(Event::create(eventNames().inputEvent, true, false));
     }
 }
 

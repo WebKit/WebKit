@@ -60,6 +60,7 @@ public:
 
     virtual bool isTextField() const;
     virtual bool isTextType() const;
+    virtual bool isRangeControl() const;
     virtual const AtomicString& formControlType() const = 0;
 
     // Form value functions
@@ -89,6 +90,7 @@ public:
     virtual bool patternMismatch(const String&) const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
+    virtual double defaultValueForStepUp() const;
     virtual double minimum() const;
     virtual double maximum() const;
     virtual bool stepMismatch(const String&, double) const;

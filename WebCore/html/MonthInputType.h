@@ -45,6 +45,7 @@ private:
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double parseToDouble(const String&, double) const;
+    virtual double defaultValueForStepUp() const;
     virtual double minimum() const;
     virtual double maximum() const;
     virtual double defaultStep() const;

@@ -55,6 +55,7 @@ private:
     virtual bool typeMismatch() const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
+    virtual double defaultValueForStepUp() const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
     virtual bool handleKeydownEvent(KeyboardEvent*);

@@ -379,7 +379,7 @@ int equivalentYearForDST(int year)
     return year;
 }
 
-static int32_t calculateUTCOffset()
+int32_t calculateUTCOffset()
 {
 #if PLATFORM(BREWMP)
     time_t localTime = static_cast<time_t>(currentTime());
@@ -449,7 +449,7 @@ static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset
 }
 
 // Get the DST offset, given a time in UTC
-static double calculateDSTOffset(double ms, double utcOffset)
+double calculateDSTOffset(double ms, double utcOffset)
 {
     // On Mac OS X, the call to localtime (see calculateDSTOffsetSimple) will return historically accurate
     // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript

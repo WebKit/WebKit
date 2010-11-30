@@ -41,6 +41,7 @@ public:
 
 private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
+    virtual bool isRangeControl() const;
     virtual const AtomicString& formControlType() const;
     virtual double valueAsNumber() const;
     virtual void setValueAsNumber(double, ExceptionCode&) const;

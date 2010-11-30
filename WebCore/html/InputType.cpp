@@ -125,6 +125,11 @@ bool InputType::isTextType() const
     return false;
 }
 
+bool InputType::isRangeControl() const
+{
+    return false;
+}
+
 bool InputType::saveFormControlState(String& result) const
 {
     String currentValue = element()->value();
@@ -211,6 +216,11 @@ bool InputType::rangeUnderflow(const String&) const
 bool InputType::rangeOverflow(const String&) const
 {
     return false;
+}
+
+double InputType::defaultValueForStepUp() const
+{
+    return 0;
 }
 
 double InputType::minimum() const

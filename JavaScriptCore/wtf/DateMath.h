@@ -84,6 +84,10 @@ int dayInYear(double ms, int year);
 int monthFromDayInYear(int dayInYear, bool leapYear);
 int dayInMonthFromDayInYear(int dayInYear, bool leapYear);
 
+// Returns offset milliseconds for UTC and DST.
+int32_t calculateUTCOffset();
+double calculateDSTOffset(double ms, double utcOffset);
+
 } // namespace WTF
 
 using WTF::dateToDaysFrom1970;
@@ -92,10 +96,13 @@ using WTF::dayInYear;
 using WTF::minutesPerHour;
 using WTF::monthFromDayInYear;
 using WTF::msPerDay;
+using WTF::msPerMinute;
 using WTF::msPerSecond;
 using WTF::msToYear;
 using WTF::secondsPerMinute;
 using WTF::parseDateFromNullTerminatedCharacters;
+using WTF::calculateUTCOffset;
+using WTF::calculateDSTOffset;
 
 #if USE(JSC)
 namespace JSC {

@@ -34,6 +34,8 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -72,6 +74,21 @@ void MonthInputType::setValueAsDate(double value, ExceptionCode&) const
         return;
     }
     element()->setValue(date.toString());
+}
+
+double MonthInputType::defaultValueForStepUp() const
+{
+    double current = currentTimeMS();
+    double utcOffset = calculateUTCOffset();
+    double dstOffset = calculateDSTOffset(current, utcOffset);
+    int offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
+    current += offset * msPerMinute;
+
+    DateComponents date;
+    date.setMillisecondsSinceEpochForMonth(current);
+    double months = date.monthsSinceEpoch();
+    ASSERT(isfinite(months));
+    return months;
 }
 
 double MonthInputType::minimum() const

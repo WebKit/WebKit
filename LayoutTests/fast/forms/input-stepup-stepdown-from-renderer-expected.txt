@@ -1,0 +1,257 @@
+Check stepping-up and -down for  from renderer. No cases of empty initial values for type=date, datetime, datetime-local, month, time, week.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Date type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("2010-02-10", null, null) is "2010-02-11"
+PASS stepDown("2010-02-10", null, null) is "2010-02-09"
+PASS stepUp("2010-02-10", null, null, 10) is "2010-02-20"
+PASS stepDown("2010-02-10", null, null, 11) is "2010-01-30"
+PASS stepUp("1970-01-01", "4", null, 2) is "1970-01-09"
+PASS stepDown("1970-01-01", "4", null, 3) is "1969-12-20"
+Step=any
+PASS stepUp("2010-02-10", "any", null) is "2010-02-10"
+PASS stepDown("2010-02-10", "any", null) is "2010-02-10"
+Overflow/underflow
+PASS stepUp("2010-02-10", "3.40282346e+38", null) is "275760-09-13"
+PASS stepDown("2010-02-10", "3.40282346e+38", null) is "1970-01-01"
+PASS stepUp("2010-02-10", "1", "2010-02-10") is "2010-02-10"
+PASS stepDown("2010-02-10", "1", "2010-02-10") is "2010-02-10"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("2010-02-10", "3", "2010-02-06") is "2010-02-09"
+PASS stepUp("1970-01-02", "2", "") is "1970-01-03"
+
+Datetime type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("2010-02-10T20:13Z", null, null) is "2010-02-10T20:14Z"
+PASS stepDown("2010-02-10T20:13Z", null, null) is "2010-02-10T20:12Z"
+PASS stepUp("2010-02-10T20:13Z", null, null, 10) is "2010-02-10T20:23Z"
+PASS stepDown("2010-02-10T20:13Z", null, null, 11) is "2010-02-10T20:02Z"
+PASS stepUp("1970-01-01T20:13Z", "4", null, 2) is "1970-01-01T20:13:08Z"
+PASS stepDown("1970-01-01T20:13Z", "4", null, 3) is "1970-01-01T20:12:48Z"
+Step=any
+PASS stepUp("2010-02-10T20:13Z", "any", null) is "2010-02-10T20:13Z"
+PASS stepDown("2010-02-10T20:13Z", "any", null) is "2010-02-10T20:13Z"
+Overflow/underflow
+PASS stepUp("2010-02-10T20:13Z", "3.40282346e+38", null) is "275760-09-13T00:00:00.000Z"
+PASS stepDown("2010-02-10T20:13Z", "3.40282346e+38", null) is "1970-01-01T00:00:00.000Z"
+PASS stepUp("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z") is "2010-02-10T20:13Z"
+PASS stepDown("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z") is "2010-02-10T20:13Z"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("2010-02-10T20:13Z", "3", "2010-02-10T20:12:56Z") is "2010-02-10T20:12:59Z"
+PASS stepUp("1970-01-01T00:13Z", "7", "") is "1970-01-01T00:13:04Z"
+
+Datetime-local type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("2010-02-10T20:13", null, null) is "2010-02-10T20:14"
+PASS stepDown("2010-02-10T20:13", null, null) is "2010-02-10T20:12"
+PASS stepUp("2010-02-10T20:13", null, null, 10) is "2010-02-10T20:23"
+PASS stepDown("2010-02-10T20:13", null, null, 11) is "2010-02-10T20:02"
+PASS stepUp("1970-01-01T20:13", "4", null, 2) is "1970-01-01T20:13:08"
+PASS stepDown("1970-01-01T20:13", "4", null, 3) is "1970-01-01T20:12:48"
+Step=any
+PASS stepUp("2010-02-10T20:13", "any", null) is "2010-02-10T20:13"
+PASS stepDown("2010-02-10T20:13", "any", null) is "2010-02-10T20:13"
+Overflow/underflow
+PASS stepUp("2010-02-10T20:13", "3.40282346e+38", null) is "275760-09-13T00:00:00.000"
+PASS stepDown("2010-02-10T20:13", "3.40282346e+38", null) is "1970-01-01T00:00:00.000"
+PASS stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13") is "2010-02-10T20:13"
+PASS stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13") is "2010-02-10T20:13"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("2010-02-10T20:13", "3", "2010-02-10T20:12:56") is "2010-02-10T20:12:59"
+PASS stepUp("1970-01-01T00:13", "7", "") is "1970-01-01T00:13:04"
+
+Month type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("2010-02", null, null) is "2010-03"
+PASS stepDown("2010-02", null, null) is "2010-01"
+PASS stepUp("2010-02", null, null, 10) is "2010-12"
+PASS stepDown("2010-02", null, null, 11) is "2009-03"
+PASS stepUp("1970-01", "4", null, 2) is "1970-09"
+PASS stepDown("1970-01", "4", null, 3) is "1969-01"
+Step=any
+PASS stepUp("2010-02", "any", null) is "2010-02"
+PASS stepDown("2010-02", "any", null) is "2010-02"
+Overflow/underflow
+PASS stepUp("2010-02", "3.40282346e+38", null) is "275760-09"
+PASS stepDown("2010-02", "3.40282346e+38", null) is "1970-01"
+PASS stepUp("2010-02", "1", "2010-02") is "2010-02"
+PASS stepDown("2010-02", "1", "2010-02") is "2010-02"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("2010-02", "3", "2009-10") is "2010-01"
+PASS stepUp("1970-02", "4", "") is "1970-05"
+
+Number type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Invalid value
+PASS stepUp("", null, null) is "1"
+PASS stepDown("", null, null) is "-1"
+PASS stepUp("", "any", null) is "0"
+PASS stepDown("", "any", null) is "0"
+PASS stepUp("", "foo", null) is "1"
+PASS stepDown("", "foo", null) is "-1"
+PASS stepUp("foo", null, null) is "1"
+PASS stepDown("foo", null, null) is "-1"
+PASS stepUp("foo", "any", null) is "0"
+PASS stepDown("foo", "any", null) is "0"
+PASS stepUp("foo", "foo", null) is "1"
+PASS stepDown("foo", "foo", null) is "-1"
+Normal cases
+PASS stepUp("0", null, null) is "1"
+PASS stepUp("1", null, null, 2) is "3"
+PASS stepUp("3", null, null, -1) is "2"
+PASS stepDown("2", null, null) is "1"
+PASS stepDown("1", null, null, 2) is "-1"
+PASS stepDown("-1", null, null, -1) is "0"
+Invalid step value
+PASS stepUp("0", "foo", null) is "1"
+PASS stepUp("1", "0", null) is "2"
+PASS stepUp("2", "-1", null) is "3"
+Step=any
+PASS stepUp("0", "any", null) is "0"
+PASS stepDown("0", "any", null) is "0"
+Overflow/underflow
+PASS stepDown("1", "1", "0") is "0"
+PASS stepDown("0", "1", "0") is "0"
+PASS stepDown("1", "1", "0", 2) is "0"
+PASS stepDown("1", "3.40282346e+38", "", 2) is "-3.40282346e+38"
+PASS stepUp("-1", "1", "0") is "0"
+PASS stepUp("0", "1", "0") is "0"
+PASS stepUp("-1", "1", "0", 2) is "0"
+PASS stepUp("1", "3.40282346e+38", "", 2) is "3.40282346e+38"
+stepDown()/stepUp() for stepMismatch values
+PASS stepUp("1", "2", "") is "2"
+PASS input.min = "0"; stepUp("9", "10", "") is "10"
+PASS stepDown("19", "10", "0") is "10"
+PASS stepUp("89", "10", "99") is "90"
+Huge value and small step
+PASS input.min = ""; stepUp("1e+38", "1", "", 999) is "1e+38"
+PASS input.max = ""; stepDown("1e+38", "1", "", 999) is "1e+38"
+Fractional numbers
+PASS input.min = ""; stepUp("0", "0.33333333333333333", "", 3) is "1"
+PASS stepUp("1", "0.1", "", 10) is "2"
+PASS input.min = "0"; stepUp("0", "0.003921568627450980", "1", 255) is "1"
+Rounding
+PASS stepUp("5.005", "0.005", "", 2) is "5.015"
+PASS stepUp("5.005", "0.005", "", 11) is "5.06"
+PASS stepUp("5.005", "0.005", "", 12) is "5.065"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 2) is "5.015"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 11) is "5.06"
+PASS stepUpExplicitBounds("4", "9", "0.005", "5.005", 12) is "5.065"
+
+Range type
+Function arguments are (min, max, step, value, [stepCount]).
+Using the default values
+PASS stepUpExplicitBounds(null, null, null, "") is "51"
+PASS stepDownExplicitBounds(null, null, null, "") is "49"
+PASS stepUpExplicitBounds(null, null, "any", "") is "51"
+PASS stepDownExplicitBounds(null, null, "any", "") is "49"
+PASS stepUpExplicitBounds(null, null, "foo", "") is "51"
+PASS stepDownExplicitBounds(null, null, "foo", "") is "49"
+PASS stepUpExplicitBounds(null, null, null, "foo") is "51"
+PASS stepDownExplicitBounds(null, null, null, "foo") is "49"
+PASS stepUpExplicitBounds(null, null, "any", "foo") is "51"
+PASS stepDownExplicitBounds(null, null, "any", "foo") is "49"
+PASS stepUpExplicitBounds(null, null, "foo", "foo") is "51"
+PASS stepDownExplicitBounds(null, null, "foo", "foo") is "49"
+Normal cases
+PASS stepUpExplicitBounds(null, null, null, "0") is "1"
+PASS stepUpExplicitBounds(null, null, null, "1", 2) is "3"
+PASS stepUpExplicitBounds(null, null, null, "3", -1) is "2"
+PASS stepDownExplicitBounds("-100", null, null, "2") is "1"
+PASS stepDownExplicitBounds("-100", null, null, "1", 2) is "-1"
+PASS stepDownExplicitBounds("-100", null, null, "-1", -1) is "0"
+Invalid step value
+PASS stepUpExplicitBounds(null, null, "foo", "0") is "1"
+PASS stepUpExplicitBounds(null, null, "0", "1") is "2"
+PASS stepUpExplicitBounds(null, null, "-1", "2") is "3"
+PASS stepDownExplicitBounds(null, null, "foo", "1") is "0"
+PASS stepDownExplicitBounds(null, null, "0", "2") is "1"
+PASS stepDownExplicitBounds(null, null, "-1", "3") is "2"
+Step=any
+PASS stepUpExplicitBounds(null, null, "any", "1") is "2"
+PASS stepDownExplicitBounds(null, null, "any", "1") is "0"
+Overflow/underflow
+PASS stepUpExplicitBounds(null, "100", "1", "99") is "100"
+PASS stepUpExplicitBounds(null, "100", "1", "100") is "100"
+PASS stepUpExplicitBounds(null, "100", "1", "99", 2) is "100"
+PASS stepDownExplicitBounds("0", null, "1", "1") is "0"
+PASS stepDownExplicitBounds("0", null, "1", "0") is "0"
+PASS stepDownExplicitBounds("0", null, "1", "1", 2) is "0"
+PASS stepDownExplicitBounds(null, null, "3.40282346e+38", "1", 2) is "0"
+PASS stepUpExplicitBounds(-100, 0, 1, -1) is "0"
+PASS stepUpExplicitBounds(null, 0, 1, 0) is "0"
+PASS stepUpExplicitBounds(-100, 0, 1, -1, 2) is "0"
+PASS stepUpExplicitBounds(null, null, "3.40282346e+38", "1", 2) is "0"
+stepDown()/stepUp() for stepMismatch values
+PASS stepUpExplicitBounds(null, null, 2, 1) is "4"
+PASS stepUpExplicitBounds(0, null, 10, 9, 9) is "100"
+PASS stepDownExplicitBounds(0, null, 10, 19) is "10"
+value + step is <= max, but rounded result would be > max.
+PASS stepUpExplicitBounds(null, 99, 10, 89) is "90"
+Huge value and small step
+PASS stepUpExplicitBounds(0, 1e38, 1, 1e38, 999) is "1e+38"
+PASS stepDownExplicitBounds(0, 1e38, 1, 1e38, 999) is "1e+38"
+Fractional numbers
+PASS stepUpExplicitBounds(null, null, 0.33333333333333333, 0, 3) is "1"
+PASS stepUpExplicitBounds(null, null, 0.1, 1) is "1.1"
+PASS stepUpExplicitBounds(null, null, 0.1, 1, 8) is "1.8"
+PASS stepUpExplicitBounds(null, null, 0.1, 1, 10) is "2"
+PASS stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255) is "1"
+PASS stepDownExplicitBounds(null, null, 0.1, 1, 8) is "0.2"
+PASS stepDownExplicitBounds(null, null, 0.1, 1) is "0.9"
+
+Time type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("20:13", null, null) is "20:14"
+PASS stepDown("20:13", null, null) is "20:12"
+PASS stepUp("20:13", null, null, 10) is "20:23"
+PASS stepDown("20:13", null, null, 11) is "20:02"
+PASS stepUp("20:13", "4", null, 2) is "20:13:08"
+PASS stepDown("20:13", "4", null, 3) is "20:12:48"
+Step=any
+PASS stepUp("20:13", "any", null) is "20:13"
+PASS stepDown("20:13", "any", null) is "20:13"
+Overflow/underflow
+PASS stepUp("20:13", "3.40282346e+38", null) is "23:59:59.999"
+PASS stepDown("20:13", "3.40282346e+38", null) is "00:00:00.000"
+PASS stepUp("20:13", "1", "20:13") is "20:13"
+PASS stepDown("20:13", "1", "20:13") is "20:13"
+PASS stepUp("23:59", null, null) is "23:59"
+PASS stepDown("00:00", null, null) is "00:00"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("20:13", "3", "20:12:56") is "20:12:59"
+PASS stepUp("00:13", "7", "") is "00:13:04"
+
+Week type
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+PASS stepUp("2010-W02", null, null) is "2010-W03"
+PASS stepDown("2010-W02", null, null) is "2010-W01"
+PASS stepUp("2010-W02", null, null, 10) is "2010-W12"
+PASS stepDown("2010-W02", null, null, 11) is "2009-W44"
+PASS stepUp("1970-W01", "4", null, 2) is "1970-W09"
+PASS stepDown("1970-W01", "4", null, 3) is "1969-W41"
+Step=any
+PASS stepUp("2010-W02", "any", null) is "2010-W02"
+PASS stepDown("2010-W02", "any", null) is "2010-W02"
+Overflow/underflow
+PASS stepUp("2010-W02", "3.40282346e+38", null) is "275760-W37"
+PASS stepDown("2010-W02", "3.40282346e+38", null) is "1970-W01"
+PASS stepUp("2010-W02", "1", "2010-W02") is "2010-W02"
+PASS stepDown("2010-W02", "1", "2010-W02") is "2010-W02"
+stepDown()/stepUp() for stepMismatch values
+PASS stepDown("2010-W02", "2", "2009-W52") is "2010-W01"
+PASS stepUp("1970-W02", "4", "") is "1970-W05"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
