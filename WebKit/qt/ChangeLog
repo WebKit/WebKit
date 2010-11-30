@@ -1,3 +1,15 @@
+2010-11-30  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebFrame::load(QNetworkRequest) should respect the CustomVerbAttribute
+
+        For CustomOperation requests, pass the CustomVerbAttribute on to
+        the WebCore::ResourceRequest.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+
 2010-11-25  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Laszlo Gombos.
