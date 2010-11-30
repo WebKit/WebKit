@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x338 [border: (2px solid #0000FF)]
+      RenderBlock {DIV} at (0,0) size 784x339 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x124
           RenderText {#text} at (0,0) size 67x32
             text run at (0,0) width 67: "Tests: "
@@ -35,20 +35,20 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,62) size 694x63
             text run at (0,62) width 694: "Text transformed with text-transform does not copy with transform"
             text run at (0,93) width 76: "applied"
-        RenderBlock {DIV} at (14,154) size 756x170
+        RenderBlock {DIV} at (14,154) size 756x171
           RenderBlock (anonymous) at (0,0) size 756x62
             RenderText {#text} at (0,0) size 189x32
               text run at (0,0) width 189: "Expected Results: "
             RenderBR {BR} at (189,24) size 0x0
             RenderText {#text} at (0,31) size 212x32
               text run at (0,31) width 212: "Should see the string"
-          RenderBlock {PRE} at (0,86) size 756x29
-            RenderText {#text} at (0,1) size 210x26
-              text run at (0,1) width 210: "Foo Bar baz Bar"
-          RenderBlock (anonymous) at (0,139) size 756x31
+          RenderBlock {PRE} at (0,86) size 756x30
+            RenderText {#text} at (0,0) size 174x29
+              text run at (0,0) width 174: "Foo Bar baz Bar"
+          RenderBlock (anonymous) at (0,140) size 756x31
             RenderText {#text} at (0,0) size 158x32
               text run at (0,0) width 158: "(case sensitive)."
-      RenderBlock {DIV} at (0,362) size 784x35 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,363) size 784x35 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 165x32
           RenderInline {SPAN} at (0,0) size 84x32
             RenderText {#text} at (2,2) size 84x32

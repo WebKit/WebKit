@@ -48,6 +48,7 @@
 # - failing transitions tests
 # - failing websocket tests
 # - new tests without expected results
+# - Qt 4.7 related bugs
 # - new skipped tests yet to be sorted
 
 
@@ -223,50 +224,6 @@ http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/workers/shared-worker-methods.html
 
-# --- Fixed in Qt 4.7. Unskip when buildbot is upgraded.
-# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
-http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
-http/tests/xmlhttprequest/access-control-response-with-body.html
-http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
-http/tests/xmlhttprequest/XMLHttpRequestException.html
-http/tests/xmlhttprequest/access-control-and-redirects.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
-http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
-http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
-http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
-http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
-http/tests/xmlhttprequest/access-control-preflight-headers-async.html
-http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
-http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
-http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
-http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html
-http/tests/xmlhttprequest/access-control-response-with-body-sync.html
-http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
-http/tests/xmlhttprequest/methods-lower-case.html
-http/tests/xmlhttprequest/methods.html
-http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlhttprequest/state-after-network-error.html
-http/tests/xmlhttprequest/workers/methods-async.html
-http/tests/xmlhttprequest/workers/methods.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
-
-# --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
-# (fixed in qt-4.7)
-http/tests/xmlhttprequest/cookies.html
-
 # Caused by the way Qt caches network connections using user@hostname as the key
 # See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
 http/tests/xmlhttprequest/re-login-async.html
@@ -289,6 +246,17 @@ http/tests/xmlhttprequest/send-array-buffer.html
 
 # Missing DRT ability to set accept cookie policy
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+
+# Still fail with Qt 4.7.1
+http/tests/xmlhttprequest/cache-override.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/methods-lower-case.html
+http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+http/tests/xmlhttprequest/workers/methods-async.html
+http/tests/xmlhttprequest/workers/methods.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 
 # =========================================================================== #
 #       Failing inserting tests.                                              #
@@ -552,6 +520,10 @@ fast/forms/menulist-width-change.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=49906
 fast/workers/storage/interrupt-database-sync.html
+
+# [Qt] http/tests/websocket/tests/reload-crash.html fails intermittently with time out
+# https://bugs.webkit.org/show_bug.cgi?id=50152
+http/tests/websocket/tests/reload-crash.html
 
 # =========================================================================== #
 # failing media tests
@@ -5134,6 +5106,47 @@ editing/selection/transformed-selection-rects.html
 svg/W3C-SVG-1.1/filters-light-04-f.svg
 
 # ============================================================================= #
+# Qt 4.7 related bugs
+# ============================================================================= #
+
+# [Qt] Some Unicode tests fail with Qt version >= 4.7.0
+# https://bugs.webkit.org/show_bug.cgi?id=46251
+fast/js/encode-URI-test.html 
+fast/js/regexp-range-bound-ffff.html 
+fast/js/switch-behaviour.html 
+fast/url/anchor.html 
+fast/url/path.html 
+http/tests/websocket/tests/bad-sub-protocol-non-ascii.html
+
+# [Qt] editing/execCommand/move-selection-back-line.html fails with Qt 4.7.1
+# https://bugs.webkit.org/show_bug.cgi?id=50144
+editing/execCommand/move-selection-back-line.html
+
+# [Qt] fast/forms/textarea-appearance-wrap.html fails with Qt 4.7.1
+# https://bugs.webkit.org/show_bug.cgi?id=50145
+fast/forms/textarea-appearance-wrap.html
+
+# [Qt] 4 css2.1/t1202-counter tests fail with Qt 4.7.1
+# https://bugs.webkit.org/show_bug.cgi?id=50146
+css2.1/t1202-counter-09-b.html 
+css2.1/t1202-counter-15-b.html 
+css2.1/t1202-counters-09-b.html 
+css2.1/t1202-counters-15-b.html
+
+# [Qt] 4 fast/text tests fail with Qt 4.7.1
+# https://bugs.webkit.org/show_bug.cgi?id=50147
+fast/text/format-control.html
+fast/text/justification-padding-mid-word.html
+fast/text/zero-width-characters.html
+fast/text/international/khmer-selection.html
+
+# 3 media tests fail with Qt version 4.6.3 and 4.7.0
+# https://bugs.webkit.org/show_bug.cgi?id=46249
+media/restore-from-page-cache.html
+media/video-can-play-type.html
+media/video-delay-load-event.html
+
+# ============================================================================= #
 # new skipped tests yet to be sorted
 # ============================================================================= #
 fast/dom/Geolocation/callback-to-remote-context2.html
@@ -5252,9 +5265,6 @@ fullscreen/
 # https://bugs.webkit.org/show_bug.cgi?id=45194
 fast/text/decomposed-after-stacked-diacritics.html
 
-# Fixed in Qt 4.7.1 - Unskip when buildbot is upgraded.
-fast/canvas/canvas-closePath-single-point.html
-
 # viewport meta tag tests that differ from the Opera results
 fast/viewport/viewport-65.html
 fast/viewport/viewport-82.html
@@ -5307,11 +5317,6 @@ fast/dom/nodesFromRect-inner-documents.html
 # It fails, because 3D canvas is disabled by default.
 http/tests/canvas/webgl/origin-clean-conformance.html
 
-# 3 media tests fail with Qt version 4.6.3 and 4.7.0
-# https://bugs.webkit.org/show_bug.cgi?id=46249
-media/restore-from-page-cache.html
-media/video-can-play-type.html
-media/video-delay-load-event.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.

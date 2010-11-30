@@ -7,46 +7,46 @@ layer at (0,0) size 784x3011
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x320
-        RenderText {#text} at (0,1) size 224x318
-          text run at (0,1) width 200: ".one {font-size: medium;}"
-          text run at (200,1) width 0: " "
-          text run at (0,17) width 200: ".two {font-size: larger;}"
-          text run at (200,17) width 0: " "
-          text run at (0,33) width 224: ".three {font-size: smaller;}"
-          text run at (224,33) width 0: " "
-          text run at (0,49) width 224: ".four {font-size: xx-small;}"
-          text run at (224,49) width 0: " "
-          text run at (0,65) width 216: ".five {font-size: x-small;}"
-          text run at (216,65) width 0: " "
-          text run at (0,81) width 192: ".six {font-size: small;}"
-          text run at (192,81) width 0: " "
-          text run at (0,97) width 208: ".seven {font-size: large;}"
-          text run at (208,97) width 0: " "
-          text run at (0,113) width 224: ".eight {font-size: x-large;}"
-          text run at (224,113) width 0: " "
-          text run at (0,129) width 224: ".nine {font-size: xx-large;}"
-          text run at (224,129) width 0: " "
-          text run at (0,145) width 176: ".a {font-size: 0.5in;}"
-          text run at (176,145) width 0: " "
-          text run at (0,161) width 160: ".b {font-size: 1cm;}"
-          text run at (160,161) width 0: " "
-          text run at (0,177) width 168: ".c {font-size: 10mm;}"
-          text run at (168,177) width 0: " "
-          text run at (0,193) width 168: ".d {font-size: 18pt;}"
-          text run at (168,193) width 0: " "
-          text run at (0,209) width 176: ".e {font-size: 1.5pc;}"
-          text run at (176,209) width 0: " "
-          text run at (0,225) width 160: ".f {font-size: 2em;}"
-          text run at (160,225) width 0: " "
-          text run at (0,241) width 160: ".g {font-size: 3ex;}"
-          text run at (160,241) width 0: " "
-          text run at (0,257) width 168: ".h {font-size: 25px;}"
-          text run at (168,257) width 0: " "
-          text run at (0,273) width 168: ".i {font-size: 200%;}"
-          text run at (168,273) width 0: " "
-          text run at (0,289) width 184: ".j {font-size: -0.5in;}"
-          text run at (184,289) width 0: " "
-          text run at (0,305) width 0: " "
+        RenderText {#text} at (0,0) size 149x320
+          text run at (0,0) width 145: ".one {font-size: medium;}"
+          text run at (145,0) width 0: " "
+          text run at (0,16) width 130: ".two {font-size: larger;}"
+          text run at (130,16) width 0: " "
+          text run at (0,32) width 149: ".three {font-size: smaller;}"
+          text run at (149,32) width 0: " "
+          text run at (0,48) width 149: ".four {font-size: xx-small;}"
+          text run at (149,48) width 0: " "
+          text run at (0,64) width 141: ".five {font-size: x-small;}"
+          text run at (141,64) width 0: " "
+          text run at (0,80) width 126: ".six {font-size: small;}"
+          text run at (126,80) width 0: " "
+          text run at (0,96) width 141: ".seven {font-size: large;}"
+          text run at (141,96) width 0: " "
+          text run at (0,112) width 145: ".eight {font-size: x-large;}"
+          text run at (145,112) width 0: " "
+          text run at (0,128) width 148: ".nine {font-size: xx-large;}"
+          text run at (148,128) width 0: " "
+          text run at (0,144) width 113: ".a {font-size: 0.5in;}"
+          text run at (113,144) width 0: " "
+          text run at (0,160) width 110: ".b {font-size: 1cm;}"
+          text run at (110,160) width 0: " "
+          text run at (0,176) width 121: ".c {font-size: 10mm;}"
+          text run at (121,176) width 0: " "
+          text run at (0,192) width 110: ".d {font-size: 18pt;}"
+          text run at (110,192) width 0: " "
+          text run at (0,208) width 117: ".e {font-size: 1.5pc;}"
+          text run at (117,208) width 0: " "
+          text run at (0,224) width 107: ".f {font-size: 2em;}"
+          text run at (107,224) width 0: " "
+          text run at (0,240) width 106: ".g {font-size: 3ex;}"
+          text run at (106,240) width 0: " "
+          text run at (0,256) width 113: ".h {font-size: 25px;}"
+          text run at (113,256) width 0: " "
+          text run at (0,272) width 114: ".i {font-size: 200%;}"
+          text run at (114,272) width 0: " "
+          text run at (0,288) width 113: ".j {font-size: -0.5in;}"
+          text run at (113,288) width 0: " "
+          text run at (0,304) width 0: " "
       RenderBlock {HR} at (0,370) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,388) size 768x21
         RenderText {#text} at (0,0) size 735x21
@@ -54,11 +54,11 @@ layer at (0,0) size 784x3011
       RenderBlock {P} at (0,425) size 768x21
         RenderText {#text} at (0,0) size 197x21
           text run at (0,0) width 197: "This sentence has been set to "
-        RenderInline {CODE} at (0,0) size 48x14
-          RenderText {#text} at (197,5) size 48x14
-            text run at (197,5) width 48: "medium"
-        RenderText {#text} at (245,0) size 383x21
-          text run at (245,0) width 383: ", which may or may not be the same size as unstyled text."
+        RenderInline {CODE} at (0,0) size 46x16
+          RenderText {#text} at (197,3) size 46x16
+            text run at (197,3) width 46: "medium"
+        RenderText {#text} at (243,0) size 383x21
+          text run at (243,0) width 383: ", which may or may not be the same size as unstyled text."
       RenderBlock {P} at (0,465) size 768x25
         RenderText {#text} at (0,0) size 403x25
           text run at (0,0) width 403: "This sentence should be larger than unstyled text."
@@ -164,11 +164,11 @@ layer at (0,0) size 784x3011
               RenderBlock {P} at (4,41) size 746x21
                 RenderText {#text} at (0,0) size 197x21
                   text run at (0,0) width 197: "This sentence has been set to "
-                RenderInline {CODE} at (0,0) size 48x14
-                  RenderText {#text} at (197,5) size 48x14
-                    text run at (197,5) width 48: "medium"
-                RenderText {#text} at (245,0) size 383x21
-                  text run at (245,0) width 383: ", which may or may not be the same size as unstyled text."
+                RenderInline {CODE} at (0,0) size 46x16
+                  RenderText {#text} at (197,3) size 46x16
+                    text run at (197,3) width 46: "medium"
+                RenderText {#text} at (243,0) size 383x21
+                  text run at (243,0) width 383: ", which may or may not be the same size as unstyled text."
               RenderBlock {P} at (4,81) size 746x25
                 RenderText {#text} at (0,0) size 403x25
                   text run at (0,0) width 403: "This sentence should be larger than unstyled text."

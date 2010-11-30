@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x21
         RenderText {#text} at (0,0) size 33x21
           text run at (0,0) width 33: "Test "
-        RenderInline {TT} at (0,0) size 72x14
-          RenderText {#text} at (33,5) size 72x14
-            text run at (33,5) width 72: "<isindex>"
-        RenderText {#text} at (105,0) size 135x21
-          text run at (105,0) width 135: " placeholder styling."
+        RenderInline {TT} at (0,0) size 57x16
+          RenderText {#text} at (33,3) size 57x16
+            text run at (33,3) width 57: "<isindex>"
+        RenderText {#text} at (90,0) size 135x21
+          text run at (90,0) width 135: " placeholder styling."
       RenderBlock (anonymous) at (0,37) size 784x21
         RenderText {#text} at (0,0) size 248x21
           text run at (0,0) width 248: "The placeholder text should be gray:"

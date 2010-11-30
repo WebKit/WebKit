@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 784x32
-        RenderText {#text} at (0,1) size 496x30
-          text run at (0,1) width 304: ".one {list-style: upper-alpha inside;}"
-          text run at (304,1) width 0: " "
-          text run at (0,17) width 496: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
-          text run at (496,17) width 0: " "
+        RenderText {#text} at (0,0) size 327x32
+          text run at (0,0) width 203: ".one {list-style: upper-alpha inside;}"
+          text run at (203,0) width 0: " "
+          text run at (0,16) width 327: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
+          text run at (327,16) width 0: " "
       RenderBlock {HR} at (0,82) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,100) size 784x42
         RenderListItem {LI} at (40,0) size 744x42

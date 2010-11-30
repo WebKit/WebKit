@@ -7,19 +7,19 @@ layer at (0,0) size 784x2330
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x96
-        RenderText {#text} at (0,1) size 376x94
-          text run at (0,1) width 360: ".zero {background-color: silver; padding: 0;}"
-          text run at (360,1) width 0: " "
-          text run at (0,17) width 368: ".one {padding: 0.5in; background-color: aqua;}"
-          text run at (368,17) width 0: " "
-          text run at (0,33) width 360: ".two {padding: 25px; background-color: aqua;}"
-          text run at (360,33) width 0: " "
-          text run at (0,49) width 368: ".three {padding: 5em; background-color: aqua;}"
-          text run at (368,49) width 0: " "
-          text run at (0,65) width 360: ".four {padding: 25%; background-color: aqua;}"
-          text run at (360,65) width 0: " "
-          text run at (0,81) width 376: ".five {padding: -20px; background-color: aqua;}"
-          text run at (376,81) width 0: " "
+        RenderText {#text} at (0,0) size 270x96
+          text run at (0,0) width 251: ".zero {background-color: silver; padding: 0;}"
+          text run at (251,0) width 0: " "
+          text run at (0,16) width 265: ".one {padding: 0.5in; background-color: aqua;}"
+          text run at (265,16) width 0: " "
+          text run at (0,32) width 264: ".two {padding: 25px; background-color: aqua;}"
+          text run at (264,32) width 0: " "
+          text run at (0,48) width 270: ".three {padding: 5em; background-color: aqua;}"
+          text run at (270,48) width 0: " "
+          text run at (0,64) width 264: ".four {padding: 25%; background-color: aqua;}"
+          text run at (264,64) width 0: " "
+          text run at (0,80) width 269: ".five {padding: -20px; background-color: aqua;}"
+          text run at (269,80) width 0: " "
       RenderBlock {HR} at (0,146) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,164) size 768x21 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 214x21

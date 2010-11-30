@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 750x32
-        RenderText {#text} at (0,1) size 552x30
-          text run at (0,1) width 240: "HTML {background-color: aqua;}"
-          text run at (240,1) width 0: " "
-          text run at (0,17) width 552: "BODY {background-color: green; background-image: none; margin: 25px;}"
-          text run at (552,17) width 0: " "
+        RenderText {#text} at (0,0) size 425x32
+          text run at (0,0) width 186: "HTML {background-color: aqua;}"
+          text run at (186,0) width 0: " "
+          text run at (0,16) width 425: "BODY {background-color: green; background-image: none; margin: 25px;}"
+          text run at (425,16) width 0: " "
       RenderBlock {HR} at (0,82) size 750x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,100) size 750x63
         RenderText {#text} at (0,0) size 741x63

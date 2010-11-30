@@ -7,20 +7,20 @@ layer at (0,0) size 784x794
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x112
-        RenderText {#text} at (0,1) size 560x110
-          text run at (0,1) width 208: "P.one {line-height: 200%;}"
-          text run at (208,1) width 0: " "
-          text run at (0,17) width 552: "SPAN.two {border-style: solid; border-width: 10px; border-color: red;"
-          text run at (552,17) width 0: " "
-          text run at (0,33) width 304: "          padding: 2pt; margin: 30pt;}"
-          text run at (304,33) width 0: " "
-          text run at (0,49) width 360: "P.three {font-size: 10pt; line-height: 12pt;}"
-          text run at (360,49) width 0: " "
-          text run at (0,65) width 560: "SPAN.four {border-style: solid; border-width: 12px; border-color: red;"
-          text run at (560,65) width 0: " "
-          text run at (0,81) width 192: "          padding: 2pt;}"
-          text run at (192,81) width 0: " "
-          text run at (0,97) width 0: " "
+        RenderText {#text} at (0,0) size 393x112
+          text run at (0,0) width 150: "P.one {line-height: 200%;}"
+          text run at (150,0) width 0: " "
+          text run at (0,16) width 391: "SPAN.two {border-style: solid; border-width: 10px; border-color: red;"
+          text run at (391,16) width 0: " "
+          text run at (0,32) width 199: "          padding: 2pt; margin: 30pt;}"
+          text run at (199,32) width 0: " "
+          text run at (0,48) width 241: "P.three {font-size: 10pt; line-height: 12pt;}"
+          text run at (241,48) width 0: " "
+          text run at (0,64) width 393: "SPAN.four {border-style: solid; border-width: 12px; border-color: red;"
+          text run at (393,64) width 0: " "
+          text run at (0,80) width 119: "          padding: 2pt;}"
+          text run at (119,80) width 0: " "
+          text run at (0,96) width 0: " "
       RenderBlock {HR} at (0,162) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,180) size 768x192
         RenderText {#text} at (0,5) size 207x21

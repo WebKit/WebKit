@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x21
           RenderText {#text} at (0,0) size 21x21
             text run at (0,0) width 21: "foo"
-          RenderInline {SPAN} at (0,0) size 24x14
-            RenderText {#text} at (21,5) size 24x14
-              text run at (21,5) width 24: "bar"
+          RenderInline {SPAN} at (0,0) size 18x16
+            RenderText {#text} at (21,3) size 18x16
+              text run at (21,3) width 18: "bar"
         RenderBlock {PRE} at (0,34) size 784x16
-          RenderText {#text} at (0,1) size 24x14
-            text run at (0,1) width 24: "baz"
+          RenderText {#text} at (0,0) size 21x16
+            text run at (0,0) width 21: "baz"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

@@ -7,18 +7,18 @@ layer at (0,0) size 784x782
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x96
-        RenderText {#text} at (0,1) size 200x94
-          text run at (0,1) width 136: "A {color: green;}"
-          text run at (136,1) width 0: " "
-          text run at (0,17) width 184: "A:link {color: purple;}"
-          text run at (184,17) width 0: " "
-          text run at (0,33) width 192: "A:visited {color: lime;}"
-          text run at (192,33) width 0: " "
-          text run at (0,49) width 200: "A:active {color: maroon;}"
-          text run at (200,49) width 0: " "
-          text run at (0,65) width 176: "#one {color: #006600;}"
-          text run at (176,65) width 0: " "
-          text run at (0,81) width 0: " "
+        RenderText {#text} at (0,0) size 143x96
+          text run at (0,0) width 93: "A {color: green;}"
+          text run at (93,0) width 0: " "
+          text run at (0,16) width 120: "A:link {color: purple;}"
+          text run at (120,16) width 0: " "
+          text run at (0,32) width 127: "A:visited {color: lime;}"
+          text run at (127,32) width 0: " "
+          text run at (0,48) width 143: "A:active {color: maroon;}"
+          text run at (143,48) width 0: " "
+          text run at (0,64) width 129: "#one {color: #006600;}"
+          text run at (129,64) width 0: " "
+          text run at (0,80) width 0: " "
       RenderBlock {HR} at (0,146) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,164) size 768x21
         RenderText {#text} at (0,0) size 536x21

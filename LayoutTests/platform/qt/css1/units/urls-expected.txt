@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 784x64
-        RenderText {#text} at (0,1) size 648x62
-          text run at (0,1) width 648: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
-          text run at (648,1) width 0: " "
-          text run at (0,17) width 296: "@import url(../resources/sec642.css);"
-          text run at (296,17) width 0: " "
-          text run at (0,33) width 352: "BODY {background: url(../resources/bg.gif);}"
-          text run at (352,33) width 0: " "
-          text run at (0,49) width 0: " "
+        RenderText {#text} at (0,0) size 480x64
+          text run at (0,0) width 480: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
+          text run at (480,0) width 0: " "
+          text run at (0,16) width 219: "@import url(../resources/sec642.css);"
+          text run at (219,16) width 0: " "
+          text run at (0,32) width 255: "BODY {background: url(../resources/bg.gif);}"
+          text run at (255,32) width 0: " "
+          text run at (0,48) width 0: " "
       RenderBlock {HR} at (0,114) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,132) size 784x21
         RenderText {#text} at (0,0) size 419x21

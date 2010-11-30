@@ -209,44 +209,44 @@ layer at (0,0) size 784x814
           RenderText {#text} at (384,0) size 9x20
             text run at (384,0) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,336) size 768x21
-        RenderInline {SPAN} at (0,0) size 353x21
-          RenderText {#text} at (0,0) size 337x21
-            text run at (0,0) width 337: "Using font \"cursive\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (337,0) size 8x21
-              text run at (337,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (345,0) size 8x21
-              text run at (345,0) width 8: "\x{A5}"
-        RenderInline {SPAN} at (0,0) size 8x21
-          RenderText {#text} at (353,0) size 8x21
-            text run at (353,0) width 8: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 366x20
+          RenderText {#text} at (0,0) size 348x20
+            text run at (0,0) width 348: "Using font \"cursive\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x20
+            RenderText {#text} at (348,0) size 9x20
+              text run at (348,0) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x20
+            RenderText {#text} at (357,0) size 9x20
+              text run at (357,0) width 9: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 9x20
+          RenderText {#text} at (366,0) size 9x20
+            text run at (366,0) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,357) size 768x21
-        RenderInline {SPAN} at (0,0) size 354x21
-          RenderText {#text} at (0,0) size 338x21
-            text run at (0,0) width 338: "Using font \"fantasy\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (338,0) size 8x21
-              text run at (338,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (346,0) size 8x21
-              text run at (346,0) width 8: "\x{A5}"
-        RenderInline {SPAN} at (0,0) size 8x21
-          RenderText {#text} at (354,0) size 8x21
-            text run at (354,0) width 8: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 366x20
+          RenderText {#text} at (0,0) size 348x20
+            text run at (0,0) width 348: "Using font \"fantasy\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x20
+            RenderText {#text} at (348,0) size 9x20
+              text run at (348,0) width 9: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 9x20
+            RenderText {#text} at (357,0) size 9x20
+              text run at (357,0) width 9: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 9x20
+          RenderText {#text} at (366,0) size 9x20
+            text run at (366,0) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,378) size 768x21
-        RenderInline {SPAN} at (0,0) size 440x14
-          RenderText {#text} at (0,5) size 424x14
-            text run at (0,5) width 424: "Using font \"monospace\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x14
-            RenderText {#text} at (424,5) size 8x14
-              text run at (424,5) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x14
-            RenderText {#text} at (432,5) size 8x14
-              text run at (432,5) width 8: "\x{A5}"
-        RenderInline {SPAN} at (0,0) size 8x14
-          RenderText {#text} at (440,5) size 8x14
-            text run at (440,5) width 8: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 330x16
+          RenderText {#text} at (0,3) size 316x16
+            text run at (0,3) width 316: "Using font \"monospace\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x16
+            RenderText {#text} at (316,3) size 7x16
+              text run at (316,3) width 7: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 7x16
+            RenderText {#text} at (323,3) size 7x16
+              text run at (323,3) width 7: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 7x16
+          RenderText {#text} at (330,3) size 7x16
+            text run at (330,3) width 7: "\x{A5}"
       RenderBlock {DIV} at (0,399) size 768x21
         RenderInline {SPAN} at (0,0) size 394x21
           RenderText {#text} at (0,0) size 386x21

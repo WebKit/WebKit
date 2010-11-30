@@ -7,19 +7,19 @@ layer at (0,0) size 786x1152
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x96
-        RenderText {#text} at (0,1) size 560x94
-          text run at (0,1) width 552: ".zero {background-color: silver; margin-right: 0; text-align: right;}"
-          text run at (552,1) width 0: " "
-          text run at (0,17) width 560: ".one {margin-right: 0.5in; text-align: right; background-color: aqua;}"
-          text run at (560,17) width 0: " "
-          text run at (0,33) width 552: ".two {margin-right: 25px; text-align: right; background-color: aqua;}"
-          text run at (552,33) width 0: " "
-          text run at (0,49) width 560: ".three {margin-right: 5em; text-align: right; background-color: aqua;}"
-          text run at (560,49) width 0: " "
-          text run at (0,65) width 552: ".four {margin-right: 25%; text-align: right; background-color: aqua;}"
-          text run at (552,65) width 0: " "
-          text run at (0,81) width 416: ".five {margin-right: -10px; background-color: aqua;}"
-          text run at (416,81) width 0: " "
+        RenderText {#text} at (0,0) size 387x96
+          text run at (0,0) width 368: ".zero {background-color: silver; margin-right: 0; text-align: right;}"
+          text run at (368,0) width 0: " "
+          text run at (0,16) width 382: ".one {margin-right: 0.5in; text-align: right; background-color: aqua;}"
+          text run at (382,16) width 0: " "
+          text run at (0,32) width 381: ".two {margin-right: 25px; text-align: right; background-color: aqua;}"
+          text run at (381,32) width 0: " "
+          text run at (0,48) width 387: ".three {margin-right: 5em; text-align: right; background-color: aqua;}"
+          text run at (387,48) width 0: " "
+          text run at (0,64) width 381: ".four {margin-right: 25%; text-align: right; background-color: aqua;}"
+          text run at (381,64) width 0: " "
+          text run at (0,80) width 292: ".five {margin-right: -10px; background-color: aqua;}"
+          text run at (292,80) width 0: " "
       RenderBlock {HR} at (0,146) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,164) size 768x21 [bgcolor=#C0C0C0]
         RenderText {#text} at (554,0) size 214x21

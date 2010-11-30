@@ -7,31 +7,31 @@ layer at (0,0) size 784x1873
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x192
-        RenderText {#text} at (0,1) size 288x190
-          text run at (0,1) width 160: "BODY {color: black;}"
-          text run at (160,1) width 0: " "
-          text run at (0,17) width 152: ".one {color: #080;}"
-          text run at (152,17) width 0: " "
-          text run at (0,33) width 176: ".two {color: #008000;}"
-          text run at (176,33) width 0: " "
-          text run at (0,49) width 232: ".three {color: rgb(0,128,0);}"
-          text run at (232,49) width 0: " "
-          text run at (0,65) width 240: ".four {color: rgb(0%,50%,0%);}"
-          text run at (240,65) width 0: " "
-          text run at (0,81) width 288: ".five {color: rgb(0.0%,50.0%,0.0%);}"
-          text run at (288,81) width 0: " "
-          text run at (0,97) width 160: ".six {color: green;}"
-          text run at (160,97) width 0: " "
-          text run at (0,113) width 232: ".seven {color: invalidValue;}"
-          text run at (232,113) width 0: " "
-          text run at (0,129) width 256: ".eight {color: rgb(0,128,1280);}"
-          text run at (256,129) width 0: " "
-          text run at (0,145) width 240: ".nine {color: rgb(0,128,255);}"
-          text run at (240,145) width 0: " "
-          text run at (0,161) width 264: ".ten {color: rgb(50%,-500%,60%);}"
-          text run at (264,161) width 0: " "
-          text run at (0,177) width 264: ".eleven {color: rgb(50%,0%,60%);}"
-          text run at (264,177) width 0: " "
+        RenderText {#text} at (0,0) size 208x192
+          text run at (0,0) width 120: "BODY {color: black;}"
+          text run at (120,0) width 0: " "
+          text run at (0,16) width 105: ".one {color: #080;}"
+          text run at (105,16) width 0: " "
+          text run at (0,32) width 125: ".two {color: #008000;}"
+          text run at (125,32) width 0: " "
+          text run at (0,48) width 154: ".three {color: rgb(0,128,0);}"
+          text run at (154,48) width 0: " "
+          text run at (0,64) width 176: ".four {color: rgb(0%,50%,0%);}"
+          text run at (176,64) width 0: " "
+          text run at (0,80) width 208: ".five {color: rgb(0.0%,50.0%,0.0%);}"
+          text run at (208,80) width 0: " "
+          text run at (0,96) width 105: ".six {color: green;}"
+          text run at (105,96) width 0: " "
+          text run at (0,112) width 161: ".seven {color: invalidValue;}"
+          text run at (161,112) width 0: " "
+          text run at (0,128) width 174: ".eight {color: rgb(0,128,1280);}"
+          text run at (174,128) width 0: " "
+          text run at (0,144) width 163: ".nine {color: rgb(0,128,255);}"
+          text run at (163,144) width 0: " "
+          text run at (0,160) width 197: ".ten {color: rgb(50%,-500%,60%);}"
+          text run at (197,160) width 0: " "
+          text run at (0,176) width 199: ".eleven {color: rgb(50%,0%,60%);}"
+          text run at (199,176) width 0: " "
       RenderBlock {HR} at (0,242) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,260) size 768x21
         RenderText {#text} at (0,0) size 205x21
@@ -57,11 +57,11 @@ layer at (0,0) size 784x1873
       RenderBlock {P} at (0,519) size 768x21
         RenderText {#text} at (0,0) size 430x21
           text run at (0,0) width 430: "This sentence should be black, because the value given for class "
-        RenderInline {CODE} at (0,0) size 48x14
-          RenderText {#text} at (430,5) size 48x14
-            text run at (430,5) width 48: ".seven"
-        RenderText {#text} at (478,0) size 68x21
-          text run at (478,0) width 68: " is invalid."
+        RenderInline {CODE} at (0,0) size 39x16
+          RenderText {#text} at (430,3) size 39x16
+            text run at (430,3) width 39: ".seven"
+        RenderText {#text} at (469,0) size 68x21
+          text run at (469,0) width 68: " is invalid."
       RenderBlock {P} at (0,556) size 768x42 [color=#0080FF]
         RenderText {#text} at (0,0) size 738x42
           text run at (0,0) width 738: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
@@ -84,51 +84,51 @@ layer at (0,0) size 784x1873
       RenderBlock {P} at (0,825) size 768x21 [color=#008800]
         RenderText {#text} at (0,0) size 426x21
           text run at (0,0) width 426: "This sentence should be a slightly different green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (426,5) size 40x14
-            text run at (426,5) width 40: "style"
-        RenderText {#text} at (466,0) size 67x21
-          text run at (466,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (426,3) size 28x16
+            text run at (426,3) width 28: "style"
+        RenderText {#text} at (454,0) size 67x21
+          text run at (454,0) width 67: " attribute."
       RenderBlock {P} at (0,862) size 768x21 [color=#008000]
         RenderText {#text} at (0,0) size 300x21
           text run at (0,0) width 300: "This sentence should be green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (300,5) size 40x14
-            text run at (300,5) width 40: "style"
-        RenderText {#text} at (340,0) size 67x21
-          text run at (340,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (300,3) size 28x16
+            text run at (300,3) width 28: "style"
+        RenderText {#text} at (328,0) size 67x21
+          text run at (328,0) width 67: " attribute."
       RenderBlock {P} at (0,899) size 768x21 [color=#008000]
         RenderText {#text} at (0,0) size 300x21
           text run at (0,0) width 300: "This sentence should be green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (300,5) size 40x14
-            text run at (300,5) width 40: "style"
-        RenderText {#text} at (340,0) size 67x21
-          text run at (340,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (300,3) size 28x16
+            text run at (300,3) width 28: "style"
+        RenderText {#text} at (328,0) size 67x21
+          text run at (328,0) width 67: " attribute."
       RenderBlock {P} at (0,936) size 768x21 [color=#008000]
         RenderText {#text} at (0,0) size 300x21
           text run at (0,0) width 300: "This sentence should be green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (300,5) size 40x14
-            text run at (300,5) width 40: "style"
-        RenderText {#text} at (340,0) size 67x21
-          text run at (340,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (300,3) size 28x16
+            text run at (300,3) width 28: "style"
+        RenderText {#text} at (328,0) size 67x21
+          text run at (328,0) width 67: " attribute."
       RenderBlock {P} at (0,973) size 768x21 [color=#008000]
         RenderText {#text} at (0,0) size 300x21
           text run at (0,0) width 300: "This sentence should be green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (300,5) size 40x14
-            text run at (300,5) width 40: "style"
-        RenderText {#text} at (340,0) size 67x21
-          text run at (340,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (300,3) size 28x16
+            text run at (300,3) width 28: "style"
+        RenderText {#text} at (328,0) size 67x21
+          text run at (328,0) width 67: " attribute."
       RenderBlock {P} at (0,1010) size 768x21 [color=#008000]
         RenderText {#text} at (0,0) size 300x21
           text run at (0,0) width 300: "This sentence should be green, and used the "
-        RenderInline {TT} at (0,0) size 40x14
-          RenderText {#text} at (300,5) size 40x14
-            text run at (300,5) width 40: "style"
-        RenderText {#text} at (340,0) size 67x21
-          text run at (340,0) width 67: " attribute."
+        RenderInline {TT} at (0,0) size 28x16
+          RenderText {#text} at (300,3) size 28x16
+            text run at (300,3) width 28: "style"
+        RenderText {#text} at (328,0) size 67x21
+          text run at (328,0) width 67: " attribute."
       RenderTable {TABLE} at (0,1047) size 768x810 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 766x808
           RenderTableRow {TR} at (0,0) size 766x29
@@ -165,11 +165,11 @@ layer at (0,0) size 784x1873
               RenderBlock {P} at (4,263) size 746x21
                 RenderText {#text} at (0,0) size 430x21
                   text run at (0,0) width 430: "This sentence should be black, because the value given for class "
-                RenderInline {CODE} at (0,0) size 48x14
-                  RenderText {#text} at (430,5) size 48x14
-                    text run at (430,5) width 48: ".seven"
-                RenderText {#text} at (478,0) size 68x21
-                  text run at (478,0) width 68: " is invalid."
+                RenderInline {CODE} at (0,0) size 39x16
+                  RenderText {#text} at (430,3) size 39x16
+                    text run at (430,3) width 39: ".seven"
+                RenderText {#text} at (469,0) size 68x21
+                  text run at (469,0) width 68: " is invalid."
               RenderBlock {P} at (4,300) size 746x42 [color=#0080FF]
                 RenderText {#text} at (0,0) size 738x42
                   text run at (0,0) width 738: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
@@ -192,48 +192,48 @@ layer at (0,0) size 784x1873
               RenderBlock {P} at (4,569) size 746x21 [color=#008800]
                 RenderText {#text} at (0,0) size 426x21
                   text run at (0,0) width 426: "This sentence should be a slightly different green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (426,5) size 40x14
-                    text run at (426,5) width 40: "style"
-                RenderText {#text} at (466,0) size 67x21
-                  text run at (466,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (426,3) size 28x16
+                    text run at (426,3) width 28: "style"
+                RenderText {#text} at (454,0) size 67x21
+                  text run at (454,0) width 67: " attribute."
               RenderBlock {P} at (4,606) size 746x21 [color=#008000]
                 RenderText {#text} at (0,0) size 300x21
                   text run at (0,0) width 300: "This sentence should be green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (300,5) size 40x14
-                    text run at (300,5) width 40: "style"
-                RenderText {#text} at (340,0) size 67x21
-                  text run at (340,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (300,3) size 28x16
+                    text run at (300,3) width 28: "style"
+                RenderText {#text} at (328,0) size 67x21
+                  text run at (328,0) width 67: " attribute."
               RenderBlock {P} at (4,643) size 746x21 [color=#008000]
                 RenderText {#text} at (0,0) size 300x21
                   text run at (0,0) width 300: "This sentence should be green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (300,5) size 40x14
-                    text run at (300,5) width 40: "style"
-                RenderText {#text} at (340,0) size 67x21
-                  text run at (340,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (300,3) size 28x16
+                    text run at (300,3) width 28: "style"
+                RenderText {#text} at (328,0) size 67x21
+                  text run at (328,0) width 67: " attribute."
               RenderBlock {P} at (4,680) size 746x21 [color=#008000]
                 RenderText {#text} at (0,0) size 300x21
                   text run at (0,0) width 300: "This sentence should be green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (300,5) size 40x14
-                    text run at (300,5) width 40: "style"
-                RenderText {#text} at (340,0) size 67x21
-                  text run at (340,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (300,3) size 28x16
+                    text run at (300,3) width 28: "style"
+                RenderText {#text} at (328,0) size 67x21
+                  text run at (328,0) width 67: " attribute."
               RenderBlock {P} at (4,717) size 746x21 [color=#008000]
                 RenderText {#text} at (0,0) size 300x21
                   text run at (0,0) width 300: "This sentence should be green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (300,5) size 40x14
-                    text run at (300,5) width 40: "style"
-                RenderText {#text} at (340,0) size 67x21
-                  text run at (340,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (300,3) size 28x16
+                    text run at (300,3) width 28: "style"
+                RenderText {#text} at (328,0) size 67x21
+                  text run at (328,0) width 67: " attribute."
               RenderBlock {P} at (4,754) size 746x21 [color=#008000]
                 RenderText {#text} at (0,0) size 300x21
                   text run at (0,0) width 300: "This sentence should be green, and used the "
-                RenderInline {TT} at (0,0) size 40x14
-                  RenderText {#text} at (300,5) size 40x14
-                    text run at (300,5) width 40: "style"
-                RenderText {#text} at (340,0) size 67x21
-                  text run at (340,0) width 67: " attribute."
+                RenderInline {TT} at (0,0) size 28x16
+                  RenderText {#text} at (300,3) size 28x16
+                    text run at (300,3) width 28: "style"
+                RenderText {#text} at (328,0) size 67x21
+                  text run at (328,0) width 67: " attribute."

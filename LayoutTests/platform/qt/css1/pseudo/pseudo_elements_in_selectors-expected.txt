@@ -7,14 +7,14 @@ layer at (0,0) size 784x645
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x64
-        RenderText {#text} at (0,1) size 264x62
-          text run at (0,1) width 264: "P:first-line {font-weight: bold;}"
-          text run at (264,1) width 0: " "
-          text run at (0,17) width 256: "P.two:first-line {color: green;}"
-          text run at (256,17) width 0: " "
-          text run at (0,33) width 256: "P:first-line.three {color: red;}"
-          text run at (256,33) width 0: " "
-          text run at (0,49) width 0: " "
+        RenderText {#text} at (0,0) size 170x64
+          text run at (0,0) width 170: "P:first-line {font-weight: bold;}"
+          text run at (170,0) width 0: " "
+          text run at (0,16) width 167: "P.two:first-line {color: green;}"
+          text run at (167,16) width 0: " "
+          text run at (0,32) width 162: "P:first-line.three {color: red;}"
+          text run at (162,32) width 0: " "
+          text run at (0,48) width 0: " "
       RenderBlock {HR} at (0,114) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,132) size 768x42
         RenderText {#text} at (0,0) size 718x42
@@ -26,11 +26,11 @@ layer at (0,0) size 784x645
           text run at (0,0) width 556: "The first line of this sentence should be boldfaced and green, thanks to its selector. "
           text run at (556,0) width 199: "If this is not the case, then the"
           text run at (0,21) width 610: "user agent may have failed to properly parse the selector, or it may simply not support the "
-        RenderInline {TT} at (0,0) size 88x14
-          RenderText {#text} at (610,26) size 88x14
-            text run at (610,26) width 88: ":first-line"
-        RenderText {#text} at (698,21) size 755x42
-          text run at (698,21) width 57: " pseudo-"
+        RenderInline {TT} at (0,0) size 50x16
+          RenderText {#text} at (610,24) size 50x16
+            text run at (610,24) width 50: ":first-line"
+        RenderText {#text} at (660,21) size 717x42
+          text run at (660,21) width 57: " pseudo-"
           text run at (0,42) width 56: "element."
       RenderBlock {P} at (0,269) size 768x84
         RenderText {#text} at (0,0) size 759x84
@@ -62,11 +62,12 @@ layer at (0,0) size 784x645
                   text run at (0,0) width 556: "The first line of this sentence should be boldfaced and green, thanks to its selector. "
                   text run at (556,0) width 174: "If this is not the case, then"
                   text run at (0,21) width 635: "the user agent may have failed to properly parse the selector, or it may simply not support the "
-                RenderInline {TT} at (0,0) size 88x14
-                  RenderText {#text} at (635,26) size 88x14
-                    text run at (635,26) width 88: ":first-line"
-                RenderText {#text} at (0,42) size 109x21
-                  text run at (0,42) width 109: "pseudo-element."
+                RenderInline {TT} at (0,0) size 50x16
+                  RenderText {#text} at (635,24) size 50x16
+                    text run at (635,24) width 50: ":first-line"
+                RenderText {#text} at (685,21) size 742x42
+                  text run at (685,21) width 57: " pseudo-"
+                  text run at (0,42) width 56: "element."
               RenderBlock {P} at (4,141) size 746x84
                 RenderText {#text} at (0,0) size 737x84
                   text run at (0,0) width 339: "The first line of this sentence should be boldfaced. "

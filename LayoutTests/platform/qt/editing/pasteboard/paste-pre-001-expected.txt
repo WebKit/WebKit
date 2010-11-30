@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x336 [border: (2px solid #0000FF)]
+      RenderBlock {DIV} at (0,0) size 784x338 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x93
           RenderText {#text} at (0,0) size 67x32
             text run at (0,0) width 67: "Tests: "
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
               text run at (121,62) width 84: "3918056"
           RenderText {#text} at (205,62) size 6x32
             text run at (205,62) width 6: "."
-        RenderBlock {DIV} at (14,123) size 756x175
+        RenderBlock {DIV} at (14,123) size 756x177
           RenderBlock (anonymous) at (0,0) size 756x93
             RenderText {#text} at (0,0) size 189x32
               text run at (0,0) width 189: "Expected Results: "
@@ -39,22 +39,22 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,31) size 727x63
               text run at (0,31) width 727: "The PRE tag and the formatting of the text inside of the PRE should be"
               text run at (0,62) width 583: "maintained. Should see this content in the red box below:"
-          RenderBlock {PRE} at (0,117) size 756x58
-            RenderText {#text} at (0,1) size 42x55
-              text run at (0,1) width 42: "foo"
-              text run at (42,1) width 0: " "
-              text run at (0,30) width 42: "bar"
-      RenderBlock {DIV} at (0,360) size 784x110
-        RenderBlock {DIV} at (0,0) size 784x110 [border: (2px solid #FF0000)]
-          RenderBlock {PRE} at (2,26) size 780x58
+          RenderBlock {PRE} at (0,117) size 756x60
+            RenderText {#text} at (0,0) size 34x59
+              text run at (0,0) width 33: "foo"
+              text run at (33,0) width 0: " "
+              text run at (0,30) width 34: "bar"
+      RenderBlock {DIV} at (0,362) size 784x112
+        RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
+          RenderBlock {PRE} at (2,26) size 780x60
             RenderBlock (anonymous) at (0,0) size 780x0
               RenderInline {SPAN} at (0,0) size 0x0
-            RenderBlock (anonymous) at (0,0) size 780x58
-              RenderBlock {PRE} at (0,0) size 780x58
-                RenderText {#text} at (0,1) size 42x55
-                  text run at (0,1) width 42: "foo"
-                  text run at (42,1) width 0: " "
-                  text run at (0,30) width 42: "bar"
-            RenderBlock (anonymous) at (0,82) size 780x0
+            RenderBlock (anonymous) at (0,0) size 780x60
+              RenderBlock {PRE} at (0,0) size 780x60
+                RenderText {#text} at (0,0) size 34x59
+                  text run at (0,0) width 33: "foo"
+                  text run at (33,0) width 0: " "
+                  text run at (0,30) width 34: "bar"
+            RenderBlock (anonymous) at (0,84) size 780x0
               RenderInline {SPAN} at (0,0) size 0x0
 caret: position 7 of child 0 {#text} of child 0 {PRE} of child 0 {SPAN} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of body

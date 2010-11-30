@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 784x48
-        RenderText {#text} at (0,1) size 288x46
-          text run at (0,1) width 288: ".one {list-style-position: outside;}"
-          text run at (288,1) width 0: " "
-          text run at (0,17) width 280: ".two {list-style-position: inside;}"
-          text run at (280,17) width 0: " "
-          text run at (0,33) width 0: " "
+        RenderText {#text} at (0,0) size 189x48
+          text run at (0,0) width 189: ".one {list-style-position: outside;}"
+          text run at (189,0) width 0: " "
+          text run at (0,16) width 180: ".two {list-style-position: inside;}"
+          text run at (180,16) width 0: " "
+          text run at (0,32) width 0: " "
       RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,116) size 784x42
         RenderListItem {LI} at (40,0) size 744x42

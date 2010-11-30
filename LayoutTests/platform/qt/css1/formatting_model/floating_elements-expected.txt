@@ -7,24 +7,24 @@ layer at (0,0) size 784x7269
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x144
-        RenderText {#text} at (0,1) size 480x142
-          text run at (0,1) width 272: "HR.minor {clear: both; width: 5%;}"
-          text run at (272,1) width 0: " "
-          text run at (0,17) width 400: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
-          text run at (400,17) width 0: " "
-          text run at (0,33) width 480: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
-          text run at (480,33) width 0: " "
-          text run at (0,49) width 432: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
-          text run at (432,49) width 0: " "
-          text run at (0,65) width 424: "   border: 1px solid lime; background-color: silver;}"
-          text run at (424,65) width 0: " "
-          text run at (0,81) width 456: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
-          text run at (456,81) width 0: " "
-          text run at (0,97) width 160: ".left {float: left;}"
-          text run at (160,97) width 0: " "
-          text run at (0,113) width 176: ".right {float: right;}"
-          text run at (176,113) width 0: " "
-          text run at (0,129) width 0: " "
+        RenderText {#text} at (0,0) size 346x144
+          text run at (0,0) width 196: "HR.minor {clear: both; width: 5%;}"
+          text run at (196,0) width 0: " "
+          text run at (0,16) width 294: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
+          text run at (294,16) width 0: " "
+          text run at (0,32) width 346: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
+          text run at (346,32) width 0: " "
+          text run at (0,48) width 307: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
+          text run at (307,48) width 0: " "
+          text run at (0,64) width 290: "   border: 1px solid lime; background-color: silver;}"
+          text run at (290,64) width 0: " "
+          text run at (0,80) width 318: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
+          text run at (318,80) width 0: " "
+          text run at (0,96) width 89: ".left {float: left;}"
+          text run at (89,96) width 0: " "
+          text run at (0,112) width 103: ".right {float: right;}"
+          text run at (103,112) width 0: " "
+          text run at (0,128) width 0: " "
       RenderBlock {HR} at (0,194) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,212) size 768x63
         RenderText {#text} at (0,0) size 737x63

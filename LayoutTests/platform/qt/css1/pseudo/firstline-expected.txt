@@ -7,14 +7,14 @@ layer at (0,0) size 784x771
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x64
-        RenderText {#text} at (0,1) size 360x62
-          text run at (0,1) width 224: "P:first-line {color: green;}"
-          text run at (224,1) width 0: " "
-          text run at (0,17) width 272: ".two:first-line {font-size: 200%;}"
-          text run at (272,17) width 0: " "
-          text run at (0,33) width 360: ".three:first-line {font-variant: small-caps;}"
-          text run at (360,33) width 0: " "
-          text run at (0,49) width 0: " "
+        RenderText {#text} at (0,0) size 235x64
+          text run at (0,0) width 143: "P:first-line {color: green;}"
+          text run at (143,0) width 0: " "
+          text run at (0,16) width 181: ".two:first-line {font-size: 200%;}"
+          text run at (181,16) width 0: " "
+          text run at (0,32) width 235: ".three:first-line {font-variant: small-caps;}"
+          text run at (235,32) width 0: " "
+          text run at (0,48) width 0: " "
       RenderBlock {HR} at (0,114) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,132) size 768x63
         RenderText {#text} at (0,0) size 757x63
@@ -37,13 +37,13 @@ layer at (0,0) size 784x771
           text run at (608,0) width 150: "Thus, if the first line is"
           text run at (0,21) width 754: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
           text run at (0,42) width 249: "(although the problem might be that "
-        RenderInline {CODE} at (0,0) size 80x14
-          RenderText {#text} at (249,47) size 80x14
-            text run at (249,47) width 80: "small-caps"
-        RenderText {#text} at (329,42) size 746x42
-          text run at (329,42) width 243: " is not supported by your browser). "
-          text run at (572,42) width 174: "This is extra text included"
-          text run at (0,63) width 558: "for the purposes of making the paragraph long enough to have more than one line."
+        RenderInline {CODE} at (0,0) size 63x16
+          RenderText {#text} at (249,45) size 63x16
+            text run at (249,45) width 63: "small-caps"
+        RenderText {#text} at (312,42) size 753x42
+          text run at (312,42) width 243: " is not supported by your browser). "
+          text run at (555,42) width 198: "This is extra text included for"
+          text run at (0,63) width 534: "the purposes of making the paragraph long enough to have more than one line."
       RenderTable {TABLE} at (0,432) size 768x323 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 766x321
           RenderTableRow {TR} at (0,0) size 766x29
@@ -77,10 +77,10 @@ layer at (0,0) size 784x771
                   text run at (608,0) width 136: "Thus, if the first line"
                   text run at (0,21) width 741: "is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this"
                   text run at (0,42) width 276: "test (although the problem might be that "
-                RenderInline {CODE} at (0,0) size 80x14
-                  RenderText {#text} at (276,47) size 80x14
-                    text run at (276,47) width 80: "small-caps"
-                RenderText {#text} at (356,42) size 711x42
-                  text run at (356,42) width 243: " is not supported by your browser). "
-                  text run at (599,42) width 112: "This is extra text"
+                RenderInline {CODE} at (0,0) size 63x16
+                  RenderText {#text} at (276,45) size 63x16
+                    text run at (276,45) width 63: "small-caps"
+                RenderText {#text} at (339,42) size 694x42
+                  text run at (339,42) width 243: " is not supported by your browser). "
+                  text run at (582,42) width 112: "This is extra text"
                   text run at (0,63) width 620: "included for the purposes of making the paragraph long enough to have more than one line."

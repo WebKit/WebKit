@@ -1,33 +1,33 @@
-layer at (0,0) size 784x785
+layer at (0,0) size 784x786
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x785
-  RenderBlock {html} at (0,0) size 784x785
-    RenderBody {body} at (8,16) size 768x761
-      RenderBlock {parsererror} at (16,0) size 736x140 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+layer at (0,0) size 784x786
+  RenderBlock {html} at (0,0) size 784x786
+    RenderBody {body} at (8,16) size 768x762
+      RenderBlock {parsererror} at (16,0) size 736x141 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 700x25
           RenderText {#text} at (0,0) size 324x25
             text run at (0,0) width 324: "This page contains the following errors:"
-        RenderBlock {div} at (18,63) size 700x14
-          RenderText {#text} at (0,0) size 497x13
-            text run at (0,0) width 497: "error on line 56 at column 56: Expected '>' or '/', but got '[a-zA-Z]'."
-        RenderBlock {h3} at (18,95) size 700x25
+        RenderBlock {div} at (18,63) size 700x15
+          RenderText {#text} at (0,0) size 346x15
+            text run at (0,0) width 346: "error on line 56 at column 56: Expected '>' or '/', but got '[a-zA-Z]'."
+        RenderBlock {h3} at (18,96) size 700x25
           RenderText {#text} at (0,0) size 429x25
             text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,156) size 768x605
-        RenderSVGRoot {svg} at (24,265) size 72x148
-          RenderSVGContainer {g} at (24,265) size 72x148 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-            RenderSVGContainer {g} at (24,265) size 72x148
+      RenderBlock (anonymous) at (0,157) size 768x605
+        RenderSVGRoot {svg} at (24,266) size 72x148
+          RenderSVGContainer {g} at (24,266) size 72x148 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+            RenderSVGContainer {g} at (24,266) size 72x148
               RenderSVGText {text} at (10,21) size 40x12 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 40x12
                   chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 10 width 40.00: "SVG to fit"
-              RenderSVGContainer {g} at (40,296) size 48x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
-                RenderSVGPath {rect} at (40,296) size 48x64 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-                RenderSVGContainer {g} at (48,312) size 32x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
-                  RenderSVGPath {circle} at (48,312) size 32x32 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
-                  RenderSVGPath {circle} at (56,320) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
-                  RenderSVGPath {circle} at (64,320) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
-                  RenderSVGPath {path} at (54,332) size 20x12 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+              RenderSVGContainer {g} at (40,297) size 48x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+                RenderSVGPath {rect} at (40,297) size 48x64 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+                RenderSVGContainer {g} at (48,313) size 32x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+                  RenderSVGPath {circle} at (48,313) size 32x32 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+                  RenderSVGPath {circle} at (56,321) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+                  RenderSVGPath {circle} at (64,321) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+                  RenderSVGPath {path} at (54,333) size 20x12 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
               RenderSVGText {text} at (10,101) size 45x12 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 45x12
                   chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 45.00: "Viewport 1"
-              RenderSVGContainer {g} at (8,172) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
+              RenderSVGContainer {g} at (8,173) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]

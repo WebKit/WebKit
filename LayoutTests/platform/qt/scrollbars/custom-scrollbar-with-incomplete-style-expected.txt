@@ -12,20 +12,20 @@ layer at (0,0) size 1550x1394
           text run at (0,0) width 622: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
       RenderBlock {PRE} at (0,231) size 771x1142 [bgcolor=#008000]
       RenderBlock {PRE} at (0,1386) size 1542x0 [bgcolor=#008000]
-layer at (8,126) size 100x100 clip at (8,126) size 87x87 scrollWidth 1432 scrollHeight 111
+layer at (8,126) size 100x100 clip at (8,126) size 87x87 scrollWidth 1068 scrollHeight 112
   RenderBlock {PRE} at (0,118) size 100x100 [bgcolor=#008000]
-    RenderText {#text} at (0,1) size 1432x110
-      text run at (0,1) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,1) width 0: " "
-      text run at (0,17) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,17) width 0: " "
-      text run at (0,33) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,33) width 0: " "
-      text run at (0,49) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,49) width 0: " "
-      text run at (0,65) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,65) width 0: " "
-      text run at (0,81) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,81) width 0: " "
-      text run at (0,97) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-      text run at (1432,97) width 0: " "
+    RenderText {#text} at (0,0) size 1068x112
+      text run at (0,0) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,0) width 0: " "
+      text run at (0,16) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,16) width 0: " "
+      text run at (0,32) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,32) width 0: " "
+      text run at (0,48) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,48) width 0: " "
+      text run at (0,64) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,64) width 0: " "
+      text run at (0,80) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,80) width 0: " "
+      text run at (0,96) width 1068: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1068,96) width 0: " "

@@ -7,24 +7,24 @@ layer at (0,0) size 784x2259
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x144
-        RenderText {#text} at (0,1) size 560x142
-          text run at (0,1) width 344: "P.test {background: white; font-size: 20px;"
-          text run at (344,1) width 0: " "
-          text run at (0,17) width 560: "        margin-left: 30px; margin-right: 10px; padding: 0; border: 0;}"
-          text run at (560,17) width 0: " "
-          text run at (0,33) width 312: "IMG {padding: 0; border: 0; margin: 0;}"
-          text run at (312,33) width 0: " "
-          text run at (0,49) width 200: "P.test IMG {float: left;}"
-          text run at (200,49) width 0: " "
-          text run at (0,65) width 352: "#img2 {margin-top: 30px; margin-left: 30px;}"
-          text run at (352,65) width 0: " "
-          text run at (0,81) width 368: "#img3 {margin-top: -30px; margin-left: -30px;}"
-          text run at (368,81) width 0: " "
-          text run at (0,97) width 384: "#img4 {margin-right: 30px; margin-bottom: 30px;}"
-          text run at (384,97) width 0: " "
-          text run at (0,113) width 400: "#img5 {margin-right: -30px; margin-bottom: -30px;}"
-          text run at (400,113) width 0: " "
-          text run at (0,129) width 0: " "
+        RenderText {#text} at (0,0) size 376x144
+          text run at (0,0) width 246: "P.test {background: white; font-size: 20px;"
+          text run at (246,0) width 0: " "
+          text run at (0,16) width 376: "        margin-left: 30px; margin-right: 10px; padding: 0; border: 0;}"
+          text run at (376,16) width 0: " "
+          text run at (0,32) width 222: "IMG {padding: 0; border: 0; margin: 0;}"
+          text run at (222,32) width 0: " "
+          text run at (0,48) width 131: "P.test IMG {float: left;}"
+          text run at (131,48) width 0: " "
+          text run at (0,64) width 253: "#img2 {margin-top: 30px; margin-left: 30px;}"
+          text run at (253,64) width 0: " "
+          text run at (0,80) width 261: "#img3 {margin-top: -30px; margin-left: -30px;}"
+          text run at (261,80) width 0: " "
+          text run at (0,96) width 282: "#img4 {margin-right: 30px; margin-bottom: 30px;}"
+          text run at (282,96) width 0: " "
+          text run at (0,112) width 290: "#img5 {margin-right: -30px; margin-bottom: -30px;}"
+          text run at (290,112) width 0: " "
+          text run at (0,128) width 0: " "
       RenderBlock {HR} at (0,194) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (30,216) size 728x104 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 702x104

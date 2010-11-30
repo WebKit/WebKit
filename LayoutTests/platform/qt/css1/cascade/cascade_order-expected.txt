@@ -7,28 +7,28 @@ layer at (0,0) size 784x873
         RenderText {#text} at (0,0) size 380x21
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,37) size 768x176
-        RenderText {#text} at (0,1) size 576x174
-          text run at (0,1) width 576: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
-          text run at (576,1) width 0: " "
-          text run at (0,17) width 152: "LI {color: purple;}"
-          text run at (152,17) width 0: " "
-          text run at (0,33) width 160: "UL LI {color: blue;}"
-          text run at (160,33) width 0: " "
-          text run at (0,49) width 184: "UL LI LI {color: gray;}"
-          text run at (184,49) width 0: " "
-          text run at (0,65) width 176: "LI.red {color: green;}"
-          text run at (176,65) width 0: " "
-          text run at (0,81) width 216: "UL LI.mar {color: #660000;}"
-          text run at (216,81) width 0: " "
-          text run at (0,97) width 200: "UL LI#gre {color: green;}"
-          text run at (200,97) width 0: " "
-          text run at (0,113) width 160: ".test {color: blue;}"
-          text run at (160,113) width 0: " "
-          text run at (0,129) width 176: ".test {color: purple;}"
-          text run at (176,129) width 0: " "
-          text run at (0,145) width 296: ".one {text-decoration: line-through;}"
-          text run at (296,145) width 0: " "
-          text run at (0,161) width 0: " "
+        RenderText {#text} at (0,0) size 432x176
+          text run at (0,0) width 432: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
+          text run at (432,0) width 0: " "
+          text run at (0,16) width 98: "LI {color: purple;}"
+          text run at (98,16) width 0: " "
+          text run at (0,32) width 107: "UL LI {color: blue;}"
+          text run at (107,32) width 0: " "
+          text run at (0,48) width 123: "UL LI LI {color: gray;}"
+          text run at (123,48) width 0: " "
+          text run at (0,64) width 117: "LI.red {color: green;}"
+          text run at (117,64) width 0: " "
+          text run at (0,80) width 158: "UL LI.mar {color: #660000;}"
+          text run at (158,80) width 0: " "
+          text run at (0,96) width 140: "UL LI#gre {color: green;}"
+          text run at (140,96) width 0: " "
+          text run at (0,112) width 102: ".test {color: blue;}"
+          text run at (102,112) width 0: " "
+          text run at (0,128) width 113: ".test {color: purple;}"
+          text run at (113,128) width 0: " "
+          text run at (0,144) width 202: ".one {text-decoration: line-through;}"
+          text run at (202,144) width 0: " "
+          text run at (0,160) width 0: " "
       RenderBlock {HR} at (0,226) size 768x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,244) size 768x168
         RenderListItem {LI} at (40,0) size 728x21 [color=#0000FF]
@@ -71,11 +71,11 @@ layer at (0,0) size 784x873
       RenderBlock {P} at (0,465) size 768x21 [color=#800080]
         RenderText {#text} at (0,0) size 218x21
           text run at (0,0) width 218: "This sentence should be purple ["
-        RenderInline {CODE} at (0,0) size 96x14
-          RenderText {#text} at (218,5) size 96x14
-            text run at (218,5) width 96: "class=\"test\""
-        RenderText {#text} at (314,0) size 9x21
-          text run at (314,0) width 9: "]."
+        RenderInline {CODE} at (0,0) size 71x16
+          RenderText {#text} at (218,3) size 71x16
+            text run at (218,3) width 71: "class=\"test\""
+        RenderText {#text} at (289,0) size 9x21
+          text run at (289,0) width 9: "]."
       RenderBlock {P} at (0,502) size 768x21
         RenderText {#text} at (0,0) size 736x21
           text run at (0,0) width 736: "This text should be stricken (overriding the imported underline; only works if LINKed sheets are supported)."
@@ -132,11 +132,11 @@ layer at (0,0) size 784x873
               RenderBlock {P} at (4,225) size 736x21 [color=#800080]
                 RenderText {#text} at (0,0) size 218x21
                   text run at (0,0) width 218: "This sentence should be purple ["
-                RenderInline {CODE} at (0,0) size 96x14
-                  RenderText {#text} at (218,5) size 96x14
-                    text run at (218,5) width 96: "class=\"test\""
-                RenderText {#text} at (314,0) size 9x21
-                  text run at (314,0) width 9: "]."
+                RenderInline {CODE} at (0,0) size 71x16
+                  RenderText {#text} at (218,3) size 71x16
+                    text run at (218,3) width 71: "class=\"test\""
+                RenderText {#text} at (289,0) size 9x21
+                  text run at (289,0) width 9: "]."
               RenderBlock {P} at (4,262) size 736x21
                 RenderText {#text} at (0,0) size 736x21
                   text run at (0,0) width 736: "This text should be stricken (overriding the imported underline; only works if LINKed sheets are supported)."
