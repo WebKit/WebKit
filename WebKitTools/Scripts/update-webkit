@@ -126,5 +126,8 @@ sub runSvnUpdate()
 
 sub runGitUpdate()
 {
+    # Doing a git fetch first allows setups with svn-remote.svn.fetch = trunk:refs/remotes/origin/master
+    # to perform the rebase much much faster.
+    system("git", "fetch") == 0 or die;
     system("git", "svn", "rebase") == 0 or die;
 }
