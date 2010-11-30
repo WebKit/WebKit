@@ -4,6 +4,14 @@
 
         <rdar://problem/8694997> DumpRenderTree fails to build.
 
+        * DumpRenderTree/mac/PerlSupport/Makefile: Skip generating wrappers.
+
+2010-11-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8694997> DumpRenderTree fails to build.
+
         * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Renamed from WebKitTools/DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupportTiger.pm.
         * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Renamed from WebKitTools/DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport_wrapTiger.c.
         * DumpRenderTree/mac/PerlSupport/Makefile:

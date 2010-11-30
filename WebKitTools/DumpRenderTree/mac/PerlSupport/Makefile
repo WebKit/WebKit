@@ -31,10 +31,15 @@ DYLIB=$(OUTPUT_DIR)/DumpRenderTreeSupport.dylib
 DUMPRENDERTREE=$(OUTPUT_DIR)/DumpRenderTree
 PERL=/usr/bin/perl
 
-OSX_VERSION=$(shell sw_vers -productVersion | cut -d. -f 2)
+OSX_VERSION = $(shell sw_vers -productVersion | cut -d. -f 2)
+ifeq "$(OSX_VERSION)" "4"
+GENERATE_WRAPPER = NO
+endif
+ifeq "$(OSX_VERSION)" "7"
+GENERATE_WRAPPER = NO
+endif
 
-ifneq "$(OSX_VERSION)" "4"
-
+ifneq "$(GENERATE_WRAPPER)" "NO"
 
 SWIG=/usr/bin/swig
 
