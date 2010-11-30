@@ -3198,3 +3198,13 @@ BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = T
 BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
+
+BUG50282 MAC : fast/images/imagemap-case.html = IMAGE
+BUG50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
+BUG50282 MAC : fast/images/imagemap-focus-ring.html = IMAGE
+BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
+BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
+BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
+BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
+BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
+BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
