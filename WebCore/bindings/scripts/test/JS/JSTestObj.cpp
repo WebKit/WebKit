@@ -1057,14 +1057,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(Ex
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 1));
+    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 1));
     size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));
     log* intArg = tolog(exec->argument(0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    imp->customArgsAndException(intArg, scriptArguments.release(), callStack.release(), ec);
+    imp->customArgsAndException(intArg, scriptArguments, callStack, ec);
     setDOMException(exec, ec);
     return JSValue::encode(jsUndefined());
 }

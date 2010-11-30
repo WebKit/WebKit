@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+PassRefPtr<ScriptArguments> ScriptArguments::create(ScriptState* scriptState, Vector<ScriptValue>& arguments)
+{
+    return adoptRef(new ScriptArguments(scriptState, arguments));
+}
+
 ScriptArguments::ScriptArguments(ScriptState* scriptState, Vector<ScriptValue>& arguments)
     : m_scriptState(scriptState)
 {

@@ -32,28 +32,32 @@
 #define ScriptCallStack_h
 
 #include "ScriptCallFrame.h"
-#include <wtf/Noncopyable.h>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class InspectorArray;
 
-class ScriptCallStack : public Noncopyable {
+class ScriptCallStack : public RefCounted<ScriptCallStack> {
 public:
     static const size_t maxCallStackSizeToCapture = 200;
+    
+    static PassRefPtr<ScriptCallStack> create(Vector<ScriptCallFrame>&);
 
-    ScriptCallStack(Vector<ScriptCallFrame>&);
     ~ScriptCallStack();
 
-    const ScriptCallFrame &at(size_t);
-    size_t size();
+    const ScriptCallFrame &at(size_t) const;
+    size_t size() const;
     static bool stackTrace(int, const RefPtr<InspectorArray>&);
 
     bool isEqual(ScriptCallStack*) const;
     PassRefPtr<InspectorArray> buildInspectorObject() const;
 
 private:
+    ScriptCallStack(Vector<ScriptCallFrame>&);
+
     Vector<ScriptCallFrame> m_frames;
 };
 

@@ -764,13 +764,13 @@ static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments&
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
+    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
     size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
     if (!callStack)
         return v8::Undefined();
     EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(args[0]) ? V8log::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
-    imp->customArgsAndException(intArg, scriptArguments.release(), callStack.release(), ec);
+    imp->customArgsAndException(intArg, scriptArguments, callStack, ec);
     if (UNLIKELY(ec))
         goto fail;
     return v8::Handle<v8::Value>();

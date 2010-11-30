@@ -33,15 +33,18 @@
 
 #include "PlatformString.h"
 #include "ScriptState.h"
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class ScriptValue;
 
-class ScriptArguments {
+class ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    ScriptArguments(ScriptState*, Vector<ScriptValue>& arguments);
+    static PassRefPtr<ScriptArguments> create(ScriptState*, Vector<ScriptValue>& arguments);
+
     ~ScriptArguments();
 
     const ScriptValue& argumentAt(size_t) const;
@@ -53,6 +56,8 @@ public:
     bool isEqual(ScriptArguments*) const;
 
 private:
+    ScriptArguments(ScriptState*, Vector<ScriptValue>& arguments);
+
     ScriptStateProtectedPtr m_scriptState;
     Vector<ScriptValue> m_arguments;
 };

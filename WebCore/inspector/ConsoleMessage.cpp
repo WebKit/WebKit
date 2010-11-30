@@ -40,7 +40,6 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -56,7 +55,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack> callStack, unsigned g)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned g)
     : m_source(s)
     , m_type(t)
     , m_level(l)

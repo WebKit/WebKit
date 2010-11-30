@@ -114,7 +114,7 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     String errorMessage = toWebCoreString(errorMessageString);
 
     v8::Handle<v8::StackTrace> stackTrace = message->GetStackTrace();
-    OwnPtr<ScriptCallStack> callStack;
+    RefPtr<ScriptCallStack> callStack;
     // Currently stack trace is only collected when inspector is open.
     if (!stackTrace.IsEmpty() && stackTrace->GetFrameCount() > 0) {
         v8::Local<v8::Context> context = v8::Context::GetEntered();
@@ -125,10 +125,10 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
     String resourceNameString = useURL ? frame->document()->url() : toWebCoreString(resourceName);
     V8ConsoleMessage consoleMessage(errorMessage, resourceNameString, message->GetLineNumber());
-    consoleMessage.dispatchNow(page, callStack.release());
+    consoleMessage.dispatchNow(page, callStack);
 }
 
-void V8ConsoleMessage::dispatchNow(Page* page, PassOwnPtr<ScriptCallStack> callStack)
+void V8ConsoleMessage::dispatchNow(Page* page, PassRefPtr<ScriptCallStack> callStack)
 {
     ASSERT(page);
 

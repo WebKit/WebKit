@@ -32,7 +32,7 @@
 #define ScriptCallFrame_h
 
 #include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

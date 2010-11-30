@@ -57,23 +57,23 @@ JSValue JSConsole::profiles(ExecState* exec) const
 
 JSValue JSConsole::profile(ExecState* exec)
 {
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
     const String& title = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
 
-    impl()->profile(title, exec, callStack.release());
+    impl()->profile(title, exec, callStack);
     return jsUndefined();
 }
 
 JSValue JSConsole::profileEnd(ExecState* exec)
 {
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
     const String& title = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
 
-    impl()->profileEnd(title, exec, callStack.release());
+    impl()->profileEnd(title, exec, callStack);
     return jsUndefined();
 }
 

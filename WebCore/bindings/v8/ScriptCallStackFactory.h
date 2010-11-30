@@ -32,10 +32,12 @@
 #define ScriptCallStackFactory_h
 
 #include <v8.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
+class ScriptArguments;
+class ScriptCallStack;
 class ScriptState;
 
 const v8::StackTrace::StackTraceOptions stackTraceOptions = static_cast<v8::StackTrace::StackTraceOptions>(
@@ -44,12 +46,9 @@ const v8::StackTrace::StackTraceOptions stackTraceOptions = static_cast<v8::Stac
     | v8::StackTrace::kScriptNameOrSourceURL
     | v8::StackTrace::kFunctionName);
 
-class ScriptArguments;
-class ScriptCallStack;
-
-PassOwnPtr<ScriptCallStack> createScriptCallStack(v8::Local<v8::Context>, v8::Handle<v8::StackTrace>, size_t maxStackSize);
-PassOwnPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize);
-PassOwnPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount);
+PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Local<v8::Context>, v8::Handle<v8::StackTrace>, size_t maxStackSize);
+PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize);
+PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount);
 
 } // namespace WebCore
 

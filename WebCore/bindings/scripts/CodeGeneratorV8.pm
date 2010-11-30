@@ -1265,9 +1265,9 @@ END
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         push(@implContentDecls, <<END);
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
+    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
     size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
     if (!callStack)
         return v8::Undefined();
 END
@@ -2651,7 +2651,7 @@ sub GenerateFunctionCallString()
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         $functionString .= ", " if $index;
-        $functionString .= "scriptArguments.release(), callStack.release()";
+        $functionString .= "scriptArguments, callStack";
         $index += 2;
     }
 

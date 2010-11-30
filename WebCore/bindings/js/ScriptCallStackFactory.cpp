@@ -48,7 +48,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-PassOwnPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
+PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
     CallFrame* callFrame = exec;
@@ -75,16 +75,16 @@ PassOwnPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
             break;
         callFrame = callFrame->callerFrame();
     }
-    return new ScriptCallStack(frames);
+    return ScriptCallStack::create(frames);
 }
 
-PassOwnPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
+PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
 {
     Vector<ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
         arguments.append(ScriptValue(exec->argument(i)));
-    return new ScriptArguments(exec, arguments);
+    return ScriptArguments::create(exec, arguments);
 }
 
 bool ScriptCallStack::stackTrace(int, const RefPtr<InspectorArray>&)
