@@ -528,9 +528,21 @@ void GraphicsContext::fillPath()
         if (shadow->m_type != ContextShadow::BlurShadow
             && !m_common->state.fillPattern && !m_common->state.fillGradient)
         {
-            p->translate(m_data->shadow.offset());
-            p->fillPath(path, QColor(m_data->shadow.m_color));
-            p->translate(-m_data->shadow.offset());
+            QPointF offset = shadow->offset();
+            const QTransform transform = p->transform();
+            if (transform.isScaling()) {
+                // If scaling is required, find the new coord for shadow origin,
+                // so that the relative offset to its shape is kept.
+                QPointF translatedOffset(offset.x() / transform.m11(),
+                                         offset.y() / transform.m22());
+                path.translate(translatedOffset);
+                p->fillPath(path, QColor(shadow->m_color));
+                path.translate(-translatedOffset);
+            } else {
+                p->translate(offset);
+                p->fillPath(path, QColor(shadow->m_color));
+                p->translate(-offset);
+            }
         } else {
             QPainter* shadowPainter = shadow->beginShadowLayer(p, path.controlPointRect());
             if (shadowPainter) {
