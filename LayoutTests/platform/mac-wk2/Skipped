@@ -2006,6 +2006,9 @@ plugins/get-url-with-blank-target.html
 fast/parser/remove-misnested-iframe-in-beforeload.html
 fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
+# This test seems to be making subsequent tests time out.
+http/tests/navigation/changing-frame-hierarchy-in-onload.html
+
 # Unexplained failures that were formerly in the WebKitTestRunner needs to print onunload handler list.
 fast/events/onunload-clears-onbeforeunload.html
 
@@ -2199,7 +2202,6 @@ http/tests/misc/slow-loading-mask.html
 http/tests/misc/unloadable-script.html
 http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/back-send-referrer.html
-http/tests/navigation/document-location-onload.html
 http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
 http/tests/security/cross-frame-access-put.html
