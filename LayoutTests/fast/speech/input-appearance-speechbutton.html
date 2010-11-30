@@ -30,6 +30,18 @@ for (var i = 0; i < cells.length; ++i) {
   div.innerHTML = cells[i];
   document.getElementById('p' + (i + 1)).appendChild(div);
 }
+
+// Also check that setting the attribute from script renders similarly.
+var inputWithAttribute = document.createElement('input');
+document.body.appendChild(inputWithAttribute);
+inputWithAttribute.setAttribute('x-webkit-speech', 'x-webkit-speech');
+
+// Similar to above, check if removing the attribute with script renders an empty input field.
+var inputWithoutAttribute = document.createElement('input');
+inputWithoutAttribute.setAttribute('x-webkit-speech', 'x-webkit-speech');
+document.body.appendChild(inputWithoutAttribute);
+inputWithoutAttribute.removeAttribute('x-webkit-speech');
+
 </script>
 </body>
 </html>

@@ -777,7 +777,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 #if ENABLE(INPUT_SPEECH)
     else if (attr->name() == webkitspeechAttr) {
       if (renderer())
-          renderer()->updateFromElement();
+          toRenderTextControlSingleLine(renderer())->speechAttributeChanged();
       setNeedsStyleRecalc();
     } else if (attr->name() == onwebkitspeechchangeAttr)
         setAttributeEventListener(eventNames().webkitspeechchangeEvent, createAttributeEventListener(this, attr));
