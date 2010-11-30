@@ -513,7 +513,7 @@ void GraphicsContext::fillPath(const Path& path)
             && !m_common->state.fillPattern && !m_common->state.fillGradient)
         {
             QPointF offset = shadow->offset();
-            const QTransform transform = p->transform();
+            const QTransform& transform = p->transform();
             if (transform.isScaling()) {
                 // If scaling is required, find the new coord for shadow origin,
                 // so that the relative offset to its shape is kept.
@@ -567,7 +567,7 @@ void GraphicsContext::strokePath(const Path& path)
             QPen shadowPen(pen);
             shadowPen.setColor(m_data->shadow.m_color);
             QPointF offset = shadow->offset();
-            const QTransform transform = p->transform();
+            const QTransform& transform = p->transform();
             if (transform.isScaling()) {
                 // If scaling is required, find the new coord for shadow origin,
                 // so that the relative offset to its shape is kept.
@@ -721,7 +721,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
                 // without using the shadow layer at all.
                 QColor shadowColor = shadow->m_color;
                 shadowColor.setAlphaF(shadowColor.alphaF() * p->brush().color().alphaF());
-                const QTransform transform = p->transform();
+                const QTransform& transform = p->transform();
                 if (transform.isScaling()) {
                     p->fillRect(normalizedRect.translated(static_cast<qreal>(shadow->offset().x()) / transform.m11(),
                                                           static_cast<qreal>(shadow->offset().y()  / transform.m22())),
