@@ -92,3 +92,13 @@ function getTracUrl(layoutTestPath)
 {
   return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + layoutTestPath;
 }
+
+function getSortedKeys(obj)
+{
+    var keys = [];
+    for (var key in obj) {
+        keys.push(key);
+    }
+    keys.sort();
+    return keys;
+}

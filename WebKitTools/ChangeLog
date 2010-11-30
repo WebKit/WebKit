@@ -1,3 +1,22 @@
+2010-11-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: baseline display tweaks
+        https://bugs.webkit.org/show_bug.cgi?id=50207
+        
+        Determine which baselines were used when running the tests and higlight
+        them in the UI. Sort platform names alphabetically.
+        
+        Also makes the server URL be launched in the user's browser
+        automatically.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/util.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py:
+
 2010-11-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -92,7 +92,7 @@ function main()
             var platformOption = document.createElement('option');
             platformOption.value = platform;
             platformOption.textContent = platform;
-  
+
             var targetOption = platformOption.cloneNode(true);
             targetOption.selected = platform == platforms.defaultPlatform;
             $('baseline-target').appendChild(targetOption);
@@ -141,7 +141,7 @@ function displayResults()
 
     selectFailureType();
 
-    document.body.classList.remove('loading');
+    document.body.className = '';
 }
 
 /**
@@ -253,13 +253,17 @@ function selectTest()
     currentBaselines.textContent = '';
     var baselines = results.tests[selectedTest].baselines;
     var testName = selectedTest.split('.').slice(0, -1).join('.');
-    for (var platform in baselines) {
-        if (currentBaselines.firstChild) {
+    getSortedKeys(baselines).forEach(function(platform, i) {
+        if (i != 0) {
             currentBaselines.appendChild(document.createTextNode('; '));
         }
-        currentBaselines.appendChild(document.createTextNode(platform + ' ('));
-        for (var i = 0, extension; extension = baselines[platform][i]; i++) {
-            if (i != 0) {
+        var platformName = document.createElement('span');
+        platformName.className = 'platform';
+        platformName.textContent = platform;
+        currentBaselines.appendChild(platformName);
+        currentBaselines.appendChild(document.createTextNode(' ('));
+        getSortedKeys(baselines[platform]).forEach(function(extension, j) {
+            if (j != 0) {
                 currentBaselines.appendChild(document.createTextNode(', '));
             }
             var link = document.createElement('a');
@@ -275,10 +279,13 @@ function selectTest()
                 link.textContent = extension.substring(1);
             }
             link.target = '_blank';
+            if (baselines[platform][extension]) {
+                link.className = 'was-used-for-test';
+            }
             currentBaselines.appendChild(link);
-        }
+        });
         currentBaselines.appendChild(document.createTextNode(')'));
-    }
+    });
 
     updateState();
     loupe.hide();

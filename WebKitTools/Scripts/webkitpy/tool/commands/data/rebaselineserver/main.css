@@ -217,6 +217,23 @@ a, .link {
   color: gray;
 }
 
+#current-baselines {
+  font-weight: normal !important;
+}
+
+#current-baselines .platform {
+  font-weight: bold;
+}
+
+#current-baselines a {
+  color: #ddf;
+}
+
+#current-baselines .was-used-for-test {
+  color: #aaf;
+  font-weight: bold;
+}
+
 #action-buttons {
   float: right;
 }
