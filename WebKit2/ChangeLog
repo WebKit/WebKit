@@ -1,3 +1,16 @@
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add plug-in process shim
+        https://bugs.webkit.org/show_bug.cgi?id=50261
+
+        * Configurations/PluginProcessShim.xcconfig: Added.
+        * PluginProcess/mac/PluginProcessShim.cpp: Added.
+        (PluginProcessShimInitialize):
+        * PluginProcess/mac/PluginProcessShim.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-11-30  Brian Weinstein  <bweinstein@apple.com>
 
         Fix the Windows build by copying WKFindOptions.h into WebKitOutputDir with the other headers.

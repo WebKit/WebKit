@@ -165,6 +165,9 @@
 		1AB7D72D1288CAAD00CFD08C /* WebDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */; };
 		1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D78B1288CD9A00CFD08C /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */; };
+		1AC25FBC12A48EDA00BD2671 /* PluginProcessShim.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */; };
+		1AC25FC212A48F6000BD2671 /* PluginProcessShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */; };
+		1AC25FDC12A4902700BD2671 /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC41AC51263C88300054E94 /* BinarySemaphore.h */; };
 		1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
@@ -559,6 +562,13 @@
 			remoteGlobalIDString = 1A50DB1D110A3BDC000D3FE5;
 			remoteInfo = WebProcess;
 		};
+		1AC25FD712A48FD500BD2671 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
+			remoteInfo = PluginProcessShim;
+		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -577,6 +587,17 @@
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AC25FDD12A4904500BD2671 /* Copy Plug-in Process Shim */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = WebProcess.app/Contents/MacOS;
+			dstSubfolderSpec = 16;
+			files = (
+				1AC25FDC12A4902700BD2671 /* PluginProcessShim.dylib in Copy Plug-in Process Shim */,
+			);
+			name = "Copy Plug-in Process Shim";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -729,6 +750,10 @@
 		1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDownloadClient.cpp; sourceTree = "<group>"; };
 		1AB7D78B1288CD9A00CFD08C /* WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownload.h; sourceTree = "<group>"; };
 		1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKDownload.cpp; sourceTree = "<group>"; };
+		1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessShim.h; sourceTree = "<group>"; };
+		1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessShim.cpp; sourceTree = "<group>"; };
+		1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
 		1AC41AC51263C88300054E94 /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
@@ -1130,6 +1155,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1AC25FAE12A48EA700BD2671 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1154,6 +1186,7 @@
 			children = (
 				8DC2EF5B0486A6940098B216 /* WebKit2.framework */,
 				1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */,
+				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1253,6 +1286,8 @@
 			children = (
 				1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */,
 				1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */,
+				1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */,
+				1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1264,6 +1299,7 @@
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
+				1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
 				5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */,
@@ -2170,6 +2206,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		1AC25FAC12A48EA700BD2671 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF500486A6940098B216 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2443,16 +2486,35 @@
 			buildPhases = (
 				1A50DB1A110A3BDC000D3FE5 /* Resources */,
 				1A50DB1B110A3BDC000D3FE5 /* Sources */,
+				1AC25FDD12A4904500BD2671 /* Copy Plug-in Process Shim */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1AC25FD812A48FD500BD2671 /* PBXTargetDependency */,
 				1A50DB27110A3BEF000D3FE5 /* PBXTargetDependency */,
 			);
 			name = WebProcess;
 			productName = WebProcess;
 			productReference = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */;
 			productType = "com.apple.product-type.application";
+		};
+		1AC25FAF12A48EA700BD2671 /* PluginProcessShim */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AC25FBA12A48EB600BD2671 /* Build configuration list for PBXNativeTarget "PluginProcessShim" */;
+			buildPhases = (
+				1AC25FAC12A48EA700BD2671 /* Headers */,
+				1AC25FAD12A48EA700BD2671 /* Sources */,
+				1AC25FAE12A48EA700BD2671 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PluginProcessShim;
+			productName = PluginProcessShim;
+			productReference = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		8DC2EF4F0486A6940098B216 /* WebKit2 */ = {
 			isa = PBXNativeTarget;
@@ -2498,6 +2560,7 @@
 				8DC2EF4F0486A6940098B216 /* WebKit2 */,
 				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
+				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 			);
 		};
 /* End PBXProject section */
@@ -2516,6 +2579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				1AC25FBC12A48EDA00BD2671 /* PluginProcessShim.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2546,6 +2610,14 @@
 				1A6FA31111E3921E00DB1371 /* MainMac.cpp in Sources */,
 				1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */,
 				1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AC25FAD12A48EA700BD2671 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AC25FC212A48F6000BD2671 /* PluginProcessShim.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2806,6 +2878,11 @@
 			target = 1A50DB1D110A3BDC000D3FE5 /* WebProcess */;
 			targetProxy = 1A50DB3B110A3C19000D3FE5 /* PBXContainerItemProxy */;
 		};
+		1AC25FD812A48FD500BD2671 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
+			targetProxy = 1AC25FD712A48FD500BD2671 /* PBXContainerItemProxy */;
+		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
@@ -2852,6 +2929,27 @@
 				PRODUCT_NAME = All;
 			};
 			name = Release;
+		};
+		1AC25FB112A48EA700BD2671 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1AC25FB212A48EA700BD2671 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1AC25FB312A48EA700BD2671 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
 		};
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2972,6 +3070,16 @@
 				1A50DB39110A3C13000D3FE5 /* Debug */,
 				1A50DB3A110A3C13000D3FE5 /* Release */,
 				5D22D69C11A7534600BF30E5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		1AC25FBA12A48EB600BD2671 /* Build configuration list for PBXNativeTarget "PluginProcessShim" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AC25FB112A48EA700BD2671 /* Debug */,
+				1AC25FB212A48EA700BD2671 /* Release */,
+				1AC25FB312A48EA700BD2671 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
