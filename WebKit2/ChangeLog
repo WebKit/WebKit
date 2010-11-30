@@ -1,3 +1,10 @@
+2010-11-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * win/WebKit2.vcproj: Add missing vsprops association for
+        Debug_Cairo_CFLite target.
+
 2010-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
