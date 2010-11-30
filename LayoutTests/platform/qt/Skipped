@@ -301,6 +301,7 @@ editing/inserting/insert-tab-003.html
 editing/inserting/insert-text-with-newlines.html
 # Missing textInputController.firstRectForCharacterRange()
 editing/inserting/caret-position.html
+fast/dom/tab-in-right-alignment.html
 
 # ---- to be reviewed
 editing/inserting/4278698.html
