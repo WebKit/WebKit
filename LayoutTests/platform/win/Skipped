@@ -1068,3 +1068,8 @@ plugins/iframe-shims.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
+
+
+#temporary skipped due to bug 50203.
+fast/dom/horizontal-scrollbar-in-rtl.html
+fast/dom/horizontal-scrollbar-when-dir-change.html
