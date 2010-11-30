@@ -121,9 +121,6 @@ accessibility/table-with-aria-role.html
 accessibility/table-with-rules.html
 accessibility/aria-list-and-listitem.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=36146 - GTK: AX: implement press in DRT 
-accessibility/label-element-press.html
-
 # Tests in css2.1/ directory
 #   Tests generating new results
 css2.1/t09-c5526c-display-00-e.html

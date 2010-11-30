@@ -1,3 +1,15 @@
+2010-11-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        GTK: AX: implement press in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36146
+
+        Implement AccessibilityUIElement::press() for GTK.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::press): Implemented.
+
 2010-11-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
