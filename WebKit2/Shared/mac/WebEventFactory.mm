@@ -57,9 +57,11 @@ static WebEvent::Type mouseEventTypeForEvent(NSEvent* event)
 {
     switch ([event type]) {
         case NSLeftMouseDragged:
-        case NSRightMouseDragged:
-        case NSOtherMouseDragged:
+        case NSMouseEntered:
+        case NSMouseExited:
         case NSMouseMoved:
+        case NSOtherMouseDragged:
+        case NSRightMouseDragged:
             return WebEvent::MouseMove;
         case NSLeftMouseDown:
         case NSRightMouseDown:
@@ -121,15 +123,17 @@ static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
-        case NSLeftMouseUp:
         case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
+        case NSLeftMouseUp:
+        case NSMouseEntered:
+        case NSMouseExited:
         case NSMouseMoved:
+        case NSOtherMouseDown:
+        case NSOtherMouseDragged:
+        case NSOtherMouseUp:
+        case NSRightMouseDown:
+        case NSRightMouseDragged:
+        case NSRightMouseUp:
         case NSScrollWheel:
             return globalPoint([event locationInWindow], [event window]);
         default:
@@ -141,15 +145,17 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
-        case NSLeftMouseUp:
         case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
+        case NSLeftMouseUp:
+        case NSMouseEntered:
+        case NSMouseExited:
         case NSMouseMoved:
+        case NSOtherMouseDown:
+        case NSOtherMouseDragged:
+        case NSOtherMouseUp:
+        case NSRightMouseDown:
+        case NSRightMouseDragged:
+        case NSRightMouseUp:
         case NSScrollWheel: {
             // Note: This will have its origin at the bottom left of the window unless windowView is flipped.
             // In those cases, the Y coordinate gets flipped by Widget::convertFromContainingWindow.

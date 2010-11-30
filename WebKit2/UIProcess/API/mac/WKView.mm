@@ -124,7 +124,7 @@ struct EditCommandState {
     RunLoop::initializeMainRunLoop();
 
     NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
-                                                                options:(NSTrackingMouseMoved | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
+                                                                options:(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
                                                                   owner:self
                                                                userInfo:nil];
     [self addTrackingArea:trackingArea];
@@ -306,17 +306,19 @@ WEBCORE_COMMAND(selectAll)
     }
 
 EVENT_HANDLER(mouseDown, Mouse)
-EVENT_HANDLER(mouseUp, Mouse)
-EVENT_HANDLER(mouseMoved, Mouse)
 EVENT_HANDLER(mouseDragged, Mouse)
-EVENT_HANDLER(rightMouseDown, Mouse)
-EVENT_HANDLER(rightMouseUp, Mouse)
-EVENT_HANDLER(rightMouseMoved, Mouse)
-EVENT_HANDLER(rightMouseDragged, Mouse)
+EVENT_HANDLER(mouseEntered, Mouse)
+EVENT_HANDLER(mouseExited, Mouse)
+EVENT_HANDLER(mouseMoved, Mouse)
+EVENT_HANDLER(mouseUp, Mouse)
 EVENT_HANDLER(otherMouseDown, Mouse)
-EVENT_HANDLER(otherMouseUp, Mouse)
-EVENT_HANDLER(otherMouseMoved, Mouse)
 EVENT_HANDLER(otherMouseDragged, Mouse)
+EVENT_HANDLER(otherMouseMoved, Mouse)
+EVENT_HANDLER(otherMouseUp, Mouse)
+EVENT_HANDLER(rightMouseDown, Mouse)
+EVENT_HANDLER(rightMouseDragged, Mouse)
+EVENT_HANDLER(rightMouseMoved, Mouse)
+EVENT_HANDLER(rightMouseUp, Mouse)
 EVENT_HANDLER(scrollWheel, Wheel)
 
 #undef EVENT_HANDLER

@@ -1,5 +1,24 @@
 2010-11-29  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Cursor does not always change back to arrow when exiting image document
+        https://bugs.webkit.org/show_bug.cgi?id=50190
+        <rdar://problem/8665265>
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseEventTypeForEvent):
+        (WebKit::globalPointForEvent):
+        (WebKit::pointForEvent):
+        Handle the NSMouseEntered and NSMouseExited events.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:hiddenFromInjectedBundle:]):
+        We want entered and exited events for this tracking area.
+        Add mouseEntered and mouseExited handlers.
+
+2010-11-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Should be able to pause and resume downloads
