@@ -3,8 +3,8 @@ Test making multiple async FileSystem operations.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Got FileSystem:TestShellFileSystem
 requested FileSystem.
+Got FileSystem:file__0:Temporary
 Starting async test stage 1.
 Starting async test stage 2.
 Verifying the FileSystem status.
