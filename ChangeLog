@@ -2,6 +2,15 @@
 
         Reviewed by Andreas Kling.
 
+        [CMake] Use preprocessor argument in GENERATE_DOM_NAMES
+        https://bugs.webkit.org/show_bug.cgi?id=49886
+
+        * cmake/WebKitMacros.cmake:
+
+2010-11-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         Move generator logic into WebCore CMakeLists.txt file
         https://bugs.webkit.org/show_bug.cgi?id=49885
 
