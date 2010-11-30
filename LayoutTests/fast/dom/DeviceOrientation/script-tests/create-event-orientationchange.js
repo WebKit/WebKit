@@ -5,7 +5,7 @@ function handleOrientationChange()
     document.getElementById('result').innerHTML = "PASS";
 }
 
-window.addEventListener('onorientationchange', handleOrientationChange, false);
+window.addEventListener('orientationchange', handleOrientationChange, false);
 
 try {
     var event = document.createEvent("OrientationEvent");
