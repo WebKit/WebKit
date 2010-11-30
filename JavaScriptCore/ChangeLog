@@ -1,3 +1,18 @@
+2010-11-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a mechanism for Windows pre-build/pre-link/post-build events to be separated into individual cmd files
+        https://bugs.webkit.org/show_bug.cgi?id=49858
+
+        We're migrating our prebuild/prelink/postbuild steps out of vcproj and vsprops files:
+        - To simplify editing (editing vsprops build steps is confusing).
+        - For more readable diffs.
+
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd: Added.
+        * JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd: Added.
+
 2010-11-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

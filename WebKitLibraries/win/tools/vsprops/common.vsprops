@@ -25,7 +25,7 @@
 	<Tool
 		Name="VCLinkerTool"
 		LinkLibraryDependencies="false"
-                AdditionalOptions="/SAFESEH /FIXED:NO /dynamicbase /ignore:4221"
+		AdditionalOptions="/SAFESEH /FIXED:NO /dynamicbase /ignore:4221"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 		AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 		GenerateDebugInformation="true"
@@ -43,6 +43,18 @@
 		Name="VCResourceCompilerTool"
 		Culture="1033"
 		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot;"
+	/>
+	<Tool
+		Name="VCPreLinkEventTool"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot;"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file.&#x0D;&#x0A;if exist &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot; &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot;"
 	/>
 	<UserMacro
 		Name="ProductionBuild"
