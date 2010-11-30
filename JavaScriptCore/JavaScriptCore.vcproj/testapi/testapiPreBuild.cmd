@@ -1,6 +1,6 @@
 %SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 cmd /c
-if exist "$(WebKitOutputDir)\buildfailed" grep XX$(ProjectName)XX "$(WebKitOutputDir)\buildfailed"
+if exist "%WEBKITOUTPUTDIR%\buildfailed" grep XX%PROJECTNAME%XX "%WEBKITOUTPUTDIR%\buildfailed"
 if errorlevel 1 exit 1
-echo XX$(ProjectName)XX > "$(WebKitOutputDir)\buildfailed"
+echo XX%PROJECTNAME%XX > "%WEBKITOUTPUTDIR%\buildfailed"

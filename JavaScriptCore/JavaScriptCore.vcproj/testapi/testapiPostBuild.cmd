@@ -1,3 +1,3 @@
-if exist "$(WebKitOutputDir)\buildfailed" del "$(WebKitOutputDir)\buildfailed"
+if exist "%WEBKITOUTPUTDIR%\buildfailed" del "%WEBKITOUTPUTDIR%\buildfailed"
 
-xcopy /y /d "$(ProjectDir)\..\..\API\tests\testapi.js" "$(OutDir)"
+xcopy /y /d "%PROJECTDIR%\..\..\API\tests\testapi.js" "%OUTDIR%"

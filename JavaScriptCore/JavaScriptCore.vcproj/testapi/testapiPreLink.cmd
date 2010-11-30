@@ -1,9 +1,9 @@
-mkdir 2>NUL "$(IntDir)\lib"
+mkdir 2>NUL "%INTDIR%\lib"
 
-if exist "$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib" copy /y "$(WebKitLibrariesDir)\lib\icuuc$(LibraryConfigSuffix).lib" "$(IntDir)\lib\libicuuc$(LibraryConfigSuffix).lib"
-if exist "$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib" copy /y "$(WebKitLibrariesDir)\lib\icuin$(LibraryConfigSuffix).lib" "$(IntDir)\lib\libicuin$(LibraryConfigSuffix).lib"
+if exist "%WEBKITLIBRARIESDIR%\lib\icuuc%LIBRARYCONFIGSUFFIX%.lib" copy /y "%WEBKITLIBRARIESDIR%\lib\icuuc%LIBRARYCONFIGSUFFIX%.lib" "%INTDIR%\lib\libicuuc%LIBRARYCONFIGSUFFIX%.lib"
+if exist "%WEBKITLIBRARIESDIR%\lib\icuin%LIBRARYCONFIGSUFFIX%.lib" copy /y "%WEBKITLIBRARIESDIR%\lib\icuin%LIBRARYCONFIGSUFFIX%.lib" "%INTDIR%\lib\libicuin%LIBRARYCONFIGSUFFIX%.lib"
 
-if exist "$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib" copy /y "$(WebKitLibrariesDir)\lib\libicuuc$(LibraryConfigSuffix).lib" "$(IntDir)\lib"
-if exist "$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib" copy /y "$(WebKitLibrariesDir)\lib\libicuin$(LibraryConfigSuffix).lib" "$(IntDir)\lib"
+if exist "%WEBKITLIBRARIESDIR%\lib\libicuuc%LIBRARYCONFIGSUFFIX%.lib" copy /y "%WEBKITLIBRARIESDIR%\lib\libicuuc%LIBRARYCONFIGSUFFIX%.lib" "%INTDIR%\lib"
+if exist "%WEBKITLIBRARIESDIR%\lib\libicuin%LIBRARYCONFIGSUFFIX%.lib" copy /y "%WEBKITLIBRARIESDIR%\lib\libicuin%LIBRARYCONFIGSUFFIX%.lib" "%INTDIR%\lib"
 
 cmd /c

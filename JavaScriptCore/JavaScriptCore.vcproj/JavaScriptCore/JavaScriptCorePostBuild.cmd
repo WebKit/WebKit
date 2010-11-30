@@ -1,1 +1,1 @@
-if exist "$(WebKitOutputDir)\buildfailed" del "$(WebKitOutputDir)\buildfailed"
+if exist "%WEBKITOUTPUTDIR%\buildfailed" del "%WEBKITOUTPUTDIR%\buildfailed"

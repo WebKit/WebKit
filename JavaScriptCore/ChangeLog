@@ -1,3 +1,18 @@
+2010-11-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix (part 1). Use correct environment variable syntax in cmd files.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePostBuild.cmd:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePreBuild.cmd:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePreLink.cmd:
+        * JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd:
+        * JavaScriptCore.vcproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcproj/jsc/jscPreBuild.cmd:
+        * JavaScriptCore.vcproj/jsc/jscPreLink.cmd:
+        * JavaScriptCore.vcproj/testapi/testapiPostBuild.cmd:
+        * JavaScriptCore.vcproj/testapi/testapiPreBuild.cmd:
+        * JavaScriptCore.vcproj/testapi/testapiPreLink.cmd:
+
 2010-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
