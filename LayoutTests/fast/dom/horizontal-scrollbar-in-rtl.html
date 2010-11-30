@@ -17,12 +17,13 @@
                     log("\n" + message + ": Success");
             }
             
-            function assertTrue(message, fact)
+            function assertClose(message, actual, expected)
             {
-                if (fact)
-                    log("\n" + message + ": Failure");
-                else
+                if ((actual >= expected && actual - expected < 5) ||
+                    (expected >= actual && expected - actual < 5))
                     log("\n" + message + ": Success");
+                else
+                    log("\n" + message + ": Failure, actual: " + actual + "; expected: " + expected);
             }
             
             var expectedScrollX = -1000;
@@ -53,7 +54,7 @@
                     window.scrollTo(expectedScrollX, expectedScrollY);
                     eventSender.zoomPageIn();
                     eventSender.zoomPageOut();
-                    assertEqual("zoom in and out preserve scroll position", window.scrollX,expectedScrollX);
+                    assertClose("zoom in and out preserve scroll position", window.scrollX,expectedScrollX);
                 }
                
                 // Test resize wont reset scroll position.
