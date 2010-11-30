@@ -584,9 +584,21 @@ void GraphicsContext::strokePath()
         {
             QPen shadowPen(pen);
             shadowPen.setColor(m_data->shadow.m_color);
-            p->translate(m_data->shadow.offset());
-            p->strokePath(path, shadowPen);
-            p->translate(-m_data->shadow.offset());
+            QPointF offset = shadow->offset();
+            const QTransform transform = p->transform();
+            if (transform.isScaling()) {
+                // If scaling is required, find the new coord for shadow origin,
+                // so that the relative offset to its shape is kept.
+                QPointF translatedOffset(offset.x() / transform.m11(),
+                                         offset.y() / transform.m22());
+                path.translate(translatedOffset);
+                p->strokePath(path, shadowPen);
+                path.translate(-translatedOffset);
+            } else {
+                p->translate(offset);
+                p->strokePath(path, shadowPen);
+                p->translate(-offset);
+            }
         } else {
             FloatRect boundingRect = path.controlPointRect();
             boundingRect.inflate(pen.miterLimit() + pen.widthF());
