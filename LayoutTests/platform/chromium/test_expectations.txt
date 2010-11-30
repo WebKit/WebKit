@@ -462,7 +462,7 @@ WONTFIX SKIP : fast/frames/flattening = TIMEOUT
 WONTFIX SKIP : fast/loader/api-test-go-to-current-back-forward-item.html = TIMEOUT
 
 // We're not planning to support rocker-based cursor navigation.
-WONTFIX SKIP : fast/events/spatial-navigation = FAIL
+WONTFIX SKIP : fast/spatial-navigation = FAIL
 
 // We're not planning to relax third-party cookie rules any time soon.
 WONTFIX BUG37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
