@@ -700,11 +700,9 @@ CommandLineAPI.prototype = {
 
     copy: function(object)
     {
-        if (injectedScript._type(object) === "node") {
-            var nodeId = InjectedScriptHost.pushNodePathToFrontend(object, false, false);
-            InjectedScriptHost.copyNode(nodeId);
-        } else
-            InjectedScriptHost.copyText(object);
+        if (injectedScript._type(object) === "node")
+            object = object.outerHTML;
+        InjectedScriptHost.copyText(object);
     },
 
     clear: function()
