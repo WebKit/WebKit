@@ -441,6 +441,9 @@ void WebPage::setActualVisibleContentRect(const IntRect& rect)
 
 void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
 {
+    if (m_resizesToContentsLayoutSize == targetLayoutSize)
+        return;
+
     m_resizesToContentsLayoutSize = targetLayoutSize;
 
     Frame* frame = m_page->mainFrame();

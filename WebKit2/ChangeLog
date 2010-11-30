@@ -1,3 +1,12 @@
+2010-11-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Early return if setResizesToContentsUsingLayoutSize() is called with already-set size
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
 2010-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
