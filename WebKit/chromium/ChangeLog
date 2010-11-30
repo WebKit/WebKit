@@ -1,3 +1,16 @@
+2010-11-30  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Update yasm entry in DEPS to match downstream
+        https://bugs.webkit.org/show_bug.cgi?id=50274
+
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=67540 changed the downstream DEPS rule
+        for yasm to pull unconditionally rather than pulling in each deps_os.  This changes the WebKit
+        chromium DEPS to match.
+
+        * DEPS:
+
 2010-11-29  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Simon Fraser.

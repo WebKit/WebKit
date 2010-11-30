@@ -109,12 +109,14 @@ deps = {
     Var('chromium_svn')+'/tools/generate_stubs@'+Var('chromium_rev'),
 
   # other third party
-  'third_party':
-    Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
   'third_party/icu':
     From('chromium_deps', 'src/third_party/icu'),
   'third_party/ots':
     From('chromium_deps', 'src/third_party/ots'),
+  'third_party/yasm/source/patched-yasm':
+    From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
+  'third_party':
+    Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
 }
 
 deps_os = {
@@ -129,9 +131,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/nss'),
   },
   'mac': {
-    # needed by ffmpeg
-    'third_party/yasm/source/patched-yasm':
-      From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
   },
@@ -139,8 +138,6 @@ deps_os = {
     # Linux, actually.
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
-    'third_party/yasm/source/patched-yasm':
-      From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
     'third_party/openssl':
       From('chromium_deps', 'src/third_party/openssl'),
   },
