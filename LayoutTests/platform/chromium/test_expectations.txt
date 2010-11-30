@@ -950,7 +950,6 @@ BUG10295 MAC : fast/dom/prototype-chain.html = FAIL
 
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
 BUG10296 MAC : fast/text/international/bidi-menulist.html = FAIL
-BUG10296 LINUX : svg/batik/paints/patternPreserveAspectRatioA.svg = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
 BUG10296 LINUX : svg/custom/foreign-object-skew.svg = FAIL
 BUG10296 LINUX : svg/batik/text/textLength.svg = FAIL
@@ -3202,20 +3201,3 @@ BUGWK50204 : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
 BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
-
-// Need rebaselining. Bots not ready yet.
-BUG_VITALYR : svg/W3C-SVG-1.1/coords-units-01-b.svg = IMAGE
-BUG_VITALYR : svg/W3C-SVG-1.1/painting-render-01-b.svg = IMAGE
-BUG_VITALYR : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = IMAGE
-BUG_VITALYR : svg/W3C-SVG-1.1/pservers-grad-16-b.svg = IMAGE
-BUG_VITALYR : svg/W3C-SVG-1.1/pservers-pattern-01-b.svg = IMAGE
-BUG_VITALYR WIN MAC : svg/batik/paints/patternPreserveAspectRatioA.svg = IMAGE
-BUG_VITALYR : svg/batik/paints/patternRegionA.svg = IMAGE
-BUG_VITALYR : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
-BUG_VITALYR : svg/batik/paints/patternRegions.svg = IMAGE
-BUG_VITALYR : svg/custom/pattern-incorrect-tiling.svg = IMAGE
-BUG_VITALYR : svg/custom/pattern-y-offset.svg = IMAGE
-BUG_VITALYR : svg/custom/recursive-gradient.svg = IMAGE
-BUG_VITALYR : svg/custom/relative-sized-content-with-resources.xhtml = IMAGE
-BUG_VITALYR : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
-BUG_VITALYR : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
