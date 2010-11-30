@@ -4710,6 +4710,7 @@ fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
 fast/events/ime-composition-events-001.html
+fast/dom/tab-in-right-alignment.html
 
 # No User Scripts
 userscripts
