@@ -44,6 +44,7 @@ class WKView;
 
 namespace WebKit {
 
+class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
 
@@ -101,6 +102,8 @@ private:
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
     void didLoadInspectorPage();
+
+    static WebPageGroup* inspectorPageGroup();
 
     WebPageProxy* m_page;
 

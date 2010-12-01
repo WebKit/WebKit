@@ -45,6 +45,7 @@ class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebInspectorProxy;
 class WebNavigationData;
+class WebPageGroup;
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
@@ -60,6 +61,7 @@ WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 #endif
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
+WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
 WK_ADD_API_MAPPING(WKPageNamespaceRef, WebPageNamespace)
 WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)

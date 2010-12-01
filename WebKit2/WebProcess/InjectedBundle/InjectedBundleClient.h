@@ -35,11 +35,13 @@ namespace WebKit {
 class APIObject;
 class InjectedBundle;
 class WebPage;
+class WebPageGroupProxy;
 
 class InjectedBundleClient : public APIClient<WKBundleClient> {
 public:
     void didCreatePage(InjectedBundle*, WebPage*);
     void willDestroyPage(InjectedBundle*, WebPage*);
+    void didInitializePageGroup(InjectedBundle*, WebPageGroupProxy*);
     void didReceiveMessage(InjectedBundle*, const String& messageName, APIObject* messageBody);
 };
 

@@ -87,44 +87,44 @@ size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
     return toImpl(bundleRef)->javaScriptObjectsCount();
 }
 
-void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
+void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toImpl(bundleRef)->addUserScript(toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
+    toImpl(bundleRef)->addUserScript(toImpl(pageGroupRef), toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
-void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
+void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toImpl(bundleRef)->addUserStyleSheet(toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
+    toImpl(bundleRef)->addUserStyleSheet(toImpl(pageGroupRef), toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
-void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toImpl(bundleRef)->removeUserScript(toImpl(scriptWorldRef), toWTFString(urlRef));
+    toImpl(bundleRef)->removeUserScript(toImpl(pageGroupRef), toImpl(scriptWorldRef), toWTFString(urlRef));
 }
 
-void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toImpl(bundleRef)->removeUserStyleSheet(toImpl(scriptWorldRef), toWTFString(urlRef));
+    toImpl(bundleRef)->removeUserStyleSheet(toImpl(pageGroupRef), toImpl(scriptWorldRef), toWTFString(urlRef));
 }
 
-void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
+void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef)
 {
-    toImpl(bundleRef)->removeUserScripts(toImpl(scriptWorldRef));
+    toImpl(bundleRef)->removeUserScripts(toImpl(pageGroupRef), toImpl(scriptWorldRef));
 }
 
-void WKBundleRemoveUserStyleSheets(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
+void WKBundleRemoveUserStyleSheets(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef)
 {
-    toImpl(bundleRef)->removeUserStyleSheets(toImpl(scriptWorldRef));
+    toImpl(bundleRef)->removeUserStyleSheets(toImpl(pageGroupRef), toImpl(scriptWorldRef));
 }
 
-void WKBundleRemoveAllUserContent(WKBundleRef bundleRef)
+void WKBundleRemoveAllUserContent(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef)
 {
-    toImpl(bundleRef)->removeAllUserContent();
+    toImpl(bundleRef)->removeAllUserContent(toImpl(pageGroupRef));
 }
 
-void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, bool enabled)
+void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
-    toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(enabled);
+    toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(toImpl(pageGroupRef), enabled);
 }
 
 void WKBundleReportException(JSContextRef context, JSValueRef exception)

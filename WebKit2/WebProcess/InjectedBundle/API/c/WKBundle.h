@@ -34,15 +34,17 @@ extern "C" {
 #endif
 
 // Client
-typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundleWillDestroyPageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundleDidReceiveMessageCallback)(WKBundleRef bundle, WKStringRef name, WKTypeRef messageBody, const void *clientInfo);
+typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+typedef void (*WKBundleWillDestroyPageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+typedef void (*WKBundleDidInitializePageGroupCallback)(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, const void* clientInfo);
+typedef void (*WKBundleDidReceiveMessageCallback)(WKBundleRef bundle, WKStringRef name, WKTypeRef messageBody, const void* clientInfo);
 
 struct WKBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundleDidCreatePageCallback                                       didCreatePage;
     WKBundleWillDestroyPageCallback                                     willDestroyPage;
+    WKBundleDidInitializePageGroupCallback                              didInitializePageGroup;
     WKBundleDidReceiveMessageCallback                                   didReceiveMessage;
 };
 typedef struct WKBundleClient WKBundleClient;

@@ -47,6 +47,11 @@ WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->pageNamespace());
 }
 
+WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->pageGroup());
+}
+
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
     toImpl(pageRef)->loadURL(toImpl(URLRef)->string());

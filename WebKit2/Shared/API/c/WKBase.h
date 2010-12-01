@@ -69,6 +69,7 @@ typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
 typedef const struct OpaqueWKPage* WKPageRef;
+typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
 typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 
@@ -77,14 +78,15 @@ typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKBundle* WKBundleRef;
 typedef const struct OpaqueWKBundleBackForwardList* WKBundleBackForwardListRef;
 typedef const struct OpaqueWKBundleBackForwardListItem* WKBundleBackForwardListItemRef;
+typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
+typedef const struct OpaqueWKBundlePageGroup* WKBundlePageGroupRef;
 typedef const struct OpaqueWKBundlePageOverlay* WKBundlePageOverlayRef;
 typedef const struct OpaqueWKBundleRangeHandle* WKBundleRangeHandleRef;
 typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
-typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

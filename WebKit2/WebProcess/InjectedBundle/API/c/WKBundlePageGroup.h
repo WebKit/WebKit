@@ -23,29 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#ifndef WKBundlePageGroup_h
+#define WKBundlePageGroup_h
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include <WebKit2/WKBase.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+WK_EXPORT WKTypeID WKBundlePageGroupGetTypeID();
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+WK_EXPORT WKStringRef WKBundlePageGroupCopyIdentifier(WKBundlePageGroupRef bundlePageGroup);
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+#ifdef __cplusplus
+}
+#endif
 
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
-} // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h
+#endif /* WKBundlePageGroup_h */

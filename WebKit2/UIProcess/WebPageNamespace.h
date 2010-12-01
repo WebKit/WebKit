@@ -36,6 +36,7 @@ struct WKContextStatistics;
 namespace WebKit {
 
 class WebContext;
+class WebPageGroup;
 
 class WebPageNamespace : public APIObject {
 public:
@@ -48,7 +49,7 @@ public:
 
     virtual ~WebPageNamespace();
 
-    WebPageProxy* createWebPage();    
+    WebPageProxy* createWebPage(WebPageGroup*);
 
     WebContext* context() const { return m_context.get(); }
     WebProcessProxy* process() const { return m_context->process(); }

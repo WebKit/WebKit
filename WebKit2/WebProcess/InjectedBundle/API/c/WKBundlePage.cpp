@@ -77,6 +77,11 @@ void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkCl
     toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
 }
 
+WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->pageGroup());
+}
+
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->mainFrame());

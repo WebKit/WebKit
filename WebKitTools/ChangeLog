@@ -1,3 +1,48 @@
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add PageGrouping to WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=50332
+
+        - Update testing harnesses to deal with new PageGroup API.
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (WKBundleInitialize):
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        (TestWebKitAPI::InjectedBundleController::didInitializePageGroup):
+        (TestWebKitAPI::InjectedBundleController::initializeTestNamed):
+        * TestWebKitAPI/InjectedBundleController.h:
+        * TestWebKitAPI/InjectedBundleTest.h:
+        (TestWebKitAPI::InjectedBundleTest::initialize):
+        (TestWebKitAPI::InjectedBundleTest::didInitializePageGroup):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextForInjectedBundleTest):
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::initialize):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didInitializePageGroup):
+        (WTR::InjectedBundle::initialize):
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::pageGroup):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::addUserScript):
+        (WTR::LayoutTestController::addUserStyleSheet):
+        (WTR::LayoutTestController::setXSSAuditorEnabled):
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

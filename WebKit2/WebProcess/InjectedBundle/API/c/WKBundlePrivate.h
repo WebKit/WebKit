@@ -55,16 +55,16 @@ enum WKUserContentInjectedFrames {
 };
 typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
 
-WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
-WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserContentInjectedFrames injectedFrames);
-WK_EXPORT void WKBundleRemoveUserScript(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
-WK_EXPORT void WKBundleRemoveUserStyleSheet(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
-WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld);
-WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld);
-WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle);
+WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundleRemoveUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
+WK_EXPORT void WKBundleRemoveUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
+WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGroupRef pageGroup);
 
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
-WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, bool enabled);
+WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 
 #ifdef __cplusplus
 }

@@ -31,6 +31,7 @@
 #include "DrawingArea.h"
 #include "SharedMemory.h"
 #include "VisitedLinkTable.h"
+#include "WebPageGroupProxy.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -50,6 +51,7 @@ class InjectedBundle;
 class WebFrame;
 class WebPage;
 struct WebPageCreationParameters;
+struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 
@@ -81,6 +83,8 @@ public:
     void addWebFrame(uint64_t, WebFrame*);
     void removeWebFrame(uint64_t);
 
+    WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
+    WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
     static WebCore::PageGroup* sharedPageGroup();
 
     // Will shut down the web process if there are no live pages or downloads.
@@ -124,6 +128,7 @@ private:
     
     RefPtr<CoreIPC::Connection> m_connection;
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
     bool m_inDidClose;

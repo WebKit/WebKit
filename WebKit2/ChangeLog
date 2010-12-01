@@ -1,3 +1,144 @@
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add PageGrouping to WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=50332
+
+        - Adds WKPageGroupRef and WKBundlePageGroupRef API objects
+          (backed by WebPageGroup and WebPageGroupProxy respectively).
+        - Moves visibleToInjectedBundle from page to PageGroup.
+        - Make userScript/userStyleSheet functions take a page group parameter.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageGroupData.cpp: Added.
+        (WebKit::WebPageGroupData::encode):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPageGroup):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPageGroup.cpp: Added.
+        (WKPageGroupGetTypeID):
+        (WKPageGroupCreateWithIdentifier):
+        (WKPageGroupCopyIdentifier):
+        * UIProcess/API/C/WKPageGroup.h: Added.
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:pageGroupRef:]):
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageGroup):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebPageGroup.cpp: Added.
+        (WebKit::generatePageGroupID):
+        (WebKit::webPageGroupMap):
+        (WebKit::WebPageGroup::create):
+        (WebKit::WebPageGroup::get):
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::~WebPageGroup):
+        * UIProcess/WebPageGroup.h: Added.
+        (WebKit::WebPageGroup::identifier):
+        (WebKit::WebPageGroup::pageGroupID):
+        (WebKit::WebPageGroup::data):
+        (WebKit::WebPageGroup::type):
+        * UIProcess/WebPageNamespace.cpp:
+        (WebKit::WebPageNamespace::createWebPage):
+        * UIProcess/WebPageNamespace.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageGroup):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::create):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleAddUserScript):
+        (WKBundleAddUserStyleSheet):
+        (WKBundleRemoveUserScript):
+        (WKBundleRemoveUserStyleSheet):
+        (WKBundleRemoveUserScripts):
+        (WKBundleRemoveUserStyleSheets):
+        (WKBundleRemoveAllUserContent):
+        (WKBundleOverrideXSSAuditorEnabledForTestRunner):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetPageGroup):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp: Added.
+        (WKBundlePageGroupGetTypeID):
+        (WKBundlePageGroupCopyIdentifier):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideXSSAuditorEnabledForTestRunner):
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScripts):
+        (WebKit::InjectedBundle::removeUserStyleSheets):
+        (WebKit::InjectedBundle::removeAllUserContent):
+        (WebKit::InjectedBundle::didInitializePageGroup):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        (WebKit::InjectedBundleClient::didInitializePageGroup):
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::pageGroup):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp: Added.
+        (WebKit::WebPageGroupProxy::create):
+        (WebKit::WebPageGroupProxy::~WebPageGroupProxy):
+        * WebProcess/WebPage/WebPageGroupProxy.h: Added.
+        (WebKit::WebPageGroupProxy::identifier):
+        (WebKit::WebPageGroupProxy::pageGroupID):
+        (WebKit::WebPageGroupProxy::isVisibleToInjectedBundle):
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::type):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webPageGroup):
+        * WebProcess/WebProcess.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

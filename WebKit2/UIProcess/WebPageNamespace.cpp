@@ -58,9 +58,9 @@ WebPageNamespace::~WebPageNamespace()
 #endif
 }
 
-WebPageProxy* WebPageNamespace::createWebPage()
+WebPageProxy* WebPageNamespace::createWebPage(WebPageGroup* group)
 {
-    return m_context->createWebPage(this);
+    return m_context->createWebPage(this, group);
 }
 
 void WebPageNamespace::preferencesDidChange()

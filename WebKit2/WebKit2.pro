@@ -249,6 +249,7 @@ HEADERS += \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \
+    Shared/WebPageGroupData.h \
     Shared/WebPopupItem.h \
     Shared/WebPreferencesStore.h \
     Shared/WebProcessCreationParameters.h \
@@ -270,6 +271,7 @@ HEADERS += \
     UIProcess/API/C/WKInspector.h \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
+    UIProcess/API/C/WKPageGroup.h \
     UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
@@ -316,6 +318,7 @@ HEADERS += \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
     UIProcess/WebPageContextMenuClient.h \
+    UIProcess/WebPageGroup.h \
     UIProcess/WebPageNamespace.h \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
@@ -333,6 +336,7 @@ HEADERS += \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
     WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h \
     WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
@@ -377,6 +381,7 @@ HEADERS += \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebInspector.h \
     WebProcess/WebPage/WebPage.h \
+    WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebProcess.h \
     $$WEBKIT2_GENERATED_HEADERS
 
@@ -424,6 +429,7 @@ SOURCES += \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebPageCreationParameters.cpp \
+    Shared/WebPageGroupData.cpp \
     Shared/WebPlatformTouchPoint.cpp \
     Shared/WebPopupItem.cpp \
     Shared/WebPreferencesStore.cpp \
@@ -449,6 +455,7 @@ SOURCES += \
     UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
     UIProcess/API/C/WKPage.cpp \
+    UIProcess/API/C/WKPageGroup.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
@@ -489,6 +496,7 @@ SOURCES += \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
+    UIProcess/WebPageGroup.cpp \
     UIProcess/WebPageNamespace.cpp \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \
@@ -513,6 +521,7 @@ SOURCES += \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
@@ -566,6 +575,7 @@ SOURCES += \
     WebProcess/WebPage/WebInspector.cpp \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/WebPage.cpp \
+    WebProcess/WebPage/WebPageGroupProxy.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \

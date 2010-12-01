@@ -174,7 +174,7 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bo
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
     WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundleAddUserScript(InjectedBundle::shared().bundle(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+    WKBundleAddUserScript(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (runAtStart ? kWKInjectAtDocumentStart : kWKInjectAtDocumentEnd),
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
@@ -184,7 +184,7 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
     WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundleAddUserStyleSheet(InjectedBundle::shared().bundle(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+    WKBundleAddUserStyleSheet(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
 
@@ -284,7 +284,7 @@ void LayoutTestController::setCanOpenWindows(bool)
 
 void LayoutTestController::setXSSAuditorEnabled(bool enabled)
 {
-    WKBundleOverrideXSSAuditorEnabledForTestRunner(InjectedBundle::shared().bundle(), true);
+    WKBundleOverrideXSSAuditorEnabledForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), true);
 }
 
 unsigned LayoutTestController::windowCount()

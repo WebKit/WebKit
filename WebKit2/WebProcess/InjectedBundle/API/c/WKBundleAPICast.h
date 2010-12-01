@@ -51,13 +51,15 @@ class InjectedBundleScriptWorld;
 class PageOverlay;
 class WebFrame;
 class WebPage;
+class WebPageGroupProxy;
 
-WK_ADD_API_MAPPING(WKBundleBackForwardListRef, InjectedBundleBackForwardList)
 WK_ADD_API_MAPPING(WKBundleBackForwardListItemRef, InjectedBundleBackForwardListItem)
+WK_ADD_API_MAPPING(WKBundleBackForwardListRef, InjectedBundleBackForwardList)
 WK_ADD_API_MAPPING(WKBundleCSSStyleDeclarationRef, WebCore::CSSStyleDeclaration)
 WK_ADD_API_MAPPING(WKBundleFrameRef, WebFrame)
 WK_ADD_API_MAPPING(WKBundleHitTestResultRef, InjectedBundleHitTestResult)
 WK_ADD_API_MAPPING(WKBundleNodeHandleRef, InjectedBundleNodeHandle)
+WK_ADD_API_MAPPING(WKBundlePageGroupRef, WebPageGroupProxy)
 WK_ADD_API_MAPPING(WKBundlePageOverlayRef, PageOverlay)
 WK_ADD_API_MAPPING(WKBundlePageRef, WebPage)
 WK_ADD_API_MAPPING(WKBundleRangeHandleRef, InjectedBundleRangeHandle)

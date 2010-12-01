@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcessProxy.h"
+#include "WebPageGroup.h"
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
@@ -38,6 +39,12 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+WebPageGroup* WebInspectorProxy::inspectorPageGroup()
+{
+    static WebPageGroup* pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false).leakRef();
+    return pageGroup;
+}
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     : m_page(page)

@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#ifndef WebPageGroupProxy_h
+#define WebPageGroupProxy_h
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "APIObject.h"
+#include "WebPageGroupData.h"
+#include <wtf/PassRefPtr.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace WebKit {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class WebPageGroupProxy : public APIObject {
+public:
+    static const Type APIType = TypeBundlePageGroup;
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+    static PassRefPtr<WebPageGroupProxy> create(const WebPageGroupData&);
+    virtual ~WebPageGroupProxy();
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+    const String& identifier() const { return m_data.identifer; }
+    uint64_t pageGroupID() const { return m_data.pageGroupID; }
+    bool isVisibleToInjectedBundle() const { return m_data.visibleToInjectedBundle; }
 
-bool isKeyDown(WKNativeEventPtr);
+private:
+    WebPageGroupProxy(const WebPageGroupData& data)
+        : m_data(data)
+    {
+    }
 
-std::string toSTD(WKStringRef string);
+    virtual Type type() const { return APIType; }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+    WebPageGroupData m_data;
+};
 
-#endif // PlatformUtilities_h
+} // namespace WebKit
+
+#endif // WebPageGroupProxy_h

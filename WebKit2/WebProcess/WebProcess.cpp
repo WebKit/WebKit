@@ -526,6 +526,22 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     m_connection->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
+WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
+{
+    return m_pageGroupMap.get(pageGroupID).get();
+}
+
+WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)
+{
+    std::pair<HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::iterator, bool> result = m_pageGroupMap.add(pageGroupData.pageGroupID, 0);
+    if (result.second) {
+        ASSERT(!result.first->second);
+        result.first->second = WebPageGroupProxy::create(pageGroupData);
+    }
+
+    return result.first->second.get();
+}
+
 void WebProcess::clearResourceCaches()
 {
     platformClearResourceCaches();

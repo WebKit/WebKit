@@ -23,29 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "WebPageGroupProxy.h"
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "WebProcess.h"
+#include "InjectedBundle.h"
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace WebKit {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
+{
+    RefPtr<WebPageGroupProxy> pageGroup = adoptRef(new WebPageGroupProxy(data));
+    
+    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
+        WebProcess::shared().injectedBundle()->didInitializePageGroup(pageGroup.get());
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+    return pageGroup.release();
+}
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+WebPageGroupProxy::~WebPageGroupProxy()
+{
+}
 
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
-} // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h
+} // namespace WebKit

@@ -53,7 +53,7 @@ PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
 
     RECT viewRect = {0, 0, 800, 600};
     m_window = CreateWindowExW(0, hostWindowClassName, L"WebKitTestRunner", WS_OVERLAPPEDWINDOW, 0 /*XOFFSET*/, 0 /*YOFFSET*/, viewRect.right, viewRect.bottom, 0, 0, GetModuleHandle(0), 0);
-    m_view = WKViewCreate(viewRect, namespaceRef, m_window);
+    m_view = WKViewCreate(viewRect, namespaceRef, 0 /*pageGroupRef*/, m_window);
 }
 
 PlatformWebView::~PlatformWebView()

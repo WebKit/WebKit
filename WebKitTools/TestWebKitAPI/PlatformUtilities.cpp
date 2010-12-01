@@ -33,13 +33,21 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-WKContextRef createContextForInjectedBundleTest(const std::string& testName)
+WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
 {
     WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());
     WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
 
+    WKRetainPtr<WKMutableDictionaryRef> initializationDictionary(AdoptWK, WKMutableDictionaryCreate());
+    
+    WKRetainPtr<WKStringRef> testNameKey(AdoptWK, WKStringCreateWithUTF8CString("TestName"));
     WKRetainPtr<WKStringRef> testNameString(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
-    WKContextSetInitializationUserDataForInjectedBundle(context, testNameString.get());
+    WKDictionaryAddItem(initializationDictionary.get(), testNameKey.get(), testNameString.get());
+
+    WKRetainPtr<WKStringRef> userDataKey(AdoptWK, WKStringCreateWithUTF8CString("UserData"));
+    WKDictionaryAddItem(initializationDictionary.get(), userDataKey.get(), userData);
+
+    WKContextSetInitializationUserDataForInjectedBundle(context, initializationDictionary.get());
 
     return context;
 }

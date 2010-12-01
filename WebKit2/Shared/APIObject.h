@@ -64,6 +64,7 @@ public:
         TypeInspector,
         TypeNavigationData,
         TypePage,
+        TypePageGroup,
         TypePageNamespace,
         TypePreferences,
 
@@ -75,6 +76,7 @@ public:
         TypeBundleHitTestResult,
         TypeBundleNodeHandle,
         TypeBundlePage,
+        TypeBundlePageGroup,
         TypeBundlePageOverlay,
         TypeBundleRangeHandle,
         TypeBundleScriptWorld,

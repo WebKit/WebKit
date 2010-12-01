@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#ifndef WebPageGroup_h
+#define WebPageGroup_h
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "APIObject.h"
+#include "WebPageGroupData.h"
+#include <wtf/PassRefPtr.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace WebKit {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class WebPageGroup : public APIObject {
+public:
+    static const Type APIType = TypePageGroup;
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+    static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true);
+    static WebPageGroup* get(uint64_t pageGroupID);
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+    virtual ~WebPageGroup();
 
-bool isKeyDown(WKNativeEventPtr);
+    const String& identifier() const { return m_data.identifer; }
+    uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
-std::string toSTD(WKStringRef string);
+    const WebPageGroupData& data() { return m_data;; }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+private:
+    WebPageGroup(const String& identifier, bool visibleToInjectedBundle);
 
-#endif // PlatformUtilities_h
+    virtual Type type() const { return APIType; }
+
+    WebPageGroupData m_data;
+};
+
+} // namespace WebKit
+
+#endif // WebPageGroup_h

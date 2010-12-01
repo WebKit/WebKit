@@ -576,6 +576,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebPageGroupData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebPageGroupData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPlatformTouchPoint.cpp"
 				>
 			</File>
@@ -1286,6 +1294,14 @@
 					RelativePath="..\WebProcess\WebPage\WebPage.messages.in"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebPageGroupProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebPageGroupProxy.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>
@@ -1518,6 +1534,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageGroup.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePageGroup.h"
 							>
 						</File>
 						<File
@@ -1908,6 +1932,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebPageGroup.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebPageGroup.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebPageNamespace.cpp"
 				>
 			</File>
@@ -2079,6 +2111,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPage.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPageGroup.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPageGroup.h"
 						>
 					</File>
 					<File

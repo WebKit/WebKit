@@ -33,6 +33,7 @@
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPageGroup.h"
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
 #include "WebProcessCreationParameters.h"
@@ -41,8 +42,6 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -80,6 +79,7 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
+    , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -207,10 +207,14 @@ void WebContext::processDidClose(WebProcessProxy* process)
     m_process = 0;
 }
 
-WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
+WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup)
 {
     ensureWebProcess();
-    return m_process->createWebPage(pageNamespace);
+
+    if (!pageGroup)
+        pageGroup = m_defaultPageGroup.get();
+
+    return m_process->createWebPage(pageNamespace, pageGroup);
 }
 
 void WebContext::relaunchProcessIfNecessary()

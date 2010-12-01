@@ -27,6 +27,7 @@
 #define WebPageCreationParameters_h
 
 #include "DrawingAreaInfo.h"
+#include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/IntSize.h>
 
@@ -44,7 +45,8 @@ struct WebPageCreationParameters {
     WebCore::IntSize viewSize;
     WebPreferencesStore store;
     DrawingAreaInfo drawingAreaInfo;
-    bool visibleToInjectedBundle;
+    WebPageGroupData pageGroupData;
+
 #if PLATFORM(WIN)
     HWND nativeWindow;
 #endif

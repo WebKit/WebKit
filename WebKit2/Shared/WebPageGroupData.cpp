@@ -23,29 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "WebPageGroupData.h"
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "ArgumentCoders.h"
+#include "Arguments.h"
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace WebKit {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+void WebPageGroupData::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    return encoder->encode(CoreIPC::In(identifer, pageGroupID, visibleToInjectedBundle));
+}
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder* decoder, WebPageGroupData& data)
+{
+    return decoder->decode(CoreIPC::Out(data.identifer, data.pageGroupID, data.visibleToInjectedBundle));
+}
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
-} // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h
+} // namespace WebKit

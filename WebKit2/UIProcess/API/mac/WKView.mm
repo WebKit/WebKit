@@ -114,7 +114,7 @@ struct EditCommandState {
 
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef hiddenFromInjectedBundle:(BOOL)hiddenFromInjectedBundle
+- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef pageGroupRef:(WKPageGroupRef)pageGroupRef
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -133,10 +133,9 @@ struct EditCommandState {
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toImpl(pageNamespaceRef)->createWebPage();
+    _data->_page = toImpl(pageNamespaceRef)->createWebPage(toImpl(pageGroupRef));
     _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
-    _data->_page->setVisibleToInjectedBundle(!hiddenFromInjectedBundle);
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
 
@@ -152,7 +151,7 @@ struct EditCommandState {
 
 - (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef
 {
-    return [self initWithFrame:frame pageNamespaceRef:pageNamespaceRef hiddenFromInjectedBundle:NO];
+    return [self initWithFrame:frame pageNamespaceRef:pageNamespaceRef pageGroupRef:nil];
 }
 
 - (id)initWithFrame:(NSRect)frame

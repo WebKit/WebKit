@@ -77,6 +77,7 @@ class WebFrame;
 class WebInspector;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
 
@@ -108,6 +109,8 @@ public:
 
     InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+
+    WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
@@ -310,6 +313,8 @@ private:
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;
 
+    RefPtr<WebPageGroupProxy> m_pageGroup;
+
     String m_customUserAgent;
 
     WebCore::IntSize m_viewSize;
@@ -317,7 +322,6 @@ private:
 
     bool m_isInRedo;
     bool m_isClosed;
-    bool m_isVisibleToInjectedBundle;
 
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.

@@ -48,6 +48,7 @@ public:
     void initialize(WKBundleRef);
 
     WKBundleRef bundle() const { return m_bundle; }
+    WKBundlePageGroupRef pageGroup() const { return m_pageGroup; }
 
     LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
     GCController* gcController() { return m_gcController.get(); }
@@ -70,15 +71,18 @@ private:
 
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
-    static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
+    static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
+    static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
 
     void didCreatePage(WKBundlePageRef);
     void willDestroyPage(WKBundlePageRef);
+    void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
     void beginTesting();
 
     WKBundleRef m_bundle;
+    WKBundlePageGroupRef m_pageGroup;
     Vector<OwnPtr<InjectedBundlePage> > m_pages;
 
     RefPtr<LayoutTestController> m_layoutTestController;

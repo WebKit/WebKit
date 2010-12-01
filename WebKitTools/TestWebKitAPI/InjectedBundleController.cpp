@@ -54,15 +54,20 @@ void InjectedBundleController::initialize(WKBundleRef bundle, WKTypeRef initiali
         this,
         didCreatePage,
         willDestroyPage,
+        didInitializePageGroup,
         didReceiveMessage
     };
     WKBundleSetClient(m_bundle, &client);
 
     // Initialize the test from the "initializationUserData".
-    assert(WKGetTypeID(initializationUserData) == WKStringGetTypeID());
-    WKStringRef testName = static_cast<WKStringRef>(initializationUserData);
 
-    initializeTestNamed(bundle, Util::toSTD(testName));
+    assert(WKGetTypeID(initializationUserData) == WKDictionaryGetTypeID());
+    WKDictionaryRef initializationDictionary = static_cast<WKDictionaryRef>(initializationUserData);
+
+    WKStringRef testName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(initializationDictionary, WKStringCreateWithUTF8CString("TestName")));
+    WKTypeRef userData = WKDictionaryGetItemForKey(initializationDictionary, WKStringCreateWithUTF8CString("UserData"));
+    
+    initializeTestNamed(bundle, Util::toSTD(testName), userData);
 }
 
 void InjectedBundleController::didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
@@ -77,6 +82,13 @@ void InjectedBundleController::willDestroyPage(WKBundleRef bundle, WKBundlePageR
     InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
     assert(self->m_currentTest);
     self->m_currentTest->willDestroyPage(bundle, page);
+}
+
+void InjectedBundleController::didInitializePageGroup(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, const void* clientInfo)
+{
+    InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
+    assert(self->m_currentTest);
+    self->m_currentTest->didInitializePageGroup(bundle, pageGroup);
 }
 
 void InjectedBundleController::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
@@ -94,7 +106,7 @@ void InjectedBundleController::dumpTestNames()
         printf("%s\n", (*it).first.c_str());
 }
 
-void InjectedBundleController::initializeTestNamed(WKBundleRef bundle, const std::string& identifier)
+void InjectedBundleController::initializeTestNamed(WKBundleRef bundle, const std::string& identifier, WKTypeRef userData)
 {
     CreateInjectedBundleTestFunction createTestFunction = m_createInjectedBundleTestFunctions[identifier];
     if (!createTestFunction) {
@@ -103,7 +115,7 @@ void InjectedBundleController::initializeTestNamed(WKBundleRef bundle, const std
     }
 
     m_currentTest = createTestFunction(identifier);
-    m_currentTest->initialize(bundle);
+    m_currentTest->initialize(bundle, userData);
 }
 
 void InjectedBundleController::registerCreateInjectedBundleTestFunction(const std::string& identifier, CreateInjectedBundleTestFunction function)

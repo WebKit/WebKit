@@ -34,6 +34,7 @@ WK_EXPORT
 }
 
 - (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef;
+- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
 - (WKPageRef)pageRef;
 

@@ -84,13 +84,13 @@ class WebData;
 class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebPageGroup;
 class WebPageNamespace;
 class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct PlatformPopupMenuData;
-struct WebNavigationDataStore;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
@@ -103,7 +103,7 @@ class WebPageProxy : public APIObject {
 public:
     static const Type APIType = TypePage;
 
-    static PassRefPtr<WebPageProxy> create(WebPageNamespace*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(WebPageNamespace*, WebPageGroup*, uint64_t pageID);
 
     virtual ~WebPageProxy();
 
@@ -114,9 +114,6 @@ public:
 
     DrawingAreaProxy* drawingArea() { return m_drawingArea.get(); }
     void setDrawingArea(PassOwnPtr<DrawingAreaProxy>);
-
-    bool visibleToInjectedBundle() const { return m_visibleToInjectedBundle; }
-    void setVisibleToInjectedBundle(bool visible) { m_visibleToInjectedBundle = visible; }
 
     WebBackForwardList* backForwardList() { return m_backForwardList.get(); }
 
@@ -242,6 +239,8 @@ public:
     WebProcessProxy* process() const;
     WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }
 
+    WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
+
     bool isValid();
 
     // REMOVE: For demo purposes only.
@@ -264,7 +263,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(WebPageNamespace*, uint64_t pageID);
+    WebPageProxy(WebPageNamespace*, WebPageGroup*, uint64_t pageID);
 
     virtual Type type() const { return APIType; }
 
@@ -388,6 +387,7 @@ private:
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebPageNamespace> m_pageNamespace;
+    RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;
     String m_pageTitle;

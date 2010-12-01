@@ -48,6 +48,7 @@ namespace WebKit {
 
 class WebBackForwardListItem;
 class WebContext;
+class WebPageGroup;
 class WebPageNamespace;
 struct WebNavigationDataStore;
 
@@ -77,7 +78,7 @@ public:
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
     WebPageProxy* webPage(uint64_t pageID) const;
-    WebPageProxy* createWebPage(WebPageNamespace*);
+    WebPageProxy* createWebPage(WebPageNamespace*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
 

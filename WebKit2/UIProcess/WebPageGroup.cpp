@@ -23,29 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "WebPageGroup.h"
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringConcatenate.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace WebKit {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+static uint64_t generatePageGroupID()
+{
+    static uint64_t uniquePageGroupID = 1;
+    return uniquePageGroupID++;
+}
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+typedef HashMap<uint64_t, WebPageGroup*> WebPageGroupMap;
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+static WebPageGroupMap& webPageGroupMap()
+{
+    static WebPageGroupMap map;
+    return map;
+}
 
-bool isKeyDown(WKNativeEventPtr);
 
-std::string toSTD(WKStringRef string);
+PassRefPtr<WebPageGroup> WebPageGroup::create(const String& identifier, bool visibleToInjectedBundle)
+{
+    RefPtr<WebPageGroup> pageGroup = adoptRef(new WebPageGroup(identifier, visibleToInjectedBundle));
 
-} // namespace Util
-} // namespace TestWebKitAPI
+    webPageGroupMap().set(pageGroup->pageGroupID(), pageGroup.get());
 
-#endif // PlatformUtilities_h
+    return pageGroup.release();
+}
+
+WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
+{
+    return webPageGroupMap().get(pageGroupID);
+}
+
+WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle)
+{
+    m_data.pageGroupID = generatePageGroupID();
+    if (!identifier.isNull())
+        m_data.identifer = identifier;
+    else
+        m_data.identifer = m_data.identifer = makeString("__uniquePageGroupID-", String::number(m_data.pageGroupID));
+    m_data.visibleToInjectedBundle = visibleToInjectedBundle;
+}
+
+WebPageGroup::~WebPageGroup()
+{
+    webPageGroupMap().remove(pageGroupID());
+}
+
+} // namespace WebKit

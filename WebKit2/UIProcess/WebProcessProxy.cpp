@@ -136,12 +136,12 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
     return m_pageMap.get(pageID).get();
 }
 
-WebPageProxy* WebProcessProxy::createWebPage(WebPageNamespace* pageNamespace)
+WebPageProxy* WebProcessProxy::createWebPage(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup)
 {
     ASSERT(pageNamespace->process() == this);
 
     unsigned pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageNamespace, pageID);
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageNamespace, pageGroup, pageID);
     m_pageMap.set(pageID, webPage);
     return webPage.get();
 }

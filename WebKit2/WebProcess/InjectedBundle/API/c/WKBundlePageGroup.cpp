@@ -23,29 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "WKBundlePageGroup.h"
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include "WebPageGroupProxy.h"
 
-namespace TestWebKitAPI {
-namespace Util {
+using namespace WebKit;
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+WKTypeID WKBundlePageGroupGetTypeID()
+{
+    return toAPI(WebPageGroupProxy::APIType);
+}
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
-
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
-} // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h
+WKStringRef WKBundlePageGroupCopyIdentifier(WKBundlePageGroupRef bundlePageGroup)
+{
+    return toCopiedAPI(toImpl(bundlePageGroup)->identifier());
+}

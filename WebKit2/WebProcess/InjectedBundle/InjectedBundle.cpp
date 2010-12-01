@@ -96,14 +96,13 @@ void InjectedBundle::removeAllVisitedLinks()
     PageGroup::removeAllVisitedLinks();
 }
 
-void InjectedBundle::overrideXSSAuditorEnabledForTestRunner(bool enabled)
+void InjectedBundle::overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled)
 {
     // Override the preference for all future pages.
     WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner(enabled);
 
     // Change the setting for existing ones.
-    const HashSet<Page*>& pages = WebProcess::sharedPageGroup()->pages();
-
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setXSSAuditorEnabled(enabled);
 }
@@ -128,39 +127,39 @@ static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
     return patternsVector;
 }
 
-void InjectedBundle::addUserScript(InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime injectionTime, WebCore::UserContentInjectedFrames injectedFrames)
+void InjectedBundle::addUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime injectionTime, WebCore::UserContentInjectedFrames injectedFrames)
 {
-    WebProcess::sharedPageGroup()->addUserScriptToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
+    PageGroup::pageGroup(pageGroup->identifier())->addUserScriptToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
 }
 
-void InjectedBundle::addUserStyleSheet(InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames)
+void InjectedBundle::addUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames)
 {
-    WebProcess::sharedPageGroup()->addUserStyleSheetToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectedFrames);
+    PageGroup::pageGroup(pageGroup->identifier())->addUserStyleSheetToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectedFrames);
 }
 
-void InjectedBundle::removeUserScript(InjectedBundleScriptWorld* scriptWorld, const String& url)
+void InjectedBundle::removeUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& url)
 {
-    WebProcess::sharedPageGroup()->removeUserScriptFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserScriptFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
 }
 
-void InjectedBundle::removeUserStyleSheet(InjectedBundleScriptWorld* scriptWorld, const String& url)
+void InjectedBundle::removeUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& url)
 {
-    WebProcess::sharedPageGroup()->removeUserStyleSheetFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserStyleSheetFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
 }
 
-void InjectedBundle::removeUserScripts(InjectedBundleScriptWorld* scriptWorld)
+void InjectedBundle::removeUserScripts(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld)
 {
-    WebProcess::sharedPageGroup()->removeUserScriptsFromWorld(scriptWorld->coreWorld());
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserScriptsFromWorld(scriptWorld->coreWorld());
 }
 
-void InjectedBundle::removeUserStyleSheets(InjectedBundleScriptWorld* scriptWorld)
+void InjectedBundle::removeUserStyleSheets(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld)
 {
-    WebProcess::sharedPageGroup()->removeUserStyleSheetsFromWorld(scriptWorld->coreWorld());
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserStyleSheetsFromWorld(scriptWorld->coreWorld());
 }
 
-void InjectedBundle::removeAllUserContent()
+void InjectedBundle::removeAllUserContent(WebPageGroupProxy* pageGroup)
 {
-    WebProcess::sharedPageGroup()->removeAllUserContent();
+    PageGroup::pageGroup(pageGroup->identifier())->removeAllUserContent();
 }
 
 void InjectedBundle::garbageCollectJavaScriptObjects()
@@ -202,6 +201,11 @@ void InjectedBundle::didCreatePage(WebPage* page)
 void InjectedBundle::willDestroyPage(WebPage* page)
 {
     m_client.willDestroyPage(this, page);
+}
+
+void InjectedBundle::didInitializePageGroup(WebPageGroupProxy* pageGroup)
+{
+    m_client.didInitializePageGroup(this, pageGroup);
 }
 
 void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* messageBody)

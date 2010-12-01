@@ -60,6 +60,7 @@ typedef void* PlatformBundle;
 class ImmutableArray;
 class InjectedBundleScriptWorld;
 class WebPage;
+class WebPageGroupProxy;
 
 class InjectedBundle : public APIObject {
 public:
@@ -83,16 +84,16 @@ public:
     void setShouldTrackVisitedLinks(bool);
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
-    void overrideXSSAuditorEnabledForTestRunner(bool enabled);
+    void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
 
     // UserContent API
-    void addUserScript(InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
-    void addUserStyleSheet(InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames);
-    void removeUserScript(InjectedBundleScriptWorld*, const String& url);
-    void removeUserStyleSheet(InjectedBundleScriptWorld*, const String& url);
-    void removeUserScripts(InjectedBundleScriptWorld*);
-    void removeUserStyleSheets(InjectedBundleScriptWorld*);
-    void removeAllUserContent();
+    void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
+    void addUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames);
+    void removeUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
+    void removeUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
+    void removeUserScripts(WebPageGroupProxy*, InjectedBundleScriptWorld*);
+    void removeUserStyleSheets(WebPageGroupProxy*, InjectedBundleScriptWorld*);
+    void removeAllUserContent(WebPageGroupProxy*);
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
@@ -102,6 +103,7 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
+    void didInitializePageGroup(WebPageGroupProxy*);
     void didReceiveMessage(const String&, APIObject*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
