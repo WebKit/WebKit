@@ -1,3 +1,9 @@
+2010-12-01  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling chromium deps to r67811.
+
+        * DEPS:
+
 2010-12-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
