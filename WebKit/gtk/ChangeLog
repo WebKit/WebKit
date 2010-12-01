@@ -1,3 +1,19 @@
+2010-11-30  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix wrong type in assert return value
+        https://bugs.webkit.org/show_bug.cgi?id=50208
+
+        Use appropriate return type in different g_return_val_if_fail(). This
+        removes some compiler warning.
+
+        * webkit/webkitwebdatasource.cpp:
+        (webkit_web_data_source_is_loading):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_page_number_for_element_by_id):
+        (webkit_web_frame_number_of_pages):
+
 2010-11-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

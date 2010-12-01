@@ -318,7 +318,7 @@ G_CONST_RETURN gchar* webkit_web_data_source_get_encoding(WebKitWebDataSource* w
  */
 gboolean webkit_web_data_source_is_loading(WebKitWebDataSource* webDataSource)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), FALSE);
 
     WebKitWebDataSourcePrivate* priv = webDataSource->priv;
 
