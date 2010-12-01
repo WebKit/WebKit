@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::cxAttr, Cx, cx)
+DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::cyAttr, Cy, cy)
+DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::rAttr, R, r)
+
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
     , m_cx(LengthModeWidth)

@@ -35,143 +35,145 @@
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
-    class SVGAngle;
-    class SVGLength;
-    class SVGMatrix;
-    class SVGTransform;
-    class SVGViewSpec;
-    class SVGViewElement;
-    class SMILTimeContainer;
-    class SVGSVGElement : public SVGStyledLocatableElement,
-                          public SVGTests,
-                          public SVGLangSpace,
-                          public SVGExternalResourcesRequired,
-                          public SVGFitToViewBox,
-                          public SVGZoomAndPan {
-    public:
-        static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
-        virtual bool isValid() const { return SVGTests::isValid(); }
+class SVGAngle;
+class SVGMatrix;
+class SVGTransform;
+class SVGViewSpec;
+class SVGViewElement;
+class SMILTimeContainer;
 
-        // 'SVGSVGElement' functions
-        const AtomicString& contentScriptType() const;
-        void setContentScriptType(const AtomicString& type);
+class SVGSVGElement : public SVGStyledLocatableElement,
+                      public SVGTests,
+                      public SVGLangSpace,
+                      public SVGExternalResourcesRequired,
+                      public SVGFitToViewBox,
+                      public SVGZoomAndPan {
+public:
+    static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
-        const AtomicString& contentStyleType() const;
-        void setContentStyleType(const AtomicString& type);
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        FloatRect viewport() const;
+    // 'SVGSVGElement' functions
+    const AtomicString& contentScriptType() const;
+    void setContentScriptType(const AtomicString& type);
 
-        void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; m_hasSetContainerSize = true; }
-        IntSize containerSize() const { return m_containerSize; }
-        bool hasSetContainerSize() const { return m_hasSetContainerSize; }
-        int relativeWidthValue() const;
-        int relativeHeightValue() const;
+    const AtomicString& contentStyleType() const;
+    void setContentStyleType(const AtomicString& type);
 
-        float pixelUnitToMillimeterX() const;
-        float pixelUnitToMillimeterY() const;
-        float screenPixelToMillimeterX() const;
-        float screenPixelToMillimeterY() const;
+    FloatRect viewport() const;
 
-        bool useCurrentView() const;
-        void setUseCurrentView(bool currentView);
+    void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; m_hasSetContainerSize = true; }
+    IntSize containerSize() const { return m_containerSize; }
+    bool hasSetContainerSize() const { return m_hasSetContainerSize; }
+    int relativeWidthValue() const;
+    int relativeHeightValue() const;
 
-        SVGViewSpec* currentView() const;
+    float pixelUnitToMillimeterX() const;
+    float pixelUnitToMillimeterY() const;
+    float screenPixelToMillimeterX() const;
+    float screenPixelToMillimeterY() const;
 
-        float currentScale() const;
-        void setCurrentScale(float scale);
+    bool useCurrentView() const;
+    void setUseCurrentView(bool currentView);
 
-        FloatPoint& currentTranslate() { return m_translation; }
-        void setCurrentTranslate(const FloatPoint&);
+    SVGViewSpec* currentView() const;
 
-        // Only used from the bindings.
-        void updateCurrentTranslate();
+    float currentScale() const;
+    void setCurrentScale(float scale);
 
-        SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
-        
-        void pauseAnimations();
-        void unpauseAnimations();
-        bool animationsPaused() const;
+    FloatPoint& currentTranslate() { return m_translation; }
+    void setCurrentTranslate(const FloatPoint&);
 
-        float getCurrentTime() const;
-        void setCurrentTime(float seconds);
+    // Only used from the bindings.
+    void updateCurrentTranslate();
 
-        unsigned suspendRedraw(unsigned maxWaitMilliseconds);
-        void unsuspendRedraw(unsigned suspendHandleId);
-        void unsuspendRedrawAll();
-        void forceRedraw();
+    SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
+    
+    void pauseAnimations();
+    void unpauseAnimations();
+    bool animationsPaused() const;
 
-        NodeList* getIntersectionList(const FloatRect&, SVGElement* referenceElement);
-        NodeList* getEnclosureList(const FloatRect&, SVGElement* referenceElement);
-        bool checkIntersection(SVGElement*, const FloatRect&);
-        bool checkEnclosure(SVGElement*, const FloatRect&);
-        void deselectAll();
+    float getCurrentTime() const;
+    void setCurrentTime(float seconds);
 
-        static float createSVGNumber();
-        static SVGLength createSVGLength();
-        static SVGAngle createSVGAngle();
-        static FloatPoint createSVGPoint();
-        static SVGMatrix createSVGMatrix();
-        static FloatRect createSVGRect();
-        static SVGTransform createSVGTransform();
-        static SVGTransform createSVGTransformFromMatrix(const SVGMatrix&);
+    unsigned suspendRedraw(unsigned maxWaitMilliseconds);
+    void unsuspendRedraw(unsigned suspendHandleId);
+    void unsuspendRedrawAll();
+    void forceRedraw();
 
-        AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+    NodeList* getIntersectionList(const FloatRect&, SVGElement* referenceElement);
+    NodeList* getEnclosureList(const FloatRect&, SVGElement* referenceElement);
+    bool checkIntersection(SVGElement*, const FloatRect&);
+    bool checkEnclosure(SVGElement*, const FloatRect&);
+    void deselectAll();
 
-        void inheritViewAttributes(SVGViewElement*);
+    static float createSVGNumber();
+    static SVGLength createSVGLength();
+    static SVGAngle createSVGAngle();
+    static FloatPoint createSVGPoint();
+    static SVGMatrix createSVGMatrix();
+    static FloatRect createSVGRect();
+    static SVGTransform createSVGTransform();
+    static SVGTransform createSVGTransformFromMatrix(const SVGMatrix&);
 
-        bool isOutermostSVG() const;
+    AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
-        Element* getElementById(const AtomicString&) const;
+    void inheritViewAttributes(SVGViewElement*);
 
-    protected:
-        virtual void willMoveToNewOwnerDocument();
-        virtual void didMoveToNewOwnerDocument();
+    bool isOutermostSVG() const;
 
-    private:
-        SVGSVGElement(const QualifiedName&, Document*);
-        virtual ~SVGSVGElement();
+    Element* getElementById(const AtomicString&) const;
 
-        virtual bool isSVG() const { return true; }
-        
-        virtual void parseMappedAttribute(Attribute*);
+protected:
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
 
-        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+private:
+    SVGSVGElement(const QualifiedName&, Document*);
+    virtual ~SVGSVGElement();
 
-        virtual void insertedIntoDocument();
-        virtual void removedFromDocument();
+    virtual bool isSVG() const { return true; }
+    
+    virtual void parseMappedAttribute(Attribute*);
 
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::yAttr, SVGLength, Y, y)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::widthAttr, SVGLength, Width, width)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::heightAttr, SVGLength, Height, height)
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    virtual bool selfHasRelativeLengths() const;
 
-        // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(X, x)
+    DECLARE_ANIMATED_LENGTH(Y, y)
+    DECLARE_ANIMATED_LENGTH(Width, width)
+    DECLARE_ANIMATED_LENGTH(Height, height)
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+
+    // SVGFitToViewBox
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
  
-        virtual void documentWillBecomeInactive();
-        virtual void documentDidBecomeActive();
+    virtual void documentWillBecomeInactive();
+    virtual void documentDidBecomeActive();
 
-        virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
-        bool m_useCurrentView;
-        RefPtr<SMILTimeContainer> m_timeContainer;
-        FloatPoint m_translation;
-        float m_scale;
-        mutable OwnPtr<SVGViewSpec> m_viewSpec;
-        IntSize m_containerSize;
-        bool m_hasSetContainerSize;
-    };
+    bool m_useCurrentView;
+    RefPtr<SMILTimeContainer> m_timeContainer;
+    FloatPoint m_translation;
+    float m_scale;
+    mutable OwnPtr<SVGViewSpec> m_viewSpec;
+    IntSize m_containerSize;
+    bool m_hasSetContainerSize;
+};
 
 } // namespace WebCore
 

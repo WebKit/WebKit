@@ -34,52 +34,51 @@
 
 namespace WebCore {
 
-    class SVGLength;
+class SVGImageElement : public SVGStyledTransformableElement,
+                        public SVGTests,
+                        public SVGLangSpace,
+                        public SVGExternalResourcesRequired,
+                        public SVGURIReference {
+public:
+    static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
 
-    class SVGImageElement : public SVGStyledTransformableElement,
-                            public SVGTests,
-                            public SVGLangSpace,
-                            public SVGExternalResourcesRequired,
-                            public SVGURIReference {
-    public:
-        static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
+private:
+    SVGImageElement(const QualifiedName&, Document*);
+    
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-    private:
-        SVGImageElement(const QualifiedName&, Document*);
-        
-        virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void attach();
+    virtual void insertedIntoDocument();
 
-        virtual void attach();
-        virtual void insertedIntoDocument();
-
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
  
-        virtual const QualifiedName& imageSourceAttributeName() const;       
-        virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual const QualifiedName& imageSourceAttributeName() const;       
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-        virtual bool haveLoadedRequiredResources();
+    virtual bool haveLoadedRequiredResources();
 
-        virtual bool selfHasRelativeLengths() const;
-        virtual void willMoveToNewOwnerDocument();
+    virtual bool selfHasRelativeLengths() const;
+    virtual void willMoveToNewOwnerDocument();
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::yAttr, SVGLength, Y, y)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::widthAttr, SVGLength, Width, width)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::heightAttr, SVGLength, Height, height)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(X, x)
+    DECLARE_ANIMATED_LENGTH(Y, y)
+    DECLARE_ANIMATED_LENGTH(Width, width)
+    DECLARE_ANIMATED_LENGTH(Height, height)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGImageElement, XLinkNames::hrefAttr, String, Href, href)
+    // SVGURIReference
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGImageElement, XLinkNames::hrefAttr, String, Href, href)
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
-        SVGImageLoader m_imageLoader;
-    };
+    SVGImageLoader m_imageLoader;
+};
 
 } // namespace WebCore
 

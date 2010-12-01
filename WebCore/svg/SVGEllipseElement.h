@@ -31,34 +31,35 @@
 
 namespace WebCore {
 
-    class SVGEllipseElement : public SVGStyledTransformableElement,
-                              public SVGTests,
-                              public SVGLangSpace,
-                              public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGEllipseElement> create(const QualifiedName&, Document*);
+class SVGEllipseElement : public SVGStyledTransformableElement,
+                          public SVGTests,
+                          public SVGLangSpace,
+                          public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGEllipseElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGEllipseElement(const QualifiedName&, Document*);
-        
-        virtual bool isValid() const { return SVGTests::isValid(); }
+private:
+    SVGEllipseElement(const QualifiedName&, Document*);
+    
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual void toPathData(Path&) const;
+    virtual void toPathData(Path&) const;
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::cxAttr, SVGLength, Cx, cx)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::cyAttr, SVGLength, Cy, cy)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::rxAttr, SVGLength, Rx, rx)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::ryAttr, SVGLength, Ry, ry)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(Cx, cx)
+    DECLARE_ANIMATED_LENGTH(Cy, cy)
+    DECLARE_ANIMATED_LENGTH(Rx, rx)
+    DECLARE_ANIMATED_LENGTH(Ry, ry)
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGEllipseElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGEllipseElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

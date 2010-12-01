@@ -23,17 +23,14 @@
 #if ENABLE(SVG)
 #include "SVGTextPathElement.h"
 
-#include "AffineTransform.h"
 #include "Attribute.h"
-#include "FloatRect.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
-#include "SVGLengthList.h"
-#include "SVGPathElement.h"
-#include "SVGRenderStyle.h"
-#include "SVGTransformList.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_LENGTH(SVGTextPathElement, SVGNames::startOffsetAttr, StartOffset, startOffset)
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)

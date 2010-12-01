@@ -31,7 +31,6 @@
 #include "FloatPoint.h"
 #include "RadialGradientAttributes.h"
 #include "RenderSVGResourceRadialGradient.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGTransform.h"
@@ -39,6 +38,13 @@
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::cxAttr, Cx, cx)
+DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::cyAttr, Cy, cy)
+DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::rAttr, R, r)
+DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fxAttr, Fx, fx)
+DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fyAttr, Fy, fy)
 
 inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* document)
     : SVGGradientElement(tagName, document)

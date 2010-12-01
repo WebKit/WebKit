@@ -26,54 +26,56 @@
 #include "SVGURIReference.h"
 
 namespace WebCore {
+
     enum SVGTextPathMethodType {
-        SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
-        SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
-        SVG_TEXTPATH_METHODTYPE_STRETCH = 2
+    SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
+    SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
+    SVG_TEXTPATH_METHODTYPE_STRETCH = 2
+};
+
+enum SVGTextPathSpacingType {
+    SVG_TEXTPATH_SPACINGTYPE_UNKNOWN = 0,
+    SVG_TEXTPATH_SPACINGTYPE_AUTO = 1,
+    SVG_TEXTPATH_SPACINGTYPE_EXACT = 2
+};
+
+class SVGTextPathElement : public SVGTextContentElement,
+                           public SVGURIReference {
+public:
+    // Forward declare these enums in the w3c naming scheme, for IDL generation
+    enum {
+        TEXTPATH_METHODTYPE_UNKNOWN = SVG_TEXTPATH_METHODTYPE_UNKNOWN,
+        TEXTPATH_METHODTYPE_ALIGN = SVG_TEXTPATH_METHODTYPE_ALIGN,
+        TEXTPATH_METHODTYPE_STRETCH = SVG_TEXTPATH_METHODTYPE_STRETCH,
+        TEXTPATH_SPACINGTYPE_UNKNOWN = SVG_TEXTPATH_SPACINGTYPE_UNKNOWN,
+        TEXTPATH_SPACINGTYPE_AUTO = SVG_TEXTPATH_SPACINGTYPE_AUTO,
+        TEXTPATH_SPACINGTYPE_EXACT = SVG_TEXTPATH_SPACINGTYPE_EXACT
     };
 
-    enum SVGTextPathSpacingType {
-        SVG_TEXTPATH_SPACINGTYPE_UNKNOWN = 0,
-        SVG_TEXTPATH_SPACINGTYPE_AUTO = 1,
-        SVG_TEXTPATH_SPACINGTYPE_EXACT = 2
-    };
-
-    class SVGTextPathElement : public SVGTextContentElement,
-                               public SVGURIReference {
-    public:
-        // Forward declare these enums in the w3c naming scheme, for IDL generation
-        enum {
-            TEXTPATH_METHODTYPE_UNKNOWN = SVG_TEXTPATH_METHODTYPE_UNKNOWN,
-            TEXTPATH_METHODTYPE_ALIGN = SVG_TEXTPATH_METHODTYPE_ALIGN,
-            TEXTPATH_METHODTYPE_STRETCH = SVG_TEXTPATH_METHODTYPE_STRETCH,
-            TEXTPATH_SPACINGTYPE_UNKNOWN = SVG_TEXTPATH_SPACINGTYPE_UNKNOWN,
-            TEXTPATH_SPACINGTYPE_AUTO = SVG_TEXTPATH_SPACINGTYPE_AUTO,
-            TEXTPATH_SPACINGTYPE_EXACT = SVG_TEXTPATH_SPACINGTYPE_EXACT
-        };
-
-        static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document*);
  
-    private:
-        SVGTextPathElement(const QualifiedName&, Document*);
+private:
+    SVGTextPathElement(const QualifiedName&, Document*);
 
-        virtual void insertedIntoDocument();
+    virtual void insertedIntoDocument();
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(Node*) const;
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGTextPathElement, SVGNames::startOffsetAttr, SVGLength, StartOffset, startOffset)
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::methodAttr, int, Method, method)
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::spacingAttr, int, Spacing, spacing)
-    
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, XLinkNames::hrefAttr, String, Href, href)
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(StartOffset, startOffset)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::methodAttr, int, Method, method)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::spacingAttr, int, Spacing, spacing)
+
+    // SVGURIReference
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, XLinkNames::hrefAttr, String, Href, href)
+};
 
 } // namespace WebCore
 

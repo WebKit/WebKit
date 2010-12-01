@@ -31,33 +31,34 @@
 
 namespace WebCore {
 
-    class SVGCircleElement : public SVGStyledTransformableElement,
-                             public SVGTests,
-                             public SVGLangSpace,
-                             public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGCircleElement> create(const QualifiedName&, Document*);
+class SVGCircleElement : public SVGStyledTransformableElement,
+                         public SVGTests,
+                         public SVGLangSpace,
+                         public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGCircleElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGCircleElement(const QualifiedName&, Document*);
+private:
+    SVGCircleElement(const QualifiedName&, Document*);
 
-        virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual void toPathData(Path&) const;
+    virtual void toPathData(Path&) const;
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGCircleElement, SVGNames::cxAttr, SVGLength, Cx, cx)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGCircleElement, SVGNames::cyAttr, SVGLength, Cy, cy)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGCircleElement, SVGNames::rAttr, SVGLength, R, r)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(Cx, cx)
+    DECLARE_ANIMATED_LENGTH(Cy, cy)
+    DECLARE_ANIMATED_LENGTH(R, r)
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCircleElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCircleElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

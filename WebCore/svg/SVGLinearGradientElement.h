@@ -28,32 +28,32 @@
 
 namespace WebCore {
 
-    struct LinearGradientAttributes;
-    class SVGLength;
+struct LinearGradientAttributes;
 
-    class SVGLinearGradientElement : public SVGGradientElement {
-    public:
-        static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
+class SVGLinearGradientElement : public SVGGradientElement {
+public:
+    static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
 
-        void collectGradientAttributes(LinearGradientAttributes&);
-        void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
+    void collectGradientAttributes(LinearGradientAttributes&);
+    void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
-    private:
-        SVGLinearGradientElement(const QualifiedName&, Document*);
+private:
+    SVGLinearGradientElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGLinearGradientElement, SVGNames::x1Attr, SVGLength, X1, x1)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGLinearGradientElement, SVGNames::y1Attr, SVGLength, Y1, y1)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGLinearGradientElement, SVGNames::x2Attr, SVGLength, X2, x2)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGLinearGradientElement, SVGNames::y2Attr, SVGLength, Y2, y2)
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(X1, x1)
+    DECLARE_ANIMATED_LENGTH(Y1, y1)
+    DECLARE_ANIMATED_LENGTH(X2, x2)
+    DECLARE_ANIMATED_LENGTH(Y2, y2)
+};
 
 } // namespace WebCore
 

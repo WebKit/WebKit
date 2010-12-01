@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::xAttr, X, x)
+DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::yAttr, Y, y)
+
 inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_x(LengthModeWidth)

@@ -167,6 +167,47 @@ void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
     static_cast<SVGAnimatedTransformListPropertyTearOff*>(wrapper)->detachListWrappers(newListSize); \
 }
 
+// FIXME: Remove all macros above, once these two below are deployed everywhere.
+
+#define DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
+void OwnerType::synchronize##UpperProperty() \
+{ \
+    if (!m_##LowerProperty.shouldSynchronize) \
+         return; \
+    AtomicString value(SVGPropertyTraits<PropertyType>::toString(LowerProperty##BaseValue())); \
+    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
+    SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<OwnerType>::value>::synchronize(contextElement, DOMAttribute, value); \
+} \
+\
+PassRefPtr<TearOffType> OwnerType::LowerProperty##Animated() \
+{ \
+    m_##LowerProperty.shouldSynchronize = true; \
+    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
+    return SVGAnimatedProperty::lookupOrCreateWrapper<TearOffType, PropertyType>(contextElement, DOMAttribute, SVGDOMAttributeIdentifier, m_##LowerProperty.value); \
+}
+
+#define DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
+public: \
+PropertyType& LowerProperty() const \
+{ \
+    return m_##LowerProperty.value; \
+} \
+\
+PropertyType& LowerProperty##BaseValue() const \
+{ \
+    return m_##LowerProperty.value; \
+} \
+\
+void set##UpperProperty##BaseValue(const PropertyType& type) \
+{ \
+    m_##LowerProperty.value = type; \
+} \
+\
+void synchronize##UpperProperty(); \
+PassRefPtr<TearOffType> LowerProperty##Animated(); \
+\
+private: \
+    mutable SVGSynchronizableAnimatedProperty<PropertyType> m_##LowerProperty;
 
 }
 

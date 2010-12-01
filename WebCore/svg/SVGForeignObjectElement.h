@@ -30,39 +30,39 @@
 #include "SVGExternalResourcesRequired.h"
 
 namespace WebCore {
-    class SVGLength;
 
-    class SVGForeignObjectElement : public SVGStyledTransformableElement,
-                                    public SVGTests,
-                                    public SVGLangSpace,
-                                    public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGForeignObjectElement> create(const QualifiedName&, Document*);
+class SVGForeignObjectElement : public SVGStyledTransformableElement,
+                                public SVGTests,
+                                public SVGLangSpace,
+                                public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGForeignObjectElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGForeignObjectElement(const QualifiedName&, Document*);
+private:
+    SVGForeignObjectElement(const QualifiedName&, Document*);
 
-        virtual bool isValid() const { return SVGTests::isValid(); }
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool childShouldCreateRenderer(Node*) const;
-        virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
+    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::yAttr, SVGLength, Y, y)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::widthAttr, SVGLength, Width, width)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::heightAttr, SVGLength, Height, height)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(X, x)
+    DECLARE_ANIMATED_LENGTH(Y, y)
+    DECLARE_ANIMATED_LENGTH(Width, width)
+    DECLARE_ANIMATED_LENGTH(Height, height)
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGForeignObjectElement, XLinkNames::hrefAttr, String, Href, href)
+    // SVGURIReference
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGForeignObjectElement, XLinkNames::hrefAttr, String, Href, href)
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

@@ -37,6 +37,12 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_LENGTH(SVGImageElement, SVGNames::xAttr, X, x)
+DEFINE_ANIMATED_LENGTH(SVGImageElement, SVGNames::yAttr, Y, y)
+DEFINE_ANIMATED_LENGTH(SVGImageElement, SVGNames::widthAttr, Width, width)
+DEFINE_ANIMATED_LENGTH(SVGImageElement, SVGNames::heightAttr, Height, height)
+
 inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
     , m_x(LengthModeWidth)

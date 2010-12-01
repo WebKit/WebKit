@@ -28,33 +28,33 @@
 
 namespace WebCore {
 
-    struct RadialGradientAttributes;
-    class SVGLength;
+struct RadialGradientAttributes;
 
-    class SVGRadialGradientElement : public SVGGradientElement {
-    public:
-        static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
+class SVGRadialGradientElement : public SVGGradientElement {
+public:
+    static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
 
-        void collectGradientAttributes(RadialGradientAttributes&);
-        void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
+    void collectGradientAttributes(RadialGradientAttributes&);
+    void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
 
-    private:
-        SVGRadialGradientElement(const QualifiedName&, Document*);
+private:
+    SVGRadialGradientElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::cyAttr, SVGLength, Cy, cy)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::rAttr, SVGLength, R, r)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::fxAttr, SVGLength, Fx, fx)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::fyAttr, SVGLength, Fy, fy)
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(Cx, cx)
+    DECLARE_ANIMATED_LENGTH(Cy, cy)
+    DECLARE_ANIMATED_LENGTH(R, r)
+    DECLARE_ANIMATED_LENGTH(Fx, fx)
+    DECLARE_ANIMATED_LENGTH(Fy, fy)
+};
 
 } // namespace WebCore
 

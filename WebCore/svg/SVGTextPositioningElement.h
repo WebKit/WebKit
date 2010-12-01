@@ -28,26 +28,26 @@
 
 namespace WebCore {
 
-    class SVGTextPositioningElement : public SVGTextContentElement {
-    public:
-        static SVGTextPositioningElement* elementFromRenderer(RenderObject*);
+class SVGTextPositioningElement : public SVGTextContentElement {
+public:
+    static SVGTextPositioningElement* elementFromRenderer(RenderObject*);
 
-    protected:
-        SVGTextPositioningElement(const QualifiedName&, Document*);
+protected:
+    SVGTextPositioningElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::xAttr, SVGLengthList, X, x)
-        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::yAttr, SVGLengthList, Y, y)
-        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dxAttr, SVGLengthList, Dx, dx)
-        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dyAttr, SVGLengthList, Dy, dy)
-        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList, Rotate, rotate)
-    };
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::xAttr, SVGLengthList, X, x)
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::yAttr, SVGLengthList, Y, y)
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dxAttr, SVGLengthList, Dx, dx)
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dyAttr, SVGLengthList, Dy, dy)
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList, Rotate, rotate)
+};
 
 } // namespace WebCore
 

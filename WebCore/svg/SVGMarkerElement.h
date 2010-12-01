@@ -78,10 +78,11 @@ private:
     static const AtomicString& orientTypeIdentifier();
     static const AtomicString& orientAngleIdentifier();
 
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::refXAttr, SVGLength, RefX, refX)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::refYAttr, SVGLength, RefY, refY)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerWidthAttr, SVGLength, MarkerWidth, markerWidth)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerHeightAttr, SVGLength, MarkerHeight, markerHeight)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH(RefX, refX)
+    DECLARE_ANIMATED_LENGTH(RefY, refY)
+    DECLARE_ANIMATED_LENGTH(MarkerWidth, markerWidth)
+    DECLARE_ANIMATED_LENGTH(MarkerHeight, markerHeight)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerUnitsAttr, int, MarkerUnits, markerUnits)
     DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGMarkerElement, SVGNames::orientAttr, orientTypeIdentifier(), int, OrientType, orientType)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGMarkerElement, SVGNames::orientAttr, orientAngleIdentifier(), SVGAngle, OrientAngle, orientAngle)
