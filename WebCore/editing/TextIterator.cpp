@@ -1892,6 +1892,17 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     m_buffer.reserveInitialCapacity(max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
+    if ((m_options & AtWordStarts) && targetLength) {
+        UChar32 targetFirstCharacter;
+        U16_GET(m_target.characters(), 0, 0, targetLength, targetFirstCharacter);
+        // Characters in the separator category never really occur at the beginning of a word,
+        // so if the target begins with such a character, we just ignore the AtWordStart option.
+        if (isSeparator(targetFirstCharacter)) {
+            m_options &= ~AtWordStarts;
+            m_needsMoreContext = false;
+        }
+    }
+
     // Grab the single global searcher.
     // If we ever have a reason to do more than once search buffer at once, we'll have
     // to move to multiple searchers.

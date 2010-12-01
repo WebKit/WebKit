@@ -51,7 +51,7 @@
     testFindString("cocoa", "co", ["AtWordStarts"], [[0, 2], []]);
 
     testFindString("webkit.org", "org", ["AtWordStarts"], [[]]);
-    testFindString("webkit.org", ".org", ["AtWordStarts"], [[]]);
+    testFindString("webkit.org", ".org", ["AtWordStarts"], [[6, 10], []]);
 
     testFindString("webkit.org", "rg", ["AtWordStarts", "TreatMedialCapitalAsWordStart"], [[]]);
     testFindString("webkit.org", "org", ["AtWordStarts", "TreatMedialCapitalAsWordStart"], [[7, 10], []]);
@@ -100,6 +100,10 @@
     testFindString(bufferSizedString.substring(0, searchBufferUnoverlappedSize) + thaiWords.join("") + bufferSizedString, thaiWords[0], ["AtWordStarts"], [[searchBufferUnoverlappedSize + 12, searchBufferUnoverlappedSize + 14], []]);
     testFindString(bufferSizedString.substring(0, searchBufferUnoverlappedSize - 1) + " " + thaiWords.join("") + bufferSizedString, thaiWords[0], ["AtWordStarts"], [[searchBufferUnoverlappedSize, searchBufferUnoverlappedSize + 2], [searchBufferUnoverlappedSize + 12, searchBufferUnoverlappedSize + 14], []]);
     testFindString(bufferSizedString.substring(0, searchBufferUnoverlappedSize - 3) + " " + thaiWords[4] + bufferSizedString, thaiWords[2], ["AtWordStarts"], [[]]);
+
+    testFindString("Spaces, the final frontier", " ", ["AtWordStarts"], [[7, 8], [11, 12], [17, 18], []]);
+    testFindString("Use an @import rule", "@", ["AtWordStarts"], [[7, 8], []]);
+    testFindString("If ((x + 5) * 2) = 14, then x = 2", "(x", ["AtWordStarts"], [[4, 6], []]);
 
     document.getElementById("console").style.removeProperty("visibility");
 </script>
