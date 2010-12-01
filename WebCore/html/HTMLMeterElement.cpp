@@ -36,17 +36,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// FIXME: This constructor should take an explicit form element pointer passed from the
-// parser like the constructors for all the other classes derived from HTMLFormControlElement.
-HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document)
-    : HTMLFormControlElement(tagName, document, 0)
+HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
 {
     ASSERT(hasTagName(meterTag));
 }
 
-PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLMeterElement(tagName, document));
+    return adoptRef(new HTMLMeterElement(tagName, document, form));
 }
 
 RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle*)
