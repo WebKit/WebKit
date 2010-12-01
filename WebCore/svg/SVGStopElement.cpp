@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_NUMBER(SVGStopElement, SVGNames::offsetAttr, Offset, offset)
+
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_offset(0)

@@ -23,8 +23,8 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEComponentTransfer.h"
+#include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedPropertyMacros.h"
 
 namespace WebCore {
 
@@ -42,11 +42,11 @@ private:
     // Animated property declarations
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::typeAttr, int, Type, type)
     DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::slopeAttr, float, Slope, slope)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::interceptAttr, float, Intercept, intercept)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::amplitudeAttr, float, Amplitude, amplitude)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::exponentAttr, float, Exponent, exponent)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::offsetAttr, float, Offset, offset)
+    DECLARE_ANIMATED_NUMBER(Slope, slope)
+    DECLARE_ANIMATED_NUMBER(Intercept, intercept)
+    DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
+    DECLARE_ANIMATED_NUMBER(Exponent, exponent)
+    DECLARE_ANIMATED_NUMBER(Offset, offset)
 };
 
 } // namespace WebCore

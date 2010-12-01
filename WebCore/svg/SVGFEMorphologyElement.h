@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEMorphology.h"
+#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -43,10 +44,11 @@ private:
     static const AtomicString& radiusXIdentifier();
     static const AtomicString& radiusYIdentifier();
 
+    // Animated property declarations
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEMorphologyElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEMorphologyElement, SVGNames::operatorAttr, int, _operator, _operator)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusXIdentifier(), float, RadiusX, radiusX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusYIdentifier(), float, RadiusY, radiusY)
+    DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
+    DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
 };
 
 } // namespace WebCore

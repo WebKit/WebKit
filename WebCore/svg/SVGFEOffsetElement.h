@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEOffset.h"
+#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -39,9 +40,10 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
+    // Animated property declarations
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)
+    DECLARE_ANIMATED_NUMBER(Dx, dx)
+    DECLARE_ANIMATED_NUMBER(Dy, dy)
 };
 
 } // namespace WebCore

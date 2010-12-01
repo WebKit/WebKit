@@ -22,30 +22,31 @@
 #define SVGStopElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedNumber.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
 
-    class SVGStopElement : public SVGStyledElement {
-    public:
-        static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document*);
+class SVGStopElement : public SVGStyledElement {
+public:
+    static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document*);
 
-        Color stopColorIncludingOpacity() const;
+    Color stopColorIncludingOpacity() const;
 
-    private:
-        SVGStopElement(const QualifiedName&, Document*);
+private:
+    SVGStopElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool isGradientStop() const { return true; }
+    virtual bool isGradientStop() const { return true; }
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGStopElement, SVGNames::offsetAttr, float, Offset, offset)
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_NUMBER(Offset, offset)
+};
 
 } // namespace WebCore
 

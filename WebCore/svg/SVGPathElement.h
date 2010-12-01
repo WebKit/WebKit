@@ -22,8 +22,8 @@
 #define SVGPathElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedNumber.h"
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGPathByteStream.h"
@@ -105,7 +105,8 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual bool supportsMarkers() const { return true; }
 
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::pathLengthAttr, float, PathLength, pathLength)
+    // Animated property declarations
+    DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

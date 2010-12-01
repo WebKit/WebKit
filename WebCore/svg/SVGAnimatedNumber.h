@@ -22,10 +22,21 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedStaticPropertyTearOff.h"
+#include "SVGAnimatedPropertyMacros.h"
 
 namespace WebCore {
 
 typedef SVGAnimatedStaticPropertyTearOff<float> SVGAnimatedNumber;
+
+// Helper macros to declare/define a SVGAnimatedNumber object
+#define DECLARE_ANIMATED_NUMBER(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedNumber, float, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_NUMBER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedNumber, float, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedNumber, float, UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

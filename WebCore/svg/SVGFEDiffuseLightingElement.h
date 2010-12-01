@@ -46,11 +46,12 @@ private:
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();
 
+    // Animated property declarations
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, float, DiffuseConstant, diffuseConstant)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
+    DECLARE_ANIMATED_NUMBER(DiffuseConstant, diffuseConstant)
+    DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
+    DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
+    DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
 
     PassRefPtr<LightSource> findLights() const;
 };
