@@ -539,8 +539,6 @@ IF (ENABLE_SVG)
 ENDIF()
 
 SET(WebCore_SOURCES
-    ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp
-    ${DERIVED_SOURCES_DIR}/ColorData.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
     ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
 
@@ -2036,11 +2034,11 @@ LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/ColorData.cpp)
 
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/html/DocTypeStrings)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp)
 
 
 # Generate HTML entity table
@@ -2113,7 +2111,6 @@ LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp)
 
 
 
-ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/HashTools.h DocTypeStrings.cpp CSSValueKeywords.cpp CSSPropertyNames.cpp ColorData.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 
 
