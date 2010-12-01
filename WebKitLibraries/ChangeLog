@@ -1,3 +1,22 @@
+2010-12-01  Adam Roben  <aroben@apple.com>
+
+        Don't let harmless errorlevels from the "set" utility leak into
+        project-specific build scripts
+
+        When using set to unset an environment variable that didn't previously
+        exist, set raises the errorlevel to 1. This was leaking into
+        project-specific scripts, causing them to think the build has failed.
+        We now clear the errorlevel after we finish setting environment
+        variables.
+
+        Fixes <http://webkit.org/b/50350> Windows builds mysteriously fail in
+        some configurations
+
+        Reviewed by Steve Falkenburg.
+
+        * win/tools/vsprops/common.vsprops: Call "cmd /c" after setting
+        environment variables to get rid of any errorlevel that "set" set.
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
