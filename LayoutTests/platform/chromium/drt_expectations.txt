@@ -30,7 +30,6 @@ BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // File API failures
 BUG48498 WIN : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT
-BUG_DRT WIN : fast/filesystem/async-operations.html = TIMEOUT
 BUG_DRT WIN : fast/filesystem/file-from-file-entry.html = TEXT
 BUG_DRT WIN : fast/filesystem/file-writer-truncate-extend.html = TIMEOUT
 BUG_DRT WIN : fast/filesystem/filesystem-reference.html = TEXT
