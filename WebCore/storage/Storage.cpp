@@ -28,6 +28,9 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "Frame.h"
+#include "Page.h"
+#include "Settings.h"
 #include "StorageArea.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
@@ -53,7 +56,7 @@ Storage::~Storage()
 
 unsigned Storage::length() const
 {
-    if (!m_frame)
+    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return 0;
 
     return m_storageArea->length();
@@ -61,7 +64,7 @@ unsigned Storage::length() const
 
 String Storage::key(unsigned index) const
 {
-    if (!m_frame)
+    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return String();
 
     return m_storageArea->key(index);
@@ -69,7 +72,7 @@ String Storage::key(unsigned index) const
 
 String Storage::getItem(const String& key) const
 {
-    if (!m_frame)
+    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return String();
 
     return m_storageArea->getItem(key);
@@ -102,7 +105,7 @@ void Storage::clear()
 
 bool Storage::contains(const String& key) const
 {
-    if (!m_frame)
+    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return false;
 
     return m_storageArea->contains(key);
