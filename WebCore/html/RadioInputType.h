@@ -45,6 +45,8 @@ private:
     virtual bool valueMissing(const String&) const;
     virtual String valueMissingText() const;
     virtual bool handleClickEvent(MouseEvent*);
+    virtual bool handleKeydownEvent(KeyboardEvent*);
+    virtual bool handleKeyupEvent(KeyboardEvent*);
 };
 
 } // namespace WebCore

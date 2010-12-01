@@ -39,11 +39,13 @@ namespace WebCore {
 class BaseCheckableInputType : public InputType {
 protected:
     BaseCheckableInputType(HTMLInputElement* element) : InputType(element) { }
+    virtual bool handleKeydownEvent(KeyboardEvent*);
 
 private:
     virtual bool saveFormControlState(String&) const;
     virtual void restoreFormControlState(const String&) const;
     virtual bool appendFormData(FormDataList&, bool) const;
+    virtual bool handleKeypressEvent(KeyboardEvent*);
 };
 
 } // namespace WebCore

@@ -34,6 +34,7 @@
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "RegularExpression.h"
 
 namespace WebCore {
@@ -55,6 +56,27 @@ bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
         return false;
     encoding.appendData(element()->name(), element()->value());
     return true;
+}
+
+bool BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    const String& key = event->keyIdentifier();
+    if (key == "U+0020") {
+        element()->setActive(true, true);
+        // No setDefaultHandled(), because IE dispatches a keypress in this case
+        // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
+    }
+    return false;
+}
+
+bool BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
+{
+    if (event->charCode() == ' ') {
+        // Prevent scrolling down the page.
+        event->setDefaultHandled();
+        return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

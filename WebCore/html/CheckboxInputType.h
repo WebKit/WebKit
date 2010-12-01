@@ -44,6 +44,7 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool valueMissing(const String&) const;
     virtual String valueMissingText() const;
+    virtual bool handleKeyupEvent(KeyboardEvent*);
 };
 
 } // namespace WebCore

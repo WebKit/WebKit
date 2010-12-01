@@ -1,42 +1,40 @@
 /*
+ * Copyright (C) 2005 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *     * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following disclaimer
- * in the documentation and/or other materials provided with the
- * distribution.
- *     * Neither the name of Google Inc. nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
 #include "RadioInputType.h"
 
+#include "Frame.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "Settings.h"
+#include "SpatialNavigation.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 PassOwnPtr<InputType> RadioInputType::create(HTMLInputElement* element)
 {
@@ -61,6 +59,61 @@ String RadioInputType::valueMissingText() const
 bool RadioInputType::handleClickEvent(MouseEvent* event)
 {
     event->setDefaultHandled();
+    return true;
+}
+
+bool RadioInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    if (BaseCheckableInputType::handleKeydownEvent(event))
+        return true;
+    const String& key = event->keyIdentifier();
+    if (key != "Up" && key != "Down" && key != "Left" && key != "Right")
+        return false;
+
+    // Left and up mean "previous radio button".
+    // Right and down mean "next radio button".
+    // Tested in WinIE, and even for RTL, left still means previous radio button (and so moves
+    // to the right).  Seems strange, but we'll match it.
+    // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
+    Document* document = element()->document();
+    if (isSpatialNavigationEnabled(document->frame()))
+        return false;
+    bool forward = (key == "Down" || key == "Right");
+
+    // We can only stay within the form's children if the form hasn't been demoted to a leaf because
+    // of malformed HTML.
+    Node* node = element();
+    while ((node = (forward ? node->traverseNextNode() : node->traversePreviousNode()))) {
+        // Once we encounter a form element, we know we're through.
+        if (node->hasTagName(formTag))
+            break;
+        // Look for more radio buttons.
+        if (!node->hasTagName(inputTag))
+            continue;
+        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+        if (inputElement->form() != element()->form())
+            break;
+        if (inputElement->isRadioButton() && inputElement->name() == element()->name() && inputElement->isFocusable()) {
+            inputElement->setChecked(true);
+            document->setFocusedNode(inputElement);
+            inputElement->dispatchSimulatedClick(event, false, false);
+            event->setDefaultHandled();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool RadioInputType::handleKeyupEvent(KeyboardEvent* event)
+{
+    const String& key = event->keyIdentifier();
+    if (key != "U+0020")
+        return false;
+    // If an unselected radio is tabbed into (because the entire group has nothing
+    // checked, or because of some explicit .focus() call), then allow space to check it.
+    if (element()->checked())
+        return false;
+    dispatchSimulatedClickIfActive(event);
     return true;
 }
 
