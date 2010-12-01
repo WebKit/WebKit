@@ -670,7 +670,7 @@ void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
     switch (type) {
         case DrawingAreaInfo::None:
             break;
-        case DrawingAreaInfo::Chunked:
+        case DrawingAreaInfo::ChunkedUpdate:
             newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(this);
             break;
         case DrawingAreaInfo::LayerBacked:

@@ -1,3 +1,10 @@
+2010-12-01  Brian Weinstein  <bweinstein@apple.com>
+
+        One last Windows build fix.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
