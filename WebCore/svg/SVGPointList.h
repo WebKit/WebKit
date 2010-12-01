@@ -23,8 +23,8 @@
 
 #if ENABLE(SVG)
 #include "QualifiedName.h"
+#include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -37,6 +37,12 @@ public:
     String valueAsString() const;
 
     static bool createAnimated(const SVGPointList& fromList, const SVGPointList& toList, SVGPointList& resultList, float progress);
+};
+
+template<>
+struct SVGPropertyTraits<SVGPointList> {
+    static SVGPointList initialValue() { return SVGPointList(); }
+    typedef FloatPoint ListItemType;
 };
 
 } // namespace WebCore

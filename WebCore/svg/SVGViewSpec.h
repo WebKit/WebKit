@@ -24,6 +24,8 @@
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGElement.h"
 #include "SVGFitToViewBox.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGRect.h"
 #include "SVGZoomAndPan.h"
 
 #include <wtf/RefPtr.h>

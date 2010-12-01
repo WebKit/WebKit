@@ -4251,6 +4251,7 @@
             'svg/SVGPreserveAspectRatio.h',
             'svg/SVGRadialGradientElement.cpp',
             'svg/SVGRadialGradientElement.h',
+            'svg/SVGRect.h',
             'svg/SVGRectElement.cpp',
             'svg/SVGRectElement.h',
             'svg/SVGRenderingIntent.h',

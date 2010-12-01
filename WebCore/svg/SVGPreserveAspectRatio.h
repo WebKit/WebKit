@@ -23,7 +23,7 @@
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
-#include <wtf/text/WTFString.h>
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
@@ -84,6 +84,12 @@ public:
 private:
     SVGPreserveAspectRatioType m_align;
     SVGMeetOrSliceType m_meetOrSlice;
+};
+
+template<>
+struct SVGPropertyTraits<SVGPreserveAspectRatio> {
+    static SVGPreserveAspectRatio initialValue() { return SVGPreserveAspectRatio(); }
+    static String toString(const SVGPreserveAspectRatio& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore

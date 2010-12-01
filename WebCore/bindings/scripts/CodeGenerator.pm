@@ -308,8 +308,8 @@ sub AvoidInclusionOfType
     my $object = shift;
     my $type = shift;
 
-    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h do not exist.
-    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber";
+    # Special case: SVGPoint.h / SVGNumber.h do not exist.
+    return 1 if $type eq "SVGPoint" or $type eq "SVGNumber";
     return 0;
 }
 

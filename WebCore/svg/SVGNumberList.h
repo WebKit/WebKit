@@ -22,8 +22,8 @@
 #define SVGNumberList_h
 
 #if ENABLE(SVG)
+#include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -33,6 +33,14 @@ public:
 
     void parse(const String&);
     String valueAsString() const;
+};
+
+template<>
+struct SVGPropertyTraits<SVGNumberList> {
+    typedef float ListItemType;
+
+    static SVGNumberList initialValue() { return SVGNumberList(); }
+    static String toString(const SVGNumberList& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore

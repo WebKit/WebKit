@@ -35,6 +35,14 @@ public:
     String valueAsString() const;
 };
 
+template<>
+struct SVGPropertyTraits<SVGLengthList> {
+    typedef SVGLength ListItemType;
+
+    static SVGLengthList initialValue() { return SVGLengthList(); }
+    static String toString(const SVGLengthList& type) { return type.valueAsString(); }
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

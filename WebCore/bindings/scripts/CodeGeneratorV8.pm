@@ -2904,10 +2904,6 @@ sub JSValueToNative
         return "V8DOMWrapper::wrapNativeNodeFilter($value)";
     }
 
-    if ($type eq "SVGRect") {
-        $implIncludes{"FloatRect.h"} = 1;
-    }
-
     if ($type eq "MediaQueryListListener") {
         $implIncludes{"MediaQueryListListener.h"} = 1;
         return "MediaQueryListListener::create(" . $value . ")";

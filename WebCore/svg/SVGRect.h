@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,37 +17,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTransformList_h
-#define SVGTransformList_h
+#ifndef SVGRect_h
+#define SVGRect_h
 
 #if ENABLE(SVG)
+#include "FloatRect.h"
 #include "SVGPropertyTraits.h"
-#include "SVGTransform.h"
-#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-class SVGTransformList : public Vector<SVGTransform> {
-public:
-    SVGTransformList() { }
-
-    SVGTransform createSVGTransformFromMatrix(const SVGMatrix&) const;
-    SVGTransform consolidate();
-
-    // Internal use only
-    bool concatenate(AffineTransform& result) const;
- 
-    String valueAsString() const;
-};
-
 template<>
-struct SVGPropertyTraits<SVGTransformList> {
-    static SVGTransformList initialValue() { return SVGTransformList(); }
-    static String toString(const SVGTransformList& type) { return type.valueAsString(); }
-    typedef SVGTransform ListItemType;
+struct SVGPropertyTraits<FloatRect> {
+    static FloatRect initialValue() { return FloatRect(); }
+    static String toString(const FloatRect& type)
+    {
+        StringBuilder builder;
+        builder.append(String::number(type.x()));
+        builder.append(' ');
+        builder.append(String::number(type.y()));
+        builder.append(' ');
+        builder.append(String::number(type.width()));
+        builder.append(' ');
+        builder.append(String::number(type.height()));
+        builder.append(' ');
+        return builder.toString();
+    }
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // SVGTransformList_h
+#endif // SVGRect_h

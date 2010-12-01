@@ -24,7 +24,7 @@
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
-#include <wtf/text/WTFString.h>
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
@@ -57,6 +57,12 @@ public:
 private:
     SVGAngleType m_unitType;
     float m_valueInSpecifiedUnits;
+};
+
+template<>
+struct SVGPropertyTraits<SVGAngle> {
+    static SVGAngle initialValue() { return SVGAngle(); }
+    static String toString(const SVGAngle& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore

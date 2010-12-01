@@ -26,6 +26,8 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGRect.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {

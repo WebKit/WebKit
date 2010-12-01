@@ -2513,6 +2513,7 @@ HEADERS += \
     svg/SVGPolylineElement.h \
     svg/SVGPreserveAspectRatio.h \
     svg/SVGRadialGradientElement.h \
+    svg/SVGRect.h \
     svg/SVGRectElement.h \
     svg/SVGScriptElement.h \
     svg/SVGSetElement.h \
