@@ -1959,7 +1959,6 @@ editing/selection/selection-background.html
 editing/selection/triple-click-in-pre.html
 editing/selection/word-granularity.html
 editing/selection/4975120.html
-editing/selection/5109817.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
@@ -2411,8 +2410,6 @@ fast/frames/onlyCommentInIFrame.html
 fast/invalid/junk-data.xml
 fast/loader/text-document-wrapping.html
 fast/overflow/005.html
-fast/regex/test1.html
-fast/regex/test4.html
 fast/repaint/inline-outline-repaint.html
 fast/text/find-case-folding.html
 fast/text/large-text-composed-char.html
