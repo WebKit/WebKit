@@ -41,6 +41,7 @@
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
+#include "SkColorPriv.h"
 #include "skia/ext/platform_canvas.h"
 #elif PLATFORM(CG)
 #include <CoreGraphics/CGBitmapContext.h>
@@ -68,8 +69,20 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
 
+    // Color is in RGBA order.
+    char rgbaFragmentShaderString[] =
+        "precision mediump float;                            \n"
+        "varying vec2 v_texCoord;                            \n"
+        "uniform sampler2D s_texture;                        \n"
+        "uniform float alpha;                                \n"
+        "void main()                                         \n"
+        "{                                                   \n"
+        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
+        "  gl_FragColor = texColor * alpha; \n"
+        "}                                                   \n";
+
     // Color is in BGRA order.
-    char fragmentShaderString[] =
+    char bgraFragmentShaderString[] =
         "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
         "uniform sampler2D s_texture;                        \n"
@@ -80,6 +93,12 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
         "}                                                   \n";
 
+#if PLATFORM(SKIA)
+    // Assuming the packing is either Skia default RGBA or Chromium default BGRA.
+    char* fragmentShaderString = SK_B32_SHIFT ? rgbaFragmentShaderString : bgraFragmentShaderString;
+#else
+    char* fragmentShaderString = bgraFragmentShaderString;
+#endif
     m_contentShaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
     if (!m_contentShaderProgram) {
         LOG_ERROR("ContentLayerChromium: Failed to create shader program");
