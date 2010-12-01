@@ -3127,7 +3127,10 @@ BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
-BUG_OJAN : fast/regex/pcre-test-1.html = TIMEOUT
+// FIXME: Need to add tooling support for V8 bugs.
+BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
+
+BUG50347 : plugins/get-user-agent-with-null-npp-from-npp-new.html = TEXT
 
 BUG50282 MAC : fast/images/imagemap-case.html = IMAGE
 BUG50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
@@ -3283,7 +3286,8 @@ BUG_DRT LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG_DRT MAC : media/video-play-pause-events.html = CRASH
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
-BUG_DRT WIN LINUX : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH
+// Crashes with DRT and is a text failure with TestShell
+BUG_DRT WIN LINUX : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
@@ -3299,8 +3303,13 @@ BUG_AWESOME : fast/harness/show-modal-dialog.html = PASS TIMEOUT FAIL
 BUG_AWESOME : fast/notifications/notifications-click-event.html = PASS TIMEOUT
 BUG_AWESOME LINUX MAC : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = PASS TEXT
 BUG_AWESOME WIN : fast/media/color-does-not-include-alpha.html = PASS TEXT
-BUG_AWESOME MAC : fast/css/font-weight-1.html = PASS FAIL
 BUG_AWESOME MAC : fast/css/resize-corner-tracking-transformed.html = PASS IMAGE+TEXT
 BUG_AWESOME MAC : fast/css/resize-corner-tracking.html = PASS IMAGE+TEXT
 BUG_AWESOME MAC : fast/forms/basic-buttons.html = PASS IMAGE
 BUG_AWESOME MAC : fast/forms/select-baseline.html = PASS IMAGE
+
+// The test says you should see numbers, but we display letters.
+// It looks like we are missing the WebKit "WeightWatcher" fonts,
+// checked in as part of http://trac.webkit.org/changeset/34771.
+BUG10370 LINUX WIN : fast/css/font-weight-1.html = IMAGE+TEXT
+BUG_AWESOME MAC : fast/css/font-weight-1.html = PASS IMAGE+TEXT TIMEOUT
