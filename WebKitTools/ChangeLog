@@ -1,3 +1,56 @@
+2010-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        vcproj changes can't be applied cleanly by the Windows EWS bot
+        https://bugs.webkit.org/show_bug.cgi?id=50328
+
+        * CLWrapper/CLWrapper.sln: Modified property svn:eol-style.
+        * CLWrapper/CLWrapper.vcproj: Modified property svn:eol-style.
+        * DumpRenderTree/DumpRenderTree.sln: Modified property svn:eol-style.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginCommon.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Modified property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeApple.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeCFLite.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeCairo.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiff.vcproj: Modified property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffCommon.vsprops: Added property svn:eol-style.
+        * FindSafari/FindSafari.vcproj: Modified property svn:eol-style.
+        * FindSafari/FindSafariCommon.vsprops: Added property svn:eol-style.
+        * MIDLWrapper/MIDLWrapper.sln: Modified property svn:eol-style.
+        * MIDLWrapper/MIDLWrapper.vcproj: Modified property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserCFLite.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserCoreFoundation.vsprops: Added property svn:eol-style.
+        * MiniBrowser/MiniBrowser.vcproj: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPICFLite.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPICoreFoundation.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/win/TestWebKitAPI.sln: Added property svn:eol-style.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added property svn:eol-style.
+        * TestWebKitAPI/win/TestWebKitAPIGenerated.vcproj: Added property svn:eol-style.
+        * TestWebKitAPI/win/TestWebKitAPIGeneratedCommon.vsprops: Added property svn:eol-style.
+        * WebKitAPITest/WebKitAPITest.vcproj: Added property svn:eol-style.
+        * WebKitAPITest/WebKitAPITestCommon.vsprops: Added property svn:eol-style.
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj: Modified property svn:eol-style.
+        * WebKitLauncherWin/WebKitLauncherWinCommon.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/InjectedBundleCFLite.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/InjectedBundleCoreFoundation.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCFLite.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreFoundation.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/WebKitTestRunner.sln: Added property svn:eol-style.
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Added property svn:eol-style.
+        * WebKitTestRunner/win/InjectedBundleGenerated.vcproj: Added property svn:eol-style.
+        * WebKitTestRunner/win/InjectedBundleGeneratedCommon.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Added property svn:eol-style.
+        * WinLauncher/WinLauncher.vcproj: Modified property svn:eol-style.
+        * WinLauncher/WinLauncherCommon.vsprops: Added property svn:eol-style.
+        * record-memory-win/record-memory-win-common.vsprops: Added property svn:eol-style.
+        * record-memory-win/record-memory-win.vcproj: Modified property svn:eol-style.
+
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,19 @@
+2010-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        vcproj changes can't be applied cleanly by the Windows EWS bot
+        https://bugs.webkit.org/show_bug.cgi?id=50328
+
+        * WebKit.vcproj/Interfaces.vcproj: Modified property svn:eol-style.
+        * WebKit.vcproj/InterfacesCommon.vsprops: Added property svn:eol-style.
+        * WebKit.vcproj/WebKit.sln: Modified property svn:eol-style.
+        * WebKit.vcproj/WebKit.submit.sln: Modified property svn:eol-style.
+        * WebKit.vcproj/WebKit.vcproj: Modified property svn:eol-style.
+        * WebKit.vcproj/WebKitGUID.vcproj: Modified property svn:eol-style.
+        * WebKit.vcproj/WebKitGUIDCommon.vsprops: Added property svn:eol-style.
+        * WebKit.vcproj/WebKitLibCommon.vsprops: Added property svn:eol-style.
+
 2010-11-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

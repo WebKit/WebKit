@@ -1,3 +1,13 @@
+2010-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        vcproj changes can't be applied cleanly by the Windows EWS bot
+        https://bugs.webkit.org/show_bug.cgi?id=50328
+
+        * src/libEGL/libEGL.vcproj: Added property svn:eol-style.
+        * src/libGLESv2/libGLESv2.vcproj: Added property svn:eol-style.
+
 2010-11-03  Darin Adler  <darin@apple.com>
 
         Updated Xcode projects by opening them with Xcode 3.2.4.

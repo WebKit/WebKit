@@ -1,3 +1,12 @@
+2010-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        vcproj changes can't be applied cleanly by the Windows EWS bot
+        https://bugs.webkit.org/show_bug.cgi?id=50328
+
+        * .gitattributes:
+
 2010-11-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
