@@ -4939,18 +4939,14 @@ var input0 = "> \x09\x0a\x0c\x0d\x0b<";
 var results = [" "];
 shouldBe('regex611.exec(input0);', 'results');
 
-// FIXME: Per inclusion of BOM as a WS character in the ECMA 5 spec, this too should pass.
-// https://bugs.webkit.org/show_bug.cgi?id=50297
 var regex612 = /[\s]+/;
 var input0 = "> \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029\uFEFF<";
-var results = [" \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029"];
+var results = [" \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029\uFEFF"];
 shouldBe('regex612.exec(input0);', 'results');
 
-// FIXME: Per inclusion of BOM as a WS character in the ECMA 5 spec, this too should pass.
-// https://bugs.webkit.org/show_bug.cgi?id=50297
 var regex613 = /\s+/;
 var input0 = "> \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029\uFEFF<";
-var results = [" \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029"];
+var results = [" \x09\x0a\x0b\x0c\x0d\x20\xA0\u2028\u2029\uFEFF"];
 shouldBe('regex613.exec(input0);', 'results');
 
 var regex614 = /ab/;
