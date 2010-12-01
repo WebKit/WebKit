@@ -1,5 +1,11 @@
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * Scripts/webkit2/messages.py:
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Rename DrawingAreaBase.h to DrawingAreaInfo.h.
