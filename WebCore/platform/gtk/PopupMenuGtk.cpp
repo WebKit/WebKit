@@ -189,7 +189,8 @@ bool PopupMenuGtk::typeAheadFind(GdkEventKey* event)
 
     // If a menu item has already been selected, start searching from the current
     // item down the list. This will make multiple key presses of the same character
-    // advance the selection.     GList* currentChild = children;
+    // advance the selection.
+    GList* currentChild = children;
     if (m_currentlySelectedMenuItem) {
         currentChild = g_list_find(children, m_currentlySelectedMenuItem);
         if (!currentChild) {
