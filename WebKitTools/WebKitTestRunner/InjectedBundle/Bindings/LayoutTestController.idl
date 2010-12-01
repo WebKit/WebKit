@@ -73,6 +73,9 @@ module WTR {
         
         // Compositing testing.
         DOMString layerTreeAsText();
+
+        // Text search testing.
+        boolean findString(in DOMString target, in object optionsArray);
     };
 
 }

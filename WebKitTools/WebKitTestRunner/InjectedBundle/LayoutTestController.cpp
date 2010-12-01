@@ -233,11 +233,14 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef argument)
     WKBundlePageExecuteEditingCommand(InjectedBundle::shared().page()->page(), toWK(name).get(), toWK(argument).get());
 }
 
-bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
+bool LayoutTestController::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
 {
     WKFindOptions options = 0;
 
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSObjectRef optionsArray = JSValueToObject(context, optionsArrayAsValue, 0);
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
     if (!JSValueIsNumber(context, lengthValue))
         return false;
