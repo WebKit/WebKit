@@ -888,6 +888,7 @@ fast/multicol/hit-test-above-or-below.html
 fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
+fast/dom/HTMLProgressElement/progress-element-form.html
 fast/forms/form-attribute.html
 
 # view mode media feature
