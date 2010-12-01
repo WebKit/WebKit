@@ -1,3 +1,12 @@
+2010-12-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: disable cookies tab in network resource view by default, enable for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=50249
+
+        * src/js/DevTools.js:
+
 2010-11-30  Ojan Vafai  <ojan@chromium.org>
 
         Revert r72876. It caused a ~30% perf regression in chromium's bloat-http test

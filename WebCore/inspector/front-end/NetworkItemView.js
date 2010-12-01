@@ -37,7 +37,6 @@ WebInspector.NetworkItemView = function(resource)
     this._headersView = new WebInspector.ResourceHeadersView(resource);
     // Do not store reference to content view - it can be recreated.
     var contentView = WebInspector.ResourceManager.resourceViewForResource(resource);
-    this._cookiesView = new WebInspector.ResourceCookiesView(resource);
 
     this._tabbedPane = new WebInspector.TabbedPane(this.element);
     this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this._headersView);
@@ -46,8 +45,10 @@ WebInspector.NetworkItemView = function(resource)
         contentView.visible = false;
         this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), contentView);
     }
-    this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
-
+    if (Preferences.showCookiesTab) {
+        this._cookiesView = new WebInspector.ResourceCookiesView(resource);
+        this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
+    }
     if (Preferences.showTimingTab) {
         var timingView = new WebInspector.ResourceTimingView(resource);
         this._tabbedPane.appendTab("timing", WebInspector.UIString("Timing"), timingView);
@@ -82,7 +83,7 @@ WebInspector.NetworkItemView.prototype = {
 
     resize: function()
     {
-        if (this._cookiesView.visible)
+        if (this._cookiesView && this._cookiesView.visible)
             this._cookiesView.resize();
     }
 }
