@@ -3195,5 +3195,9 @@ BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-
 BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
 BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
+// Started to flake since http://src.chromium.org/viewvc/chrome?view=rev&revision=66937
+// (72440; 72514] range
+BUGCR64952 LINUX : fast/ruby/nested-ruby.html = CRASH PASS
+
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
