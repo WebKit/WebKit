@@ -1,3 +1,12 @@
+2010-12-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Touch GetUserAgentWithNullNPPFromNPPNew.cpp in an effort to force
+        a rebuild of TestNetscapePlugin.la on GTK+. It seems that simply
+        adding the file to the sources list was not enough to force the rebuild.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp:
+        Remove an empty line at the end of this file to force a rebuild.
+
 2010-12-01  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

@@ -54,4 +54,3 @@ private:
 };
 
 static PluginTest::Register<GetUserAgentWithNullNPPFromNPPNew> getUserAgentWithNullNPPFromNPPNew("get-user-agent-with-null-npp-from-npp-new");
-
