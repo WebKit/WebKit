@@ -1,3 +1,13 @@
+2010-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed speculative build fix for Windows.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::pageDidEnterAcceleratedCompositing):
+        (WebKit::WebView::pageDidLeaveAcceleratedCompositing):
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+        * UIProcess/win/WebView.h:
+
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
         Fix Qt build.
