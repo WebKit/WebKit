@@ -78,6 +78,7 @@ void LayerBackedDrawingAreaProxy::setSize(const IntSize& viewSize)
 
     if (m_isWaitingForDidSetFrameNotification)
         return;
+
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
@@ -113,9 +114,12 @@ void LayerBackedDrawingAreaProxy::setPageIsVisible(bool isVisible)
     // FIXME: We should request a full repaint here if needed.
 }
     
-void LayerBackedDrawingAreaProxy::didSetSize()
+void LayerBackedDrawingAreaProxy::didSetSize(const IntSize& size)
 {
     m_isWaitingForDidSetFrameNotification = false;
+
+    if (size != m_lastSetViewSize)
+        setSize(m_lastSetViewSize);
 
     WebPageProxy* page = this->page();
     page->process()->responsivenessTimer()->stop();
@@ -135,7 +139,10 @@ void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIP
             break;
         }
         case DrawingAreaProxyMessage::DidSetSize: {
-            didSetSize();
+            IntSize size;
+            if (!arguments->decode(CoreIPC::Out(size)))
+                return;
+            didSetSize(size);
             break;
         }
         default:

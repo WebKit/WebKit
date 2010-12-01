@@ -184,6 +184,29 @@
 
         Reviewed by Anders Carlsson.
 
+        Size changes on layer-backed drawing areas don't always end up with the correct value
+        https://bugs.webkit.org/show_bug.cgi?id=50351
+        <rdar://problem/8692966>
+        
+        When the UI process does not receive didSetSize messages promptly, 
+        LayerBackedDrawingAreaProxy::setSize() bails early based on the
+        m_isWaitingForDidSetFrameNotification flag.
+        
+        In this situation, the final size may be incorrect. didSetSize()
+        needs to compare the size that the web process has to the expected size,
+        and send a final setSize if they differ.
+
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::didSetSize):
+        (WebKit::LayerBackedDrawingAreaProxy::didReceiveMessage):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::setSize):
+
+2010-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Crash when closing WebKit2 window with accelerated composting content
         https://bugs.webkit.org/show_bug.cgi?id=50307
         <rdar://problem/8640126>
