@@ -707,6 +707,11 @@ bool LayoutTestController::isCommandEnabled(const QString& name) const
     return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
 }
 
+bool LayoutTestController::findString(const QString& string, const QStringList& optionArray)
+{
+    return DumpRenderTreeSupportQt::findString(m_drt->webPage(), string, optionArray);
+}
+
 QString LayoutTestController::markerTextForListItem(const QWebElement& listItem)
 {
     return DumpRenderTreeSupportQt::markerTextForListItem(listItem);

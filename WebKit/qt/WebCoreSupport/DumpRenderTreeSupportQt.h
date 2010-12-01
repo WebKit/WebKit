@@ -44,6 +44,7 @@ public:
 
     static void executeCoreCommandByName(QWebPage* page, const QString& name, const QString& value);
     static bool isCommandEnabled(QWebPage* page, const QString& name);
+    static bool findString(QWebPage* page, const QString& string, const QStringList& optionArray);
     static void setSmartInsertDeleteEnabled(QWebPage* page, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(QWebPage* page, bool enabled);
     static QVariantList selectedRange(QWebPage* page);

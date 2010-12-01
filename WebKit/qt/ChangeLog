@@ -1,3 +1,16 @@
+2010-11-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement layoutTestController.findString
+        https://bugs.webkit.org/show_bug.cgi?id=50236
+
+        Add support for the new advanced findString().
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::findString):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-11-30  Ojan Vafai  <ojan@chromium.org>
 
         Revert r72876. It caused a ~30% perf regression in chromium's bloat-http test
