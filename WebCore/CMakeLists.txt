@@ -540,8 +540,6 @@ ENDIF()
 
 SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp
-    ${DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp
-    ${DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp
     ${DERIVED_SOURCES_DIR}/ColorData.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
     ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
@@ -1617,6 +1615,14 @@ SET(WebCore_SOURCES
     xml/XSLTUnicodeSort.cpp
 )
 
+SET(WebCore_CSS_PROPERTY_NAMES
+    ${WEBCORE_DIR}/css/CSSPropertyNames.in
+)
+
+SET(WebCore_CSS_VALUE_KEYWORDS
+    ${WEBCORE_DIR}/css/CSSValueKeywords.in
+)
+
 SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
@@ -1938,6 +1944,14 @@ IF (ENABLE_SVG)
         svg/graphics/filters/SVGFilterBuilder.cpp
         svg/properties/SVGPathSegListPropertyTearOff.cpp
     )
+
+    LIST(APPEND WebCore_CSS_PROPERTY_NAMES
+        ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
+    )
+
+    LIST(APPEND WebCore_CSS_VALUE_KEYWORDS
+        ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
+    )
 ENDIF()
 
 IF (ENABLE_VIDEO)
@@ -2050,6 +2064,35 @@ ADD_CUSTOM_COMMAND(
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
 
 
+# Generate CSS property names
+ADD_CUSTOM_COMMAND (
+    OUTPUT ${DERIVED_SOURCES_DIR}/CSSPropertyNames.in ${DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makeprop.pl
+    DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
+    WORKING_DIRECTORY ${DERIVED_SOURCES_DIR}
+    COMMAND ${PERL_EXECUTABLE} -ne "print" ${WebCore_CSS_PROPERTY_NAMES} > ${DERIVED_SOURCES_DIR}/CSSPropertyNames.in
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makeprop.pl
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp CSSValueKeywords.h)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSPropertyNames.h)
+
+
+# Generate CSS value keywords
+ADD_CUSTOM_COMMAND (
+    OUTPUT ${DERIVED_SOURCES_DIR}/CSSValueKeywords.in ${DERIVED_SOURCES_DIR}/CSSValueKeywords.h ${DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp ${DERIVED_SOURCES_DIR}/CSSValueKeywords.gperf
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makevalues.pl
+    DEPENDS ${WebCore_CSS_VALUE_KEYWORDS}
+    WORKING_DIRECTORY ${DERIVED_SOURCES_DIR}
+    COMMAND ${PERL_EXECUTABLE} -ne "print lc" ${WebCore_CSS_VALUE_KEYWORDS} > ${DERIVED_SOURCES_DIR}/CSSValueKeywords.in
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makevalues.pl
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp CSSValueKeywords.h)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSValueKeywords.h)
+
+
 # Generate user agent styles
 ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp ${DERIVED_SOURCES_DIR}/UserAgentStyleSheets.h
@@ -2069,14 +2112,8 @@ GENERATE_GRAMMAR(xpathyy ${WEBCORE_DIR}/xml/XPathGrammar.y ${DERIVED_SOURCES_DIR
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp)
 
 
-GENERATE_CSS_PROPERTY_NAMES()
-GENERATE_CSS_VALUE_KEYWORDS()
-
 
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/HashTools.h DocTypeStrings.cpp CSSValueKeywords.cpp CSSPropertyNames.cpp ColorData.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSValueKeywords.h)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSPropertyNames.h)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 
 
