@@ -1,5 +1,13 @@
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix Qt build.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::takeSnapshot):
+        (QGraphicsWKViewPrivate::commitScale):
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Change DrawingArea and DrawingAreaProxy to not inherit from DrawingAreaBase
