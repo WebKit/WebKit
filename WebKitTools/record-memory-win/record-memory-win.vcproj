@@ -265,7 +265,6 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\record-memory-win-common.vsprops"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
