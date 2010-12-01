@@ -686,10 +686,6 @@ BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
-// Selection is wrong.
-BUG10292 MAC : editing/selection/5354455-1.html = FAIL
-BUG10292 WIN LINUX : editing/selection/5354455-1.html = TEXT
-
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
 BUG58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
@@ -3202,3 +3198,6 @@ BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited
 BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
 BUG50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
 BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
+
+// Selection is wrong.
+BUGCR64938 : editing/selection/5354455-1.html = TEXT
