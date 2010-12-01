@@ -26,15 +26,12 @@
 module events {
 
     interface ProgressEvent : Event {
-         readonly attribute boolean         lengthComputable;
-         readonly attribute unsigned long   loaded;
-         readonly attribute unsigned long   total;
-         void               initProgressEvent(in DOMString typeArg,
-                                              in boolean       canBubbleArg,
-                                              in boolean       cancelableArg,
-                                              in boolean       lengthComputableArg,
-                                              in unsigned long loadedArg,
-                                              in unsigned long totalArg);
+        readonly attribute boolean lengthComputable;
+        readonly attribute unsigned long long loaded;
+        readonly attribute unsigned long long total;
+
+        void initProgressEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg,
+            in boolean lengthComputableArg, in unsigned long long loadedArg, in unsigned long long totalArg);
     };
 
 }

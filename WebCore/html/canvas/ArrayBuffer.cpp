@@ -85,7 +85,10 @@ ArrayBuffer::~ArrayBuffer()
 void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
 {
     void* result;
-    // Do not allow 32-bit overflow of the total size
+    // Do not allow 32-bit overflow of the total size.
+    // FIXME: Why not? The tryFastCalloc function already checks its arguments,
+    // and will fail if there is any overflow, so why should we include a
+    // redudant unnecessarily restrictive check here?
     if (numElements) {
         unsigned totalSize = numElements * elementByteSize;
         if (totalSize / numElements != elementByteSize)

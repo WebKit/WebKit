@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@ module events {
         NoStaticTables
     // We should also inherit from LSProgressEvent when the idl is added.
     ] XMLHttpRequestProgressEvent : ProgressEvent {
-         readonly attribute unsigned long   position;
-         readonly attribute unsigned long   totalSize;
+         readonly attribute unsigned long long position;
+         readonly attribute unsigned long long totalSize;
     };
 
 }

@@ -186,8 +186,7 @@ void FileWriter::didFail(FileError::ErrorCode code)
 
 void FileWriter::fireEvent(const AtomicString& type)
 {
-    // FIXME: the current ProgressEvent uses "unsigned long" for total and loaded attributes. Need to talk with the spec writer to resolve the issue.
-    dispatchEvent(ProgressEvent::create(type, true, static_cast<unsigned>(m_bytesWritten), static_cast<unsigned>(m_bytesToWrite)));
+    dispatchEvent(ProgressEvent::create(type, true, m_bytesWritten, m_bytesToWrite));
 }
 
 void FileWriter::setError(FileError::ErrorCode errorCode, ExceptionCode& ec)

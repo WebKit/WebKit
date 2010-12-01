@@ -48,7 +48,7 @@ public:
     XMLHttpRequestProgressEventThrottle(EventTarget*);
     virtual ~XMLHttpRequestProgressEventThrottle();
 
-    void dispatchProgressEvent(bool lengthComputable, unsigned loaded, unsigned total);
+    void dispatchProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
 
     void suspend();
@@ -69,8 +69,8 @@ private:
     EventTarget* m_target;
 
     bool m_lengthComputable;
-    unsigned m_loaded;
-    unsigned m_total;
+    unsigned long long m_loaded;
+    unsigned long long m_total;
 
     bool m_suspended;
     RefPtr<Event> m_pausedEvent;

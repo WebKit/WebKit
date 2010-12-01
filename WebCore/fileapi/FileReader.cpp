@@ -35,20 +35,16 @@
 #include "FileReader.h"
 
 #include "ArrayBuffer.h"
-#include "Blob.h"
 #include "CrossThreadTask.h"
 #include "File.h"
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-const double progressNotificationIntervalMS = 50;
+static const double progressNotificationIntervalMS = 50;
 
 FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
@@ -195,7 +191,7 @@ void FileReader::didStartLoading()
 void FileReader::didReceiveData()
 {
     // Fire the progress event at least every 50ms.
-    double now = WTF::currentTimeMS();
+    double now = currentTimeMS();
     if (!m_lastProgressNotificationTimeMS)
         m_lastProgressNotificationTimeMS = now;
     else if (now - m_lastProgressNotificationTimeMS > progressNotificationIntervalMS) {
@@ -227,10 +223,7 @@ void FileReader::didFail(int errorCode)
 
 void FileReader::fireEvent(const AtomicString& type)
 {
-    // FIXME: the current ProgressEvent uses "unsigned long" for total and loaded attributes. Need to talk with the spec writer to resolve the issue.
-    unsigned bytesLoaded = m_loader ? m_loader->bytesLoaded() : 0;
-    unsigned totalBytes = m_loader ? m_loader->totalBytes() : 0;
-    dispatchEvent(ProgressEvent::create(type, true, bytesLoaded, totalBytes));
+    dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
 FileReader::ReadyState FileReader::readyState() const
