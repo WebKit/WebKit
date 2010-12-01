@@ -1,3 +1,42 @@
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change DrawingArea and DrawingAreaProxy to not inherit from DrawingAreaBase
+        https://bugs.webkit.org/show_bug.cgi?id=50300
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaBase::]):
+        (-[WKView _pageDidEnterAcceleratedCompositing]):
+        (-[WKView _pageDidLeaveAcceleratedCompositing]):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::nextDrawingAreaID):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::info):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::info):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::TiledDrawingArea):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+
 2010-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

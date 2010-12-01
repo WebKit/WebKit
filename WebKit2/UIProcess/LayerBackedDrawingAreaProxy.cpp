@@ -44,7 +44,7 @@ PassOwnPtr<LayerBackedDrawingAreaProxy> LayerBackedDrawingAreaProxy::create(Plat
 }
 
 LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy(PlatformWebView* webView)
-    : DrawingAreaProxy(LayerBackedDrawingAreaType)
+    : DrawingAreaProxy(DrawingAreaBase::LayerBackedDrawingAreaType)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)

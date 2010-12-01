@@ -43,9 +43,9 @@ typedef HDC PlatformDrawingContext;
 typedef QPainter* PlatformDrawingContext;
 #endif
 
-class DrawingAreaProxy : public DrawingAreaBase {
+class DrawingAreaProxy {
 public:
-    static DrawingAreaID nextDrawingAreaID();
+    static DrawingAreaBase::DrawingAreaID nextDrawingAreaID();
 
     virtual ~DrawingAreaProxy();
 
@@ -63,8 +63,12 @@ public:
     virtual void detachCompositingContext() = 0;
 #endif
 
+    const DrawingAreaBase::DrawingAreaInfo info() const { return m_info; }
+
 protected:
-    DrawingAreaProxy(Type);
+    explicit DrawingAreaProxy(DrawingAreaBase::Type);
+
+    DrawingAreaBase::DrawingAreaInfo m_info;
     WebCore::IntSize m_size;
 };
 

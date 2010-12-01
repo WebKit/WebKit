@@ -41,10 +41,10 @@ namespace WebKit {
 
 class WebPage;
 
-class DrawingArea : public DrawingAreaBase, public RefCounted<DrawingArea> {
+class DrawingArea : public RefCounted<DrawingArea> {
 public:
     // FIXME: It might make sense to move this create function into a factory style class. 
-    static PassRefPtr<DrawingArea> create(Type, DrawingAreaID, WebPage*);
+    static PassRefPtr<DrawingArea> create(DrawingAreaBase::Type, DrawingAreaBase::DrawingAreaID, WebPage*);
 
     virtual ~DrawingArea();
     
@@ -66,9 +66,12 @@ public:
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 
-protected:
-    DrawingArea(Type, DrawingAreaID, WebPage*);
+    const DrawingAreaBase::DrawingAreaInfo& info() const { return m_info; }
 
+protected:
+    DrawingArea(DrawingAreaBase::Type, DrawingAreaBase::DrawingAreaID, WebPage*);
+
+    DrawingAreaBase::DrawingAreaInfo m_info;
     WebPage* m_webPage;
 };
 

@@ -39,8 +39,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaID identifier, WebPage* webPage)
-    : DrawingArea(LayerBackedDrawingAreaType, identifier, webPage)
+LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaBase::DrawingAreaID identifier, WebPage* webPage)
+    : DrawingArea(DrawingAreaBase::LayerBackedDrawingAreaType, identifier, webPage)
     , m_syncTimer(WebProcess::shared().runLoop(), this, &LayerBackedDrawingArea::syncCompositingLayers)
     , m_attached(false)
     , m_shouldPaint(true)
@@ -143,7 +143,7 @@ void LayerBackedDrawingArea::didUpdate()
 
 void LayerBackedDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    DrawingAreaID targetDrawingAreaID;
+    DrawingAreaBase::DrawingAreaID targetDrawingAreaID;
     if (!arguments->decode(CoreIPC::Out(targetDrawingAreaID)))
         return;
 

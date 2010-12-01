@@ -40,7 +40,7 @@ class UpdateChunk;
 
 class TiledDrawingArea : public DrawingArea {
 public:
-    TiledDrawingArea(DrawingAreaID identifier, WebPage*);
+    TiledDrawingArea(DrawingAreaBase::DrawingAreaID identifier, WebPage*);
     virtual ~TiledDrawingArea();
 
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);

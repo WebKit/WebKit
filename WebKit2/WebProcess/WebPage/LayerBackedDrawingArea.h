@@ -52,7 +52,7 @@ namespace WebKit {
 
 class LayerBackedDrawingArea : public DrawingArea, private WebCore::GraphicsLayerClient {
 public:
-    LayerBackedDrawingArea(DrawingAreaID identifier, WebPage*);
+    LayerBackedDrawingArea(DrawingAreaBase::DrawingAreaID identifier, WebPage*);
     virtual ~LayerBackedDrawingArea();
 
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);

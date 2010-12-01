@@ -37,8 +37,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(DrawingAreaID identifier, WebPage* webPage)
-    : DrawingArea(ChunkedUpdateDrawingAreaType, identifier, webPage)
+ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(DrawingAreaBase::DrawingAreaID identifier, WebPage* webPage)
+    : DrawingArea(DrawingAreaBase::ChunkedUpdateDrawingAreaType, identifier, webPage)
     , m_isWaitingForUpdate(false)
     , m_paintingIsSuspended(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &ChunkedUpdateDrawingArea::display)
@@ -188,7 +188,7 @@ void ChunkedUpdateDrawingArea::didUpdate()
 
 void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    DrawingAreaID targetDrawingAreaID;
+    DrawingAreaBase::DrawingAreaID targetDrawingAreaID;
     if (!arguments->decode(CoreIPC::Out(targetDrawingAreaID)))
         return;
 

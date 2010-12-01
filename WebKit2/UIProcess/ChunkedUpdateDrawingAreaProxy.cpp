@@ -43,7 +43,7 @@ PassOwnPtr<ChunkedUpdateDrawingAreaProxy> ChunkedUpdateDrawingAreaProxy::create(
 }
 
 ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy(PlatformWebView* webView)
-    : DrawingAreaProxy(ChunkedUpdateDrawingAreaType)
+    : DrawingAreaProxy(DrawingAreaBase::ChunkedUpdateDrawingAreaType)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_forceRepaintWhenResumingPainting(false)
