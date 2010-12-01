@@ -156,6 +156,11 @@ void InsertListCommand::doApply()
                 doApplyForSingleParagraph(forceCreateList, listTag, currentSelection.get());
                 if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {
                     RefPtr<Range> lastSelectionRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), indexForEndOfSelection, 0, true);
+                    // If lastSelectionRange is null, then some contents have been deleted from the document.
+                    // This should never happen and if it did, exit early immediately because we've lost the loop invariant.
+                    ASSERT(lastSelectionRange);
+                    if (!lastSelectionRange)
+                        return;
                     endOfSelection = lastSelectionRange->startPosition();
                     startOfLastParagraph = startOfParagraph(endOfSelection);
                 }

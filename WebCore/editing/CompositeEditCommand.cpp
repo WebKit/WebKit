@@ -776,8 +776,8 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
             outerNode = outerNode->parentNode();
             topNode = topNode->parentNode();
         }
-            
-        for (Node* n = start.node()->traverseNextSibling(outerNode); n; n = n->nextSibling()) {
+
+        for (Node* n = start.node()->traverseNextSibling(outerNode); n; n = n->traverseNextSibling(outerNode)) {
             if (n->parentNode() != start.node()->parentNode())
                 lastNode = topNode->lastChild();
 
