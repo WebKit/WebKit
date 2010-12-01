@@ -1,5 +1,12 @@
 2010-12-01  Sam Weinig  <sam@webkit.org>
 
+        Attempt to fix Windows build.
+
+        * UIProcess/API/C/win/WKViewPrivate.cpp:
+        * UIProcess/API/C/win/WKViewPrivate.h:
+
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add PageGrouping to WebKit2 API

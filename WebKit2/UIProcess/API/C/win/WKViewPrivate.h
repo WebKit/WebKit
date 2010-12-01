@@ -33,8 +33,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKViewRef WKViewCreateForWebInspector(RECT rect, WKPageNamespaceRef pageNamespace, HWND parentWindow);
-
 WK_EXPORT void WKViewSetOverrideCursor(WKViewRef viewRef, HCURSOR overrideCursor);
 
 #ifdef __cplusplus
