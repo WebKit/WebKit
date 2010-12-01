@@ -1,3 +1,9 @@
+2010-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Try using svn:eol-style native on a vcproj file.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Modified property svn:eol-style.
+
 2010-12-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.
