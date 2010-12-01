@@ -2865,7 +2865,7 @@ BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
 
-BUGWK45667 LINUX MAC : fast/files/read-file-async.html = CRASH PASS
+BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
@@ -3194,6 +3194,8 @@ BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
+
+BUG_OJAN : fast/regex/pcre-test-1.html = TIMEOUT
 
 BUG50282 MAC : fast/images/imagemap-case.html = IMAGE
 BUG50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
