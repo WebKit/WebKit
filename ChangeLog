@@ -1,3 +1,15 @@
+2010-12-01  Adam Roben  <aroben@apple.com>
+
+        Teach git to ignore files installed by WebKitSupportLibrary and
+        WebKitAuxiliaryLibrary
+
+        Fixes <http://webkit.org/b/50348> Git complains about lots of
+        untracked files in WebKitLibraries/win
+
+        Reviewed by Steve Falkenburg.
+
+        * .gitignore: Added files from these libraries.
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
