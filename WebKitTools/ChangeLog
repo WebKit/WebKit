@@ -1,3 +1,12 @@
+2010-12-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add WinCELauncher
+        https://bugs.webkit.org/show_bug.cgi?id=50217
+
+        * WinCELauncher/main.cpp: Added.
+
 2010-11-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
