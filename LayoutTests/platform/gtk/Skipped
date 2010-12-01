@@ -5566,3 +5566,9 @@ fast/canvas/canvas-strokePath-shadow.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47727
 mathml/presentation
+
+# While zooming we sometimes appear to have ~1 pixel differences
+# with font metrics to other ports
+# https://bugs.webkit.org/show_bug.cgi?id=50313
+css3/zoom-coords.xhtml
+svg/zoom/page/zoom-zoom-coords.xhtml
