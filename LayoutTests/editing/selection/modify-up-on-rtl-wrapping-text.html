@@ -9,9 +9,9 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
 var tests = [
-    {content: "&#1498; &#1500;&#1499;", width: "2.5ex", expected: [2, 4]},
-    {content: "&#1490; &#1490;&#1499; &#1499;&#1506;&#1497;", width: "3.5ex", expected: [2, 5, 8]},
-    {content: "&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499;", width: "5ex",
+    {content: "&#1498; &#1500;&#1499;", expected: [2, 4]},
+    {content: "&#1499; &#1499;&#1499; &#1499;&#1499;&#1499;", expected: [2, 5, 8]},
+    {content: "&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499;",
         expected: [3, 6, 10, 14, 18]},
 ];
 
@@ -24,11 +24,20 @@ function passed(message) {
 }
 
 function runTest(container, test) {
+    container.style.width = '100%';
     container.innerHTML = test.content;
-    container.style.width = test.width;
+
+    // Starting from 5px, slowly increase the width until each word fits in one line.
+    var heightOfLine = container.offsetHeight;
+    var width = 5;
+    do {
+        container.style.width = width + 'px';
+        width++;
+    } while (container.offsetHeight > heightOfLine * test.expected.length);        
+    container.style.width = (width + 1) + 'px';
 
     var lines = ['st', 'nd', 'rd', 'th'];
-    window.getSelection().setPosition(container.firstChild, test.content.length);
+    window.getSelection().setPosition(container.lastChild, container.lastChild.length);
 
     for (var i = 0; i < test.expected.length; i++) {
         if (!window.getSelection().isCollapsed)

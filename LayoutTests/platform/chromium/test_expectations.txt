@@ -3191,9 +3191,6 @@ BUGCR64695 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 
-BUGWK50204 : editing/selection/click-left-of-rtl-wrapping-text.html = TEXT
-BUGWK50204 WIN LINUX : editing/selection/modify-up-on-rtl-wrapping-text.html = TEXT
-
 BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
