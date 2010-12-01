@@ -706,6 +706,16 @@ static NSScreen *screenForWindow(NSWindow *window)
     [self _updateVisibility];
 }
 
+- (NSView *)hitTest:(NSPoint)point
+{
+    NSView *hitView = [super hitTest:point];
+#if USE(ACCELERATED_COMPOSITING)
+    if (_data && hitView == _data->_layerHostingView)
+        hitView = self;
+#endif
+    return hitView;
+}
+
 @end
 
 @implementation WKView (Internal)
