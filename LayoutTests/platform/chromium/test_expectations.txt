@@ -3144,7 +3144,7 @@ BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Started to flake since http://src.chromium.org/viewvc/chrome?view=rev&revision=66937
 // (72440; 72514] range
-BUGCR64952 LINUX : fast/ruby/nested-ruby.html = CRASH PASS
+BUGCR64952 LINUX : fast/ruby/nested-ruby.html = CRASH IMAGE PASS
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
@@ -3190,6 +3190,8 @@ BUG_DRT WIN : fast/filesystem/op-remove.html = TEXT
 BUG_DRT WIN : fast/filesystem/op-restricted-chars.html = TEXT
 BUG_DRT WIN : fast/filesystem/op-restricted-names.html = TEXT
 BUG_DRT WIN : fast/filesystem/read-directory.html = TIMEOUT
+BUG_DRT WIN : fast/filesystem/simple-persistent.html = TEXT
+BUG_DRT WIN : fast/filesystem/simple-temporary.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
