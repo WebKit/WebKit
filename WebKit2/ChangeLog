@@ -1,3 +1,25 @@
+2010-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Crash when closing WebKit2 window with accelerated composting content
+        https://bugs.webkit.org/show_bug.cgi?id=50307
+        <rdar://problem/8640126>
+        
+        When the web page is closing, notify the drawing area, so that
+        the layer-backed drawing area can kill the runloop obsever,
+        then clear it. Clearing it is not sufficient, since the drawing
+        area is ref-counted.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::onPageClose):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformClear):
+        (WebKit::LayerBackedDrawingArea::onPageClose):
+
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -322,6 +322,9 @@ void WebPage::close()
     m_mainFrame->coreFrame()->loader()->detachFromParent();
     m_page.clear();
 
+    m_drawingArea->onPageClose();
+    m_drawingArea.clear();
+
     WebProcess::shared().removeWebPage(m_pageID);
 }
 

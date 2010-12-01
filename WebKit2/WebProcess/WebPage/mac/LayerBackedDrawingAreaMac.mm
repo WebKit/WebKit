@@ -54,6 +54,9 @@ void LayerBackedDrawingArea::platformInit()
 
 void LayerBackedDrawingArea::platformClear()
 {
+    if (!m_attached)
+        return;
+
     if (m_updateLayoutRunLoopObserver) {
         CFRunLoopObserverInvalidate(m_updateLayoutRunLoopObserver.get());
         m_updateLayoutRunLoopObserver = 0;
@@ -164,6 +167,11 @@ void LayerBackedDrawingArea::updateLayoutRunLoopObserverFired()
     
     if (m_attached)
         syncCompositingLayers();
+}
+
+void LayerBackedDrawingArea::onPageClose()
+{
+    platformClear();
 }
 
 } // namespace WebKit
