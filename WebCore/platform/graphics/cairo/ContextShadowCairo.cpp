@@ -84,6 +84,8 @@ static cairo_surface_t* getScratchBuffer(const IntSize& size)
 
 PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const FloatRect& layerArea)
 {
+    m_unscaledLayerRect = layerArea;
+
     double x1, x2, y1, y2;
     cairo_clip_extents(context, &x1, &y1, &x2, &y2);
     calculateLayerBoundingRect(layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));
@@ -120,7 +122,19 @@ void ContextShadow::endShadowLayer(cairo_t* cr)
 
     cairo_save(cr);
     setSourceRGBAFromColor(cr, m_color);
-    cairo_mask_surface(cr, m_layerImage, m_layerRect.x(), m_layerRect.y());
+
+    cairo_matrix_t transform;
+    cairo_get_matrix(cr, &transform);
+    double x = m_layerRect.x();
+    double y = m_layerRect.y();
+
+    double xScale = sqrt(transform.xx * transform.xx + transform.yx * transform.yx);
+    double yScale = sqrt(transform.xy * transform.xy + transform.yy * transform.yy);
+    if (xScale != 1 || yScale != 1) {
+        x = m_unscaledLayerRect.x() + m_offset.width()  / transform.xx - m_blurDistance;
+        y = m_unscaledLayerRect.y() + m_offset.height() / transform.yy - m_blurDistance;
+    }
+    cairo_mask_surface(cr, m_layerImage, x, y);
     cairo_restore(cr);
 
     // Schedule a purge of the scratch buffer. We do not need to destroy the surface.
