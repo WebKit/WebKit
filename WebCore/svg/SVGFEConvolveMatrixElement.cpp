@@ -24,16 +24,15 @@
 
 #include "Attr.h"
 #include "FloatPoint.h"
-#include "FloatSize.h"
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "SVGNames.h"
-#include "SVGNumberList.h"
 #include "SVGParserUtilities.h"
 
-#include <math.h>
-
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_NUMBER_LIST(SVGFEConvolveMatrixElement, SVGNames::kernelMatrixAttr, KernelMatrix, kernelMatrix)
 
 inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)

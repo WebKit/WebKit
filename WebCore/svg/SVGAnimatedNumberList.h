@@ -28,6 +28,13 @@ namespace WebCore {
 
 typedef SVGAnimatedListPropertyTearOff<SVGNumberList> SVGAnimatedNumberList;
 
+// Helper macros to declare/define a SVGAnimatedNumberList object
+#define DECLARE_ANIMATED_NUMBER_LIST(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedNumberList, SVGNumberList, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_NUMBER_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedNumberList, SVGNumberList, UpperProperty, LowerProperty)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

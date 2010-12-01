@@ -30,6 +30,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_NUMBER_LIST(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, TableValues, tableValues)
+
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)

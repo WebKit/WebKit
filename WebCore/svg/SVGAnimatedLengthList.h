@@ -28,6 +28,13 @@ namespace WebCore {
 
 typedef SVGAnimatedListPropertyTearOff<SVGLengthList> SVGAnimatedLengthList;
 
+// Helper macros to declare/define a SVGAnimatedLengthList object
+#define DECLARE_ANIMATED_LENGTH_LIST(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedLengthList, SVGLengthList, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_LENGTH_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedLengthList, SVGLengthList, UpperProperty, LowerProperty)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

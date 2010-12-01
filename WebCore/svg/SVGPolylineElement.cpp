@@ -23,6 +23,8 @@
 #if ENABLE(SVG)
 #include "SVGPolylineElement.h"
 
+#include "Path.h"
+
 namespace WebCore {
 
 inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document* document)

@@ -23,6 +23,8 @@
 #if ENABLE(SVG)
 #include "SVGPolygonElement.h"
 
+#include "Path.h"
+
 namespace WebCore {
 
 inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document* document)

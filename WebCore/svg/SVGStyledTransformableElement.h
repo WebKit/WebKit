@@ -22,14 +22,14 @@
 #define SVGStyledTransformableElement_h
 
 #if ENABLE(SVG)
-#include "Path.h"
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedTransformList.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"
 
 namespace WebCore {
 
 class AffineTransform;
+class Path;
 
 class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                       public SVGTransformable {
@@ -60,7 +60,8 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
 
-    DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(SVGStyledTransformableElement, SVGNames::transformAttr, SVGTransformList, Transform, transform)
+    // Animated property declarations
+    DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
 
 private:
     virtual bool isStyledTransformable() const { return true; }

@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_TRANSFORM_LIST(SVGStyledTransformableElement, SVGNames::transformAttr, Transform, transform)
+
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document)
     : SVGStyledLocatableElement(tagName, document)
 {

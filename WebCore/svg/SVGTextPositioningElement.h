@@ -22,9 +22,9 @@
 #define SVGTextPositioningElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedLengthList.h"
+#include "SVGAnimatedNumberList.h"
 #include "SVGTextContentElement.h"
-#include "SVGLengthList.h"
-#include "SVGNumberList.h"
 
 namespace WebCore {
 
@@ -42,11 +42,12 @@ protected:
 
     virtual bool selfHasRelativeLengths() const;
 
-    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::xAttr, SVGLengthList, X, x)
-    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::yAttr, SVGLengthList, Y, y)
-    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dxAttr, SVGLengthList, Dx, dx)
-    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dyAttr, SVGLengthList, Dy, dy)
-    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList, Rotate, rotate)
+    // Animated property declarations
+    DECLARE_ANIMATED_LENGTH_LIST(X, x)
+    DECLARE_ANIMATED_LENGTH_LIST(Y, y)
+    DECLARE_ANIMATED_LENGTH_LIST(Dx, dx)
+    DECLARE_ANIMATED_LENGTH_LIST(Dy, dy)
+    DECLARE_ANIMATED_NUMBER_LIST(Rotate, rotate)
 };
 
 } // namespace WebCore

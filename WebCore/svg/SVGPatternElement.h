@@ -32,7 +32,6 @@
 #include "SVGRect.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
-#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -72,7 +71,7 @@ private:
     DECLARE_ANIMATED_LENGTH(Height, height)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternUnitsAttr, int, PatternUnits, patternUnits)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternContentUnitsAttr, int, PatternContentUnits, patternContentUnits)
-    DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(SVGPatternElement, SVGNames::patternTransformAttr, SVGTransformList, PatternTransform, patternTransform)
+    DECLARE_ANIMATED_TRANSFORM_LIST(PatternTransform, patternTransform)
 
     // SVGURIReference
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, XLinkNames::hrefAttr, String, Href, href)

@@ -28,38 +28,39 @@
 
 namespace WebCore {
 
-    class SVGTextElement : public SVGTextPositioningElement,
-                           public SVGTransformable {
-    public:
-        static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document*);
+class SVGTextElement : public SVGTextPositioningElement,
+                       public SVGTransformable {
+public:
+    static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document*);
 
-        virtual SVGElement* nearestViewportElement() const;
-        virtual SVGElement* farthestViewportElement() const;
+    virtual SVGElement* nearestViewportElement() const;
+    virtual SVGElement* farthestViewportElement() const;
 
-        virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
-        virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
-        virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
-        virtual AffineTransform animatedLocalTransform() const;
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform animatedLocalTransform() const;
 
-    private:
-        SVGTextElement(const QualifiedName&, Document*);
+private:
+    SVGTextElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
-        virtual AffineTransform* supplementalTransform();
-        virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGTransformable::localCoordinateSpaceTransform(mode); }
+    virtual AffineTransform* supplementalTransform();
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGTransformable::localCoordinateSpaceTransform(mode); }
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual bool childShouldCreateRenderer(Node*) const;
-                
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool childShouldCreateRenderer(Node*) const;
+            
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        DECLARE_ANIMATED_TRANSFORM_LIST_PROPERTY_NEW(SVGTextElement, SVGNames::transformAttr, SVGTransformList, Transform, transform)
-       
-        // Used by <animateMotion>
-        OwnPtr<AffineTransform> m_supplementalTransform;
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
+
+    // Used by <animateMotion>
+    OwnPtr<AffineTransform> m_supplementalTransform;
+};
 
 } // namespace WebCore
 
