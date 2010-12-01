@@ -147,7 +147,8 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint tempPoint = { max(-[scrollView() scrollOriginX], scrollPoint.x()), max(0, scrollPoint.y()) };  // Don't use NSMakePoint to work around 4213314.
+    NSPoint floatPoint = scrollPoint;
+    NSPoint tempPoint = { max(-[scrollView() scrollOrigin].x, floatPoint.x), max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -202,10 +203,10 @@ bool ScrollView::platformIsOffscreen() const
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
-void ScrollView::platformSetScrollOriginX(int x)
+void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePosition)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [scrollView() setScrollOriginX:x];
+    [scrollView() setScrollOrigin:origin updatePosition:updatePosition];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

@@ -172,8 +172,9 @@ protected:
 
 private:
     bool shouldRepaint(const IntRect& r) const;
-        
-    int docHeight() const;
+    
+    int docTop() const;
+    int docHeight(int topOverflow) const;
     int docLeft() const;
     int docWidth(int leftOverflow) const;
 

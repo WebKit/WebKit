@@ -63,12 +63,14 @@ struct WebDynamicScrollBarsViewPrivate {
     bool horizontalScrollingAllowedButScrollerHidden;
     bool verticalScrollingAllowedButScrollerHidden;
 
-    // scrollOriginX is 0 for LTR page and is the negative of left layout overflow value for RTL page.
-    int scrollOriginX;
+    // scrollOrigin is set for various combinations of writing mode and direction.
+    // See the comment next to the corresponding member in ScrollView.h.
+    NSPoint scrollOrigin;
 
     // Flag to indicate that the scrollbar thumb's initial position needs to
     // be manually set.
-    bool setScrollbarThumbInitialPosition;
+    bool scrollOriginChanged;
+    NSPoint scrollPositionExcludingOrigin;
 
     bool inProgrammaticScroll;
 };
@@ -215,27 +217,22 @@ struct WebDynamicScrollBarsViewPrivate {
 #endif
 }
 
-- (void)refreshInitialScrollbarPosition
+- (void)adjustForScrollOriginChange
 {
-    if (_private->setScrollbarThumbInitialPosition) {
-        NSView *documentView = [self documentView];
-        NSRect documentRect = [documentView bounds];
+    if (!_private->scrollOriginChanged)
+        return;
 
-        // If scrollOriginX is non-zero that means that there's a left overflow <=> this is an RTL document and thus
-        // the initial position of the horizontal scrollbar thumb should be on the right.
-        // FIXME: If knowledge of document directionality is ever propagated to the scroll view, it probably makes
-        // more sense to use the directionality directly in the below if statement, rather than doing so indirectly
-        // through scrollOriginX.
-        if (_private->scrollOriginX != 0) {
-            // The call to [NSView scrollPoint:] fires off notification the handler for which needs to know that
-            // we're setting the initial scroll position so it doesn't interpret this as a user action and
-            // fire off a JS event.
-            _private->inProgrammaticScroll = true;
-            [documentView scrollPoint:NSMakePoint(NSMaxX(documentRect) - NSWidth([self contentViewFrame]), 0)];
-            _private->inProgrammaticScroll = false;
-        }
-        _private->setScrollbarThumbInitialPosition = false;
-    }
+    _private->scrollOriginChanged = false;
+
+    NSView *documentView = [self documentView];
+    NSRect documentRect = [documentView bounds];
+
+    // The call to [NSView scrollPoint:] fires off notification the handler for which needs to know that
+    // we're setting the initial scroll position so it doesn't interpret this as a user action and
+    // fire off a JS event.
+    _private->inProgrammaticScroll = true;
+    [documentView scrollPoint:NSMakePoint(_private->scrollPositionExcludingOrigin.x + documentRect.origin.x, _private->scrollPositionExcludingOrigin.y + documentRect.origin.y)];
+    _private->inProgrammaticScroll = false;
 }
 
 static const unsigned cMaxUpdateScrollbarsPass = 2;
@@ -339,14 +336,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         _private->inUpdateScrollers = YES;
         [self setHasHorizontalScroller:newHasHorizontalScroller];
-        
-        // For RTL documents, we need to set the initial position of the
-        // horizontal scrollbar thumb to be on the right.
-        if (newHasHorizontalScroller)
-            _private->setScrollbarThumbInitialPosition = true;
-        
         _private->inUpdateScrollers = NO;
         needsLayout = YES;
+        NSView *documentView = [self documentView];
+        NSRect documentRect = [documentView bounds];
+        if (documentRect.origin.y < 0 && !newHasHorizontalScroller)
+            [documentView setBoundsOrigin:NSMakePoint(documentRect.origin.x, documentRect.origin.y + 15)];
     }
 
     if (hasVerticalScroller != newHasVerticalScroller) {
@@ -354,6 +349,10 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         [self setHasVerticalScroller:newHasVerticalScroller];
         _private->inUpdateScrollers = NO;
         needsLayout = YES;
+        NSView *documentView = [self documentView];
+        NSRect documentRect = [documentView bounds];
+        if (documentRect.origin.x < 0 && !newHasVerticalScroller)
+            [documentView setBoundsOrigin:NSMakePoint(documentRect.origin.x + 15, documentRect.origin.y)];
     }
 
     if (needsLayout && _private->inUpdateScrollersLayoutPass < cMaxUpdateScrollbarsPass &&
@@ -410,7 +409,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // The call to [NSView reflectScrolledClipView] sets the scrollbar thumb
     // position to 0 (the left) when the view is initially displayed.
     // This call updates the initial position correctly.
-    [self refreshInitialScrollbarPosition];
+    [self adjustForScrollOriginChange];
 
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
     NSView *documentView = [self documentView];
@@ -573,22 +572,30 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     return [super accessibilityIsIgnored];
 }
 
-- (void)setScrollOriginX:(int)scrollOriginX
+- (void)setScrollOrigin:(NSPoint)scrollOrigin updatePosition:(BOOL)updatePosition
 {
-    _private->scrollOriginX = scrollOriginX;
-    
+    // The cross-platform ScrollView call already checked to see if the old/new scroll origins were the same or not
+    // so we don't have to check for equivalence here.
+    _private->scrollOrigin = scrollOrigin;
     id docView = [self documentView];
-    if (scrollOriginX != [docView bounds].origin.x) {
-        // "-[self scrollOriginX]" is equal to the left layout overflow.
-        // Make Document bounds origin x coordinate correspond to the left overflow so the entire canvas is covered by the document.
-        [docView setBoundsOrigin:NSMakePoint(-scrollOriginX, [docView bounds].origin.y)];
-    }
+    NSPoint docOrigin = [docView bounds].origin;
 
+    NSRect visibleRect = [self documentVisibleRect];
+
+    [docView setBoundsOrigin:NSMakePoint(-scrollOrigin.x, -scrollOrigin.y)];
+
+    _private->scrollOriginChanged = true;
+
+    // Maintain our original position in the presence of the new scroll origin.
+    _private->scrollPositionExcludingOrigin = NSMakePoint(visibleRect.origin.x + scrollOrigin.x, visibleRect.origin.y + scrollOrigin.y);
+
+    if (updatePosition) // Otherwise we'll just let the snap happen when we update for the resize.
+        [self adjustForScrollOriginChange];
 }
 
-- (int)scrollOriginX
+- (NSPoint)scrollOrigin
 {
-    return _private->scrollOriginX;
+    return _private->scrollOrigin;
 }
 
 @end

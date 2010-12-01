@@ -1,3 +1,27 @@
+2010-12-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46645
+        
+        Part 1 of making scrolling work with vertical text. This patch generalizes the scrollOriginX concept
+        recently added for horizontal RTL documents and applies it to writing modes as well.  Now the
+        scrollOrigin is a point, since you can start off locked to the bottom or locked to the right.
+        
+        This patch also fixes numerous bugs with the scrollOrigin code using native Mac NSScrollViews and
+        makes them behave the same as the cross-platform code (allowing for cross-platform results to be
+        landed).
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView adjustForScrollOriginChange]):
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        (-[WebDynamicScrollBarsView setScrollOrigin:updatePosition:]):
+        (-[WebDynamicScrollBarsView scrollOrigin]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+
 2010-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

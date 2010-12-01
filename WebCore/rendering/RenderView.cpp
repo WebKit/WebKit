@@ -132,7 +132,8 @@ void RenderView::layout()
     // Reset overflow and then replace it with docWidth and docHeight.
     m_overflow.clear();
     int leftOverflow = docLeft();
-    addLayoutOverflow(IntRect(leftOverflow, 0, docWidth(leftOverflow), docHeight()));
+    int topOverflow = docTop();
+    addLayoutOverflow(IntRect(leftOverflow, topOverflow, docWidth(leftOverflow), docHeight(topOverflow)));
 
     ASSERT(layoutDelta() == IntSize());
     ASSERT(m_layoutStateDisableCount == 0);
@@ -617,9 +618,18 @@ IntRect RenderView::viewRect() const
     return IntRect();
 }
 
-int RenderView::docHeight() const
+int RenderView::docTop() const
 {
-    int h = lowestPosition();
+    // Clip out top overflow in vertical LTR pages or horizontal-tb pages.
+    if ((!style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == TopToBottomWritingMode)
+        return 0;
+    return std::min(0, topmostPosition());
+}
+
+int RenderView::docHeight(int topOverflow) const
+{
+    int h = ((!style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == TopToBottomWritingMode) ?
+                lowestPosition() : height() - topOverflow;
 
     // FIXME: This doesn't do any margin collapsing.
     // Instead of this dh computation we should keep the result
@@ -636,13 +646,16 @@ int RenderView::docHeight() const
 
 int RenderView::docLeft() const
 {
-    // Clip out left overflow in LTR page.
-    return style()->isLeftToRightDirection() ? 0 : std::min(0, leftmostPosition());
+    // Clip out left overflow in horizontal LTR pages or vertical-lr pages.
+    if ((style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == LeftToRightWritingMode)
+        return 0;
+    return std::min(0, leftmostPosition());
 }
 
 int RenderView::docWidth(int leftOverflow) const
 {
-    int w = style()->isLeftToRightDirection() ? rightmostPosition() : width() - leftOverflow;
+    int w = ((style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == LeftToRightWritingMode) ? 
+                rightmostPosition() : width() - leftOverflow;
 
     for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox()) {
         int dw = c->width() + c->marginLeft() + c->marginRight();
