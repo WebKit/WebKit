@@ -1,15 +1,17 @@
-<script src="../../resources/dump-as-markup.js"></script>
-
-<p>This tests whether right clicking on a paragraph break in editable content selects it.  The break should be selected on OS X, but not on Windows or Linux.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
-<div id="dump">
+<p>This tests whether right clicking on a paragraph break in editable content selects it.  The break should be selected on OS X, but not on Windows or Unix.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
 <div id="div" contenteditable="true">
 <div><span id="text">The following paragraph break should be selected on OS X.</span></div>
 <br>
 </div>
-</div>
+<p>Mac: <span id="resultmac">RUNNING</span></p>
+<p>Win: <span id="resultwin">RUNNING</span></p>
+<p>Unix: <span id="resultunix">RUNNING</span></p>
 
 <script>
-if (window.layoutTestController) {
+function test(platform, result) {
+    window.getSelection().removeAllRanges();
+    layoutTestController.setEditingBehavior(platform);
+    
     paragraph = document.getElementById("text");
     x = paragraph.offsetParent.offsetLeft + paragraph.offsetLeft + paragraph.offsetWidth + 10;
     y = paragraph.offsetParent.offsetTop + paragraph.offsetTop + paragraph.offsetHeight / 2;
@@ -19,7 +21,18 @@ if (window.layoutTestController) {
     eventSender.mouseUp();
     // Right click on the paragraph break to select it.
     eventSender.contextClick();
+    // esc key to kill the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+    
+    document.getElementById(result).innerHTML = window.getSelection().type;
 }
-Markup.dump(document.getElementById("dump"));
+
+if (window.eventSender && window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+    test('mac', 'resultmac');
+    test('win', 'resultwin');
+    test('unix', 'resultunix');
+}
 </script>
 
