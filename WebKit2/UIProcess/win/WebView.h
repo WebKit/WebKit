@@ -118,7 +118,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();
     virtual void pageDidLeaveAcceleratedCompositing();
-    void switchToDrawingAreaTypeIfNecessary(DrawingAreaBase::Type);
+    void switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type);
 #endif
 
     virtual HWND nativeWindow();
