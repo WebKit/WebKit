@@ -26,8 +26,13 @@
 #include "config.h"
 #include "UTF8.h"
 
+#include "ASCIICType.h"
+
 namespace WTF {
 namespace Unicode {
+
+// FIXME: Use definition from CharacterNames.h.
+const UChar replacementCharacter = 0xFFFD;
 
 inline int inlineUTF8SequenceLengthNonASCII(char b0)
 {
@@ -44,12 +49,12 @@ inline int inlineUTF8SequenceLengthNonASCII(char b0)
 
 inline int inlineUTF8SequenceLength(char b0)
 {
-    return (b0 & 0x80) == 0 ? 1 : inlineUTF8SequenceLengthNonASCII(b0);
+    return isASCII(b0) ? 1 : inlineUTF8SequenceLengthNonASCII(b0);
 }
 
 int UTF8SequenceLength(char b0)
 {
-    return (b0 & 0x80) == 0 ? 1 : inlineUTF8SequenceLengthNonASCII(b0);
+    return isASCII(b0) ? 1 : inlineUTF8SequenceLengthNonASCII(b0);
 }
 
 int decodeUTF8Sequence(const char* sequence)
@@ -172,7 +177,7 @@ ConversionResult convertUTF16ToUTF8(
             bytesToWrite = 4;
         } else {
             bytesToWrite = 3;
-            ch = 0xFFFD;
+            ch = replacementCharacter;
         }
 
         target += bytesToWrite;
@@ -231,6 +236,23 @@ static bool isLegalUTF8(const unsigned char* source, int length)
 static const UChar32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL, 
             0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 
+static inline UChar32 readUTF8Sequence(const char*& sequence, unsigned length)
+{
+    UChar32 character = 0;
+
+    // The cases all fall through.
+    switch (length) {
+        case 6: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 5: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 4: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 3: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 2: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 1: character += static_cast<unsigned char>(*sequence++);
+    }
+
+    return character - offsetsFromUTF8[length - 1];
+}
+
 ConversionResult convertUTF8ToUTF16(
     const char** sourceStart, const char* sourceEnd, 
     UChar** targetStart, UChar* targetEnd, bool strict)
@@ -239,60 +261,52 @@ ConversionResult convertUTF8ToUTF16(
     const char* source = *sourceStart;
     UChar* target = *targetStart;
     while (source < sourceEnd) {
-        UChar32 ch = 0;
-        int extraBytesToRead = inlineUTF8SequenceLength(*source) - 1;
-        if (source + extraBytesToRead >= sourceEnd) {
+        int utf8SequenceLength = inlineUTF8SequenceLength(*source);
+        if (sourceEnd - source < utf8SequenceLength)  {
             result = sourceExhausted;
             break;
         }
         // Do this check whether lenient or strict
-        if (!isLegalUTF8(reinterpret_cast<const unsigned char*>(source), extraBytesToRead + 1)) {
+        if (!isLegalUTF8(reinterpret_cast<const unsigned char*>(source), utf8SequenceLength)) {
             result = sourceIllegal;
             break;
         }
-        // The cases all fall through.
-        switch (extraBytesToRead) {
-            case 5: ch += static_cast<unsigned char>(*source++); ch <<= 6; // remember, illegal UTF-8
-            case 4: ch += static_cast<unsigned char>(*source++); ch <<= 6; // remember, illegal UTF-8
-            case 3: ch += static_cast<unsigned char>(*source++); ch <<= 6;
-            case 2: ch += static_cast<unsigned char>(*source++); ch <<= 6;
-            case 1: ch += static_cast<unsigned char>(*source++); ch <<= 6;
-            case 0: ch += static_cast<unsigned char>(*source++);
-        }
-        ch -= offsetsFromUTF8[extraBytesToRead];
+
+        UChar32 character = readUTF8Sequence(source, utf8SequenceLength);
 
         if (target >= targetEnd) {
-            source -= (extraBytesToRead + 1); // Back up source pointer!
-            result = targetExhausted; break;
+            source -= utf8SequenceLength; // Back up source pointer!
+            result = targetExhausted;
+            break;
         }
-        if (ch <= 0xFFFF) {
+
+        if (U_IS_BMP(character)) {
             // UTF-16 surrogate values are illegal in UTF-32
-            if (ch >= 0xD800 && ch <= 0xDFFF) {
+            if (U_IS_SURROGATE(character)) {
                 if (strict) {
-                    source -= (extraBytesToRead + 1); // return to the illegal value itself
+                    source -= utf8SequenceLength; // return to the illegal value itself
                     result = sourceIllegal;
                     break;
                 } else
-                    *target++ = 0xFFFD;
+                    *target++ = replacementCharacter;
             } else
-                *target++ = (UChar)ch; // normal case
-        } else if (ch > 0x10FFFF) {
-            if (strict) {
-                result = sourceIllegal;
-                source -= (extraBytesToRead + 1); // return to the start
-                break; // Bail out; shouldn't continue
-            } else
-                *target++ = 0xFFFD;
-        } else {
+                *target++ = character; // normal case
+        } else if (U_IS_SUPPLEMENTARY(character)) {
             // target is a character in range 0xFFFF - 0x10FFFF
             if (target + 1 >= targetEnd) {
-                source -= (extraBytesToRead + 1); // Back up source pointer!
+                source -= utf8SequenceLength; // Back up source pointer!
                 result = targetExhausted;
                 break;
             }
-            ch -= 0x0010000UL;
-            *target++ = (UChar)((ch >> 10) + 0xD800);
-            *target++ = (UChar)((ch & 0x03FF) + 0xDC00);
+            *target++ = U16_LEAD(character);
+            *target++ = U16_TRAIL(character);
+        } else {
+            if (strict) {
+                source -= utf8SequenceLength; // return to the start
+                result = sourceIllegal;
+                break; // Bail out; shouldn't continue
+            } else
+                *target++ = replacementCharacter;
         }
     }
     *sourceStart = source;
@@ -300,5 +314,5 @@ ConversionResult convertUTF8ToUTF16(
     return result;
 }
 
-}
-}
+} // namespace Unicode
+} // namespace WTF

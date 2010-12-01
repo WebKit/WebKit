@@ -1,3 +1,20 @@
+2010-11-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Cleanup UTF8.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=49581
+
+        Use macros and functions instead of range values directly.
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::inlineUTF8SequenceLength):
+        (WTF::Unicode::UTF8SequenceLength):
+        (WTF::Unicode::convertUTF16ToUTF8):
+        (WTF::Unicode::readUTF8Sequence):
+        (WTF::Unicode::convertUTF8ToUTF16):
+        * wtf/unicode/UnicodeMacrosFromICU.h: Added U_IS_SUPPLEMENTARY macro.
+
 2010-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
