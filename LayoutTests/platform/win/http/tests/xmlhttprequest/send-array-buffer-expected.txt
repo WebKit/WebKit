@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: Uint8Array
+Tests sending an array buffer.
+
