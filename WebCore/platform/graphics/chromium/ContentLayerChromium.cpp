@@ -69,6 +69,7 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
 
+#if PLATFORM(SKIA)
     // Color is in RGBA order.
     char rgbaFragmentShaderString[] =
         "precision mediump float;                            \n"
@@ -80,6 +81,7 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
         "  gl_FragColor = texColor * alpha; \n"
         "}                                                   \n";
+#endif
 
     // Color is in BGRA order.
     char bgraFragmentShaderString[] =
