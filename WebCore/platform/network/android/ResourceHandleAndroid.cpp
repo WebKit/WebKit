@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "ResourceHandle.h"
 
 #include "CachedResourceLoader.h"
@@ -36,6 +35,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceLoaderAndroid.h"
+#include "Settings.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -48,16 +48,14 @@ ResourceHandle::~ResourceHandle()
 {
 }
 
-bool ResourceHandle::start(Frame* frame)
+bool ResourceHandle::start(NetworkingContext* context)
 {
-    DocumentLoader* documentLoader = frame->loader()->activeDocumentLoader();
-    MainResourceLoader* mainLoader = documentLoader->mainResourceLoader();
-    bool isMainResource = mainLoader && (mainLoader->handle() == this);
-
-    PassRefPtr<ResourceLoaderAndroid> loader = ResourceLoaderAndroid::start(this, d->m_request, frame->loader()->client(), isMainResource, false);
+    MainResourceLoader* mainLoader = context->mainResourceLoader();
+    bool isMainResource = static_cast<void*>(mainLoader) == static_cast<void*>(client());
+    RefPtr<ResourceLoaderAndroid> loader = ResourceLoaderAndroid::start(this, d->m_firstRequest, context->frameLoaderClient(), isMainResource, false);
 
     if (loader) {
-        d->m_loader = loader;
+        d->m_loader = loader.release();
         return true;
     }
 
@@ -101,11 +99,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
     return ResourceLoaderAndroid::willLoadFromCache(request.url(), formData ? formData->identifier() : 0);
 }
 
-bool ResourceHandle::loadsBlocked() 
+bool ResourceHandle::loadsBlocked()
 {
     // FIXME, need to check whether connection pipe is blocked.
     // return false for now
-    return false; 
+    return false;
 }
 
 // Class to handle synchronized loading of resources.
@@ -140,15 +138,17 @@ private:
     WTF::Vector<char>* m_data;
 };
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request,
-        StoredCredentials /*storedCredentials*/,
-        ResourceError& error, ResourceResponse& response, WTF::Vector<char>& data,
-        Frame* frame) 
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request,
+        StoredCredentials, ResourceError& error, ResourceResponse& response, WTF::Vector<char>& data)
 {
     SyncLoader s(error, response, data);
-    RefPtr<ResourceHandle> h = adoptRef(new ResourceHandle(request, &s, false, false, false));
+    RefPtr<ResourceHandle> h = adoptRef(new ResourceHandle(request, &s, false, false));
     // This blocks until the load is finished.
-    ResourceLoaderAndroid::start(h.get(), request, frame->loader()->client(), false, true);
+    // Use the request owned by the ResourceHandle. This has had the username
+    // and password (if present) stripped from the URL in
+    // ResourceHandleInternal::ResourceHandleInternal(). This matches the
+    // behaviour in the asynchronous case.
+    ResourceLoaderAndroid::start(h.get(), request, context->frameLoaderClient(), false, true);
 }
 
 } // namespace WebCore
