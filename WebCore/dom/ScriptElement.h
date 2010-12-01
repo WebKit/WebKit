@@ -51,11 +51,12 @@ public:
     virtual void dispatchLoadEvent() = 0;
     virtual void dispatchErrorEvent() = 0;
 
+    bool haveFiredLoadEvent() const { return m_haveFiredLoad; }
+
 protected:
-    bool haveFiredLoadEvent() const { return m_firedLoad; }
-    void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
-    bool createdByParser() const { return m_createdByParser; }
-    bool isEvaluated() const { return m_isEvaluated; }
+    void setHaveFiredLoadEvent(bool haveFiredLoad) { m_haveFiredLoad = haveFiredLoad; }
+    bool wasInsertedByParser() const { return m_wasInsertedByParser; }
+    bool wasAlreadyStarted() const { return m_wasAlreadyStarted; }
 
     // Helper functions used by our parent classes.
     void insertedIntoDocument(const String& sourceUrl);
@@ -85,10 +86,10 @@ private:
 
     Element* m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
-    bool m_createdByParser; // HTML5: "parser-inserted"
-    bool m_requested;
-    bool m_isEvaluated; // HTML5: "already started"
-    bool m_firedLoad;
+    bool m_wasInsertedByParser;
+    bool m_isExternalScript;
+    bool m_wasAlreadyStarted;
+    bool m_haveFiredLoad;
 };
 
 ScriptElement* toScriptElement(Element*);

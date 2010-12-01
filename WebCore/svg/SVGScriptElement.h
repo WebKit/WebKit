@@ -35,13 +35,13 @@ namespace WebCore {
                            , public SVGExternalResourcesRequired
                            , public ScriptElement {
     public:
-        static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool createdByParser);
+        static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
 
         String type() const;
         void setType(const String&);
 
     private:
-        SVGScriptElement(const QualifiedName&, Document*, bool createdByParser, bool isEvaluated);
+        SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void insertedIntoDocument();

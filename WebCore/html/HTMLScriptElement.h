@@ -31,17 +31,15 @@ namespace WebCore {
 
 class HTMLScriptElement : public HTMLElement, public ScriptElement {
 public:
-    static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document*, bool createdByParser);
+    static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
 
     String text() const { return scriptContent(); }
     void setText(const String&);
 
     KURL src() const;
 
-    bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
-
 private:
-    HTMLScriptElement(const QualifiedName&, Document*, bool createdByParser, bool isEvaluated);
+    HTMLScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();

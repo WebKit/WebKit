@@ -31,15 +31,15 @@
 
 namespace WebCore {
 
-inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool createdByParser, bool isEvaluated)
+inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool wasAlreadyStarted)
     : SVGElement(tagName, document)
-    , ScriptElement(this, createdByParser, isEvaluated)
+    , ScriptElement(this, wasInsertedByParser, wasAlreadyStarted)
 {
 }
 
-PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document* document, bool insertedByParser)
 {
-    return adoptRef(new SVGScriptElement(tagName, document, createdByParser, false));
+    return adoptRef(new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
 void SVGScriptElement::parseMappedAttribute(Attribute* attr)
@@ -68,7 +68,7 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
         // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
         // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
         // in the document, the SVGLoad event has already been dispatched.
-        if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !createdByParser()) {
+        if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !wasInsertedByParser()) {
             setHaveFiredLoadEvent(true);
             ASSERT(haveLoadedRequiredResources());
 
@@ -98,7 +98,7 @@ void SVGScriptElement::insertedIntoDocument()
     SVGElement::insertedIntoDocument();
     ScriptElement::insertedIntoDocument(sourceAttributeValue());
 
-    if (createdByParser())
+    if (wasInsertedByParser())
         return;
 
     // Eventually send SVGLoad event now for the dynamically inserted script element
@@ -201,7 +201,7 @@ void SVGScriptElement::dispatchLoadEvent()
 {
     bool externalResourcesRequired = externalResourcesRequiredBaseValue();
 
-    if (createdByParser())
+    if (wasInsertedByParser())
         ASSERT(externalResourcesRequired != haveFiredLoadEvent());
     else if (haveFiredLoadEvent()) {
         // If we've already fired an load event and externalResourcesRequired is set to 'true'
@@ -232,7 +232,7 @@ void SVGScriptElement::dispatchErrorEvent()
 
 PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren() const
 {
-    return adoptRef(new SVGScriptElement(tagQName(), document(), false, isEvaluated()));
+    return adoptRef(new SVGScriptElement(tagQName(), document(), false, wasAlreadyStarted()));
 }
 
 }
