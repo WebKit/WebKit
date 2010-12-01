@@ -5370,3 +5370,9 @@ plugins/keyboard-events.html
 # https://bugs.webkit.org/show_bug.cgi?id=50204
 editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
+
+# [Qt] Add focus ring outline color support
+# https://bugs.webkit.org/show_bug.cgi?id=50325
+fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html
+fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html
+fast/images/imagemap-focus-ring-outline-color.html
