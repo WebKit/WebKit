@@ -167,7 +167,6 @@
 		1AB7D72D1288CAAD00CFD08C /* WebDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */; };
 		1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D78B1288CD9A00CFD08C /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */; };
-		1AC25FBC12A48EDA00BD2671 /* PluginProcessShim.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */; };
 		1AC25FC212A48F6000BD2671 /* PluginProcessShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */; };
 		1AC25FDC12A4902700BD2671 /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC41AC51263C88300054E94 /* BinarySemaphore.h */; };
@@ -2584,7 +2583,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				1AC25FBC12A48EDA00BD2671 /* PluginProcessShim.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,15 @@
+2010-11-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Build fix.
+
+        * Configurations/BaseTarget.xcconfig: Don't run Copy Files and Run Script build phases
+        during installhdrs. It's not necessary, and it results in Xcode attempting to copy the
+        plug-in shim dylib when it has not yet been built.
+        * WebKit2.xcodeproj/project.pbxproj: Stop copying the .xcconfig file in to the application
+        wrapper.
+
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
