@@ -595,7 +595,7 @@ public:
             term.quantify(min, QuantifierFixedCount);
             m_alternative->m_terms.append(copyTerm(term));
             // NOTE: this term is interesting from an analysis perspective, in that it can be ignored.....
-            m_alternative->lastTerm().quantify((max == UINT_MAX) ? max : max - min, greedy ? QuantifierGreedy : QuantifierNonGreedy);
+            m_alternative->lastTerm().quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierGreedy : QuantifierNonGreedy);
             if (m_alternative->lastTerm().type == PatternTerm::TypeParenthesesSubpattern)
                 m_alternative->lastTerm().parentheses.isCopy = true;
         }
@@ -734,7 +734,8 @@ public:
     // This optimization identifies sets of parentheses that we will never need to backtrack.
     // In these cases we do not need to store state from prior iterations.
     // We can presently avoid backtracking for:
-    //   * a set of parens at the end of the regular expression (last term in any of the alternatives of the main body disjunction).
+    //   * where the parens are at the end of the regular expression (last term in any of the
+    //     alternatives of the main body disjunction).
     //   * where the parens are non-capturing, and quantified unbounded greedy (*).
     //   * where the parens do not contain any capturing subpatterns.
     void checkForTerminalParentheses()
@@ -745,13 +746,13 @@ public:
             return;
 
         Vector<PatternAlternative*>& alternatives = m_pattern.m_body->m_alternatives;
-        for (unsigned i =0; i < alternatives.size(); ++i) {
+        for (size_t i = 0; i < alternatives.size(); ++i) {
             Vector<PatternTerm>& terms = alternatives[i]->m_terms;
             if (terms.size()) {
                 PatternTerm& term = terms.last();
                 if (term.type == PatternTerm::TypeParenthesesSubpattern
                     && term.quantityType == QuantifierGreedy
-                    && term.quantityCount == UINT_MAX
+                    && term.quantityCount == quantifyInfinite
                     && !term.capture())
                     term.parentheses.isTerminal = true;
             }

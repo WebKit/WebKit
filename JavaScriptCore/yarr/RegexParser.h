@@ -33,6 +33,8 @@
 
 namespace JSC { namespace Yarr {
 
+static const unsigned quantifyInfinite = UINT_MAX;
+
 enum BuiltInCharacterClassID {
     DigitClassID,
     SpaceClassID,
@@ -594,13 +596,13 @@ private:
 
             case '*':
                 consume();
-                parseQuantifier(lastTokenWasAnAtom, 0, UINT_MAX);
+                parseQuantifier(lastTokenWasAnAtom, 0, quantifyInfinite);
                 lastTokenWasAnAtom = false;
                 break;
 
             case '+':
                 consume();
-                parseQuantifier(lastTokenWasAnAtom, 1, UINT_MAX);
+                parseQuantifier(lastTokenWasAnAtom, 1, quantifyInfinite);
                 lastTokenWasAnAtom = false;
                 break;
 
@@ -619,7 +621,7 @@ private:
                     unsigned max = min;
                     
                     if (tryConsume(','))
-                        max = peekIsDigit() ? consumeNumber() : UINT_MAX;
+                        max = peekIsDigit() ? consumeNumber() : quantifyInfinite;
 
                     if (tryConsume('}')) {
                         if (min <= max)
@@ -861,7 +863,7 @@ private:
  */
 
 template<class Delegate>
-const char* parse(Delegate& delegate, const UString& pattern, unsigned backReferenceLimit = UINT_MAX)
+const char* parse(Delegate& delegate, const UString& pattern, unsigned backReferenceLimit = quantifyInfinite)
 {
     return Parser<Delegate>(delegate, pattern, backReferenceLimit).parse();
 }
