@@ -8,7 +8,8 @@ lineElement.setAttribute("x1", "20");
 lineElement.setAttribute("y1", "20");
 lineElement.setAttribute("x2", "200");
 lineElement.setAttribute("y2", "200");
-lineElement.setAttribute("fill", "green");
+lineElement.setAttribute("stroke", "green");
+lineElement.setAttribute("stroke-width", "10px");
 
 rootSVGElement.appendChild(lineElement);
 
