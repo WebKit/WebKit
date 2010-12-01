@@ -1,3 +1,15 @@
+2010-12-01  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] renderer does not realize hardware compositing is disabled and crashes
+        https://bugs.webkit.org/show_bug.cgi?id=50264
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootGraphicsLayer): repaint always
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive): null check
+        (WebKit::WebViewImpl::reallocateRenderer):
+
 2010-11-30  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
