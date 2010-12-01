@@ -5112,12 +5112,10 @@ var input1 = "bXYaXXaX";
 var results = ["bX", "X"];
 shouldBe('regex642.exec(input1);', 'results');
 
-// FIXME: this regex trips an ASSERT in JSC.
-// https://bugs.webkit.org/show_bug.cgi?id=50298
-//var regex643 = /()()()()()()()()()(?:(\10a|b)(X|Y))+/;
-//var input0 = "bXXaYYaY";
-//var results = ["bX", "", "", "", "", "", "", "", "", "", "X"];
-//shouldBe('regex643.exec(input0);', 'results');
+var regex643 = /()()()()()()()()()(?:(\10a|b)(X|Y))+/;
+var input0 = "bXXaYYaY";
+var results = ["bX", "", "", "", "", "", "", "", "", "", "b", "X"];
+shouldBe('regex643.exec(input0);', 'results');
 
 var regex644 = /[[,abc,]+]/;
 var input0 = "abc]";

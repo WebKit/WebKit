@@ -107,7 +107,7 @@ struct PatternTerm {
     union {
         UChar patternCharacter;
         CharacterClass* characterClass;
-        unsigned subpatternId;
+        unsigned backReferenceSubpatternId;
         struct {
             PatternDisjunction* disjunction;
             unsigned subpatternId;
@@ -162,7 +162,7 @@ struct PatternTerm {
         : type(TypeBackReference)
         , invertOrCapture(false)
     {
-        subpatternId = spatternId;
+        backReferenceSubpatternId = spatternId;
         quantityType = QuantifierFixedCount;
         quantityCount = 1;
     }

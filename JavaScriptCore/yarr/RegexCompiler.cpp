@@ -520,7 +520,7 @@ public:
             PatternTerm& term = currentAlternative->lastTerm();
             ASSERT((term.type == PatternTerm::TypeParenthesesSubpattern) || (term.type == PatternTerm::TypeParentheticalAssertion));
 
-            if ((term.type == PatternTerm::TypeParenthesesSubpattern) && term.invertOrCapture && (subpatternId == term.subpatternId)) {
+            if ((term.type == PatternTerm::TypeParenthesesSubpattern) && term.invertOrCapture && (subpatternId == term.parentheses.subpatternId)) {
                 m_alternative->m_terms.append(PatternTerm::ForwardReference());
                 return;
             }

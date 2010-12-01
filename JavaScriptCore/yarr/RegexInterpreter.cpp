@@ -515,8 +515,7 @@ public:
         if (matchEnd == -1)
             return true;
 
-        ASSERT((matchBegin == -1) == (matchEnd == -1));
-        ASSERT(matchBegin <= matchEnd);
+        ASSERT((matchBegin == -1) || (matchBegin <= matchEnd));
 
         if (matchBegin == matchEnd)
             return true;
@@ -558,8 +557,7 @@ public:
 
         int matchBegin = output[(term.atom.subpatternId << 1)];
         int matchEnd = output[(term.atom.subpatternId << 1) + 1];
-        ASSERT((matchBegin == -1) == (matchEnd == -1));
-        ASSERT(matchBegin <= matchEnd);
+        ASSERT((matchBegin == -1) || (matchBegin <= matchEnd));
 
         if (matchBegin == matchEnd)
             return false;
@@ -1828,7 +1826,7 @@ public:
                     break;
 
                 case PatternTerm::TypeBackReference:
-                    atomBackReference(term.subpatternId, term.inputPosition - currentCountAlreadyChecked, term.frameLocation, term.quantityCount, term.quantityType);
+                    atomBackReference(term.backReferenceSubpatternId, term.inputPosition - currentCountAlreadyChecked, term.frameLocation, term.quantityCount, term.quantityType);
                         break;
 
                 case PatternTerm::TypeForwardReference:

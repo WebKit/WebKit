@@ -1270,6 +1270,7 @@ PASS regex637.exec(input1); is results
 PASS regex641.exec(input0); is results
 PASS regex642.exec(input0); is results
 PASS regex642.exec(input1); is results
+PASS regex643.exec(input0); is results
 PASS regex644.exec(input0); is results
 PASS regex644.exec(input1); is results
 PASS regex644.exec(input2); is results

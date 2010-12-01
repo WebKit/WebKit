@@ -22,11 +22,30 @@
 
 2010-12-01  Gavin Barraclough  <barraclough@apple.com>
 
-        Rubber stamped by Sam Weinig.
+        Reviewed by Sam Weinig.
 
-        Bug 50297 - \s in YARR should match BOMs.
+        Bug 50298 - /()()()()()()()()()(?:(\10a|b)(X|Y))+/.exec("bXXaYYaY") ASSERTs
 
-        * create_regex_tables:
+        For unmatched subpattens we previously used to set the subpattern end to -1,
+        but now we only set the start value. E.g. consider the following:
+            /a(b)?c/.exec("ac");
+        Previously we would generate an internal results array of:
+            [ 0, 2, -1, -1 ]
+        Since fairly recently we have generated results of:
+            [ 0, 2, -1, ??? ]
+        (With the end index of the subpattern uninitialized).
+
+        Update these ASSERTs to account for this.
+
+        Also, when stripping out self-referencing backreferences, (e.g. /(\1)/) we
+        were checking the wrong property on the pattern term. We should have been
+        looking at term.parentheses.subpatternId, but instead were checking
+        term.subpatternId. The latter is actually only the subpatternId for
+        back reference terms. Rename this to backReferenceSubpatternId.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackBackReference):
 
 2010-11-30  Gavin Barraclough  <barraclough@apple.com>
 
