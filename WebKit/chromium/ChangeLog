@@ -1,3 +1,39 @@
+2010-11-30  Ojan Vafai  <ojan@chromium.org>
+
+        Revert r72876. It caused a ~30% perf regression in chromium's bloat-http test
+        https://bugs.webkit.org/show_bug.cgi?id=50288
+
+        2010-11-29 Adam Barth <abarth@webkit.org (:abarth) (r)>
+        Reviewed by Darin Adler.
+        Introduce the notion of a "display-isolated" URL scheme for use by Chrome-internal URLs
+        https://bugs.webkit.org/show_bug.cgi?id=50182
+        A display-isolated URL can only be displayed (e.g., put in an iframe,
+        hyperlinked to) by documents from that scheme. In a sense, this is a
+        generalization of some of the protections we give file URLs, but
+        instead of lumping them all together into one "local" bucket, this
+        patch creates a separate bucket for each scheme.
+        For a while, I tried using a separate bucket for each origin. That
+        would have played nicely with what Blob URLs are trying to do, but some
+        "chrome" URL pages rely on being able to display other chrome URL
+        pages, even in different origins. For example, the New Tab Page shows
+        thumbnails from the "thumbnail" host.
+        This patch also removes a bunch of unused code. I've also propagated
+        the "deprecated" status of deprecatedCanDisplay to
+        deprecatedShouldTreatURLAsLocal because that method has no other
+        callers and is really asking for uppercase/lowercase bugs. I dream of
+        someday removing these functions.
+        2010-11-29 Adam Barth <abarth@webkit.org (:abarth) (r)>
+        Reviewed by Darin Adler.
+        Introduce the notion of a "display-isolated" URL scheme for use by Chrome-internal URLs
+         https://bugs.webkit.org/show_bug.cgi?id=50182
+        This patch adds a Chromium API for registering schemes as
+        display-isolated. In a subsequent patch, I'll change the "chrome"
+        scheme in Chrome to be display isolated instead of local. That will
+        prevent file URLs from linking to chrome URLs.
+
+        * public/WebSecurityPolicy.h:
+        * src/WebSecurityPolicy.cpp:
+
 2010-11-30  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
