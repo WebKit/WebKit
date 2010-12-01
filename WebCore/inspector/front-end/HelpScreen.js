@@ -30,8 +30,6 @@
 
 WebInspector.HelpScreen = function(title)
 {
-    this._addStyleSheetIfNeeded("helpScreen.css");
-
     this._element = document.createElement("div");
     this._element.className = "help-window-outer";
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
@@ -86,17 +84,5 @@ WebInspector.HelpScreen.prototype = {
          // Pretend we're modal, grab focus back if we're still shown.
         if (this._isShown)
             WebInspector.currentFocusElement = this.contentElement;
-    },
-
-    _addStyleSheetIfNeeded: function(href)
-    {
-        if (WebInspector.HelpScreen._styleSheetAdded)
-            return;
-       
-        WebInspector.HelpScreen._styleSheetAdded = true;
-        var link = document.head.createChild("link");
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        link.href = href;
     }
-};
+}
