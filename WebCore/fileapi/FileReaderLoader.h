@@ -73,8 +73,8 @@ public:
 
     String stringResult();
     PassRefPtr<ArrayBuffer> arrayBufferResult() const;
-    unsigned long long bytesLoaded() const { return m_bytesLoaded; }
-    unsigned long long totalBytes() const { return m_totalBytes; }
+    unsigned bytesLoaded() const { return m_bytesLoaded; }
+    unsigned totalBytes() const { return m_totalBytes; }
     int errorCode() const { return m_errorCode; }
 
     void setEncoding(const String&);
@@ -107,8 +107,8 @@ private:
     // The decoder used to decode the text data.
     RefPtr<TextResourceDecoder> m_decoder;
 
-    unsigned long long m_bytesLoaded;
-    unsigned long long m_totalBytes;
+    unsigned m_bytesLoaded;
+    unsigned m_totalBytes;
     int m_errorCode;
 };
 

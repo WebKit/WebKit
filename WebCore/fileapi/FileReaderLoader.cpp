@@ -144,7 +144,7 @@ void FileReaderLoader::didReceiveResponse(const ResourceResponse& response)
         return;
     }
 
-    m_totalBytes = length;
+    m_totalBytes = static_cast<unsigned>(length);
 
     if (m_client)
         m_client->didStartLoading();
@@ -160,7 +160,7 @@ void FileReaderLoader::didReceiveData(const char* data, int lengthReceived)
         return;
 
     int length = lengthReceived;
-    unsigned long long remainingBufferSpace = m_totalBytes - m_bytesLoaded;
+    unsigned remainingBufferSpace = m_totalBytes - m_bytesLoaded;
     if (length > static_cast<long long>(remainingBufferSpace))
         length = static_cast<int>(remainingBufferSpace);
 
