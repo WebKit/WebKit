@@ -1,3 +1,11 @@
+2010-12-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes after recent trunk changes.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::findString):
+        * wx/build/settings.py:
+
 2010-12-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

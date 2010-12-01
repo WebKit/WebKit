@@ -118,8 +118,9 @@ webcore_dirs = [
     'WebCore/html/parser',
     'WebCore/inspector', 
     'WebCore/loader', 
-    'WebCore/loader/appcache', 
-    'WebCore/loader/archive', 
+    'WebCore/loader/appcache',
+    'WebCore/loader/archive',
+    'WebCore/loader/cache',
     'WebCore/loader/icon',
     'WebCore/notifications',
     'WebCore/page',
@@ -135,6 +136,7 @@ webcore_dirs = [
     'WebCore/platform/image-decoders/ico', 
     'WebCore/platform/image-decoders/jpeg', 
     'WebCore/platform/image-decoders/png',
+    'WebCore/platform/image-decoders/webp',
     'WebCore/platform/mock',
     'WebCore/platform/network', 
     'WebCore/platform/sql', 
@@ -149,7 +151,7 @@ webcore_dirs = [
     'WebCore/svg/animation',
     'WebCore/svg/graphics',
     'WebCore/svg/graphics/filters',
-    
+    'WebCore/svg/properties',
     'WebCore/websockets', 
     'WebCore/xml'
 ]
