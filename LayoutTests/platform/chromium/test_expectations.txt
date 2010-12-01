@@ -151,11 +151,6 @@ WONTFIX SKIP : fast/wml = FAIL
 // most likely these tests will always be JSC specific.
 WONTFIX SKIP : fast/profiler = FAIL TIMEOUT
 
-// This test doesn't terminate because it contains exponential
-// regexps.  It is safe to disable because we run the same tests
-// (sans the nonterminating ones) as part of the v8 tests.
-WONTFIX SKIP : fast/regex/test1.html = PASS
-
 // We use worker_uitests to run workers tests. Don't run them in test_shell.
 WONTFIX SKIP : fast/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL

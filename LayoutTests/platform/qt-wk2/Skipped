@@ -2208,8 +2208,6 @@ fast/loader/submit-form-while-parsing-2.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
 fast/parser/document-close-iframe-load.html
-fast/regex/test1.html
-fast/regex/test4.html
 fast/table/giantCellspacing.html
 fast/workers/storage/change-version-handle-reuse-sync.html
 fast/workers/storage/multiple-databases-garbage-collection.html
