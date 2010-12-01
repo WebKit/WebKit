@@ -1,3 +1,10 @@
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+
 2010-12-01  Martin Robinson  <mrobinson@igalia.com>
 
         Add missing file to the TestNetscapePlugin sources list after r73057.
