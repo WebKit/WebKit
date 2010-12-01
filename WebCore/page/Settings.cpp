@@ -147,6 +147,11 @@ Settings::Settings(Page* page)
     , m_downloadableBinaryFontsEnabled(true)
     , m_xssAuditorEnabled(false)
     , m_acceleratedCompositingEnabled(true)
+    , m_acceleratedCompositingFor3DTransformsEnabled(true)
+    , m_acceleratedCompositingForVideoEnabled(true)
+    , m_acceleratedCompositingForPluginsEnabled(true)
+    , m_acceleratedCompositingForCanvasEnabled(true)
+    , m_acceleratedCompositingForAnimationEnabled(true)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
     , m_experimentalNotificationsEnabled(false)
@@ -582,6 +587,31 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         
     m_acceleratedCompositingEnabled = enabled;
     setNeedsRecalcStyleInAllFrames(m_page);
+}
+
+void Settings::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)
+{
+    m_acceleratedCompositingFor3DTransformsEnabled = enabled;
+}
+
+void Settings::setAcceleratedCompositingForVideoEnabled(bool enabled)
+{
+    m_acceleratedCompositingForVideoEnabled = enabled;
+}
+
+void Settings::setAcceleratedCompositingForPluginsEnabled(bool enabled)
+{
+    m_acceleratedCompositingForPluginsEnabled = enabled;
+}
+
+void Settings::setAcceleratedCompositingForCanvasEnabled(bool enabled)
+{
+    m_acceleratedCompositingForCanvasEnabled = enabled;
+}
+
+void Settings::setAcceleratedCompositingForAnimationEnabled(bool enabled)
+{
+    m_acceleratedCompositingForAnimationEnabled = enabled;
 }
 
 void Settings::setShowDebugBorders(bool enabled)

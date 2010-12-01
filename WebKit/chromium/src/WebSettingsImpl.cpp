@@ -284,6 +284,31 @@ void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)
     m_settings->setAcceleratedCompositingEnabled(enabled);
 }
 
+void WebSettingsImpl::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingFor3DTransformsEnabled(enabled);
+}
+
+void WebSettingsImpl::setAcceleratedCompositingForVideoEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingForVideoEnabled(enabled);
+}
+
+void WebSettingsImpl::setAcceleratedCompositingForPluginsEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingForPluginsEnabled(enabled);
+}
+
+void WebSettingsImpl::setAcceleratedCompositingForCanvasEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingForCanvasEnabled(enabled);
+}
+
+void WebSettingsImpl::setAcceleratedCompositingForAnimationEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingForAnimationEnabled(enabled);
+}
+
 void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
 {
     m_settings->setAccelerated2dCanvasEnabled(enabled);

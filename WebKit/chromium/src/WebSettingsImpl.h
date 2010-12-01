@@ -88,6 +88,11 @@ public:
     virtual void setShowDebugBorders(bool);
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
+    virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool);
+    virtual void setAcceleratedCompositingForVideoEnabled(bool);
+    virtual void setAcceleratedCompositingForPluginsEnabled(bool);
+    virtual void setAcceleratedCompositingForCanvasEnabled(bool);
+    virtual void setAcceleratedCompositingForAnimationEnabled(bool);    
     virtual void setAccelerated2dCanvasEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
