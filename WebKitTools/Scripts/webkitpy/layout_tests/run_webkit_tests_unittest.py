@@ -201,6 +201,13 @@ class MainTest(unittest.TestCase):
         self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
 
+    def test_dryrun(self):
+        batch_tests_run = get_tests_run(['--dry-run'])
+        self.assertEqual(batch_tests_run, [])
+
+        batch_tests_run = get_tests_run(['-n'])
+        self.assertEqual(batch_tests_run, [])
+
     def test_exception_raised(self):
         self.assertRaises(ValueError, logging_run,
             ['failures/expected/exception.html'], tests_included=True)

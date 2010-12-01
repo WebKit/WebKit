@@ -599,20 +599,25 @@ class TestRunner:
         message_broker = self._message_broker
         self._current_filename_queue = filename_queue
         self._current_result_summary = result_summary
-        threads = message_broker.start_workers(self)
+
+        if not self._options.dry_run:
+            threads = message_broker.start_workers(self)
+        else:
+            threads = {}
 
         self._printer.print_update("Starting testing ...")
         keyboard_interrupted = False
-        try:
-            message_broker.run_message_loop()
-        except KeyboardInterrupt:
-            _log.info("Interrupted, exiting")
-            message_broker.cancel_workers()
-            keyboard_interrupted = True
-        except:
-            # Unexpected exception; don't try to clean up workers.
-            _log.info("Exception raised, exiting")
-            raise
+        if not self._options.dry_run:
+            try:
+                message_broker.run_message_loop()
+            except KeyboardInterrupt:
+                _log.info("Interrupted, exiting")
+                message_broker.cancel_workers()
+                keyboard_interrupted = True
+            except:
+                # Unexpected exception; don't try to clean up workers.
+                _log.info("Exception raised, exiting")
+                raise
 
         thread_timings, test_timings, individual_test_timings = \
             self._collect_timing_info(threads)
@@ -737,16 +742,18 @@ class TestRunner:
             self._expectations, result_summary, retry_summary)
         self._printer.print_unexpected_results(unexpected_results)
 
-        if self._options.record_results:
+        if (self._options.record_results and not self._options.dry_run and
+            not keyboard_interrupted):
             # Write the same data to log files and upload generated JSON files
             # to appengine server.
             self._upload_json_files(unexpected_results, result_summary,
                                     individual_test_timings)
 
         # Write the summary to disk (results.html) and display it if requested.
-        wrote_results = self._write_results_html_file(result_summary)
-        if self._options.show_results and wrote_results:
-            self._show_results_html_file()
+        if not self._options.dry_run:
+            wrote_results = self._write_results_html_file(result_summary)
+            if self._options.show_results and wrote_results:
+                self._show_results_html_file()
 
         # Now that we've completed all the processing we can, we re-raise
         # a KeyboardInterrupt if necessary so the caller can handle it.
@@ -1520,6 +1527,9 @@ def parse_args(args=None):
         optparse.make_option("--no-build", dest="build",
             action="store_false", help="Don't check to see if the "
                                        "DumpRenderTree build is up-to-date."),
+        optparse.make_option("-n", "--dry-run", action="store_true",
+            default=False,
+            help="Do everything but actually run the tests or upload results."),
         # old-run-webkit-tests has --valgrind instead of wrapper.
         optparse.make_option("--wrapper",
             help="wrapper command to insert before invocations of "
