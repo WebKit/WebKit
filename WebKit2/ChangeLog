@@ -1,3 +1,12 @@
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig..
+
+        Fix <rdar://problem/8717674>.
+
+        * WebProcess/com.apple.WebProcess.sb:
+        Allow the UI process to issue file-write extensions.
+
 2010-12-01  Sam Weinig  <sam@webkit.org>
 
         Another windows build fix.

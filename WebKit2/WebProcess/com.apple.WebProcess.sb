@@ -35,6 +35,10 @@
        ;; Extensions from UIProcess
        (extension))
 
+(allow file-write*
+       ;; Extensions from UIProcess
+       (extension))
+
 ;; Writable preferences and temporary files
 (allow file*
        (subpath (string-append (param "_HOME") "/Library/Caches/com.apple.WebProcess"))
