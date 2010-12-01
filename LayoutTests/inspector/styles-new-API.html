@@ -129,6 +129,9 @@ function frontend_setStyleText(testController, styleSheet)
 
     InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "", true);
     InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "", true);
+
+    // This operation should not update the style as the new property text is not parsable.
+    InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "zzz;", false);
     InspectorBackend.setPropertyText2(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetStyleText.bind(null, testController));
 }
 
