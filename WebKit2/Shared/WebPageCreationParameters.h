@@ -43,7 +43,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
     WebPreferencesStore store;
-    DrawingAreaBase::DrawingAreaInfo drawingAreaInfo;
+    DrawingAreaInfo drawingAreaInfo;
     bool visibleToInjectedBundle;
 #if PLATFORM(WIN)
     HWND nativeWindow;

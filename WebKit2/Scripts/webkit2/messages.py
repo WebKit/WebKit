@@ -415,8 +415,6 @@ def headers_for_type(type):
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebWheelEvent': '"WebEvent.h"',
         'WebKit::WebTouchEvent': '"WebEvent.h"',
-        'WebKit::DrawingAreaBase::DrawingAreaInfo': '"DrawingAreaInfo.h"'
-
     }
     if type in special_cases:
         return [special_cases[type]]

@@ -46,7 +46,7 @@ PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView*
 }
 
 TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView)
-    : DrawingAreaProxy(DrawingAreaBase::TiledDrawingAreaType)
+    : DrawingAreaProxy(DrawingAreaInfo::Tiled)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)

@@ -36,7 +36,7 @@ class UpdateChunk;
 
 class ChunkedUpdateDrawingArea : public DrawingArea {
 public:
-    ChunkedUpdateDrawingArea(DrawingAreaBase::DrawingAreaID identifier, WebPage*);
+    ChunkedUpdateDrawingArea(DrawingAreaInfo::Identifier identifier, WebPage*);
     virtual ~ChunkedUpdateDrawingArea();
 
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);

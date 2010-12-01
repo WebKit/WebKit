@@ -662,22 +662,20 @@ void WebView::pageDidLeaveAcceleratedCompositing()
 
 void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaBase::Type type)
 {
-    DrawingAreaBase::Type existingDrawingAreaType = m_page->drawingArea() ? m_page->drawingArea()->info().type : DrawingAreaBase::None;
+    DrawingAreaInfo::Type existingDrawingAreaType = m_page->drawingArea() ? m_page->drawingArea()->info().type : DrawingAreaInfo::None;
     if (existingDrawingAreaType == type)
         return;
 
     OwnPtr<DrawingAreaProxy> newDrawingArea;
     switch (type) {
-        case DrawingAreaBase::None:
+        case DrawingAreaInfo::None:
             break;
-        case DrawingAreaBase::ChunkedUpdateDrawingAreaType: {
+        case DrawingAreaInfo::Chunked:
             newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(this);
             break;
-        }
-        case DrawingAreaBase::LayerBackedDrawingAreaType: {
+        case DrawingAreaInfo::LayerBacked:
             newDrawingArea = LayerBackedDrawingAreaProxy::create(this);
             break;
-        }
     }
 
     if (m_page->drawingArea())

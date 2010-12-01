@@ -37,22 +37,22 @@
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaBase::Type type, DrawingAreaBase::DrawingAreaID identifier, WebPage* webPage)
+PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
 {
     switch (type) {
-        case DrawingAreaBase::None:
+        case DrawingAreaInfo::None:
             ASSERT_NOT_REACHED();
             break;
 
-        case DrawingAreaBase::ChunkedUpdateDrawingAreaType:
+        case DrawingAreaInfo::ChunkedUpdate:
             return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case DrawingAreaBase::LayerBackedDrawingAreaType:
+        case DrawingAreaInfo::LayerBacked:
             return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
 #endif
 #if ENABLE(TILED_BACKING_STORE)
-        case DrawingAreaBase::TiledDrawingAreaType:
+        case DrawingAreaInfo::Tiled:
             return adoptRef(new TiledDrawingArea(identifier, webPage));
 #endif
     }
@@ -60,7 +60,7 @@ PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaBase::Type type, DrawingA
     return 0;
 }
 
-DrawingArea::DrawingArea(DrawingAreaBase::Type type, DrawingAreaBase::DrawingAreaID identifier, WebPage* webPage)
+DrawingArea::DrawingArea(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
     : m_info(type, identifier)
     , m_webPage(webPage)
 {

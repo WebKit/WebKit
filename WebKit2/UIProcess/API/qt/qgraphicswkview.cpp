@@ -326,7 +326,7 @@ void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)
 {
 #if ENABLE(TILED_BACKING_STORE)
     DrawingAreaProxy* drawingArea = page()->d->page->drawingArea();
-    if (drawingArea->info().type != DrawingAreaBase::TiledDrawingAreaType)
+    if (drawingArea->info().type != DrawingAreaInfo::Tiled)
         return;
     TiledDrawingAreaProxy* tiledDrawingArea = static_cast<TiledDrawingAreaProxy*>(drawingArea);
     tiledDrawingArea->takeSnapshot(size, contentsRect);
@@ -386,7 +386,7 @@ void QGraphicsWKViewPrivate::commitScale()
 #if ENABLE(TILED_BACKING_STORE)
     DrawingAreaProxy* drawingArea = page->d->page->drawingArea();
     float newScale = q->scale();
-    if (drawingArea->info().type == DrawingAreaBase::TiledDrawingAreaType) {
+    if (drawingArea->info().type == DrawingAreaInfo::Tiled) {
         TiledDrawingAreaProxy* tiledDrawingArea = static_cast<TiledDrawingAreaProxy*>(drawingArea);
         if (tiledDrawingArea->contentsScale() == newScale)
             return;

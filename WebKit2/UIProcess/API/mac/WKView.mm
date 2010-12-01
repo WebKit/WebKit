@@ -966,21 +966,21 @@ static NSScreen *screenForWindow(NSWindow *window)
     }
 }
 
-- (void)_switchToDrawingAreaTypeIfNecessary:(DrawingAreaBase::Type)type
+- (void)_switchToDrawingAreaTypeIfNecessary:(DrawingAreaInfo::Type)type
 {
-    DrawingAreaBase::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->info().type : DrawingAreaBase::None;
+    DrawingAreaInfo::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->info().type : DrawingAreaInfo::None;
     if (existingDrawingAreaType == type)
         return;
 
     OwnPtr<DrawingAreaProxy> newDrawingArea;
     switch (type) {
-        case DrawingAreaBase::None:
+        case DrawingAreaInfo::None:
             break;
-        case DrawingAreaBase::ChunkedUpdateDrawingAreaType: {
+        case DrawingAreaInfo::ChunkedUpdate: {
             newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(self);
             break;
         }
-        case DrawingAreaBase::LayerBackedDrawingAreaType: {
+        case DrawingAreaInfo::LayerBacked: {
             newDrawingArea = LayerBackedDrawingAreaProxy::create(self);
             break;
         }
@@ -994,13 +994,13 @@ static NSScreen *screenForWindow(NSWindow *window)
 
 - (void)_pageDidEnterAcceleratedCompositing
 {
-    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaBase::LayerBackedDrawingAreaType];
+    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::LayerBacked];
 }
 
 - (void)_pageDidLeaveAcceleratedCompositing
 {
     // FIXME: we may want to avoid flipping back to the non-layer-backed drawing area until the next page load, to avoid thrashing.
-    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaBase::ChunkedUpdateDrawingAreaType];
+    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::ChunkedUpdate];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

@@ -1,3 +1,64 @@
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Get rid of DrawingAreaBase
+        https://bugs.webkit.org/show_bug.cgi?id=50329
+
+        * Scripts/webkit2/messages.py:
+        * Shared/DrawingAreaInfo.h:
+        (WebKit::DrawingAreaInfo::DrawingAreaInfo):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::]):
+        (-[WKView _pageDidEnterAcceleratedCompositing]):
+        (-[WKView _pageDidLeaveAcceleratedCompositing]):
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::takeSnapshot):
+        (QGraphicsWKViewPrivate::commitScale):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::nextIdentifier):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::info):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy):
+        (WebKit::LayerBackedDrawingAreaProxy::setSize):
+        (WebKit::LayerBackedDrawingAreaProxy::setPageIsVisible):
+        (WebKit::LayerBackedDrawingAreaProxy::update):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeAcceleratedCompositing):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::info):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::TiledDrawingArea):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+
 2010-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed speculative build fix for Windows.

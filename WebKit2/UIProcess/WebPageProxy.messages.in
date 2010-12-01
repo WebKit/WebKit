@@ -133,6 +133,6 @@ messages -> WebPageProxy {
 
 #if USE(ACCELERATED_COMPOSITING)
     # Accelerated compsiting messages.
-    DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaBase::DrawingAreaInfo newDrawingArea)
+    DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaInfo newDrawingArea)
 #endif
 }
