@@ -1,5 +1,14 @@
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::pageDidEnterAcceleratedCompositing):
+        (WebKit::WebView::pageDidLeaveAcceleratedCompositing):
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/win/WebView.h:

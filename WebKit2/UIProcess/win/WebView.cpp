@@ -652,15 +652,15 @@ void WebView::setIsInWindow(bool isInWindow)
 
 void WebView::pageDidEnterAcceleratedCompositing()
 {
-    switchToDrawingAreaTypeIfNecessary(DrawingAreaBase::LayerBackedDrawingAreaType);
+    switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::LayerBacked);
 }
 
 void WebView::pageDidLeaveAcceleratedCompositing()
 {
-    switchToDrawingAreaTypeIfNecessary(DrawingAreaBase::ChunkedUpdateDrawingAreaType);
+    switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::ChunkedUpdate);
 }
 
-void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaBase::Type type)
+void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
 {
     DrawingAreaInfo::Type existingDrawingAreaType = m_page->drawingArea() ? m_page->drawingArea()->info().type : DrawingAreaInfo::None;
     if (existingDrawingAreaType == type)
