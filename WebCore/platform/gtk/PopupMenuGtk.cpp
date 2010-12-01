@@ -5,6 +5,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,16 +28,22 @@
 #include "PopupMenuGtk.h"
 
 #include "FrameView.h"
+#include "GOwnPtr.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "PlatformString.h"
-#include <wtf/text/CString.h>
+#include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
+static const uint32_t gSearchTimeoutMs = 1000;
+
 PopupMenuGtk::PopupMenuGtk(PopupMenuClient* client)
     : m_popupClient(client)
+    , m_previousKeyEventCharacter(0)
+    , m_currentlySelectedMenuItem(0)
 {
 }
 
@@ -54,7 +61,8 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
 
     if (!m_popup) {
         m_popup = GTK_MENU(gtk_menu_new());
-        g_signal_connect(m_popup.get(), "unmap", G_CALLBACK(menuUnmapped), this);
+        g_signal_connect(m_popup.get(), "unmap", G_CALLBACK(PopupMenuGtk::menuUnmapped), this);
+        g_signal_connect(m_popup.get(), "key-press-event", G_CALLBACK(PopupMenuGtk::keyPressEventCallback), this);
     } else
         gtk_container_foreach(GTK_CONTAINER(m_popup.get()), reinterpret_cast<GtkCallback>(menuRemoveItem), this);
 
@@ -76,7 +84,8 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
             item = gtk_menu_item_new_with_label(client()->itemText(i).utf8().data());
 
         m_indexMap.add(item, i);
-        g_signal_connect(item, "activate", G_CALLBACK(menuItemActivated), this);
+        g_signal_connect(item, "activate", G_CALLBACK(PopupMenuGtk::menuItemActivated), this);
+        g_signal_connect(item, "select", G_CALLBACK(PopupMenuGtk::selectItemCallback), this);
 
         // FIXME: Apply the PopupMenuStyle from client()->itemStyle(i)
         gtk_widget_set_sensitive(item, client()->itemIsEnabled(i));
@@ -141,6 +150,76 @@ void PopupMenuGtk::disconnectClient()
     m_popupClient = 0;
 }
 
+bool PopupMenuGtk::typeAheadFind(GdkEventKey* event)
+{
+    // If we were given a non-printable character just skip it.
+    gunichar unicodeCharacter = gdk_keyval_to_unicode(event->keyval);
+    if (!unicodeCharacter) {
+        resetTypeAheadFindState();
+        return false;
+    }
+
+    glong charactersWritten;
+    GOwnPtr<gunichar2> utf16String(g_ucs4_to_utf16(&unicodeCharacter, 1, 0, &charactersWritten, 0));
+    if (!utf16String) {
+        resetTypeAheadFindState();
+        return false;
+    }
+
+    // If the character is the same as the last character, the user is probably trying to
+    // cycle through the menulist entries. This matches the WebCore behavior for collapsed
+    // menulists.
+    bool repeatingCharacter = unicodeCharacter != m_previousKeyEventCharacter;
+    if (event->time - m_previousKeyEventTimestamp > gSearchTimeoutMs)
+        m_currentSearchString = String(static_cast<UChar*>(utf16String.get()), charactersWritten);
+    else if (repeatingCharacter)
+        m_currentSearchString.append(String(static_cast<UChar*>(utf16String.get()), charactersWritten));
+
+    m_previousKeyEventTimestamp = event->time;
+    m_previousKeyEventCharacter = unicodeCharacter;
+
+    // Like the Chromium port, we case fold before searching, because 
+    // strncmp does not handle non-ASCII characters.
+    GOwnPtr<gchar> searchStringWithCaseFolded(g_utf8_casefold(m_currentSearchString.utf8().data(), -1));
+    size_t prefixLength = strlen(searchStringWithCaseFolded.get());
+
+    GList* children = gtk_container_get_children(GTK_CONTAINER(m_popup.get()));
+    if (!children)
+        return true;
+
+    // If a menu item has already been selected, start searching from the current
+    // item down the list. This will make multiple key presses of the same character
+    // advance the selection.     GList* currentChild = children;
+    if (m_currentlySelectedMenuItem) {
+        currentChild = g_list_find(children, m_currentlySelectedMenuItem);
+        if (!currentChild) {
+            m_currentlySelectedMenuItem = 0;
+            currentChild = children;
+        }
+
+        // Repeating characters should iterate.
+        if (repeatingCharacter) {
+            if (GList* nextChild = g_list_next(currentChild))
+                currentChild = nextChild;
+        }
+    }
+
+    GList* firstChild = currentChild;
+    do {
+        currentChild = g_list_next(currentChild);
+        if (!currentChild)
+            currentChild = children;
+
+        GOwnPtr<gchar> itemText(g_utf8_casefold(gtk_menu_item_get_label(GTK_MENU_ITEM(currentChild->data)), -1));
+        if (!strncmp(searchStringWithCaseFolded.get(), itemText.get(), prefixLength)) {
+            gtk_menu_shell_select_item(GTK_MENU_SHELL(m_popup.get()), GTK_WIDGET(currentChild->data));
+            return true;
+        }
+    } while (currentChild != firstChild);
+
+    return true;
+}
+
 void PopupMenuGtk::menuItemActivated(GtkMenuItem* item, PopupMenuGtk* that)
 {
     ASSERT(that->client());
@@ -151,6 +230,7 @@ void PopupMenuGtk::menuItemActivated(GtkMenuItem* item, PopupMenuGtk* that)
 void PopupMenuGtk::menuUnmapped(GtkWidget*, PopupMenuGtk* that)
 {
     ASSERT(that->client());
+    that->resetTypeAheadFindState();
     that->client()->popupDidHide();
 }
 
@@ -161,10 +241,28 @@ void PopupMenuGtk::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pu
     *pushIn = true;
 }
 
+void PopupMenuGtk::resetTypeAheadFindState()
+{
+    m_currentlySelectedMenuItem = 0;
+    m_previousKeyEventCharacter = 0;
+    m_currentSearchString = "";
+}
+
 void PopupMenuGtk::menuRemoveItem(GtkWidget* widget, PopupMenuGtk* that)
 {
     ASSERT(that->m_popup);
     gtk_container_remove(GTK_CONTAINER(that->m_popup.get()), widget);
+}
+
+int PopupMenuGtk::selectItemCallback(GtkMenuItem* item, PopupMenuGtk* that)
+{
+    that->m_currentlySelectedMenuItem = GTK_WIDGET(item);
+    return FALSE;
+}
+
+int PopupMenuGtk::keyPressEventCallback(GtkWidget* widget, GdkEventKey* event, PopupMenuGtk* that)
+{
+    return that->typeAheadFind(event);
 }
 
 }

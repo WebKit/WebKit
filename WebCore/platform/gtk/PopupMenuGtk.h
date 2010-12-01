@@ -24,10 +24,11 @@
 #include "IntRect.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
-#include <glib.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+
+typedef struct _GdkEventKey GdkEventKey;
 
 namespace WebCore {
 
@@ -43,19 +44,27 @@ public:
     virtual void hide();
     virtual void updateFromElement();
     virtual void disconnectClient();
+    bool typeAheadFind(GdkEventKey*);
 
 private:
     PopupMenuClient* client() const { return m_popupClient; }
+    void resetTypeAheadFindState();
 
     static void menuItemActivated(GtkMenuItem* item, PopupMenuGtk*);
     static void menuUnmapped(GtkWidget*, PopupMenuGtk*);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, PopupMenuGtk*);
     static void menuRemoveItem(GtkWidget*, PopupMenuGtk*);
+    static int selectItemCallback(GtkMenuItem*, PopupMenuGtk*);
+    static int keyPressEventCallback(GtkWidget*, GdkEventKey*, PopupMenuGtk*);
 
     PopupMenuClient* m_popupClient;
     IntPoint m_menuPosition;
     PlatformRefPtr<GtkMenu> m_popup;
     HashMap<GtkWidget*, int> m_indexMap;
+    String m_currentSearchString;
+    uint32_t m_previousKeyEventTimestamp;
+    unsigned int m_previousKeyEventCharacter;
+    GtkWidget* m_currentlySelectedMenuItem;
 };
 
 }
