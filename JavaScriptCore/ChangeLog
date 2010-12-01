@@ -1,3 +1,12 @@
+2010-11-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WTF project missing build-stopping code from its pre-build event
+        https://bugs.webkit.org/show_bug.cgi?id=50281
+
+        * JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd:
+
 2010-11-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.
