@@ -300,6 +300,7 @@ private:
     
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& name) const;
+    String ariaAccessibilityDescription() const;
     
     virtual ESpeak speakProperty() const;
     
