@@ -30,6 +30,7 @@ SOURCES = PluginObject.cpp \
           TestObject.cpp \
           Tests/DocumentOpenInDestroyStream.cpp \
           Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+          Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
           Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
           Tests/NPRuntimeRemoveProperty.cpp \
           Tests/NullNPPGetValuePointer.cpp \

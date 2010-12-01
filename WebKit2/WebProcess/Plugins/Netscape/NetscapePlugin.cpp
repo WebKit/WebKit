@@ -40,6 +40,9 @@ using namespace std;
 
 namespace WebKit {
 
+// The plug-in that we're currently calling NPP_New for.
+static NetscapePlugin* currentNPPNewPlugin;
+    
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginController(0)
     , m_nextRequestID(0)
@@ -99,6 +102,17 @@ void NetscapePlugin::invalidate(const NPRect* invalidRect)
         return;
 
     m_pluginController->invalidate(rect);
+}
+
+const char* NetscapePlugin::userAgent(NPP npp)
+{
+    if (npp)
+        return fromNPP(npp)->userAgent();
+
+    if (currentNPPNewPlugin)
+        return currentNPPNewPlugin->userAgent();
+
+    return 0;
 }
 
 const char* NetscapePlugin::userAgent()
@@ -358,7 +372,6 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
     uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
     
     m_loadManually = parameters.loadManually;
-    m_inNPPNew = true;
 
     CString mimeTypeCString = parameters.mimeType.utf8();
 
@@ -378,10 +391,17 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
         names.append(paramNames[i].data());
         values.append(paramValues[i].data());
     }
+
+    NetscapePlugin* previousNPPNewPlugin = currentNPPNewPlugin;
     
+    m_inNPPNew = true;
+    currentNPPNewPlugin = this;
+
     NPError error = NPP_New(const_cast<char*>(mimeTypeCString.data()), mode, names.size(),
                             const_cast<char**>(names.data()), const_cast<char**>(values.data()), 0);
+
     m_inNPPNew = false;
+    currentNPPNewPlugin = previousNPPNewPlugin;
 
     if (error != NPERR_NO_ERROR)
         return false;

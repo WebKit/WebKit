@@ -64,7 +64,7 @@ public:
 #endif
 
     void invalidate(const NPRect*);
-    const char* userAgent();
+    static const char* userAgent(NPP);
     void loadURL(const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields,
                  const Vector<uint8_t>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
@@ -109,6 +109,8 @@ private:
     NetscapePluginStream* streamFromID(uint64_t streamID);
     void stopAllStreams();
     bool allowPopups() const;
+
+    const char* userAgent();
 
     bool platformPostInitialize();
     void platformDestroy();

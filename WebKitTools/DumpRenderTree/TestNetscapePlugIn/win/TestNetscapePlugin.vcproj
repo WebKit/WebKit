@@ -399,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>

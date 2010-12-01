@@ -1,3 +1,35 @@
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Return a correct user agent if NPN_UserAgent is called with a null NPP from NPP_New.
+        https://bugs.webkit.org/show_bug.cgi?id=50336
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add new test.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_New):
+        Add default implementation/
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp: Added.
+        (GetUserAgentWithNullNPPFromNPPNew::GetUserAgentWithNullNPPFromNPPNew):
+        (GetUserAgentWithNullNPPFromNPPNew::NPP_New):
+        Get the user agent.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        Call PluginTest::NPP_New.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        Add new files.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        Call PluginTest::NPP_New.
+
 2010-12-01  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes after recent trunk changes.
