@@ -1,5 +1,12 @@
 2010-12-01  Sam Weinig  <sam@webkit.org>
 
+        Another windows build fix.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate):
+
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
         Attempt to fix Windows build.
 
         * UIProcess/API/C/win/WKViewPrivate.cpp:
