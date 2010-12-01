@@ -1,5 +1,22 @@
 2010-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Rename DrawingAreaBase.h to DrawingAreaInfo.h.
+
+        * Shared/DrawingAreaInfo.h: Renamed from WebKit2/Shared/DrawingAreaBase.h.
+        (WebKit::DrawingAreaBase::DrawingAreaInfo::DrawingAreaInfo):
+        (WebKit::DrawingAreaBase::~DrawingAreaBase):
+        (WebKit::DrawingAreaBase::info):
+        (WebKit::DrawingAreaBase::DrawingAreaBase):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.h:
+        * win/WebKit2.vcproj:
+
+2010-11-30  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * PluginProcess/mac/PluginProcessShim.cpp:

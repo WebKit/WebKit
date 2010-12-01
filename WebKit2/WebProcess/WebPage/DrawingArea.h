@@ -26,7 +26,7 @@
 #ifndef DrawingArea_h
 #define DrawingArea_h
 
-#include "DrawingAreaBase.h"
+#include "DrawingAreaInfo.h"
 #include <WebCore/IntRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

@@ -26,7 +26,7 @@
 #ifndef DrawingAreaProxy_h
 #define DrawingAreaProxy_h
 
-#include "DrawingAreaBase.h"
+#include "DrawingAreaInfo.h"
 #include <WebCore/IntSize.h>
 
 #if PLATFORM(QT)

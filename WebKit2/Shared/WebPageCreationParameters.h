@@ -26,7 +26,7 @@
 #ifndef WebPageCreationParameters_h
 #define WebPageCreationParameters_h
 
-#include "DrawingAreaBase.h"
+#include "DrawingAreaInfo.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/IntSize.h>
 

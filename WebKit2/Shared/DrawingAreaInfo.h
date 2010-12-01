@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaBase_h
-#define DrawingAreaBase_h
+#ifndef DrawingAreaInfo_h
+#define DrawingAreaInfo_h
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
@@ -81,4 +81,4 @@ namespace CoreIPC {
 template<> struct ArgumentCoder<WebKit::DrawingAreaBase::DrawingAreaInfo> : SimpleArgumentCoder<WebKit::DrawingAreaBase::DrawingAreaInfo> { };
 }
 
-#endif // DrawingAreaBase_h
+#endif // DrawingAreaInfo_h
