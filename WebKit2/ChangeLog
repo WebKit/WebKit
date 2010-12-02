@@ -1,3 +1,15 @@
+2010-12-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Enable DEP at runtime to allow for compatibility with older versions of ATL
+        https://bugs.webkit.org/show_bug.cgi?id=50378
+
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::enableDataExecutionPrevention):
+        (WebKit::WebProcessMain):
+        * win/WebKit2WebProcessCommon.vsprops:
+
 2010-12-01  Sam Weinig  <sam@webkit.org>
 
         Fix 64-bit build.

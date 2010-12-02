@@ -11,6 +11,5 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib"
-		AdditionalOptions="/NXCOMPAT"
 	/>
 </VisualStudioPropertySheet>
