@@ -36,27 +36,6 @@
 
 using namespace WebKit;
 
-static void enableDataExecutionPrevention()
-{
-    // Enable Data Execution prevention at runtime rather than via /NXCOMPAT
-    // http://blogs.msdn.com/michael_howard/archive/2008/01/29/new-nx-apis-added-to-windows-vista-sp1-windows-xp-sp3-and-windows-server-2008.aspx
-
-    const DWORD enableDEP = 0x00000001;
-
-    HMODULE hMod = ::GetModuleHandleW(L"Kernel32.dll");
-    if (!hMod)
-        return;
-
-    typedef BOOL (WINAPI *PSETDEP)(DWORD);
-
-    PSETDEP procSet = reinterpret_cast<PSETDEP>(::GetProcAddress(hMod, "SetProcessDEPPolicy"));
-    if (!procSet)
-        return;
-
-    // Enable Data Execution Prevention, but allow ATL thunks (for compatibility with the version of ATL that ships with the Platform SDK).
-    procSet(enableDEP);
-}
-
 static int WebKitMain(const CommandLine& commandLine)
 {
     ProcessLauncher::ProcessType processType;    
@@ -99,6 +78,27 @@ int WebKitMain(int argc, char** argv)
 #else
 #define PROCESS_NAME L"WebKit2WebProcess_debug.exe"
 #endif
+
+static void enableDataExecutionPrevention()
+{
+    // Enable Data Execution prevention at runtime rather than via /NXCOMPAT
+    // http://blogs.msdn.com/michael_howard/archive/2008/01/29/new-nx-apis-added-to-windows-vista-sp1-windows-xp-sp3-and-windows-server-2008.aspx
+
+    const DWORD enableDEP = 0x00000001;
+
+    HMODULE hMod = ::GetModuleHandleW(L"Kernel32.dll");
+    if (!hMod)
+        return;
+
+    typedef BOOL (WINAPI *PSETDEP)(DWORD);
+
+    PSETDEP procSet = reinterpret_cast<PSETDEP>(::GetProcAddress(hMod, "SetProcessDEPPolicy"));
+    if (!procSet)
+        return;
+
+    // Enable Data Execution Prevention, but allow ATL thunks (for compatibility with the version of ATL that ships with the Platform SDK).
+    procSet(enableDEP);
+}
 
 static void enableTerminationOnHeapCorruption()
 {

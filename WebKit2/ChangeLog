@@ -1,3 +1,10 @@
+2010-12-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Mac build fix.
+
+        * WebProcess/WebKitMain.cpp:
+        (enableDataExecutionPrevention):
+
 2010-11-30 Amruth Raj  <amruthraj@motorola.com> and Ravi Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Reviewed by Martin Robinson.
