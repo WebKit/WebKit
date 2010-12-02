@@ -1130,17 +1130,14 @@ void GraphicsContext::clip(const Path& path)
     if (paintingDisabled())
         return;
 
-    m_data->p()->setClipPath(path.platformPath(), Qt::IntersectClip);
+    QPainterPath clipPath = path.platformPath();
+    clipPath.setFillRule(Qt::WindingFill);
+    m_data->p()->setClipPath(clipPath, Qt::IntersectClip);
 }
 
 void GraphicsContext::canvasClip(const Path& path)
 {
-    if (paintingDisabled())
-        return;
-
-    QPainterPath clipPath = path.platformPath();
-    clipPath.setFillRule(Qt::WindingFill);
-    m_data->p()->setClipPath(clipPath, Qt::IntersectClip);
+    clip(path);
 }
 
 void GraphicsContext::clipOut(const Path& path)
