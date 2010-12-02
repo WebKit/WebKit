@@ -58,18 +58,20 @@ namespace WebCore {
 
 static void cancelAll(const ResourceLoaderSet& loaders)
 {
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->cancel();
+    Vector<RefPtr<ResourceLoader> > loadersCopy;
+    copyToVector(loaders, loadersCopy);
+    size_t size = loadersCopy.size();
+    for (unsigned i = 0; i < size; ++i)
+        loadersCopy[i]->cancel();
 }
 
 static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
 {
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->setDefersLoading(defers);
+    Vector<RefPtr<ResourceLoader> > loadersCopy;
+    copyToVector(loaders, loadersCopy);
+    size_t size = loadersCopy.size();
+    for (unsigned i = 0; i < size; ++i)
+        loadersCopy[i]->setDefersLoading(defers);
 }
 
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
