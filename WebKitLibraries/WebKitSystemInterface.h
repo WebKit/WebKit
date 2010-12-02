@@ -330,6 +330,8 @@ void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScale
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 void WKSyncSurfaceToView(NSView *view);
+
+void WKEnableSettingCursorWhenInBackground(void);
 #endif
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)

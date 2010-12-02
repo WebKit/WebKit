@@ -1,3 +1,15 @@
+2010-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Plug-ins should be able to update the mouse cursor
+        https://bugs.webkit.org/show_bug.cgi?id=50399
+
+        Call WKEnableSettingCursorWhenInBackground.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+
 2010-12-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

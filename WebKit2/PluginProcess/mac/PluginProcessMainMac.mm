@@ -34,6 +34,7 @@
 #include <servers/bootstrap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <WebKitSystemInterface.h>
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
@@ -70,6 +71,10 @@ int PluginProcessMain(const CommandLine& commandLine)
     signal(SIGBUS, _exit);
     signal(SIGSEGV, _exit);
 #endif
+
+    // FIXME: It would be better to proxy set cursor calls over to the UI process instead of
+    // allowing plug-ins to change the mouse cursor at any time.
+    WKEnableSettingCursorWhenInBackground();
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
