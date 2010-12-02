@@ -26,8 +26,6 @@
 #include "config.h"
 #include "OSAllocator.h"
 
-#if OS(WINDOWS)
-
 #include "windows.h"
 
 namespace WTF {
@@ -60,5 +58,3 @@ void OSAllocator::release(void* address, size_t bytes)
 }
 
 } // namespace WTF
-
-#endif

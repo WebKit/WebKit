@@ -13,9 +13,6 @@ SOURCES += \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
-    wtf/OSAllocatorPosix.cpp \
-    wtf/OSAllocatorSymbian.cpp \
-    wtf/OSAllocatorWin.cpp \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \
     wtf/qt/ThreadingQt.cpp \
@@ -46,3 +43,6 @@ contains(DEFINES, USE_GSTREAMER=1) {
     SOURCES += wtf/TCSystemAlloc.cpp
 }
 
+unix: SOURCES += wtf/OSAllocatorPosix.cpp
+symbian: SOURCES += wtf/OSAllocatorSymbian.cpp
+win*|wince*: SOURCES += wtf/OSAllocatorWin.cpp

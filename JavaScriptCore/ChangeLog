@@ -1,3 +1,15 @@
+2010-12-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        [Qt] Make platform managing of OSAllocator better than r73106
+        https://bugs.webkit.org/show_bug.cgi?id=50385
+
+        * wtf/OSAllocatorPosix.cpp: Remove platform specific guard.
+        * wtf/OSAllocatorSymbian.cpp: Remove platform specific guard.
+        * wtf/OSAllocatorWin.cpp: Remove platform specific guard.
+        * wtf/wtf.pri: Add the correct platform specific source file instead of all of them.
+
 2010-12-02  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
