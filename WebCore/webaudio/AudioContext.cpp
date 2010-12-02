@@ -28,6 +28,7 @@
 
 #include "AudioContext.h"
 
+#include "ArrayBuffer.h"
 #include "AudioBuffer.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioChannelMerger.h"
@@ -37,7 +38,6 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioPannerNode.h"
-#include "CachedAudio.h"
 #include "ConvolverNode.h"
 #include "DelayNode.h"
 #include "Document.h"
@@ -59,22 +59,6 @@ const int UndefinedThreadIdentifier = 0xffffffff;
 const unsigned MaxNodesToDeletePerQuantum = 10;
 
 namespace WebCore {
-
-PassRefPtr<CachedAudio> AudioContext::createAudioRequest(const String &url, bool mixToMono)
-{
-    lazyInitialize();
-
-    // Convert relative URL to absolute
-    KURL completedURL = document()->completeURL(url);
-    String completedURLString = completedURL.string();
-
-    RefPtr<CachedAudio> cachedAudio = CachedAudio::create(completedURLString, this, document(), sampleRate(), mixToMono);
-    CachedAudio* c = cachedAudio.get();
-
-    m_cachedAudioReferences.append(c);
-
-    return cachedAudio;
-}
 
 PassRefPtr<AudioContext> AudioContext::create(Document* document)
 {
@@ -199,6 +183,15 @@ void AudioContext::refBuffer(PassRefPtr<AudioBuffer> buffer)
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
 {
     return AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+}
+
+PassRefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono)
+{
+    ASSERT(arrayBuffer);
+    if (!arrayBuffer)
+        return 0;
+    
+    return AudioBuffer::createFromAudioFileData(arrayBuffer->data(), arrayBuffer->byteLength(), mixToMono, sampleRate());
 }
 
 PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()

@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class ArrayBuffer;
 class AudioBuffer;
 class AudioBufferSourceNode;
 class AudioChannelMerger;
@@ -47,7 +48,6 @@ class AudioChannelSplitter;
 class AudioGainNode;
 class AudioPannerNode;
 class AudioListener;
-class CachedAudio;
 class DelayNode;
 class Document;
 class LowPass2FilterNode;
@@ -81,8 +81,7 @@ public:
     double sampleRate() { return m_destinationNode->sampleRate(); }
 
     PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);
-
-    PassRefPtr<CachedAudio> createAudioRequest(const String &url, bool mixToMono);
+    PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono);
 
     // Keep track of this buffer so we can release memory after the context is shut down...
     void refBuffer(PassRefPtr<AudioBuffer> buffer);
@@ -221,8 +220,6 @@ private:
     // Accumulate nodes which need to be deleted at the end of a render cycle (in realtime thread) here.
     Vector<AudioNode*> m_nodesToDelete;
 
-    Vector<RefPtr<CachedAudio> > m_cachedAudioReferences;
-    
     // Only accessed when the graph lock is held.
     HashSet<AudioNodeInput*> m_dirtyAudioNodeInputs;
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
