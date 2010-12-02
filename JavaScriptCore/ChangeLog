@@ -1,3 +1,11 @@
+2010-12-02  Darin Adler  <darin@apple.com>
+
+        Try to fix certain builds (Qt Windows).
+
+        * wtf/ASCIICType.h: Added an overload for unsigned because in obsolete
+        versions of ICU, UChar32 can be a typedef for unsigned. Adding this
+        overload should make us compatible with these old ICUs.
+
 2010-12-02  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.
