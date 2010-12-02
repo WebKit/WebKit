@@ -91,7 +91,6 @@ public:
 
 #if USE(WXGC)
     wxGCDC* context;
-    wxGraphicsPath currentPath;
 #else
     wxWindowDC* context;
 #endif
@@ -125,9 +124,6 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     }
 #if USE(WXGC)
     m_data->context = (wxGCDC*)context;
-    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
-    if (gc)
-        m_data->currentPath = gc->CreatePath();
 #else
     m_data->context = (wxWindowDC*)context;
 #endif
@@ -459,23 +455,6 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     }
 }
 
-void GraphicsContext::beginPath()
-{
-#if USE(WXGC)
-    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
-    if (gc)
-        m_data->currentPath = gc->CreatePath();
-#endif
-}
-
-void GraphicsContext::addPath(const Path& path)
-{
-#if USE(WXGC)
-    if (path.platformPath())
-        m_data->currentPath.AddPath(*path.platformPath());
-#endif
-}
-
 void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
@@ -536,26 +515,18 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 void GraphicsContext::fillPath(const Path& path)
 {
 #if USE(WXGC)
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)
-        gc->FillPath(m_data->currentPath);
+        gc->FillPath(path.platformPath());
 #endif
 }
 
 void GraphicsContext::strokePath(const Path& path)
 {
 #if USE(WXGC)
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)
-        gc->StrokePath(m_data->currentPath);
+        gc->StrokePath(path.platformPath());
 #endif
 }
 
