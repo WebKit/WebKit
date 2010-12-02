@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the GTK Linux build.
+
+        * JavaScriptCore.gypi: Added OSAllocator to the project.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Qt Linux build.
 
         * wtf/OSAllocatorPosix.cpp: Use the right errno.h.
