@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Move enableExecutionPrevention to WebKitMain
+        https://bugs.webkit.org/show_bug.cgi?id=50392
+
+        * WebProcess/WebKitMain.cpp:
+        (enableDataExecutionPrevention):
+        (WebKitMain):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMain):
+
+2010-12-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Enable DEP at runtime to allow for compatibility with older versions of ATL
         https://bugs.webkit.org/show_bug.cgi?id=50378
 

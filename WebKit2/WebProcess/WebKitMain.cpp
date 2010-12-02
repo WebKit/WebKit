@@ -36,6 +36,27 @@
 
 using namespace WebKit;
 
+static void enableDataExecutionPrevention()
+{
+    // Enable Data Execution prevention at runtime rather than via /NXCOMPAT
+    // http://blogs.msdn.com/michael_howard/archive/2008/01/29/new-nx-apis-added-to-windows-vista-sp1-windows-xp-sp3-and-windows-server-2008.aspx
+
+    const DWORD enableDEP = 0x00000001;
+
+    HMODULE hMod = ::GetModuleHandleW(L"Kernel32.dll");
+    if (!hMod)
+        return;
+
+    typedef BOOL (WINAPI *PSETDEP)(DWORD);
+
+    PSETDEP procSet = reinterpret_cast<PSETDEP>(::GetProcAddress(hMod, "SetProcessDEPPolicy"));
+    if (!procSet)
+        return;
+
+    // Enable Data Execution Prevention, but allow ATL thunks (for compatibility with the version of ATL that ships with the Platform SDK).
+    procSet(enableDEP);
+}
+
 static int WebKitMain(const CommandLine& commandLine)
 {
     ProcessLauncher::ProcessType processType;    
@@ -136,6 +157,8 @@ int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine
     if (getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH") || (::GetKeyState(VK_CONTROL) & highBitMaskShort) && (::GetKeyState(VK_MENU) & highBitMaskShort) && (::GetKeyState(VK_SHIFT) & highBitMaskShort))
         ::MessageBoxW(0, L"You can now attach a debugger to " PROCESS_NAME L". You can use\nthe same debugger for WebKit2WebProcessand the UI process, if desired.\nClick OK when you are ready for WebKit2WebProcess to continue.", L"WebKit2WebProcess has launched", MB_OK | MB_ICONINFORMATION);
 #endif
+
+    enableDataExecutionPrevention();
 
     enableTerminationOnHeapCorruption();
 
