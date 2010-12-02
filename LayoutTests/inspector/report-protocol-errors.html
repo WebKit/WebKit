@@ -22,7 +22,7 @@ function test()
     ];
     var numberOfReports = 0;
 
-    InspectorBackend.reportProtocolError = function(message)
+    WebInspector.reportProtocolError = function(message)
     {
         if (numberOfReports < messages.length)
             InspectorTest.addObject(message);

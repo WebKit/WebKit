@@ -92,21 +92,21 @@ module core {
 #endif
 
         // This method is going to be broken down into smaller parts.
-        [domain=Inspector] void populateScriptObjects();
+        [handler=Controller] void populateScriptObjects();
 
-        [domain=Inspector] void getInspectorState(out Object state);
+        [handler=Controller] void getInspectorState(out Object state);
 
-        [domain=Inspector] void setSearchingForNode(in boolean enabled, out boolean newState);
+        [handler=Controller] void setSearchingForNode(in boolean enabled, out boolean newState);
 
-        [domain=Inspector] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
+        [handler=Controller] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
 
-        [domain=Inspector] void reloadPage();
+        [handler=Controller] void reloadPage();
 
-        [domain=Inspector] void startTimelineProfiler();
-        [domain=Inspector] void stopTimelineProfiler();
+        [handler=Controller] void startTimelineProfiler();
+        [handler=Controller] void stopTimelineProfiler();
 
-        [domain=Resources] void cachedResources(out Object resources);
-        [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
+        [handler=Resource] void cachedResources(out Object resources);
+        [handler=Resource] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
         [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader);
         [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify] void markResourceAsCached(out long identifier);
@@ -125,121 +125,121 @@ module core {
         [notify] void didCloseWebSocket(out unsigned long identifier, out double time);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [domain=Backend] void enableDebugger(in boolean always);
-        [domain=Inspector] void disableDebugger(in boolean always);
+        [handler=Backend] void enableDebugger(in boolean always);
+        [handler=Controller] void disableDebugger(in boolean always);
 
-        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
-        [domain=Debugger] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
-        [domain=Debugger] void activateBreakpoints();
-        [domain=Debugger] void deactivateBreakpoints();
+        [handler=Debug] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
+        [handler=Debug] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
+        [handler=Debug] void activateBreakpoints();
+        [handler=Debug] void deactivateBreakpoints();
 
-        [domain=Debugger] void pause();
-        [domain=Debugger] void resume();
+        [handler=Debug] void pause();
+        [handler=Debug] void resume();
 
-        [domain=Debugger] void stepOverStatement();
-        [domain=Debugger] void stepIntoStatement();
-        [domain=Debugger] void stepOutOfFunction();
+        [handler=Debug] void stepOverStatement();
+        [handler=Debug] void stepIntoStatement();
+        [handler=Debug] void stepOutOfFunction();
 
-        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
+        [handler=Debug] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
 
-        [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
-        [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
+        [handler=Debug] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        [handler=Debug] void getScriptSource(in String sourceID, out String scriptSource);
 
-        [domain=Inspector] void setNativeBreakpoint(in Object breakpoint, out String breakpointId);
-        [domain=Inspector] void removeNativeBreakpoint(in String breakpointId);
+        [handler=Controller] void setNativeBreakpoint(in Object breakpoint, out String breakpointId);
+        [handler=Controller] void removeNativeBreakpoint(in String breakpointId);
 
-        [domain=Inspector] void enableProfiler(in boolean always);
-        [domain=Inspector] void disableProfiler(in boolean always);
+        [handler=Controller] void enableProfiler(in boolean always);
+        [handler=Controller] void disableProfiler(in boolean always);
 
-        [domain=Inspector] void startProfiling();
-        [domain=Inspector] void stopProfiling();
+        [handler=Controller] void startProfiling();
+        [handler=Controller] void stopProfiling();
 
-        [domain=Profiler] void getProfileHeaders(out Array headers);
-        [domain=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);
+        [handler=Profiler] void getProfileHeaders(out Array headers);
+        [handler=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);
 
-        [domain=Profiler] void removeProfile(in String type, in unsigned long uid);
-        [domain=Profiler] void clearProfiles();
+        [handler=Profiler] void removeProfile(in String type, in unsigned long uid);
+        [handler=Profiler] void clearProfiles();
 
-        [domain=Profiler] void takeHeapSnapshot();
+        [handler=Profiler] void takeHeapSnapshot();
 #endif
-        [domain=Backend] void setInjectedScriptSource(in String scriptSource);
-        [domain=Backend] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
-        [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
-        [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
+        [handler=Backend] void setInjectedScriptSource(in String scriptSource);
+        [handler=Backend] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
+        [handler=Controller] void addScriptToEvaluateOnLoad(in String scriptSource);
+        [handler=Controller] void removeAllScriptsToEvaluateOnLoad();
 
-        [domain=DOM] void getChildNodes(in long nodeId);
-        [domain=DOM] void setAttribute(in long elementId, in String name, in String value, out boolean success);
-        [domain=DOM] void removeAttribute(in long elementId, in String name, out boolean success);
-        [domain=DOM] void setTextNodeValue(in long nodeId, in String value, out boolean success);
-        [domain=DOM] void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
-        [domain=DOM] void copyNode(in long nodeId);
-        [domain=DOM] void removeNode(in long nodeId, out long outNodeId);
-        [domain=DOM] void changeTagName(in long nodeId, in String newTagName, out long outNodeId);
-        [domain=DOM] void getOuterHTML(in long nodeId, out String outerHTML);
-        [domain=DOM] void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
-        [domain=DOM] void addInspectedNode(in long nodeId);
-        [domain=DOM] void performSearch(in String query, in boolean runSynchronously);
-        [domain=DOM] void searchCanceled();
-        [domain=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
+        [handler=DOM] void getChildNodes(in long nodeId);
+        [handler=DOM] void setAttribute(in long elementId, in String name, in String value, out boolean success);
+        [handler=DOM] void removeAttribute(in long elementId, in String name, out boolean success);
+        [handler=DOM] void setTextNodeValue(in long nodeId, in String value, out boolean success);
+        [handler=DOM] void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
+        [handler=DOM] void copyNode(in long nodeId);
+        [handler=DOM] void removeNode(in long nodeId, out long outNodeId);
+        [handler=DOM] void changeTagName(in long nodeId, in String newTagName, out long outNodeId);
+        [handler=DOM] void getOuterHTML(in long nodeId, out String outerHTML);
+        [handler=DOM] void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
+        [handler=DOM] void addInspectedNode(in long nodeId);
+        [handler=DOM] void performSearch(in String query, in boolean runSynchronously);
+        [handler=DOM] void searchCanceled();
+        [handler=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
 
-        [domain=Inspector] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
+        [handler=Controller] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
         [notify] void addConsoleMessage(out Object messageObj);
         [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
 
-        [domain=Inspector] void clearConsoleMessages();
+        [handler=Controller] void clearConsoleMessages();
         [notify] void consoleMessagesCleared();
 
-        [domain=Inspector] void highlightDOMNode(in long nodeId);
-        [domain=Inspector] void hideDOMNodeHighlight();
-        [domain=Inspector] void openInInspectedWindow(in String url);
+        [handler=Controller] void highlightDOMNode(in long nodeId);
+        [handler=Controller] void hideDOMNodeHighlight();
+        [handler=Controller] void openInInspectedWindow(in String url);
 
-        [domain=Inspector] void highlightFrame(in unsigned long frameId);
-        [domain=Inspector] void hideFrameHighlight();
+        [handler=Controller] void highlightFrame(in unsigned long frameId);
+        [handler=Controller] void hideFrameHighlight();
 
-        [domain=CSS] void getStylesForNode2(in long nodeId, out Value styles);
-        [domain=CSS] void getComputedStyleForNode2(in long nodeId, out Value style);
-        [domain=CSS] void getInlineStyleForNode2(in long nodeId, out Value style);
-        [domain=CSS] void getAllStyles2(out Array styleSheetIds);
-        [domain=CSS] void getStyleSheet2(in String styleSheetId, out Value styleSheet);
-        [domain=CSS] void getStyleSheetText2(in String styleSheetId, out String url, out String text);
-        [domain=CSS] void setStyleSheetText2(in String styleSheetId, in String text, out boolean success);
-        [domain=CSS] void setPropertyText2(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
-        [domain=CSS] void toggleProperty2(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
-        [domain=CSS] void setRuleSelector2(in Object ruleId, in String selector, out Value rule);
-        [domain=CSS] void addRule2(in long contextNodeId, in String selector, out Value rule);
-        [domain=CSS] void getSupportedCSSProperties(out Array cssProperties);
-        [domain=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
+        [handler=CSS] void getStylesForNode2(in long nodeId, out Value styles);
+        [handler=CSS] void getComputedStyleForNode2(in long nodeId, out Value style);
+        [handler=CSS] void getInlineStyleForNode2(in long nodeId, out Value style);
+        [handler=CSS] void getAllStyles2(out Array styleSheetIds);
+        [handler=CSS] void getStyleSheet2(in String styleSheetId, out Value styleSheet);
+        [handler=CSS] void getStyleSheetText2(in String styleSheetId, out String url, out String text);
+        [handler=CSS] void setStyleSheetText2(in String styleSheetId, in String text, out boolean success);
+        [handler=CSS] void setPropertyText2(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
+        [handler=CSS] void toggleProperty2(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
+        [handler=CSS] void setRuleSelector2(in Object ruleId, in String selector, out Value rule);
+        [handler=CSS] void addRule2(in long contextNodeId, in String selector, out Value rule);
+        [handler=CSS] void getSupportedCSSProperties(out Array cssProperties);
+        [handler=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
 
-        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
-        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+        [handler=Controller] void getCookies(out Array cookies, out String cookiesString);
+        [handler=Controller] void deleteCookie(in String cookieName, in String domain);
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
+        [handler=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
 #endif
 
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
-        [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
-        [domain=FileSystem] void revealFolderInOS(in String path);
+        [handler=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
+        [handler=FileSystem] void revealFolderInOS(in String path);
         [notify] void didGetFileSystemPath(out String root, out int type, out String origin);
         [notify] void didGetFileSystemError(out int type, out String origin);
         [notify] void didGetFileSystemDisabled();
 #endif
 
-        [domain=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-        [domain=Inspector] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
+        [handler=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+        [handler=Controller] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [domain=Backend] void getDatabaseTableNames(in long databaseId, out Array tableNames);
-        [domain=Backend] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
+        [handler=Backend] void getDatabaseTableNames(in long databaseId, out Array tableNames);
+        [handler=Backend] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
         [notify] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
         [notify] void sqlTransactionFailed(out long transactionId, out Value sqlError);
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [domain=Inspector] void getDOMStorageEntries(in long storageId, out Array entries);
-        [domain=Inspector] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
-        [domain=Inspector] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
+        [handler=Controller] void getDOMStorageEntries(in long storageId, out Array entries);
+        [handler=Controller] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
+        [handler=Controller] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
 #endif
     };
 }

@@ -80,8 +80,6 @@ WebInspector.DOMNode = function(doc, payload) {
         this.name = payload.name;
         this.value = payload.value;
     }
-
-    InspectorBackend.registerDomainDispatcher("DOM", this);
 }
 
 WebInspector.DOMNode.prototype = {

@@ -478,7 +478,7 @@ WebInspector.loaded = function()
 {
     if ("page" in WebInspector.queryParamsObject) {
         WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector.queryParamsObject.page);
-        WebInspector.socket.onmessage = function(message) { InspectorBackend.dispatch(message.data); }
+        WebInspector.socket.onmessage = function(message) { WebInspector_syncDispatch(message.data); }
         WebInspector.socket.onerror = function(error) { console.error(error); }
         WebInspector.socket.onopen = function() {
             InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
@@ -519,8 +519,6 @@ WebInspector.doLoadedDone = function()
     this.drawer.visibleView = this.console;
     this.resourceManager = new WebInspector.ResourceManager();
     this.domAgent = new WebInspector.DOMAgent();
-
-    InspectorBackend.registerDomainDispatcher("Inspector", this);
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory("documents", WebInspector.UIString("Documents"), "rgb(47,102,236)"),
@@ -650,16 +648,56 @@ WebInspector.dispatch = function(message) {
     // This is important to LayoutTests.
     function delayDispatch()
     {
-        InspectorBackend.dispatch(message);
+        WebInspector_syncDispatch(message);
         WebInspector.pendingDispatches--;
     }
     WebInspector.pendingDispatches++;
     setTimeout(delayDispatch, 0);
 }
 
+// This function is purposely put into the global scope for easy access.
+WebInspector_syncDispatch = function(message)
+{
+    if (window.dumpInspectorProtocolMessages)
+        console.log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
+
+    var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
+
+    var arguments = [];
+    if (messageObject.data)
+        for (var key in messageObject.data)
+            arguments.push(messageObject.data[key]);
+
+    if ("seq" in messageObject) { // just a response for some request
+        if (messageObject.success)
+            WebInspector.processResponse(messageObject.seq, arguments);
+        else {
+            WebInspector.removeResponseCallbackEntry(messageObject.seq)
+            WebInspector.reportProtocolError(messageObject);
+        }
+        return;
+    }
+
+    if (messageObject.type === "event") {
+        if (!(messageObject.event in WebInspector)) {
+            console.error("Protocol Error: Attempted to dispatch an unimplemented WebInspector method '%s'", messageObject.event);
+            return;
+        }
+        WebInspector[messageObject.event].apply(WebInspector, arguments);
+    }
+}
+
 WebInspector.dispatchMessageFromBackend = function(messageObject)
 {
     WebInspector.dispatch(messageObject);
+}
+
+WebInspector.reportProtocolError = function(messageObject)
+{
+    console.error("Protocol Error: InspectorBackend request with seq = %d failed.", messageObject.seq);
+    for (var i = 0; i < messageObject.errors.length; ++i)
+        console.error("    " + messageObject.errors[i]);
+    WebInspector.removeResponseCallbackEntry(messageObject.seq);
 }
 
 WebInspector.windowResize = function(event)
