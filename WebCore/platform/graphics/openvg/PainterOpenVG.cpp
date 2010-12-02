@@ -399,14 +399,12 @@ struct PlatformPainterState {
 PainterOpenVG::PainterOpenVG()
     : m_state(0)
     , m_surface(0)
-    , m_currentPath(0)
 {
 }
 
 PainterOpenVG::PainterOpenVG(SurfaceOpenVG* surface)
     : m_state(0)
     , m_surface(0)
-    , m_currentPath(0)
 {
     ASSERT(surface);
     begin(surface);
@@ -415,7 +413,6 @@ PainterOpenVG::PainterOpenVG(SurfaceOpenVG* surface)
 PainterOpenVG::~PainterOpenVG()
 {
     end();
-    delete m_currentPath;
 }
 
 void PainterOpenVG::begin(SurfaceOpenVG* surface)
@@ -717,26 +714,7 @@ void PainterOpenVG::translate(float dx, float dy)
     setTransformation(transformation);
 }
 
-void PainterOpenVG::beginPath()
-{
-    delete m_currentPath;
-    m_currentPath = new Path();
-}
-
-void PainterOpenVG::addPath(const Path& path)
-{
-    m_currentPath->platformPath()->makeCompatibleContextCurrent();
-
-    vgAppendPath(m_currentPath->platformPath()->vgPath(), path.platformPath()->vgPath());
-    ASSERT_VG_NO_ERROR();
-}
-
-Path* PainterOpenVG::currentPath() const
-{
-    return m_currentPath;
-}
-
-void PainterOpenVG::drawPath(VGbitfield specifiedPaintModes, WindRule fillRule)
+void PainterOpenVG::drawPath(const Path& path, VGbitfield specifiedPaintModes, WindRule fillRule)
 {
     ASSERT(m_state);
 
@@ -754,7 +732,7 @@ void PainterOpenVG::drawPath(VGbitfield specifiedPaintModes, WindRule fillRule)
     m_surface->makeCurrent();
 
     vgSeti(VG_FILL_RULE, toVGFillRule(fillRule));
-    vgDrawPath(m_currentPath->platformPath()->vgPath(), paintModes);
+    vgDrawPath(path.platformPath()->vgPath(), paintModes);
     ASSERT_VG_NO_ERROR();
 }
 

@@ -111,10 +111,7 @@ public:
     void rotate(float radians);
     void translate(float dx, float dy);
 
-    void beginPath();
-    void addPath(const Path&);
-    Path* currentPath() const;
-    void drawPath(VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH), WindRule fillRule = RULE_NONZERO);
+    void drawPath(const Path&, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH), WindRule fillRule = RULE_NONZERO);
 
     void intersectClipRect(const FloatRect&);
     void clipPath(const Path&, PainterOpenVG::ClipOperation, WindRule clipRule = RULE_NONZERO);
@@ -137,7 +134,6 @@ private:
     Vector<PlatformPainterState*> m_stateStack;
     PlatformPainterState* m_state;
     SurfaceOpenVG* m_surface;
-    Path* m_currentPath;
 };
 
 }

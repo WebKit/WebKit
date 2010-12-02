@@ -301,7 +301,7 @@ namespace WebCore {
 
         void setCompositeOperation(CompositeOperator);
 
-#if PLATFORM(SKIA) || PLATFORM(OPENVG)
+#if PLATFORM(SKIA)
         void beginPath();
         void addPath(const Path&);
 #endif

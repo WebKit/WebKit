@@ -144,11 +144,7 @@ void GraphicsContext::fillPath(const Path& path)
     if (paintingDisabled())
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
-    m_data->drawPath(VG_FILL_PATH, m_common->state.fillRule);
+    m_data->drawPath(path, VG_FILL_PATH, m_common->state.fillRule);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -156,11 +152,7 @@ void GraphicsContext::strokePath(const Path& path)
     if (paintingDisabled())
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
-    m_data->drawPath(VG_STROKE_PATH, m_common->state.fillRule);
+    m_data->drawPath(path, VG_STROKE_PATH, m_common->state.fillRule);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -197,22 +189,6 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     UNUSED_PARAM(colorSpace); // FIXME
 }
 
-void GraphicsContext::beginPath()
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->beginPath();
-}
-
-void GraphicsContext::addPath(const Path& path)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->addPath(path);
-}
-
 void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
@@ -226,11 +202,7 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
-    m_data->clipPath(*(m_data->currentPath()), PainterOpenVG::IntersectClip, clipRule);
+    m_data->clipPath(path, PainterOpenVG::IntersectClip, clipRule);
 }
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
