@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the EFL Linux build.
+
+        * CMakeListsEfl.txt: Added OSAllocator to the project.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Qt build: Include all OS files for Qt's sake, and then
         use #ifdefs in the files to exclude things based on OS.
         
