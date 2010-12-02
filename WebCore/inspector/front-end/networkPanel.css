@@ -159,13 +159,6 @@
     content: "";
 }
 
-.network-sidebar .network-category-images .icon {
-    position: relative;
-    background-image: url(Images/resourcePlainIcon.png);
-    background-repeat: no-repeat;
-    content: "";
-}
-
 .network-sidebar .data-grid.small .network-category-images .icon {
     background-image: url(Images/resourcePlainIconSmall.png);
     content: "";
@@ -473,21 +466,19 @@
     margin-top: 1px;
 }
 
-.data-grid table.data tr.revealed.network-category-documents, .data-grid table.data tr.revealed.network-category-stylesheets,
-.data-grid table.data tr.revealed.network-category-images, .data-grid table.data tr.revealed.network-category-scripts,
-.data-grid table.data tr.revealed.network-category-xhr, .data-grid table.data tr.revealed.network-category-fonts,
-.data-grid table.data tr.revealed.network-category-websockets, .data-grid table.data tr.revealed.network-category-other {
+.data-grid table.data tr.revealed.network-item {
     display: none;
 }
 
-.data-grid.filter-all table.data tr.revealed.network-category-documents, .data-grid.filter-documents table.data tr.revealed.network-category-documents,
-.data-grid.filter-all table.data tr.revealed.network-category-stylesheets, .data-grid.filter-stylesheets table.data tr.revealed.network-category-stylesheets,
-.data-grid.filter-all table.data tr.revealed.network-category-images, .data-grid.filter-images table.data tr.revealed.network-category-images,
-.data-grid.filter-all table.data tr.revealed.network-category-scripts, .data-grid.filter-scripts table.data tr.revealed.network-category-scripts,
-.data-grid.filter-all table.data tr.revealed.network-category-xhr, .data-grid.filter-xhr table.data tr.revealed.network-category-xhr,
-.data-grid.filter-all table.data tr.revealed.network-category-fonts, .data-grid.filter-fonts table.data tr.revealed.network-category-fonts,
-.data-grid.filter-all table.data tr.revealed.network-category-websockets, .data-grid.filter-websockets table.data tr.revealed.network-category-websockets,
-.data-grid.filter-all table.data tr.revealed.network-category-other, .data-grid.filter-other table.data tr.revealed.network-category-other {
+.data-grid.filter-all table.data tr.revealed.network-item,
+.data-grid.filter-documents table.data tr.revealed.network-category-documents,
+.data-grid.filter-stylesheets table.data tr.revealed.network-category-stylesheets,
+.data-grid.filter-images table.data tr.revealed.network-category-images,
+.data-grid.filter-scripts table.data tr.revealed.network-category-scripts,
+.data-grid.filter-xhr table.data tr.revealed.network-category-xhr,
+.data-grid.filter-fonts table.data tr.revealed.network-category-fonts,
+.data-grid.filter-websockets table.data tr.revealed.network-category-websockets,
+.data-grid.filter-other table.data tr.revealed.network-category-other {
     display: table-row;
 }
 

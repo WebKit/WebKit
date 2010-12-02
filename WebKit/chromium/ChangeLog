@@ -1,3 +1,13 @@
+2010-12-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Resources panel] [HAR] Need a way to save timing data.
+        Enable resource export to HAR for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45663
+
+        * src/js/DevTools.js: Preferences.resourceExportEnabled = true
+
 2010-12-02  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by Darin Fisher.

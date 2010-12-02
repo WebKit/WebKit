@@ -8,13 +8,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -210,6 +210,7 @@ WebInspector.NetworkPanel.prototype = {
         columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
         this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
@@ -397,7 +398,7 @@ WebInspector.NetworkPanel.prototype = {
             transferSize += (resource.cached || !resource.transferSize) ? 0 : resource.transferSize;
             if (resource.isMainResource)
                 baseTime = resource.startTime;
-            if (resource.endTime > maxTime) 
+            if (resource.endTime > maxTime)
                 maxTime = resource.endTime;
         }
         var text = String.sprintf(WebInspector.UIString("%d requests"), numRequests);
@@ -517,7 +518,7 @@ WebInspector.NetworkPanel.prototype = {
             proceed = false;
         } else
             proceed = this._timelineGrid.updateDividers(force, this.calculator);
-        
+
         if (!proceed)
             return;
 
@@ -545,13 +546,13 @@ WebInspector.NetworkPanel.prototype = {
             loadDividerPadding.style.left = percent + "%";
             this._timelineGrid.addEventDivider(loadDividerPadding);
         }
-        
+
         if (this._mainResourceDOMContentTime !== -1) {
             var percent = this.calculator.computePercentageFromEventTime(this._mainResourceDOMContentTime);
 
             var domContentDivider = document.createElement("div");
             domContentDivider.className = "network-event-divider network-blue-divider";
-            
+
             var domContentDividerPadding = document.createElement("div");
             domContentDividerPadding.className = "network-event-divider-padding";
             domContentDividerPadding.title = WebInspector.UIString("DOMContent event fired");
@@ -625,7 +626,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if (this._mainResourceLoadTime === x)
             return;
-        
+
         this._mainResourceLoadTime = x || -1;
         // Update the dividers to draw the new line
         this._updateDividersIfNeeded(true);
@@ -762,7 +763,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this._mainResourceLoadTime = -1;
         this._mainResourceDOMContentTime = -1;
- 
+
         this._viewsContainerElement.removeChildren();
         this._viewsContainerElement.appendChild(this._closeButtonElement);
         this._resetSummaryBar();
@@ -792,7 +793,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this._staleResources.push(resource);
         this._scheduleRefresh();
-        
+
         if (!resource)
             return;
 
@@ -972,6 +973,35 @@ WebInspector.NetworkPanel.prototype = {
         var widths = {};
         widths.name = 100;
         this._dataGrid.applyColumnWidthsMap(widths);
+    },
+
+    _contextMenu: function(event)
+    {
+        // createBlobURL is enabled conditionally, do not expose resource export if it's not available.
+        if (typeof window.createObjectURL !== "function" || !Preferences.resourceExportEnabled)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu();
+        var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
+        var resource = gridNode && gridNode._resource;
+        if (resource)
+            contextMenu.appendItem(WebInspector.UIString("Export to HAR"), this._exportResource.bind(this, resource));
+        contextMenu.appendItem(WebInspector.UIString("Export all to HAR"), this._exportAll.bind(this));
+        contextMenu.show(event);
+    },
+
+    _exportAll: function()
+    {
+        var harArchive = {
+            log: (new WebInspector.HARLog()).build()
+        }
+        offerFileForDownload(JSON.stringify(harArchive));
+    },
+
+    _exportResource: function(resource)
+    {
+        var har = (new WebInspector.HAREntry(resource)).build();
+        offerFileForDownload(JSON.stringify(har));
     }
 }
 
@@ -1134,7 +1164,7 @@ WebInspector.NetworkTimeCalculator.prototype = {
 
         return {start: start, middle: middle, end: end};
     },
-    
+
     computePercentageFromEventTime: function(eventTime)
     {
         // This function computes a percentage in terms of the total loading time
@@ -1364,6 +1394,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         if (this._resource.cached)
             this._graphElement.addStyleClass("resource-cached");
 
+        this._element.addStyleClass("network-item");
         if (!this._element.hasStyleClass("network-category-" + this._resource.category.name)) {
             this._element.removeMatchingStyleClasses("network-category-\\w+");
             this._element.addStyleClass("network-category-" + this._resource.category.name);
