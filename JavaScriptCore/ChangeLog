@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Export some symbols.
+
+        * JavaScriptCore.exp:
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Export OSAllocator.h as private
