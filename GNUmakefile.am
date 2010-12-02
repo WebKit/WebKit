@@ -92,7 +92,6 @@ global_cppflags += \
 
 
 global_cxxflags += \
-	$(SYMBOL_VISIBILITY_INLINES) \
 	-fno-rtti
 
 # -no-undefined required for building DLLs on Windows
@@ -178,7 +177,6 @@ endif
 
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
-global_cflags += $(SYMBOL_VISIBILITY)
 else
 global_cppflags += \
 	-DG_DISABLE_DEPRECATED \

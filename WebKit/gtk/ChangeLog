@@ -1,3 +1,15 @@
+2010-12-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DumpRenderTree has two copies of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=49877
+
+        Keep WebKit/WebCore symbols hidden.
+
+        * GNUmakefile.am: Move the symbol visibility rules here, because
+        now JSC symbols are visible, but WebCore/WebKit symbols are hidden.
+
 2010-12-02  Daniel Bates  <dbates@rim.com>
 
         Ignore WebKit/gtk/docs/GNUmakefile.in and WebKit/gtk/po/*.pot so that

@@ -1,3 +1,13 @@
+2010-12-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DumpRenderTree has two copies of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=49877
+
+        * GNUmakefile.am: Remove the second copy of JavaScriptCore from the
+        LDADD list for DumpRenderTree.
+
 2010-12-02  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed: Added myself to list of Committers.

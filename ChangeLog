@@ -1,3 +1,18 @@
+2010-12-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DumpRenderTree has two copies of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=49877
+
+        Prevent the need to compile JSC into DumpRenderTree twice, by adjusting
+        the symbol visibility rules for libwebkit. Make all JSC symbols visible,
+        while hiding WebCore/WebKit symbols.
+
+        * GNUmakefile.am: Move the symbol visibility flags to the WebKit build.
+        * autotools/symbols.filter: Update the symbol filter list with the real
+        mangled names of the symbols and include other symbols that DRT needs.
+
 2010-12-02  Daniel Bates  <dbates@rim.com>
 
         Add autotools generated files to svn:ignore so that these
