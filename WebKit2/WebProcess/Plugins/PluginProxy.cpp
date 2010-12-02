@@ -131,7 +131,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     IntRect dirtyRectInPluginCoordinates = dirtyRect;
     dirtyRectInPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
-    m_backingStore->paint(*graphicsContext, m_frameRect.location(), dirtyRectInPluginCoordinates);
+    m_backingStore->paint(*graphicsContext, dirtyRect.location(), dirtyRectInPluginCoordinates);
 
     if (m_waitingForPaintInResponseToUpdate) {
         m_waitingForPaintInResponseToUpdate = false;
@@ -419,7 +419,8 @@ void PluginProxy::update(const IntRect& paintedRect)
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
 
-        m_pluginBackingStore->paint(*graphicsContext, IntPoint(), paintedRectPluginCoordinates);
+        m_pluginBackingStore->paint(*graphicsContext, paintedRectPluginCoordinates.location(), 
+                                    paintedRectPluginCoordinates);
     }
 
     // Ask the controller to invalidate the rect for us.
