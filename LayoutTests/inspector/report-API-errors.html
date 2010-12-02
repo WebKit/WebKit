@@ -16,7 +16,8 @@ function test()
     InspectorBackend.setMonitoringXHREnabled(true, "not a function");
     InspectorBackend.setMonitoringXHREnabled(true, undefined);
     InspectorBackend.setMonitoringXHREnabled(false, undefined);
-    WebInspector_syncDispatch('{"type": "event", "domain": "dom", "event": "something-strange", "data": {}}');
+    InspectorBackend.dispatch('{"type": "event", "domain": "wrongDomain", "event": "something-strange", "data": {}}');
+    InspectorBackend.dispatch('{"type": "event", "domain": "Inspector", "event": "something-strange", "data": {}}');
 
     InspectorTest.completeTest();
 }
