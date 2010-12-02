@@ -3286,7 +3286,7 @@ BUG_DRT MAC : media/video-play-pause-events.html = CRASH
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 // Crashes with DRT and is a text failure with TestShell
-BUG_DRT WIN LINUX : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
+BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
