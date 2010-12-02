@@ -5486,6 +5486,10 @@ fast/text/hyphenate-locale.html
 # see also: https://bugzilla.gnome.org/show_bug.cgi?id=628020
 media/video-buffered.html
 
+# fails on 32-bits debug bot
+# https://bugs.webkit.org/show_bug.cgi?id=50389
+media/video-volume.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=44784
 fast/history/history-subframe-with-name.html
 
