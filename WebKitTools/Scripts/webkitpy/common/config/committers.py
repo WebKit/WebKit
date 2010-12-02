@@ -179,6 +179,7 @@ committers_unable_to_review = [
     Committer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),
     Committer("Satish Sampath", "satish@chromium.org"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
+    Committer("Sergio Villar Senin", ["svillar@igalia.com", "sergio@webkit.org"], "svillar"),
     Committer("Stephen White", "senorblanco@chromium.org", "senorblanco"),
     Committer("Tony Gentilcore", "tonyg@chromium.org", "tonyg-cr"),
     Committer("Trey Matteson", "trey@usa.net", "trey"),

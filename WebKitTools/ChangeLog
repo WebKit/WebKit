@@ -1,3 +1,9 @@
+2010-12-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed: Added myself to list of Committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-12-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
