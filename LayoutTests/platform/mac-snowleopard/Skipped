@@ -144,3 +144,6 @@ platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.htm
 
 # https://bugs.webkit.org/show_bug.cgi?id=49194
 plugins/nested-plugin-objects.html
+
+# Very flaky: https://bugs.webkit.org/show_bug.cgi?id=50255
+compositing/iframes/overlapped-nested-iframes.html
