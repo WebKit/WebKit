@@ -1,3 +1,16 @@
+2010-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Hit testing broken on sibling views of the WKView
+        <rdar://problem/8718397>
+        
+        Make sure that hitView is not null when comparing with the
+        _layerHostingView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView hitTest:]):
+
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
