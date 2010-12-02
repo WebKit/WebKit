@@ -1921,9 +1921,6 @@ BUG24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 BUG23955 MAC : fast/css/last-of-type-pseudo-class.html = IMAGE
 BUG23955 LINUX : fast/css/last-of-type-pseudo-class.html = IMAGE
 
-// WebKit update: 49190:49206
-BUG_JPARENT LINUX DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
-
 // Started failing for no apparent reason at r28124, and IMAGE+TEXT diffs started at r51875
 
 // Flaky timeouts first appearing at r27764 (webkit 48947)
