@@ -266,25 +266,6 @@ static GtkTextDirection gtkTextDirection(TextDirection direction)
     }
 }
 
-static void adjustMozillaStyle(const RenderThemeGtk* theme, RenderStyle* style, GtkThemeWidgetType type)
-{
-    gint left, top, right, bottom;
-    GtkTextDirection direction = gtkTextDirection(style->direction());
-    gboolean inhtml = true;
-
-    if (moz_gtk_get_widget_border(type, &left, &top, &right, &bottom, direction, inhtml) != MOZ_GTK_SUCCESS)
-        return;
-
-    // FIXME: This approach is likely to be incorrect. See other ports and layout tests to see the problem.
-    const int xpadding = 1;
-    const int ypadding = 1;
-
-    style->setPaddingLeft(Length(xpadding + left, Fixed));
-    style->setPaddingTop(Length(ypadding + top, Fixed));
-    style->setPaddingRight(Length(xpadding + right, Fixed));
-    style->setPaddingBottom(Length(ypadding + bottom, Fixed));
-}
-
 bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
 {
     // Painting is disabled so just claim to have succeeded
@@ -433,18 +414,37 @@ bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& 
     return paintMenuList(object, info, rect);
 }
 
+static void setTextInputBorders(RenderStyle* style)
+{
+    // If this control isn't drawn using the native theme, we don't touch the borders.
+    if (style->appearance() == NoControlPart)
+        return;
+
+    // We cannot give a proper rendering when border radius is active, unfortunately.
+    style->resetBorderRadius();
+
+    int left = 0, top = 0, right = 0, bottom = 0;
+    moz_gtk_get_widget_border(MOZ_GTK_ENTRY, &left, &top, &right, &bottom,
+                              gtkTextDirection(style->direction()), TRUE);
+    style->setBorderLeftWidth(left);
+    style->setBorderTopWidth(top);
+    style->setBorderRightWidth(right);
+    style->setBorderBottomWidth(bottom);
+}
+
 void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    style->resetBorder();
-    style->resetPadding();
-    style->setHeight(Length(Auto));
-    style->setWhiteSpace(PRE);
-    adjustMozillaStyle(this, style, MOZ_GTK_ENTRY);
+    setTextInputBorders(style);
 }
 
 bool RenderThemeGtk::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
     return paintRenderObject(MOZ_GTK_ENTRY, o, i.context, rect);
+}
+
+void RenderThemeGtk::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    setTextInputBorders(style);
 }
 
 bool RenderThemeGtk::paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -518,7 +518,8 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* object, const Pa
 
 void RenderThemeGtk::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    adjustTextFieldStyle(selector, style, e);
+    style->setLineHeight(RenderStyle::initialLineHeight());
+    setTextInputBorders(style);
 }
 
 bool RenderThemeGtk::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& rect)

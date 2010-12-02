@@ -7,24 +7,24 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 564x19
           text run at (0,0) width 564: "The following 5 inputs should be all be rendered exactly the same, aligned to the left side."
       RenderBlock (anonymous) at (0,35) size 784x116
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (198,5) size 4x19
           text run at (198,5) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,31) size 194x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,31) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (198,34) size 4x19
           text run at (198,34) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,60) size 194x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,60) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (198,63) size 4x19
           text run at (198,63) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,89) size 194x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,89) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (198,92) size 4x19
           text run at (198,92) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (0,151) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
 layer at (13,48) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
     RenderText {#text} at (1,0) size 130x19
