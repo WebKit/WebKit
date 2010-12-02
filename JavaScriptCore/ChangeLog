@@ -1,3 +1,19 @@
+2010-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added a little hardening to OSAllocator.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::release):
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::release): CRASH() if the OS's virtual memory system
+        reports an error.
+
 2010-12-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Geoffrey Garen.

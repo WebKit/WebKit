@@ -77,7 +77,9 @@ void OSAllocator::decommit(void* address, size_t bytes)
 
 void OSAllocator::release(void* address, size_t bytes)
 {
-    munmap(address, bytes);
+    int result = munmap(address, bytes);
+    if (result == -1)
+        CRASH();
 }
 
 } // namespace WTF
