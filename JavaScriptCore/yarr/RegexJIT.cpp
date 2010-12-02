@@ -31,7 +31,6 @@
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "RegexCompiler.h"
-#include "RegexInterpreter.h" // temporary, remove when fallback is removed.
 
 #if ENABLE(YARR_JIT)
 
@@ -1496,11 +1495,7 @@ public:
             patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.locationOf(m_backtrackRecords[i].backtrackLocation));
 
         jitObject.set(patchBuffer.finalizeCode());
-    }
-
-    bool shouldFallBack()
-    {
-        return m_shouldFallBack;
+        jitObject.setFallBack(m_shouldFallBack);
     }
 
 private:
@@ -1509,22 +1504,12 @@ private:
     Vector<AlternativeBacktrackRecord> m_backtrackRecords;
 };
 
-void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& patternString, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator* allocator, bool ignoreCase, bool multiline)
+void jitCompileRegex(RegexPattern& pattern, JSGlobalData* globalData, RegexCodeBlock& jitObject)
 {
-    RegexPattern pattern(ignoreCase, multiline);
-    if ((error = compileRegex(patternString, pattern)))
-        return;
-    numSubpatterns = pattern.m_numSubpatterns;
-
-    if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
-        RegexGenerator generator(pattern);
-        generator.compile(globalData, jitObject);
-        if (!generator.shouldFallBack())
-            return;
-    }
-
-    jitObject.setFallback(byteCompileRegex(pattern, allocator));
+    RegexGenerator generator(pattern);
+    generator.compile(globalData, jitObject);
 }
+
 
 }}
 

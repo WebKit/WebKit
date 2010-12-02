@@ -1,3 +1,29 @@
+2010-12-02  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Move regex parsing and fallback handling to runtime/RegExp.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50015
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        (JSC::RegExp::printTraceData):
+        * runtime/RegExp.h:
+        (JSC::RegExp::pattern):
+        * yarr/RegexInterpreter.cpp:
+        * yarr/RegexInterpreter.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::RegexCodeBlock):
+        (JSC::Yarr::RegexCodeBlock::setFallBack):
+        (JSC::Yarr::RegexCodeBlock::isFallBack):
+        (JSC::Yarr::executeRegex):
+
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the GTK build.

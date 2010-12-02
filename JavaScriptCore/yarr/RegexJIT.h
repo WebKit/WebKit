@@ -29,7 +29,6 @@
 #if ENABLE(YARR_JIT)
 
 #include "MacroAssembler.h"
-#include "RegexInterpreter.h" // temporary, remove when fallback is removed.
 #include "RegexPattern.h"
 #include "UString.h"
 
@@ -51,7 +50,7 @@ class RegexCodeBlock {
 
 public:
     RegexCodeBlock()
-        : m_needFallback(false)
+        : m_needFallBack(false)
     {
     }
 
@@ -59,15 +58,8 @@ public:
     {
     }
 
-    BytecodePattern* getFallback() { return m_fallback.get(); }
-    bool isFallback() { return m_needFallback; }
-    void setFallback(PassOwnPtr<BytecodePattern> fallback)
-    {
-        m_fallback = fallback;
-        m_needFallback = true;
-    }
-
-    bool operator!() { return (!m_ref.m_code.executableAddress() && !m_fallback); }
+    void setFallBack(bool fallback) { m_needFallBack = fallback; }
+    bool isFallBack() { return m_needFallBack; }
     void set(MacroAssembler::CodeRef ref) { m_ref = ref; }
 
     int execute(const UChar* input, unsigned start, unsigned length, int* output)
@@ -81,17 +73,13 @@ public:
 
 private:
     MacroAssembler::CodeRef m_ref;
-    OwnPtr<Yarr::BytecodePattern> m_fallback;
-    bool m_needFallback;
+    bool m_needFallBack;
 };
 
-void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator* allocator, bool ignoreCase = false, bool multiline = false);
+void jitCompileRegex(RegexPattern& pattern, JSGlobalData* globalData, RegexCodeBlock& jitObject);
 
 inline int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
 {
-    if (jitObject.isFallback())
-        return (interpretRegex(jitObject.getFallback(), input, start, length, output));
-
     return jitObject.execute(input, start, length, output);
 }
 

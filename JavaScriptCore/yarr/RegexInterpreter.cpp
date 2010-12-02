@@ -1883,19 +1883,6 @@ private:
     Vector<ByteDisjunction*> m_allParenthesesInfo;
 };
 
-
-PassOwnPtr<BytecodePattern> byteCompileRegex(const UString& patternString, unsigned& numSubpatterns, const char*& error, BumpPointerAllocator* allocator, bool ignoreCase, bool multiline)
-{
-    RegexPattern pattern(ignoreCase, multiline);
-
-    if ((error = compileRegex(patternString, pattern)))
-        return PassOwnPtr<BytecodePattern>();
-
-    numSubpatterns = pattern.m_numSubpatterns;
-
-    return ByteCompiler(pattern).compile(allocator);
-}
-
 PassOwnPtr<BytecodePattern> byteCompileRegex(RegexPattern& pattern, BumpPointerAllocator* allocator)
 {
     return ByteCompiler(pattern).compile(allocator);

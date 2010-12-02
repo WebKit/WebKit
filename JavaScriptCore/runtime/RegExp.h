@@ -41,7 +41,7 @@ namespace JSC {
         bool ignoreCase() const { return m_flagBits & IgnoreCase; }
         bool multiline() const { return m_flagBits & Multiline; }
 
-        const UString& pattern() const { return m_pattern; }
+        const UString& pattern() const { return m_patternString; }
 
         bool isValid() const { return !m_constructionError; }
         const char* errorMessage() const { return m_constructionError; }
@@ -56,11 +56,16 @@ namespace JSC {
     private:
         RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags);
 
-        void compile(JSGlobalData*);
+        enum RegExpState {
+            ParseError,
+            JITCode,
+            ByteCode
+        } m_state;
+
+        RegExpState compile(JSGlobalData*);
 
         enum FlagBits { Global = 1, IgnoreCase = 2, Multiline = 4 };
-
-        UString m_pattern; // FIXME: Just decompile m_regExp instead of storing this.
+        UString m_patternString;
         int m_flagBits;
         const char* m_constructionError;
         unsigned m_numSubpatterns;
