@@ -22,8 +22,23 @@ module html {
     interface HTMLMarqueeElement : HTMLElement {
         void start();
         void stop();
+        
+        attribute [Reflect] DOMString behavior;
+        attribute [Reflect] DOMString bgColor;
+        attribute [Reflect] DOMString direction;
+        attribute [Reflect] DOMString height;
+        attribute [Reflect] unsigned long hspace;
+        attribute long loop setter raises(DOMException);
+        attribute long scrollAmount setter raises(DOMException);
+        attribute long scrollDelay setter raises(DOMException);
+        attribute [Reflect] boolean trueSpeed;
+        attribute [Reflect] unsigned long vspace;
+        attribute [Reflect] DOMString width;
 
-        // FIXME: Find out what WinIE exposes as attributes.
+        // FIXME: Implement the following event handler attributes
+        // https://bugs.webkit.org/show_bug.cgi?id=49788
+        // attribute EventListener onbounce;
+        // attribute EventListener onfinish;
+        // attribute EventListener onstart;
     };
-
 }

@@ -41,6 +41,15 @@ public:
     void start();
     void stop();
     
+    int scrollAmount() const;
+    void setScrollAmount(int, ExceptionCode&);
+    
+    int scrollDelay() const;
+    void setScrollDelay(int, ExceptionCode&);
+    
+    int loop() const;
+    void setLoop(int, ExceptionCode&);
+    
 private:
     HTMLMarqueeElement(const QualifiedName&, Document*);
 

@@ -127,6 +127,51 @@ void HTMLMarqueeElement::stop()
         marqueeRenderer->stop();
 }
 
+int HTMLMarqueeElement::scrollAmount() const
+{
+    bool ok;
+    int scrollAmount = fastGetAttribute(scrollamountAttr).toInt(&ok);
+    return ok && scrollAmount >= 0 ? scrollAmount : RenderStyle::initialMarqueeIncrement().value();
+}
+    
+void HTMLMarqueeElement::setScrollAmount(int scrollAmount, ExceptionCode& ec)
+{
+    if (scrollAmount < 0)
+        ec = INDEX_SIZE_ERR;
+    else
+        setIntegralAttribute(scrollamountAttr, scrollAmount);
+}
+    
+int HTMLMarqueeElement::scrollDelay() const
+{
+    bool ok;
+    int scrollDelay = fastGetAttribute(scrolldelayAttr).toInt(&ok);
+    return ok && scrollDelay >= 0 ? scrollDelay : RenderStyle::initialMarqueeSpeed();
+}
+
+void HTMLMarqueeElement::setScrollDelay(int scrollDelay, ExceptionCode& ec)
+{
+    if (scrollDelay < 0)
+        ec = INDEX_SIZE_ERR;
+    else
+        setIntegralAttribute(scrolldelayAttr, scrollDelay);
+}
+    
+int HTMLMarqueeElement::loop() const
+{
+    bool ok;
+    int loopValue = fastGetAttribute(loopAttr).toInt(&ok);
+    return ok && loopValue > 0 ? loopValue : -1;
+}
+    
+void HTMLMarqueeElement::setLoop(int loop, ExceptionCode& ec)
+{
+    if (loop <= 0 && loop != -1)
+        ec = INDEX_SIZE_ERR;
+    else
+        setIntegralAttribute(loopAttr, loop);
+}
+
 bool HTMLMarqueeElement::canSuspend() const
 {
     return true;
