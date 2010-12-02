@@ -174,8 +174,8 @@ static NSMutableSet *pluginViews = nil;
     if ([_views count] > 0)
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
     
-    int i, count = [_views count];
-    for (i = 0; i < count; i++) {
+    int count = [_views count];
+    for (int i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInStart)]) {
             JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
@@ -197,13 +197,13 @@ static NSMutableSet *pluginViews = nil;
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
     }
     
-    int i, count = [_views count];
-    for (i = 0; i < count; i++)
+    int viewsCount = [_views count];
+    for (int i = 0; i < viewsCount; i++)
         [self stopOnePlugin:[_views objectAtIndex:i]];
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    count = [_viewsNotInDocument count];
-    for (i = 0; i < count; i++)
+    int viewsNotInDocumentCount = [_viewsNotInDocument count];
+    for (int i = 0; i < viewsNotInDocumentCount; i++)
         [self stopOnePlugin:[_viewsNotInDocument objectAtIndex:i]];
 #endif
 
@@ -333,8 +333,8 @@ static void cancelOutstandingCheck(const void *item, void *context)
 
     [self _cancelOutstandingChecks];
     
-    int i, count = [_views count];
-    for (i = 0; i < count; i++) {
+    int viewsCount = [_views count];
+    for (int i = 0; i < viewsCount; i++) {
         id aView = [_views objectAtIndex:i];
         [self destroyOnePlugin:aView];
         
@@ -348,8 +348,8 @@ static void cancelOutstandingCheck(const void *item, void *context)
     }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    count = [_viewsNotInDocument count];
-    for (i = 0; i < count; i++)
+    int viewsNotInDocumentCount = [_viewsNotInDocument count];
+    for (int i = 0; i < viewsNotInDocumentCount; i++)
         [self destroyOnePlugin:[_viewsNotInDocument objectAtIndex:i]];
 #endif
 
