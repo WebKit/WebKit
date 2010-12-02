@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Chromium build.
+        
+        * JavaScriptCore.gypi: This is a Windows build file, so use OSAllocatorWin.cpp.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the GTK build.
 
         * GNUmakefile.am: Added OSAllocator to another project.
