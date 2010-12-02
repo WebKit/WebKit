@@ -1,5 +1,14 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Export OSAllocator.h as private
+        so other projects can see it.
+
+        * wtf/OSAllocatorPosix.cpp: #include UnusedParam.h for UNUSED_PARAM.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Baby step toward a cross-platform virtual memory abstraction: created
