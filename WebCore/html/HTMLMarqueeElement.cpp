@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
