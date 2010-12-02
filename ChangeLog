@@ -1,5 +1,11 @@
 2010-12-02  Xan Lopez  <xlopez@igalia.com>
 
+        Third attempt to fix the build.
+
+        * autotools/symbols.filter: be more liberal in one more symbol.
+
+2010-12-02  Xan Lopez  <xlopez@igalia.com>
+
         Another attempt to fix the GTK+ build.
 
         * autotools/symbols.filter: try to be more liberal with the
