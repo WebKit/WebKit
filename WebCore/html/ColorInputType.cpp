@@ -42,13 +42,12 @@ static bool isValidColorString(const String& value)
 {
     if (value.isEmpty())
         return false;
-    if (value[0] == '#') {
-        // We don't accept #rgb and #aarrggbb formats.
-        if (value.length() != 7)
-            return false;
-    }
-    // This accepts named colors such as "white".
-    // FIXME: Reject named colors, accept only #rrggbb.
+    if (value[0] != '#')
+        return false;
+
+    // We don't accept #rgb and #aarrggbb formats.
+    if (value.length() != 7)
+        return false;
     Color color(value);
     return color.isValid() && !color.hasAlpha();
 }

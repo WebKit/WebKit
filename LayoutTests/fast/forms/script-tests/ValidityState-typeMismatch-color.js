@@ -22,17 +22,17 @@ check('#789abc', false);
 check('#defABC', false);
 check('#DEF012', false);
 
-// Extension: named colors
-check('black', false);
-check('blue', false);
-check('red', false);
-check('purple', false);
-check('green', false);
-check('cyan', false);
-check('yellow', false);
-check('white', false);
-check('White', false);
-check('WHITE', false);
+// Invalid values: named colors
+check('black', true);
+check('blue', true);
+check('red', true);
+check('purple', true);
+check('green', true);
+check('cyan', true);
+check('yellow', true);
+check('white', true);
+check('White', true);
+check('WHITE', true);
 
 // Invalid values
 check('000000', true);
