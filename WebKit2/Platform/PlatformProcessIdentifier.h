@@ -39,6 +39,8 @@ typedef pid_t PlatformProcessIdentifier;
 typedef HANDLE PlatformProcessIdentifier;
 #elif PLATFORM(QT)
 typedef QProcess* PlatformProcessIdentifier;
+#elif PLATFORM(GTK)
+typedef pid_t PlatformProcessIdentifier;
 #endif
 
 } // namespace WebKit 

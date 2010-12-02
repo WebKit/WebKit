@@ -1,3 +1,57 @@
+2010-11-30 Amruth Raj  <amruthraj@motorola.com> and Ravi Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement RunLoop, WorkQueue, Connection classes for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48507
+
+        * Platform/CoreIPC/Connection.h: UNIX_X11 specific changes for GTK port.
+        (CoreIPC::Connection::messageProcessingCompleted):
+        * Platform/CoreIPC/gtk: Added.
+        * Platform/CoreIPC/gtk/ConnectionGtk.cpp: Added. Connection class implementation for GTK port (UNIX_X11 specific).
+        (CoreIPC::readBytesFromSocket):
+        (CoreIPC::writeBytesToSocket):
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::processCompletedMessage):
+        (CoreIPC::Connection::readEventHandler):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::platformCanSendOutgoingMessages):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Platform/PlatformProcessIdentifier.h: UNIX_X11 specific changes for GTK port.
+        * Platform/RunLoop.h: GTK port specific changes.
+        * Platform/WorkQueue.h: GTK port specific changes.
+        * Platform/gtk/RunLoopGtk.cpp: Added. Runs an event loop using GMainLoop and handles the incoming messages.
+        (RunLoop::RunLoop):
+        (RunLoop::~RunLoop):
+        (RunLoop::run):
+        (RunLoop::mainLoop):
+        (RunLoop::stop):
+        (RunLoop::queueWork):
+        (RunLoop::wakeUp):
+        (RunLoop::TimerBase::TimerBase):
+        (RunLoop::TimerBase::~TimerBase):
+        (RunLoop::TimerBase::resetTimerSource):
+        (RunLoop::TimerBase::oneShotTimerFired):
+        (RunLoop::TimerBase::repeatingTimerFired):
+        (RunLoop::TimerBase::start):
+        (RunLoop::TimerBase::stop):
+        (RunLoop::TimerBase::isActive):
+        * Platform/gtk/WorkQueueGtk.cpp: Added. Creates a thread and polls on a given fd using GIOChannel. 
+        Dispatches the obtained messages to RunLoop's GMainLoop.
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::EventSource::dispatchSource):
+        (WorkQueue::EventSource::performWorkOnce):
+        (WorkQueue::EventSource::performWork):
+        (WorkQueue::EventSource::deleteEventSource):
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        (WorkQueue::startWorkQueueThread):
+        (WorkQueue::workQueueThreadBody):
+        (WorkQueue::registerEventSourceHandler):
+        (WorkQueue::unregisterEventSourceHandler):
+        (WorkQueue::scheduleWork):
+
 2010-12-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

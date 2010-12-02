@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +91,8 @@ public:
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
 #elif PLATFORM(QT)
     typedef const QString Identifier;
+#elif PLATFORM(GTK)
+    typedef int Identifier;
 #endif
 
     static PassRefPtr<Connection> createServerConnection(Identifier, Client*, RunLoop* clientRunLoop);
@@ -263,6 +266,15 @@ private:
     size_t m_currentMessageSize;
     QLocalSocket* m_socket;
     QString m_serverName;
+#elif PLATFORM(GTK)
+    void readEventHandler();
+    void processCompletedMessage();
+    bool messageProcessingCompleted() { return !m_currentMessageSize; }
+
+    int m_socket;
+    Vector<uint8_t> m_readBuffer;
+    size_t m_currentMessageSize;
+    size_t m_pendingBytes;
 #endif
 };
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,9 @@
 class QLocalSocket;
 class QObject;
 class QThread;
+#elif PLATFORM(GTK)
+typedef struct _GMainContext GMainContext;
+typedef struct _GMainLoop GMainLoop;
 #endif
 
 class WorkQueue {
@@ -79,6 +83,9 @@ public:
     void disconnectSignal(QObject*, const char* signal);
 
     void moveSocketToWorkThread(QLocalSocket*);
+#elif PLATFORM(GTK)
+    void registerEventSourceHandler(int, int, PassOwnPtr<WorkItem>);
+    void unregisterEventSourceHandler(int);
 #endif
 
 private:
@@ -151,6 +158,18 @@ private:
     HashMap<QObject*, WorkItemQt*> m_signalListeners;
     QThread* m_workThread;
     friend class WorkItemQt;
+#elif PLATFORM(GTK)
+    static void* startWorkQueueThread(WorkQueue*);
+    void workQueueThreadBody();
+
+    ThreadIdentifier m_workQueueThread;
+    GMainContext* m_eventContext;
+    Mutex m_eventLoopLock;
+    GMainLoop* m_eventLoop;
+    Mutex m_eventSourcesLock;
+    class EventSource;
+    HashMap<int, Vector<EventSource*> > m_eventSources;
+    typedef HashMap<int, Vector<EventSource*> >::iterator EventSourceIterator; 
 #endif
 };
 

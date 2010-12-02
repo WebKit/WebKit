@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,12 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#if PLATFORM(GTK)
+typedef struct _GSource GSource;
+typedef struct _GMainLoop GMainLoop;
+typedef struct _GMainContext GMainContext;
+typedef int gboolean;
+#endif
 
 class WorkItem;
 
@@ -78,6 +85,11 @@ public:
         static void timerFired(RunLoop*, int ID);
         int m_ID;
         bool m_isRepeating;
+#elif PLATFORM(GTK)
+        static gboolean oneShotTimerFired(RunLoop::TimerBase*);
+        static gboolean repeatingTimerFired(RunLoop::TimerBase*);
+        void resetTimerSource();
+        GSource* m_timerSource;
 #endif
     };
 
@@ -129,6 +141,13 @@ private:
     TimerMap m_activeTimers;
     class TimerObject;
     TimerObject* m_timerObject;
+#elif PLATFORM(GTK)
+public:
+    static gboolean queueWork(RunLoop*);
+    GMainLoop* mainLoop();
+private:
+    GMainContext* m_runLoopContext;
+    GMainLoop* m_runLoopMain;
 #endif
 };
 
