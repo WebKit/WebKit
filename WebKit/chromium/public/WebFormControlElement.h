@@ -51,7 +51,7 @@ public:
         WebElement::assign(e);
         return *this;
     }
-    WEBKIT_API void assign(const WebFormControlElement& e) { WebElement::assign(e); }
+    void assign(const WebFormControlElement& e) { WebElement::assign(e); }
 
     WEBKIT_API bool isEnabled() const;
     WEBKIT_API WebString formControlName() const;

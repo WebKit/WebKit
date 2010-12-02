@@ -1,3 +1,11 @@
+2010-12-02  Darin Fisher  <darin@chromium.org>
+
+        Fix the Windows multi-dll build.  Do not export functions that are
+        implemented inline!
+
+        * public/WebFormControlElement.h:
+        (WebKit::WebFormControlElement::assign):
+
 2010-12-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed, roll chromium deps to r67980.
