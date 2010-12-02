@@ -213,5 +213,14 @@ SOURCES += \
 
 # Generated files, simply list them for JavaScriptCore
 
+symbian: {
+    symbian-abld|symbian-sbsv2 {
+        MMP_RULES += ALWAYS_BUILD_AS_ARM
+    }  else {
+        QMAKE_CFLAGS -= --thumb
+        QMAKE_CXXFLAGS -= --thumb
+    }
+    QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+}
 # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec
 *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x

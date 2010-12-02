@@ -1,3 +1,15 @@
+2010-12-02  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] Reintroduce compiler optimizations for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=50270
+
+        Add compiler optimization (symbian ARM target) which was lost after split from WebCore.
+        Tested via Sunspider and V8 - both of which show significant performance improvement.
+
+        * JavaScriptCore.pro:
+
 2010-12-02  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
