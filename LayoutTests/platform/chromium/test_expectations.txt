@@ -3331,3 +3331,5 @@ BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
+// The y-scroll position from HOME keydown seems not consistent.
+BUGWK50352 MAC : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
