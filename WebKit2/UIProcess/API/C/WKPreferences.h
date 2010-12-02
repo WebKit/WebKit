@@ -72,7 +72,11 @@ WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled);
 WK_EXPORT bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferences);
-    
+
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferences, bool javaScriptCanOpenWindowsAutomatically);
+WK_EXPORT bool WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferences);
+
 WK_EXPORT void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef);
 

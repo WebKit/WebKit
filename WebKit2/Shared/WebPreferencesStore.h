@@ -48,6 +48,7 @@ namespace WebKit {
     macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \
     macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, true) \
+    macro(JavaScriptCanOpenWindowsAutomatically, javaScriptCanOpenWindowsAutomatically, Bool, bool, true) \
     macro(NeedsSiteSpecificQuirks, needsSiteSpecificQuirks, Bool, bool, false) \
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \

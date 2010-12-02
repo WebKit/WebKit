@@ -1,3 +1,21 @@
+2010-12-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs API to turn on popup blocking
+        https://bugs.webkit.org/show_bug.cgi?id=50407
+
+        Pipe-through a preference for javascript being able to open
+        windows without user gesture.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaScriptCanOpenWindowsAutomatically):
+        (WKPreferencesGetJavaScriptCanOpenWindowsAutomatically):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2010-12-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

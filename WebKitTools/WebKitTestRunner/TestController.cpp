@@ -277,6 +277,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
     WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
+    WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
 
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");

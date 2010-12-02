@@ -130,6 +130,16 @@ bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->javaEnabled();
 }
 
+void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferencesRef, bool javaScriptCanOpenWindowsAutomatically)
+{
+    toImpl(preferencesRef)->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+}
+
+bool WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaScriptCanOpenWindowsAutomatically();
+}
+
 void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
     toImpl(preferencesRef)->setStandardFontFamily(toWTFString(family));
