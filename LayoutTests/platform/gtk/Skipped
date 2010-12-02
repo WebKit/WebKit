@@ -2841,9 +2841,6 @@ media/video-source-error.html
 media/video-aspect-ratio.html
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
-# Tests requiring fullscreen <video> support
-media/media-fullscreen-inline.html
-media/media-fullscreen-not-in-document.html
 # Requires media engine closed caption support
 media/media-captions.html
 
