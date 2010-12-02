@@ -1,3 +1,37 @@
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement the remaining PluginController/Plugin member functions
+        https://bugs.webkit.org/show_bug.cgi?id=50356
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::cancelStreamLoad):
+        (WebKit::PluginControllerProxy::cancelManualStreamLoad):
+        (WebKit::PluginControllerProxy::setStatusbarText):
+        (WebKit::PluginControllerProxy::pluginProcessCrashed):
+        (WebKit::PluginControllerProxy::frameDidFinishLoading):
+        (WebKit::PluginControllerProxy::frameDidFail):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveResponse):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveData):
+        (WebKit::PluginControllerProxy::manualStreamDidFinishLoading):
+        (WebKit::PluginControllerProxy::manualStreamDidFail):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::frameDidFinishLoading):
+        (WebKit::PluginProxy::frameDidFail):
+        (WebKit::PluginProxy::manualStreamDidReceiveResponse):
+        (WebKit::PluginProxy::manualStreamDidReceiveData):
+        (WebKit::PluginProxy::manualStreamDidFinishLoading):
+        (WebKit::PluginProxy::manualStreamDidFail):
+        (WebKit::PluginProxy::windowFrameChanged):
+        (WebKit::PluginProxy::cancelStreamLoad):
+        (WebKit::PluginProxy::cancelManualStreamLoad):
+        (WebKit::PluginProxy::setStatusbarText):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

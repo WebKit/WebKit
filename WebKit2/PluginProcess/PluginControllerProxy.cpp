@@ -34,7 +34,6 @@
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
 #include "NetscapePlugin.h"
-#include "NotImplemented.h"
 #include "PluginProcess.h"
 #include "PluginProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -159,12 +158,12 @@ void PluginControllerProxy::loadURL(uint64_t requestID, const String& method, co
 
 void PluginControllerProxy::cancelStreamLoad(uint64_t streamID)
 {
-    notImplemented();
+    m_connection->connection()->send(Messages::PluginProxy::CancelStreamLoad(streamID), m_pluginInstanceID);
 }
 
 void PluginControllerProxy::cancelManualStreamLoad()
 {
-    notImplemented();
+    m_connection->connection()->send(Messages::PluginProxy::CancelManualStreamLoad(), m_pluginInstanceID);
 }
 
 NPObject* PluginControllerProxy::windowScriptNPObject()
@@ -214,9 +213,9 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     return true;
 }
 
-void PluginControllerProxy::setStatusbarText(const WTF::String&)
+void PluginControllerProxy::setStatusbarText(const String& statusbarText)
 {
-    notImplemented();
+    m_connection->connection()->send(Messages::PluginProxy::SetStatusbarText(statusbarText), m_pluginInstanceID);
 }
 
 bool PluginControllerProxy::isAcceleratedCompositingEnabled()
@@ -226,7 +225,8 @@ bool PluginControllerProxy::isAcceleratedCompositingEnabled()
 
 void PluginControllerProxy::pluginProcessCrashed()
 {
-    notImplemented();
+    // This should never be called from here.
+    ASSERT_NOT_REACHED();
 }
 
 String PluginControllerProxy::proxiesForURL(const String& urlString)
@@ -258,7 +258,17 @@ bool PluginControllerProxy::isPrivateBrowsingEnabled()
 {
     return m_isPrivateBrowsingEnabled;
 }
-    
+
+void PluginControllerProxy::frameDidFinishLoading(uint64_t requestID)
+{
+    m_plugin->frameDidFinishLoading(requestID);
+}
+
+void PluginControllerProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
+{
+    m_plugin->frameDidFail(requestID, wasCancelled);
+}
+
 void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle)
 {
     m_frameRect = frameRect;
@@ -299,6 +309,26 @@ void PluginControllerProxy::streamDidFinishLoading(uint64_t streamID)
 void PluginControllerProxy::streamDidFail(uint64_t streamID, bool wasCancelled)
 {
     m_plugin->streamDidFail(streamID, wasCancelled);
+}
+
+void PluginControllerProxy::manualStreamDidReceiveResponse(const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+{
+    m_plugin->manualStreamDidReceiveResponse(KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers);
+}
+
+void PluginControllerProxy::manualStreamDidReceiveData(const CoreIPC::DataReference& data)
+{
+    m_plugin->manualStreamDidReceiveData(reinterpret_cast<const char*>(data.data()), data.size());
+}
+
+void PluginControllerProxy::manualStreamDidFinishLoading()
+{
+    m_plugin->manualStreamDidFinishLoading();
+}
+
+void PluginControllerProxy::manualStreamDidFail(bool wasCancelled)
+{
+    m_plugin->manualStreamDidFail(wasCancelled);
 }
     
 void PluginControllerProxy::handleMouseEvent(const WebMouseEvent& mouseEvent, bool& handled)

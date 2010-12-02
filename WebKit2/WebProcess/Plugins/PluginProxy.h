@@ -112,6 +112,9 @@ private:
     void getWindowScriptNPObject(uint64_t& windowScriptNPObjectID);
     void getPluginElementNPObject(uint64_t& pluginElementNPObjectID);
     void evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData);
+    void cancelStreamLoad(uint64_t streamID);
+    void cancelManualStreamLoad();
+    void setStatusbarText(const String& statusbarText);
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;

@@ -46,6 +46,15 @@ messages -> PluginProxy {
 
     # Evaluates the given JavaScript string.
     Evaluate(WebKit::NPVariantData npObjectAsVariantData, WTF::String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData)
+
+    # Cancels the given stream load.
+    CancelStreamLoad(uint64_t streamID)
+
+    # Cancel the manual stream load.
+    CancelManualStreamLoad()
+
+    # Set the status bar text.
+    SetStatusbarText(WTF::String statusbarText)
 }
 
 #endif
