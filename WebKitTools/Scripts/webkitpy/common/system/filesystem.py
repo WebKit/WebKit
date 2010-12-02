@@ -33,6 +33,7 @@ from __future__ import with_statement
 import codecs
 import errno
 import os
+import shutil
 import tempfile
 
 
@@ -45,6 +46,10 @@ class FileSystem(object):
     def exists(self, path):
         """Return whether the path exists in the filesystem."""
         return os.path.exists(path)
+
+    def isfile(self, path):
+        """Return whether the path refers to a file."""
+        return os.path.isfile(path)
 
     def isdir(self, path):
         """Return whether the path refers to a directory."""
@@ -115,3 +120,8 @@ class FileSystem(object):
         The file is written encoded as UTF-8 with no BOM."""
         with codecs.open(path, 'w', 'utf8') as f:
             f.write(contents)
+
+    def copyfile(self, source, destination):
+        """Copies the contents of the file at the given path to the destination
+        path."""
+        shutil.copyfile(source, destination)

@@ -32,6 +32,114 @@ from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.commands import rebaselineserver
+from webkitpy.tool.mocktool import MockSCM
+
+
+class RebaselineTestTest(unittest.TestCase):
+    def test_text_rebaseline(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+                'platform/mac/fast/text-expected.txt',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='none',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Updating baselines for mac',
+                '    Updated text-expected.txt',
+            ])
+
+    def test_text_rebaseline_move_no_op(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+                'platform/win/fast/text-expected.txt',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='mac-leopard',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Updating baselines for mac',
+                '    Updated text-expected.txt',
+            ])
+
+    def test_text_rebaseline_move(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+                'platform/mac/fast/text-expected.txt',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='mac-leopard',
+            expected_success=False,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Moving current mac baselines to mac-leopard',
+                '    FIXME: Add support for moving existing baselines',
+            ])
+
+    def test_image_rebaseline(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/image-expected.txt',
+                'platform/mac/fast/image-expected.png',
+                'platform/mac/fast/image-expected.checksum',
+            ),
+            results_files=(
+                'fast/image-actual.png',
+                'fast/image-actual.checksum',
+            ),
+            test_name='fast/image.html',
+            baseline_target='mac',
+            baseline_move_to='none',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/image...',
+                '  Updating baselines for mac',
+                '    Updated image-expected.checksum',
+                '    Updated image-expected.png',
+            ])
+
+    def _assertRebaseline(self, test_files, results_files, test_name, baseline_target, baseline_move_to, expected_success, expected_log):
+        log = []
+        test_config = get_test_config(test_files, results_files)
+        success = rebaselineserver._rebaseline_test(
+            test_name,
+            baseline_target,
+            baseline_move_to,
+            test_config,
+            log=lambda l: log.append(l))
+        self.assertEqual(expected_log, log)
+        self.assertEqual(expected_success, success)
+
+
+class GetActualResultFilesTest(unittest.TestCase):
+    def test(self):
+        test_config = get_test_config(result_files=(
+            'fast/text-actual.txt',
+            'fast2/text-actual.txt',
+            'fast/text2-actual.txt',
+            'fast/text-notactual.txt',
+        ))
+        self.assertEqual(
+            ('text-actual.txt',),
+            rebaselineserver._get_actual_result_files(
+                'fast/text.html', test_config))
 
 
 class GetBaselinesTest(unittest.TestCase):
@@ -79,21 +187,31 @@ class GetBaselinesTest(unittest.TestCase):
             expected_baselines={'base': {'.txt': True}})
 
     def _assertBaselines(self, test_files, test_name, expected_baselines):
-        layout_tests_directory = base.Port().layout_tests_dir()
-        mock_filesystem = filesystem_mock.MockFileSystem()
-        for file in test_files + (test_name,):
-            file_path = mock_filesystem.join(layout_tests_directory, file)
-            mock_filesystem.files[file_path] = ''
-
-        class TestMacPort(WebKitPort):
-            def __init__(self):
-                WebKitPort.__init__(self, filesystem=mock_filesystem)
-                self._name = 'mac'
-
         actual_baselines = rebaselineserver._get_test_baselines(
-            test_name,
-            TestMacPort(),
-            layout_tests_directory,
-            ('mac', 'win', 'linux'),
-            mock_filesystem)
+            test_name, get_test_config(test_files))
         self.assertEqual(expected_baselines, actual_baselines)
+
+
+def get_test_config(test_files=[], result_files=[]):
+    layout_tests_directory = base.Port().layout_tests_dir()
+    results_directory = '/WebKitBuild/Debug/layout-test-results'
+    mock_filesystem = filesystem_mock.MockFileSystem()
+    for file in test_files:
+        file_path = mock_filesystem.join(layout_tests_directory, file)
+        mock_filesystem.files[file_path] = ''
+    for file in result_files:
+        file_path = mock_filesystem.join(results_directory, file)
+        mock_filesystem.files[file_path] = ''
+
+    class TestMacPort(WebKitPort):
+        def __init__(self):
+            WebKitPort.__init__(self, filesystem=mock_filesystem)
+            self._name = 'mac'
+
+    return rebaselineserver.TestConfig(
+        TestMacPort(),
+        layout_tests_directory,
+        results_directory,
+        ('mac', 'win', 'linux'),
+        mock_filesystem,
+        MockSCM())

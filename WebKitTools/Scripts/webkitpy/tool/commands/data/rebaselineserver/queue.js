@@ -146,13 +146,36 @@ RebaselineQueue.prototype._rebaselineTest = function(testName)
     var baselineTarget = getSelectValue('baseline-target');
     var baselineMoveTo = getSelectValue('baseline-move-to');
 
-    // FIXME: actually rebaseline
-    log('Rebaselining ' + testName + ' for platform ' + baselineTarget + '...');
-    var test = results.tests[testName];
-    this._removeTest(testName);
-    this._inProgressRebaselineCount--;
-    test.state = STATE_REBASELINE_SUCCEEDED;
-    updateState();
-    log('Rebaselined add test with state ' + test.state + ' to queue',
-        log.SUCCESS);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST',
+        '/rebaseline?test=' + encodeURIComponent(testName) +
+        '&baseline-target=' + encodeURIComponent(baselineTarget) +
+        '&baseline-move-to=' + encodeURIComponent(baselineMoveTo));
+
+    var self = this;
+    function handleResponse(logType, newState) {
+        log(xhr.responseText, logType);
+        self._removeTest(testName);
+        self._inProgressRebaselineCount--;
+        results.tests[testName].state = newState;
+        updateState();
+    }
+
+    function handleSuccess() {
+        handleResponse(log.SUCCESS, STATE_REBASELINE_SUCCEEDED);
+    }
+    function handleFailure() {
+        handleResponse(log.ERROR, STATE_REBASELINE_FAILED);
+    }
+
+    xhr.addEventListener('load', function() {
+      if (xhr.status < 400) {
+          handleSuccess();
+      } else {
+          handleFailure();
+      }
+    });
+    xhr.addEventListener('error', handleFailure);
+
+    xhr.send();
 };

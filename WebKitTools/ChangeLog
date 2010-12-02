@@ -1,3 +1,31 @@
+2010-11-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: add updating of baselines
+        https://bugs.webkit.org/show_bug.cgi?id=50305
+        
+        Implements updating of baselines, where we copy -actual.* files over
+        the current -expected.* files. To do this, we need a
+        _get_actual_result_files method to get test results files and a
+        _rebaseline_test method to actually do the file copy and SCM operation.
+        _rebaseline_test logs output into a buffer, this is useful for both
+        showing result in the UI and for unit tests.
+        
+        To make passing around of the various test environment properties
+        (results directory, filesystem, SCM, etc) easier, add a TestConfig
+        class for them.
+        
+        Moving of existing baselines is not implemented yet, this patch is big
+        enough as it is.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/queue.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-12-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix after vcproj updates.

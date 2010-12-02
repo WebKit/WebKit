@@ -449,6 +449,10 @@ class MockSCM(Mock):
     def svn_revision_from_commit_text(self, commit_text):
         return "49824"
 
+    def add(self, destination_path, return_exit_code=False):
+        if return_exit_code:
+            return 0
+
 
 class MockCheckout(object):
 

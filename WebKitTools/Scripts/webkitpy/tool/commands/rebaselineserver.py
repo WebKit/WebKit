@@ -33,6 +33,7 @@ from __future__ import with_statement
 
 import codecs
 import datetime
+import fnmatch
 import mimetypes
 import os
 import os.path
@@ -56,9 +57,9 @@ STATE_REBASELINE_FAILED = 'rebaseline_failed'
 STATE_REBASELINE_SUCCEEDED = 'rebaseline_succeeded'
 
 class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
-    def __init__(self, httpd_port, results_directory, results_json, platforms_json):
+    def __init__(self, httpd_port, test_config, results_json, platforms_json):
         BaseHTTPServer.HTTPServer.__init__(self, ("", httpd_port), RebaselineHTTPRequestHandler)
-        self.results_directory = results_directory
+        self.test_config = test_config
         self.results_json = results_json
         self.platforms_json = platforms_json
 
@@ -113,6 +114,36 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self._serve_file(os.path.join(
             RebaselineHTTPRequestHandler.STATIC_FILE_DIRECTORY, static_path))
 
+    def rebaseline(self):
+        test = self.query['test'][0]
+        baseline_target = self.query['baseline-target'][0]
+        baseline_move_to = self.query['baseline-move-to'][0]
+        test_json = self.server.results_json['tests'][test]
+
+        if test_json['state'] != STATE_NEEDS_REBASELINE:
+            self.send_error(400, "Test %s is in unexpected state: %s" %
+                (test, test_json["state"]))
+            return
+
+        log = []
+        success = _rebaseline_test(
+            test,
+            baseline_target,
+            baseline_move_to,
+            self.server.test_config,
+            log=lambda l: log.append(l))
+
+        if success:
+            test_json['state'] = STATE_REBASELINE_SUCCEEDED
+            self.send_response(200)
+        else:
+            test_json['state'] = STATE_REBASELINE_FAILED
+            self.send_response(500)
+
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write('\n'.join(log))
+
     def quitquitquit(self):
         self.send_response(200)
         self.send_header("Content-type", "text/plain")
@@ -143,7 +174,7 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         elif mode == 'diff-text':
             file_name = test_name + '-diff.txt'
 
-        file_path = os.path.join(self.server.results_directory, file_name)
+        file_path = os.path.join(self.server.test_config.results_directory, file_name)
 
         # Let results be cached for 60 seconds, so that they can be pre-fetched
         # by the UI
@@ -183,12 +214,79 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             shutil.copyfileobj(static_file, self.wfile)
 
 
-def _get_test_baselines(test_file, test_port, layout_tests_directory, platforms, filesystem):
+class TestConfig(object):
+    def __init__(self, test_port, layout_tests_directory, results_directory, platforms, filesystem, scm):
+        self.test_port = test_port
+        self.layout_tests_directory = layout_tests_directory
+        self.results_directory = results_directory
+        self.platforms = platforms
+        self.filesystem = filesystem
+        self.scm = scm
+
+
+def _get_actual_result_files(test_file, test_config):
+    test_name, _ = os.path.splitext(test_file)
+    test_directory = os.path.dirname(test_file)
+
+    test_results_directory = test_config.filesystem.join(
+        test_config.results_directory, test_directory)
+    actual_pattern = os.path.basename(test_name) + '-actual.*'
+    actual_files = []
+    for filename in test_config.filesystem.listdir(test_results_directory):
+        if fnmatch.fnmatch(filename, actual_pattern):
+            actual_files.append(filename)
+    actual_files.sort()
+    return tuple(actual_files)
+
+
+def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, log):
+    test_name, _ = os.path.splitext(test_file)
+    test_directory = os.path.dirname(test_name)
+
+    log('Rebaselining %s...' % test_name)
+
+    actual_result_files = _get_actual_result_files(test_file, test_config)
+    filesystem = test_config.filesystem
+    scm = test_config.scm
+    layout_tests_directory = test_config.layout_tests_directory
+    results_directory = test_config.results_directory
+    target_expectations_directory = filesystem.join(
+        layout_tests_directory, 'platform', baseline_target, test_directory)
+    test_results_directory = test_config.filesystem.join(
+        test_config.results_directory, test_directory)
+
+    # If requested, move current baselines out
+    current_baselines = _get_test_baselines(test_file, test_config)
+    if baseline_target in current_baselines and baseline_move_to != 'none':
+        log('  Moving current %s baselines to %s' %
+            (baseline_target, baseline_move_to))
+        log('    FIXME: Add support for moving existing baselines')
+        return False
+
+    log('  Updating baselines for %s' % baseline_target)
+    for source_file in actual_result_files:
+        source_path = filesystem.join(test_results_directory, source_file)
+        destination_file = source_file.replace('-actual', '-expected')
+        destination_path = filesystem.join(
+            target_expectations_directory, destination_file)
+        filesystem.copyfile(source_path, destination_path)
+        exit_code = scm.add(destination_path, return_exit_code=True)
+        if exit_code:
+            log('    Could not update %s in SCM, exit code %d' %
+                (destination_file, exit_code))
+            return False
+        else:
+            log('    Updated %s' % destination_file)
+
+    return True
+
+
+def _get_test_baselines(test_file, test_config):
     class AllPlatformsPort(WebKitPort):
         def __init__(self):
-            WebKitPort.__init__(self, filesystem=filesystem)
+            WebKitPort.__init__(self, filesystem=test_config.filesystem)
             self._platforms_by_directory = dict(
-                [(self._webkit_baseline_path(p), p) for p in platforms])
+                [(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):
             return self._platforms_by_directory.keys()
@@ -196,20 +294,21 @@ def _get_test_baselines(test_file, test_port, layout_tests_directory, platforms,
         def platform_from_directory(self, directory):
             return self._platforms_by_directory[directory]
 
-    test_path = filesystem.join(layout_tests_directory, test_file)
+    test_path = test_config.filesystem.join(
+        test_config.layout_tests_directory, test_file)
 
     all_platforms_port = AllPlatformsPort()
 
     all_test_baselines = {}
     for baseline_extension in ('.txt', '.checksum', '.png'):
-        test_baselines = test_port.expected_baselines(
+        test_baselines = test_config.test_port.expected_baselines(
             test_path, baseline_extension)
         baselines = all_platforms_port.expected_baselines(
             test_path, baseline_extension, all_baselines=True)
         for platform_directory, expected_filename in baselines:
             if not platform_directory:
                 continue
-            if platform_directory == layout_tests_directory:
+            if platform_directory == test_config.layout_tests_directory:
                 platform = 'base'
             else:
                 platform = all_platforms_port.platform_from_directory(
@@ -218,7 +317,7 @@ def _get_test_baselines(test_file, test_port, layout_tests_directory, platforms,
             was_used_for_test = (
                 platform_directory, expected_filename) in test_baselines
             platform_baselines[baseline_extension] = was_used_for_test
-        
+
     return all_test_baselines
 
 class RebaselineServer(AbstractDeclarativeCommand):
@@ -247,13 +346,19 @@ class RebaselineServer(AbstractDeclarativeCommand):
         layout_tests_directory = port.layout_tests_dir()
         platforms = filesystem.listdir(
             filesystem.join(layout_tests_directory, 'platform'))
+        test_config = TestConfig(
+            port,
+            layout_tests_directory,
+            results_directory,
+            platforms,
+            filesystem,
+            self._tool.scm())
 
         print 'Gathering current baselines...'
         for test_file, test_json in results_json['tests'].items():
             test_json['state'] = STATE_NEEDS_REBASELINE
             test_path = filesystem.join(layout_tests_directory, test_file)
-            test_json['baselines'] = _get_test_baselines(
-                test_file, port, layout_tests_directory, platforms, filesystem)
+            test_json['baselines'] = _get_test_baselines(test_file, test_config)
 
         server_url = "http://localhost:%d/" % options.httpd_port
         print "Starting server at %s" % server_url
@@ -265,7 +370,7 @@ class RebaselineServer(AbstractDeclarativeCommand):
 
         httpd = RebaselineHTTPServer(
             httpd_port=options.httpd_port,
-            results_directory=results_directory,
+            test_config=test_config,
             results_json=results_json,
             platforms_json={
                 'platforms': platforms,
