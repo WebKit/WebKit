@@ -204,6 +204,7 @@ fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-xy-properties.html
 fast/dom/horizontal-scrollbar-in-rtl.html
+fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/hover-style-recalc-crash.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/layer-hit-test-crash.html
@@ -220,6 +221,8 @@ fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/autoscroll.html
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/capture-on-target.html
+fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html
+fast/events/check-defocus-event-order-when-triggered-by-tab.html
 fast/events/click-count.html
 fast/events/click-focus-anchor.html
 fast/events/click-focus-control.html
@@ -393,6 +396,7 @@ fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-listbox-focus-displaynone.html
 fast/forms/select-popup-pagekeys.html
+fast/forms/select-option-accesskey-crash.html
 fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html
 fast/forms/select-type-ahead-non-latin.html
