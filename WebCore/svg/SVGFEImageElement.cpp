@@ -32,11 +32,13 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGImageBufferTools.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGFEImageElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)

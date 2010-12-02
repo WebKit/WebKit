@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FETurbulence.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -54,8 +55,8 @@ private:
     DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::numOctavesAttr, long, NumOctaves, numOctaves)
     DECLARE_ANIMATED_NUMBER(Seed, seed)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::stitchTilesAttr, int, StitchTiles, stitchTiles)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::typeAttr, int, Type, type)
+    DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles)
+    DECLARE_ANIMATED_ENUMERATION(Type, type)
 };
 
 } // namespace WebCore

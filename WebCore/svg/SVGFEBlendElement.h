@@ -23,9 +23,11 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEBlend.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
+
 class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEBlendElement> create(const QualifiedName&, Document*);
@@ -38,14 +40,13 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEBlendElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEBlendElement, SVGNames::in2Attr, String, In2, in2)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEBlendElement, SVGNames::modeAttr, int, Mode, mode)
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_STRING(In2, in2)
+    DECLARE_ANIMATED_ENUMERATION(Mode, mode)
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

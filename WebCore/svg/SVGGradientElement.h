@@ -23,7 +23,7 @@
 
 #if ENABLE(SVG)
 #include "Gradient.h"
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStyledElement.h"
@@ -50,12 +50,12 @@ private:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGradientElement, SVGNames::spreadMethodAttr, int, SpreadMethod, spreadMethod)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGradientElement, SVGNames::gradientUnitsAttr, int, GradientUnits, gradientUnits)
+    DECLARE_ANIMATED_ENUMERATION(SpreadMethod, spreadMethod)
+    DECLARE_ANIMATED_ENUMERATION(GradientUnits, gradientUnits)
     DECLARE_ANIMATED_TRANSFORM_LIST(GradientTransform, gradientTransform)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGradientElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGradientElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

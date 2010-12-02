@@ -70,11 +70,11 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH(StartOffset, startOffset)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::methodAttr, int, Method, method)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, SVGNames::spacingAttr, int, Spacing, spacing)
+    DECLARE_ANIMATED_ENUMERATION(Method, method)
+    DECLARE_ANIMATED_ENUMERATION(Spacing, spacing)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextPathElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 };
 
 } // namespace WebCore

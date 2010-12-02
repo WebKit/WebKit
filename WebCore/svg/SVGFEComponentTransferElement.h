@@ -22,8 +22,8 @@
 #define SVGFEComponentTransferElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "FEComponentTransfer.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
 
@@ -38,7 +38,8 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
 };
 
 } // namespace WebCore

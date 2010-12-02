@@ -41,7 +41,7 @@ private:
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_NUMBER(Dx, dx)
     DECLARE_ANIMATED_NUMBER(Dy, dy)
 };

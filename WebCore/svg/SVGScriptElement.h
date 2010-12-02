@@ -22,7 +22,7 @@
 #define SVGScriptElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
@@ -30,55 +30,57 @@
 
 namespace WebCore {
 
-    class SVGScriptElement : public SVGElement
-                           , public SVGURIReference
-                           , public SVGExternalResourcesRequired
-                           , public ScriptElement {
-    public:
-        static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
+class SVGScriptElement : public SVGElement
+                       , public SVGURIReference
+                       , public SVGExternalResourcesRequired
+                       , public ScriptElement {
+public:
+    static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
 
-        String type() const;
-        void setType(const String&);
+    String type() const;
+    void setType(const String&);
 
-    private:
-        SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
+private:
+    SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void insertedIntoDocument();
-        virtual void removedFromDocument();
-        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool isURLAttribute(Attribute*) const;
-        virtual void finishParsingChildren();
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool isURLAttribute(Attribute*) const;
+    virtual void finishParsingChildren();
 
-        virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-        virtual bool haveLoadedRequiredResources();
+    virtual bool haveLoadedRequiredResources();
 
-        virtual String sourceAttributeValue() const;
-        virtual String charsetAttributeValue() const;
-        virtual String typeAttributeValue() const;
-        virtual String languageAttributeValue() const;
-        virtual String forAttributeValue() const;
-        virtual String eventAttributeValue() const;
-        virtual bool asyncAttributeValue() const;
-        virtual bool deferAttributeValue() const;
+    virtual String sourceAttributeValue() const;
+    virtual String charsetAttributeValue() const;
+    virtual String typeAttributeValue() const;
+    virtual String languageAttributeValue() const;
+    virtual String forAttributeValue() const;
+    virtual String eventAttributeValue() const;
+    virtual bool asyncAttributeValue() const;
+    virtual bool deferAttributeValue() const;
 
-        virtual void dispatchLoadEvent();
-        virtual void dispatchErrorEvent();
+    virtual void dispatchLoadEvent();
+    virtual void dispatchErrorEvent();
 
-        PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)
+    // Animated property declarations
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    // SVGURIReference
+    DECLARE_ANIMATED_STRING(Href, href)
 
-        String m_type;
-    };
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+
+    String m_type;
+};
 
 } // namespace WebCore
 

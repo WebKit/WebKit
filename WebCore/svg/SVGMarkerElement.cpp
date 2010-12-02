@@ -40,7 +40,9 @@ DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::refXAttr, RefX, refX)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::refYAttr, RefY, refY)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerWidthAttr, MarkerWidth, markerWidth)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerHeightAttr, MarkerHeight, markerHeight)
-
+DEFINE_ANIMATED_ENUMERATION(SVGMarkerElement, SVGNames::markerUnitsAttr, MarkerUnits, markerUnits)
+DEFINE_ANIMATED_ENUMERATION_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, orientTypeIdentifier(), OrientType, orientType)
+    
 inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_refX(LengthModeWidth)

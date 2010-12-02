@@ -22,24 +22,25 @@
 #define SVGFEMergeNodeElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 
 namespace WebCore {
 
-    class SVGFEMergeNodeElement : public SVGElement {
-    public:
-        static PassRefPtr<SVGFEMergeNodeElement> create(const QualifiedName&, Document*);
+class SVGFEMergeNodeElement : public SVGElement {
+public:
+    static PassRefPtr<SVGFEMergeNodeElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGFEMergeNodeElement(const QualifiedName&, Document*);
+private:
+    SVGFEMergeNodeElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEMergeNodeElement, SVGNames::inAttr, String, In1, in1)
-    };
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+};
 
 } // namespace WebCore
 

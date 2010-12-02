@@ -21,12 +21,19 @@
 #define SVGAnimatedString_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 typedef SVGAnimatedStaticPropertyTearOff<String> SVGAnimatedString;
+
+// Helper macros to declare/define a SVGAnimatedString object
+#define DECLARE_ANIMATED_STRING(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_STRING(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedString, String, UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

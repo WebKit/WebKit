@@ -25,7 +25,6 @@
 #include "FilterEffect.h"
 #include "RenderSVGResource.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SVGNames.h"
@@ -67,7 +66,7 @@ private:
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)
     DECLARE_ANIMATED_LENGTH(Height, height)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::resultAttr, String, Result, result)
+    DECLARE_ANIMATED_STRING(Result, result)
 };
 
 } // namespace WebCore

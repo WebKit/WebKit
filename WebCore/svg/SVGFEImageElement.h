@@ -57,10 +57,11 @@ private:
 
     void requestImageResource();
 
+    // Animated property declarations
     DECLARE_ANIMATED_PROPERTY_NEW(SVGFEImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEImageElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

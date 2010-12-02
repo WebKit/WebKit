@@ -25,35 +25,36 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-    class SVGGlyphElement;
+class SVGGlyphElement;
 
-    class SVGAltGlyphElement : public SVGTextPositioningElement,
-                               public SVGURIReference {
-    public:
-        static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
+class SVGAltGlyphElement : public SVGTextPositioningElement,
+                           public SVGURIReference {
+public:
+    static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
 
-        const AtomicString& glyphRef() const;
-        void setGlyphRef(const AtomicString&, ExceptionCode&);
-        const AtomicString& format() const;
-        void setFormat(const AtomicString&, ExceptionCode&);
-    
-        SVGGlyphElement* glyphElement() const;
+    const AtomicString& glyphRef() const;
+    void setGlyphRef(const AtomicString&, ExceptionCode&);
+    const AtomicString& format() const;
+    void setFormat(const AtomicString&, ExceptionCode&);
 
-    private:
-        SVGAltGlyphElement(const QualifiedName&, Document*);
+    SVGGlyphElement* glyphElement() const;
 
-        virtual void synchronizeProperty(const QualifiedName&);
+private:
+    SVGAltGlyphElement(const QualifiedName&, Document*);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual bool childShouldCreateRenderer(Node*) const;
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAltGlyphElement, XLinkNames::hrefAttr, String, Href, href)
-    };
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool childShouldCreateRenderer(Node*) const;
+
+    // Animated property declarations
+
+    // SVGURIReference
+    DECLARE_ANIMATED_STRING(Href, href)
+};
 
 } // namespace WebCore
 

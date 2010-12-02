@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEColorMatrix.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -41,8 +42,8 @@ private:
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEColorMatrixElement, SVGNames::typeAttr, int, Type, type)
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_ENUMERATION(Type, type)
     DECLARE_ANIMATED_NUMBER_LIST(Values, values)
 };
 

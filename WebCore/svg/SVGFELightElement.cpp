@@ -25,6 +25,7 @@
 #include "SVGFELightElement.h"
 
 #include "Attribute.h"
+#include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGFilterElement.h"
 #include "SVGNames.h"

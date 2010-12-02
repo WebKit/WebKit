@@ -47,7 +47,7 @@ private:
     static const AtomicString& kernelUnitLengthYIdentifier();
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_NUMBER(DiffuseConstant, diffuseConstant)
     DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)

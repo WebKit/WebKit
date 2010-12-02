@@ -22,8 +22,8 @@
 #define SVGPatternElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
@@ -69,12 +69,12 @@ private:
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)
     DECLARE_ANIMATED_LENGTH(Height, height)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternUnitsAttr, int, PatternUnits, patternUnits)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternContentUnitsAttr, int, PatternContentUnits, patternContentUnits)
+    DECLARE_ANIMATED_ENUMERATION(PatternUnits, patternUnits)
+    DECLARE_ANIMATED_ENUMERATION(PatternContentUnits, patternContentUnits)
     DECLARE_ANIMATED_TRANSFORM_LIST(PatternTransform, patternTransform)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

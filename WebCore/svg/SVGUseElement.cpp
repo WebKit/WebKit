@@ -62,6 +62,7 @@ DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::heightAttr, Height, height)
+DEFINE_ANIMATED_STRING(SVGUseElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)

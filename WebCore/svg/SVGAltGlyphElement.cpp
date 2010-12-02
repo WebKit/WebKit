@@ -33,6 +33,9 @@
 
 namespace WebCore {
 
+// Animated property declarations
+DEFINE_ANIMATED_STRING(SVGAltGlyphElement, XLinkNames::hrefAttr, Href, href)
+
 inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {

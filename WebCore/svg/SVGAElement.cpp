@@ -47,6 +47,10 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGAElement, SVGNames::targetAttr, SVGTarget, svgTarget)
+DEFINE_ANIMATED_STRING(SVGAElement, XLinkNames::hrefAttr, Href, href)
+
 inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {

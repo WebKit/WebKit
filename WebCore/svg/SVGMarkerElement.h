@@ -24,8 +24,8 @@
 #if ENABLE(SVG)
 #include "RenderObject.h"
 #include "SVGAngle.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -83,8 +83,8 @@ private:
     DECLARE_ANIMATED_LENGTH(RefY, refY)
     DECLARE_ANIMATED_LENGTH(MarkerWidth, markerWidth)
     DECLARE_ANIMATED_LENGTH(MarkerHeight, markerHeight)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerUnitsAttr, int, MarkerUnits, markerUnits)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGMarkerElement, SVGNames::orientAttr, orientTypeIdentifier(), int, OrientType, orientType)
+    DECLARE_ANIMATED_ENUMERATION(MarkerUnits, markerUnits)
+    DECLARE_ANIMATED_ENUMERATION(OrientType, orientType)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGMarkerElement, SVGNames::orientAttr, orientAngleIdentifier(), SVGAngle, OrientAngle, orientAngle)
 
     // SVGExternalResourcesRequired

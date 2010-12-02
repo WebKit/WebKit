@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGScriptElement, XLinkNames::hrefAttr, Href, href)
+
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool wasAlreadyStarted)
     : SVGElement(tagName, document)
     , ScriptElement(this, wasInsertedByParser, wasAlreadyStarted)

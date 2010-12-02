@@ -21,34 +21,36 @@
 #define SVGMPathElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedString.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
     
-    class SVGPathElement;
+class SVGPathElement;
+
+class SVGMPathElement : public SVGElement,
+                        public SVGURIReference,
+                        public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document*);
+
+    SVGPathElement* pathElement();
     
-    class SVGMPathElement : public SVGElement,
-                            public SVGURIReference,
-                            public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document*);
+private:
+    SVGMPathElement(const QualifiedName&, Document*);
+    
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        SVGPathElement* pathElement();
-        
-    private:
-        SVGMPathElement(const QualifiedName&, Document*);
-        
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMPathElement, XLinkNames::hrefAttr, String, Href, href)
+    // Animated property declarations
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // SVGURIReference
+    DECLARE_ANIMATED_STRING(Href, href)
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

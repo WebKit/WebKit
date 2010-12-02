@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEDisplacementMap.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -42,10 +43,10 @@ private:
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::in2Attr, String, In2, in2)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::xChannelSelectorAttr, int, XChannelSelector, xChannelSelector)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::yChannelSelectorAttr, int, YChannelSelector, yChannelSelector)
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_STRING(In2, in2)
+    DECLARE_ANIMATED_ENUMERATION(XChannelSelector, xChannelSelector)
+    DECLARE_ANIMATED_ENUMERATION(YChannelSelector, yChannelSelector)
     DECLARE_ANIMATED_NUMBER(Scale, scale)
 };
 

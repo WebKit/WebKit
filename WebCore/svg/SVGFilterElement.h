@@ -24,9 +24,8 @@
 #define SVGFilterElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
-#include "RenderObject.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
@@ -62,8 +61,8 @@ private:
     static const AtomicString& filterResYIdentifier();
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, SVGNames::filterUnitsAttr, int, FilterUnits, filterUnits)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, SVGNames::primitiveUnitsAttr, int, PrimitiveUnits, primitiveUnits)
+    DECLARE_ANIMATED_ENUMERATION(FilterUnits, filterUnits)
+    DECLARE_ANIMATED_ENUMERATION(PrimitiveUnits, primitiveUnits)
     DECLARE_ANIMATED_LENGTH(X, x)
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)
@@ -73,7 +72,7 @@ private:
     DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFilterElement, SVGNames::filterResAttr, filterResYIdentifier(), long, FilterResY, filterResY)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

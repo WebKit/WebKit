@@ -22,8 +22,8 @@
 
 #if ENABLE(SVG)
 #include "RenderObject.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledLocatableElement.h"
@@ -56,8 +56,8 @@ private:
     virtual bool selfHasRelativeLengths() const;
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMaskElement, SVGNames::maskUnitsAttr, int, MaskUnits, maskUnits)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMaskElement, SVGNames::maskContentUnitsAttr, int, MaskContentUnits, maskContentUnits)
+    DECLARE_ANIMATED_ENUMERATION(MaskUnits, maskUnits)
+    DECLARE_ANIMATED_ENUMERATION(MaskContentUnits, maskContentUnits)
     DECLARE_ANIMATED_LENGTH(X, x)
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)

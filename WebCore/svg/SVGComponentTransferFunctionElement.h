@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEComponentTransfer.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
 
@@ -40,7 +41,7 @@ protected:
     
 private:
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::typeAttr, int, Type, type)
+    DECLARE_ANIMATED_ENUMERATION(Type, type)
     DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
     DECLARE_ANIMATED_NUMBER(Slope, slope)
     DECLARE_ANIMATED_NUMBER(Intercept, intercept)

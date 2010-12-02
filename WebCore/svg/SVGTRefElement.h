@@ -27,26 +27,28 @@
 
 namespace WebCore {
 
-    class SVGTRefElement : public SVGTextPositioningElement,
-                           public SVGURIReference {
-    public:
-        static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
+class SVGTRefElement : public SVGTextPositioningElement,
+                       public SVGURIReference {
+public:
+    static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGTRefElement(const QualifiedName&, Document*);
+private:
+    SVGTRefElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual bool childShouldCreateRenderer(Node*) const;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool childShouldCreateRenderer(Node*) const;
 
-        void updateReferencedText();
+    void updateReferencedText();
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTRefElement, XLinkNames::hrefAttr, String, Href, href)
-    };
+    // Animated property declarations
+
+    // SVGURIReference
+    DECLARE_ANIMATED_STRING(Href, href)
+};
 
 } // namespace WebCore
 

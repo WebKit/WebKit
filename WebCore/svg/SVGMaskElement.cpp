@@ -36,6 +36,8 @@
 namespace WebCore {
 
 // Animated property definitions
+DEFINE_ANIMATED_ENUMERATION(SVGMaskElement, SVGNames::maskUnitsAttr, MaskUnits, maskUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGMaskElement, SVGNames::maskContentUnitsAttr, MaskContentUnits, maskContentUnits)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::widthAttr, Width, width)

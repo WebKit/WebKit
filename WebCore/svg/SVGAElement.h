@@ -23,7 +23,6 @@
 #define SVGAElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -32,51 +31,51 @@
 
 namespace WebCore {
 
-    class SVGAElement : public SVGStyledTransformableElement,
-                        public SVGURIReference,
-                        public SVGTests,
-                        public SVGLangSpace,
-                        public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGAElement> create(const QualifiedName&, Document*);
+class SVGAElement : public SVGStyledTransformableElement,
+                    public SVGURIReference,
+                    public SVGTests,
+                    public SVGLangSpace,
+                    public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGAElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGAElement(const QualifiedName&, Document*);
+private:
+    SVGAElement(const QualifiedName&, Document*);
 
-        virtual bool isValid() const { return SVGTests::isValid(); }
-        
-        virtual String title() const;
-        virtual String target() const { return svgTarget(); }
+    virtual bool isValid() const { return SVGTests::isValid(); }
+    
+    virtual String title() const;
+    virtual String target() const { return svgTarget(); }
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual void defaultEventHandler(Event*);
-        
-        virtual bool supportsFocus() const;
-        virtual bool isMouseFocusable() const;
-        virtual bool isKeyboardFocusable(KeyboardEvent*) const;
-        virtual bool isFocusable() const;
+    virtual void defaultEventHandler(Event*);
+    
+    virtual bool supportsFocus() const;
+    virtual bool isMouseFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isFocusable() const;
 
-        virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(Node*) const;
 
-        // This defines a non-virtual "String& target() const" method before, that would clash with "virtual String target() const"
-        // in Element. That's why it's now named "String& svgTarget() const", to avoid the clash. The CodeGenerators take care
-        // of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, SVGNames::targetAttr, String, SVGTarget, svgTarget)
+    // Animated property declarations
 
-        // SVGURIReference
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, XLinkNames::hrefAttr, String, Href, href)
+    // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".
+    // That's why it has been renamed to "svgTarget", the CodeGenerators take care of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
+    DECLARE_ANIMATED_STRING(SVGTarget, svgTarget)
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // SVGURIReference
+    DECLARE_ANIMATED_STRING(Href, href)
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-
 #endif // SVGAElement_h

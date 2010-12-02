@@ -27,6 +27,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGMPathElement, XLinkNames::hrefAttr, Href, href)
+
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {

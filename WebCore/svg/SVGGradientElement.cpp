@@ -39,7 +39,10 @@
 namespace WebCore {
 
 // Animated property definitions
+DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::spreadMethodAttr, SpreadMethod, spreadMethod)
+DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::gradientUnitsAttr, GradientUnits, gradientUnits)
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGGradientElement, SVGNames::gradientTransformAttr, GradientTransform, gradientTransform)
+DEFINE_ANIMATED_STRING(SVGGradientElement, XLinkNames::hrefAttr, Href, href)
 
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)

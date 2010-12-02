@@ -27,12 +27,9 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
-#include "FloatSize.h"
-#include "PlatformString.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGUnitTypes.h"
@@ -40,10 +37,13 @@
 namespace WebCore {
 
 // Animated property definitions
+DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::filterUnitsAttr, FilterUnits, filterUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::primitiveUnitsAttr, PrimitiveUnits, primitiveUnits)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::heightAttr, Height, height)
+DEFINE_ANIMATED_STRING(SVGFilterElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)

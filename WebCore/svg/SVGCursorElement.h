@@ -23,7 +23,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -59,7 +59,7 @@ private:
     DECLARE_ANIMATED_LENGTH(Y, y)
 
     // SVGURIReference
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCursorElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCursorElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

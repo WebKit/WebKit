@@ -31,6 +31,7 @@
 namespace WebCore {
 
 // Animated property definitions
+DEFINE_ANIMATED_ENUMERATION(SVGComponentTransferFunctionElement, SVGNames::typeAttr, Type, type)
 DEFINE_ANIMATED_NUMBER_LIST(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, TableValues, tableValues)
 DEFINE_ANIMATED_NUMBER(SVGComponentTransferFunctionElement, SVGNames::slopeAttr, Slope, slope)
 DEFINE_ANIMATED_NUMBER(SVGComponentTransferFunctionElement, SVGNames::interceptAttr, Intercept, intercept)

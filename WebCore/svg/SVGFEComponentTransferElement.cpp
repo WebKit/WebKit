@@ -29,9 +29,11 @@
 #include "SVGFEFuncGElement.h"
 #include "SVGFEFuncRElement.h"
 #include "SVGNames.h"
-#include "SVGRenderStyle.h"
 
 namespace WebCore {
+
+// Animated property declarations
+DEFINE_ANIMATED_STRING(SVGFEComponentTransferElement, SVGNames::inAttr, In1, in1)
 
 inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)

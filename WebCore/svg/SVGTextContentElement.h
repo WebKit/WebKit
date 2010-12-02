@@ -22,8 +22,8 @@
 #define SVGTextContentElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
@@ -72,7 +72,7 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH(TextLength, textLength)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextContentElement, SVGNames::lengthAdjustAttr, int, LengthAdjust, lengthAdjust)
+    DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired) 

@@ -44,7 +44,7 @@ private:
     static const AtomicString& kernelUnitLengthYIdentifier();
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFESpecularLightingElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_NUMBER(SpecularConstant, specularConstant)
     DECLARE_ANIMATED_NUMBER(SpecularExponent, specularExponent)
     DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)

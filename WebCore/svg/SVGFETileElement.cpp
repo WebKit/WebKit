@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGFETileElement, SVGNames::inAttr, In1, in1)
+
 inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {

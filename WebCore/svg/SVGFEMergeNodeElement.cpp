@@ -24,10 +24,14 @@
 #include "SVGFEMergeNodeElement.h"
 
 #include "Attribute.h"
+#include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGFilterElement.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGFEMergeNodeElement, SVGNames::inAttr, In1, in1)
 
 inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)

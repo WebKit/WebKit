@@ -31,6 +31,9 @@ namespace WebCore {
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGTextPathElement, SVGNames::startOffsetAttr, StartOffset, startOffset)
+DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::methodAttr, Method, method)
+DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::spacingAttr, Spacing, spacing)
+DEFINE_ANIMATED_STRING(SVGTextPathElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)

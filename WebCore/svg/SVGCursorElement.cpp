@@ -25,7 +25,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -33,6 +32,7 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::yAttr, Y, y)
+DEFINE_ANIMATED_STRING(SVGCursorElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)

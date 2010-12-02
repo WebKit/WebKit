@@ -46,6 +46,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_STRING(SVGStyledElement, HTMLNames::classAttr, ClassName, className)
+
 using namespace SVGNames;
 
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)

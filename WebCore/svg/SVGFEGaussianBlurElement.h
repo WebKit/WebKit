@@ -46,7 +46,7 @@ private:
     static const AtomicString& stdDeviationYIdentifier();
 
     // Animated property declarations
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEGaussianBlurElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_NUMBER(StdDeviationX, stdDeviationX)
     DECLARE_ANIMATED_NUMBER(StdDeviationY, stdDeviationY)
 };
