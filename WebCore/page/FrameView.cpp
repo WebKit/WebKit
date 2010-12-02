@@ -483,6 +483,13 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
 
 void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode)
 {
+    const HTMLFrameOwnerElement* owner = m_frame->ownerElement();
+    if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
+        hMode = ScrollbarAlwaysOff;
+        vMode = ScrollbarAlwaysOff;
+        return;
+    }  
+    
     if (m_canHaveScrollbars) {
         hMode = ScrollbarAuto;
         vMode = ScrollbarAuto;
@@ -498,7 +505,6 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         Node* body = document->body();
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
-                body->renderer()->setChildNeedsLayout(true);
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
@@ -509,26 +515,14 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
             }
         } else if (rootRenderer) {
 #if ENABLE(SVG)
-            if (documentElement->isSVGElement()) {
-                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
-                    rootRenderer->setChildNeedsLayout(true);
-            } else
+            if (!documentElement->isSVGElement()) {
                 applyOverflowToViewport(rootRenderer, hMode, vMode);
 #else
             applyOverflowToViewport(rootRenderer, hMode, vMode);
 #endif
         }
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_firstLayout && !document->ownerElement())
-            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
-#endif
-    }
-    
-    HTMLFrameOwnerElement* owner = m_frame->ownerElement();
-    if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
-        hMode = ScrollbarAlwaysOff;
-        vMode = ScrollbarAlwaysOff;
-    }     
+    }    
+}
 }
     
 #if USE(ACCELERATED_COMPOSITING)
@@ -754,9 +748,35 @@ void FrameView::layout(bool allowSubtree)
 
     m_nestedLayoutCount++;
 
-    ScrollbarMode hMode;
-    ScrollbarMode vMode;
+    if (!m_layoutRoot) {
+        Document* document = m_frame->document();
+        Node* documentElement = document->documentElement();
+        RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
+        Node* body = document->body();
+        if (body && body->renderer()) {
+            if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
+                body->renderer()->setChildNeedsLayout(true);
+            } else if (body->hasTagName(bodyTag)) {
+                if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
+                    body->renderer()->setChildNeedsLayout(true);
+            }
+        } else if (rootRenderer) {
+#if ENABLE(SVG)
+            if (documentElement->isSVGElement()) {
+                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
+                    rootRenderer->setChildNeedsLayout(true);
+            }
+#endif
+        }
+        
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (m_firstLayout && !document->ownerElement())
+            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
+#endif        
+    }
     
+    ScrollbarMode hMode;
+    ScrollbarMode vMode;    
     calculateScrollbarModesForLayout(hMode, vMode);
 
     m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
