@@ -421,6 +421,15 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
+// Tries the given font and save it |outFontFamilyName| if it succeeds.
+static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font, wchar_t* outFontFamilyName)
+{
+    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, font.lfFaceName);
+    if (fontData)
+        memcpy(outFontFamilyName, font.lfFaceName, sizeof(font.lfFaceName));
+    return fontData;
+}
+
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description)
 {
     FontDescription::GenericFamilyType generic = description.genericFamily();
@@ -438,7 +447,43 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
     else if (generic == FontDescription::MonospaceFamily)
         fontStr = courierStr;
 
-    return getCachedFontData(description, fontStr);
+    SimpleFontData* simpleFont = getCachedFontData(description, fontStr);
+    if (simpleFont)
+        return simpleFont;
+
+    // Fall back to system fonts as Win Safari does because this function must
+    // return a valid font. Once we find a valid system font, we save its name
+    // to a static variable and use it to prevent trying system fonts again.
+    static wchar_t fallbackFontName[LF_FACESIZE] = {0};
+    if (fallbackFontName[0])
+        return getCachedFontData(description, fallbackFontName);
+
+    // Fall back to the DEFAULT_GUI_FONT if no known Unicode fonts are available.
+    if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
+        LOGFONT defaultGUILogFont;
+        GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, defaultGUILogFont, fallbackFontName))
+            return simpleFont;
+    }
+
+    // Fall back to Non-client metrics fonts.
+    NONCLIENTMETRICS nonClientMetrics = {0};
+    nonClientMetrics.cbSize = sizeof(nonClientMetrics);
+    if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfMessageFont, fallbackFontName))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfMenuFont, fallbackFontName))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfStatusFont, fallbackFontName))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfCaptionFont, fallbackFontName))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
+            return simpleFont;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static LONG toGDIFontWeight(FontWeight fontWeight)
