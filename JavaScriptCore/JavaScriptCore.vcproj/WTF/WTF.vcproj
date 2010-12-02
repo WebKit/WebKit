@@ -673,6 +673,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\OSAllocatorWin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\OwnArrayPtr.h"
 			>
 		</File>

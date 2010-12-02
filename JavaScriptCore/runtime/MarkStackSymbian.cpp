@@ -33,16 +33,6 @@ void MarkStack::initializePagesize()
     MarkStack::s_pageSize = page_size;
 }
 
-void* MarkStack::allocateStack(size_t size)
-{
-    return fastMalloc(size);
-}
-
-void MarkStack::releaseStack(void* addr, size_t size)
-{
-    return fastFree(addr);
-}
-
 }
 
 #endif

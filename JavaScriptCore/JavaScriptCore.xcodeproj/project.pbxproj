@@ -48,6 +48,8 @@
 		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F29479C126E698C00B3ABF5 /* DecimalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */; };
+		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; };
+		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		14035DB110DBFB2A00FFFFE7 /* WeakGCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
 		140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */; };
@@ -649,6 +651,8 @@
 		0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadRefCounted.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
 		0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecimalNumber.cpp; sourceTree = "<group>"; };
+		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
+		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCPtr.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
@@ -1472,10 +1476,6 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				9714AF2F122F27C60092D9F5 /* url */,
-				06D358A00DAAD9C4003B174E /* mac */,
-				8656573E115BE35200291F40 /* text */,
-				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -1491,8 +1491,8 @@
 				180B9AF00F16C569009BDBC5 /* CurrentTime.h */,
 				41359CF40FDD89CB00206180 /* DateMath.cpp */,
 				41359CF50FDD89CB00206180 /* DateMath.h */,
-				862AF4B512239C7B0024E5B8 /* DecimalNumber.h */,
 				0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */,
+				862AF4B512239C7B0024E5B8 /* DecimalNumber.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
@@ -1514,6 +1514,7 @@
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				E1EE79270D6C964500FEA3BA /* Locker.h */,
+				06D358A00DAAD9C4003B174E /* mac */,
 				06D358A20DAAD9C4003B174E /* MainThread.cpp */,
 				06D358A30DAAD9C4003B174E /* MainThread.h */,
 				5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */,
@@ -1521,10 +1522,12 @@
 				511FC4C7117EE23D00425272 /* MD5.cpp */,
 				511FC4CA117EE2A800425272 /* MD5.h */,
 				E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */,
-				65E1A2F4122B880D00B26097 /* NonCopyingSort.h */,
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
+				65E1A2F4122B880D00B26097 /* NonCopyingSort.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
 				933F5CDB126922690049191E /* NullPtr.h */,
+				1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */,
+				1400067612A6F7830064D123 /* OSAllocator.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
 				BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */,
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
@@ -1558,6 +1561,7 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
+				8656573E115BE35200291F40 /* text */,
 				18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */,
 				18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */,
 				5D6A566A0F05995500266145 /* Threading.cpp */,
@@ -1568,7 +1572,9 @@
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
+				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
+				9714AF2F122F27C60092D9F5 /* url */,
 				E17FF770112131D200076A19 /* ValueCheck.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
@@ -2353,6 +2359,7 @@
 				A730B6121250068F009D25B1 /* StrictEvalActivation.h in Headers */,
 				933F5CDC1269229B0049191E /* NullPtr.h in Headers */,
 				F3BD31ED126735770065467F /* TextPosition.h in Headers */,
+				1400067712A6F7830064D123 /* OSAllocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2811,6 +2818,7 @@
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,
 				86438FC41265503E00E0DFCA /* StringBuilder.cpp in Sources */,
 				0F29479C126E698C00B3ABF5 /* DecimalNumber.cpp in Sources */,
+				1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

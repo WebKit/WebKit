@@ -1,3 +1,50 @@
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Baby step toward a cross-platform virtual memory abstraction: created
+        an all-static OSAllocator class and changed MarkStack to use it.
+
+        * JavaScriptCore.exp: These functions are inlined now.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added OSAllocatorWin.cpp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added OSAllocatorPosix.cpp.
+
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack): Use OSAllocator instead of rolling our
+        own platform-specific code.
+
+        * runtime/MarkStackNone.cpp: Removed. Nothing used this.
+
+        * runtime/MarkStackPosix.cpp: 
+        * runtime/MarkStackSymbian.cpp:
+        * runtime/MarkStackWin.cpp: Removed custom platform-specific code, since
+        we use the OSAllocator abstraction now.
+
+        * wtf/OSAllocator.h: Added.
+        * wtf/OSAllocatorPosix.cpp: Added.
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::release):
+        * wtf/OSAllocatorSymbian.cpp: Added.
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::release):
+        * wtf/OSAllocatorWin.cpp: Added.
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::release): The new OSAllocator abstraction.
+
+        * wtf/wtf.pri: Added OSAllocatorSymbian.cpp.
+
 2010-12-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
