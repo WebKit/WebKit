@@ -173,7 +173,6 @@ public:
 
     AffineTransform m_transform;
     float m_opacity;
-    Vector<Path> m_paths;
 };
 
 enum AlphaPaintType {
@@ -1182,16 +1181,6 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     notImplemented();
 }
 
-void GraphicsContext::beginPath()
-{
-    m_data->m_paths.clear();
-}
-
-void GraphicsContext::addPath(const Path& path)
-{
-    m_data->m_paths.append(path);
-}
-
 void GraphicsContext::clip(const Path& path)
 {
     notImplemented();
@@ -1327,10 +1316,6 @@ Color gradientAverageColor(const Gradient* gradient)
 
 void GraphicsContext::fillPath(const Path& path)
 {
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
     Color c = m_common->state.fillGradient
         ? gradientAverageColor(m_common->state.fillGradient.get())
         : fillColor();
@@ -1345,33 +1330,30 @@ void GraphicsContext::fillPath(const Path& path)
     OwnPtr<HBRUSH> brush = createBrush(c);
 
     if (m_data->m_opacity < 1.0f || m_data->hasAlpha()) {
-        for (Vector<Path>::const_iterator i = m_data->m_paths.begin(); i != m_data->m_paths.end(); ++i) {
-            IntRect trRect = enclosingIntRect(m_data->mapRect(i->boundingRect()));
-            trRect.inflate(1);
-            TransparentLayerDC transparentDC(m_data, trRect);
-            HDC dc = transparentDC.hdc();
-            if (!dc)
-                continue;
+        IntRect trRect = enclosingIntRect(m_data->mapRect(path.boundingRect()));
+        trRect.inflate(1);
+        TransparentLayerDC transparentDC(m_data, trRect);
+        HDC dc = transparentDC.hdc();
+        if (!dc)
+            return;
 
-            AffineTransform tr = m_data->m_transform;
-            tr.translate(transparentDC.toShift().width(), transparentDC.toShift().height());
+        AffineTransform tr = m_data->m_transform;
+        tr.translate(transparentDC.toShift().width(), transparentDC.toShift().height());
 
-            SelectObject(dc, GetStockObject(NULL_PEN));
-            HGDIOBJ oldBrush = SelectObject(dc, brush.get());
-            i->platformPath()->fillPath(dc, &tr);
-            SelectObject(dc, oldBrush);
-        }
+        SelectObject(dc, GetStockObject(NULL_PEN));
+        HGDIOBJ oldBrush = SelectObject(dc, brush.get());
+        path.platformPath()->fillPath(dc, &tr);
+        SelectObject(dc, oldBrush);
     } else {
         SelectObject(m_data->m_dc, GetStockObject(NULL_PEN));
         HGDIOBJ oldBrush = SelectObject(m_data->m_dc, brush.get());
-        for (Vector<Path>::const_iterator i = m_data->m_paths.begin(); i != m_data->m_paths.end(); ++i)
-            i->platformPath()->fillPath(m_data->m_dc, &m_data->m_transform);
+        path.platformPath()->fillPath(m_data->m_dc, &m_data->m_transform);
         SelectObject(m_data->m_dc, oldBrush);
     }
 }
 
 
-void GraphicsContext::strokePath()
+void GraphicsContext::strokePath(const Path& path)
 {
     if (!m_data->m_opacity)
         return;
@@ -1380,34 +1362,27 @@ void GraphicsContext::strokePath()
     if (!m_data->m_dc)
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(path);
-
     OwnPtr<HPEN> pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
 
     if (m_data->m_opacity < 1.0f || m_data->hasAlpha()) {
-        for (Vector<Path>::const_iterator i = m_data->m_paths.begin(); i != m_data->m_paths.end(); ++i) {
-            IntRect trRect = enclosingIntRect(m_data->mapRect(i->boundingRect()));
-            trRect.inflate(1);
-            TransparentLayerDC transparentDC(m_data, trRect);
-            HDC dc = transparentDC.hdc();
-            if (!dc)
-                continue;
+        IntRect trRect = enclosingIntRect(m_data->mapRect(path.boundingRect()));
+        trRect.inflate(1);
+        TransparentLayerDC transparentDC(m_data, trRect);
+        HDC dc = transparentDC.hdc();
+        if (!dc)
+            return;
 
-            AffineTransform tr = m_data->m_transform;
-            tr.translate(transparentDC.toShift().width(), transparentDC.toShift().height());
+        AffineTransform tr = m_data->m_transform;
+        tr.translate(transparentDC.toShift().width(), transparentDC.toShift().height());
 
-            SelectObject(dc, GetStockObject(NULL_BRUSH));
-            HGDIOBJ oldPen = SelectObject(dc, pen.get());
-            i->platformPath()->strokePath(dc, &tr);
-            SelectObject(dc, oldPen);
-        }
+        SelectObject(dc, GetStockObject(NULL_BRUSH));
+        HGDIOBJ oldPen = SelectObject(dc, pen.get());
+        path.platformPath()->strokePath(dc, &tr);
+        SelectObject(dc, oldPen);
     } else {
         SelectObject(m_data->m_dc, GetStockObject(NULL_BRUSH));
         HGDIOBJ oldPen = SelectObject(m_data->m_dc, pen.get());
-        for (Vector<Path>::const_iterator i = m_data->m_paths.begin(); i != m_data->m_paths.end(); ++i)
-            i->platformPath()->strokePath(m_data->m_dc, &m_data->m_transform);
+        path.platformPath()->strokePath(m_data->m_dc, &m_data->m_transform);
         SelectObject(m_data->m_dc, oldPen);
     }
 }

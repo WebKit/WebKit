@@ -301,7 +301,7 @@ namespace WebCore {
 
         void setCompositeOperation(CompositeOperator);
 
-#if PLATFORM(SKIA) || PLATFORM(OPENVG) || OS(WINCE)
+#if PLATFORM(SKIA) || PLATFORM(OPENVG)
         void beginPath();
         void addPath(const Path&);
 #endif
