@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class Geolocation;
 class GeolocationPosition;
 
 class GeolocationClient {
@@ -42,6 +43,9 @@ public:
     // is published.
     virtual void setEnableHighAccuracy(bool) = 0;
     virtual GeolocationPosition* lastPosition() = 0;
+
+    virtual void requestPermission(Geolocation*) = 0;
+    virtual void cancelPermissionRequest(Geolocation*) = 0;
 
 protected:
     virtual ~GeolocationClient() { }

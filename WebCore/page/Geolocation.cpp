@@ -233,8 +233,13 @@ Geolocation::~Geolocation()
 
 void Geolocation::disconnectFrame()
 {
-    if (m_frame && m_frame->page() && m_allowGeolocation == InProgress)
+    if (m_frame && m_frame->page() && m_allowGeolocation == InProgress) {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+        m_frame->page()->geolocationController()->cancelPermissionRequest(this);
+#else
         m_frame->page()->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
+#endif
+    }
     cancelAllRequests();
     stopUpdating();
     if (m_frame && m_frame->document())
@@ -596,8 +601,12 @@ void Geolocation::requestPermission()
 
     m_allowGeolocation = InProgress;
 
-    // Ask the chrome: it maintains the geolocation challenge policy itself.
+    // Ask the embedder: it maintains the geolocation challenge policy itself.
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    page->geolocationController()->requestPermission(this);
+#else
     page->chrome()->requestGeolocationPermissionForFrame(m_frame, this);
+#endif
 }
 
 void Geolocation::positionChangedInternal()

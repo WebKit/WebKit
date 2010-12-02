@@ -25,10 +25,24 @@
 
 #import "WebGeolocationClient.h"
 
+#import "WebDelegateImplementationCaching.h"
+#import "WebFrameInternal.h"
 #import "WebGeolocationPositionInternal.h"
+#import "WebSecurityOriginInternal.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/BlockExceptions.h>
+#import <WebCore/Frame.h>
+#import <WebCore/Geolocation.h>
 
 using namespace WebCore;
+
+@interface WebGeolocationPolicyListener : NSObject <WebGeolocationPolicyListener>
+{
+    RefPtr<Geolocation> _geolocation;
+}
+- (id)initWithGeolocation:(Geolocation*)geolocation;
+@end
 
 WebGeolocationClient::WebGeolocationClient(WebView *webView)
     : m_webView(webView)
@@ -50,6 +64,28 @@ void WebGeolocationClient::stopUpdating()
     [[m_webView _geolocationProvider] unregisterWebView:m_webView];
 }
 
+void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
+    if (![[m_webView UIDelegate] respondsToSelector:selector]) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
+    Frame *frame = geolocation->frame();
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
+    WebGeolocationPolicyListener* listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation];
+
+    CallUIDelegate(m_webView, selector, webOrigin, kit(frame), listener);
+
+    [webOrigin release];
+    [listener release];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 GeolocationPosition* WebGeolocationClient::lastPosition()
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
@@ -58,3 +94,26 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     return 0;
 #endif
 }
+
+@implementation WebGeolocationPolicyListener
+
+- (id)initWithGeolocation:(Geolocation*)geolocation
+{
+    if (!(self = [super init]))
+        return nil;
+    _geolocation = geolocation;
+    return self;
+}
+
+- (void)allow
+{
+    _geolocation->setIsAllowed(true);
+}
+
+- (void)deny
+{
+    _geolocation->setIsAllowed(false);
+}
+
+@end
+

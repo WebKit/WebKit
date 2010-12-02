@@ -26,7 +26,8 @@
 #import <WebCore/GeolocationClient.h>
 
 namespace WebCore {
-    class GeolocationPosition;
+class Geolocation;
+class GeolocationPosition;
 }
 
 @class WebView;
@@ -42,6 +43,9 @@ public:
     void setEnableHighAccuracy(bool) { }
 
     WebCore::GeolocationPosition* lastPosition();
+
+    void requestPermission(WebCore::Geolocation*);
+    void cancelPermissionRequest(WebCore::Geolocation*) { };
 
 private:
     WebView *m_webView;

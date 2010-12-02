@@ -37,6 +37,7 @@
 #include "PlatformString.h"
 #include "Timer.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -57,6 +58,7 @@ public:
 
     void setError(PassRefPtr<GeolocationError>);
     void setPosition(PassRefPtr<GeolocationPosition>);
+    void setPermission(bool allowed);
 
     // GeolocationClient
     virtual void geolocationDestroyed();
@@ -64,17 +66,30 @@ public:
     virtual void stopUpdating();
     virtual void setEnableHighAccuracy(bool);
     virtual GeolocationPosition* lastPosition();
+    virtual void requestPermission(Geolocation*);
+    virtual void cancelPermissionRequest(Geolocation*);
 
 private:
-    void timerFired(Timer<GeolocationClientMock>*);
     void asyncUpdateController();
-    void updateController();
+    void controllerTimerFired(Timer<GeolocationClientMock>*);
+
+    void asyncUpdatePermission();
+    void permissionTimerFired(Timer<GeolocationClientMock>*);
 
     GeolocationController* m_controller;
     RefPtr<GeolocationPosition> m_lastPosition;
     RefPtr<GeolocationError> m_lastError;
-    Timer<GeolocationClientMock> m_timer;
+    Timer<GeolocationClientMock> m_controllerTimer;
+    Timer<GeolocationClientMock> m_permissionTimer;
     bool m_isActive;
+
+    enum PermissionState {
+        PermissionStateUnset,
+        PermissionStateAllowed,
+        PermissionStateDenied,
+    } m_permissionState;
+    typedef WTF::HashSet<RefPtr<Geolocation> > GeolocationSet;
+    GeolocationSet m_pendingPermission;
 };
 
 }

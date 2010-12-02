@@ -1,3 +1,30 @@
+2010-12-02  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Move requestGeolocationPermissionForFrame to GeolocationClient
+        https://bugs.webkit.org/show_bug.cgi?id=50061
+
+        This change facilitates client-based geolocation implementation by
+        bringing together permission control into the geolocation client
+        interface.
+
+        Move method ChromeClient::requestGeolocationPermissionForFrame to
+        GeolocationClient::requestPermission, and supporting class
+        WebGeolocationPolicyListener. The moved code is unchanged except
+        that requestPermission now takes only one argument (Geolocation*)
+        and the Frame parameter is retrieved from the Geolocation object.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebGeolocationClient.h:
+        (WebGeolocationClient::cancelPermissionRequest):
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (WebGeolocationClient::requestPermission):
+        (-[WebGeolocationPolicyListener initWithGeolocation:]):
+        (-[WebGeolocationPolicyListener allow]):
+        (-[WebGeolocationPolicyListener deny]):
+
 2010-12-02  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Eric Carlson.

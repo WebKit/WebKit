@@ -27,8 +27,14 @@
 #include "WebKitDLL.h"
 #include "WebGeolocationClient.h"
 
+#include "WebFrame.h"
+#include "WebGeolocationPolicyListener.h"
 #include "WebGeolocationPosition.h"
+#include "WebSecurityOrigin.h"
 #include "WebView.h"
+#include <WebCore/Frame.h>
+#include <WebCore/Geolocation.h>
+#include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -71,4 +77,28 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 #else
     return 0;
 #endif
+}
+
+void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (FAILED(m_webView->uiDelegate(&uiDelegate))) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
+    COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, uiDelegate);
+    if (!uiDelegatePrivate2) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
+    Frame* frame = geolocation->frame();
+    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
+    COMPtr<WebGeolocationPolicyListener> listener = WebGeolocationPolicyListener::createInstance(geolocation);
+    HRESULT hr = uiDelegatePrivate2->decidePolicyForGeolocationRequest(m_webView.get(), kit(frame), origin.get(), listener.get());
+    if (hr != E_NOTIMPL)
+        return;
+
+    geolocation->setIsAllowed(false);
 }

@@ -55,7 +55,6 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
-#import <WebCore/Geolocation.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
@@ -100,13 +99,6 @@ using namespace WebCore;
     FileChooser* _chooser;
 }
 - (id)initWithChooser:(PassRefPtr<FileChooser>)chooser;
-@end
-
-@interface WebGeolocationPolicyListener : NSObject <WebGeolocationPolicyListener>
-{
-    RefPtr<Geolocation> _geolocation;
-}
-- (id)initWithGeolocation:(Geolocation*)geolocation;
 @end
 
 #if ENABLE(FULLSCREEN_API)
@@ -849,27 +841,6 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 #endif
 
-void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
-    if (![[m_webView UIDelegate] respondsToSelector:selector]) {
-        geolocation->setIsAllowed(false);
-        return;
-    }
-
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-    WebGeolocationPolicyListener* listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation];
-
-    CallUIDelegate(m_webView, selector, webOrigin, kit(frame), listener);
-
-    [webOrigin release];
-    [listener release];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 @implementation WebOpenPanelResultListener
 
 - (id)initWithChooser:(PassRefPtr<FileChooser>)chooser
@@ -928,28 +899,6 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
     _chooser->chooseFiles(names);
     _chooser->deref();
     _chooser = 0;
-}
-
-@end
-
-@implementation WebGeolocationPolicyListener
-
-- (id)initWithGeolocation:(Geolocation*)geolocation
-{
-    if (!(self = [super init]))
-        return nil;
-    _geolocation = geolocation;
-    return self;
-}
-
-- (void)allow
-{
-    _geolocation->setIsAllowed(true);
-}
-
-- (void)deny
-{
-    _geolocation->setIsAllowed(false);
 }
 
 @end

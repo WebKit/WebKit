@@ -48,6 +48,9 @@ public:
     void addObserver(Geolocation*, bool enableHighAccuracy);
     void removeObserver(Geolocation*);
 
+    void requestPermission(Geolocation*);
+    void cancelPermissionRequest(Geolocation*);
+
     void positionChanged(GeolocationPosition*);
     void errorOccurred(GeolocationError*);
 

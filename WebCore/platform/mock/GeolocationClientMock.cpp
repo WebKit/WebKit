@@ -41,8 +41,10 @@ namespace WebCore {
 
 GeolocationClientMock::GeolocationClientMock()
     : m_controller(0)
-    , m_timer(this, &GeolocationClientMock::timerFired)
+    , m_controllerTimer(this, &GeolocationClientMock::controllerTimerFired)
+    , m_permissionTimer(this, &GeolocationClientMock::permissionTimerFired)
     , m_isActive(false)
+    , m_permissionState(PermissionStateUnset)
 {
 }
 
@@ -71,10 +73,55 @@ void GeolocationClientMock::setError(PassRefPtr<GeolocationError> error)
     asyncUpdateController();
 }
 
+void GeolocationClientMock::setPermission(bool allowed)
+{
+    m_permissionState = allowed ? PermissionStateAllowed : PermissionStateDenied;
+    asyncUpdatePermission();
+}
+
+void GeolocationClientMock::requestPermission(Geolocation* geolocation)
+{
+    m_pendingPermission.add(geolocation);
+    if (m_permissionState != PermissionStateUnset)
+        asyncUpdatePermission();
+}
+
+void GeolocationClientMock::cancelPermissionRequest(Geolocation* geolocation)
+{
+    // Called from Geolocation::disconnectFrame() in response to Frame destruction.
+    m_pendingPermission.remove(geolocation);
+    if (m_pendingPermission.isEmpty() && m_permissionTimer.isActive())
+        m_permissionTimer.stop();
+}
+
+void GeolocationClientMock::asyncUpdatePermission()
+{
+    ASSERT(m_permissionState != PermissionStateUnset);
+    if (!m_permissionTimer.isActive())
+        m_permissionTimer.startOneShot(0);
+}
+
+void GeolocationClientMock::permissionTimerFired(WebCore::Timer<GeolocationClientMock>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_permissionTimer);
+    ASSERT(m_permissionState != PermissionStateUnset);
+    bool allowed = m_permissionState == PermissionStateAllowed;
+    GeolocationSet::iterator end = m_pendingPermission.end();
+
+    // Once permission has been set (or denied) on a Geolocation object, there can be
+    // no further requests for permission to the mock. Consequently the callbacks
+    // which fire synchronously from Geolocation::setIsAllowed() cannot reentrantly modify
+    // m_pendingPermission.
+    for (GeolocationSet::iterator it = m_pendingPermission.begin(); it != end; ++it)
+        (*it)->setIsAllowed(allowed);
+    m_pendingPermission.clear();
+}
+
 void GeolocationClientMock::reset()
 {
     m_lastPosition = 0;
     m_lastError = 0;
+    m_permissionState = PermissionStateUnset;
 }
 
 void GeolocationClientMock::geolocationDestroyed()
@@ -93,7 +140,7 @@ void GeolocationClientMock::stopUpdating()
 {
     ASSERT(m_isActive);
     m_isActive = false;
-    m_timer.stop();
+    m_controllerTimer.stop();
 }
 
 void GeolocationClientMock::setEnableHighAccuracy(bool)
@@ -110,18 +157,13 @@ GeolocationPosition* GeolocationClientMock::lastPosition()
 void GeolocationClientMock::asyncUpdateController()
 {
     ASSERT(m_controller);
-    if (m_isActive && !m_timer.isActive())
-        m_timer.startOneShot(0);
+    if (m_isActive && !m_controllerTimer.isActive())
+        m_controllerTimer.startOneShot(0);
 }
 
-void GeolocationClientMock::timerFired(Timer<GeolocationClientMock>* timer)
+void GeolocationClientMock::controllerTimerFired(Timer<GeolocationClientMock>* timer)
 {
-    ASSERT_UNUSED(timer, timer == &m_timer);
-    updateController();
-}
-
-void GeolocationClientMock::updateController()
-{
+    ASSERT_UNUSED(timer, timer == &m_controllerTimer);
     ASSERT(m_controller);
 
     if (m_lastPosition.get())

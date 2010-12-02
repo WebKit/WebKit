@@ -78,6 +78,18 @@ void GeolocationController::removeObserver(Geolocation* observer)
     }
 }
 
+void GeolocationController::requestPermission(Geolocation* geolocation)
+{
+    if (m_client)
+        m_client->requestPermission(geolocation);
+}
+
+void GeolocationController::cancelPermissionRequest(Geolocation* geolocation)
+{
+    if (m_client)
+        m_client->cancelPermissionRequest(geolocation);
+}
+
 void GeolocationController::positionChanged(GeolocationPosition* position)
 {
     m_lastPosition = position;
