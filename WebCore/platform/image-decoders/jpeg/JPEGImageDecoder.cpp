@@ -208,8 +208,13 @@ public:
             // Let libjpeg take care of gray->RGB and YCbCr->RGB conversions.
             switch (m_info.jpeg_color_space) {
             case JCS_GRAYSCALE:
-            case JCS_RGB:
             case JCS_YCbCr:
+                // Grayscale images get "upsampled" by libjpeg.  If we use
+                // their color profile, CoreGraphics will "upsample" them
+                // again, resulting in horizontal distortions.
+                m_decoder->setIgnoreGammaAndColorProfile(true);
+                // Note fall-through!
+            case JCS_RGB:
                 m_info.out_color_space = JCS_RGB;
                 break;
             case JCS_CMYK:
