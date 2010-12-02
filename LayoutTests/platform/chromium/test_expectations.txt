@@ -3302,10 +3302,11 @@ BUG_AWESOME : fast/harness/show-modal-dialog.html = PASS TIMEOUT FAIL
 BUG_AWESOME : fast/notifications/notifications-click-event.html = PASS TIMEOUT
 BUG_AWESOME LINUX MAC : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = PASS TEXT
 BUG_AWESOME WIN : fast/media/color-does-not-include-alpha.html = PASS TEXT
-BUG_AWESOME MAC : fast/css/resize-corner-tracking-transformed.html = PASS IMAGE+TEXT
-BUG_AWESOME MAC : fast/css/resize-corner-tracking.html = PASS IMAGE+TEXT
+BUG_AWESOME BUG22777 MAC : fast/css/resize-corner-tracking-transformed.html = PASS IMAGE+TEXT
+BUG_AWESOME BUG10364 MAC : fast/css/resize-corner-tracking.html = PASS IMAGE+TEXT
 BUG_AWESOME MAC : fast/forms/basic-buttons.html = PASS IMAGE
 BUG_AWESOME MAC : fast/forms/select-baseline.html = PASS IMAGE
+BUG_AWESOME BUG22777 MAC : fast/overflow/hit-test-overflow-controls.html = PASS IMAGE+TEXT
 
 // The test says you should see numbers, but we display letters.
 // It looks like we are missing the WebKit "WeightWatcher" fonts,
