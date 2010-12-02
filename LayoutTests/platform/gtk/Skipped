@@ -5540,6 +5540,13 @@ fast/images/webp-image-decoding.html
 # https://bugs.webkit.org/show_bug.cgi?id=47832
 http/tests/inspector/console-xhr-logging.html
 
+# The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
+# method. But that method is not implemented in gtk port since gtk port can't
+# not get user gesture in frameload callbacks.
+# The related bugs are https://bugs.webkit.org/show_bug.cgi?id=47849/47817.
+fast/frames/location-redirect-user-gesture.html
+fast/frames/meta-refresh-user-gesture.html
+
 # This test passes locally, but does not pass on the bots. Perhaps
 # it is an issue with the version of Cairo on the bots.
 # https://bugs.webkit.org/show_bug.cgi?id=49052

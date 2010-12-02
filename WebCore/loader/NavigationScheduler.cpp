@@ -77,6 +77,9 @@ public:
     bool isLocationChange() const { return m_isLocationChange; }
     bool wasUserGesture() const { return m_wasUserGesture; }
 
+protected:
+    void clearUserGesture() { m_wasUserGesture = false; }
+
 private:
     double m_delay;
     bool m_lockHistory;
@@ -131,6 +134,7 @@ public:
     ScheduledRedirect(double delay, const String& url, bool lockHistory, bool lockBackForwardList)
         : ScheduledURLNavigation(delay, url, String(), lockHistory, lockBackForwardList, false, false)
     {
+        clearUserGesture();
     }
 
     virtual bool shouldStartTimer(Frame* frame) { return frame->loader()->allAncestorsAreComplete(); }
