@@ -29,6 +29,8 @@
 
 #include "DataView.h"
 
+#include "CheckedInt.h"
+
 namespace {
 
 template<typename T>
@@ -43,7 +45,12 @@ namespace WebCore {
 
 PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned byteLength)
 {
-    if (byteOffset + byteLength > buffer->byteLength())
+    if (byteOffset > buffer->byteLength())
+        return 0;
+    CheckedInt<uint32_t> checkedOffset(byteOffset);
+    CheckedInt<uint32_t> checkedLength(byteLength);
+    CheckedInt<uint32_t> checkedMax = checkedOffset + checkedLength;
+    if (!checkedMax.valid() || checkedMax.value() > buffer->byteLength())
         return 0;
     return adoptRef(new DataView(buffer, byteOffset, byteLength));
 }
