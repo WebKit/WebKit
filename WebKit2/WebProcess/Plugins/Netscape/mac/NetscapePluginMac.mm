@@ -633,9 +633,9 @@ void NetscapePlugin::windowAndViewFramesChanged(const WebCore::IntRect& windowFr
             Rect bounds = computeFakeWindowBoundsRect(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 
             ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
-#endif
             break;
         }
+#endif
 
         default:
             ASSERT_NOT_REACHED();

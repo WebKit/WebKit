@@ -1,3 +1,10 @@
+2010-12-01  Sam Weinig  <sam@webkit.org>
+
+        Fix 64-bit build.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::windowAndViewFramesChanged):
+
 2010-12-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
