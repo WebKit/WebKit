@@ -1,3 +1,13 @@
+2010-12-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix after vcproj updates.
+
+        * DumpRenderTree/win/DumpRenderTreeCairo.vsprops: Make sure
+        that WIN_CAIRO is defined for this build.
+        * DumpRenderTree/win/DumpRenderTreePreBuild.cmd: Update file
+        to reflect new 'Debug_Cairo_CFLite' and 'Release_Cairo_CFLite'
+        (these were previously 'Debug_Cairo' and 'Release_Cairo'
+
 2010-12-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

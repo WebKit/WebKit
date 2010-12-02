@@ -10,5 +10,9 @@ mkdir 2>NUL "%WEBKITOUTPUTDIR%\include\DumpRenderTree\ForwardingHeaders"
 mkdir 2>NUL "%WEBKITOUTPUTDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
 
 xcopy /y /d "%PROJECTDIR%\..\ForwardingHeaders\wtf\*.h" "%WEBKITOUTPUTDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
+
+if "%CONFIGURATIONNAME%"=="Debug_Cairo_CFLite" xcopy /y /d "%WEBKITOUTPUTDIR%\include\WebCore\ForwardingHeaders\wtf\MD5.h" "%WEBKITOUTPUTDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
+if "%CONFIGURATIONNAME%"=="Release_Cairo_CFLite" xcopy /y /d "%WEBKITOUTPUTDIR%\include\WebCore\ForwardingHeaders\wtf\MD5.h" "%WEBKITOUTPUTDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
+
 if "%CONFIGURATIONNAME%"=="Debug_Cairo" xcopy /y /d "%TARGETDIR%\..\include\WebCore\ForwardingHeaders\wtf\MD5.h"
 if "%CONFIGURATIONNAME%"=="Release_Cairo" xcopy /y /d "%TARGETDIR%\..\include\WebCore\ForwardingHeaders\wtf\MD5.h"
