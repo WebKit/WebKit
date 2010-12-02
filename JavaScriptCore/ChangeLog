@@ -1,5 +1,18 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Qt build: Include all OS files for Qt's sake, and then
+        use #ifdefs in the files to exclude things based on OS.
+        
+        This is a pretty bad way to manage platforms -- hopefully we can
+        fix the Qt build system and move away from this in the future.
+
+        * wtf/OSAllocatorPosix.cpp:
+        * wtf/OSAllocatorSymbian.cpp:
+        * wtf/OSAllocatorWin.cpp:
+        * wtf/wtf.pri:
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Chromium build.
         
         * JavaScriptCore.gypi: This is a Windows build file, so use OSAllocatorWin.cpp.

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "OSAllocator.h"
 
+#if OS(UNIX) && !OS(SYMBIAN)
+
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
@@ -81,3 +83,5 @@ void OSAllocator::release(void* address, size_t bytes)
 }
 
 } // namespace WTF
+
+#endif
