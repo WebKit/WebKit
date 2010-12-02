@@ -1,3 +1,15 @@
+2010-12-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Use GetTickCount() for srand()
+        https://bugs.webkit.org/show_bug.cgi?id=50338
+
+        time() is not a native function on WinCE, so use GetTickCount() instead.
+
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2010-12-02  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Laszlo Gombos.

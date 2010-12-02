@@ -53,7 +53,7 @@ inline void initializeRandomNumberGenerator()
     // On Darwin we use arc4random which initialises itself.
 #elif OS(WINCE)
     // initialize rand()
-    srand(static_cast<unsigned>(time(0)));
+    srand(GetTickCount());
 
     // use rand() to initialize the real RNG
     unsigned long initializationBuffer[4];
