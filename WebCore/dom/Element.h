@@ -225,6 +225,10 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange = NoChange);
 
+    Node* shadowRoot();
+    void setShadowRoot(PassRefPtr<Node>);
+    void clearShadowRoot();
+
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
     AtomicString computeInheritedLanguage() const;
@@ -337,6 +341,8 @@ protected:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void insertedIntoTree(bool);
+    virtual void removedFromTree(bool);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     // The implementation of Element::attributeChanged() calls the following two functions.
