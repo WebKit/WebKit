@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Qt Linux build.
+
+        * wtf/wtf.pri: Use the POSIX OSAllocator for Qt Linux.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: commit doesn't have a return value.
 
         * wtf/OSAllocatorWin.cpp:

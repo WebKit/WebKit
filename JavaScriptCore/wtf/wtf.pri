@@ -13,7 +13,7 @@ SOURCES += \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
-    wtf/OSAllocatorSymbian.cpp \
+    wtf/OSAllocatorPosix.cpp \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \
     wtf/qt/ThreadingQt.cpp \
