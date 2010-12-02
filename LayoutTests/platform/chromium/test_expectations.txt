@@ -3317,3 +3317,6 @@ BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 
 BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
 BUG_VICTORW : fast/block/basic/truncation-rtl.html = IMAGE+TEXT
+
+BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
+BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
