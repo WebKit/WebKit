@@ -3316,5 +3316,7 @@ BUG_AWESOME MAC : fast/forms/select-baseline.html = PASS IMAGE
 BUG10370 LINUX WIN : fast/css/font-weight-1.html = IMAGE+TEXT
 BUG_AWESOME MAC : fast/css/font-weight-1.html = PASS IMAGE+TEXT TIMEOUT
 
+BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
+
 BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
 BUG_VICTORW : fast/block/basic/truncation-rtl.html = IMAGE+TEXT
