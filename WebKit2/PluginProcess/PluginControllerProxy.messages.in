@@ -90,8 +90,8 @@ messages -> PluginControllerProxy {
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)
 
-    # Sent when the containing NSWindow's frame changes
-    WindowFrameChanged(WebCore::IntRect windowFrame)
+    # Sent when the containing NSWindow or NSView frame changes
+    WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates)
 
     # Sent when the containing NSWindow's visibility changes
     WindowVisibilityChanged(bool isVisible)

@@ -61,7 +61,7 @@ public:
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool);
     void setWindowIsFocused(bool);
-    void setWindowFrame(const WebCore::IntRect&);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
 #endif
 
 private:

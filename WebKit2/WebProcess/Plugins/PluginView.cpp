@@ -353,12 +353,12 @@ void PluginView::setWindowIsFocused(bool windowIsFocused)
     m_plugin->windowFocusChanged(windowIsFocused);    
 }
 
-void PluginView::setWindowFrame(const IntRect& windowFrame)
+void PluginView::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     if (!m_plugin)
         return;
 
-    m_plugin->windowFrameChanged(windowFrame);
+    m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 }
 
 #endif
@@ -407,7 +407,7 @@ void PluginView::initializePlugin()
         }
     }
 
-    setWindowFrame(m_webPage->windowFrame());
+    windowAndViewFramesChanged(m_webPage->windowFrameInScreenCoordinates(), m_webPage->viewFrameInWindowCoordinates());
     setWindowIsVisible(m_webPage->windowIsVisible());
     setWindowIsFocused(m_webPage->windowIsFocused());
 #endif

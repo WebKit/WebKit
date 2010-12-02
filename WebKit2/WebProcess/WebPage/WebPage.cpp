@@ -1065,13 +1065,14 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
         (*it)->setWindowIsVisible(windowIsVisible);
 }
 
-void WebPage::setWindowFrame(const IntRect& windowFrame)
+void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
 {
-    m_windowFrame = windowFrame;
+    m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
+    m_viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
 
-    // Tell all our plug-in views that the window frame changed.
+    // Tell all our plug-in views that the window and view frames have changed.
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setWindowFrame(windowFrame);
+        (*it)->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 }
 
 bool WebPage::windowIsFocused() const

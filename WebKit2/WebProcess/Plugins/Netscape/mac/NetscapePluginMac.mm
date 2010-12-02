@@ -25,7 +25,6 @@
 
 #include "NetscapePlugin.h"
 
-#include "NotImplemented.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -131,7 +130,7 @@ bool NetscapePlugin::platformPostInitialize()
     if (m_eventModel == NPEventModelCarbon) {
         // Initialize the fake Carbon window.
         ::Rect bounds = { 0, 0, 0, 0 };
-        CreateNewWindow(kDocumentWindowClass, 0, &bounds, reinterpret_cast<WindowRef*>(&m_npCGContext.window));
+        CreateNewWindow(kDocumentWindowClass, kWindowNoTitleBarAttribute, &bounds, reinterpret_cast<WindowRef*>(&m_npCGContext.window));
         ASSERT(m_npCGContext.window);
 
         // FIXME: Disable the backing store.
@@ -602,7 +601,27 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
     }
 }
 
-void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
+#ifndef NP_NO_CARBON
+static Rect computeFakeWindowBoundsRect(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
+{
+    // Carbon global coordinates has the origin set at the top left corner of the main viewing screen, so we want to flip the y coordinate.
+    CGFloat maxY = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
+
+    int flippedWindowFrameYCoordinate = maxY - windowFrameInScreenCoordinates.bottom();
+    int flippedViewFrameYCoordinate = windowFrameInScreenCoordinates.height() - viewFrameInWindowCoordinates.bottom();
+
+    Rect bounds;
+    
+    bounds.top = flippedWindowFrameYCoordinate + flippedViewFrameYCoordinate;
+    bounds.left = windowFrameInScreenCoordinates.x();
+    bounds.right = bounds.left + viewFrameInWindowCoordinates.width();
+    bounds.bottom = bounds.top + viewFrameInWindowCoordinates.height();
+    
+    return bounds;
+}
+#endif
+
+void NetscapePlugin::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
 {
     switch (m_eventModel) {
         case NPEventModelCocoa:
@@ -611,16 +630,12 @@ void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            ::Rect bounds;
-            bounds.top = windowFrame.y() + windowFrame.height();
-            bounds.left = windowFrame.x();
-            bounds.right = windowFrame.right();
-            bounds.bottom = windowFrame.y();
+            Rect bounds = computeFakeWindowBoundsRect(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 
             ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
+#endif
             break;
         }
-#endif
 
         default:
             ASSERT_NOT_REACHED();

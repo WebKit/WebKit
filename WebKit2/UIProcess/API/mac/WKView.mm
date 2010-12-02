@@ -202,13 +202,29 @@ struct EditCommandState {
     _data->_page->drawingArea()->setSize(IntSize(size));
 }
 
+- (void)_updateWindowAndViewFrames
+{
+    NSWindow *window = [self window];
+    ASSERT(window);
+    
+    NSRect windowFrameInScreenCoordinates = [window frame];
+    NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
+    
+    _data->_page->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
+}
+
 - (void)renewGState
 {
     // Hide the find indicator.
     _data->_findIndicatorWindow = nullptr;
 
+    // Update the view frame.
+    if ([self window])
+        [self _updateWindowAndViewFrames];
+
     [super renewGState];
 }
+
 typedef HashMap<SEL, String> SelectorNameMap;
 
 // Map selectors into Editor command names.
@@ -598,31 +614,6 @@ static bool isViewVisible(NSView *view)
         area->setPageIsVisible(isViewVisible(self));
 }
 
-static NSScreen *screenForWindow(NSWindow *window)
-{
-    if (NSScreen *screen = [window screen]) // nil if the window is off-screen
-        return screen;
-    
-    NSArray *screens = [NSScreen screens];
-    if ([screens count] > 0)
-        return [screens objectAtIndex:0]; // screen containing the menubar
-    
-    return nil;
-}
-
-- (void)_updateWindowFrame
-{
-    NSWindow *window = [self window];
-    ASSERT(window);
-
-    // We want the window frame in Carbon coordinates, so flip the Y coordinate.
-    NSRect windowFrame = [window frame];
-    NSScreen *screen = ::screenForWindow(window);
-    windowFrame.origin.y = NSMaxY([screen frame]) - windowFrame.origin.y;
-
-    _data->_page->updateWindowFrame(enclosingIntRect(windowFrame));
-}
-
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     if (window != [self window]) {
@@ -640,7 +631,7 @@ static NSScreen *screenForWindow(NSWindow *window)
         [self _updateActiveState];
         [self _updateVisibility];
         [self _updateWindowVisibility];
-        [self _updateWindowFrame];
+        [self _updateWindowAndViewFrames];
     } else {
         [self _updateVisibility];
         [self _updateActiveState];
@@ -674,7 +665,7 @@ static NSScreen *screenForWindow(NSWindow *window)
 
 - (void)_windowFrameDidChange:(NSNotification *)notification
 {
-    [self _updateWindowFrame];
+    [self _updateWindowAndViewFrames];
 }
 
 - (void)drawRect:(NSRect)rect

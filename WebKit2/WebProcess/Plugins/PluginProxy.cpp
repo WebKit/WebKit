@@ -308,9 +308,9 @@ void PluginProxy::windowFocusChanged(bool hasFocus)
     m_connection->connection()->send(Messages::PluginControllerProxy::WindowFocusChanged(hasFocus), m_pluginInstanceID);
 }
 
-void PluginProxy::windowFrameChanged(const IntRect& windowFrame)
+void PluginProxy::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
 {
-    m_connection->connection()->send(Messages::PluginControllerProxy::WindowFrameChanged(windowFrame), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates), m_pluginInstanceID);
 }
 
 void PluginProxy::windowVisibilityChanged(bool isVisible)

@@ -446,11 +446,12 @@ void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
     process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
 }
 
-void WebPageProxy::updateWindowFrame(const IntRect& windowFrame)
+void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     if (!isValid())
         return;
-    process()->send(Messages::WebPage::SetWindowFrame(windowFrame), m_pageID);
+
+    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates), m_pageID);
 }
 #endif
 

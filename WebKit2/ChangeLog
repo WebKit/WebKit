@@ -1,3 +1,53 @@
+2010-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Give the fake Carbon window the right bounds
+        https://bugs.webkit.org/show_bug.cgi?id=50361
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowAndViewFramesChanged):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        Pass both the window frame and view frame along.
+
+        (-[WKView renewGState]):
+        Call _updateWindowAndViewFrames.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        Pass both the window frame and view frame along.
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        We don't want a title bar in our fake window.
+    
+        (WebKit::computeFakeWindowBoundsRect):
+        Compute the fake window bounds.
+
+        (WebKit::NetscapePlugin::windowAndViewFramesChanged):
+        Update the fake window bounds.
+
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowAndViewFramesChanged):
+        (WebKit::PluginView::initializePlugin):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::windowFrameInScreenCoordinates):
+        (WebKit::WebPage::viewFrameInWindowCoordinates):
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pass both the window frame and view frame along.
+
 2010-12-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

@@ -167,7 +167,7 @@ public:
 // These are only used on Mac currently.
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
-    void updateWindowFrame(const WebCore::IntRect&);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)

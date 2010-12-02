@@ -92,7 +92,7 @@ messages -> WebPage {
 
 #if PLATFORM(MAC)
     SetWindowIsVisible(bool windowIsVisible)
-    SetWindowFrame(WebCore::IntRect windowFrame)
+    WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates)
 #endif
 
 #if PLATFORM(QT)

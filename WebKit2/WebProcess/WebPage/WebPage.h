@@ -185,7 +185,8 @@ public:
     void removePluginView(PluginView*);
 
     bool windowIsVisible() const { return m_windowIsVisible; }
-    const WebCore::IntRect& windowFrame() const { return m_windowFrame; }
+    const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
+    const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
     bool windowIsFocused() const;
     bool interceptEditingKeyboardEvent(WebCore::KeyboardEvent*, bool);
 #elif PLATFORM(WIN)
@@ -288,7 +289,7 @@ private:
 
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool windowIsVisible);
-    void setWindowFrame(const WebCore::IntRect&);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
 #endif
 
     void unapplyEditCommand(uint64_t commandID);
@@ -327,8 +328,11 @@ private:
     // Whether the containing window is visible or not.
     bool m_windowIsVisible;
 
-    // The frame of the containing window.
-    WebCore::IntRect m_windowFrame;
+    // The frame of the containing window in screen coordinates.
+    WebCore::IntRect m_windowFrameInScreenCoordinates;
+
+    // The frame of the view in window coordinates.
+    WebCore::IntRect m_viewFrameInWindowCoordinates;
 
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
