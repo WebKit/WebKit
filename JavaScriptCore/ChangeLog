@@ -1,5 +1,11 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the GTK build.
+
+        * GNUmakefile.am: Use a full path to OSAllocator*.cpp.
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the EFL Linux build.
 
         * CMakeListsEfl.txt: Added OSAllocator to the project.
