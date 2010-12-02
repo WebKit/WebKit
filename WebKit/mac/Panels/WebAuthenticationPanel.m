@@ -129,6 +129,8 @@
     }
 
     NSString *realm = [space realm];
+    if (!realm)
+        realm = @"";
     NSString *message;
 
     // Consider the realm name to be "simple" if it does not contain any whitespace or newline characters.
