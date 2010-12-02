@@ -70,6 +70,7 @@ module html {
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLOptionElement selectedOption;
 #endif
+        attribute [Reflect] boolean incremental;
 
         void stepUp(in [Optional] long n) raises(DOMException);
         void stepDown(in [Optional] long n) raises(DOMException);
