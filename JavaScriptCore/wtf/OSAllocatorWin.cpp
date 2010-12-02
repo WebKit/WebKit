@@ -42,7 +42,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes)
 
 void OSAllocator::commit(void* address, size_t bytes)
 {
-    return VirtualAlloc(address, bytes, MEM_COMMIT, PAGE_READWRITE);
+    VirtualAlloc(address, bytes, MEM_COMMIT, PAGE_READWRITE);
 }
 
 void OSAllocator::decommit(void* address, size_t bytes)

@@ -1,5 +1,12 @@
 2010-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: commit doesn't have a return value.
+
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::commit):
+
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: Export some symbols.
 
         * JavaScriptCore.exp:
