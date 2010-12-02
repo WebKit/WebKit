@@ -29,7 +29,7 @@
 #include "Unicode.h"
 
 namespace WTF {
-  namespace Unicode {
+namespace Unicode {
 
     // Given a first byte, gives the length of the UTF-8 sequence it begins.
     // Returns 0 for bytes that are not legal starts of UTF-8 sequences.
@@ -69,7 +69,12 @@ namespace WTF {
     ConversionResult convertUTF16ToUTF8(
                     const UChar** sourceStart, const UChar* sourceEnd, 
                     char** targetStart, char* targetEnd, bool strict = true);
-  }
-}
+
+    unsigned calculateStringHashFromUTF8(const char* data, const char* dataEnd, unsigned& utf16Length);
+
+    bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd);
+
+} // namespace Unicode
+} // namespace WTF
 
 #endif // WTF_UTF8_h

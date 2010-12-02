@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,7 @@
 
 #include "config.h"
 #include "UTF8.h"
+#include <wtf/StringHasher.h>
 
 #include "ASCIICType.h"
 
@@ -32,7 +34,7 @@ namespace WTF {
 namespace Unicode {
 
 // FIXME: Use definition from CharacterNames.h.
-const UChar replacementCharacter = 0xFFFD;
+static const UChar replacementCharacter = 0xFFFD;
 
 inline int inlineUTF8SequenceLengthNonASCII(char b0)
 {
@@ -312,6 +314,87 @@ ConversionResult convertUTF8ToUTF16(
     *sourceStart = source;
     *targetStart = target;
     return result;
+}
+
+unsigned calculateStringHashFromUTF8(const char* data, const char* dataEnd, unsigned& utf16Length)
+{
+    if (!data)
+        return 0;
+
+    WTF::StringHasher stringHasher;
+    utf16Length = 0;
+
+    while (data < dataEnd) {
+        if (isASCII(*data)) {
+            stringHasher.addCharacter(*data++);
+            utf16Length++;
+            continue;
+        }
+
+        int utf8SequenceLength = inlineUTF8SequenceLengthNonASCII(*data);
+
+        if (dataEnd - data < utf8SequenceLength)
+            return false;
+
+        if (!isLegalUTF8(reinterpret_cast<const unsigned char*>(data), utf8SequenceLength))
+            return 0;
+
+        UChar32 character = readUTF8Sequence(data, utf8SequenceLength);
+        ASSERT(!isASCII(character));
+
+        if (U_IS_BMP(character)) {
+            // UTF-16 surrogate values are illegal in UTF-32
+            if (U_IS_SURROGATE(character))
+                return 0;
+            stringHasher.addCharacter(static_cast<UChar>(character)); // normal case
+            utf16Length++;
+        } else if (U_IS_SUPPLEMENTARY(character)) {
+            stringHasher.addCharacters(static_cast<UChar>(U16_LEAD(character)),
+                                       static_cast<UChar>(U16_TRAIL(character)));
+            utf16Length += 2;
+        } else
+            return 0;
+    }
+
+    return stringHasher.hash();
+}
+
+bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd)
+{
+    while (b < bEnd) {
+        if (isASCII(*b)) {
+            if (*a++ != *b++)
+                return false;
+            continue;
+        }
+
+        int utf8SequenceLength = inlineUTF8SequenceLengthNonASCII(*b);
+
+        if (bEnd - b < utf8SequenceLength)
+            return false;
+
+        if (!isLegalUTF8(reinterpret_cast<const unsigned char*>(b), utf8SequenceLength))
+            return 0;
+
+        UChar32 character = readUTF8Sequence(b, utf8SequenceLength);
+        ASSERT(!isASCII(character));
+
+        if (U_IS_BMP(character)) {
+            // UTF-16 surrogate values are illegal in UTF-32
+            if (U_IS_SURROGATE(character))
+                return false;
+            if (*a++ != character)
+                return false;
+        } else if (U_IS_SUPPLEMENTARY(character)) {
+            if (*a++ != U16_LEAD(character))
+                return false;
+            if (*a++ != U16_TRAIL(character))
+                return false;
+        } else
+            return false;
+    }
+
+    return a == aEnd;
 }
 
 } // namespace Unicode

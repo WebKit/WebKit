@@ -1,3 +1,35 @@
+2010-12-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add AtomicString::fromUTF8
+        https://bugs.webkit.org/show_bug.cgi?id=45594
+
+        Unicode::calculateStringHashFromUTF8 creates a StringHash out of UTF8 input data and
+        calculates the required length for the UTF16 conversation in one step.
+        This is then used in a specialized translator for the string table of AtomicString.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/text/AtomicString.cpp:
+        (WTF::CStringTranslator::equal):
+        (WTF::HashAndUTF8CharactersTranslator::hash):
+        (WTF::HashAndUTF8CharactersTranslator::equal):
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addSlowCase):
+        (WTF::AtomicString::find):
+        (WTF::AtomicString::fromUTF8):
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::readUTF8Sequence):
+        (WTF::Unicode::convertUTF8ToUTF16):
+        (WTF::Unicode::calculateStringHashFromUTF8):
+        (WTF::Unicode::equalUTF16WithUTF8):
+        * wtf/unicode/UTF8.h:
+
 2010-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

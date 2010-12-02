@@ -108,6 +108,11 @@ public:
     operator QString() const { return m_string; }
 #endif
 
+    // AtomicString::fromUTF8 will return a null string if
+    // the input data contains invalid UTF-8 sequences.
+    static AtomicString fromUTF8(const char*, size_t);
+    static AtomicString fromUTF8(const char*);
+
 private:
     String m_string;
     

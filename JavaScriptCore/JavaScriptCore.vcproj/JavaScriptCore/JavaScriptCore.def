@@ -59,6 +59,7 @@ EXPORTS
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?calculateDSTOffset@WTF@@YANNN@Z
+    ?calculateStringHashFromUTF8@Unicode@WTF@@YAIPBD0AAI@Z
     ?calculateUTCOffset@WTF@@YAHXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
@@ -139,6 +140,7 @@ EXPORTS
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBVStringImpl@WTF@@PBD@Z
+    ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
     ?evaluate@JSC@@YA?AVCompletion@1@PAVExecState@1@AAVScopeChain@1@ABVSourceCode@1@VJSValue@1@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z

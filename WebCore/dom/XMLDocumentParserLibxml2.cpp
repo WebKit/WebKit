@@ -686,14 +686,12 @@ static inline String toString(const xmlChar* string)
 
 static inline AtomicString toAtomicString(const xmlChar* string, size_t size)
 {
-    // FIXME: Use AtomicString::fromUTF8.
-    return AtomicString(toString(string, size));
+    return AtomicString::fromUTF8(reinterpret_cast<const char*>(string), size);
 }
 
 static inline AtomicString toAtomicString(const xmlChar* string)
 {
-    // FIXME: Use AtomicString::fromUTF8.
-    return AtomicString(toString(string));
+    return AtomicString::fromUTF8(reinterpret_cast<const char*>(string));
 }
 
 struct _xmlSAX2Namespace {

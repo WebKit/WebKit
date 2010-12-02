@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,8 +27,11 @@
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
+#include <wtf/unicode/UTF8.h>
 
 namespace WTF {
+
+using namespace Unicode;
 
 COMPILE_ASSERT(sizeof(AtomicString) == sizeof(String), atomic_string_and_string_must_be_same_size);
 
@@ -85,7 +89,7 @@ struct CStringTranslator {
             if (d[i] != c)
                 return false;
         }
-        return s[length] == 0;
+        return !s[length];
     }
 
     static void translate(StringImpl*& location, const char* const& c, unsigned hash)
@@ -206,12 +210,44 @@ struct HashAndCharactersTranslator {
     }
 };
 
+struct HashAndUTF8Characters {
+    unsigned hash;
+    const char* characters;
+    unsigned length;
+    unsigned utf16Length;
+};
+
+struct HashAndUTF8CharactersTranslator {
+    static unsigned hash(const HashAndUTF8Characters& buffer)
+    {
+        return buffer.hash;
+    }
+
+    static bool equal(StringImpl* const& string, const HashAndUTF8Characters& buffer)
+    {
+        return equalUTF16WithUTF8(string->characters(), string->characters() + string->length(), buffer.characters, buffer.characters + buffer.length);
+    }
+
+    static void translate(StringImpl*& location, const HashAndUTF8Characters& buffer, unsigned hash)
+    {
+        UChar* target;
+        location = StringImpl::createUninitialized(buffer.utf16Length, target).releaseRef();
+
+        const char* source = buffer.characters;
+        if (convertUTF8ToUTF16(&source, source + buffer.length, &target, target + buffer.utf16Length) != conversionOK)
+            ASSERT_NOT_REACHED();
+
+        location->setHash(hash);
+        location->setIsAtomic(true);
+    }
+};
+
 PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
 {
     if (!s)
         return 0;
 
-    if (length == 0)
+    if (!length)
         return StringImpl::empty();
     
     UCharBuffer buf = { s, length }; 
@@ -227,7 +263,7 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsign
     ASSERT(s);
     ASSERT(existingHash);
 
-    if (length == 0)
+    if (!length)
         return StringImpl::empty();
     
     HashAndCharacters buffer = { existingHash, s, length }; 
@@ -246,7 +282,7 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
     while (s[length] != UChar(0))
         length++;
 
-    if (length == 0)
+    if (!length)
         return StringImpl::empty();
 
     UCharBuffer buf = {s, length}; 
@@ -262,7 +298,7 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
     if (!r || r->isAtomic())
         return r;
 
-    if (r->length() == 0)
+    if (!r->length())
         return StringImpl::empty();
 
     StringImpl* result = *stringTable().add(r).first;
@@ -276,7 +312,7 @@ AtomicStringImpl* AtomicString::find(const UChar* s, unsigned length, unsigned e
     ASSERT(s);
     ASSERT(existingHash);
 
-    if (length == 0)
+    if (!length)
         return static_cast<AtomicStringImpl*>(StringImpl::empty());
 
     HashAndCharacters buffer = { existingHash, s, length }; 
@@ -290,7 +326,7 @@ void AtomicString::remove(StringImpl* r)
 {
     stringTable().remove(r);
 }
-    
+
 AtomicString AtomicString::lower() const
 {
     // Note: This is a hot function in the Dromaeo benchmark.
@@ -303,4 +339,36 @@ AtomicString AtomicString::lower() const
     return AtomicString(newImpl);
 }
 
+AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
+{
+    if (!characters)
+        return AtomicString();
+
+    if (!length)
+        return emptyAtom;
+
+    HashAndUTF8Characters buffer;
+    buffer.characters = characters;
+    buffer.length = length;
+    buffer.hash = calculateStringHashFromUTF8(characters, characters + length, buffer.utf16Length);
+
+    if (!buffer.hash)
+        return AtomicString();
+
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    AtomicString atomicString;
+    atomicString.m_string = addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    return atomicString;
 }
+
+AtomicString AtomicString::fromUTF8(const char* characters)
+{
+    if (!characters)
+        return AtomicString();
+    return fromUTF8(characters, strlen(characters));
+}
+
+} // namespace WTF

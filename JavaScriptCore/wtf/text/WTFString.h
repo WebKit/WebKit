@@ -309,6 +309,8 @@ public:
     String(const AECHAR*);
 #endif
 
+    // String::fromUTF8 will return a null string if
+    // the input data contains invalid UTF-8 sequences.
     static String fromUTF8(const char*, size_t);
     static String fromUTF8(const char*);
 
