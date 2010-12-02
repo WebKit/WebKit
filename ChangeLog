@@ -1,3 +1,11 @@
+2010-12-02  Daniel Bates  <dbates@rim.com>
+
+        Add autotools generated files to svn:ignore so that these
+        files do not show up in an svn stat.
+
+        * .: Added properties svn:ignore, svn:ignore and svn:ignore. Modified property svn:ignore.
+        * autotools: Added property svn:ignore.
+
 2010-12-01  Adam Roben  <aroben@apple.com>
 
         Teach git to ignore files installed by WebKitSupportLibrary and

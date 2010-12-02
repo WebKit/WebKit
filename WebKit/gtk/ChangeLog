@@ -1,3 +1,12 @@
+2010-12-02  Daniel Bates  <dbates@rim.com>
+
+        Ignore WebKit/gtk/docs/GNUmakefile.in and WebKit/gtk/po/*.pot so that
+        these files do not appear in an svn stat. This change makes SVN
+        consistent with the current Git ignore behavior for these files.
+
+        * docs: Added property svn:ignore.
+        * po: Added property svn:ignore.
+
 2010-12-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
