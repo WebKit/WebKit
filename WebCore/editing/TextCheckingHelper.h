@@ -55,11 +55,11 @@ public:
     bool checkingRangeMatches(int location, int length) const { return location == checkingStart() && length == checkingLength(); }
     bool isCheckingRangeCoveredBy(int location, int length) const { return location <= checkingStart() && location + length >= checkingStart() + checkingLength(); }
     bool checkingRangeCovers(int location, int length) const { return location < checkingEnd() && location + length > checkingStart(); }
+    PassRefPtr<Range> paragraphRange() const;
 
 private:
     void invalidateParagraphRangeValues();
     PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
-    PassRefPtr<Range> paragraphRange() const;
     PassRefPtr<Range> offsetAsRange() const;
     const String& text() const;
 

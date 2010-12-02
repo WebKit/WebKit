@@ -1,3 +1,17 @@
+2010-12-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support multiple correction candidates panel for misspelled word on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=50137
+        <rdar://problem/8568059>
+
+        Adopted new function signature defined in base class.
+
+        * WebCoreSupport/EditorClientHaiku.cpp:
+        (WebCore::EditorClientHaiku::getGuessesForWord):
+        * WebCoreSupport/EditorClientHaiku.h:
+
 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

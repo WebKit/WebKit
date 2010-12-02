@@ -129,11 +129,11 @@ public:
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);
     virtual void showSpellingUI(bool show);
     virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const WTF::String&, WTF::Vector<WTF::String>& guesses);
+    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const WTF::Vector<WTF::String>& alternativeReplacementStrings, WebCore::Editor*);
     virtual void dismissCorrectionPanel(WebCore::CorrectionWasRejectedOrNot);
     virtual bool isShowingCorrectionPanel();
 #endif

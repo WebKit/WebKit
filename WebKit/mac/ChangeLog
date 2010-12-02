@@ -1,3 +1,21 @@
+2010-12-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support multiple correction candidates panel for misspelled word on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=50137
+        <rdar://problem/8568059>
+
+        This patch is for supporting multiple correction suggestion panel on Mac OS X.
+        The behavior and implementation is similar to that of reversion candiate panel.
+
+        * WebCoreSupport/WebEditorClient.h: Adopted new signatures defined in base class.
+
+        * WebCoreSupport/WebEditorClient.mm:  Adopted new signatures defined in base class.
+          Added code to handle new multiple suggestion canidate panel type.
+        (WebEditorClient::showCorrectionPanel):
+        (WebEditorClient::getGuessesForWord):
+
 2010-12-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

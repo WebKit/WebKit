@@ -480,7 +480,7 @@ public:
     virtual void checkTextOfParagraph(const UChar*, int, uint64_t, Vector<TextCheckingResult>&) { };
 #endif
 #if SUPPORT_AUTOCORRECTION_PANEL
-    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, Editor*) { }
+    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&, Editor*) { }
     virtual void dismissCorrectionPanel(CorrectionWasRejectedOrNot) { }
     virtual bool isShowingCorrectionPanel() { return false; }
 #endif
@@ -488,7 +488,7 @@ public:
     virtual void updateSpellingUIWithMisspelledWord(const String&) { }
     virtual void showSpellingUI(bool) { }
     virtual bool spellingUIIsShowing() { return false; }
-    virtual void getGuessesForWord(const String&, Vector<String>&) { }
+    virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
     virtual void willSetInputMethodState() { }
     virtual void setInputMethodState(bool) { }
 

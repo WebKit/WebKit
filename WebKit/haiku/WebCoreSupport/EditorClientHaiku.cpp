@@ -461,7 +461,7 @@ bool EditorClientHaiku::spellingUIIsShowing()
     return false;
 }
 
-void EditorClientHaiku::getGuessesForWord(const String&, Vector<String>&)
+void EditorClientHaiku::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
 {
     notImplemented();
 }

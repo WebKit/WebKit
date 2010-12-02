@@ -77,6 +77,22 @@ using namespace WTF;
 
 using namespace HTMLNames;
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+static inline NSCorrectionBubbleType correctionBubbleType(CorrectionPanelInfo::PanelType panelType)
+{
+    switch (panelType) {
+    case CorrectionPanelInfo::PanelTypeCorrection:
+        return NSCorrectionBubbleTypeCorrection;
+    case CorrectionPanelInfo::PanelTypeReversion:
+        return NSCorrectionBubbleTypeReversion;
+    case CorrectionPanelInfo::PanelTypeSpellingSuggestions:
+        return NSCorrectionBubbleTypeGuesses;
+    }
+    ASSERT_NOT_REACHED();
+    return NSCorrectionBubbleTypeCorrection;
+}
+#endif
+
 @interface NSAttributedString (WebNSAttributedStringDetails)
 - (id)_initWithDOMRange:(DOMRange*)range;
 - (DOMDocumentFragment*)_documentFromRange:(NSRange)range document:(DOMDocument*)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
@@ -856,7 +872,7 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
 }
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, Editor* editor) {
+void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, Editor* editor) {
     dismissCorrectionPanel(WebCore::CorrectionWasNotRejected);
 
     NSRect boundingBoxAsNSRect = boundingBoxOfReplacedString;
@@ -868,14 +884,34 @@ void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelTyp
     NSString *replacementStringAsNSString = replacementString;
 
     m_correctionPanelIsShown = YES;
-    NSCorrectionBubbleType bubbleType = panelType == WebCore::CorrectionPanelInfo::PanelTypeCorrection ? NSCorrectionBubbleTypeCorrection : NSCorrectionBubbleTypeReversion;
-    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:nil forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(NSString *acceptedString) {
-        if (!acceptedString && bubbleType == NSCorrectionBubbleTypeCorrection) {
-            [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseRejected toCorrection:replacementStringAsNSString forWord:replacedStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
-            editor->handleRejectedCorrection();
-        } else if (acceptedString && bubbleType == NSCorrectionBubbleTypeReversion) {
-            [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseReverted toCorrection:replacedStringAsNSString forWord:replacementStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
-            editor->handleRejectedCorrection();
+    NSCorrectionBubbleType bubbleType = correctionBubbleType(panelType);
+    NSMutableArray *alternativeStrings = nil;
+    if (!alternativeReplacementStrings.isEmpty()) {
+        size_t size = alternativeReplacementStrings.size();
+        alternativeStrings = [NSMutableArray arrayWithCapacity:size];
+        for (size_t i = 0; i < size; ++i)
+            [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
+    }
+
+    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(NSString *acceptedString) {
+        switch (bubbleType) {
+        case NSCorrectionBubbleTypeCorrection:
+            if (!acceptedString) {
+                [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseRejected toCorrection:replacementStringAsNSString forWord:replacedStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+                editor->handleCorrectionPanelResult(String());
+            }
+            break;
+        case NSCorrectionBubbleTypeReversion:
+            if (acceptedString) {
+                [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseReverted toCorrection:replacedStringAsNSString forWord:replacementStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+                editor->handleCorrectionPanelResult(String());
+            }
+            break;
+        case NSCorrectionBubbleTypeGuesses:
+            if (acceptedString)
+                [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedString forWord:replacedStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+            editor->handleCorrectionPanelResult(String(acceptedString));
+            break;
         }
     }];
 }
@@ -916,11 +952,22 @@ bool WebEditorClient::spellingUIIsShowing()
     return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
 }
 
-void WebEditorClient::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
-{
-    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
-    unsigned count = [stringsArray count];
+void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) {
     guesses.clear();
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSString* language = nil;
+    NSOrthography* orthography = nil;
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (context.length()) {
+        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:0 inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
+        language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
+    }
+    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
+#else
+    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
+#endif
+    unsigned count = [stringsArray count];
+
     if (count > 0) {
         NSEnumerator* enumerator = [stringsArray objectEnumerator];
         NSString* string;

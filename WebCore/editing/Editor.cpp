@@ -92,6 +92,37 @@ static inline bool isAmbiguousBoundaryCharacter(UChar character)
     return character == '\'' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
 }
 
+#if SUPPORT_AUTOCORRECTION_PANEL
+static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
+{
+    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAutoCorrection, ());
+    if (markerTypesForAutoCorrection.isEmpty()) {
+        markerTypesForAutoCorrection.append(DocumentMarker::Replacement);
+        markerTypesForAutoCorrection.append(DocumentMarker::CorrectionIndicator);
+    }
+    return markerTypesForAutoCorrection;
+}
+
+static FloatRect boundingBoxForRange(Range* range)
+{
+    Vector<FloatQuad> textQuads;
+    range->getBorderAndTextQuads(textQuads);
+    FloatRect totalBoundingBox;
+    size_t size = textQuads.size();
+    for (size_t i = 0; i< size; ++i)
+        totalBoundingBox.unite(textQuads[i].boundingBox());
+    return totalBoundingBox;
+}
+#endif // SUPPORT_AUTOCORRECTION_PANEL
+
+static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
+{
+    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForReplacement, ());
+    if (markerTypesForReplacement.isEmpty())
+        markerTypesForReplacement.append(DocumentMarker::Replacement);
+    return markerTypesForReplacement;
+}
+
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
 VisibleSelection Editor::selectionForCommand(Event* event)
@@ -500,13 +531,18 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
     size_t markerCount = markers.size();
     for (size_t i = 0; i < markerCount; ++i) {
         const DocumentMarker& marker = markers[i];
-        if (marker.type == DocumentMarker::CorrectionIndicator && static_cast<int>(marker.endOffset) == endOffset) {
+        if (((marker.type == DocumentMarker::CorrectionIndicator && marker.description.length()) || marker.type == DocumentMarker::Spelling) && static_cast<int>(marker.endOffset) == endOffset) {
             RefPtr<Range> wordRange = Range::create(frame()->document(), node, marker.startOffset, node, marker.endOffset);
             String currentWord = plainText(wordRange.get());
-            if (currentWord.length() > 0 && marker.description.length() > 0) {
+            if (currentWord.length()) {
                 m_correctionPanelInfo.m_rangeToBeReplaced = wordRange;
-                m_correctionPanelInfo.m_replacementString = marker.description;
-                startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeReversion);
+                m_correctionPanelInfo.m_replacedString = currentWord;
+                if (marker.type == DocumentMarker::Spelling)
+                    startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeSpellingSuggestions);
+                else {
+                    m_correctionPanelInfo.m_replacementString = marker.description;
+                    startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeReversion);
+                }
             }
             break;
         }
@@ -1932,7 +1968,7 @@ Vector<String> Editor::guessesForMisspelledSelection()
 
     Vector<String> guesses;
     if (client())
-        client()->getGuessesForWord(selectedString, guesses);
+        client()->getGuessesForWord(selectedString, String(), guesses);
     return guesses;
 }
 
@@ -2019,7 +2055,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
             doApplyCorrection = false;
     }
     if (doApplyCorrection)
-        applyCorrectionPanelInfo(true);
+        applyCorrectionPanelInfo(markerTypesForAutocorrection());
     m_correctionPanelInfo.m_rangeToBeReplaced.clear();
 #else
     UNUSED_PARAM(selectionAfterTyping);
@@ -2341,7 +2377,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                         m_correctionPanelInfo.m_replacedString = replacedString;
                         m_correctionPanelInfo.m_replacementString = result->replacement;
                         m_correctionPanelInfo.m_isActive = true;
-                        client()->showCorrectionPanel(m_correctionPanelInfo.m_panelType, totalBoundingBox, m_correctionPanelInfo.m_replacedString, result->replacement, this);
+                        client()->showCorrectionPanel(m_correctionPanelInfo.m_panelType, totalBoundingBox, m_correctionPanelInfo.m_replacedString, result->replacement, Vector<String>(), this);
                         doReplacement = false;
                     }
 #endif
@@ -2419,39 +2455,66 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
 void Editor::correctionPanelTimerFired(Timer<Editor>*)
 {
 #if SUPPORT_AUTOCORRECTION_PANEL
-    if (m_correctionPanelInfo.m_panelType == CorrectionPanelInfo::PanelTypeCorrection) {
+    switch (m_correctionPanelInfo.m_panelType) {
+    case CorrectionPanelInfo::PanelTypeCorrection: {
         VisibleSelection selection(frame()->selection()->selection());
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         markAllMisspellingsAndBadGrammarInRanges(MarkSpelling | ShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
-    } else {
-        String currentWord = plainText(m_correctionPanelInfo.m_rangeToBeReplaced.get());
-        Vector<FloatQuad> textQuads;
-        m_correctionPanelInfo.m_rangeToBeReplaced->getBorderAndTextQuads(textQuads);
-        Vector<FloatQuad>::const_iterator end = textQuads.end();
-        FloatRect totalBoundingBox;
-        for (Vector<FloatQuad>::const_iterator it = textQuads.begin(); it < end; ++it)
-            totalBoundingBox.unite(it->boundingBox());
+    }
+        break;
+    case CorrectionPanelInfo::PanelTypeReversion: {
         m_correctionPanelInfo.m_isActive = true;
-        m_correctionPanelInfo.m_replacedString = currentWord;
-        client()->showCorrectionPanel(m_correctionPanelInfo.m_panelType, totalBoundingBox, m_correctionPanelInfo.m_replacedString, m_correctionPanelInfo.m_replacementString, this);
+        m_correctionPanelInfo.m_replacedString = plainText(m_correctionPanelInfo.m_rangeToBeReplaced.get());
+        client()->showCorrectionPanel(m_correctionPanelInfo.m_panelType, boundingBoxForRange(m_correctionPanelInfo.m_rangeToBeReplaced.get()), m_correctionPanelInfo.m_replacedString, m_correctionPanelInfo.m_replacementString, Vector<String>(), this);
+    }
+        break;
+    case CorrectionPanelInfo::PanelTypeSpellingSuggestions: {
+        if (plainText(m_correctionPanelInfo.m_rangeToBeReplaced.get()) != m_correctionPanelInfo.m_replacedString)
+            break;
+        String paragraphText = plainText(TextCheckingParagraph(m_correctionPanelInfo.m_rangeToBeReplaced).paragraphRange().get());
+        Vector<String> suggestions;
+        client()->getGuessesForWord(m_correctionPanelInfo.m_replacedString, paragraphText, suggestions);
+        if (suggestions.isEmpty())
+            break;
+        String topSuggestion = suggestions.first();
+        suggestions.remove(0);
+        m_correctionPanelInfo.m_isActive = true;
+        client()->showCorrectionPanel(m_correctionPanelInfo.m_panelType, boundingBoxForRange(m_correctionPanelInfo.m_rangeToBeReplaced.get()), m_correctionPanelInfo.m_replacedString, topSuggestion, suggestions, this);
+    }
+        break;
     }
 #endif
 }
 
-void Editor::handleRejectedCorrection()
+void Editor::handleCorrectionPanelResult(const String& correction)
 {
     Range* replacedRange = m_correctionPanelInfo.m_rangeToBeReplaced.get();
     if (!replacedRange || m_frame->document() != replacedRange->ownerDocument())
         return;
 
-    if (m_correctionPanelInfo.m_panelType == CorrectionPanelInfo::PanelTypeCorrection)
+    String currentWord = plainText(m_correctionPanelInfo.m_rangeToBeReplaced.get());
+    // Check to see if the word we are about to correct has been changed between timer firing and callback being triggered.
+    if (currentWord != m_correctionPanelInfo.m_replacedString)
+        return;
+
+    m_correctionPanelInfo.m_isActive = false;
+
+    switch (m_correctionPanelInfo.m_panelType) {
+    case CorrectionPanelInfo::PanelTypeCorrection:
         replacedRange->startContainer()->document()->markers()->addMarker(replacedRange, DocumentMarker::RejectedCorrection, m_correctionPanelInfo.m_replacedString);
-    else {
-        m_correctionPanelInfo.m_isActive = false;
-        applyCorrectionPanelInfo(false);
+        break;
+    case CorrectionPanelInfo::PanelTypeReversion:
+        applyCorrectionPanelInfo(markerTypesForReplacement());
+    case CorrectionPanelInfo::PanelTypeSpellingSuggestions:
+        if (correction.length()) {
+            m_correctionPanelInfo.m_replacementString = correction;
+            applyCorrectionPanelInfo(markerTypesForReplacement());
+        }
+        break;
     }
+
     m_correctionPanelInfo.m_rangeToBeReplaced.clear();
 }
 
@@ -2475,6 +2538,7 @@ void Editor::stopCorrectionPanelTimer()
 {
 #if SUPPORT_AUTOCORRECTION_PANEL
     m_correctionPanelTimer.stop();
+    m_correctionPanelInfo.m_rangeToBeReplaced.clear();
 #endif
 }
 
@@ -2504,7 +2568,6 @@ void Editor::dismissCorrectionPanel(CorrectionWasRejectedOrNot correctionWasReje
     if (!m_correctionPanelInfo.m_isActive)
         return;
     m_correctionPanelInfo.m_isActive = false;
-    m_correctionPanelInfo.m_rangeToBeReplaced.clear();
     if (client())
         client()->dismissCorrectionPanel(correctionWasRejectedOrNot);
 #else
@@ -2608,7 +2671,7 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
         document->markers()->removeMarkers(pairIterator->first.get(), pairIterator->second);
 }
 
-void Editor::applyCorrectionPanelInfo(bool addCorrectionIndicatorMarker)
+void Editor::applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
 {
     if (!m_correctionPanelInfo.m_rangeToBeReplaced)
         return;
@@ -2649,9 +2712,10 @@ void Editor::applyCorrectionPanelInfo(bool addCorrectionIndicatorMarker)
         caretPosition.moveToOffset(caretPosition.offsetInContainerNode() + m_correctionPanelInfo.m_replacementString.length() - m_correctionPanelInfo.m_replacedString.length());
         setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(caretPosition));
         RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, m_correctionPanelInfo.m_replacementString.length());
-        replacementRange->startContainer()->document()->markers()->addMarker(replacementRange.get(), DocumentMarker::Replacement, m_correctionPanelInfo.m_replacementString);
-        if (addCorrectionIndicatorMarker)
-            replacementRange->startContainer()->document()->markers()->addMarker(replacementRange.get(), DocumentMarker::CorrectionIndicator, m_correctionPanelInfo.m_replacedString);
+        DocumentMarkerController* markers = replacementRange->startContainer()->document()->markers();
+        size_t size = markerTypesToAdd.size();
+        for (size_t i = 0; i < size; ++i)
+            markers->addMarker(replacementRange.get(), markerTypesToAdd[i], m_correctionPanelInfo.m_replacementString);
         m_frame->selection()->moveTo(caretPosition, false);
     }
 }

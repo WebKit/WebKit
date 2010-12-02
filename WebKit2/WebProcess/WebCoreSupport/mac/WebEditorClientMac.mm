@@ -223,7 +223,7 @@ void WebEditorClient::checkTextOfParagraph(const UChar *, int length, uint64_t, 
 #endif
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*)
+void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::Editor*)
 {
     notImplemented();
 }

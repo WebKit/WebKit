@@ -542,9 +542,9 @@ bool EditorClientWx::spellingUIIsShowing()
     return false;
 }
 
-void EditorClientWx::getGuessesForWord(const String&, Vector<String>& guesses) 
-{ 
-    notImplemented(); 
+void EditorClientWx::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
+{
+    notImplemented();
 }
 
 String EditorClientWx::getAutoCorrectSuggestionForMisspelledWord(const WTF::String&)

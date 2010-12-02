@@ -929,7 +929,8 @@ bool EditorClientImpl::spellingUIIsShowing()
     return false;
 }
 
-void EditorClientImpl::getGuessesForWord(const String&,
+void EditorClientImpl::getGuessesForWord(const String& word,
+                                         const String& context,
                                          WTF::Vector<String>& guesses)
 {
     notImplemented();
