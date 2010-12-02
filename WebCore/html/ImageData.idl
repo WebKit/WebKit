@@ -33,7 +33,7 @@ module html {
     ] ImageData {
         readonly attribute long width;
         readonly attribute long height;
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT || defined(V8_BINDING) && V8_BINDING
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         readonly attribute CanvasPixelArray data;
 #endif
     };

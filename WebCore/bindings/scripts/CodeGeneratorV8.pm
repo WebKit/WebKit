@@ -2528,7 +2528,6 @@ sub HasCustomToV8Implementation {
     # We don't generate a custom converter (but JSC does) for the following:
     return 0 if $interfaceName eq "AbstractWorker";
     return 0 if $interfaceName eq "CanvasRenderingContext";
-    return 0 if $interfaceName eq "ImageData";
     return 0 if $interfaceName eq "SVGElementInstance";
 
     # For everything else, do what JSC does.

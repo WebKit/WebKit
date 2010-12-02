@@ -34,7 +34,9 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter
     ] CanvasPixelArray {
+#if !defined(V8_BINDING) || !V8_BINDING
         readonly attribute long length;
+#endif
     };
 #endif
 }
