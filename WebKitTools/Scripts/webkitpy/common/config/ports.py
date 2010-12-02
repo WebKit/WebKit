@@ -221,6 +221,7 @@ class ChromiumPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--chromium")
+        command.append("--update-chromium")
         return command
 
     @classmethod

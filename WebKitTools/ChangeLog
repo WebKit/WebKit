@@ -1,3 +1,23 @@
+2010-12-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        build-webkit --chromium always updates DEPS and re-generates project files
+        https://bugs.webkit.org/show_bug.cgi?id=50340
+        
+        Make build-webkit --chromium invoke update-webkit-chromium only when
+        --update-chromium is passed in, so that we don't add 20 seconds to all
+        builds.
+        
+        Making all invocations update was added with r61883, with the goal of
+        making EWS bots always update. The bots will switch to using this flag
+        (as will all other webkit-patch build steps) so nothing should change
+        for them.
+
+        * Scripts/webkitdirs.pm:
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
 2010-12-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
