@@ -1,3 +1,9 @@
+2010-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: Added a forwarding header.
+
+        * ForwardingHeaders/wtf/OSAllocator.h: Added.
+
 2010-10-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
