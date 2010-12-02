@@ -143,7 +143,9 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
 
     // Everything else gets resampled.
     // If the platform context permits high quality interpolation, use it.
-    if (platformContext->interpolationQuality() == InterpolationHigh)
+    // High quality interpolation only enabled for scaling and translation.
+    if (platformContext->interpolationQuality() == InterpolationHigh
+        && !(platformContext->canvas()->getTotalMatrix().getType() & (SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask)))
         return RESAMPLE_AWESOME;
     
     return RESAMPLE_LINEAR;
@@ -178,17 +180,32 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
     SkIRect resizedImageRect =  // Represents the size of the resized image.
         { 0, 0, destRectRounded.width(), destRectRounded.height() };
 
-    if (srcIsFull && bitmap.hasResizedBitmap(destRectRounded.width(), destRectRounded.height())) {
+    // Apply forward transform to destRect to estimate required size of
+    // re-sampled bitmap, and use only in calls required to resize, or that
+    // check for the required size.
+    SkRect destRectTransformed;
+    canvas.getTotalMatrix().mapRect(&destRectTransformed, destRect);
+    SkIRect destRectTransformedRounded;
+    destRectTransformed.round(&destRectTransformedRounded);
+
+    if (srcIsFull && bitmap.hasResizedBitmap(destRectTransformedRounded.width(), destRectTransformedRounded.height())) {
         // Yay, this bitmap frame already has a resized version.
-        SkBitmap resampled = bitmap.resizedBitmap(destRectRounded.width(), destRectRounded.height());
+        SkBitmap resampled = bitmap.resizedBitmap(destRectTransformedRounded.width(), destRectTransformedRounded.height());
         canvas.drawBitmapRect(resampled, 0, destRect, &paint);
         return;
     }
 
     // Compute the visible portion of our rect.
+    // We also need to compute the transformed portion of the
+    // visible portion for use below.
     SkRect destBitmapSubsetSk;
     ClipRectToCanvas(canvas, destRect, &destBitmapSubsetSk);
+    SkRect destBitmapSubsetTransformed;
+    canvas.getTotalMatrix().mapRect(&destBitmapSubsetTransformed, destBitmapSubsetSk);
     destBitmapSubsetSk.offset(-destRect.fLeft, -destRect.fTop);
+    SkIRect destBitmapSubsetTransformedRounded;
+    destBitmapSubsetTransformed.round(&destBitmapSubsetTransformedRounded);
+    destBitmapSubsetTransformedRounded.offset(-destRectTransformedRounded.fLeft, -destRectTransformedRounded.fTop);
 
     // The matrix inverting, etc. could have introduced rounding error which
     // causes the bounds to be outside of the resized bitmap. We round outward
@@ -207,27 +224,33 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
             destBitmapSubsetSkI.height())) {
         // We're supposed to resize the entire image and cache it, even though
         // we don't need all of it.
-        SkBitmap resampled = bitmap.resizedBitmap(destRectRounded.width(),
-                                                  destRectRounded.height());
+        SkBitmap resampled = bitmap.resizedBitmap(destRectTransformedRounded.width(),
+                                                  destRectTransformedRounded.height());
         canvas.drawBitmapRect(resampled, 0, destRect, &paint);
     } else {
         // We should only resize the exposed part of the bitmap to do the
         // minimal possible work.
 
         // Resample the needed part of the image.
-        SkBitmap resampled = skia::ImageOperations::Resize(subset,
-            skia::ImageOperations::RESIZE_LANCZOS3,
-            destRectRounded.width(), destRectRounded.height(),
-            destBitmapSubsetSkI);
+        // Transforms above plus rounding may cause destBitmapSubsetTransformedRounded
+        // to go outside the image, so need to clip to avoid problems.
+        if (destBitmapSubsetTransformedRounded.intersect(0, 0,
+                destRectTransformedRounded.width(), destRectTransformedRounded.height())) {
 
-        // Compute where the new bitmap should be drawn. Since our new bitmap
-        // may be smaller than the original, we have to shift it over by the
-        // same amount that we cut off the top and left.
-        destBitmapSubsetSkI.offset(destRect.fLeft, destRect.fTop);
-        SkRect offsetDestRect;
-        offsetDestRect.set(destBitmapSubsetSkI);
+            SkBitmap resampled = skia::ImageOperations::Resize(subset,
+                skia::ImageOperations::RESIZE_LANCZOS3,
+                destRectTransformedRounded.width(), destRectTransformedRounded.height(),
+                destBitmapSubsetTransformedRounded);
 
-        canvas.drawBitmapRect(resampled, 0, offsetDestRect, &paint);
+            // Compute where the new bitmap should be drawn. Since our new bitmap
+            // may be smaller than the original, we have to shift it over by the
+            // same amount that we cut off the top and left.
+            destBitmapSubsetSkI.offset(destRect.fLeft, destRect.fTop);
+            SkRect offsetDestRect;
+            offsetDestRect.set(destBitmapSubsetSkI);
+
+            canvas.drawBitmapRect(resampled, 0, offsetDestRect, &paint);
+        }
     }
 }
 
