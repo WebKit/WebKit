@@ -400,6 +400,7 @@ v8 {
         bindings/v8/custom/V8CanvasPixelArrayCustom.cpp \
         bindings/v8/custom/V8ClipboardCustom.cpp \
         bindings/v8/custom/V8CoordinatesCustom.cpp \
+        bindings/v8/custom/V8ImageDataCustom.cpp \
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
         bindings/v8/custom/V8CustomEventListener.cpp \
