@@ -515,7 +515,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
             }
         } else if (rootRenderer) {
 #if ENABLE(SVG)
-            if (!documentElement->isSVGElement()) {
+            if (!documentElement->isSVGElement())
                 applyOverflowToViewport(rootRenderer, hMode, vMode);
 #else
             applyOverflowToViewport(rootRenderer, hMode, vMode);
@@ -523,7 +523,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         }
     }    
 }
-}
+
     
 #if USE(ACCELERATED_COMPOSITING)
 void FrameView::updateCompositingLayers()
