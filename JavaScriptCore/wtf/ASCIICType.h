@@ -134,15 +134,16 @@ namespace WTF {
     inline wchar_t toASCIILower(wchar_t c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
 #endif
     inline int toASCIILower(int c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
-    inline int toASCIILower(unsigned c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
+    inline unsigned toASCIILower(unsigned c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
 
+    // FIXME: Why do these need static_cast?
     inline char toASCIIUpper(char c) { return static_cast<char>(c & ~((c >= 'a' && c <= 'z') << 5)); }
     inline unsigned short toASCIIUpper(unsigned short c) { return static_cast<unsigned short>(c & ~((c >= 'a' && c <= 'z') << 5)); }
 #if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline wchar_t toASCIIUpper(wchar_t c) { return static_cast<wchar_t>(c & ~((c >= 'a' && c <= 'z') << 5)); }
 #endif
     inline int toASCIIUpper(int c) { return static_cast<int>(c & ~((c >= 'a' && c <= 'z') << 5)); }
-    inline int toASCIIUpper(unsigned c) { return static_cast<int>(c & ~((c >= 'a' && c <= 'z') << 5)); }
+    inline unsigned toASCIIUpper(unsigned c) { return static_cast<unsigned>(c & ~((c >= 'a' && c <= 'z') << 5)); }
 
     inline int toASCIIHexValue(char c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
     inline int toASCIIHexValue(unsigned short c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }

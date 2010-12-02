@@ -1,5 +1,9 @@
 2010-12-02  Darin Adler  <darin@apple.com>
 
+        * wtf/ASCIICType.h: Fix wrong type from last check-in.
+
+2010-12-02  Darin Adler  <darin@apple.com>
+
         Try to fix certain builds (Qt Windows).
 
         * wtf/ASCIICType.h: Added an overload for unsigned because in obsolete
