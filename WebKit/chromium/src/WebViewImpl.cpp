@@ -35,6 +35,7 @@
 #include "AXObjectCache.h"
 #include "BackForwardListImpl.h"
 #include "Chrome.h"
+#include "ChromiumBridge.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
 #include "ContextMenu.h"
@@ -2374,6 +2375,8 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
 
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
+    ChromiumBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
+
     if (m_isAcceleratedCompositingActive == active)
         return;
 

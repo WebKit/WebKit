@@ -239,6 +239,8 @@ namespace WebCore {
         // StatsCounters ------------------------------------------------------
         static void decrementStatsCounter(const char* name);
         static void incrementStatsCounter(const char* name);
+        static void histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount);
+        static void histogramEnumeration(const char* name, int sample, int boundaryValue);
 
         // Sudden Termination
         static void suddenTerminationChanged(bool enabled);

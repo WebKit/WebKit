@@ -210,10 +210,11 @@ public:
     virtual void traceEventBegin(const char* name, void* id, const char* extra) { }
     virtual void traceEventEnd(const char* name, void* id, const char* extra) { }
 
-    // Generic callback for reporting histogram data. Range is identified by the min, max pair.
-    // By default, histogram is exponential, so that min=1, max=1000000, bucketCount=50 would do. Setting
-    // linear to true would require bucket count to cover whole min-max range.
-    virtual void histogramCounts(const WebString& name, int sample, int min, int max, int bucketCount, bool linear) { }
+    // Callbacks for reporting histogram data.
+    // CustomCounts histogram has exponential bucket sizes, so that min=1, max=1000000, bucketCount=50 would do.
+    virtual void histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount) { }
+    // Enumeration histogram buckets are linear, boundaryValue should be larger than any possible sample value.
+    virtual void histogramEnumeration(const char* name, int sample, int boundaryValue) { }
 
 
     // Resources -----------------------------------------------------------

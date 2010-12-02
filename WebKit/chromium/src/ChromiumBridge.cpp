@@ -679,6 +679,16 @@ void ChromiumBridge::incrementStatsCounter(const char* name)
     webKitClient()->incrementStatsCounter(name);
 }
 
+void ChromiumBridge::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
+{
+    webKitClient()->histogramCustomCounts(name, sample, min, max, bucketCount);
+}
+
+void ChromiumBridge::histogramEnumeration(const char* name, int sample, int boundaryValue)
+{
+    webKitClient()->histogramEnumeration(name, sample, boundaryValue);
+}
+
 // Sudden Termination ---------------------------------------------------------
 
 void ChromiumBridge::suddenTerminationChanged(bool enabled)
