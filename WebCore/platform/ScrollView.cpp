@@ -451,11 +451,15 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             newHasHorizontalScrollbar = false;
 
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar) {
+            if (m_scrollOrigin.y() && !newHasHorizontalScrollbar)
+                m_scrollOrigin.setY(m_scrollOrigin.y() - m_horizontalScrollbar->height());
             setHasHorizontalScrollbar(newHasHorizontalScrollbar);
             sendContentResizedNotification = true;
         }
 
         if (hasVerticalScrollbar != newHasVerticalScrollbar) {
+            if (m_scrollOrigin.x() && !newHasVerticalScrollbar)
+                m_scrollOrigin.setX(m_scrollOrigin.x() - m_verticalScrollbar->width());
             setHasVerticalScrollbar(newHasVerticalScrollbar);
             sendContentResizedNotification = true;
         }
