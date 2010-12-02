@@ -1,5 +1,12 @@
 2010-12-02  Xan Lopez  <xlopez@igalia.com>
 
+        Another attempt to fix the GTK+ build.
+
+        * autotools/symbols.filter: try to be more liberal with the
+        mangled names of some symbols.
+
+2010-12-02  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix GTK+ build.
 
         * autotools/symbols.filter: add missing ';'.
