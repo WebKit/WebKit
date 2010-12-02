@@ -1042,15 +1042,23 @@ void GraphicsContext::clearRect(const FloatRect& rect)
         p->setCompositionMode(currentCompositionMode);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& rect, float width)
+void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
     if (paintingDisabled())
         return;
 
     Path path;
     path.addRect(rect);
-    setStrokeThickness(width);
+
+    float previousStrokeThickness = strokeThickness();
+
+    if (lineWidth != previousStrokeThickness)
+        setStrokeThickness(lineWidth);
+
     strokePath(path);
+
+    if (lineWidth != previousStrokeThickness)
+        setStrokeThickness(previousStrokeThickness);
 }
 
 void GraphicsContext::setLineCap(LineCap lc)
