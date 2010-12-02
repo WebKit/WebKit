@@ -5139,6 +5139,10 @@ editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 media/controls-right-click-on-timebar.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=50394
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
+
 # Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the
 # preloader tests.
 fast/preloader
