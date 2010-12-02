@@ -1897,8 +1897,6 @@ webcore_sources += \
 	WebCore/inspector/InspectorController.h \
 	WebCore/inspector/InspectorCSSAgent.cpp \
 	WebCore/inspector/InspectorCSSAgent.h \
-	WebCore/inspector/InspectorCSSStore.cpp \
-	WebCore/inspector/InspectorCSSStore.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
 	WebCore/inspector/InspectorDatabaseResource.h \
 	WebCore/inspector/InspectorDebuggerAgent.cpp \

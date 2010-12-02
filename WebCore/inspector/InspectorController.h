@@ -59,7 +59,6 @@ class InspectorBackend;
 class InspectorBackendDispatcher;
 class InspectorClient;
 class InspectorCSSAgent;
-class InspectorCSSStore;
 class InspectorDOMAgent;
 class InspectorDOMStorageResource;
 class InspectorDatabaseResource;
@@ -345,7 +344,6 @@ private:
     OwnPtr<InspectorCSSAgent> m_cssAgent;
     RefPtr<InspectorDOMAgent> m_domAgent;
     RefPtr<InspectorStorageAgent> m_storageAgent;
-    OwnPtr<InspectorCSSStore> m_cssStore;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorState> m_state;
 

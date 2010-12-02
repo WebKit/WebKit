@@ -63,6 +63,8 @@ function doit()
     {
         var matchedCSSRules = styles.matchedCSSRules;
         for (var i = 0; i < matchedCSSRules.length; ++i) {
+            if (matchedCSSRules[i].origin !== "")
+                continue;
             output("Line:" + (matchedCSSRules[i].sourceLine + 1) + "\t" + matchedCSSRules[i].selectorText);
         }
         notifyDone();
@@ -85,7 +87,7 @@ function frontend_getRawStyles(testController)
     {
         testController.notifyDone(styles);
     }
-    InspectorBackend.getStyles(WebInspector.domAgent.document.body.id, true, callback);
+    InspectorBackend.getStylesForNode2(WebInspector.domAgent.document.body.id, callback);
 }
 
 </script>

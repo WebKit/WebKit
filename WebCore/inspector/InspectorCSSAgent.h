@@ -46,6 +46,7 @@ class Element;
 class InspectorFrontend;
 class NameNodeMap;
 class Node;
+class StyleBase;
 
 #if ENABLE(INSPECTOR)
 

@@ -64650,14 +64650,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorCSSStore.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorCSSStore.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
 				>
 			</File>

@@ -59,7 +59,6 @@
 #include "InspectorBackend.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCSSStore.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
@@ -144,7 +143,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_client(client)
     , m_openingFrontend(false)
     , m_cssAgent(new InspectorCSSAgent())
-    , m_cssStore(new InspectorCSSStore(this))
     , m_mainResourceIdentifier(0)
     , m_expiredConsoleMessageCount(0)
     , m_groupLevel(0)
@@ -484,7 +482,7 @@ void InspectorController::connectFrontend()
     m_openingFrontend = false;
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(m_client);
-    m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
+    m_domAgent = InspectorDOMAgent::create(m_frontend.get());
     m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_frontend.get());
 
     m_cssAgent->setDOMAgent(m_domAgent.get());
@@ -747,7 +745,6 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // resources are cleared so that it has a chance to unbind them.
         unbindAllResources();
 
-        m_cssStore->reset();
         if (m_frontend) {
             m_frontend->reset();
             m_domAgent->reset();
