@@ -1,3 +1,19 @@
+2010-12-02  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Fine-tune chromium WebKit API for loading audio resources
+        https://bugs.webkit.org/show_bug.cgi?id=50406
+
+        * public/WebAudioBus.h:
+        (WebKit::WebAudioBus::~WebAudioBus):
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::loadAudioResource):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::decodeAudioFileData):
+        * src/WebAudioBus.cpp:
+        (WebKit::WebAudioBus::reset):
+
 2010-12-02  Darin Fisher  <darin@chromium.org>
 
         Fix the Windows multi-dll build.  Do not export functions that are

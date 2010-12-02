@@ -44,14 +44,6 @@ namespace WebKit {
 class WebAudioBusPrivate : public AudioBus {
 };
 
-WebAudioBus::~WebAudioBus()
-{
-#if ENABLE(WEB_AUDIO)
-    delete m_private;
-    m_private = 0;
-#endif
-}
-
 void WebAudioBus::initialize(unsigned numberOfChannels, size_t length, double sampleRate)
 {        
 #if ENABLE(WEB_AUDIO)
@@ -61,6 +53,16 @@ void WebAudioBus::initialize(unsigned numberOfChannels, size_t length, double sa
     if (m_private)
         delete m_private;
     m_private = static_cast<WebAudioBusPrivate*>(audioBus);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void WebAudioBus::reset()
+{
+#if ENABLE(WEB_AUDIO)
+    delete m_private;
+    m_private = 0;
 #else
     ASSERT_NOT_REACHED();
 #endif

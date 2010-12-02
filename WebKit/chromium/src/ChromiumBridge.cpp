@@ -636,7 +636,7 @@ PassOwnPtr<AudioBus> ChromiumBridge::loadPlatformAudioResource(const char* name,
 PassOwnPtr<AudioBus> ChromiumBridge::decodeAudioFileData(const char* data, size_t size, double sampleRate)
 {
     WebAudioBus webAudioBus;
-    if (webKitClient()->decodeAudioFileData(&webAudioBus, data, size, sampleRate))
+    if (webKitClient()->loadAudioResource(&webAudioBus, data, size, sampleRate))
         return webAudioBus.release();
     return 0;
 }

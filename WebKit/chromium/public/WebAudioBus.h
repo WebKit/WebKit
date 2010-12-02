@@ -27,8 +27,9 @@
 
 #include "WebCommon.h"
 
-#if WEBKIT_IMPLEMENTATION
 namespace WebCore { class AudioBus; }
+
+#if WEBKIT_IMPLEMENTATION
 namespace WTF { template <typename T> class PassOwnPtr; }
 #endif
 
@@ -43,11 +44,14 @@ class WebAudioBusPrivate;
 class WebAudioBus {
 public:
     WebAudioBus() : m_private(0) { }
-    ~WebAudioBus();
+    ~WebAudioBus() { reset(); }
     
     // initialize() allocates memory of the given length for the given number of channels.
-    void initialize(unsigned numberOfChannels, size_t length, double sampleRate);
+    WEBKIT_API void initialize(unsigned numberOfChannels, size_t length, double sampleRate);
 
+    // reset() releases the memory allocated from initialize().
+    WEBKIT_API void reset();
+    
     WEBKIT_API unsigned numberOfChannels() const;
     WEBKIT_API size_t length() const;
     WEBKIT_API double sampleRate() const;
@@ -59,9 +63,11 @@ public:
 #endif
 
 private:
-    // Noncopyable
-    WebAudioBus(const WebAudioBus& d) : m_private(0) { }
-    WebAudioBusPrivate* m_private;
+    // Disallow copy and assign.
+    WebAudioBus(const WebAudioBus&);
+    void operator=(const WebAudioBus&);
+
+    WebCore::AudioBus* m_private;
 };
 
 } // namespace WebKit
