@@ -2193,6 +2193,10 @@
 					RelativePath="..\UIProcess\cf\WebPageProxyCF.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\UIProcess\cf\WebPreferencesCF.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Downloads"

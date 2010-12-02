@@ -880,38 +880,42 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     Settings* settings = m_page->settings();
     
-    settings->setJavaScriptEnabled(store.javaScriptEnabled);
-    settings->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
-    settings->setPluginsEnabled(store.pluginsEnabled);
-    settings->setJavaEnabled(store.javaEnabled);
-    settings->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
-    settings->setLocalStorageEnabled(store.localStorageEnabled);
-    settings->setXSSAuditorEnabled(store.xssAuditorEnabled);
-    settings->setFrameFlatteningEnabled(store.frameFlatteningEnabled);
-    settings->setPrivateBrowsingEnabled(store.privateBrowsingEnabled);
-    settings->setDeveloperExtrasEnabled(store.developerExtrasEnabled);
-    settings->setTextAreasAreResizable(store.textAreasAreResizable);
-    settings->setNeedsSiteSpecificQuirks(store.needsSiteSpecificQuirks);
-    settings->setMinimumFontSize(store.minimumFontSize);
-    settings->setMinimumLogicalFontSize(store.minimumLogicalFontSize);
-    settings->setDefaultFontSize(store.defaultFontSize);
-    settings->setDefaultFixedFontSize(store.defaultFixedFontSize);
-    settings->setStandardFontFamily(store.standardFontFamily);
-    settings->setCursiveFontFamily(store.cursiveFontFamily);
-    settings->setFantasyFontFamily(store.fantasyFontFamily);
-    settings->setFixedFontFamily(store.fixedFontFamily);
-    settings->setSansSerifFontFamily(store.sansSerifFontFamily);
-    settings->setSerifFontFamily(store.serifFontFamily);
+    // FIXME: This should be generated from macro expansion for all preferences,
+    // but we currently don't match the naming of WebCore exactly so we are
+    // handrolling the boolean and integer preferences until that is fixed.
+
+#define INITIALIZE_SETTINGS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) settings->set##KeyUpper(store.get##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key()));
+
+    FOR_EACH_WEBKIT_STRING_PREFERENCE(INITIALIZE_SETTINGS)
+
+#undef INITIALIZE_SETTINGS
+
+    settings->setJavaScriptEnabled(store.getBoolValueForKey(WebPreferencesKey::javaScriptEnabledKey()));
+    settings->setLoadsImagesAutomatically(store.getBoolValueForKey(WebPreferencesKey::loadsImagesAutomaticallyKey()));
+    settings->setPluginsEnabled(store.getBoolValueForKey(WebPreferencesKey::pluginsEnabledKey()));
+    settings->setJavaEnabled(store.getBoolValueForKey(WebPreferencesKey::javaEnabledKey()));
+    settings->setOfflineWebApplicationCacheEnabled(store.getBoolValueForKey(WebPreferencesKey::offlineWebApplicationCacheEnabledKey()));
+    settings->setLocalStorageEnabled(store.getBoolValueForKey(WebPreferencesKey::localStorageEnabledKey()));
+    settings->setXSSAuditorEnabled(store.getBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey()));
+    settings->setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
+    settings->setPrivateBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()));
+    settings->setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));
+    settings->setTextAreasAreResizable(store.getBoolValueForKey(WebPreferencesKey::textAreasAreResizableKey()));
+    settings->setNeedsSiteSpecificQuirks(store.getBoolValueForKey(WebPreferencesKey::needsSiteSpecificQuirksKey()));
+    settings->setMinimumFontSize(store.getUInt32ValueForKey(WebPreferencesKey::minimumFontSizeKey()));
+    settings->setMinimumLogicalFontSize(store.getUInt32ValueForKey(WebPreferencesKey::minimumLogicalFontSizeKey()));
+    settings->setDefaultFontSize(store.getUInt32ValueForKey(WebPreferencesKey::defaultFontSizeKey()));
+    settings->setDefaultFixedFontSize(store.getUInt32ValueForKey(WebPreferencesKey::defaultFixedFontSizeKey()));
     settings->setJavaScriptCanOpenWindowsAutomatically(true);
 
 #if PLATFORM(WIN)
     // Temporarily turn off accelerated compositing until we have a good solution for rendering it.
     settings->setAcceleratedCompositingEnabled(false);
 #else
-    settings->setAcceleratedCompositingEnabled(store.acceleratedCompositingEnabled);
+    settings->setAcceleratedCompositingEnabled(store.getBoolValueForKey(WebPreferencesKey::acceleratedCompositingEnabledKey()));
 #endif
-    settings->setShowDebugBorders(store.compositingBordersVisible);
-    settings->setShowRepaintCounter(store.compositingRepaintCountersVisible);
+    settings->setShowDebugBorders(store.getBoolValueForKey(WebPreferencesKey::compositingBordersVisibleKey()));
+    settings->setShowRepaintCounter(store.getBoolValueForKey(WebPreferencesKey::compositingRepaintCountersVisibleKey()));
     
     platformPreferencesDidChange(store);
 }

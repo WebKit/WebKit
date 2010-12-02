@@ -33,6 +33,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+    void set##KeyUpper(const Type& value); \
+    Type KeyLower() const;
+
 namespace WebKit {
 
 class WebContext;
@@ -59,85 +63,36 @@ public:
 
     const WebPreferencesStore& store() const { return m_store; }
 
-    void setJavaScriptEnabled(bool);
-    bool javaScriptEnabled() const;
 
-    void setLoadsImagesAutomatically(bool);
-    bool loadsImagesAutomatically() const;
+#define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+    void set##KeyUpper(const Type& value); \
+    Type KeyLower() const; \
 
-    void setOfflineWebApplicationCacheEnabled(bool);
-    bool offlineWebApplicationCacheEnabled() const;
+    FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
 
-    void setLocalStorageEnabled(bool);
-    bool localStorageEnabled() const;
-
-    void setXSSAuditorEnabled(bool);
-    bool xssAuditorEnabled() const;
-
-    void setFrameFlatteningEnabled(bool);
-    bool frameFlatteningEnabled() const;
-
-    void setPluginsEnabled(bool);
-    bool pluginsEnabled() const;
-
-    void setJavaEnabled(bool);
-    bool javaEnabled() const;
-
-    void setFontSmoothingLevel(FontSmoothingLevel);
-    FontSmoothingLevel fontSmoothingLevel() const;
-
-    void setStandardFontFamily(const String&);
-    const String& standardFontFamily() const;
-
-    void setFixedFontFamily(const String&);
-    const String& fixedFontFamily() const;
-
-    void setSerifFontFamily(const String&);
-    const String& serifFontFamily() const;
-
-    void setSansSerifFontFamily(const String&);
-    const String& sansSerifFontFamily() const;
-
-    void setCursiveFontFamily(const String&);
-    const String& cursiveFontFamily() const;
-
-    void setFantasyFontFamily(const String&);
-    const String& fantasyFontFamily() const;
-    
-    void setMinimumFontSize(uint32_t);
-    uint32_t minimumFontSize() const;
-
-    void setAcceleratedCompositingEnabled(bool);
-    bool acceleratedCompositingEnabled() const;
-
-    void setCompositingBordersVisible(bool);
-    bool compositingBordersVisible() const;
-
-    void setCompositingRepaintCountersVisible(bool);
-    bool compositingRepaintCountersVisible() const;
-
-    void setPrivateBrowsingEnabled(bool);
-    bool privateBrowsingEnabled() const;
-
-    void setDeveloperExtrasEnabled(bool);
-    bool developerExtrasEnabled() const;
-
-    void setTextAreasAreResizable(bool);
-    bool textAreasAreResizable() const;
-
-    void setNeedsSiteSpecificQuirks(bool);
-    bool needsSiteSpecificQuirks() const;
+#undef DECLARE_PREFERENCE_GETTER_AND_SETTERS
 
 private:
     WebPreferences();
     WebPreferences(WebPreferences*);
+    WebPreferences(const String& identifier);
+
+    void platformInitializeStore();
 
     virtual Type type() const { return APIType; }
 
     void update();
 
+    void updateStringValueForKey(const String& key, const String& value);
+    void updateBoolValueForKey(const String& key, bool value);
+    void updateUInt32ValueForKey(const String& key, uint32_t value);
+    void platformUpdateStringValueForKey(const String& key, const String& value);
+    void platformUpdateBoolValueForKey(const String& key, bool value);
+    void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
+
     HashSet<WebContext*> m_contexts;
     WebPreferencesStore m_store;
+    String m_identifier;
 };
 
 } // namespace WebKit

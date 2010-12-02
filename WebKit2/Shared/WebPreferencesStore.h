@@ -28,10 +28,79 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "WebCoreArgumentCoders.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+// macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue) 
+
+#define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
+    macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
+    macro(LoadsImagesAutomatically, loadsImagesAutomatically, Bool, bool, true) \
+    macro(PluginsEnabled, pluginsEnabled, Bool, bool, true) \
+    macro(JavaEnabled, javaEnabled, Bool, bool, true) \
+    macro(OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled, Bool, bool, false) \
+    macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true) \
+    macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true) \
+    macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, false) \
+    macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
+    macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \
+    macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, true) \
+    macro(NeedsSiteSpecificQuirks, needsSiteSpecificQuirks, Bool, bool, false) \
+    macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
+    macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
+    macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
+    \
+
+#define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
+    macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium) \
+    macro(MinimumFontSize, minimumFontSize, UInt32, uint32_t, 0) \
+    macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
+    macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
+    macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
+    \
+
+#if PLATFORM(WIN)
+
+#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    macro(StandardFontFamily, standardFontFamily, String, String, "Times New Roman") \
+    macro(CursiveFontFamily, cursiveFontFamily, String, String, "Comic Sans MS") \
+    macro(FantasyFontFamily, fantasyFontFamily, String, String, "Comic Sans MS") \
+    macro(FixedFontFamily, fixedFontFamily, String, String, "Courier New") \
+    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Arial") \
+    macro(SerifFontFamily, serifFontFamily, String, String, "Times New Roman") \
+    \
+
+#else
+
+#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
+    macro(CursiveFontFamily, cursiveFontFamily, String, String, "Apple Chancery") \
+    macro(FantasyFontFamily, fantasyFontFamily, String, String, "Papyrus") \
+    macro(FixedFontFamily, fixedFontFamily, String, String, "Courier") \
+    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Courier") \
+    macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
+    \
+
+#endif
+
+#define FOR_EACH_WEBKIT_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    \
+
+namespace WebPreferencesKey {
+
+#define DECLARE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) const String& KeyLower##Key();
+
+    FOR_EACH_WEBKIT_PREFERENCE(DECLARE_KEY_GETTERS)
+
+#undef DECLARE_KEY_GETTERS
+
+} // namespace WebPreferencesKey
 
 struct WebPreferencesStore {
     WebPreferencesStore();
@@ -39,35 +108,23 @@ struct WebPreferencesStore {
     void encode(CoreIPC::ArgumentEncoder* encoder) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebPreferencesStore&);
 
+    // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
+
+    bool setStringValueForKey(const String& key, const String& value);
+    String getStringValueForKey(const String& key) const;
+
+    bool setBoolValueForKey(const String& key, bool value);
+    bool getBoolValueForKey(const String& key) const;
+
+    bool setUInt32ValueForKey(const String& key, uint32_t value);
+    uint32_t getUInt32ValueForKey(const String& key) const;
+
     static void overrideXSSAuditorEnabledForTestRunner(bool);
     static void removeTestRunnerOverrides();
 
-    bool javaScriptEnabled;
-    bool loadsImagesAutomatically;
-    bool pluginsEnabled;
-    bool javaEnabled;
-    bool offlineWebApplicationCacheEnabled;
-    bool localStorageEnabled;
-    bool xssAuditorEnabled;
-    bool frameFlatteningEnabled;
-    bool developerExtrasEnabled;
-    bool privateBrowsingEnabled;
-    bool textAreasAreResizable;
-    bool needsSiteSpecificQuirks;
-    bool acceleratedCompositingEnabled;
-    bool compositingBordersVisible;
-    bool compositingRepaintCountersVisible;
-    uint32_t fontSmoothingLevel;
-    uint32_t minimumFontSize;
-    uint32_t minimumLogicalFontSize;
-    uint32_t defaultFontSize;
-    uint32_t defaultFixedFontSize;
-    String standardFontFamily;
-    String cursiveFontFamily;
-    String fantasyFontFamily;
-    String fixedFontFamily;
-    String sansSerifFontFamily;
-    String serifFontFamily;
+    HashMap<String, String> m_stringValues;
+    HashMap<String, bool> m_boolValues;
+    HashMap<String, uint32_t> m_uint32Values;
 };
 
 } // namespace WebKit

@@ -51,14 +51,16 @@ void WebPage::platformInitialize()
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
+    FontSmoothingLevel fontSmoothingLevel = static_cast<FontSmoothingLevel>(store.getUInt32ValueForKey(WebPreferencesKey::fontSmoothingLevelKey()));
+
 #if PLATFORM(CG)
-    FontSmoothingLevel adjustedLevel = static_cast<FontSmoothingLevel>(store.fontSmoothingLevel);
+    FontSmoothingLevel adjustedLevel = fontSmoothingLevel;
     if (adjustedLevel == FontSmoothingLevelWindows)
         adjustedLevel = FontSmoothingLevelMedium;
     wkSetFontSmoothingLevel(adjustedLevel);
 #endif
 
-    m_page->settings()->setFontRenderingMode(store.fontSmoothingLevel == FontSmoothingLevelWindows ? AlternateRenderingMode : NormalRenderingMode);
+    m_page->settings()->setFontRenderingMode(fontSmoothingLevel == FontSmoothingLevelWindows ? AlternateRenderingMode : NormalRenderingMode);
 }
 
 static const unsigned CtrlKey = 1 << 0;

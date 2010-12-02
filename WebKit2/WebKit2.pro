@@ -511,6 +511,7 @@ SOURCES += \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
+    UIProcess/qt/WebPreferencesQt.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \

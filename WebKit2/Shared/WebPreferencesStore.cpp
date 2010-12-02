@@ -26,138 +26,45 @@
 #include "WebPreferencesStore.h"
 
 #include "FontSmoothingLevel.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
+
+namespace WebPreferencesKey {
+
+#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+        const String& KeyLower##Key() \
+        { \
+            DEFINE_STATIC_LOCAL(String, key, (#KeyUpper)); \
+            return key; \
+        }
+
+    FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
+
+#undef DEFINE_KEY_GETTERS
+
+} // namespace WebPreferencesKey
+
 
 static bool hasXSSAuditorEnabledTestRunnerOverride;
 static bool xssAuditorEnabledTestRunnerOverride;
 
 WebPreferencesStore::WebPreferencesStore()
-    : javaScriptEnabled(true)
-    , loadsImagesAutomatically(true)
-    , pluginsEnabled(true)
-    , javaEnabled(true)
-    , offlineWebApplicationCacheEnabled(false)
-    , localStorageEnabled(true)
-    , xssAuditorEnabled(true)
-    , frameFlatteningEnabled(false)
-    , developerExtrasEnabled(false)
-    , privateBrowsingEnabled(false)
-    , textAreasAreResizable(true)
-    , needsSiteSpecificQuirks(false)
-    , acceleratedCompositingEnabled(true)
-    , compositingBordersVisible(false)
-    , compositingRepaintCountersVisible(false)
-    , fontSmoothingLevel(FontSmoothingLevelMedium)
-    , minimumFontSize(0)
-    , minimumLogicalFontSize(9)
-    , defaultFontSize(16)
-    , defaultFixedFontSize(13)
-#if PLATFORM(WIN)
-    , standardFontFamily("Times New Roman")
-    , cursiveFontFamily("Comic Sans MS")
-    , fantasyFontFamily("Comic Sans MS")
-    , fixedFontFamily("Courier New")
-    , sansSerifFontFamily("Arial")
-    , serifFontFamily("Times New Roman")
-#else
-    , standardFontFamily("Times")
-    , cursiveFontFamily("Apple Chancery")
-    , fantasyFontFamily("Papyrus")
-    , fixedFontFamily("Courier")
-    , sansSerifFontFamily("Helvetica")
-    , serifFontFamily("Times")
-#endif
 {
 }
 
 void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(javaScriptEnabled);
-    encoder->encode(loadsImagesAutomatically);
-    encoder->encode(pluginsEnabled);
-    encoder->encode(javaEnabled);
-    encoder->encode(offlineWebApplicationCacheEnabled);
-    encoder->encode(localStorageEnabled);
-    encoder->encode(xssAuditorEnabled);
-    encoder->encode(frameFlatteningEnabled);
-    encoder->encode(privateBrowsingEnabled);
-    encoder->encode(textAreasAreResizable);
-    encoder->encode(developerExtrasEnabled);
-    encoder->encode(fontSmoothingLevel);
-    encoder->encode(minimumFontSize);
-    encoder->encode(minimumLogicalFontSize);
-    encoder->encode(defaultFontSize);
-    encoder->encode(defaultFixedFontSize);
-    encoder->encode(standardFontFamily);
-    encoder->encode(cursiveFontFamily);
-    encoder->encode(fantasyFontFamily);
-    encoder->encode(fixedFontFamily);
-    encoder->encode(sansSerifFontFamily);
-    encoder->encode(serifFontFamily);
-    encoder->encode(acceleratedCompositingEnabled);
-    encoder->encode(compositingBordersVisible);
-    encoder->encode(compositingRepaintCountersVisible);
-    encoder->encode(needsSiteSpecificQuirks);
+    encoder->encode(CoreIPC::In(m_stringValues, m_boolValues, m_uint32Values));
 }
 
 bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
 {
-    if (!decoder->decode(s.javaScriptEnabled))
-        return false;
-    if (!decoder->decode(s.loadsImagesAutomatically))
-        return false;
-    if (!decoder->decode(s.pluginsEnabled))
-        return false;
-    if (!decoder->decode(s.javaEnabled))
-        return false;
-    if (!decoder->decode(s.offlineWebApplicationCacheEnabled))
-        return false;
-    if (!decoder->decode(s.localStorageEnabled))
-        return false;
-    if (!decoder->decode(s.xssAuditorEnabled))
-        return false;
-    if (!decoder->decode(s.frameFlatteningEnabled))
-        return false;
-    if (!decoder->decode(s.privateBrowsingEnabled))
-        return false;
-    if (!decoder->decode(s.textAreasAreResizable))
-        return false;
-    if (!decoder->decode(s.developerExtrasEnabled))
-        return false;
-    if (!decoder->decode(s.fontSmoothingLevel))
-        return false;
-    if (!decoder->decode(s.minimumFontSize))
-        return false;
-    if (!decoder->decode(s.minimumLogicalFontSize))
-        return false;
-    if (!decoder->decode(s.defaultFontSize))
-        return false;
-    if (!decoder->decode(s.defaultFixedFontSize))
-        return false;
-    if (!decoder->decode(s.standardFontFamily))
-        return false;
-    if (!decoder->decode(s.cursiveFontFamily))
-        return false;
-    if (!decoder->decode(s.fantasyFontFamily))
-        return false;
-    if (!decoder->decode(s.fixedFontFamily))
-        return false;
-    if (!decoder->decode(s.sansSerifFontFamily))
-        return false;
-    if (!decoder->decode(s.serifFontFamily))
-        return false;
-    if (!decoder->decode(s.acceleratedCompositingEnabled))
-        return false;
-    if (!decoder->decode(s.compositingBordersVisible))
-        return false;
-    if (!decoder->decode(s.compositingRepaintCountersVisible))
-        return false;
-    if (!decoder->decode(s.needsSiteSpecificQuirks))
+    if (!decoder->decode(CoreIPC::Out(s.m_stringValues, s.m_boolValues, s.m_uint32Values)))
         return false;
 
     if (hasXSSAuditorEnabledTestRunnerOverride)
-        s.xssAuditorEnabled = xssAuditorEnabledTestRunnerOverride;
+        s.m_boolValues.set(WebPreferencesKey::xssAuditorEnabledKey(), xssAuditorEnabledTestRunnerOverride);
 
     return true;
 }
@@ -171,6 +78,101 @@ void WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner(bool enabled)
 void WebPreferencesStore::removeTestRunnerOverrides()
 {
     hasXSSAuditorEnabledTestRunnerOverride = false;
+}
+
+
+template<typename MappedType>
+MappedType defaultValueForKey(const String&);
+
+template<>
+String defaultValueForKey(const String& key)
+{
+    static HashMap<String, String>& defaults = *new HashMap<String, String>;
+    if (defaults.isEmpty()) {
+#define DEFINE_STRING_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
+    FOR_EACH_WEBKIT_STRING_PREFERENCE(DEFINE_STRING_DEFAULTS)
+#undef DEFINE_STRING_DEFAULTS
+    }
+
+    return defaults.get(key);
+}
+
+template<>
+bool defaultValueForKey(const String& key)
+{
+    static HashMap<String, bool>& defaults = *new HashMap<String, bool>;
+    if (defaults.isEmpty()) {
+#define DEFINE_BOOL_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
+    FOR_EACH_WEBKIT_BOOL_PREFERENCE(DEFINE_BOOL_DEFAULTS)
+#undef DEFINE_BOOL_DEFAULTS
+    }
+
+    return defaults.get(key);
+}
+
+template<>
+uint32_t defaultValueForKey(const String& key)
+{
+    static HashMap<String, uint32_t>& defaults = *new HashMap<String, uint32_t>;
+    if (defaults.isEmpty()) {
+#define DEFINE_UINT32_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
+    FOR_EACH_WEBKIT_UINT32_PREFERENCE(DEFINE_UINT32_DEFAULTS)
+#undef DEFINE_UINT32_DEFAULTS
+    }
+
+    return defaults.get(key);
+}
+
+
+template<typename MapType>
+static bool setValueForKey(MapType& map, const typename MapType::KeyType& key, const typename MapType::MappedType& value)
+{
+    typename MapType::MappedType existingValue = valueForKey(map, key);
+    if (existingValue == value)
+        return false;
+    
+    map.set(key, value);
+    return true;
+}
+
+template<typename MapType>
+static typename MapType::MappedType valueForKey(const MapType& map, const typename MapType::KeyType& key)
+{
+    typename MapType::const_iterator it = map.find(key);
+    if (it != map.end())
+        return it->second;
+
+    return defaultValueForKey<typename MapType::MappedType>(key);
+}
+
+bool WebPreferencesStore::setStringValueForKey(const String& key, const String& value)
+{
+    return setValueForKey(m_stringValues, key, value);
+}
+
+String WebPreferencesStore::getStringValueForKey(const String& key) const
+{
+    return valueForKey(m_stringValues, key);
+}
+
+bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
+{
+    return setValueForKey(m_boolValues, key, value);
+}
+
+bool WebPreferencesStore::getBoolValueForKey(const String& key) const
+{
+    return valueForKey(m_boolValues, key);
+}
+
+bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value) 
+{
+    return setValueForKey(m_uint32Values, key, value);
+}
+
+uint32_t WebPreferencesStore::getUInt32ValueForKey(const String& key) const
+{
+    return valueForKey(m_uint32Values, key);
 }
 
 } // namespace WebKit

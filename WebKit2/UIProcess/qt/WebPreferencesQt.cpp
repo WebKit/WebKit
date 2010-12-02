@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPageCreationParameters.h"
-
-#include "WebCoreArgumentCoders.h"
+#include "WebPreferences.h"
 
 namespace WebKit {
 
-void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPreferences::platformInitializeStore()
 {
-    encoder->encode(viewSize);
-    encoder->encode(store);
-    encoder->encode(drawingAreaInfo);
-    encoder->encode(pageGroupData);
-
-#if PLATFORM(WIN)
-    encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
-#endif
 }
 
-bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPageCreationParameters& parameters)
+void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)
 {
-    if (!decoder->decode(parameters.viewSize))
-        return false;
-    if (!decoder->decode(parameters.store))
-        return false;
-    if (!decoder->decode(parameters.drawingAreaInfo))
-        return false;
-    if (!decoder->decode(parameters.pageGroupData))
-        return false;
+}
 
-#if PLATFORM(WIN)
-    uint64_t nativeWindow;
-    if (!decoder->decode(nativeWindow))
-        return false;
-    parameters.nativeWindow = reinterpret_cast<HWND>(nativeWindow);
-#endif
+void WebPreferences::platformUpdateBoolValueForKey(const String&, bool)
+{
+}
 
-    return true;
+void WebPreferences::platformUpdateUInt32ValueForKey(const String&, uint32_t)
+{
 }
 
 } // namespace WebKit

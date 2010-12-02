@@ -1,3 +1,94 @@
+2010-12-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50368
+        Overhaul WebKit2 preferences code
+
+        - Reduces the number of places you have to touch to add a new preference
+          (From 9 down to 4, but with a bit of elbow grease, we should get that
+           down to 2 or 3).
+        - Add hooks so that platforms can initialize the preferences based on an
+          identifier. This is currently only used on the Mac to initialize a
+          preference store from NSUserDefaults and autosave the changes to disk.
+          It is not yet enabled due to no way to set the identifier from client
+          code.
+
+        * Shared/WebPageCreationParameters.cpp:
+        Add necessary #include of WebCoreArgumentCoders.h which is now needed
+        due to cleanup in WebPreferencesStore.h.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        (WebKit::defaultValueForKey):
+        (WebKit::setValueForKey):
+        (WebKit::valueForKey):
+        (WebKit::WebPreferencesStore::setStringValueForKey):
+        (WebKit::WebPreferencesStore::getStringValueForKey):
+        (WebKit::WebPreferencesStore::setBoolValueForKey):
+        (WebKit::WebPreferencesStore::getBoolValueForKey):
+        (WebKit::WebPreferencesStore::setUInt32ValueForKey):
+        (WebKit::WebPreferencesStore::getUInt32ValueForKey):
+        * Shared/WebPreferencesStore.h:
+        Complete overhaul of this class to store the preferences as
+        a set of HashMaps and use macros to define the keys and default
+        values.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetFontSmoothingLevel):
+        Add cast to keep conversion function working.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences): Add identifier constructor.
+        (WebKit::WebPreferences::updateStringValueForKey):
+        (WebKit::WebPreferences::updateBoolValueForKey):
+        (WebKit::WebPreferences::updateUInt32ValueForKey):
+        Add type based updaters. These currently give hooks to the platform and
+        call the generic update, but in the future, we can use this to optimize
+        updating preferences to not send the entire store for each change.
+
+        * UIProcess/WebPreferences.h:
+        Generate the getters and setters via macro instantiation.
+
+        * UIProcess/cf/WebPreferencesCF.cpp: Added.
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        Stubbed out.
+
+        * UIProcess/mac/WebPreferencesMac.mm: Added.
+        (WebKit::makeKey):
+        (WebKit::setStringValueIfInUserDefaults):
+        (WebKit::setBoolValueIfInUserDefaults):
+        (WebKit::setUInt32ValueIfInUserDefaults):
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        Use the platform hooks to initialize and update the store from
+        NSUserDefaults.
+        
+        * UIProcess/qt/WebPreferencesQt.cpp: Added.
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        Stubbed out.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        Update to pull the value using the new type based getters.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-12-02  Steve Falkenburg  <sfalken@apple.com>
 
         Mac build fix.
