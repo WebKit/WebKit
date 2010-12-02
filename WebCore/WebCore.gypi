@@ -2937,6 +2937,8 @@
             'platform/image-decoders/zlib/zconf.h',
             'platform/image-decoders/zlib/zlib.h',
             'platform/image-decoders/zlib/zutil.h',
+            'platform/image-encoders/skia/JPEGImageEncoder.cpp',
+            'platform/image-encoders/skia/JPEGImageEncoder.h',
             'platform/image-encoders/skia/PNGImageEncoder.cpp',
             'platform/image-encoders/skia/PNGImageEncoder.h',
             'platform/mac/AutodrainedPool.mm',

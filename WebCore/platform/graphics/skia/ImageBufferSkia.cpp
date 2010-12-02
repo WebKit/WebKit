@@ -40,6 +40,8 @@
 #include "GLES2Canvas.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
+#include "JPEGImageEncoder.h"
+#include "MIMETypeRegistry.h"
 #include "PNGImageEncoder.h"
 #include "PlatformContextSkia.h"
 #include "SkColorPriv.h"
@@ -318,20 +320,28 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     putImageData<Premultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
-String ImageBuffer::toDataURL(const String&, const double*) const
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
-    // Encode the image into a vector.
-    Vector<unsigned char> pngEncodedData;
-    PNGImageEncoder::encode(*context()->platformContext()->bitmap(), &pngEncodedData);
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    // Convert it into base64.
-    Vector<char> base64EncodedData;
-    base64Encode(*reinterpret_cast<Vector<char>*>(&pngEncodedData), base64EncodedData);
-    // Append with a \0 so that it's a valid string.
-    base64EncodedData.append('\0');
+    Vector<unsigned char> encodedImage;
+    if (mimeType == "image/jpeg") {
+        int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
+        if (quality && *quality >= 0.0 && *quality <= 1.0)
+            compressionQuality = static_cast<int>(*quality * 100 + 0.5);
+        if (!JPEGImageEncoder::encode(*context()->platformContext()->bitmap(), compressionQuality, &encodedImage))
+            return "data:,";
+    } else {
+        if (!PNGImageEncoder::encode(*context()->platformContext()->bitmap(), &encodedImage))
+            return "data:,";
+        ASSERT(mimeType == "image/png");
+    }
 
-    // And the resulting string.
-    return makeString("data:image/png;base64,", base64EncodedData.data());
+    Vector<char> base64Data;
+    base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
+    base64Data.append('\0');
+
+    return makeString("data:", mimeType, ";base64,", base64Data.data());
 }
 
 } // namespace WebCore

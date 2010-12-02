@@ -94,18 +94,19 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
 
 v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallback(const v8::Arguments& args)
 {
-    double quality = 1.0;
-    if (args.Length() > 1) {
-        if (args[1]->IsNumber())
-            quality = args[1]->NumberValue();
-        if (!(0.0 <= quality && quality <= 1.0))
-            quality = 1.0;
-    }
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLCanvasElement* canvas = V8HTMLCanvasElement::toNative(holder);
-    String type = toWebCoreString(args[0]);
     ExceptionCode ec = 0;
-    String result = canvas->toDataURL(type, &quality, ec);
+
+    String type = toWebCoreString(args[0]);
+    double quality;
+    double* qualityPtr = 0;
+    if (args.Length() > 1 && args[1]->IsNumber()) {
+        quality = args[1]->NumberValue();
+        qualityPtr = &quality;
+    }
+
+    String result = canvas->toDataURL(type, qualityPtr, ec);
     V8Proxy::setDOMException(ec);
     return v8StringOrUndefined(result);
 }

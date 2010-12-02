@@ -91,8 +91,7 @@ bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)
 {
-    // FIXME: Fill this out. See: http://trac.webkit.org/changeset/30888
-    return isSupportedImageMIMEType(mimeType);
+    return mimeType == "image/jpeg" || mimeType == "image/png";
 }
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
