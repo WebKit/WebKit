@@ -1,5 +1,12 @@
 2010-12-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Attempt to fix the GTK+ build. Add missing symbol the
+        list of unfiltered symbols for the linker.
+
+        * autotools/symbols.filter: Add symbol used in DumpRenderTree.
+
+2010-12-02  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] DumpRenderTree has two copies of JavaScriptCore
