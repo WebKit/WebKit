@@ -1,3 +1,15 @@
+2010-12-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Fails to build with non-system cairo
+        https://bugs.webkit.org/show_bug.cgi?id=50395
+
+        Do not add 'cairo' as a suffix for the paths provided by
+        pkgconfig. The paths provided by pkgconfig already include it.
+
+        * cmake/FindCairo.cmake:
+
 2010-12-02  Xan Lopez  <xlopez@igalia.com>
 
         Third attempt to fix the build.
