@@ -1,3 +1,32 @@
+2010-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixed <rdar://problem/8310571> CrashTracer: 60 crashes in Photo Booth at
+        com.apple.JavaScriptCore: JSC::Heap::markRoots + 746
+        
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock): Call our new
+        synchronize() function.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::activityCallback):
+        * runtime/Collector.h: Added an activityCallback() accessor, for the
+        call above.
+
+        * runtime/GCActivityCallback.h:
+        (JSC::GCActivityCallback::synchronize):
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::~DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::operator()):
+        (JSC::DefaultGCActivityCallback::synchronize): Track the run loop we're
+        scheduled in. If we begin/resume execution within a new run loop, reschedule
+        on it. This prevents a crash when using a lockless context group on
+        multiple threads -- the crash would happen if the GC timer scheduled on
+        thread A, then you continued execution on thread B, then the thread A
+        timer fired.
+
 2010-12-02  Darin Adler  <darin@apple.com>
 
         * wtf/ASCIICType.h: Fix wrong type from last check-in.

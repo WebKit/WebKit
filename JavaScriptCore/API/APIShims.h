@@ -27,6 +27,7 @@
 #define APIShims_h
 
 #include "CallFrame.h"
+#include "GCActivityCallback.h"
 #include "JSLock.h"
 #include <wtf/WTFThreadData.h>
 
@@ -40,6 +41,7 @@ protected:
     {
         if (registerThread)
             globalData->heap.registerThread();
+        m_globalData->heap.activityCallback()->synchronize();
         m_globalData->timeoutChecker.start();
     }
 
@@ -85,6 +87,7 @@ public:
 
     ~APICallbackShim()
     {
+        m_globalData->heap.activityCallback()->synchronize();
         wtfThreadData().setCurrentIdentifierTable(m_globalData->identifierTable);
     }
 

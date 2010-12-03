@@ -98,6 +98,8 @@ namespace JSC {
 
         bool isBusy(); // true if an allocation or collection is in progress
         void collectAllGarbage();
+
+        GCActivityCallback* activityCallback();
         void setActivityCallback(PassOwnPtr<GCActivityCallback>);
 
         static const size_t minExtraCost = 256;

@@ -47,10 +47,12 @@ struct DefaultGCActivityCallbackPlatformData {
     static void trigger(CFRunLoopTimerRef, void *info);
 
     RetainPtr<CFRunLoopTimerRef> timer;
+    RetainPtr<CFRunLoopRef> runLoop;
     CFRunLoopTimerContext context;
 };
 
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
+const CFTimeInterval triggerInterval = 2; // seconds
 
 void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef, void *info)
 {
@@ -65,21 +67,32 @@ DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
 
     memset(&d->context, '\0', sizeof(CFRunLoopTimerContext));
     d->context.info = heap;
+    d->runLoop = CFRunLoopGetCurrent();
     d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), d->timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
 DefaultGCActivityCallback::~DefaultGCActivityCallback()
 {
-    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(), d->timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
     CFRunLoopTimerInvalidate(d->timer.get());
     d->context.info = 0;
+    d->runLoop = 0;
     d->timer = 0;
 }
 
 void DefaultGCActivityCallback::operator()()
 {
-    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + 2);
+    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + triggerInterval);
+}
+
+void DefaultGCActivityCallback::synchronize()
+{
+    if (CFRunLoopGetCurrent() == d->runLoop.get())
+        return;
+    CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
+    d->runLoop = CFRunLoopGetCurrent();
+    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
 }

@@ -1232,4 +1232,9 @@ void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
     m_activityCallback = activityCallback;
 }
 
+GCActivityCallback* Heap::activityCallback()
+{
+    return m_activityCallback.get();
+}
+
 } // namespace JSC

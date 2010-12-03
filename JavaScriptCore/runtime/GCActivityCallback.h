@@ -40,6 +40,7 @@ class GCActivityCallback {
 public:
     virtual ~GCActivityCallback() {}
     virtual void operator()() {}
+    virtual void synchronize() {}
 
 protected:
     GCActivityCallback() {}
@@ -55,6 +56,7 @@ public:
     ~DefaultGCActivityCallback();
 
     void operator()();
+    void synchronize();
 
 private:
     OwnPtr<DefaultGCActivityCallbackPlatformData*> d;
