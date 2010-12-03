@@ -4570,6 +4570,12 @@ DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 # ----
+# Web Audio Support - disable for now.
+# ----
+FEATURE_DEFINES += ENABLE_WEB_AUDIO=0
+webcore_cppflags += -DENABLE_WEB_AUDIO=0
+
+# ----
 # Web Sockets Support
 # ----
 if ENABLE_WEB_SOCKETS
