@@ -242,7 +242,6 @@ WebInspector.HeapSnapshotView = function(parent, profile)
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item status-bar-item");
     this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
 
-    this._loadedCallbacks = [];
     this._loadProfile(this.profile, profileCallback.bind(this));
 
     function profileCallback(profile)
@@ -439,14 +438,6 @@ WebInspector.HeapSnapshotView.prototype = {
         this._updateSummaryGraph();
     },
 
-    snapshotLoaded: function(uid, loadedSnapshot)
-    {
-        if (!this._loadedCallbacks[uid])
-            return;
-        this._loadedCallbacks[uid](loadedSnapshot);
-        delete this._loadedCallbacks[uid];
-    },
-
     _changeBase: function()
     {
         if (this.baseSnapshot.uid === this._getProfiles()[this.baseSelectElement.selectedIndex].uid)
@@ -484,24 +475,16 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _loadProfile: function(profile, callback)
     {
-        if (profile._loaded) {
-            callback(profile);
-            return;
-        }
+        WebInspector.panels.profiles.loadHeapSnapshot(profile.uid, callback);
+    },
 
-        this._loadedCallbacks[profile.uid] = processLoadedSnapshot.bind(this);
-        InspectorBackend.getProfile(profile.typeId, profile.uid);
-
-        function processLoadedSnapshot(loadedSnapshot)
-        {
-            var snapshot = this._convertSnapshot(loadedSnapshot);
-            profile.children = snapshot.children;
-            profile.entries = snapshot.entries;
-            profile.lowlevels = snapshot.lowlevels;
-            this._prepareProfile(profile);
-            profile._loaded = true;
-            callback(profile);
-        }
+    processLoadedSnapshot: function(profile, loadedSnapshot)
+    {
+        var snapshot = WebInspector.HeapSnapshotView.prototype._convertSnapshot(loadedSnapshot);
+        profile.children = snapshot.children;
+        profile.entries = snapshot.entries;
+        profile.lowlevels = snapshot.lowlevels;
+        WebInspector.HeapSnapshotView.prototype._prepareProfile(profile);
     },
 
     _mouseDownInDataGrid: function(event)

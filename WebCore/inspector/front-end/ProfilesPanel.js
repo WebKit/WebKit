@@ -123,7 +123,6 @@ WebInspector.ProfilesPanel = function()
 
     this._profiles = [];
     this._profilerEnabled = Preferences.profilerAlwaysEnabled;
-    this._tempHeapSnapshots = [];
     this._reset();
 }
 
@@ -412,23 +411,48 @@ WebInspector.ProfilesPanel.prototype = {
             }
     },
 
+    loadHeapSnapshot: function(uid, callback)
+    {
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
+        if (!profile)
+            return;
+
+        if (profile._loaded)
+            callback(profile);
+        else if (profile._is_loading)
+            profile._callbacks.push(callback);
+        else {
+            profile._is_loading = true;
+            profile._callbacks = [callback];
+            profile._json = "";
+            InspectorBackend.getProfile(profile.typeId, profile.uid);
+        }
+    },
+
     addHeapSnapshotChunk: function(uid, chunk)
     {
-        if (this._tempHeapSnapshots[uid])
-            this._tempHeapSnapshots[uid] += chunk;
-        else
-            this._tempHeapSnapshots[uid] = chunk;
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
+        if (!profile || profile._loaded || !profile._is_loading)
+            return;
+
+        profile._json += chunk;
     },
 
     finishHeapSnapshot: function(uid)
     {
-        var profile =
-            this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (profile) {
-            var view = profile.__profilesPanelProfileType.viewForProfile(profile);
-            view.snapshotLoaded(uid, JSON.parse(this._tempHeapSnapshots[uid]));
-        }
-        delete this._tempHeapSnapshots[uid];
+        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
+        if (!profile || profile._loaded || !profile._is_loading)
+            return;
+
+        var callbacks = profile._callbacks;
+        delete profile._callbacks;
+        var loadedSnapshot = JSON.parse(profile._json);
+        delete profile._json;
+        delete profile._is_loading;
+        profile._loaded = true;
+        WebInspector.HeapSnapshotView.prototype.processLoadedSnapshot(profile, loadedSnapshot);
+        for (var i = 0; i < callbacks.length; ++i)
+            callbacks[i](profile);
     },
 
     showView: function(view)
