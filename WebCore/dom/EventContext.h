@@ -42,7 +42,6 @@ public:
 
     Node* node() const;
     EventTarget* target() const;
-    void defaultEventHandler(Event*) const;
     void handleLocalEvents(Event*) const;
 
 private:

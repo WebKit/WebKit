@@ -119,7 +119,7 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
 
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
-        if (!element || (evt->target() && element->contains(evt->target()->toNode())))
+        if (!element || (evt->target() && element->containsIncludingShadowDOM(evt->target()->toNode())))
             return;
 
         processingClick = true;

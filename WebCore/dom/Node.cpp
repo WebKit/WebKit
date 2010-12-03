@@ -1193,6 +1193,17 @@ bool Node::contains(const Node* node) const
     return this == node || node->isDescendantOf(this);
 }
 
+bool Node::containsIncludingShadowDOM(Node* node)
+{
+    if (!node)
+        return false;
+    for (Node* n = node; n; n = n->parentOrHostNode()) {
+        if (n == this)
+            return true;
+    }
+    return false;
+}
+
 void Node::attach()
 {
     ASSERT(!attached());
@@ -2635,7 +2646,7 @@ doneDispatching:
         if (event->bubbles()) {
             size_t size = ancestors.size();
             for (size_t i = 0; i < size; ++i) {
-                ancestors[i].defaultEventHandler(event.get());
+                ancestors[i].node()->defaultEventHandler(event.get());
                 ASSERT(!event->defaultPrevented());
                 if (event->defaultHandled())
                     goto doneWithDefault;

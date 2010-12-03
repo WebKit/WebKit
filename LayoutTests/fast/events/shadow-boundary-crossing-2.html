@@ -21,6 +21,17 @@ function clickOn(element)
     eventSender.mouseUp();
 }
 
+function clickOnLeftQuarterOf(element)
+{
+    if (!window.eventSender)
+        return;
+
+    var x = element.offsetLeft + element.offsetWidth / 4;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
 
 function leapForward()
 {
@@ -45,7 +56,7 @@ var tests = {
         log('Mutation events should not propagate out of the shadow DOM', !mutationEventFired);
         textarea.parentNode.removeChild(textarea);
     },
-    defaultEventRetargeting: function()
+    labelSyntheticClick: function()
     {
         var count = 0;
         var label = document.body.appendChild(document.createElement('label'));
@@ -58,8 +69,23 @@ var tests = {
             count++;
         }, false);
         clickOn(searchInput);
-        log("Events for default event handler should also be retargeted", count == 1);
+        log("Label should look beyond shadow boundary to detect if it encloses its associated element", count == 1);
         label.parentNode.removeChild(label);
+    },
+    defaultEventRetargeting: function()
+    {
+        var count = 0;
+        var fileInput = document.body.appendChild(document.createElement('input'));
+        fileInput.setAttribute('type', 'file');
+        var counter = function()
+        {
+            count++;
+        }
+        document.body.addEventListener('DOMActivate', counter, false);
+        clickOnLeftQuarterOf(fileInput);
+        log("Events for default event handler should not be retargeted", count == 1);
+        document.body.removeEventListener('DOMActivate', counter, false);
+        fileInput.parentNode.removeChild(fileInput);
     },
     eventInProgress: function()
     {

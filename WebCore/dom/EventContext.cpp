@@ -41,13 +41,6 @@ EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> curren
 {
 }
 
-void EventContext::defaultEventHandler(Event* event) const
-{
-    event->setTarget(m_target.get());
-    event->setCurrentTarget(m_currentTarget.get());
-    m_node->defaultEventHandler(event);
-}
-
 void EventContext::handleLocalEvents(Event* event) const
 {
     event->setTarget(m_target.get());

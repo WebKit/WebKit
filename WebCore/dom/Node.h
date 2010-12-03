@@ -385,6 +385,7 @@ public:
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
     bool isDescendantOf(const Node*) const;
     bool contains(const Node*) const;
+    bool containsIncludingShadowDOM(Node*);
 
     // This method is used to do strict error-checking when adding children via
     // the public DOM API (e.g., appendChild()).
