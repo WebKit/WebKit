@@ -386,19 +386,20 @@ class TestShellThread(WatchableThread):
             test_input.image_hash = self._port.expected_checksum(
                 test_input.filename)
         test_output = driver.run_test(test_input)
-        return self._process_output(test_input.filename, test_output)
+        return self._process_output(test_input, test_output)
 
-    def _process_output(self, test_filename, test_output):
+    def _process_output(self, test_input, test_output):
         """Receives the output from a DumpRenderTree process, subjects it to a
         number of tests, and returns a list of failure types the test produced.
 
         Args:
-        test_filename: full path to the test in question.
+        test_input: a TestInput object
         test_output: a TestOutput object containing the output of the test
 
         Returns: a TestResult object
         """
         failures = []
+        test_filename = test_input.filename
 
         if test_output.crash:
             failures.append(test_failures.FailureCrash())
@@ -426,7 +427,7 @@ class TestShellThread(WatchableThread):
         for test_type in self._test_types:
             start_diff_time = time.time()
             new_failures = test_type.compare_output(self._port,
-                                                    test_filename,
+                                                    test_input,
                                                     self._test_args,
                                                     test_output,
                                                     expected_test_output)

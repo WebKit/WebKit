@@ -1,3 +1,21 @@
+2010-12-02  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor test_types's compare_output() method so that it takes a
+        TestInput object.
+
+        compare_output() will need additional information included in a TestInput
+        object to support reftests. This change is a pre-requirement of that.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50362
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base_unittest.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2010-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

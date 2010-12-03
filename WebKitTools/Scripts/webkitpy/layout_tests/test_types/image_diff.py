@@ -90,12 +90,13 @@ class ImageDiff(test_type_base.TestTypeBase):
                                              self.FILENAME_SUFFIX_COMPARE)
         return port.diff_image(actual_image, expected_image, diff_filename)
 
-    def compare_output(self, port, filename, test_args, actual_test_output,
+    def compare_output(self, port, test_input, test_args, actual_test_output,
                        expected_test_output):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
         """
         failures = []
+        filename = test_input.filename
 
         # If we didn't produce a hash file, this test must be text-only.
         if actual_test_output.image_hash is None:
