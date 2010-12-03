@@ -1,5 +1,21 @@
 2010-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r73222.
+        http://trac.webkit.org/changeset/73222
+        https://bugs.webkit.org/show_bug.cgi?id=50449
+
+        r73211 seemed to break Chromium's "Webkit Win (dbg)(2)" bot.
+        (Requested by yutak on #webkit).
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r73228.
         http://trac.webkit.org/changeset/73228
         https://bugs.webkit.org/show_bug.cgi?id=50448

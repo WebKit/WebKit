@@ -98,7 +98,7 @@ class WatchableThread(threading.Thread):
 
 
 class TestShellThread(WatchableThread):
-    def __init__(self, port, options, worker_number,
+    def __init__(self, port, options, worker_number, worker_name,
                  filename_list_queue, result_queue):
         """Initialize all the local state for this DumpRenderTree thread.
 
@@ -106,6 +106,7 @@ class TestShellThread(WatchableThread):
           port: interface to port-specific hooks
           options: command line options argument from optparse
           worker_number: identifier for a particular worker thread.
+          worker_name: for logging.
           filename_list_queue: A thread safe Queue class that contains lists
               of tuples of (filename, uri) pairs.
           result_queue: A thread safe Queue class that will contain
@@ -115,7 +116,7 @@ class TestShellThread(WatchableThread):
         self._port = port
         self._options = options
         self._worker_number = worker_number
-        self._name = 'worker/%d' % worker_number
+        self._name = worker_name
         self._filename_list_queue = filename_list_queue
         self._result_queue = result_queue
 
@@ -182,9 +183,6 @@ class TestShellThread(WatchableThread):
 
     def get_num_tests(self):
         return self._num_tests
-
-    def name(self):
-        return self._name
 
     def next_timeout(self):
         """Return the time the test is supposed to finish by."""
@@ -335,7 +333,7 @@ class TestShellThread(WatchableThread):
 
         class SingleTestThread(threading.Thread):
             def run(self):
-                result = worker._run_single_test(test_input, driver)
+                result = worker._run_single_test(driver, test_input)
 
         thread = SingleTestThread()
         thread.start()

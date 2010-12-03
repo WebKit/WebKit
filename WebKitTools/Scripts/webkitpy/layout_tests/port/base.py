@@ -127,10 +127,6 @@ class Port(object):
         port."""
         return self._executive.cpu_count()
 
-    def default_worker_model(self):
-        """Return the concurrency model the port should use."""
-        return 'threads'
-
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines
         in for this port."""
