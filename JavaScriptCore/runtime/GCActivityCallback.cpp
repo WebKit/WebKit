@@ -46,5 +46,9 @@ void DefaultGCActivityCallback::operator()()
 {
 }
 
+void DefaultGCActivityCallback::synchronize()
+{
+}
+
 }
 

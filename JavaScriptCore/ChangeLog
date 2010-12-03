@@ -1,5 +1,12 @@
 2010-12-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix Windows build.
+
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::synchronize): Added a non-CF implementation.
+
+2010-12-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Fixed <rdar://problem/8310571> CrashTracer: 60 crashes in Photo Booth at
