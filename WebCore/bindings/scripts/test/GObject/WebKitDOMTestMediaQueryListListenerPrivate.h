@@ -31,7 +31,7 @@ namespace WebKit {
     WebCore::TestMediaQueryListListener *
     core(WebKitDOMTestMediaQueryListListener *request);
 
-    gpointer
+    WebKitDOMTestMediaQueryListListener*
     kit(WebCore::TestMediaQueryListListener* node);
 
 } // namespace WebKit

@@ -31,7 +31,7 @@ namespace WebKit {
     WebCore::TestCallback *
     core(WebKitDOMTestCallback *request);
 
-    gpointer
+    WebKitDOMTestCallback*
     kit(WebCore::TestCallback* node);
 
 } // namespace WebKit

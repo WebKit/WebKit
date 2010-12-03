@@ -31,7 +31,7 @@ namespace WebKit {
     WebCore::TestObj *
     core(WebKitDOMTestObj *request);
 
-    gpointer
+    WebKitDOMTestObj*
     kit(WebCore::TestObj* node);
 
 } // namespace WebKit

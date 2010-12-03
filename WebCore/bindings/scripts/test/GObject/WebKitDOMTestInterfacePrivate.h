@@ -31,7 +31,7 @@ namespace WebKit {
     WebCore::TestInterface *
     core(WebKitDOMTestInterface *request);
 
-    gpointer
+    WebKitDOMTestInterface*
     kit(WebCore::TestInterface* node);
 
 } // namespace WebKit

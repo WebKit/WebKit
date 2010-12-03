@@ -43,14 +43,14 @@
 
 namespace WebKit {
     
-gpointer kit(WebCore::TestObj* obj)
+WebKitDOMTestObj* kit(WebCore::TestObj* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return ret;
+        return static_cast<WebKitDOMTestObj*>(ret);
 
-    return DOMObjectCache::put(obj, WebKit::wrapTestObj(obj));
+    return static_cast<WebKitDOMTestObj*>(DOMObjectCache::put(obj, WebKit::wrapTestObj(obj)));
 }
     
 } // namespace WebKit //
@@ -116,7 +116,7 @@ webkit_dom_test_obj_obj_method(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethod());
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -135,7 +135,7 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, 
         g_return_val_if_fail(converted_obj_arg, 0);
     }
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg));
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -154,7 +154,7 @@ webkit_dom_test_obj_method_that_requires_all_args(WebKitDOMTestObj* self, const 
         g_return_val_if_fail(converted_obj_arg, 0);
     }
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgs(converted_str_arg, converted_obj_arg));
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -179,7 +179,7 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
         WebCore::getExceptionCodeDescription(ec, ecdesc);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -316,7 +316,7 @@ webkit_dom_test_obj_with_script_state_obj(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->withScriptStateObj());
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -348,7 +348,7 @@ webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GErr
         WebCore::getExceptionCodeDescription(ec, ecdesc);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -434,7 +434,7 @@ webkit_dom_test_obj_get_read_only_test_obj_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->readOnlyTestObjAttr());
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -561,7 +561,7 @@ webkit_dom_test_obj_get_test_obj_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->testObjAttr());
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -587,7 +587,7 @@ webkit_dom_test_obj_get_xml_obj_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->xmlObjAttr());
-    WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
     return res;
 }
 

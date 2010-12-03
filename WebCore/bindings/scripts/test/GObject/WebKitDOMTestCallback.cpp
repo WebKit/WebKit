@@ -44,14 +44,14 @@
 
 namespace WebKit {
     
-gpointer kit(WebCore::TestCallback* obj)
+WebKitDOMTestCallback* kit(WebCore::TestCallback* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return ret;
+        return static_cast<WebKitDOMTestCallback*>(ret);
 
-    return DOMObjectCache::put(obj, WebKit::wrapTestCallback(obj));
+    return static_cast<WebKitDOMTestCallback*>(DOMObjectCache::put(obj, WebKit::wrapTestCallback(obj)));
 }
     
 } // namespace WebKit //

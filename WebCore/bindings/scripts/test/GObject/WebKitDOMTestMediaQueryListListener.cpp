@@ -36,14 +36,14 @@
 
 namespace WebKit {
     
-gpointer kit(WebCore::TestMediaQueryListListener* obj)
+WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return ret;
+        return static_cast<WebKitDOMTestMediaQueryListListener*>(ret);
 
-    return DOMObjectCache::put(obj, WebKit::wrapTestMediaQueryListListener(obj));
+    return static_cast<WebKitDOMTestMediaQueryListListener*>(DOMObjectCache::put(obj, WebKit::wrapTestMediaQueryListListener(obj)));
 }
     
 } // namespace WebKit //

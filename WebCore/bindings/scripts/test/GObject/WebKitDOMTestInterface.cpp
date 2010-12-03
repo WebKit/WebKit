@@ -38,14 +38,14 @@
 
 namespace WebKit {
     
-gpointer kit(WebCore::TestInterface* obj)
+WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return ret;
+        return static_cast<WebKitDOMTestInterface*>(ret);
 
-    return DOMObjectCache::put(obj, WebKit::wrapTestInterface(obj));
+    return static_cast<WebKitDOMTestInterface*>(DOMObjectCache::put(obj, WebKit::wrapTestInterface(obj)));
 }
     
 } // namespace WebKit //
