@@ -39,6 +39,9 @@
 #import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
+#import <wtf/UnusedParam.h>
+
+#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
 using namespace WebCore;
 
@@ -146,6 +149,7 @@ static NSDictionary* nullActionsDictionary()
     return actions;
 }
 
+#if HAVE_MODERN_QUARTZCORE
 static NSString* toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
@@ -155,6 +159,7 @@ static NSString* toCAFilterType(PlatformCALayer::FilterType type)
     default: return 0;
     }
 }
+#endif
 
 PassRefPtr<PlatformCALayer> PlatformCALayer::create(LayerType layerType, GraphicsLayerCA* owner)
 {
@@ -184,9 +189,11 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Grap
             case LayerTypeWebLayer:
                 layerClass = [WebLayer class];
                 break;
+#if HAVE_MODERN_QUARTZCORE
             case LayerTypeTransformLayer:
                 layerClass = [CATransformLayer class];
                 break;
+#endif
             case LayerTypeWebTiledLayer:
                 layerClass = [WebTiledLayer class];
                 break;
@@ -434,14 +441,20 @@ void PlatformCALayer::setPosition(const FloatPoint3D& value)
 FloatPoint3D PlatformCALayer::anchorPoint() const
 {
     CGPoint point = [m_layer.get() anchorPoint];
-    return FloatPoint3D(point.x, point.y, [m_layer.get() anchorPointZ]);
+    float z = 0;
+#if HAVE_MODERN_QUARTZCORE
+    z = [m_layer.get() anchorPointZ];
+#endif
+    return FloatPoint3D(point.x, point.y, z);
 }
 
 void PlatformCALayer::setAnchorPoint(const FloatPoint3D& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAnchorPoint:CGPointMake(value.x(), value.y())];
+#if HAVE_MODERN_QUARTZCORE
     [m_layer.get() setAnchorPointZ:value.z()];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -475,6 +488,34 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+TransformationMatrix PlatformCALayer::contentsTransform() const
+{
+#if !HAVE_MODERN_QUARTZCORE
+    if (m_layerType != LayerTypeWebLayer)
+        return TransformationMatrix();
+        
+    CGAffineTransform t = [static_cast<WebLayer*>(m_layer.get()) contentsTransform];
+    return TransformationMatrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
+#else
+    return TransformationMatrix();
+#endif
+}
+
+void PlatformCALayer::setContentsTransform(const TransformationMatrix& value)
+{
+#if !HAVE_MODERN_QUARTZCORE
+    if (m_layerType != LayerTypeWebLayer)
+        return;
+
+    CGAffineTransform transform = value;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer.get() setContentsTransform:transform];
+    END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(value);
+#endif
+}
+
 bool PlatformCALayer::isHidden() const
 {
     return [m_layer.get() isHidden];
@@ -489,14 +530,22 @@ void PlatformCALayer::setHidden(bool value)
 
 bool PlatformCALayer::isGeometryFlipped() const
 {
+#if HAVE_MODERN_QUARTZCORE
     return [m_layer.get() isGeometryFlipped];
+#else
+    return false;
+#endif
 }
 
 void PlatformCALayer::setGeometryFlipped(bool value)
 {
+#if HAVE_MODERN_QUARTZCORE
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setGeometryFlipped:value];
     END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 bool PlatformCALayer::isDoubleSided() const
@@ -549,14 +598,24 @@ void PlatformCALayer::setContentsRect(const FloatRect& value)
 
 void PlatformCALayer::setMinificationFilter(FilterType value)
 {
+#if HAVE_MODERN_QUARTZCORE
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setMinificationFilter:toCAFilterType(value)];
+    END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 void PlatformCALayer::setMagnificationFilter(FilterType value)
 {
+#if HAVE_MODERN_QUARTZCORE
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setMagnificationFilter:toCAFilterType(value)];
     END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 Color PlatformCALayer::backgroundColor() const

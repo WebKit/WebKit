@@ -132,6 +132,9 @@ public:
     TransformationMatrix sublayerTransform() const;
     void setSublayerTransform(const TransformationMatrix&);
 
+    TransformationMatrix contentsTransform() const;
+    void setContentsTransform(const TransformationMatrix&);
+
     bool isHidden() const;
     void setHidden(bool);
 

@@ -109,25 +109,25 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     case TransformOperation::ROTATE:
     case TransformOperation::ROTATE_X:
     case TransformOperation::ROTATE_Y:
-        value = transformOp ? deg2rad(static_cast<const RotateTransformOperation*>(transformOp)->angle()) : 0;
+        value = transformOp ? narrowPrecisionToFloat(deg2rad(static_cast<const RotateTransformOperation*>(transformOp)->angle())) : 0;
         break;
     case TransformOperation::SCALE_X:
-        value = transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->x() : 1;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->x()) : 1;
         break;
     case TransformOperation::SCALE_Y:
-        value = transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->y() : 1;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->y()) : 1;
         break;
     case TransformOperation::SCALE_Z:
-        value = transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->z() : 1;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->z()) : 1;
         break;
     case TransformOperation::TRANSLATE_X:
-        value = transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->x(size) : 0;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->x(size)) : 0;
         break;
     case TransformOperation::TRANSLATE_Y:
-        value = transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->y(size) : 0;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->y(size)) : 0;
         break;
     case TransformOperation::TRANSLATE_Z:
-        value = transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->z(size) : 0;
+        value = transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->z(size)) : 0;
         break;
     default:
         break;
@@ -139,15 +139,15 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     switch (transformType) {
     case TransformOperation::SCALE:
     case TransformOperation::SCALE_3D:
-        value.setX(transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->x() : 1);
-        value.setY(transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->y() : 1);
-        value.setZ(transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->z() : 1);
+        value.setX(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->x()) : 1);
+        value.setY(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->y()) : 1);
+        value.setZ(transformOp ? narrowPrecisionToFloat(static_cast<const ScaleTransformOperation*>(transformOp)->z()) : 1);
         break;
     case TransformOperation::TRANSLATE:
     case TransformOperation::TRANSLATE_3D:
-        value.setX(transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->x(size) : 0);
-        value.setY(transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->y(size) : 0);
-        value.setZ(transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->z(size) : 0);
+        value.setX(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->x(size)) : 0);
+        value.setY(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->y(size)) : 0);
+        value.setZ(transformOp ? narrowPrecisionToFloat(static_cast<const TranslateTransformOperation*>(transformOp)->z(size)) : 0);
         break;
     default:
         break;
@@ -1991,8 +1991,9 @@ void GraphicsLayerCA::updateContentsTransform()
 #if !HAVE_MODERN_QUARTZCORE
     if (contentsOrientation() == CompositingCoordinatesBottomUp) {
         CGAffineTransform contentsTransform = CGAffineTransformMakeScale(1, -1);
-        contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -[m_layer.get() bounds].size.height);
-        [m_layer.get() setContentsTransform:contentsTransform];
+        contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -m_layer->bounds().size().height());
+        TransformationMatrix transform3D(contentsTransform.a, contentsTransform.b, contentsTransform.c, contentsTransform.d, contentsTransform.tx, contentsTransform.ty);
+        m_layer->setContentsTransform(TransformationMatrix(transform3D));
     }
 #endif
 }

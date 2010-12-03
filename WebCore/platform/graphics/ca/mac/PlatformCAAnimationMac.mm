@@ -33,6 +33,7 @@
 #import "PlatformString.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/UnusedParam.h>
 
 #define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
@@ -83,6 +84,7 @@ static PlatformCAAnimation::FillModeType fromCAFillModeType(NSString* string)
     return PlatformCAAnimation::Forwards;
 }
 
+#if HAVE_MODERN_QUARTZCORE
 static NSString* toCAValueFunctionType(PlatformCAAnimation::ValueFunctionType type)
 {
     switch (type) {
@@ -139,6 +141,7 @@ static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* 
 
     return PlatformCAAnimation::NoValueFunction;
 }
+#endif
 
 static CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction* timingFunction)
 {
@@ -358,13 +361,21 @@ void PlatformCAAnimation::setAdditive(bool value)
 
 PlatformCAAnimation::ValueFunctionType PlatformCAAnimation::valueFunction() const
 {
+#if HAVE_MODERN_QUARTZCORE
     CAValueFunction* vf = [m_animation.get() valueFunction];
     return fromCAValueFunctionType([vf name]);
+#else
+    return NoValueFunction;
+#endif
 }
 
 void PlatformCAAnimation::setValueFunction(ValueFunctionType value)
 {
+#if HAVE_MODERN_QUARTZCORE
     [m_animation.get() setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(value)]];
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 void PlatformCAAnimation::setFromValue(float value)
