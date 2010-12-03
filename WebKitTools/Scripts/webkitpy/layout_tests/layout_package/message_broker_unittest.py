@@ -42,60 +42,139 @@ from webkitpy.layout_tests import run_webkit_tests
 
 import message_broker
 
-# FIXME: Boy do we need a lot more tests here ...
 
+class TestThread(threading.Thread):
+    def __init__(self, started_queue, stopping_queue):
+        threading.Thread.__init__(self)
+        self._id = None
+        self._started_queue = started_queue
+        self._stopping_queue = stopping_queue
+        self._timeout = False
+        self._timeout_queue = Queue.Queue()
+        self._exception_info = None
 
-class TestThreadStacks(unittest.TestCase):
-    class Thread(threading.Thread):
-        def __init__(self, started_queue, stopping_queue):
-            threading.Thread.__init__(self)
-            self._id = None
-            self._started_queue = started_queue
-            self._stopping_queue = stopping_queue
+    def id(self):
+        return self._id
 
-        def id(self):
-            return self._id
+    def name(self):
+        return 'worker/0'
 
-        def name(self):
-            return 'worker/0'
+    def run(self):
+        self._covered_run()
 
-        def run(self):
-            self._id = thread.get_ident()
+    def _covered_run(self):
+        # FIXME: this is a separate routine to work around a bug
+        # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
+        self._id = thread.get_ident()
+        try:
             self._started_queue.put('')
             msg = self._stopping_queue.get()
+            if msg == 'KeyboardInterrupt':
+                raise KeyboardInterrupt
+            elif msg == 'Exception':
+                raise ValueError()
+            elif msg == 'Timeout':
+                self._timeout = True
+                self._timeout_queue.get()
+        except:
+            self._exception_info = sys.exc_info()
 
-    def make_broker(self):
-        options = mocktool.MockOptions()
-        return message_broker._MultiThreadedBroker(port=None,
-                                                     options=options)
+    def exception_info(self):
+        return self._exception_info
 
+    def next_timeout(self):
+        if self._timeout:
+            self._timeout_queue.put('done')
+            return time.time() - 10
+        return time.time()
+
+    def clear_next_timeout(self):
+        self._next_timeout = None
+
+class TestHandler(logging.Handler):
+    def __init__(self, astream):
+        logging.Handler.__init__(self)
+        self._stream = astream
+
+    def emit(self, record):
+        self._stream.write(self.format(record))
+
+
+class MultiThreadedBrokerTest(unittest.TestCase):
+    class MockTestRunner(object):
+        def __init__(self):
+            pass
+
+        def __del__(self):
+            pass
+
+        def update(self):
+            pass
+
+    def run_one_thread(self, msg):
+        runner = self.MockTestRunner()
+        port = None
+        options = mocktool.MockOptions(child_processes='1')
+        starting_queue = Queue.Queue()
+        stopping_queue = Queue.Queue()
+        broker = message_broker._MultiThreadedBroker(port, options)
+        broker._test_runner = runner
+        child_thread = TestThread(starting_queue, stopping_queue)
+        name = child_thread.name()
+        broker._threads[name] = child_thread
+        child_thread.start()
+        started_msg = starting_queue.get()
+        stopping_queue.put(msg)
+        return broker.run_message_loop()
+
+    def test_basic(self):
+        interrupted = self.run_one_thread('')
+        self.assertFalse(interrupted)
+
+    def test_interrupt(self):
+        self.assertRaises(KeyboardInterrupt, self.run_one_thread, 'KeyboardInterrupt')
+
+    def test_timeout(self):
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        interrupted = self.run_one_thread('Timeout')
+        self.assertFalse(interrupted)
+        oc.restore_output()
+
+    def test_exception(self):
+        self.assertRaises(ValueError, self.run_one_thread, 'Exception')
+
+
+class Test(unittest.TestCase):
     def test_find_thread_stack_found(self):
-        broker = self.make_broker()
         id, stack = sys._current_frames().items()[0]
-        found_stack = broker._find_thread_stack(id)
+        found_stack = message_broker._find_thread_stack(id)
         self.assertNotEqual(found_stack, None)
 
     def test_find_thread_stack_not_found(self):
-        broker = self.make_broker()
-        found_stack = broker._find_thread_stack(0)
+        found_stack = message_broker._find_thread_stack(0)
         self.assertEqual(found_stack, None)
 
     def test_log_wedged_worker(self):
-        broker = self.make_broker()
         oc = outputcapture.OutputCapture()
         oc.capture_output()
+        logger = message_broker._log
+        astream = array_stream.ArrayStream()
+        handler = TestHandler(astream)
+        logger.addHandler(handler)
 
         starting_queue = Queue.Queue()
         stopping_queue = Queue.Queue()
-        child_thread = TestThreadStacks.Thread(starting_queue, stopping_queue)
+        child_thread = TestThread(starting_queue, stopping_queue)
         child_thread.start()
-        broker._threads[child_thread.name()] = child_thread
         msg = starting_queue.get()
 
-        broker.log_wedged_worker(child_thread.name())
+        message_broker.log_wedged_worker(child_thread.name(),
+                                         child_thread.id())
         stopping_queue.put('')
         child_thread.join(timeout=1.0)
 
+        self.assertFalse(astream.empty())
         self.assertFalse(child_thread.isAlive())
         oc.restore_output()
 
