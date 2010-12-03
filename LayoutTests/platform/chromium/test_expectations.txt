@@ -732,7 +732,8 @@ BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 // than chromium's old forked copy.  We can remove the PASS on these once we
 // switch.
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
-BUGWK48655 : plugins/js-from-destroy.html = CRASH
+BUGWK48655 WIN MAC : plugins/js-from-destroy.html = CRASH
+BUGWK48655 LINUX : plugins/js-from-destroy.html = CRASH TEXT
 BUG_TONY WIN : plugins/mouse-events.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin is currently named
@@ -3167,7 +3168,7 @@ BUG_YUTAK LINUX : http/tests/plugins/cross-frame-object-access.html = TEXT
 BUG_YUTAK LINUX : http/tests/plugins/get-url.html = TEXT
 BUG_YUTAK LINUX : http/tests/plugins/interrupted-get-url.html = TEXT
 BUG_YUTAK LINUX : http/tests/plugins/npapi-response-headers.html = TEXT
-BUG_YUTAK LINUX : http/tests/plugins/post-url-file.html = TEXT
+// See below: http/tests/plugins/post-url-file.html = TEXT
 BUG_YUTAK LINUX : http/tests/plugins/third-party-cookie-accept-policy.html = TEXT
 BUG_YUTAK LINUX : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = TEXT
 BUG_YUTAK LINUX : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT
@@ -3187,7 +3188,7 @@ BUG_YUTAK LINUX : plugins/geturl-replace-query.html = TEXT
 BUG_YUTAK LINUX : plugins/iframe-shims.html = TEXT
 BUG_YUTAK LINUX : plugins/inner-html-display-none.html = TEXT
 BUG_YUTAK LINUX : plugins/instance-available-before-stylesheets-loaded.html = TEXT
-BUG_YUTAK LINUX : plugins/js-from-destroy.html = TEXT
+// See above: plugins/js-from-destroy.html = TEXT
 BUG_YUTAK LINUX : plugins/missing-plugin.html = TEXT
 BUG_YUTAK LINUX : plugins/mouse-events.html = TEXT
 BUG_YUTAK LINUX : plugins/netscape-destroy-plugin-script-objects.html = TEXT
@@ -3351,7 +3352,8 @@ BUG_DRT WIN : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = CRASH
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
-BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
+BUG_DRT MAC : http/tests/plugins/post-url-file.html = TIMEOUT
+BUG_DRT LINUX : http/tests/plugins/post-url-file.html = TIMEOUT TEXT
 BUG_DRT BUG8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 BUG_DRT LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG_DRT MAC : media/video-play-pause-events.html = CRASH
