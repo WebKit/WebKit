@@ -100,21 +100,6 @@ SET(WebCore_IDL_INCLUDES
     xml
 )
 
-SET(WebCore_IDL_PURE_FILES
-    svg/ElementTimeControl.idl
-    svg/SVGExternalResourcesRequired.idl
-    svg/SVGFilterPrimitiveStandardAttributes.idl
-    svg/SVGFitToViewBox.idl
-    svg/SVGLangSpace.idl
-    svg/SVGLocatable.idl
-    svg/SVGStylable.idl
-    svg/SVGTests.idl
-    svg/SVGTransformable.idl
-    svg/SVGURIReference.idl
-    svg/SVGViewSpec.idl
-    svg/SVGZoomAndPan.idl
-)
-
 SET(WebCore_IDL_FILES
     css/Counter.idl
     css/CSSCharsetRule.idl
@@ -2059,10 +2044,6 @@ ENDFOREACH ()
 
 FOREACH (_file ${WebCore_IDL_FILES})
     GENERATE_JS_FROM_IDL(${_file})
-ENDFOREACH ()
-
-FOREACH (_file ${WebCore_IDL_PURE_FILES})
-    GENERATE_JS_FROM_IDL_PURE(${_file})
 ENDFOREACH ()
 
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES})
