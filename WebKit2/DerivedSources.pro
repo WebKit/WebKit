@@ -46,6 +46,7 @@ DIRS = \
     $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt
 
 for(DIR, DIRS) {
+    DIR = $$replace(DIR, /, $$QMAKE_DIR_SEP)
     !exists($$DIR): system($$QMAKE_MKDIR $$DIR)
 }
 
@@ -115,17 +116,19 @@ SCRIPTS = \
     $$PWD/Scripts/webkit2/__init__.py \
     $$PWD/Scripts/webkit2/messages.py
 
-ualist_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
-ualist_copier.depends = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt
-ualist_copier.input = $${SRC_ROOT_DIR}/WebKitTools/QtTestBrowser/useragentlist.txt
+ualist_copier.input = $${SRC_ROOT_DIR}WebKitTools/QtTestBrowser/useragentlist.txt
 ualist_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
+ualist_copier.tempNames = $$ualist_copier.input $$ualist_copier.output
+ualist_copier.commands = $$QMAKE_COPY $$replace(ualist_copier.tempNames, "/", $$QMAKE_DIR_SEP)
+ualist_copier.depends = $$ualist_copier.input
 generated_files.depends += ualist_copier
 QMAKE_EXTRA_TARGETS += ualist_copier
 
-qrc_copier.commands = $(COPY_FILE) $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
-qrc_copier.depends = ualist_copier $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
-qrc_copier.input = $${SRC_ROOT_DIR}/WebKitTools/MiniBrowser/MiniBrowser.qrc
+qrc_copier.input = $${SRC_ROOT_DIR}WebKitTools/MiniBrowser/MiniBrowser.qrc
 qrc_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
+qrc_copier.tempNames = $$qrc_copier.input $$qrc_copier.output
+qrc_copier.commands = $$QMAKE_COPY $$replace(qrc_copier.tempNames, "/", $$QMAKE_DIR_SEP)
+qrc_copier.depends = ualist_copier $$qrc_copier.input
 generated_files.depends += qrc_copier
 QMAKE_EXTRA_TARGETS += qrc_copier
 

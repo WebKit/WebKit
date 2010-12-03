@@ -1,3 +1,13 @@
+2010-12-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [WK2] Build system improvements for non-Unix targets
+        https://bugs.webkit.org/show_bug.cgi?id=50257
+
+        * DerivedSources.pro:
+        Fix dir seperator errors on Windows build host. Thanks to Laszlo Gombos.
+
 2010-12-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
