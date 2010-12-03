@@ -81,6 +81,8 @@ private:
     virtual bool isTypingCommand() const;
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
 
+    static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
+
     void updatePreservesTypingStyle(ETypingCommand);
     void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);

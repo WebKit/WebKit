@@ -54,6 +54,8 @@ private:
     bool performTrivialReplace(const String&, bool selectInsertedText);
 
     unsigned m_charactersAdded;
+
+    friend class TypingCommand;
 };
 
 } // namespace WebCore

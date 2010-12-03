@@ -91,6 +91,7 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (granularity == CharacterGranularity && isOpenForMoreTypingCommand(lastEditCommand)) {
+        updateSelectionIfDifferentFromCurrentSelection(static_cast<TypingCommand*>(lastEditCommand), frame);
         static_cast<TypingCommand*>(lastEditCommand)->deleteKeyPressed(granularity, killRing);
         return;
     }
@@ -110,6 +111,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (granularity == CharacterGranularity && isOpenForMoreTypingCommand(lastEditCommand)) {
+        updateSelectionIfDifferentFromCurrentSelection(static_cast<TypingCommand*>(lastEditCommand), frame);
         static_cast<TypingCommand*>(lastEditCommand)->forwardDeleteKeyPressed(granularity, killRing);
         return;
     }
@@ -118,6 +120,18 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     typingCommand->setSmartDelete(smartDelete);
     typingCommand->apply();
 }
+
+void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Frame* frame)
+{
+    ASSERT(frame);
+    VisibleSelection currentSelection = frame->selection()->selection();
+    if (currentSelection == typingCommand->endingSelection())
+        return;
+    
+    typingCommand->setStartingSelection(currentSelection);
+    typingCommand->setEndingSelection(currentSelection);
+}
+    
 
 void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText, bool insertedTextIsComposition)
 {
@@ -129,6 +143,7 @@ void TypingCommand::insertText(Document* document, const String& text, bool sele
     insertText(document, text, frame->selection()->selection(), selectInsertedText, insertedTextIsComposition);
 }
 
+// FIXME: We shouldn't need to take selectionForInsertion. It should be identical to SelectionController's current selection.
 void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
 {
 #if REMOVE_MARKERS_UPON_EDITING
@@ -163,15 +178,11 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     RefPtr<EditCommand> lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand.get())) {
         TypingCommand* lastTypingCommand = static_cast<TypingCommand*>(lastEditCommand.get());
-        if (changeSelection) {
+        if (lastTypingCommand->endingSelection() != selectionForInsertion) {
             lastTypingCommand->setStartingSelection(selectionForInsertion);
             lastTypingCommand->setEndingSelection(selectionForInsertion);
         }
         lastTypingCommand->insertText(newText, selectInsertedText);
-        if (changeSelection) {
-            lastTypingCommand->setEndingSelection(currentSelection);
-            frame->selection()->setSelection(currentSelection);
-        }
         return;
     }
 
@@ -370,6 +381,10 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
     if (!command) {
         command = InsertTextCommand::create(document());
         applyCommandToComposite(command);
+    }
+    if (endingSelection() != command->endingSelection()) {
+        command->setStartingSelection(endingSelection());
+        command->setEndingSelection(endingSelection());
     }
     command->input(text, selectInsertedText);
     typingAddedToOpenCommand(InsertText);
