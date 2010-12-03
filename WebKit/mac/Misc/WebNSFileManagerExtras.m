@@ -94,6 +94,7 @@ typedef struct MetaDataInfo
 static void *setMetaData(void* context)
 {
     MetaDataInfo *info = (MetaDataInfo *)context;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     WKSetMetadataURL((NSString *)info->URLString, (NSString *)info->referrer, (NSString *)info->path);
 
     if (info->URLString)
@@ -102,8 +103,10 @@ static void *setMetaData(void* context)
         CFRelease(info->referrer);
     if (info->path)
         CFRelease(info->path);
-    
+
     free(info);
+    [pool drain];
+
     return 0;
 }
 

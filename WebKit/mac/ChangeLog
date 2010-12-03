@@ -1,3 +1,12 @@
+2010-12-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/8708730> Objects reported as being leaked due to lack of autorelease pool
+
+        * Misc/WebNSFileManagerExtras.m:
+        (setMetaData): Create an autorelease pool for the duration of the thread body.
+
 2010-12-02  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
