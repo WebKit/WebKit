@@ -201,7 +201,8 @@ sub GetSVGPropertyTypes
         $implIncludes{"SVGAnimatedPropertyTearOff.h"} = 1;
     } elsif ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
         $svgListPropertyType = $svgWrappedNativeType;
-        $implIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
+        $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
+        $headerIncludes{"SVGStaticListPropertyTearOff.h"} = 1;
     } elsif ($svgNativeType =~ /SVGTransformListPropertyTearOff/) {
         $svgListPropertyType = $svgWrappedNativeType;
         $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
