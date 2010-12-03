@@ -24,9 +24,10 @@
 
 #include "config.h"
 
-#include "AudioUtilities.h"
+#if ENABLE(WEB_AUDIO)
 
-#include <math.h>
+#include "AudioUtilities.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -50,9 +51,13 @@ double linearToDecibels(double linear)
 
 double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate)
 {
-    return 1.0 - pow(1.0 / M_E, 1.0 / (sampleRate * timeConstant));
+    // hardcoded value is temporary build fix for Windows.
+    // FIXME: replace hardcode 2.718282 with M_E until the correct MathExtras.h solution is determined.
+    return 1.0 - pow(1.0 / 2.718282, 1.0 / (sampleRate * timeConstant));
 }
     
 } // AudioUtilites
 
 } // WebCore
+
+#endif // ENABLE(WEB_AUDIO)
