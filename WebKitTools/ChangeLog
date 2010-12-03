@@ -1,3 +1,11 @@
+2010-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Chromium Linux plugin tests by not logging
+        unconditionally from the event handling code.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventX11):
+
 2010-12-02  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

@@ -613,40 +613,49 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
     XButtonReleasedEvent* buttonReleaseEvent = reinterpret_cast<XButtonReleasedEvent*>(event);
     switch (event->type) {
     case ButtonPress:
-        pluginLog(instance, "mouseDown at (%d, %d)", buttonPressEvent->x, buttonPressEvent->y);
+        if (obj->eventLogging)
+            pluginLog(instance, "mouseDown at (%d, %d)", buttonPressEvent->x, buttonPressEvent->y);
         if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
             executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
         break;
     case ButtonRelease:
-        pluginLog(instance, "mouseUp at (%d, %d)", buttonReleaseEvent->x, buttonReleaseEvent->y);
+        if (obj->eventLogging)
+            pluginLog(instance, "mouseUp at (%d, %d)", buttonReleaseEvent->x, buttonReleaseEvent->y);
         break;
     case KeyPress:
         // FIXME: extract key code
-        pluginLog(instance, "NOTIMPLEMENTED: keyDown '%c'", ' ');
+        if (obj->eventLogging)
+            pluginLog(instance, "NOTIMPLEMENTED: keyDown '%c'", ' ');
         if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
             executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
         break;
     case KeyRelease:
         // FIXME: extract key code
-        pluginLog(instance, "NOTIMPLEMENTED: keyUp '%c'", ' ');
+        if (obj->eventLogging)
+            pluginLog(instance, "NOTIMPLEMENTED: keyUp '%c'", ' ');
         break;
     case GraphicsExpose:
-        pluginLog(instance, "updateEvt");
+        if (obj->eventLogging)
+            pluginLog(instance, "updateEvt");
         break;
     // NPAPI events
     case FocusIn:
-        pluginLog(instance, "getFocusEvent");
+        if (obj->eventLogging)
+            pluginLog(instance, "getFocusEvent");
         break;
     case FocusOut:
-        pluginLog(instance, "loseFocusEvent");
+        if (obj->eventLogging)
+            pluginLog(instance, "loseFocusEvent");
         break;
     case EnterNotify:
     case LeaveNotify:
     case MotionNotify:
-        pluginLog(instance, "adjustCursorEvent");
+        if (obj->eventLogging)
+            pluginLog(instance, "adjustCursorEvent");
         break;
     default:
-        pluginLog(instance, "event %d", event->type);
+        if (obj->eventLogging)
+            pluginLog(instance, "event %d", event->type);
     }
 
     fflush(stdout);
