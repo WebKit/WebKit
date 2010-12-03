@@ -55,7 +55,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
              "\r\n", "\n")
         return norm + "\n"
 
-    def compare_output(self, port, test_input, test_args, actual_test_output,
+    def compare_output(self, port, filename, test_args, actual_test_output,
                         expected_test_output):
         """Implementation of CompareOutput that checks the output text against
         the expected text from the LayoutTest directory."""
@@ -66,7 +66,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
             # Although all test_shell/DumpRenderTree output should be utf-8,
             # we do not ever decode it inside run-webkit-tests.  For some tests
             # DumpRenderTree may not output utf-8 text (e.g. webarchives).
-            self._save_baseline_data(test_input.filename, actual_test_output.text,
+            self._save_baseline_data(filename, actual_test_output.text,
                                      ".txt", encoding=None,
                                      generate_new_baseline=test_args.new_baseline)
             return failures
@@ -79,7 +79,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
         # Write output files for new tests, too.
         if port.compare_text(actual_text, expected_text):
             # Text doesn't match, write output files.
-            self.write_output_files(test_input.filename, ".txt", actual_text,
+            self.write_output_files(filename, ".txt", actual_text,
                                     expected_text, encoding=None,
                                     print_text_diffs=True)
 

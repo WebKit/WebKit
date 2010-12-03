@@ -140,7 +140,7 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         return os.path.splitext(output_filename)[0] + modifier
 
-    def compare_output(self, port, test_input, test_args, actual_test_output,
+    def compare_output(self, port, filename, test_args, actual_test_output,
                         expected_test_output):
         """Method that compares the output from the test with the
         expected value.
@@ -149,7 +149,7 @@ class TestTypeBase(object):
 
         Args:
           port: object implementing port-specific information and methods
-          test_input: a TestInput object
+          filename: absolute filename to test file
           test_args: a TestArguments object holding optional additional
               arguments
           actual_test_output: a TestOutput object which represents actual test

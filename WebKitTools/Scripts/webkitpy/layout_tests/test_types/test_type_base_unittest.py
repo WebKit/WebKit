@@ -39,7 +39,8 @@ class Test(unittest.TestCase):
     def test_compare_output_notimplemented(self):
         test_type = test_type_base.TestTypeBase(None, None)
         self.assertRaises(NotImplementedError, test_type.compare_output,
-                          None, None, test_type_base.TestArguments(), None, None)
+                          None, "foo.txt", '',
+                          test_type_base.TestArguments(), 'Debug')
 
 
 if __name__ == '__main__':
