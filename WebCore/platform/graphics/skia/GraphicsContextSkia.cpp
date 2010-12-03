@@ -1136,7 +1136,7 @@ void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
     platformContext()->setStrokeShader(pattern->platformPattern(getCTM()));
 }
 
-void GraphicsContext::setPlatformTextDrawingMode(int mode)
+void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())
         return;
