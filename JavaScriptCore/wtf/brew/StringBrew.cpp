@@ -40,5 +40,4 @@ String::String(const AECHAR* string)
     m_impl = StringImpl::create(str, len);
 }
 
-} // namespace WebCore
-
+} // namespace WTF
