@@ -1920,6 +1920,10 @@ fast/spatial-navigation
 # WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
 printing/page-format-data-display-none.html
 
+# WebKitTestRunner needs layoutTestController.dumpUserGestureInFrameLoadCallbacks
+fast/frames/location-redirect-user-gesture.html
+fast/frames/meta-refresh-user-gesture.html
+
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
