@@ -29,6 +29,38 @@
 
         Reviewed by Tony Chang.
 
+        new-run-webkit-tests: minor cleanup for multiprocessing work
+
+        This change:
+        * moves worker naming into TestShellThread, eliminating a
+          parameter to the constructor and putting the responsibility in
+          the correct place.
+        * eliminates the _WorkerState() class in message_broker, because
+          it turns out that state really needs to be in run_webkit_tests
+        * renames the Broker classes to be module-private.
+        * fixes a bunch of minor commenting and whitespace issues to
+          make subsequent patches a bit clearer.
+        * Adds a Port hook for default_worker_model() so that we can
+          accomodate the potential for different worker models on
+          different ports.
+        * merge in the fix from 50420 for the brokenness introduced in
+          bug 50367.
+
+        This patch depends on bug 50367.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50372
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-12-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
         This change is a bunch of cleanup / refactoring of the file
         below. It moves a bunch of free functions to methods on the
         TestShellThread class, and restructures other methods to be

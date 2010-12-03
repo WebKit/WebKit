@@ -46,7 +46,7 @@ import message_broker
 class TestThread(threading.Thread):
     def __init__(self, started_queue, stopping_queue):
         threading.Thread.__init__(self)
-        self._thread_id = None
+        self._id = None
         self._started_queue = started_queue
         self._stopping_queue = stopping_queue
         self._timeout = False
@@ -54,10 +54,10 @@ class TestThread(threading.Thread):
         self._exception_info = None
 
     def id(self):
-        return self._thread_id
+        return self._id
 
-    def getName(self):
-        return "worker-0"
+    def name(self):
+        return 'worker/0'
 
     def run(self):
         self._covered_run()
@@ -65,7 +65,7 @@ class TestThread(threading.Thread):
     def _covered_run(self):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
-        self._thread_id = thread.get_ident()
+        self._id = thread.get_ident()
         try:
             self._started_queue.put('')
             msg = self._stopping_queue.get()
@@ -117,11 +117,11 @@ class MultiThreadedBrokerTest(unittest.TestCase):
         options = mocktool.MockOptions(child_processes='1')
         starting_queue = Queue.Queue()
         stopping_queue = Queue.Queue()
-        broker = message_broker.MultiThreadedBroker(port, options)
+        broker = message_broker._MultiThreadedBroker(port, options)
         broker._test_runner = runner
         child_thread = TestThread(starting_queue, stopping_queue)
-        broker._workers['worker-0'] = message_broker._WorkerState('worker-0')
-        broker._workers['worker-0'].thread = child_thread
+        name = child_thread.name()
+        broker._threads[name] = child_thread
         child_thread.start()
         started_msg = starting_queue.get()
         stopping_queue.put(msg)
@@ -169,7 +169,7 @@ class Test(unittest.TestCase):
         child_thread.start()
         msg = starting_queue.get()
 
-        message_broker.log_wedged_worker(child_thread.getName(),
+        message_broker.log_wedged_worker(child_thread.name(),
                                          child_thread.id())
         stopping_queue.put('')
         child_thread.join(timeout=1.0)

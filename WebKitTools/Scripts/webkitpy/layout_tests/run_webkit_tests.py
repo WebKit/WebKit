@@ -603,7 +603,7 @@ class TestRunner:
         if not self._options.dry_run:
             threads = message_broker.start_workers(self)
         else:
-            threads = {}
+            threads = []
 
         self._printer.print_update("Starting testing ...")
         keyboard_interrupted = False
@@ -1338,7 +1338,8 @@ def run(port, options, args, regular_output=sys.stderr,
 
 def _set_up_derived_options(port_obj, options):
     """Sets the options values that depend on other options values."""
-
+    if options.worker_model is None:
+        options.worker_model = port_obj.default_worker_model()
     if options.worker_model == 'inline':
         if options.child_processes and int(options.child_processes) > 1:
             _log.warning("--worker-model=inline overrides --child-processes")
@@ -1569,9 +1570,10 @@ def parse_args(args=None):
         optparse.make_option("--child-processes",
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
+        # FIXME: Display default threading model (will be port-specific).
         optparse.make_option("--worker-model", action="store",
-            default="threads", help=("controls worker model. Valid values are "
-            "'inline' and 'threads' (default).")),
+            help=("controls worker model. Valid values are "
+            "'inline' and 'threads'.")),
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),

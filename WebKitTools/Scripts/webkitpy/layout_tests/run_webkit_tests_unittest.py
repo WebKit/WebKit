@@ -47,6 +47,7 @@ from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import user
 from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port import test
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
@@ -186,6 +187,7 @@ class MainTest(unittest.TestCase):
 
     def test_batch_size(self):
         batch_tests_run = get_tests_run(['--batch-size', '2'])
+        self.assertEquals(len(batch_tests_run), 9)
         for batch in batch_tests_run:
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
@@ -297,6 +299,7 @@ class MainTest(unittest.TestCase):
 
     def test_run_singly(self):
         batch_tests_run = get_tests_run(['--run-singly'])
+        self.assertEqual(len(batch_tests_run), 14)
         for batch in batch_tests_run:
             self.assertEquals(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
@@ -391,6 +394,18 @@ class MainTest(unittest.TestCase):
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,
                           ['--worker-model', 'unknown'])
+
+    def test_worker_model__port_override(self):
+        class OverridePort(test.TestPort):
+            def default_worker_model(self):
+                return 'INVALID'
+
+        options, parsed_args = run_webkit_tests.parse_args(
+            ['--print', 'nothing', '--platform', 'test', '--noshow-results'])
+        port_obj = OverridePort(options=options)
+        self.assertRaises(ValueError, run_webkit_tests.run, port_obj,
+                          options, parsed_args)
+
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
