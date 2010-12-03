@@ -83,24 +83,6 @@ void encoderWriteCallback(png_structp png, png_bytep data, png_size_t size)
     memcpy(&(*state->m_out)[oldSize], data, size);
 }
 
-// Automatically destroys the given write structs on destruction to make
-// cleanup and error handling code cleaner.
-class PNGWriteStructDestroyer {
-public:
-    PNGWriteStructDestroyer(png_struct** ps, png_info** pi)
-        : m_pngStruct(ps)
-        , m_pngInfo(pi) {
-    }
-
-    ~PNGWriteStructDestroyer() {
-        png_destroy_write_struct(m_pngStruct, m_pngInfo);
-    }
-
-private:
-    png_struct** m_pngStruct;
-    png_info** m_pngInfo;
-};
-
 static bool encodeImpl(const unsigned char* input,
                        const IntSize& size,
                        int bytesPerRow,
@@ -127,17 +109,16 @@ static bool encodeImpl(const unsigned char* input,
         png_destroy_write_struct(&pngPtr, NULL);
         return false;
     }
-    PNGWriteStructDestroyer destroyer(&pngPtr, &infoPtr);
+
+    OwnArrayPtr<unsigned char> rowPixels(new unsigned char[imageSize.width() * outputColorComponents]);
+    PNGEncoderState state(output);
 
     if (setjmp(png_jmpbuf(pngPtr))) {
-        // The destroyer will ensure that the structures are cleaned up in this
-        // case, even though we may get here as a jump from random parts of the
-        // PNG library called below.
+        png_destroy_write_struct(&pngPtr, &infoPtr);
         return false;
     }
 
     // Set our callback for libpng to give us the data.
-    PNGEncoderState state(output);
     png_set_write_fn(pngPtr, &state, encoderWriteCallback, NULL);
 
     png_set_IHDR(pngPtr, infoPtr, imageSize.width(), imageSize.height(), 8, pngOutputColorType,
@@ -145,13 +126,13 @@ static bool encodeImpl(const unsigned char* input,
                  PNG_FILTER_TYPE_DEFAULT);
     png_write_info(pngPtr, infoPtr);
 
-    OwnArrayPtr<unsigned char> rowPixels(new unsigned char[imageSize.width() * outputColorComponents]);
     for (int y = 0; y < imageSize.height(); ++y) {
         preMultipliedBGRAtoRGBA(&input[y * bytesPerRow], imageSize.width(), rowPixels.get());
         png_write_row(pngPtr, rowPixels.get());
     }
 
     png_write_end(pngPtr, infoPtr);
+    png_destroy_write_struct(&pngPtr, &infoPtr);
     return true;
 }
 
@@ -161,10 +142,8 @@ bool PNGImageEncoder::encode(const SkBitmap& image, Vector<unsigned char>* outpu
     if (image.config() != SkBitmap::kARGB_8888_Config)
         return false; // Only support ARGB 32 bpp skia bitmaps.
 
-    image.lockPixels();
-    bool result = encodeImpl(static_cast<unsigned char*>(image.getPixels()), IntSize(image.width(), image.height()), image.rowBytes(), output);
-    image.unlockPixels();
-    return result;
+    SkAutoLockPixels bitmapLock(image);
+    return encodeImpl(static_cast<unsigned char*>(image.getPixels()), IntSize(image.width(), image.height()), image.rowBytes(), output);
 }
 
 } // namespace WebCore
