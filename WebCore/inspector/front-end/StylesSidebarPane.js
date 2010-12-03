@@ -1179,13 +1179,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     updateTitle: function()
     {
-        var priority = this.priority;
         var value = this.value;
-
-        if (priority && !priority.length)
-            delete priority;
-        if (priority)
-            priority = "!" + priority;
 
         this.updateState();
 
@@ -1339,12 +1333,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             valueElement.appendChild(processValue(/url\(([^)]+)\)/g, linkifyURL, colorProcessor, value));
         }
 
-        if (priority) {
-            var priorityElement = document.createElement("span");
-            priorityElement.className = "priority";
-            priorityElement.textContent = priority;
-        }
-
         this.listItemElement.removeChildren();
 
         if (!this.treeOutline)
@@ -1356,12 +1344,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.listItemElement.appendChild(nameElement);
         this.listItemElement.appendChild(document.createTextNode(": "));
         this.listItemElement.appendChild(valueElement);
-
-        if (priorityElement) {
-            this.listItemElement.appendChild(document.createTextNode(" "));
-            this.listItemElement.appendChild(priorityElement);
-        }
-
         this.listItemElement.appendChild(document.createTextNode(";"));
 
         if (!this.parsedOk)

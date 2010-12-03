@@ -1488,10 +1488,6 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: blue;
 }
 
-.section .properties .priority {
-    color: rgb(128, 0, 0);
-}
-
 .section .properties .keyword, .event-properties .keyword {
     color: rgb(136, 19, 79);
 }
