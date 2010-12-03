@@ -539,7 +539,6 @@ IF (ENABLE_SVG)
 ENDIF()
 
 SET(WebCore_SOURCES
-    ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
     ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
 
     accessibility/AXObjectCache.cpp
@@ -2014,10 +2013,25 @@ IF (ENABLE_PROGRESS_TAG)
     )
 ENDIF ()
 
+
+
+# Modules that the bindings generator scripts may use
+SET(SCRIPTS_BINDINGS
+    ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
+    ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
+    ${WEBCORE_DIR}/bindings/scripts/IDLStructure.pm
+    ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm
+)
+
 SET(IDL_INCLUDES "")
 FOREACH (_include ${WebCore_IDL_INCLUDES})
     LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
-ENDFOREACH()
+ENDFOREACH ()
+
+SET(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1")
+FOREACH (_feature ${FEATURE_DEFINES})
+    SET(FEATURE_DEFINES_JAVASCRIPT "${FEATURE_DEFINES_JAVASCRIPT} ${_feature}")
+ENDFOREACH ()
 
 FOREACH (_file ${WebCore_IDL_FILES})
     GENERATE_JS_FROM_IDL(${_file})
@@ -2027,9 +2041,17 @@ FOREACH (_file ${WebCore_IDL_PURE_FILES})
     GENERATE_JS_FROM_IDL_PURE(${_file})
 ENDFOREACH ()
 
-GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
+LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES})
 
-LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
+ 
+# All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.h ${DERIVED_SOURCES_DIR}/InspectorFrontend.cpp ${DERIVED_SOURCES_DIR}/InspectorFrontend.h
+    MAIN_DEPENDENCY inspector/Inspector.idl
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} inspector/Inspector.idl
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${WEBCORE_DIR}/inspector ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator Inspector ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/inspector/Inspector.idl
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/InspectorFrontend.cpp)
 
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
