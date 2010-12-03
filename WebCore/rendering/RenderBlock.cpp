@@ -400,8 +400,13 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
                               RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
     // Create a clone of this inline.
-    RenderBlock* cloneBlock = clone();
-    cloneBlock->setContinuation(oldCont);
+    RenderBlock* cloneBlock;
+    if (isAnonymousBlock())
+        cloneBlock = createAnonymousBlock();
+    else {
+        cloneBlock = clone();
+        cloneBlock->setContinuation(oldCont);
+    }
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
@@ -410,7 +415,8 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     moveChildrenTo(cloneBlock, beforeChild, 0);
     
     // Hook |clone| up as the continuation of the middle block.
-    middleBlock->setContinuation(cloneBlock);
+    if (!cloneBlock->isAnonymousBlock())
+        middleBlock->setContinuation(cloneBlock);
 
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our block parent chain until we hit the containing anonymous columns block.
@@ -419,13 +425,13 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     RenderBoxModelObject* currChild = this;
     
     while (curr && curr != fromBlock) {
-        ASSERT(curr->isRenderBlock() && !curr->isAnonymousBlock());
+        ASSERT(curr->isRenderBlock());
         
         RenderBlock* blockCurr = toRenderBlock(curr);
         
         // Create a new clone.
         RenderBlock* cloneChild = cloneBlock;
-        cloneBlock = blockCurr->clone();
+        cloneBlock = blockCurr->isAnonymousBlock() ? blockCurr->createAnonymousBlock() : blockCurr->clone();
 
         // Insert our child clone as the first child.
         cloneBlock->children()->appendChildNode(cloneBlock, cloneChild);
@@ -623,41 +629,6 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             beforeChild = lastRenderer->lastChild();
     }
 
-    // Check for a spanning element in columns.
-    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
-    if (columnsBlockAncestor) {
-        // We are placing a column-span element inside a block. 
-        RenderBlock* newBox = createAnonymousColumnSpanBlock();
-        
-        if (columnsBlockAncestor != this) {
-            // We are nested inside a multi-column element and are being split by the span.  We have to break up
-            // our block into continuations.
-            RenderBoxModelObject* oldContinuation = continuation();
-            setContinuation(newBox);
-
-            // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
-            // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
-            // content gets properly destroyed.
-            bool isLastChild = (beforeChild == lastChild());
-            if (document()->usesBeforeAfterRules())
-                children()->updateBeforeAfterContent(this, AFTER);
-            if (isLastChild && beforeChild != lastChild())
-                beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
-                                 // point to be 0.  It's just a straight append now.
-
-            splitFlow(beforeChild, newBox, newChild, oldContinuation);
-            return;
-        }
-
-        // We have to perform a split of this block's children.  This involves creating an anonymous block box to hold
-        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
-        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
-        makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
-        return;
-    }
-
-    bool madeBoxesNonInline = false;
-
     // If the requested beforeChild is not one of our children, then this is because
     // there is an anonymous container within this object that contains the beforeChild.
     if (beforeChild && beforeChild->parent() != this) {
@@ -692,6 +663,41 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         // Go on to insert before the anonymous table.
         beforeChild = anonymousChild;
     }
+
+    // Check for a spanning element in columns.
+    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
+    if (columnsBlockAncestor) {
+        // We are placing a column-span element inside a block. 
+        RenderBlock* newBox = createAnonymousColumnSpanBlock();
+        
+        if (columnsBlockAncestor != this) {
+            // We are nested inside a multi-column element and are being split by the span.  We have to break up
+            // our block into continuations.
+            RenderBoxModelObject* oldContinuation = continuation();
+            setContinuation(newBox);
+
+            // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
+            // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
+            // content gets properly destroyed.
+            bool isLastChild = (beforeChild == lastChild());
+            if (document()->usesBeforeAfterRules())
+                children()->updateBeforeAfterContent(this, AFTER);
+            if (isLastChild && beforeChild != lastChild())
+                beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
+                                 // point to be 0.  It's just a straight append now.
+
+            splitFlow(beforeChild, newBox, newChild, oldContinuation);
+            return;
+        }
+
+        // We have to perform a split of this block's children.  This involves creating an anonymous block box to hold
+        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
+        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
+        makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
+        return;
+    }
+
+    bool madeBoxesNonInline = false;
 
     // A block has to either have all of its children inline, or all of its children as blocks.
     // So, if our children are currently inline and a block child has to be inserted, we move all our
