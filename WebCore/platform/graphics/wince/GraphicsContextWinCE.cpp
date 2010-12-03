@@ -1626,7 +1626,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
     FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
-    bool hasShadow = textDrawingMode() == cTextFill
+    bool hasShadow = textDrawingMode() == TextModeFill
         && getShadow(shadowOffset, shadowBlur, shadowColor)
         && shadowColor.alpha();
     COLORREF shadowRGBColor;

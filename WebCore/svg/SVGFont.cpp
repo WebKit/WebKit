@@ -512,7 +512,7 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         SVGTextRunWalker<SVGTextRunWalkerDrawTextData> runWalker(fontData, fontElement, data, drawTextUsingSVGFontCallback, drawTextMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, from, to);
 
-        RenderSVGResourceMode resourceMode = context->textDrawingMode() == cTextStroke ? ApplyToStrokeMode : ApplyToFillMode;
+        RenderSVGResourceMode resourceMode = context->textDrawingMode() == TextModeStroke ? ApplyToStrokeMode : ApplyToFillMode;
 
         unsigned numGlyphs = data.glyphIdentifiers.size();
         unsigned fallbackCharacterIndex = 0;

@@ -69,7 +69,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     ContextShadow* shadow = graphicsContext->contextShadow();
     ASSERT(shadow);
 
-    if (!(graphicsContext->textDrawingMode() & cTextFill) || shadow->m_type == ContextShadow::NoShadow)
+    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
         return;
 
     if (shadow->m_type == ContextShadow::SolidShadow) {
@@ -111,7 +111,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
     cairo_save(cr);
     prepareContextForGlyphDrawing(cr, font, point);
-    if (context->textDrawingMode() & cTextFill) {
+    if (context->textDrawingMode() & TextModeFill) {
         if (context->fillGradient()) {
             cairo_set_source(cr, context->fillGradient()->platformGradient());
             if (context->getAlpha() < 1.0f) {
@@ -141,7 +141,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     // twice the size of the width of the text we will not ask cairo to stroke
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
-    if (context->textDrawingMode() & cTextStroke && context->strokeThickness() < 2 * offset) {
+    if (context->textDrawingMode() & TextModeStroke && context->strokeThickness() < 2 * offset) {
         if (context->strokeGradient()) {
             cairo_set_source(cr, context->strokeGradient()->platformGradient());
             if (context->getAlpha() < 1.0f) {

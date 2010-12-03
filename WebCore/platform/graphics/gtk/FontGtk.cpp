@@ -218,7 +218,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     ContextShadow* shadow = graphicsContext->contextShadow();
     ASSERT(shadow);
 
-    if (!(graphicsContext->textDrawingMode() & cTextFill) || shadow->m_type == ContextShadow::NoShadow)
+    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
         return;
 
     FloatPoint totalOffset(point + shadow->m_offset);
@@ -300,7 +300,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 
     pango_cairo_show_layout_line(cr, layoutLine);
 
-    if (context->textDrawingMode() & cTextStroke) {
+    if (context->textDrawingMode() & TextModeStroke) {
         Color strokeColor = context->strokeColor();
         strokeColor.getRGBA(red, green, blue, alpha);
         cairo_set_source_rgba(cr, red, green, blue, alpha);

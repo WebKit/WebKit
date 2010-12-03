@@ -60,7 +60,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
         context->setFillRule(svgStyle ? svgStyle->fillRule() : RULE_NONZERO);
 
         if (resourceMode & ApplyToTextMode)
-            context->setTextDrawingMode(cTextFill);
+            context->setTextDrawingMode(TextModeFill);
     } else if (resourceMode & ApplyToStrokeMode) {
         context->setAlpha(svgStyle ? svgStyle->strokeOpacity() : 1.0f);
         context->setStrokeColor(m_color, colorSpace);
@@ -69,7 +69,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
             SVGRenderSupport::applyStrokeStyleToContext(context, style, object);
 
         if (resourceMode & ApplyToTextMode)
-            context->setTextDrawingMode(cTextStroke);
+            context->setTextDrawingMode(TextModeStroke);
     }
 
     return true;

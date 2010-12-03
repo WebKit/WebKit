@@ -1116,7 +1116,7 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return InterpolationDefault;
 }
 
-void GraphicsContext::setPlatformTextDrawingMode(int mode)
+void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())
         return;
@@ -1124,28 +1124,28 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
     // Wow, wish CG had used bits here.
     CGContextRef context = platformContext();
     switch (mode) {
-    case cTextInvisible: // Invisible
+    case TextModeInvisible:
         CGContextSetTextDrawingMode(context, kCGTextInvisible);
         break;
-    case cTextFill: // Fill
+    case TextModeFill:
         CGContextSetTextDrawingMode(context, kCGTextFill);
         break;
-    case cTextStroke: // Stroke
+    case TextModeStroke:
         CGContextSetTextDrawingMode(context, kCGTextStroke);
         break;
-    case 3: // Fill | Stroke
+    case TextModeFill | TextModeStroke:
         CGContextSetTextDrawingMode(context, kCGTextFillStroke);
         break;
-    case cTextClip: // Clip
+    case TextModeClip:
         CGContextSetTextDrawingMode(context, kCGTextClip);
         break;
-    case 5: // Fill | Clip
+    case TextModeFill | TextModeClip:
         CGContextSetTextDrawingMode(context, kCGTextFillClip);
         break;
-    case 6: // Stroke | Clip
+    case TextModeStroke | TextModeClip:
         CGContextSetTextDrawingMode(context, kCGTextStrokeClip);
         break;
-    case 7: // Fill | Stroke | Clip
+    case TextModeFill | TextModeStroke | TextModeClip:
         CGContextSetTextDrawingMode(context, kCGTextFillStrokeClip);
         break;
     default:

@@ -165,13 +165,13 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
 
     if (resourceMode & ApplyToTextMode) {
         if (resourceMode & ApplyToFillMode) {
-            context->setTextDrawingMode(cTextFill);
+            context->setTextDrawingMode(TextModeFill);
 
 #if PLATFORM(CG)
             context->applyFillPattern();
 #endif
         } else if (resourceMode & ApplyToStrokeMode) {
-            context->setTextDrawingMode(cTextStroke);
+            context->setTextDrawingMode(TextModeStroke);
 
 #if PLATFORM(CG)
             context->applyStrokePattern();

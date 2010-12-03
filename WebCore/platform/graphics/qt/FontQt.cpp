@@ -79,7 +79,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     QPainter *p = ctx->platformContext();
 
     QPen textFillPen;
-    if (ctx->textDrawingMode() & cTextFill) {
+    if (ctx->textDrawingMode() & TextModeFill) {
         if (ctx->fillGradient()) {
             QBrush brush(*ctx->fillGradient()->platformGradient());
             brush.setTransform(ctx->fillGradient()->gradientSpaceTransform());
@@ -92,7 +92,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     }
 
     QPen textStrokePen;
-    if (ctx->textDrawingMode() & cTextStroke) {
+    if (ctx->textDrawingMode() & TextModeStroke) {
         if (ctx->strokeGradient()) {
             QBrush brush(*ctx->strokeGradient()->platformGradient());
             brush.setTransform(ctx->strokeGradient()->gradientSpaceTransform());
@@ -179,17 +179,17 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     int flags = run.rtl() ? Qt::TextForceRightToLeft : Qt::TextForceLeftToRight;
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     // See QWebPagePrivate::QWebPagePrivate() where the default path is set to Complex for Qt 4.6 and earlier.
-    if (!isComplexText && !(ctx->textDrawingMode() & cTextStroke))
+    if (!isComplexText && !(ctx->textDrawingMode() & TextModeStroke))
         flags |= Qt::TextBypassShaping;
 #endif
 
     QPainterPath textStrokePath;
-    if (ctx->textDrawingMode() & cTextStroke)
+    if (ctx->textDrawingMode() & TextModeStroke)
         textStrokePath.addText(pt, font, string);
 
     ContextShadow* ctxShadow = ctx->contextShadow();
     if (ctxShadow->m_type != ContextShadow::NoShadow) {
-        if (ctx->textDrawingMode() & cTextFill) {
+        if (ctx->textDrawingMode() & TextModeFill) {
             if (ctxShadow->m_type != ContextShadow::BlurShadow) {
                 p->save();
                 p->setPen(ctxShadow->m_color);
@@ -212,7 +212,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
                     ctxShadow->endShadowLayer(p);
                 }
             }
-        } else if (ctx->textDrawingMode() & cTextStroke) {
+        } else if (ctx->textDrawingMode() & TextModeStroke) {
             if (ctxShadow->m_type != ContextShadow::BlurShadow) {
                 p->translate(ctxShadow->offset());
                 p->strokePath(textStrokePath, QPen(ctxShadow->m_color));
@@ -235,10 +235,10 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
         }
     }
 
-    if (ctx->textDrawingMode() & cTextStroke)
+    if (ctx->textDrawingMode() & TextModeStroke)
         p->strokePath(textStrokePath, textStrokePen);
 
-    if (ctx->textDrawingMode() & cTextFill) {
+    if (ctx->textDrawingMode() & TextModeFill) {
         QPen previousPen = p->pen();
         p->setPen(textFillPen);
         p->drawText(pt, string, flags, run.padding());

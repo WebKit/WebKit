@@ -94,8 +94,8 @@ struct PlatformContextSkia::State {
     SkPaint::Join m_lineJoin;
     SkDashPathEffect* m_dash;
 
-    // Text. (See cTextFill & friends in GraphicsContext.h.)
-    int m_textDrawingMode;
+    // Text. (See TextModeFill & friends in GraphicsContext.h.)
+    TextDrawingModeFlags m_textDrawingMode;
 
     // Helper function for applying the state's alpha value to the given input
     // color to produce a new output color.
@@ -137,7 +137,7 @@ PlatformContextSkia::State::State()
     , m_lineCap(SkPaint::kDefault_Cap)
     , m_lineJoin(SkPaint::kDefault_Join)
     , m_dash(0)
-    , m_textDrawingMode(cTextFill)
+    , m_textDrawingMode(TextModeFill)
     , m_interpolationQuality(InterpolationHigh)
     , m_canvasClipApplied(false)
 {
@@ -501,7 +501,7 @@ void PlatformContextSkia::setStrokeShader(SkShader* strokeShader)
     }
 }
 
-int PlatformContextSkia::getTextDrawingMode() const
+TextDrawingModeFlags PlatformContextSkia::getTextDrawingMode() const
 {
     return m_state->m_textDrawingMode;
 }
@@ -521,11 +521,11 @@ int PlatformContextSkia::getNormalizedAlpha() const
     return alpha;
 }
 
-void PlatformContextSkia::setTextDrawingMode(int mode)
+void PlatformContextSkia::setTextDrawingMode(TextDrawingModeFlags mode)
 {
-    // cTextClip is never used, so we assert that it isn't set:
+    // TextModeClip is never used, so we assert that it isn't set:
     // https://bugs.webkit.org/show_bug.cgi?id=21898
-    ASSERT(!(mode & cTextClip));
+    ASSERT(!(mode & TextModeClip));
     m_state->m_textDrawingMode = mode;
 }
 

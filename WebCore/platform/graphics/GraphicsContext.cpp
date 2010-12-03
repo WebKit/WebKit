@@ -526,12 +526,12 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
     buffer->clip(this, rect);
 }
 
-int GraphicsContext::textDrawingMode()
+TextDrawingModeFlags GraphicsContext::textDrawingMode() const
 {
     return m_common->state.textDrawingMode;
 }
 
-void GraphicsContext::setTextDrawingMode(int mode)
+void GraphicsContext::setTextDrawingMode(TextDrawingModeFlags mode)
 {
     m_common->state.textDrawingMode = mode;
     if (paintingDisabled())
@@ -567,7 +567,7 @@ void GraphicsContext::setPlatformStrokePattern(Pattern*)
 #if !PLATFORM(CG) && !PLATFORM(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
-void GraphicsContext::setPlatformTextDrawingMode(int mode)
+void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
 }
 #endif

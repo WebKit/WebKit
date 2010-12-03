@@ -103,10 +103,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     gc->platformContext()->prepareForSoftwareDraw();
 
     SkCanvas* canvas = gc->platformContext()->canvas();
-    int textMode = gc->platformContext()->getTextDrawingMode();
+    TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
 
     // We draw text up to two times (once for fill, once for stroke).
-    if (textMode & cTextFill) {
+    if (textMode & TextModeFill) {
         SkPaint paint;
         gc->platformContext()->setupPaintForFilling(&paint);
         font->platformData().setupPaint(&paint);
@@ -116,7 +116,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 
-    if ((textMode & cTextStroke)
+    if ((textMode & TextModeStroke)
         && gc->platformContext()->getStrokeStyle() != NoStroke
         && gc->platformContext()->getStrokeThickness() > 0) {
 
@@ -127,7 +127,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->strokeColor().rgb());
 
-        if (textMode & cTextFill) {
+        if (textMode & TextModeFill) {
             // If we also filled, we don't want to draw shadows twice.
             // See comment in FontChromiumWin.cpp::paintSkiaText() for more details.
             SkSafeUnref(paint.setLooper(0));
@@ -651,9 +651,9 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         return;
 
     SkCanvas* canvas = gc->platformContext()->canvas();
-    int textMode = gc->platformContext()->getTextDrawingMode();
-    bool fill = textMode & cTextFill;
-    bool stroke = (textMode & cTextStroke)
+    TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
+    bool fill = textMode & TextModeFill;
+    bool stroke = (textMode & TextModeStroke)
                && gc->platformContext()->getStrokeStyle() != NoStroke
                && gc->platformContext()->getStrokeThickness() > 0;
 

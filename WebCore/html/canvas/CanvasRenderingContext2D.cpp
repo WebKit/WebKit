@@ -1830,7 +1830,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             maskImageContext->setStrokeThickness(c->strokeThickness());
         }
 
-        maskImageContext->setTextDrawingMode(fill ? cTextFill : cTextStroke);
+        maskImageContext->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
         maskImageContext->translate(-maskRect.x(), -maskRect.y());
 
         maskImageContext->drawBidiText(font, textRun, location);
@@ -1845,7 +1845,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     }
 #endif
 
-    c->setTextDrawingMode(fill ? cTextFill : cTextStroke);
+    c->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
 
 #if PLATFORM(QT)
     // We always use complex text shaping since it can't be turned off for QPainterPath::addText().

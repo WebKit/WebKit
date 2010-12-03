@@ -34,7 +34,7 @@ namespace WebCore {
 
     struct GraphicsContextState {
         GraphicsContextState()
-            : textDrawingMode(cTextFill)
+            : textDrawingMode(TextModeFill)
             , strokeStyle(SolidStroke)
             , strokeThickness(0)
             , strokeColor(Color::black)
@@ -52,7 +52,7 @@ namespace WebCore {
         {
         }
 
-        int textDrawingMode;
+        TextDrawingModeFlags textDrawingMode;
         
         StrokeStyle strokeStyle;
         float strokeThickness;

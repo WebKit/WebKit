@@ -110,22 +110,22 @@ public:
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
 
     void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
-    void setTextDrawingMode(int mode) { m_textDrawingMode = mode; }
+    void setTextDrawingMode(TextDrawingModeFlags mode) { m_textDrawingMode = mode; }
 
     InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
-    int textDrawingMode() const { return m_textDrawingMode; }
+    TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
 
     void setViewportSize(const IntSize&);
 
 protected:
     TextureMapper()
         : m_interpolationQuality(InterpolationDefault)
-        , m_textDrawingMode(cTextFill)
+        , m_textDrawingMode(TextModeFill)
     {}
 
 private:
     InterpolationQuality m_interpolationQuality;
-    int m_textDrawingMode;
+    TextDrawingModeFlags m_textDrawingMode;
 };
 
 };

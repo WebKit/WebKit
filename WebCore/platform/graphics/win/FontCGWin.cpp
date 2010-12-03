@@ -133,8 +133,8 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
     Color fillColor = graphicsContext->fillColor();
 
     bool drawIntoBitmap = false;
-    int drawingMode = graphicsContext->textDrawingMode();
-    if (drawingMode == cTextFill) {
+    TextDrawingModeFlags drawingMode = graphicsContext->textDrawingMode();
+    if (drawingMode == TextModeFill) {
         if (!fillColor.alpha())
             return;
 
@@ -205,7 +205,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
         ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
     }
 
-    if (drawingMode == cTextFill) {
+    if (drawingMode == TextModeFill) {
         XFORM xform;
         xform.eM11 = 1.0;
         xform.eM12 = 0;
@@ -247,7 +247,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             CGContextSaveGState(cgContext);
             CGContextConcatCTM(cgContext, initialGlyphTransform);
 
-            if (drawingMode & cTextFill) {
+            if (drawingMode & TextModeFill) {
                 CGContextAddPath(cgContext, glyphPath.get());
                 CGContextFillPath(cgContext);
                 if (font->syntheticBoldOffset()) {
@@ -257,7 +257,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
                     CGContextTranslateCTM(cgContext, -font->syntheticBoldOffset(), 0);
                 }
             }
-            if (drawingMode & cTextStroke) {
+            if (drawingMode & TextModeStroke) {
                 CGContextAddPath(cgContext, glyphPath.get());
                 CGContextStrokePath(cgContext);
                 if (font->syntheticBoldOffset()) {
@@ -354,7 +354,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     Color shadowColor;
     graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor);
 
-    bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
+    bool hasSimpleShadow = graphicsContext->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur;
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         graphicsContext->clearShadow();

@@ -131,11 +131,13 @@ namespace WebCore {
     class SharedGraphicsContext3D;
     class TextRun;
 
-    // These bits can be ORed together for a total of 8 possible text drawing modes.
-    const int cTextInvisible = 0;
-    const int cTextFill = 1;
-    const int cTextStroke = 2;
-    const int cTextClip = 4;
+    enum TextDrawingMode {
+        TextModeInvisible = 0,
+        TextModeFill      = 1 << 0,
+        TextModeStroke    = 1 << 1,
+        TextModeClip      = 1 << 2
+    };
+    typedef unsigned TextDrawingModeFlags;
 
     enum StrokeStyle {
         NoStroke,
@@ -256,8 +258,8 @@ namespace WebCore {
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
         void clipToImageBuffer(ImageBuffer*, const FloatRect&);
 
-        int textDrawingMode();
-        void setTextDrawingMode(int);
+        TextDrawingModeFlags textDrawingMode() const;
+        void setTextDrawingMode(TextDrawingModeFlags);
 
         void drawText(const Font&, const TextRun&, const IntPoint&, int from = 0, int to = -1);
         void drawBidiText(const Font&, const TextRun&, const FloatPoint&);
@@ -421,7 +423,7 @@ namespace WebCore {
         void savePlatformState();
         void restorePlatformState();
 
-        void setPlatformTextDrawingMode(int);
+        void setPlatformTextDrawingMode(TextDrawingModeFlags);
         void setPlatformFont(const Font& font);
 
         void setPlatformStrokeColor(const Color&, ColorSpace);
