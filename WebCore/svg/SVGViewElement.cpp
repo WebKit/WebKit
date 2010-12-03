@@ -23,14 +23,18 @@
 #if ENABLE(SVG)
 #include "SVGViewElement.h"
 
-#include "Attr.h"
-#include "PlatformString.h"
+#include "Attribute.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_BOOLEAN(SVGViewElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+DEFINE_ANIMATED_RECT(SVGViewElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
+DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGViewElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)

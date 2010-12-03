@@ -45,13 +45,15 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
-#include <math.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
 
 namespace WebCore {
-    
+
+// Animated property definitions
+DEFINE_ANIMATED_BOOLEAN(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* document)
     : SVGSMILElement(tagName, document)
     , m_animationValid(false)

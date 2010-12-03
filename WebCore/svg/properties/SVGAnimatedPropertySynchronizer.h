@@ -21,6 +21,8 @@
 #define SVGAnimatedPropertySynchronizer_h
 
 #if ENABLE(SVG)
+#include "SVGElement.h"
+
 namespace WebCore {
 
 // Helper template used for synchronizing SVG <-> XML properties

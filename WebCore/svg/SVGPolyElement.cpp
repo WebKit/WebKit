@@ -34,6 +34,9 @@
 
 namespace WebCore {
 
+// Animated property definitions
+DEFINE_ANIMATED_BOOLEAN(SVGPolyElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+
 SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {

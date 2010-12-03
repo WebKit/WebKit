@@ -22,15 +22,15 @@
 #define SVGImageElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGImageLoader.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
-#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
@@ -69,13 +69,13 @@ private:
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)
     DECLARE_ANIMATED_LENGTH(Height, height)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
 
     // SVGURIReference
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     SVGImageLoader m_imageLoader;
 };

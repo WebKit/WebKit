@@ -22,40 +22,42 @@
 #define SVGSymbolElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedBoolean.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
 
-    class SVGSymbolElement : public SVGStyledElement,
-                             public SVGLangSpace,
-                             public SVGExternalResourcesRequired,
-                             public SVGFitToViewBox {
-    public:
-        static PassRefPtr<SVGSymbolElement> create(const QualifiedName&, Document*);
+class SVGSymbolElement : public SVGStyledElement,
+                         public SVGLangSpace,
+                         public SVGExternalResourcesRequired,
+                         public SVGFitToViewBox {
+public:
+    static PassRefPtr<SVGSymbolElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGSymbolElement(const QualifiedName&, Document*);
+private:
+    SVGSymbolElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-        virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const;
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGSymbolElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    // Animated property declarations
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
  
-        // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSymbolElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGSymbolElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio) 
-    };
+    // SVGFitToViewBox
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio) 
+};
 
 } // namespace WebCore
 

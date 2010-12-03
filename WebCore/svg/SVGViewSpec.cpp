@@ -18,18 +18,21 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGViewSpec.h"
 
 #include "Document.h"
-#include "PlatformString.h"
 #include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
-#include "SVGTransformList.h"
 #include "SVGTransformable.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_RECT(SVGViewSpec, SVGNames::viewBoxAttr, ViewBox, viewBox)
+DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGViewSpec, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
 
 SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
     : m_contextElement(contextElement)

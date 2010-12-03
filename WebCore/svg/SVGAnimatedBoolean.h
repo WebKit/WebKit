@@ -27,6 +27,13 @@ namespace WebCore {
 
 typedef SVGAnimatedStaticPropertyTearOff<bool> SVGAnimatedBoolean;
 
+// Helper macros to declare/define a SVGAnimatedBoolean object
+#define DECLARE_ANIMATED_BOOLEAN(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_BOOLEAN(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedBoolean, bool, UpperProperty, LowerProperty)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

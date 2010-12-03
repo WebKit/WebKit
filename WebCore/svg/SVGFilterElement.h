@@ -24,7 +24,9 @@
 #define SVGFilterElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
+#include "SVGAnimatedInteger.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -67,15 +69,14 @@ private:
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)
     DECLARE_ANIMATED_LENGTH(Height, height)
-
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFilterElement, SVGNames::filterResAttr, filterResXIdentifier(), long, FilterResX, filterResX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFilterElement, SVGNames::filterResAttr, filterResYIdentifier(), long, FilterResY, filterResY)
+    DECLARE_ANIMATED_INTEGER(FilterResX, filterResX)
+    DECLARE_ANIMATED_INTEGER(FilterResY, filterResY)
 
     // SVGURIReference
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 };
 
 }

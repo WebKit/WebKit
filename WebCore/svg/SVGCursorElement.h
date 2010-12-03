@@ -22,6 +22,7 @@
 #define SVGCursorElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
@@ -62,7 +63,7 @@ private:
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCursorElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     HashSet<SVGElement*> m_clients;
 };

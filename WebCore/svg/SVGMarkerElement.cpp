@@ -25,12 +25,9 @@
 #include "SVGMarkerElement.h"
 
 #include "Attribute.h"
-#include "PlatformString.h"
 #include "RenderSVGResourceMarker.h"
 #include "SVGFitToViewBox.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -42,7 +39,11 @@ DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerWidthAttr, MarkerWidth,
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerHeightAttr, MarkerHeight, markerHeight)
 DEFINE_ANIMATED_ENUMERATION(SVGMarkerElement, SVGNames::markerUnitsAttr, MarkerUnits, markerUnits)
 DEFINE_ANIMATED_ENUMERATION_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, orientTypeIdentifier(), OrientType, orientType)
-    
+DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, orientAngleIdentifier(), OrientAngle, orientAngle)
+DEFINE_ANIMATED_BOOLEAN(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+DEFINE_ANIMATED_RECT(SVGMarkerElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
+DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGMarkerElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
+
 inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_refX(LengthModeWidth)

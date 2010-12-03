@@ -28,6 +28,13 @@ namespace WebCore {
 
 typedef SVGAnimatedPropertyTearOff<SVGAngle> SVGAnimatedAngle;
 
+// Helper macros to declare/define a SVGAnimatedAngle object
+#define DECLARE_ANIMATED_ANGLE(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProperty)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

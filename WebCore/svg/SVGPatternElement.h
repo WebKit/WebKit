@@ -22,14 +22,15 @@
 #define SVGPatternElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -77,11 +78,11 @@ private:
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     // SVGPatternElement
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio) 
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio) 
 };
 
 } // namespace WebCore

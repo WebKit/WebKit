@@ -22,20 +22,18 @@
 #define SVGMarkerElement_h
 
 #if ENABLE(SVG)
-#include "RenderObject.h"
-#include "SVGAngle.h"
+#include "SVGAnimatedAngle.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
-
-class Document;
 
 class SVGMarkerElement : public SVGStyledElement,
                          public SVGLangSpace,
@@ -85,14 +83,14 @@ private:
     DECLARE_ANIMATED_LENGTH(MarkerHeight, markerHeight)
     DECLARE_ANIMATED_ENUMERATION(MarkerUnits, markerUnits)
     DECLARE_ANIMATED_ENUMERATION(OrientType, orientType)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGMarkerElement, SVGNames::orientAttr, orientAngleIdentifier(), SVGAngle, OrientAngle, orientAngle)
+    DECLARE_ANIMATED_ANGLE(OrientAngle, orientAngle)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     // SVGFitToViewBox
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
 };
 
 }

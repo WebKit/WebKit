@@ -21,11 +21,22 @@
 #define SVGAnimatedInteger_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 
 namespace WebCore {
 
 typedef SVGAnimatedStaticPropertyTearOff<long> SVGAnimatedInteger;
+
+// Helper macros to declare/define a SVGAnimatedInteger object
+#define DECLARE_ANIMATED_INTEGER(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_INTEGER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedInteger, long, UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

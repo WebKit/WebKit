@@ -34,11 +34,10 @@
 #include "SVGVKernElement.h"
 #include <wtf/ASCIICType.h>
 
-using namespace WTF;
-
 namespace WebCore {
 
-using namespace SVGNames;
+// Animated property declarations
+DEFINE_ANIMATED_BOOLEAN(SVGFontElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document) 
@@ -72,7 +71,7 @@ void SVGFontElement::invalidateGlyphCache()
 SVGMissingGlyphElement* SVGFontElement::firstMissingGlyphElement() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(missing_glyphTag))
+        if (child->hasTagName(SVGNames::missing_glyphTag))
             return static_cast<SVGMissingGlyphElement*>(child);
     }
 
@@ -85,15 +84,15 @@ void SVGFontElement::ensureGlyphCache() const
         return;
 
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(glyphTag)) {
+        if (child->hasTagName(SVGNames::glyphTag)) {
             SVGGlyphElement* glyph = static_cast<SVGGlyphElement*>(child);
-            String unicode = glyph->getAttribute(unicodeAttr);
+            String unicode = glyph->getAttribute(SVGNames::unicodeAttr);
             if (unicode.length())
                 m_glyphMap.add(unicode, glyph->buildGlyphIdentifier());
-        } else if (child->hasTagName(hkernTag)) {
+        } else if (child->hasTagName(SVGNames::hkernTag)) {
             SVGHKernElement* hkern = static_cast<SVGHKernElement*>(child);
             hkern->buildHorizontalKerningPair(m_horizontalKerningPairs);
-        } else if (child->hasTagName(vkernTag)) {
+        } else if (child->hasTagName(SVGNames::vkernTag)) {
             SVGVKernElement* vkern = static_cast<SVGVKernElement*>(child);
             vkern->buildVerticalKerningPair(m_verticalKerningPairs);
         }

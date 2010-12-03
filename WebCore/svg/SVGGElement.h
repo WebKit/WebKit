@@ -22,7 +22,7 @@
 #define SVGGElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -30,32 +30,34 @@
 
 namespace WebCore {
 
-    class SVGGElement : public SVGStyledTransformableElement,
-                        public SVGTests,
-                        public SVGLangSpace,
-                        public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGGElement> create(const QualifiedName&, Document*);
+class SVGGElement : public SVGStyledTransformableElement,
+                    public SVGTests,
+                    public SVGLangSpace,
+                    public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGGElement> create(const QualifiedName&, Document*);
 
-        virtual bool isShadowTreeContainerElement() const { return false; }
+    virtual bool isShadowTreeContainerElement() const { return false; }
 
-    protected:
-        SVGGElement(const QualifiedName&, Document*);
+protected:
+    SVGGElement(const QualifiedName&, Document*);
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    private:
-        virtual bool isValid() const { return SVGTests::isValid(); }
+private:
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(RenderStyle*);
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // Animated property declarations
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

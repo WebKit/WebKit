@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGSwitchElement.h"
 
@@ -26,6 +27,9 @@
 #include "SVGNames.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_BOOLEAN(SVGSwitchElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)

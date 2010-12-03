@@ -22,6 +22,7 @@
 #define SVGTextContentElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -75,7 +76,7 @@ private:
     DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired) 
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired) 
 };
 
 } // namespace WebCore

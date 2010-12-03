@@ -23,7 +23,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGGradientElement.h"
 
 namespace WebCore {

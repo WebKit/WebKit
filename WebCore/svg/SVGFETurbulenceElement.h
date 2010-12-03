@@ -53,7 +53,7 @@ private:
     // Animated property declarations
     DECLARE_ANIMATED_NUMBER(BaseFrequencyX, baseFrequencyX)
     DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::numOctavesAttr, long, NumOctaves, numOctaves)
+    DECLARE_ANIMATED_INTEGER(NumOctaves, numOctaves)
     DECLARE_ANIMATED_NUMBER(Seed, seed)
     DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles)
     DECLARE_ANIMATED_ENUMERATION(Type, type)

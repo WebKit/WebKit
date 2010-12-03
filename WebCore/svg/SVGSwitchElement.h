@@ -22,33 +22,36 @@
 #define SVGSwitchElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
 namespace WebCore {
-    class SVGSwitchElement : public SVGStyledTransformableElement,
-                             public SVGTests,
-                             public SVGLangSpace,
-                             public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGSwitchElement(const QualifiedName&, Document*);
-        
-        virtual bool isValid() const { return SVGTests::isValid(); }
+class SVGSwitchElement : public SVGStyledTransformableElement,
+                         public SVGTests,
+                         public SVGLangSpace,
+                         public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document*);
 
-        virtual bool childShouldCreateRenderer(Node*) const;
+private:
+    SVGSwitchElement(const QualifiedName&, Document*);
+    
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual bool childShouldCreateRenderer(Node*) const;
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGSwitchElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void synchronizeProperty(const QualifiedName&);
+
+    // Animated property declarations
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

@@ -22,6 +22,7 @@
 #define SVGPathElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
 #include "SVGExternalResourcesRequired.h"
@@ -109,7 +110,7 @@ private:
     DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     void synchronizeD();
 

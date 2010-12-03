@@ -21,12 +21,20 @@
 #define SVGAnimatedRect_h
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedPropertyTearOff.h"
+#include "SVGRect.h"
 
 namespace WebCore {
 
 typedef SVGAnimatedPropertyTearOff<FloatRect> SVGAnimatedRect;
+
+// Helper macros to declare/define a SVGAnimatedRect object
+#define DECLARE_ANIMATED_RECT(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
+
+#define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

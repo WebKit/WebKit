@@ -22,14 +22,13 @@
 #define SVGSVGElement_h
 
 #if ENABLE(SVG)
-#include "IntSize.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTests.h"
 #include "SVGZoomAndPan.h"
@@ -155,11 +154,11 @@ private:
     DECLARE_ANIMATED_LENGTH(Height, height)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     // SVGFitToViewBox
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
  
     virtual void documentWillBecomeInactive();
     virtual void documentDidBecomeActive();

@@ -42,6 +42,7 @@ DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::heightAttr, Height, height)
+DEFINE_ANIMATED_BOOLEAN(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* document)
     : SVGStyledLocatableElement(tagName, document)

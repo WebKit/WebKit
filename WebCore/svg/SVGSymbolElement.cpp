@@ -19,13 +19,18 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGSymbolElement.h"
 
-#include "PlatformString.h"
 #include "SVGFitToViewBox.h"
 
 namespace WebCore {
+
+// Animated property definitions
+DEFINE_ANIMATED_BOOLEAN(SVGSymbolElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGSymbolElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio) 
+DEFINE_ANIMATED_RECT(SVGSymbolElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)

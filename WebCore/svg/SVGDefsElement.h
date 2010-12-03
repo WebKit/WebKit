@@ -22,7 +22,7 @@
 #define SVGDefsElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -30,24 +30,26 @@
 
 namespace WebCore {
 
-    class SVGDefsElement : public SVGStyledTransformableElement,
-                           public SVGTests,
-                           public SVGLangSpace,
-                           public SVGExternalResourcesRequired {
-    public:
-        static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document*);
+class SVGDefsElement : public SVGStyledTransformableElement,
+                       public SVGTests,
+                       public SVGLangSpace,
+                       public SVGExternalResourcesRequired {
+public:
+    static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGDefsElement(const QualifiedName&, Document*);
+private:
+    SVGDefsElement(const QualifiedName&, Document*);
 
-        virtual bool isValid() const;
+    virtual bool isValid() const;
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGDefsElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-    };
+    // Animated property declarations
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+};
 
 } // namespace WebCore
 

@@ -21,7 +21,7 @@
 #define SVGMaskElement_h
 
 #if ENABLE(SVG)
-#include "RenderObject.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -64,7 +64,7 @@ private:
     DECLARE_ANIMATED_LENGTH(Height, height)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 };
 
 }

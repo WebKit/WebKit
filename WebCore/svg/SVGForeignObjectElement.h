@@ -21,8 +21,8 @@
 #define SVGForeignObjectElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGTests.h"
 #include "SVGLangSpace.h"
 #include "SVGURIReference.h"
@@ -61,7 +61,7 @@ private:
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 };
 
 } // namespace WebCore

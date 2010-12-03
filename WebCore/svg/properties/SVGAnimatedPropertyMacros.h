@@ -23,17 +23,11 @@
 #define SVGAnimatedPropertyMacros_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedListPropertyTearOff.h"
-#include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedPropertySynchronizer.h"
-#include "SVGAnimatedPropertyTearOff.h"
-#include "SVGAnimatedTransformListPropertyTearOff.h"
 #include "SVGNames.h" // FIXME: Temporary hack, until we expand the macros in all files, so we don't need a global SVGNames.h include
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
-
-class SVGElement;
 
 // GetOwnerElementForType implementation
 template<typename OwnerType, bool isDerivedFromSVGElement>
@@ -69,6 +63,7 @@ struct IsDerivedFromSVGElement<SVGViewSpec> {
     static const bool value = false;
 };
 
+// SVGSynchronizableAnimatedProperty implementation
 template<typename PropertyType>
 struct SVGSynchronizableAnimatedProperty {
     SVGSynchronizableAnimatedProperty()
@@ -94,56 +89,6 @@ struct SVGSynchronizableAnimatedProperty {
     PropertyType value;
     bool shouldSynchronize : 1;
 };
-
-// FIXME: These macros should be removed, after the transition to the new SVGAnimatedProperty concept is finished.
-#define DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
-public: \
-PropertyType& LowerProperty() const \
-{ \
-    return m_##LowerProperty.value; \
-} \
-\
-PropertyType& LowerProperty##BaseValue() const \
-{ \
-    return m_##LowerProperty.value; \
-} \
-\
-void set##UpperProperty##BaseValue(const PropertyType& type) \
-{ \
-    m_##LowerProperty.value = type; \
-} \
-\
-void synchronize##UpperProperty() \
-{ \
-    if (!m_##LowerProperty.shouldSynchronize) \
-         return; \
-    AtomicString value(SVGPropertyTraits<PropertyType>::toString(LowerProperty##BaseValue())); \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<OwnerType>::value>::synchronize(contextElement, DOMAttribute, value); \
-} \
-\
-PassRefPtr<TearOffType> LowerProperty##Animated() \
-{ \
-    m_##LowerProperty.shouldSynchronize = true; \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    return SVGAnimatedProperty::lookupOrCreateWrapper<TearOffType, PropertyType>(contextElement, DOMAttribute, SVGDOMAttributeIdentifier, m_##LowerProperty.value); \
-} \
-private: \
-    mutable SVGSynchronizableAnimatedProperty<PropertyType> m_##LowerProperty;
-
-#define DECLARE_ANIMATED_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
-
-#define DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS_NEW(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
-
-#define DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedStaticPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
-
-#define DECLARE_ANIMATED_STATIC_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedStaticPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
-
-// FIXME: Remove all macros above, once these two below are deployed everywhere.
 
 #define DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
 void OwnerType::synchronize##UpperProperty() \

@@ -21,51 +21,49 @@
 #define SVGViewSpec_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
-#include "SVGElement.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGFitToViewBox.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
+#include "SVGTransformList.h"
 #include "SVGZoomAndPan.h"
-
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class SVGElement;
-    class SVGTransformList;
+class SVGElement;
 
-    class SVGViewSpec : public SVGFitToViewBox,
-                        public SVGZoomAndPan,
-                        public Noncopyable {
-    public:
-        SVGViewSpec(SVGElement*);
+class SVGViewSpec : public SVGFitToViewBox,
+                    public SVGZoomAndPan,
+                    public Noncopyable {
+public:
+    SVGViewSpec(SVGElement*);
 
-        bool parseViewSpec(const String&);
+    bool parseViewSpec(const String&);
 
-        void setTransform(const String&);
-        SVGTransformList transform() const { return m_transform; }
+    void setTransform(const String&);
+    SVGTransformList transform() const { return m_transform; }
 
-        void setViewBoxString(const String&);
+    void setViewBoxString(const String&);
 
-        void setPreserveAspectRatioString(const String&);
+    void setPreserveAspectRatioString(const String&);
 
-        void setViewTargetString(const String&);
-        String viewTargetString() const { return m_viewTargetString; }
-        SVGElement* viewTarget() const;
+    void setViewTargetString(const String&);
+    String viewTargetString() const { return m_viewTargetString; }
+    SVGElement* viewTarget() const;
 
-        SVGElement* contextElement() const { return const_cast<SVGElement*>(m_contextElement); }
+    SVGElement* contextElement() const { return const_cast<SVGElement*>(m_contextElement); }
 
-    private:
-        SVGElement* m_contextElement;
+private:
+    SVGElement* m_contextElement;
 
-        // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    // Animated property declarations
 
-        SVGTransformList m_transform;
-        String m_viewTargetString;
-    };
+    // SVGFitToViewBox
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+
+    SVGTransformList m_transform;
+    String m_viewTargetString;
+};
 
 } // namespace WebCore
 

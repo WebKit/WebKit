@@ -53,14 +53,14 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
-using namespace SVGNames;
-
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::heightAttr, Height, height)
+DEFINE_ANIMATED_BOOLEAN(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGSVGElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
+DEFINE_ANIMATED_RECT(SVGSVGElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 
 inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
@@ -106,7 +106,7 @@ void SVGSVGElement::didMoveToNewOwnerDocument()
 const AtomicString& SVGSVGElement::contentScriptType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/ecmascript"));
-    const AtomicString& n = getAttribute(contentScriptTypeAttr);
+    const AtomicString& n = getAttribute(SVGNames::contentScriptTypeAttr);
     return n.isNull() ? defaultValue : n;
 }
 
@@ -118,7 +118,7 @@ void SVGSVGElement::setContentScriptType(const AtomicString& type)
 const AtomicString& SVGSVGElement::contentStyleType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
-    const AtomicString& n = getAttribute(contentStyleTypeAttr);
+    const AtomicString& n = getAttribute(SVGNames::contentStyleTypeAttr);
     return n.isNull() ? defaultValue : n;
 }
 
@@ -246,11 +246,11 @@ void SVGSVGElement::parseMappedAttribute(Attribute* attr)
         bool setListener = true;
 
         // Only handle events if we're the outermost <svg> element
-        if (attr->name() == onunloadAttr)
+        if (attr->name() == HTMLNames::onunloadAttr)
             document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
-        else if (attr->name() == onresizeAttr)
+        else if (attr->name() == HTMLNames::onresizeAttr)
             document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
-        else if (attr->name() == onscrollAttr)
+        else if (attr->name() == HTMLNames::onscrollAttr)
             document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
         else if (attr->name() == SVGNames::onzoomAttr)
             document()->setWindowAttributeEventListener(eventNames().zoomEvent, createAttributeEventListener(document()->frame(), attr));
@@ -261,9 +261,9 @@ void SVGSVGElement::parseMappedAttribute(Attribute* attr)
             return;
     }
 
-    if (attr->name() == onabortAttr)
+    if (attr->name() == HTMLNames::onabortAttr)
         document()->setWindowAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(document()->frame(), attr));
-    else if (attr->name() == onerrorAttr)
+    else if (attr->name() == HTMLNames::onerrorAttr)
         document()->setWindowAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));

@@ -25,11 +25,11 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ImageBuffer.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFEImage.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGLangSpace.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -58,13 +58,13 @@ private:
     void requestImageResource();
 
     // Animated property declarations
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGFEImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
 
     // SVGURIReference
     DECLARE_ANIMATED_STRING(Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     CachedResourceHandle<CachedImage> m_cachedImage;
     OwnPtr<ImageBuffer> m_targetImage;

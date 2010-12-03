@@ -27,7 +27,6 @@
 #include "SVGAnimatedLength.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
-#include "SVGNames.h"
 #include "SVGStyledElement.h"
 
 #include <wtf/PassRefPtr.h>

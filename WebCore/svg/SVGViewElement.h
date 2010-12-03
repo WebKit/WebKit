@@ -22,43 +22,45 @@
 #define SVGViewElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedBoolean.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGStringList.h"
 #include "SVGStyledElement.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
 
-    class SVGViewElement : public SVGStyledElement,
-                           public SVGExternalResourcesRequired,
-                           public SVGFitToViewBox,
-                           public SVGZoomAndPan {
-    public:
-        static PassRefPtr<SVGViewElement> create(const QualifiedName&, Document*);
+class SVGViewElement : public SVGStyledElement,
+                       public SVGExternalResourcesRequired,
+                       public SVGFitToViewBox,
+                       public SVGZoomAndPan {
+public:
+    static PassRefPtr<SVGViewElement> create(const QualifiedName&, Document*);
 
-        SVGStringList& viewTarget() { return m_viewTarget; }
+    SVGStringList& viewTarget() { return m_viewTarget; }
 
-    private:
-        SVGViewElement(const QualifiedName&, Document*);
+private:
+    SVGViewElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGViewElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    // Animated property declarations
+
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
  
-        // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGViewElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY_NEW(SVGViewElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    // SVGFitToViewBox
+    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
 
-        SVGStringList m_viewTarget;
-    };
+    SVGStringList m_viewTarget;
+};
 
 } // namespace WebCore
 

@@ -50,17 +50,17 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::orderAttr, orderXIdentifier(), long, OrderX, orderX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::orderAttr, orderYIdentifier(), long, OrderY, orderY)
+    DECLARE_ANIMATED_INTEGER(OrderX, orderX)
+    DECLARE_ANIMATED_INTEGER(OrderY, orderY)
     DECLARE_ANIMATED_NUMBER_LIST(KernelMatrix, kernelMatrix)
     DECLARE_ANIMATED_NUMBER(Divisor, divisor)
     DECLARE_ANIMATED_NUMBER(Bias, bias)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::targetXAttr, long, TargetX, targetX)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::targetYAttr, long, TargetY, targetY)
+    DECLARE_ANIMATED_INTEGER(TargetX, targetX)
+    DECLARE_ANIMATED_INTEGER(TargetY, targetY)
     DECLARE_ANIMATED_ENUMERATION(EdgeMode, edgeMode)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
-    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::preserveAlphaAttr, bool, PreserveAlpha, preserveAlpha)
+    DECLARE_ANIMATED_BOOLEAN(PreserveAlpha, preserveAlpha)
 };
 
 } // namespace WebCore
