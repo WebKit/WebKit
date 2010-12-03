@@ -459,7 +459,7 @@ public:
 
         PatternDisjunction* parenthesesDisjunction = new PatternDisjunction(m_alternative);
         m_pattern.m_disjunctions.append(parenthesesDisjunction);
-        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, capture));
+        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, capture, false));
         m_alternative = parenthesesDisjunction->addNewAlternative();
     }
 
@@ -467,7 +467,7 @@ public:
     {
         PatternDisjunction* parenthesesDisjunction = new PatternDisjunction(m_alternative);
         m_pattern.m_disjunctions.append(parenthesesDisjunction);
-        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction, invert));
+        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction, false, invert));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_invertParentheticalAssertion = invert;
     }
@@ -520,7 +520,7 @@ public:
             PatternTerm& term = currentAlternative->lastTerm();
             ASSERT((term.type == PatternTerm::TypeParenthesesSubpattern) || (term.type == PatternTerm::TypeParentheticalAssertion));
 
-            if ((term.type == PatternTerm::TypeParenthesesSubpattern) && term.invertOrCapture && (subpatternId == term.parentheses.subpatternId)) {
+            if ((term.type == PatternTerm::TypeParenthesesSubpattern) && term.capture() && (subpatternId == term.parentheses.subpatternId)) {
                 m_alternative->m_terms.append(PatternTerm::ForwardReference());
                 return;
             }
@@ -845,7 +845,7 @@ public:
                 return false;
 
             case PatternTerm::TypeParentheticalAssertion:
-                if (term.invertOrCapture)
+                if (term.invert())
                     return false;
 
             case PatternTerm::TypeParenthesesSubpattern:

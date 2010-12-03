@@ -103,7 +103,8 @@ struct PatternTerm {
         TypeParenthesesSubpattern,
         TypeParentheticalAssertion,
     } type;
-    bool invertOrCapture;
+    bool m_capture :1;
+    bool m_invert :1;
     union {
         UChar patternCharacter;
         CharacterClass* characterClass;
@@ -123,6 +124,8 @@ struct PatternTerm {
 
     PatternTerm(UChar ch)
         : type(PatternTerm::TypePatternCharacter)
+        , m_capture(false)
+        , m_invert(false)
     {
         patternCharacter = ch;
         quantityType = QuantifierFixedCount;
@@ -131,16 +134,18 @@ struct PatternTerm {
 
     PatternTerm(CharacterClass* charClass, bool invert)
         : type(PatternTerm::TypeCharacterClass)
-        , invertOrCapture(invert)
+        , m_capture(false)
+        , m_invert(invert)
     {
         characterClass = charClass;
         quantityType = QuantifierFixedCount;
         quantityCount = 1;
     }
 
-    PatternTerm(Type type, unsigned subpatternId, PatternDisjunction* disjunction, bool invertOrCapture)
+    PatternTerm(Type type, unsigned subpatternId, PatternDisjunction* disjunction, bool capture = false, bool invert = false)
         : type(type)
-        , invertOrCapture(invertOrCapture)
+        , m_capture(capture)
+        , m_invert(invert)
     {
         parentheses.disjunction = disjunction;
         parentheses.subpatternId = subpatternId;
@@ -152,7 +157,8 @@ struct PatternTerm {
     
     PatternTerm(Type type, bool invert = false)
         : type(type)
-        , invertOrCapture(invert)
+        , m_capture(false)
+        , m_invert(invert)
     {
         quantityType = QuantifierFixedCount;
         quantityCount = 1;
@@ -160,7 +166,8 @@ struct PatternTerm {
 
     PatternTerm(unsigned spatternId)
         : type(TypeBackReference)
-        , invertOrCapture(false)
+        , m_capture(false)
+        , m_invert(false)
     {
         backReferenceSubpatternId = spatternId;
         quantityType = QuantifierFixedCount;
@@ -189,12 +196,12 @@ struct PatternTerm {
     
     bool invert()
     {
-        return invertOrCapture;
+        return m_invert;
     }
 
     bool capture()
     {
-        return invertOrCapture;
+        return m_capture;
     }
     
     void quantify(unsigned count, QuantifierType type)

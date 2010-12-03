@@ -241,6 +241,7 @@ public:
         }
         
         bool isUsed() const { return m_label.isUsed(); }
+        bool isSet() const { return m_label.isSet(); }
         void used() { m_label.used(); }
     private:
         JmpDst m_label;
@@ -263,6 +264,8 @@ public:
             : m_label(masm->m_assembler.label())
         {
         }
+        
+        bool isSet() const { return m_label.isSet(); }
         
     private:
         JmpDst m_label;
@@ -408,6 +411,11 @@ public:
         bool empty()
         {
             return !m_jumps.size();
+        }
+        
+        void clear()
+        {
+            m_jumps.clear();
         }
         
         const JumpVector& jumps() { return m_jumps; }

@@ -87,7 +87,6 @@ struct ByteTerm {
         TypeParentheticalAssertionEnd,
         TypeCheckInput,
     } type;
-    bool invertOrCapture;
     union {
         struct {
             union {
@@ -114,10 +113,14 @@ struct ByteTerm {
         unsigned checkInputCount;
     };
     unsigned frameLocation;
+    bool m_capture : 1;
+    bool m_invert : 1;
     int inputPosition;
 
     ByteTerm(UChar ch, int inputPos, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
+        , m_capture(false)
+        , m_invert(false)
     {
         switch (quantityType) {
         case QuantifierFixedCount:
@@ -139,6 +142,8 @@ struct ByteTerm {
 
     ByteTerm(UChar lo, UChar hi, int inputPos, unsigned frameLocation, unsigned quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
+        , m_capture(false)
+        , m_invert(false)
     {
         switch (quantityType) {
         case QuantifierFixedCount:
@@ -161,7 +166,8 @@ struct ByteTerm {
 
     ByteTerm(CharacterClass* characterClass, bool invert, int inputPos)
         : type(ByteTerm::TypeCharacterClass)
-        , invertOrCapture(invert)
+        , m_capture(false)
+        , m_invert(invert)
     {
         atom.characterClass = characterClass;
         atom.quantityType = QuantifierFixedCount;
@@ -169,9 +175,10 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    ByteTerm(Type type, unsigned subpatternId, ByteDisjunction* parenthesesInfo, bool invertOrCapture, int inputPos)
+    ByteTerm(Type type, unsigned subpatternId, ByteDisjunction* parenthesesInfo, bool capture, int inputPos)
         : type(type)
-        , invertOrCapture(invertOrCapture)
+        , m_capture(capture)
+        , m_invert(false)
     {
         atom.subpatternId = subpatternId;
         atom.parenthesesDisjunction = parenthesesInfo;
@@ -182,15 +189,17 @@ struct ByteTerm {
     
     ByteTerm(Type type, bool invert = false)
         : type(type)
-        , invertOrCapture(invert)
+        , m_capture(false)
+        , m_invert(invert)
     {
         atom.quantityType = QuantifierFixedCount;
         atom.quantityCount = 1;
     }
 
-    ByteTerm(Type type, unsigned subpatternId, bool invertOrCapture, int inputPos)
+    ByteTerm(Type type, unsigned subpatternId, bool capture, bool invert, int inputPos)
         : type(type)
-        , invertOrCapture(invertOrCapture)
+        , m_capture(capture)
+        , m_invert(invert)
     {
         atom.subpatternId = subpatternId;
         atom.quantityType = QuantifierFixedCount;
@@ -228,7 +237,7 @@ struct ByteTerm {
     
     static ByteTerm BackReference(unsigned subpatternId, int inputPos)
     {
-        return ByteTerm(TypeBackReference, subpatternId, false, inputPos);
+        return ByteTerm(TypeBackReference, subpatternId, false, false, inputPos);
     }
 
     static ByteTerm BodyAlternativeBegin(bool onceThrough)
@@ -297,12 +306,12 @@ struct ByteTerm {
 
     bool invert()
     {
-        return invertOrCapture;
+        return m_invert;
     }
 
     bool capture()
     {
-        return invertOrCapture;
+        return m_capture;
     }
 };
 

@@ -553,6 +553,7 @@ public:
         }
 
         bool isUsed() const { return m_used; }
+        bool isSet() const { return (m_offset != -1); }
         void used() { m_used = true; }
     private:
         JmpDst(int offset)

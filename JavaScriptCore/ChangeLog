@@ -1,3 +1,148 @@
+2010-12-03  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough
+
+        Changes to significantly reduce branches to branches in JIT'ed
+        parentheses backtrack processing.  The changes include the following:
+        - Taking the backtracking processing out of line and adding it as
+          code at the end of the JIT'ed routine.
+        - Allow backtracks to be direct via an indirect branch for an address
+          pushed onto the stack.  If the use of an indirect branch is from a
+          conditional jump, then we emit a trampoline at the end of the 
+          routine.
+        - Propogate backtracks instead of adding trampolines.  Backtracks are
+          propogated to where they are used.  This change also eliminated 
+          trampoline branch code that aren't used.
+        - Added global expression state to keep track of parentheses tail
+          code and indirect branches.
+        Other changes made to support these changes.
+        - Split invertOrCapture flag on Patterns to two separate flags.  Added
+          getters for these flags.  Rippled these changes to both the JIT 
+          and interpreter code.
+        - Split BacktrackDestination out off TermGenerationState struct.
+          This is done to hold references to a backtrack for later code
+          generation.
+        https://bugs.webkit.org/show_bug.cgi?id=50295
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::JmpDst::isSet):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::JmpDst::isSet):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Label::isSet):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::isUsed):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::used):
+        (JSC::AbstractMacroAssembler::JumpList::clear):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::JmpDst::isSet):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpDst::isSet):
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::RegexPatternConstructor::atomParentheticalAssertionBegin):
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeBeginTerms):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::BackReference):
+        (JSC::Yarr::ByteTerm::invert):
+        (JSC::Yarr::ByteTerm::capture):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::IndirectJumpEntry::IndirectJumpEntry):
+        (JSC::Yarr::RegexGenerator::IndirectJumpEntry::addJump):
+        (JSC::Yarr::RegexGenerator::GenerationState::GenerationState):
+        (JSC::Yarr::RegexGenerator::GenerationState::addIndirectJumpEntry):
+        (JSC::Yarr::RegexGenerator::GenerationState::emitIndirectJumpTable):
+        (JSC::Yarr::RegexGenerator::GenerationState::addParenthesesTail):
+        (JSC::Yarr::RegexGenerator::GenerationState::emitParenthesesTail):
+        (JSC::Yarr::RegexGenerator::GenerationState::addJumpToNextInteration):
+        (JSC::Yarr::RegexGenerator::GenerationState::addJumpsToNextInteration):
+        (JSC::Yarr::RegexGenerator::GenerationState::addDataLabelToNextIteration):
+        (JSC::Yarr::RegexGenerator::GenerationState::linkToNextIteration):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::BacktrackDestination):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::clear):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::clearDataLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::haveDestination):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::isStackOffset):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::isLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::isJumpList):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::haveDataLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::copyTarget):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::copyTo):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::addBacktrackJump):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setStackOffset):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setNextBacktrackLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setBacktrackToLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setBacktrackJumpList):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setBacktrackSourceLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setDataLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::setSubDataLabelPtr):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::linkToNextBacktrack):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::getStackOffset):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::getLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::getBacktrackJumps):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::getDataLabel):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::jumpToBacktrack):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::linkDataLabelToHereIfExists):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::plantJumpToBacktrackIfExists):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::linkAlternativeBacktracks):
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::linkAlternativeBacktracksTo):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::TermGenerationState):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::resetAlternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isLastAlternative):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::clearBacktrack):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::jumpToBacktrack):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::plantJumpToBacktrackIfExists):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::linkDataLabelToBacktrackIfExists):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::addBacktrackJump):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setDataLabelPtr):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setBackTrackStackOffset):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setBacktrackLabel):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::linkAlternativeBacktracks):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::linkAlternativeBacktracksTo):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setBacktrackLink):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::chainBacktracks):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::chainBacktrackJumps):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::getBacktrackDestination):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::propagateBacktrackingFrom):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::ParenthesesTail):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::processBacktracks):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::setNextIteration):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::RegexGenerator::generateAssertionBOL):
+        (JSC::Yarr::RegexGenerator::generateAssertionEOL):
+        (JSC::Yarr::RegexGenerator::generateAssertionWordBoundary):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterSingle):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterPair):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassSingle):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateParenthesesDisjunction):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+        (JSC::Yarr::RegexGenerator::generateParenthesesGreedyNoBacktrack):
+        (JSC::Yarr::RegexGenerator::generateParentheticalAssertion):
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+        (JSC::Yarr::RegexGenerator::compile):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::PatternTerm::invert):
+        (JSC::Yarr::PatternTerm::capture):
+
 2010-12-03  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
