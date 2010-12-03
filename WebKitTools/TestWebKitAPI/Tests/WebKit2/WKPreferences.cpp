@@ -71,6 +71,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     TEST_ASSERT(WKPreferencesGetPluginsEnabled(preference) == true);
     TEST_ASSERT(WKPreferencesGetJavaEnabled(preference) == true);
     TEST_ASSERT(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference) == true);
+    TEST_ASSERT(WKPreferencesGetHyperlinkAuditingEnabled(preference) == true);
     WKRetainPtr<WKStringRef> standardFontFamily(AdoptWK, WKPreferencesCopyStandardFontFamily(preference));
     TEST_ASSERT(WKStringIsEqualToUTF8CString(standardFontFamily.get(), expectedStandardFontFamily));
     WKRetainPtr<WKStringRef> fixedFontFamily(AdoptWK, WKPreferencesCopyFixedFontFamily(preference));

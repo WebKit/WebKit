@@ -140,6 +140,16 @@ bool WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef pref
     return toImpl(preferencesRef)->javaScriptCanOpenWindowsAutomatically();
 }
 
+void WKPreferencesSetHyperlinkAuditingEnabled(WKPreferencesRef preferencesRef, bool hyperlinkAuditingEnabled)
+{
+    toImpl(preferencesRef)->setHyperlinkAuditingEnabled(hyperlinkAuditingEnabled);
+}
+
+bool WKPreferencesGetHyperlinkAuditingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->hyperlinkAuditingEnabled();
+}
+
 void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
     toImpl(preferencesRef)->setStandardFontFamily(toWTFString(family));

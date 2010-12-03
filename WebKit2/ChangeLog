@@ -1,3 +1,18 @@
+2010-12-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Enable <a ping> for Mac/Windows/WebKit2 builds
+        <rdar://problem/8504473>
+        https://bugs.webkit.org/show_bug.cgi?id=50488
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetHyperlinkAuditingEnabled):
+        (WKPreferencesGetHyperlinkAuditingEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        Add "HyperlinkAuditing" preference and enabled it by default.
+
 2010-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by good sense in fixing builds.

@@ -1,3 +1,14 @@
+2010-12-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Enable <a ping> for Mac/Windows/WebKit2 builds
+        <rdar://problem/8504473>
+        https://bugs.webkit.org/show_bug.cgi?id=50488
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Enable "HyperlinkAuditing" by default.
+
 2010-12-03  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.
