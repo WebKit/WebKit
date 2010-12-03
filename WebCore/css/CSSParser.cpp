@@ -5536,10 +5536,10 @@ WebKitCSSKeyframesRule* CSSParser::createKeyframesRule()
 
 CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
 {
-    m_allowImportRules = m_allowNamespaceDeclarations = false;
     CSSStyleRule* result = 0;
     markRuleBodyEnd();
     if (selectors) {
+        m_allowImportRules = m_allowNamespaceDeclarations = false;
         RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLineNumber);
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
