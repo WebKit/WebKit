@@ -3164,6 +3164,9 @@ BUGCR65257 WIN DEBUG : storage/change-version-handle-reuse.html = CRASH
 // New test. Just needs a new baseline for Windows / Linux.
 BUG_YUTAK WIN LINUX : css2.1/t040105-import-10-b.html = IMAGE+TEXT
 
+// New test.
+BUG_YUTAK : media/controls-without-preload.html = MISSING
+
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
