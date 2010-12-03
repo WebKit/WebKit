@@ -91,7 +91,7 @@ namespace WebCore {
             void deleteNodeTest(Step::NodeTest*);
 
         private:
-            bool isOperatorContext() const;
+            bool isBinaryOperatorContext() const;
 
             void skipWS();
             Token makeTokenAndAdvance(int type, int advance = 1);
