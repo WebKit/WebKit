@@ -1054,7 +1054,7 @@ BUG22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
 
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
-BUG10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
+BUG10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
 
 // Regression from the 41362:41402 merge.
 BUG8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
@@ -3330,8 +3330,6 @@ BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
-
-BUGWK50410 MAC : fast/canvas/toDataURL-supportedTypes.html = TEXT
 
 BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
 
