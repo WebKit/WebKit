@@ -177,6 +177,9 @@ private:
     WebDownloadClient m_downloadClient;
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 
+    bool m_clearResourceCachesForNewWebProcess;
+    bool m_clearApplicationCacheForNewWebProcess;
+    
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
 #endif

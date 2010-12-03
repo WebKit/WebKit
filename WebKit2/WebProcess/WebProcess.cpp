@@ -158,6 +158,11 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
         setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
 
+    if (parameters.clearResourceCaches)
+        clearResourceCaches();
+    if (parameters.clearApplicationCache)
+        clearApplicationCache();
+
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 #endif

@@ -58,6 +58,9 @@ struct WebProcessCreationParameters {
 
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;
+    
+    bool clearResourceCaches;
+    bool clearApplicationCache;
 
     String languageCode;
 

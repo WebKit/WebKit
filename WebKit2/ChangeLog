@@ -1,3 +1,23 @@
+2010-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8725679> and https://bugs.webkit.org/show_bug.cgi?id=50482
+        Crash trying to empty caches with no WebProcess.
+
+        * Shared/WebProcessCreationParameters.h: Add the "clear this cache" flags.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::ensureWebProcess): If either of the clear cache flags are set when a new WebProcess is
+          created, include those flags in the parameters.
+        (WebKit::WebContext::clearResourceCaches): If the current process isn't valid, flag this action to be done later.
+        (WebKit::WebContext::clearApplicationCache): Ditto.
+        * UIProcess/WebContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Clear the caches if told to.
+
 2010-12-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

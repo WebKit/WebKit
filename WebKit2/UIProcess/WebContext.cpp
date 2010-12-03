@@ -82,6 +82,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_clearResourceCachesForNewWebProcess(false)
+    , m_clearApplicationCacheForNewWebProcess(false)
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -159,7 +161,12 @@ void WebContext::ensureWebProcess()
     parameters.cacheModel = m_cacheModel;
     parameters.languageCode = defaultLanguage();
     parameters.applicationCacheDirectory = applicationCacheDirectory();
-
+    parameters.clearResourceCaches = m_clearResourceCachesForNewWebProcess;
+    parameters.clearApplicationCache = m_clearApplicationCacheForNewWebProcess;
+    
+    m_clearResourceCachesForNewWebProcess = false;
+    m_clearApplicationCacheForNewWebProcess = false;
+    
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
@@ -472,11 +479,27 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
 
 void WebContext::clearResourceCaches()
 {
+    if (!hasValidProcess()) {
+        // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
+        // clear the resource cache will be respected. But if the user quits the application before another WebProcess is created,
+        // their request will be ignored.
+        m_clearResourceCachesForNewWebProcess = true;
+        return;
+    }
+
     m_process->send(Messages::WebProcess::ClearResourceCaches(), 0);
 }
 
 void WebContext::clearApplicationCache()
 {
+    if (!hasValidProcess()) {
+        // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
+        // clear the application cache will be respected. But if the user quits the application before another WebProcess is created,
+        // their request will be ignored.
+        m_clearApplicationCacheForNewWebProcess = true;
+        return;
+    }
+
     m_process->send(Messages::WebProcess::ClearApplicationCache(), 0);
 }
 
