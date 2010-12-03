@@ -49,6 +49,11 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
 void mediaPlayerPrivateVolumeChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 void mediaPlayerPrivateMuteChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
+void mediaPlayerPrivateVideoTagsChangedCallback(GObject* element, gint, MediaPlayerPrivateGStreamer*);
+void mediaPlayerPrivateAudioTagsChangedCallback(GObject* element, gint, MediaPlayerPrivateGStreamer*);
+gboolean mediaPlayerPrivateAudioTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player);
+gboolean mediaPlayerPrivateVideoTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player);
+
 gboolean mediaPlayerPrivateVolumeChangeTimeoutCallback(MediaPlayerPrivateGStreamer*);
 gboolean mediaPlayerPrivateMuteChangeTimeoutCallback(MediaPlayerPrivateGStreamer*);
 
@@ -61,8 +66,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             static void registerMediaEngine(MediaEngineRegistrar);
 
             IntSize naturalSize() const;
-            bool hasVideo() const;
-            bool hasAudio() const;
+            bool hasVideo() const { return m_hasVideo; }
+            bool hasAudio() const { return m_hasAudio; }
 
             void load(const String &url);
             void commitLoad();
@@ -91,6 +96,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void muteChanged();
             void notifyPlayerOfMute();
 
+            bool loadDelayed() const { return m_delayingLoad; }
             void setPreload(MediaPlayer::Preload);
             void fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
 
@@ -123,6 +129,11 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             GstElement* pipeline() const { return m_playBin; }
             bool pipelineReset() const { return m_resetPipeline; }
+
+            void videoTagsChanged(gint);
+            void audioTagsChanged(gint);
+            void notifyPlayerOfVideoTags();
+            void notifyPlayerOfAudioTags();
 
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
@@ -181,6 +192,10 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             RefPtr<GStreamerGWorld> m_gstGWorld;
             guint m_volumeTimerHandler;
             guint m_muteTimerHandler;
+            bool m_hasVideo;
+            bool m_hasAudio;
+            guint m_audioTagsTimerHandler;
+            guint m_videoTagsTimerHandler;
     };
 }
 
