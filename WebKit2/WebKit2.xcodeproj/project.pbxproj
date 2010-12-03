@@ -219,13 +219,13 @@
 		512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */; };
 		512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */; };
 		512F58F512A88A5400629530 /* WKAuthenticationChallenge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58ED12A88A5400629530 /* WKAuthenticationChallenge.cpp */; };
-		512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58EE12A88A5400629530 /* WKAuthenticationChallenge.h */; };
+		512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58EE12A88A5400629530 /* WKAuthenticationChallenge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		512F58F712A88A5400629530 /* WKAuthenticationDecisionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58EF12A88A5400629530 /* WKAuthenticationDecisionListener.cpp */; };
-		512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F012A88A5400629530 /* WKAuthenticationDecisionListener.h */; };
+		512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F012A88A5400629530 /* WKAuthenticationDecisionListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		512F58F912A88A5400629530 /* WKCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58F112A88A5400629530 /* WKCredential.cpp */; };
-		512F58FA12A88A5400629530 /* WKCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F212A88A5400629530 /* WKCredential.h */; };
+		512F58FA12A88A5400629530 /* WKCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F212A88A5400629530 /* WKCredential.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58F312A88A5400629530 /* WKProtectionSpace.cpp */; };
-		512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F412A88A5400629530 /* WKProtectionSpace.h */; };
+		512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F412A88A5400629530 /* WKProtectionSpace.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */; };
 		5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };

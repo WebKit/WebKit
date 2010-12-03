@@ -1,5 +1,13 @@
 2010-12-03  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by good sense in fixing builds.
+
+        Export the 4 new API headers I added today.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-12-03  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/8725679> and https://bugs.webkit.org/show_bug.cgi?id=50482
