@@ -1,3 +1,10 @@
+2010-12-03  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * win/WebKit2Generated.make:
+        Add the new API files from http://trac.webkit.org/changeset/73281.
+
 2010-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
