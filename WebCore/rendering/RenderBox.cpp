@@ -306,23 +306,24 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // Set the text color if we're the body.
     if (isBodyRenderer)
         document()->setTextColor(style()->visitedDependentColor(CSSPropertyColor));
-    
-    if ((isRootRenderer || isBodyRenderer) && (!oldStyle || oldStyle->writingMode() != style()->writingMode() || oldStyle->direction() != style()->direction())) {
+
+    if (isRootRenderer || isBodyRenderer) {
         // Propagate the new writing mode and direction up to the RenderView.
         RenderView* viewRenderer = view();
         RenderStyle* viewStyle = viewRenderer->style();
-        if (isRootRenderer || !document()->directionSetOnDocumentElement()) {
+        if (viewStyle->direction() != style()->direction() && (isRootRenderer || !document()->directionSetOnDocumentElement())) {
             viewStyle->setDirection(style()->direction());
             if (isBodyRenderer)
                 document()->documentElement()->renderer()->style()->setDirection(style()->direction());
+            setNeedsLayoutAndPrefWidthsRecalc();
         }
-        
-        if (isRootRenderer || !document()->writingModeSetOnDocumentElement()) {
+
+        if (viewStyle->writingMode() != style()->writingMode() && (isRootRenderer || !document()->writingModeSetOnDocumentElement())) {
             viewStyle->setWritingMode(style()->writingMode());
             if (isBodyRenderer)
                 document()->documentElement()->renderer()->style()->setWritingMode(style()->writingMode());
+            setNeedsLayoutAndPrefWidthsRecalc();
         }
-        setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
 
