@@ -143,6 +143,8 @@
       '../page/chromium',
       '../platform',
       '../platform/animation',
+      '../platform/audio',
+      '../platform/audio/chromium',
       '../platform/chromium',
       '../platform/graphics',
       '../platform/graphics/chromium',
@@ -179,6 +181,7 @@
       '../svg/graphics',
       '../svg/graphics/filters',
       '../svg/properties',
+      '../webaudio',
       '../websockets',
       '../workers',
       '../xml',
@@ -241,6 +244,7 @@
           # related directories.
           # platform/graphics/cg may need to stick around, though.
           '../loader/archive/cf',
+          '../platform/audio/mac',
           '../platform/graphics/mac',
           '../platform/mac',
           '../platform/text/mac',
@@ -249,6 +253,7 @@
       ['OS=="win"', {
         'webcore_include_dirs': [
           '../page/win',
+          '../platform/audio/win',
           '../platform/graphics/win',
           '../platform/text/win',
           '../platform/win',
@@ -679,6 +684,7 @@
               '--include', '../plugins',
               '--include', '../storage',
               '--include', '../svg',
+              '--include', '../webaudio',
               '--include', '../websockets',
               '--include', '../workers',
               '--include', '../xml',
@@ -1120,6 +1126,13 @@
             ['include', 'platform/(graphics/)?mac/[^/]*Font[^/]*\\.(cpp|mm?)$'],
             ['include', 'platform/graphics/mac/ComplexText[^/]*\\.(cpp|h)$'],
 
+            # Necessary for web audio API bringup on Chrome.
+            # They will later be replaced with chromium-specific code.
+            ['include', 'platform/audio/mac/AudioBusMac\\.mm$'],
+            ['include', 'platform/audio/mac/AudioDestinationMac\\.cpp$'],
+            ['include', 'platform/audio/mac/AudioFileReaderMac\\.cpp$'],
+            ['include', 'platform/audio/mac/FFTFrameMac\\.cpp$'],
+
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see
             # the specific exclusions in the "sources!" list below.
@@ -1387,6 +1400,13 @@
         ],
         'mac_framework_dirs': [
           '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
+          '$(SDKROOT)/System/Library/Frameworks/Accelerate.framework',
+          '$(SDKROOT)/System/Library/Frameworks/CoreServices.framework',
+          '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
+          '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
+          '$(SDKROOT)/System/Library/Frameworks/AudioToolbox.framework',
+          '$(SDKROOT)/System/Library/Frameworks/AudioUnit.framework',
+          '$(SDKROOT)/System/Library/Frameworks/CoreAudio.framework',
         ],
       },
       'conditions': [

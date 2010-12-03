@@ -239,6 +239,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/page/animation \
     $$PWD/platform \
     $$PWD/platform/animation \
+    $$PWD/platform/audio \
     $$PWD/platform/graphics \
     $$PWD/platform/graphics/filters \
     $$PWD/platform/graphics/transforms \
@@ -258,6 +259,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/svg/graphics \
     $$PWD/svg/graphics/filters \
     $$PWD/svg/properties \
+    $$PWD/webaudio \
     $$PWD/websockets \
     $$PWD/wml \
     $$PWD/workers \

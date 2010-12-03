@@ -34,6 +34,11 @@
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSAudioConstructor.h"
+
+#if ENABLE(WEB_AUDIO)
+#include "JSAudioContext.h"
+#endif
+
 #include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
@@ -645,6 +650,13 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
     if (SharedWorkerRepository::isAvailable())
         return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
     return jsUndefined();
+}
+#endif
+
+#if ENABLE(WEB_AUDIO)
+JSValue JSDOMWindow::audioContext(ExecState* exec) const
+{
+    return getDOMConstructor<JSAudioContextConstructor>(exec, this);
 }
 #endif
 

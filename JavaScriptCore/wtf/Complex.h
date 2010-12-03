@@ -43,4 +43,7 @@ inline Complex complexFromMagnitudePhase(double magnitude, double phase)
 
 } // namespace WTF
 
+using WTF::Complex;
+using WTF::complexFromMagnitudePhase;
+
 #endif // WTF_Complex_h

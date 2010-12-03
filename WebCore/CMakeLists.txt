@@ -30,6 +30,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
+    "${WEBCORE_DIR}/platform/audio"
     "${WEBCORE_DIR}/platform/graphics"
     "${WEBCORE_DIR}/platform/graphics/filters"
     "${WEBCORE_DIR}/platform/graphics/transforms"
@@ -55,6 +56,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/svg/properties"
+    "${WEBCORE_DIR}/webaudio"
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/wml"
     "${WEBCORE_DIR}/workers"
@@ -93,6 +95,7 @@ SET(WebCore_IDL_INCLUDES
     plugins
     storage
     svg
+    webaudio
     workers
     xml
 )
@@ -373,6 +376,27 @@ SET(WebCore_IDL_FILES
     storage/SQLTransactionSyncCallback.idl
     storage/Storage.idl
     storage/StorageEvent.idl
+
+    webaudio/AudioBuffer.idl
+    webaudio/AudioBufferSourceNode.idl
+    webaudio/AudioChannelSplitter.idl
+    webaudio/AudioChannelMerger.idl
+    webaudio/AudioContext.idl
+    webaudio/AudioDestinationNode.idl
+    webaudio/AudioGain.idl
+    webaudio/AudioGainNode.idl
+    webaudio/AudioListener.idl
+    webaudio/AudioNode.idl
+    webaudio/AudioPannerNode.idl
+    webaudio/AudioParam.idl
+    webaudio/AudioProcessingEvent.idl
+    webaudio/AudioSourceNode.idl
+    webaudio/ConvolverNode.idl
+    webaudio/DelayNode.idl
+    webaudio/HighPass2FilterNode.idl
+    webaudio/JavaScriptAudioNode.idl
+    webaudio/LowPass2FilterNode.idl
+    webaudio/RealtimeAnalyserNode.idl
 
     websockets/WebSocket.idl
 

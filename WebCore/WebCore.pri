@@ -489,6 +489,26 @@ IDL_BINDINGS += \
     svg/SVGUseElement.idl \
     svg/SVGViewElement.idl \
     svg/SVGVKernElement.idl \
+    webaudio/AudioBuffer.idl \
+    webaudio/AudioBufferSourceNode.idl \
+    webaudio/AudioChannelMerger.idl \
+    webaudio/AudioChannelSplitter.idl \
+    webaudio/AudioContext.idl \
+    webaudio/AudioDestinationNode.idl \
+    webaudio/AudioGain.idl \
+    webaudio/AudioGainNode.idl \
+    webaudio/AudioListener.idl \
+    webaudio/AudioNode.idl \
+    webaudio/AudioPannerNode.idl \
+    webaudio/AudioParam.idl \
+    webaudio/AudioProcessingEvent.idl \
+    webaudio/AudioSourceNode.idl \
+    webaudio/ConvolverNode.idl \
+    webaudio/DelayNode.idl \
+    webaudio/HighPass2FilterNode.idl \
+    webaudio/JavaScriptAudioNode.idl \
+    webaudio/LowPass2FilterNode.idl \
+    webaudio/RealtimeAnalyserNode.idl \
     websockets/WebSocket.idl \
     workers/AbstractWorker.idl \
     workers/DedicatedWorkerContext.idl \

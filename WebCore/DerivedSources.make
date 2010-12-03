@@ -43,6 +43,7 @@ VPATH = \
     $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/xml \
+    $(WebCore)/webaudio \
     $(WebCore)/wml \
     $(WebCore)/workers \
     $(WebCore)/svg \
@@ -53,6 +54,26 @@ DOM_CLASSES = \
     AbstractView \
     AbstractWorker \
     Attr \
+    AudioBuffer \
+    AudioBufferSourceNode \
+    AudioChannelSplitter \
+    AudioChannelMerger \
+    AudioContext \
+    AudioDestinationNode \
+    AudioGain \
+    AudioGainNode \
+    AudioListener \
+    AudioNode \
+    AudioPannerNode \
+    AudioParam \
+    AudioProcessingEvent \
+    AudioSourceNode \
+    ConvolverNode \
+    DelayNode \
+    HighPass2FilterNode \
+    JavaScriptAudioNode \
+    LowPass2FilterNode \
+    RealtimeAnalyserNode \
     BarInfo \
     BeforeLoadEvent \
     BeforeProcessEvent \

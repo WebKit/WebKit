@@ -34,7 +34,6 @@
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
-#include "AudioResources.h"
 #include "Biquad.h"
 #include "FFTFrame.h"
 #include "HRTFPanner.h"
