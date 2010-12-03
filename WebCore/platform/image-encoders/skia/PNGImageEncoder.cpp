@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006-2009, Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,34 +29,18 @@
  */
 
 #include "config.h"
+#include "PNGImageEncoder.h"
 
 #include "IntSize.h"
 #include "OwnArrayPtr.h"
-#include "PNGImageEncoder.h"
 #include "Vector.h"
-
 #include "SkBitmap.h"
 #include "SkUnPreMultiply.h"
-
 extern "C" {
 #include "png.h"
 }
 
 namespace WebCore {
-
-// Converts BGRA->RGBA and RGBA->BGRA.
-static void convertBetweenBGRAandRGBA(const unsigned char* input, int numberOfPixels,
-                                      unsigned char* output)
-{
-    for (int x = 0; x < numberOfPixels; x++) {
-        const unsigned char* pixelIn = &input[x * 4];
-        unsigned char* pixelOut = &output[x * 4];
-        pixelOut[0] = pixelIn[2];
-        pixelOut[1] = pixelIn[1];
-        pixelOut[2] = pixelIn[0];
-        pixelOut[3] = pixelIn[3];
-    }
-}
 
 // Converts BGRA->RGBA and RGBA->BGRA and undoes alpha premultiplication.
 static void preMultipliedBGRAtoRGBA(const unsigned char* input, int numberOfPixels,
@@ -75,7 +59,6 @@ static void preMultipliedBGRAtoRGBA(const unsigned char* input, int numberOfPixe
         pixelOut[3] = SkColorGetA(unmultiplied);
     }
 }
-
 
 // Encoder --------------------------------------------------------------------
 //
@@ -121,9 +104,7 @@ private:
 static bool encodeImpl(const unsigned char* input,
                        const IntSize& size,
                        int bytesPerRow,
-                       Vector<unsigned char>* output,
-                       void (*conversionFunc)(const unsigned char*, int, unsigned char*)
-                       )
+                       Vector<unsigned char>* output)
 {
     int inputColorComponents = 4;
     int outputColorComponents = 4;
@@ -165,8 +146,8 @@ static bool encodeImpl(const unsigned char* input,
     png_write_info(pngPtr, infoPtr);
 
     OwnArrayPtr<unsigned char> rowPixels(new unsigned char[imageSize.width() * outputColorComponents]);
-    for (int y = 0; y < imageSize.height(); y ++) {
-        conversionFunc(&input[y * bytesPerRow], imageSize.width(), rowPixels.get());
+    for (int y = 0; y < imageSize.height(); ++y) {
+        preMultipliedBGRAtoRGBA(&input[y * bytesPerRow], imageSize.width(), rowPixels.get());
         png_write_row(pngPtr, rowPixels.get());
     }
 
@@ -174,27 +155,16 @@ static bool encodeImpl(const unsigned char* input,
     return true;
 }
 
-
 // static
 bool PNGImageEncoder::encode(const SkBitmap& image, Vector<unsigned char>* output)
 {
     if (image.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support ARGB at 8 bpp now.
+        return false; // Only support ARGB 32 bpp skia bitmaps.
 
     image.lockPixels();
-    bool result = encodeImpl(static_cast<unsigned char*>(
-        image.getPixels()), IntSize(image.width(), image.height()),
-        image.rowBytes(), output, preMultipliedBGRAtoRGBA);
+    bool result = encodeImpl(static_cast<unsigned char*>(image.getPixels()), IntSize(image.width(), image.height()), image.rowBytes(), output);
     image.unlockPixels();
     return result;
 }
 
-// static
-bool PNGImageEncoder::encode(const unsigned char* input, const IntSize& size,
-                             int bytesPerRow,
-                             Vector<unsigned char>* output)
-{
-    return encodeImpl(input, size, bytesPerRow, output, convertBetweenBGRAandRGBA);
-}
-
-}  // namespace WebCore
+} // namespace WebCore

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006-2009, Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,23 +33,16 @@
 
 #include "Vector.h"
 
-class IntSize;
 class SkBitmap;
 
 namespace WebCore {
 
-    // Interface for encoding PNG data. This is a wrapper around libpng.
-    class PNGImageEncoder {
-    public:
-        // Encodes the specific SkBitmap into the supplied vector.
-        static bool encode(const SkBitmap&, WTF::Vector<unsigned char>* output);
+// Interface for encoding PNG data. This is a wrapper around libpng.
+class PNGImageEncoder {
+public:
+    static bool encode(const SkBitmap&, Vector<unsigned char>* output);
+};
 
-        // Encodes the specified image data into the supplied vector.
-        // w, h give the size of the image and bytes_per_row gives the bytes
-        // per row.
-        static bool encode(const unsigned char* input, const IntSize& size, int bytesPerRow, WTF::Vector<unsigned char>* output);
-    };
-
-}  // namespace WebCore
+} // namespace WebCore
 
 #endif
