@@ -81,7 +81,7 @@ namespace WebKit {
     macro(CursiveFontFamily, cursiveFontFamily, String, String, "Apple Chancery") \
     macro(FantasyFontFamily, fantasyFontFamily, String, String, "Papyrus") \
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier") \
-    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Courier") \
+    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \
     macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
     \
 

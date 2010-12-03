@@ -1,3 +1,12 @@
+2010-12-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix failing API test. The default san serif font on the mac
+        should be Helvetica, not Courier.
+
+        * Shared/WebPreferencesStore.h:
+
 2010-12-03  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
