@@ -3152,6 +3152,14 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             '    if (condition) doIt();\n',
             'More than one command on the same line in if  [whitespace/parens] [4]')
+        # Ensure that having a # in the line doesn't hide the error.
+        self.assert_multi_line_lint(
+            '    x++; char a[] = "#";',
+            'More than one command on the same line  [whitespace/newline] [4]')
+        # Ignore preprocessor if's.
+        self.assert_multi_line_lint(
+            '    #if (condition) || (condition2)\n',
+            '')
 
         # 2. An else statement should go on the same line as a preceding
         #   close brace if one is present, else it should line up with the

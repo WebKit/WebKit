@@ -1458,8 +1458,8 @@ def check_spacing(file_extension, clean_lines, line_number, error):
                               'Extra space before ) in %s' % statement)
 
             # Do not check for more than one command in macros
-            in_macro = match(r'\s*#define', line)
-            if not in_macro and not match(r'((\s*{\s*}?)|(\s*;?))\s*\\?$', rest):
+            in_preprocessor_directive = match(r'\s*#', line)
+            if not in_preprocessor_directive and not match(r'((\s*{\s*}?)|(\s*;?))\s*\\?$', rest):
                 error(line_number, 'whitespace/parens', 4,
                       'More than one command on the same line in %s' % statement)
 

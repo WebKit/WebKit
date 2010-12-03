@@ -1,3 +1,14 @@
+2010-12-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style: false positive reported for #if macro
+        https://bugs.webkit.org/show_bug.cgi?id=48242
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Adjusted check to avoid
+          all preprocessor commands.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added test.
+
 2010-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
