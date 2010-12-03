@@ -214,6 +214,7 @@ HEADERS += \
     Shared/API/c/WKContextMenuItemTypes.h \
     Shared/API/c/WKGeometry.h \
     Shared/API/c/WKNumber.h \
+    Shared/API/c/WKSecurityOrigin.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
     Shared/API/c/WKString.h \
@@ -406,6 +407,7 @@ SOURCES += \
     Shared/API/c/WKCertificateInfo.cpp \
     Shared/API/c/WKContextMenuItem.cpp \
     Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKSecurityOrigin.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
     Shared/API/c/WKString.cpp \
     Shared/API/c/WKType.cpp \

@@ -611,6 +611,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebSecurityOrigin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebSerializedScriptValue.h"
 				>
 			</File>
@@ -751,6 +755,14 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKNumber.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSecurityOrigin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSecurityOrigin.h"
 					>
 				</File>
 				<File

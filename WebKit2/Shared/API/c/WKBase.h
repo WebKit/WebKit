@@ -49,6 +49,7 @@ typedef const struct OpaqueWKData* WKDataRef;
 typedef const struct OpaqueWKDouble* WKDoubleRef;
 typedef const struct OpaqueWKError* WKErrorRef;
 typedef const struct OpaqueWKCertificateInfo* WKCertificateInfoRef;
+typedef const struct OpaqueWKSecurityOrigin* WKSecurityOriginRef;
 typedef const struct OpaqueWKSerializedScriptValue* WKSerializedScriptValueRef;
 typedef const struct OpaqueWKString* WKStringRef;
 typedef const struct OpaqueWKUInt64* WKUInt64Ref;

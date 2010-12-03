@@ -1,3 +1,47 @@
+2010-12-03  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need a WebKit2 Equivalent of WebSecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=50170
+
+        * Shared/API/c/WKBase.h:
+        Add the WKSecurityOriginRef typedef.
+
+        * Shared/APIObject.h:
+        Add the SecurityOrigin type as a Shared type.
+
+        * Shared/API/c/WKSharedAPICast.h::
+        Add the mapping between WKSecurityOriginRef and WebSecurityOrigin.
+
+        * UIProcess/API/C/WKSecurityOrigin.cpp: Added.
+        (WKSecurityOriginGetTypeID):
+        (WKSecurityOriginCreate):
+        (WKSecurityOriginGetProtocol):
+        (WKSecurityOriginGetHost):
+        (WKSecurityOriginGetPort):
+        * UIProcess/API/C/WKSecurityOrigin.h: Added.
+
+        * UIProcess/WebSecurityOrigin.h: Added.
+        (WebKit::WebSecurityOrigin::create):
+        Create based on the database identifier, which contains the protocol, host and port.
+        (WebKit::WebSecurityOrigin::protocol):
+        (WebKit::WebSecurityOrigin::host):
+        (WebKit::WebSecurityOrigin::port):
+        (WebKit::WebSecurityOrigin::databaseIdentifier):
+        (WebKit::WebSecurityOrigin::WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::type):
+
+        * WebKit2.pro:
+        Add WKSecurityOrigin.cpp/.h.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add the WebSecurityOrigin.h and WKSecurityOrigin.cpp/.h.
+
+        * win/WebKit2Generated.make:
+        Make sure WKSecurityOrigin.h file gets copied over to the WebKitBuild directory on Windows.
+
 2010-12-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

@@ -557,6 +557,9 @@
 		F6113E25126CE1820057D0A7 /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */; };
 		F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */; };
 		F6113E29126CE19B0057D0A7 /* WKUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F634445612A885C8000612D8 /* WebSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445512A885C8000612D8 /* WebSecurityOrigin.h */; };
+		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
+		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -1177,6 +1180,9 @@
 		F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentURLPattern.cpp; sourceTree = "<group>"; };
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
+		F634445512A885C8000612D8 /* WebSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOrigin.h; sourceTree = "<group>"; };
+		F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOrigin.cpp; sourceTree = "<group>"; };
+		F634445B12A885E9000612D8 /* WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOrigin.h; sourceTree = "<group>"; };
 		F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValuePrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1498,6 +1504,7 @@
 				BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
+				F634445512A885C8000612D8 /* WebSecurityOrigin.h */,
 				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
 				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
 				C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */,
@@ -2153,6 +2160,8 @@
 				BC4075E4124FF0270068F20A /* WKMutableDictionary.h */,
 				BC4075E5124FF0270068F20A /* WKNumber.cpp */,
 				BC4075E6124FF0270068F20A /* WKNumber.h */,
+				F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */,
+				F634445B12A885E9000612D8 /* WKSecurityOrigin.h */,
 				BC4075E7124FF0270068F20A /* WKSerializedScriptValue.cpp */,
 				BC4075E8124FF0270068F20A /* WKSerializedScriptValue.h */,
 				F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */,
@@ -2519,6 +2528,8 @@
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,
 				BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */,
 				37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */,
+				F634445612A885C8000612D8 /* WebSecurityOrigin.h in Headers */,
+				F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2914,6 +2925,7 @@
 				1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */,
 				BC84EB1812A7100C0083F2DA /* WebPreferencesMac.mm in Sources */,
 				BC2DFBA312A761A500E732A3 /* WebPreferencesCF.cpp in Sources */,
+				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

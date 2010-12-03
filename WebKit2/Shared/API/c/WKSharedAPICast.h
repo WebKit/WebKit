@@ -52,6 +52,7 @@ class MutableDictionary;
 class WebCertificateInfo;
 class WebContextMenuItem;
 class WebData;
+class WebSecurityOrigin;
 class WebSerializedScriptValue;
 class WebURLRequest;
 class WebURLResponse;
@@ -74,6 +75,7 @@ WK_ADD_API_MAPPING(WKDoubleRef, WebDouble)
 WK_ADD_API_MAPPING(WKErrorRef, WebError)
 WK_ADD_API_MAPPING(WKMutableArrayRef, MutableArray)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
+WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
 WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
 WK_ADD_API_MAPPING(WKStringRef, WebString)
 WK_ADD_API_MAPPING(WKTypeRef, APIObject)

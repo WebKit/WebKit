@@ -41,6 +41,7 @@ public:
         TypeData,
         TypeDictionary,
         TypeError,
+        TypeSecurityOrigin,
         TypeSerializedScriptValue,
         TypeString,
         TypeURL,
