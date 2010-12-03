@@ -3333,6 +3333,7 @@ BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
 BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
 
-// Disable while investigating
-BUG_VICTORW : fast/frames/location-redirect-user-gesture.html = TEXT
-BUG_VICTORW : fast/frames/meta-refresh-user-gesture.html = TEXT
+// These tests work with DRT but not test shell
+// Remove them once we switch from test shell to DRT
+BUG65210 : fast/frames/location-redirect-user-gesture.html = TEXT
+BUG65210 : fast/frames/meta-refresh-user-gesture.html = TEXT
