@@ -1,3 +1,14 @@
+2010-12-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Move StringHaiku.cpp into wtf directory
+        https://bugs.webkit.org/show_bug.cgi?id=50057
+
+        * wtf/haiku/StringHaiku.cpp: Renamed from WebCore/platform/text/haiku/StringHaiku.cpp.
+        (WTF::String::String):
+        (WTF::String::operator BString):
+
 2010-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix Windows build.

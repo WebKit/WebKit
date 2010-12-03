@@ -25,9 +25,9 @@
 
 #include "config.h"
 #include "PlatformString.h"
-#include <wtf/text/CString.h>
 
 #include <String.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -48,5 +48,4 @@ String::operator BString() const
     return string;
 }
 
-} // namespace WebCore
-
+} // namespace WTF
