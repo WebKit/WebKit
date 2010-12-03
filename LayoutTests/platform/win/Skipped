@@ -111,6 +111,7 @@ editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/get-data-text-plain-drop.html
 fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html
+http/tests/security/drag-drop-same-unique-origin.html
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
