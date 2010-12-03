@@ -443,7 +443,9 @@ QWKPage::ViewportAttributes QWKPage::viewportAttributesForSize(const QSize& avai
 
 void QWKPage::setActualVisibleContentsRect(const QRect& rect) const
 {
+#if ENABLE(TILED_BACKING_STORE)
     d->page->setActualVisibleContentRect(rect);
+#endif
 }
 
 void QWKPage::timerEvent(QTimerEvent* ev)

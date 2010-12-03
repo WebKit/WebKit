@@ -25,6 +25,8 @@
 
 #include "TiledDrawingAreaProxy.h"
 
+#if ENABLE(TILED_BACKING_STORE)
+
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "UpdateChunk.h"
@@ -65,3 +67,5 @@ void TiledDrawingAreaProxy::snapshotTaken(UpdateChunk& chunk)
 }
 
 } // namespace WebKit
+
+#endif

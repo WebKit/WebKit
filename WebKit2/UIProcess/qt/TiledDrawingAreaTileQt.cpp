@@ -25,6 +25,8 @@
 
 #include "TiledDrawingAreaTile.h"
 
+#if ENABLE(TILED_BACKING_STORE)
+
 #include "GraphicsContext.h"
 #include "TiledDrawingAreaProxy.h"
 #include "WebPageProxy.h"
@@ -203,3 +205,4 @@ void TiledDrawingAreaTile::updateBackBuffer()
 }
 
 }
+#endif

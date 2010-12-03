@@ -137,8 +137,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         }
     }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
+#endif
 
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));

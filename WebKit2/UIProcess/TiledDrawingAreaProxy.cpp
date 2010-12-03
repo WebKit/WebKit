@@ -25,6 +25,7 @@
 
 #include "TiledDrawingAreaProxy.h"
 
+#if ENABLE(TILED_BACKING_STORE)
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
@@ -625,3 +626,4 @@ bool TiledDrawingAreaProxy::hasPendingUpdates() const
 
 } // namespace WebKit
 
+#endif
