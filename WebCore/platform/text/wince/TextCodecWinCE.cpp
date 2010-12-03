@@ -333,8 +333,7 @@ String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool
         result.append(L'?');
         sawError = true;
         if (stopOnError)
-            return String(result.data(), result.size());
-
+            return String::adopt(result);
 
         if (left == 1)
             break;
@@ -351,7 +350,8 @@ String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool
         }
     } else
         m_decodeBuffer.clear();
-    return String(result.data(), result.size());
+
+    return String::adopt(result);
 }
 
 CString TextCodecWinCE::encode(const UChar* characters, size_t length, UnencodableHandling)
