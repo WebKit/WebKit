@@ -1,3 +1,16 @@
+2010-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        The chunked update drawing area is flipped twice when drawing
+        https://bugs.webkit.org/show_bug.cgi?id=50465
+        <rdar://problem/8726836>
+
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        Flip the destination contexts, thus unflipping them. (Turns out two wrongs make a right here).
+
 2010-12-03  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

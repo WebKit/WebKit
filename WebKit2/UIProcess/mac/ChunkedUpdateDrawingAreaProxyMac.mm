@@ -65,8 +65,16 @@ void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContext
     if (!m_bitmapContext)
         return;
 
+    CGContextSaveGState(context);
+
+    // Flip the destination.
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -m_size.height());
+
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(m_bitmapContext.get()));
     CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
+
+    CGContextRestoreGState(context);
 }
 
 void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)
@@ -74,10 +82,16 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
     ensureBackingStore();
 
     RetainPtr<CGImageRef> image(updateChunk->createImage());
-    const IntRect& updateChunkRect = updateChunk->rect();
+    IntRect updateChunkRect = updateChunk->rect();
 
-    CGContextDrawImage(m_bitmapContext.get(), CGRectMake(updateChunkRect.x(), size().height() - updateChunkRect.bottom(), 
-                                                         updateChunkRect.width(), updateChunkRect.height()), image.get());
+    // Flip the destination.
+    CGContextSaveGState(m_bitmapContext.get());
+    CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
+    CGContextTranslateCTM(m_bitmapContext.get(), 0, -(updateChunkRect.y() + updateChunkRect.bottom()));
+
+    CGContextDrawImage(m_bitmapContext.get(), updateChunkRect, image.get());
+    CGContextRestoreGState(m_bitmapContext.get());
+
     [m_webView setNeedsDisplayInRect:NSRectFromCGRect(updateChunkRect)];
 }
 
