@@ -33,6 +33,7 @@ do
   git reset --hard trunk
   git clean -f
   git rebase --abort
+  git fetch
   git svn rebase
   ./WebKitTools/Scripts/webkit-patch commit-queue --no-confirm --exit-after-iteration 10
 done

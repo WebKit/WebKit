@@ -27,10 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# These are meant to match the instructions from:
+# http://trac.webkit.org/wiki/UsingGitWithWebKit
 cd /mnt/git
 git clone git://git.webkit.org/WebKit.git webkit
 cd webkit
+
 git svn init -T trunk http://svn.webkit.org/repository/webkit
 git update-ref refs/remotes/trunk origin/master
-git svn rebase
+# It's possible that this "config" step can get merged into an earlier setup step.
+git config --replace-all svn-remote.svn.fetch trunk:refs/remotes/origin/master
 
+git fetch
+git svn rebase

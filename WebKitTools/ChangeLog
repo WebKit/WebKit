@@ -1,3 +1,14 @@
+2010-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update the EWSTools scripts to use modern-style git repos
+        https://bugs.webkit.org/show_bug.cgi?id=50402
+
+        * EWSTools/create-webkit-git:
+        * EWSTools/start-commit-queue.sh:
+        * EWSTools/start-queue.sh:
+
 2010-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Chromium Linux plugin tests by not logging
