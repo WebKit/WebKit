@@ -125,14 +125,14 @@ public:
     void setStrokeColor(SkColor);
     void setStrokeThickness(float thickness);
     void setStrokeShader(SkShader*);
-    void setTextDrawingMode(int mode);
+    void setTextDrawingMode(TextDrawingModeFlags mode);
     void setUseAntialiasing(bool enable);
     void setDashPathEffect(SkDashPathEffect*);
 
     SkDrawLooper* getDrawLooper() const;
     StrokeStyle getStrokeStyle() const;
     float getStrokeThickness() const;
-    int getTextDrawingMode() const;
+    TextDrawingModeFlags getTextDrawingMode() const;
     float getAlpha() const;
     int getNormalizedAlpha() const;
 
