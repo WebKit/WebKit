@@ -260,10 +260,37 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
     if baseline_target in current_baselines and baseline_move_to != 'none':
         log('  Moving current %s baselines to %s' %
             (baseline_target, baseline_move_to))
-        log('    FIXME: Add support for moving existing baselines')
-        return False
+
+        # See which ones we need to move (only those that are about to be
+        # updated), and make sure we're not clobbering any files in the
+        # destination.
+        current_extensions = set(current_baselines[baseline_target].keys())
+        actual_result_extensions = [
+            os.path.splitext(f)[1] for f in actual_result_files]
+        extensions_to_move = current_extensions.intersection(
+            actual_result_extensions)
+
+        if extensions_to_move.intersection(
+            current_baselines.get(baseline_move_to, {}).keys()):
+            log('    Already had baselines in %s, could not move existing '
+                '%s ones' % (baseline_move_to, baseline_target))
+            return False
+
+        # Do the actual move.
+        if extensions_to_move:
+            if not _move_test_baselines(
+                test_file,
+                list(extensions_to_move),
+                baseline_target,
+                baseline_move_to,
+                test_config,
+                log):
+                return False
+        else:
+            log('    No current baselines to move')
 
     log('  Updating baselines for %s' % baseline_target)
+    filesystem.maybe_make_directory(target_expectations_directory)
     for source_file in actual_result_files:
         source_path = filesystem.join(test_results_directory, source_file)
         destination_file = source_file.replace('-actual', '-expected')
@@ -280,6 +307,41 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
 
     return True
 
+
+def _move_test_baselines(test_file, extensions_to_move, source_platform, destination_platform, test_config, log):
+    test_file_name = os.path.splitext(os.path.basename(test_file))[0]
+    test_directory = os.path.dirname(test_file)
+    filesystem = test_config.filesystem
+
+    # Want predictable output order for unit tests.
+    extensions_to_move.sort()
+
+    source_directory = os.path.join(
+        test_config.layout_tests_directory,
+        'platform',
+        source_platform,
+        test_directory)
+    destination_directory = os.path.join(
+        test_config.layout_tests_directory,
+        'platform',
+        destination_platform,
+        test_directory)
+    filesystem.maybe_make_directory(destination_directory)
+
+    for extension in extensions_to_move:
+        file_name = test_file_name + '-expected' + extension
+        source_path = filesystem.join(source_directory, file_name)
+        destination_path = filesystem.join(destination_directory, file_name)
+        filesystem.copyfile(source_path, destination_path)
+        exit_code = test_config.scm.add(destination_path, return_exit_code=True)
+        if exit_code:
+            log('    Could not update %s in SCM, exit code %d' %
+                (file_name, exit_code))
+            return False
+        else:
+            log('    Moved %s' % file_name)
+
+    return True
 
 def _get_test_baselines(test_file, test_config):
     class AllPlatformsPort(WebKitPort):

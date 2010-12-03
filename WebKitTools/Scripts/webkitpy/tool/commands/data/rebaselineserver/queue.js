@@ -39,7 +39,7 @@ function RebaselineQueue()
 
     var self = this;
     $('add-to-rebaseline-queue').addEventListener(
-        'click', function() { self.addCurentTest(); });
+        'click', function() { self.addCurrentTest(); });
     this._selectNode.addEventListener('change', updateState);
     this._removeSelectionButtonNode.addEventListener(
         'click', function() { self._removeSelection(); });

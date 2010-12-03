@@ -36,7 +36,7 @@ from webkitpy.tool.mocktool import MockSCM
 
 
 class RebaselineTestTest(unittest.TestCase):
-    def test_text_rebaseline(self):
+    def test_text_rebaseline_update(self):
         self._assertRebaseline(
             test_files=(
                 'fast/text-expected.txt',
@@ -55,7 +55,25 @@ class RebaselineTestTest(unittest.TestCase):
                 '    Updated text-expected.txt',
             ])
 
-    def test_text_rebaseline_move_no_op(self):
+    def test_text_rebaseline_new(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='none',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Updating baselines for mac',
+                '    Updated text-expected.txt',
+            ])
+
+    def test_text_rebaseline_move_no_op_1(self):
         self._assertRebaseline(
             test_files=(
                 'fast/text-expected.txt',
@@ -74,6 +92,27 @@ class RebaselineTestTest(unittest.TestCase):
                 '    Updated text-expected.txt',
             ])
 
+    def test_text_rebaseline_move_no_op_2(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+                'platform/mac/fast/text-expected.checksum',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='mac-leopard',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Moving current mac baselines to mac-leopard',
+                '    No current baselines to move',
+                '  Updating baselines for mac',
+                '    Updated text-expected.txt',
+            ])
+
     def test_text_rebaseline_move(self):
         self._assertRebaseline(
             test_files=(
@@ -86,11 +125,59 @@ class RebaselineTestTest(unittest.TestCase):
             test_name='fast/text.html',
             baseline_target='mac',
             baseline_move_to='mac-leopard',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/text...',
+                '  Moving current mac baselines to mac-leopard',
+                '    Moved text-expected.txt',
+                '  Updating baselines for mac',
+                '    Updated text-expected.txt',
+            ])
+
+    def test_text_rebaseline_move_only_images(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/image-expected.txt',
+                'platform/mac/fast/image-expected.txt',
+                'platform/mac/fast/image-expected.png',
+                'platform/mac/fast/image-expected.checksum',
+            ),
+            results_files=(
+                'fast/image-actual.png',
+                'fast/image-actual.checksum',
+            ),
+            test_name='fast/image.html',
+            baseline_target='mac',
+            baseline_move_to='mac-leopard',
+            expected_success=True,
+            expected_log=[
+                'Rebaselining fast/image...',
+                '  Moving current mac baselines to mac-leopard',
+                '    Moved image-expected.checksum',
+                '    Moved image-expected.png',
+                '  Updating baselines for mac',
+                '    Updated image-expected.checksum',
+                '    Updated image-expected.png',
+            ])
+
+    def test_text_rebaseline_move_already_exist(self):
+        self._assertRebaseline(
+            test_files=(
+                'fast/text-expected.txt',
+                'platform/mac-leopard/fast/text-expected.txt',
+                'platform/mac/fast/text-expected.txt',
+            ),
+            results_files=(
+                'fast/text-actual.txt',
+            ),
+            test_name='fast/text.html',
+            baseline_target='mac',
+            baseline_move_to='mac-leopard',
             expected_success=False,
             expected_log=[
                 'Rebaselining fast/text...',
                 '  Moving current mac baselines to mac-leopard',
-                '    FIXME: Add support for moving existing baselines',
+                '    Already had baselines in mac-leopard, could not move existing mac ones',
             ])
 
     def test_image_rebaseline(self):
@@ -212,6 +299,6 @@ def get_test_config(test_files=[], result_files=[]):
         TestMacPort(),
         layout_tests_directory,
         results_directory,
-        ('mac', 'win', 'linux'),
+        ('mac', 'mac-leopard', 'win', 'linux'),
         mock_filesystem,
         MockSCM())

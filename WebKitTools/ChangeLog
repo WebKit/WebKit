@@ -1,3 +1,19 @@
+2010-12-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: move existing baselines
+        https://bugs.webkit.org/show_bug.cgi?id=50421
+        
+        Implement moving of existing baselines: move all files that are about
+        to be overwriten by update baselines.
+        
+        Also fix a typo in the UI JS.
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/queue.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py:
+
 2010-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73211.
