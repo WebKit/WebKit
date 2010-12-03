@@ -110,10 +110,14 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, WebPageGroup* pageGr
 #ifndef NDEBUG
     webPageProxyCounter.increment();
 #endif
+
+    m_pageGroup->addPage(this);
 }
 
 WebPageProxy::~WebPageProxy()
 {
+    m_pageGroup->removePage(this);
+
 #ifndef NDEBUG
     webPageProxyCounter.decrement();
 #endif
@@ -663,8 +667,9 @@ void WebPageProxy::preferencesDidChange()
         return;
 
     // FIXME: It probably makes more sense to send individual preference changes.
-    // However, WebKitTestRunner depends on getting a preference change notification even if nothing changed in UI process, so that overrides get removed.
-    process()->send(Messages::WebPage::PreferencesDidChange(pageNamespace()->context()->preferences()->store()), m_pageID);
+    // However, WebKitTestRunner depends on getting a preference change notification
+    // even if nothing changed in UI process, so that overrides get removed.
+    process()->send(Messages::WebPage::PreferencesDidChange(pageGroup()->preferences()->store()), m_pageID);
 }
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -1496,8 +1501,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) 
 {
     WebPageCreationParameters parameters;
     parameters.viewSize = size;
-    parameters.store = pageNamespace()->context()->preferences()->store();
     parameters.drawingAreaInfo = m_drawingArea->info();
+    parameters.store = m_pageGroup->preferences()->store();
     parameters.pageGroupData = m_pageGroup->data();
 
 #if PLATFORM(WIN)

@@ -46,6 +46,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebKit2/WKFrame.h>
+#include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
 
 using namespace WebKit;
@@ -462,8 +463,8 @@ WKPageRef QWKPage::pageRef() const
 QWKPreferences* QWKPage::preferences() const
 {
     if (!d->preferences) {
-        WKContextRef contextRef = WKPageNamespaceGetContext(toAPI(d->page->pageNamespace()));
-        d->preferences = QWKPreferencesPrivate::createPreferences(contextRef);
+        WKPageGroupRef pageGroupRef = WKPageGetPageGroup(pageRef());
+        d->preferences = QWKPreferencesPrivate::createPreferences(pageGroupRef);
     }
 
     return d->preferences;

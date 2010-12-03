@@ -50,7 +50,6 @@ class DownloadProxy;
 class WebPageGroup;
 class WebPageNamespace;
 class WebPageProxy;
-class WebPreferences;
 struct WebProcessCreationParameters;
 
 class WebContext : public APIObject {
@@ -79,10 +78,6 @@ public:
 
     WebPageNamespace* createPageNamespace();
     void pageNamespaceWasDestroyed(WebPageNamespace*);
-
-    void setPreferences(WebPreferences*);
-    WebPreferences* preferences() const;
-    void preferencesDidChange();
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 
@@ -159,7 +154,6 @@ private:
     RefPtr<WebProcessProxy> m_process;
 
     HashSet<WebPageNamespace*> m_pageNamespaces;
-    RefPtr<WebPreferences> m_preferences;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 

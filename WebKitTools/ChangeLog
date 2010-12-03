@@ -1,3 +1,23 @@
+2010-12-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 Preferences should be held off the PageGroup, not the Context
+        https://bugs.webkit.org/show_bug.cgi?id=50414
+
+        Update for API changes.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2010-12-02  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

@@ -28,7 +28,6 @@
 
 #include "WKAPICast.h"
 #include "WebContext.h"
-#include "WebPreferences.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -60,16 +59,6 @@ WKContextRef WKContextGetSharedProcessContext()
 WKContextRef WKContextGetSharedThreadContext()
 {
     return toAPI(WebContext::sharedThreadContext());
-}
-
-void WKContextSetPreferences(WKContextRef contextRef, WKPreferencesRef preferencesRef)
-{
-    toImpl(contextRef)->setPreferences(toImpl(preferencesRef));
-}
-
-WKPreferencesRef WKContextGetPreferences(WKContextRef contextRef)
-{
-    return toAPI(toImpl(contextRef)->preferences());
 }
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)

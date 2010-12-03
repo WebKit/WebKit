@@ -25,23 +25,13 @@
 
 #include "WebPreferences.h"
 
-#include "WebContext.h"
+#include "WebPageGroup.h"
 
 namespace WebKit {
 
-WebPreferences* WebPreferences::shared()
-{
-    static WebPreferences* sharedPreferences = WebPreferences::create().leakRef();
-    return sharedPreferences;
-}
-
 WebPreferences::WebPreferences()
 {
-}
-
-WebPreferences::WebPreferences(WebPreferences* preferences)
-    : m_store(preferences->m_store)
-{
+    platformInitializeStore();
 }
 
 WebPreferences::WebPreferences(const String& identifier)
@@ -54,19 +44,19 @@ WebPreferences::~WebPreferences()
 {
 }
 
-void WebPreferences::addContext(WebContext* context)
+void WebPreferences::addPageGroup(WebPageGroup* pageGroup)
 {
-    m_contexts.add(context);
+    m_pageGroups.add(pageGroup);
 }
 
-void WebPreferences::removeContext(WebContext* context)
+void WebPreferences::removePageGroup(WebPageGroup* pageGroup)
 {
-    m_contexts.remove(context);
+    m_pageGroups.remove(pageGroup);
 }
 
 void WebPreferences::update()
 {
-    for (HashSet<WebContext*>::iterator it = m_contexts.begin(), end = m_contexts.end(); it != end; ++it)
+    for (HashSet<WebPageGroup*>::iterator it = m_pageGroups.begin(), end = m_pageGroups.end(); it != end; ++it)
         (*it)->preferencesDidChange();
 }
 

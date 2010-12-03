@@ -27,6 +27,7 @@
 
 #include "WKAPICast.h"
 #include "WebPageGroup.h"
+#include "WebPreferences.h"
 
 using namespace WebKit;
 
@@ -41,7 +42,17 @@ WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier)
     return toAPI(pageGroup.release().leakRef());
 }
 
-WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup)
+WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroupRef)
 {
-    return toCopiedAPI(toImpl(pageGroup)->identifier());
+    return toCopiedAPI(toImpl(pageGroupRef)->identifier());
+}
+
+void WKPageGroupSetPreferences(WKPageGroupRef pageGroupRef, WKPreferencesRef preferencesRef)
+{
+    toImpl(pageGroupRef)->setPreferences(toImpl(preferencesRef));
+}
+
+WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroupRef)
+{
+    return toAPI(toImpl(pageGroupRef)->preferences());
 }

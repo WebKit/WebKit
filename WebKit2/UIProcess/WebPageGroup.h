@@ -28,9 +28,13 @@
 
 #include "APIObject.h"
 #include "WebPageGroupData.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 
 namespace WebKit {
+
+class WebPreferences;
+class WebPageProxy;
 
 class WebPageGroup : public APIObject {
 public:
@@ -41,10 +45,17 @@ public:
 
     virtual ~WebPageGroup();
 
+    void addPage(WebPageProxy*);
+    void removePage(WebPageProxy*);
+
     const String& identifier() const { return m_data.identifer; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
-    const WebPageGroupData& data() { return m_data;; }
+    const WebPageGroupData& data() { return m_data; }
+
+    void setPreferences(WebPreferences*);
+    WebPreferences* preferences() const;
+    void preferencesDidChange();
 
 private:
     WebPageGroup(const String& identifier, bool visibleToInjectedBundle);
@@ -52,6 +63,8 @@ private:
     virtual Type type() const { return APIType; }
 
     WebPageGroupData m_data;
+    RefPtr<WebPreferences> m_preferences;
+    HashSet<WebPageProxy*> m_pages;
 };
 
 } // namespace WebKit

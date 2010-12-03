@@ -106,7 +106,7 @@ static void closeOtherPage(WKPageRef page, const void* clientInfo)
 
 static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
 {
-    PlatformWebView* view = new PlatformWebView(WKPageGetPageNamespace(oldPage));
+    PlatformWebView* view = new PlatformWebView(WKPageGetPageNamespace(oldPage), WKPageGetPageGroup(oldPage));
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);
@@ -194,6 +194,9 @@ void TestController::initialize(int argc, const char* argv[])
     initializeInjectedBundlePath();
     initializeTestPluginDirectory();
 
+    WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
+    m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
+
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
     platformInitializeContext();
 
@@ -208,7 +211,7 @@ void TestController::initialize(int argc, const char* argv[])
     _WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
-    m_mainWebView = adoptPtr(new PlatformWebView(m_pageNamespace.get()));
+    m_mainWebView = adoptPtr(new PlatformWebView(m_pageNamespace.get(), m_pageGroup.get()));
 
     WKPageUIClient pageUIClient = {
         0,
@@ -272,7 +275,7 @@ bool TestController::resetStateToConsistentValues()
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset preferences
-    WKPreferencesRef preferences = WKContextGetPreferences(m_context.get());
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);

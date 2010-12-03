@@ -27,10 +27,10 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
+PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef, WKPageGroupRef pageGroupRef)
 {
     NSRect rect = NSMakeRect(0, 0, 800, 600);
-    m_view = [[WKView alloc] initWithFrame:rect pageNamespaceRef:namespaceRef];
+    m_view = [[WKView alloc] initWithFrame:rect pageNamespaceRef:namespaceRef pageGroupRef:pageGroupRef];
 
     NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     m_window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];

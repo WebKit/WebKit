@@ -21,7 +21,7 @@
 
 class QWKPreferencesPrivate {
 public:
-    static QWKPreferences* createPreferences(WKContextRef contextRef);
+    static QWKPreferences* createPreferences(WKPageGroupRef);
     static QWKPreferences* createSharedPreferences();
 
     WKPreferencesRef ref;

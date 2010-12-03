@@ -54,8 +54,6 @@ public:
     WebContext* context() const { return m_context.get(); }
     WebProcessProxy* process() const { return m_context->process(); }
 
-    void preferencesDidChange();
-
     void getStatistics(WKContextStatistics*);
 
 private:

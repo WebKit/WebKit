@@ -25,6 +25,8 @@
 
 #include "WebPageGroup.h"
 
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -44,7 +46,6 @@ static WebPageGroupMap& webPageGroupMap()
     return map;
 }
 
-
 PassRefPtr<WebPageGroup> WebPageGroup::create(const String& identifier, bool visibleToInjectedBundle)
 {
     RefPtr<WebPageGroup> pageGroup = adoptRef(new WebPageGroup(identifier, visibleToInjectedBundle));
@@ -62,16 +63,56 @@ WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
 WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle)
 {
     m_data.pageGroupID = generatePageGroupID();
-    if (!identifier.isNull())
+
+    if (!identifier.isNull()) {
         m_data.identifer = identifier;
-    else
+        m_preferences = WebPreferences::create(identifier);
+    } else {
         m_data.identifer = m_data.identifer = makeString("__uniquePageGroupID-", String::number(m_data.pageGroupID));
-    m_data.visibleToInjectedBundle = visibleToInjectedBundle;
+        m_preferences = WebPreferences::create();
+    }
+
+    m_data.visibleToInjectedBundle = visibleToInjectedBundle;    
 }
 
 WebPageGroup::~WebPageGroup()
 {
     webPageGroupMap().remove(pageGroupID());
+}
+
+void WebPageGroup::addPage(WebPageProxy* page)
+{
+    m_pages.add(page);
+}
+
+void WebPageGroup::removePage(WebPageProxy* page)
+{
+    m_pages.remove(page);
+}
+
+void WebPageGroup::setPreferences(WebPreferences* preferences)
+{
+    if (preferences == m_preferences)
+        return;
+
+    m_preferences->removePageGroup(this);
+    m_preferences = preferences;
+    m_preferences->addPageGroup(this);
+
+    preferencesDidChange();
+}
+
+WebPreferences* WebPageGroup::preferences() const
+{
+    return m_preferences.get();
+}
+
+void WebPageGroup::preferencesDidChange()
+{
+    for (HashSet<WebPageProxy*>::iterator it = m_pages.begin(), end = m_pages.end(); it != end; ++it) {
+        WebPageProxy* page = *it;
+        page->preferencesDidChange();
+    }
 }
 
 } // namespace WebKit

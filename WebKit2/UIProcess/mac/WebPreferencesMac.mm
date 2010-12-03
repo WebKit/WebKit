@@ -32,7 +32,7 @@ namespace WebKit {
 
 static inline NSString* makeKey(const String& identifier, const String& baseKey)
 {
-    return nsStringFromWebCoreString(makeString(identifier, baseKey));
+    return nsStringFromWebCoreString(makeString(identifier, ".WebKit2", baseKey));
 }
 
 static void setStringValueIfInUserDefaults(const String& identifier, const String& key, WebPreferencesStore& store)

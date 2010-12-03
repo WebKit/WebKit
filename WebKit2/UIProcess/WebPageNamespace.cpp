@@ -25,10 +25,9 @@
 
 #include "WebPageNamespace.h"
 
+#include "WKContextPrivate.h"
 #include "WebProcessManager.h"
 #include "WebProcessProxy.h"
-
-#include "WKContextPrivate.h"
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -61,12 +60,6 @@ WebPageNamespace::~WebPageNamespace()
 WebPageProxy* WebPageNamespace::createWebPage(WebPageGroup* group)
 {
     return m_context->createWebPage(this, group);
-}
-
-void WebPageNamespace::preferencesDidChange()
-{
-    for (WebProcessProxy::pages_const_iterator it = process()->pages_begin(), end = process()->pages_end(); it != end; ++it)
-        (*it)->preferencesDidChange();
 }
 
 void WebPageNamespace::getStatistics(WKContextStatistics* statistics)

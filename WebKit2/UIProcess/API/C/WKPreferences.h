@@ -39,7 +39,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKPreferencesGetTypeID();
 
 WK_EXPORT WKPreferencesRef WKPreferencesCreate();
-WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
+WK_EXPORT WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifier);
 
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferences, bool javaScriptEnabled);

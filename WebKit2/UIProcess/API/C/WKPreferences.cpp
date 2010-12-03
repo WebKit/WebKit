@@ -44,9 +44,9 @@ WKPreferencesRef WKPreferencesCreate()
     return toAPI(preferences.release().leakRef());
 }
 
-WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
+WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::copy(toImpl(preferencesRef));
+    RefPtr<WebPreferences> preferences = WebPreferences::create(toWTFString(identifierRef));
     return toAPI(preferences.release().releaseRef());
 }
 

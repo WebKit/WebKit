@@ -97,6 +97,7 @@ private:
     OwnPtr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
+    WKRetainPtr<WKPageGroupRef> m_pageGroup;
     
     enum State {
         Initial,

@@ -35,7 +35,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroup.h"
 #include "WebPageNamespace.h"
-#include "WebPreferences.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
@@ -89,9 +88,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 {
     addLanguageChangeObserver(this, languageChanged);
 
-    m_preferences = WebPreferences::shared();
-    m_preferences->addContext(this);
-
 #ifndef NDEBUG
     webContextCounter.increment();
 #endif
@@ -100,7 +96,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 WebContext::~WebContext()
 {
     ASSERT(m_pageNamespaces.isEmpty());
-    m_preferences->removeContext(this);
     removeLanguageChangeObserver(this);
 
     WebProcessManager::shared().contextWasDestroyed(this);
@@ -233,36 +228,6 @@ void WebContext::pageNamespaceWasDestroyed(WebPageNamespace* pageNamespace)
 {
     ASSERT(m_pageNamespaces.contains(pageNamespace));
     m_pageNamespaces.remove(pageNamespace);
-}
-
-void WebContext::setPreferences(WebPreferences* preferences)
-{
-    ASSERT(preferences);
-
-    if (preferences == m_preferences)
-        return;
-
-    m_preferences->removeContext(this);
-    m_preferences = preferences;
-    m_preferences->addContext(this);
-
-    // FIXME: Update all Pages/PageNamespace with the new WebPreferences.
-}
-
-WebPreferences* WebContext::preferences() const
-{
-    return m_preferences.get();
-}
-
-void WebContext::preferencesDidChange()
-{
-    if (!m_process)
-        return;
-
-    for (HashSet<WebPageNamespace*>::iterator it = m_pageNamespaces.begin(), end = m_pageNamespaces.end(); it != end; ++it) {
-        WebPageNamespace* pageNamespace = *it;
-        pageNamespace->preferencesDidChange();
-    }
 }
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)

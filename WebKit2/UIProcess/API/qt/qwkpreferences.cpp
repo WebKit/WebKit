@@ -19,17 +19,17 @@
 
 #include "qwkpreferences.h"
 
-#include "WKContext.h"
+#include "WKPageGroup.h"
 #include "WKPreferences.h"
 #include "WKStringQt.h"
 #include "WKRetainPtr.h"
 #include "qwkpreferences_p.h"
 
 
-QWKPreferences* QWKPreferencesPrivate::createPreferences(WKContextRef contextRef)
+QWKPreferences* QWKPreferencesPrivate::createPreferences(WKPageGroupRef pageGroupRef)
 {
     QWKPreferences* prefs = new QWKPreferences;
-    prefs->d->ref = WKContextGetPreferences(contextRef);
+    prefs->d->ref = WKContextGetPreferences(pageGroupRef);
     return prefs;
 }
 

@@ -52,7 +52,7 @@ namespace WTR {
 
 class PlatformWebView {
 public:
-    PlatformWebView(WKPageNamespaceRef);
+    PlatformWebView(WKPageNamespaceRef, WKPageGroupRef);
     ~PlatformWebView();
 
     WKPageRef page();

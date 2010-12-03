@@ -1,3 +1,73 @@
+2010-12-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 Preferences should be held off the PageGroup, not the Context
+        https://bugs.webkit.org/show_bug.cgi?id=50414
+
+        - In addition, this now makes the preference held off the PageGroup have
+          the identifier of the PageGroup and autosave to disk (only on the mac
+          for now).
+        - Adds ability to create an arbitrary preference that can be autosaved
+          via a new WKPreferencesCreateWithIdentifier function.
+
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContext.h:
+        Remove preference related code.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupSetPreferences):
+        (WKPageGroupGetPreferences):
+        * UIProcess/API/C/WKPageGroup.h:
+        Add getter/setter for preferences.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/C/WKPreferences.h:
+        Add WKPreferencesCreateWithIdentifier and remove WKPreferencesCreateCopy which is
+        unused.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        * UIProcess/WebContext.h:
+        Remove preference related code.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::addPage):
+        (WebKit::WebPageGroup::removePage):
+        (WebKit::WebPageGroup::setPreferences):
+        (WebKit::WebPageGroup::preferences):
+        (WebKit::WebPageGroup::preferencesDidChange):
+        * UIProcess/WebPageGroup.h:
+        Add preference and page tracking.
+
+        * UIProcess/WebPageNamespace.cpp:
+        * UIProcess/WebPageNamespace.h:
+        Remove preference change notification code.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        Add/remove self from page group set.
+
+        (WebKit::WebPageProxy::preferencesDidChange):
+        (WebKit::WebPageProxy::creationParameters):
+        Get preferences from the pageGroup.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences):
+        (WebKit::WebPreferences::addPageGroup):
+        (WebKit::WebPreferences::removePageGroup):
+        (WebKit::WebPreferences::update):
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::create):
+        Change to track page groups instead of contexts.
+
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::makeKey): Add ".WebKit2" prefix for keys.
+
 2010-12-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

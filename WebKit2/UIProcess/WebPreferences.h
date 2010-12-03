@@ -39,30 +39,27 @@
 
 namespace WebKit {
 
-class WebContext;
+class WebPageGroup;
 
 class WebPreferences : public APIObject {
 public:
     static const Type APIType = TypePreferences;
 
-    static WebPreferences* shared();
-
     static PassRefPtr<WebPreferences> create()
     {
         return adoptRef(new WebPreferences);
     }
-    static PassRefPtr<WebPreferences> copy(WebPreferences* preferences)
+    static PassRefPtr<WebPreferences> create(const String& identifier)
     {
-        return adoptRef(new WebPreferences(preferences));
+        return adoptRef(new WebPreferences(identifier));
     }
 
     virtual ~WebPreferences();
 
-    void addContext(WebContext*);
-    void removeContext(WebContext*);
+    void addPageGroup(WebPageGroup*);
+    void removePageGroup(WebPageGroup*);
 
     const WebPreferencesStore& store() const { return m_store; }
-
 
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
     void set##KeyUpper(const Type& value); \
@@ -74,7 +71,6 @@ public:
 
 private:
     WebPreferences();
-    WebPreferences(WebPreferences*);
     WebPreferences(const String& identifier);
 
     void platformInitializeStore();
@@ -90,7 +86,7 @@ private:
     void platformUpdateBoolValueForKey(const String& key, bool value);
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
 
-    HashSet<WebContext*> m_contexts;
+    HashSet<WebPageGroup*> m_pageGroups;
     WebPreferencesStore m_store;
     String m_identifier;
 };
