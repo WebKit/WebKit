@@ -447,13 +447,13 @@ void ewk_tile_updates_process(Ewk_Tile *t, void (*cb)(void *data, Ewk_Tile *t, c
 #endif
     } else if (t->updates) {
         Eina_Iterator *itr = eina_tiler_iterator_new(t->updates);
-        Eina_Rectangle r = {0, 0, 0, 0};
+        Eina_Rectangle *r;
         if (!itr) {
             CRITICAL("could not create tiler iterator!");
             return;
         }
         EINA_ITERATOR_FOREACH(itr, r)
-            cb((void *)data, t, &r);
+            cb((void *)data, t, r);
         eina_iterator_free(itr);
     }
 }
