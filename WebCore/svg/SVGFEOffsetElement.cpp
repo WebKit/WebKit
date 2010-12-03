@@ -23,7 +23,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEOffsetElement.h"
 
-#include "Attr.h"
+#include "Attribute.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

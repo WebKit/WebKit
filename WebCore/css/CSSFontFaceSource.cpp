@@ -37,10 +37,10 @@
 
 #if ENABLE(SVG_FONTS)
 #include "FontCustomPlatformData.h"
-#include "HTMLNames.h"
 #include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 #endif
 

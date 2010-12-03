@@ -24,7 +24,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedPropertySynchronizer.h"
-#include "SVGNames.h" // FIXME: Temporary hack, until we expand the macros in all files, so we don't need a global SVGNames.h include
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {

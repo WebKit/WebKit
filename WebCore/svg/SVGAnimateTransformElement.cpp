@@ -32,6 +32,7 @@
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
 #include "SVGGradientElement.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"

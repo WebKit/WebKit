@@ -23,6 +23,7 @@
 #include "SVGMPathElement.h"
 
 #include "Document.h"
+#include "SVGNames.h"
 #include "SVGPathElement.h"
 
 namespace WebCore {

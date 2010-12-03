@@ -24,6 +24,7 @@
 #include "SVGTextPathElement.h"
 
 #include "Attribute.h"
+#include "SVGNames.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
 

@@ -29,6 +29,7 @@
 #include "FrameView.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 

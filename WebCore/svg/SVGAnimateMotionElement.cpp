@@ -29,6 +29,7 @@
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
 #include "SVGMPathElement.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPathElement.h"

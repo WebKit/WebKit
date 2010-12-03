@@ -35,6 +35,7 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGMissingGlyphElement.h"
+#include "SVGNames.h"
 #include "XMLNames.h"
 
 using namespace WTF::Unicode;

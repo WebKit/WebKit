@@ -97,6 +97,7 @@
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
+#include "SVGNames.h"
 #include "SVGUseElement.h"
 #endif
 

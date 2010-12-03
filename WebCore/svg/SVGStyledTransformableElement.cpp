@@ -24,11 +24,9 @@
 #include "SVGStyledTransformableElement.h"
 
 #include "AffineTransform.h"
-#include "Attr.h"
+#include "Attribute.h"
 #include "RenderSVGPath.h"
-#include "SVGDocument.h"
-#include "SVGStyledElement.h"
-#include "SVGTransformList.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

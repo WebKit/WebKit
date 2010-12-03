@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGPathSegList.h"
 
+#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathParserFactory.h"
 

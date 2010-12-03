@@ -23,7 +23,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETileElement.h"
 
-#include "Attr.h"
+#include "Attribute.h"
+#include "SVGNames.h"
 #include "SVGRenderStyle.h"
 
 namespace WebCore {

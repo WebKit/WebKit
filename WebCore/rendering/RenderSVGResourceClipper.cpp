@@ -38,6 +38,7 @@
 #include "SVGClipPathElement.h"
 #include "SVGElement.h"
 #include "SVGImageBufferTools.h"
+#include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGResources.h"
 #include "SVGStyledElement.h"

@@ -27,6 +27,7 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGFilterElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

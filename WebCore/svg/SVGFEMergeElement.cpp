@@ -24,6 +24,7 @@
 #include "SVGFEMergeElement.h"
 
 #include "SVGFEMergeNodeElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

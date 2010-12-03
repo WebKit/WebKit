@@ -31,10 +31,10 @@
 #define STORE_FONT_CUSTOM_PLATFORM_DATA
 #endif
 
-#include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "FontPlatformData.h"
+#include "MemoryCache.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "loader.h"
@@ -45,11 +45,11 @@
 #endif
 
 #if ENABLE(SVG_FONTS)
-#include "HTMLNames.h"
 #include "NodeList.h"
 #include "SVGElement.h"
 #include "SVGFontElement.h"
 #include "SVGGElement.h"
+#include "SVGNames.h"
 #endif
 
 namespace WebCore {

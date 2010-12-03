@@ -27,11 +27,11 @@
 #include "SMILTimeContainer.h"
 
 #if ENABLE(SVG)
-
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "Document.h"
 #include "SVGAnimationElement.h"
+#include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include <wtf/CurrentTime.h>

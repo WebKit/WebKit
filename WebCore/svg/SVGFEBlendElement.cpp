@@ -24,6 +24,7 @@
 #include "SVGFEBlendElement.h"
 
 #include "Attribute.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

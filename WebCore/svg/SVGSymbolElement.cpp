@@ -24,6 +24,7 @@
 #include "SVGSymbolElement.h"
 
 #include "SVGFitToViewBox.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

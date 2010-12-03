@@ -23,8 +23,8 @@
 #include "SVGViewSpec.h"
 
 #include "Document.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 #include "SVGTransformable.h"
 

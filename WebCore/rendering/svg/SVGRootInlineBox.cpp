@@ -30,6 +30,7 @@
 #include "RenderSVGInlineText.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
+#include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGTextPositioningElement.h"
 

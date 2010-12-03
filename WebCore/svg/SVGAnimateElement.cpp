@@ -20,17 +20,18 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateElement.h"
 
 #include "ColorDistance.h"
 #include "FloatConversion.h"
 #include "SVGColor.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPathSegList.h"
 #include "SVGPointList.h"
-#include <math.h>
 
 using namespace std;
 

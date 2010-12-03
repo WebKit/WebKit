@@ -62,6 +62,7 @@
 #include "SVGInlineTextBox.h"
 #include "SVGLineElement.h"
 #include "SVGLinearGradientElement.h"
+#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPatternElement.h"

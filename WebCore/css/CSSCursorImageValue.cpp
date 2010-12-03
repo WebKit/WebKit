@@ -30,6 +30,7 @@
 
 #if ENABLE(SVG)
 #include "SVGCursorElement.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 #endif
 

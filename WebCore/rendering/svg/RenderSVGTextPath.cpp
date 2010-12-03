@@ -28,6 +28,7 @@
 #include "FloatQuad.h"
 #include "RenderBlock.h"
 #include "SVGInlineTextBox.h"
+#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextPathElement.h"

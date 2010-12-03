@@ -29,9 +29,7 @@
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
-#include "SVGDocument.h"
-#include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
+#include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "XLinkNames.h"
 

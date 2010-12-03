@@ -28,10 +28,9 @@
 #include "FloatRect.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
-#include "SVGLengthList.h"
+#include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
-#include "SVGTransformList.h"
 
 namespace WebCore {
 

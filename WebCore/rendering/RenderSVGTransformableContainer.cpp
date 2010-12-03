@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGTransformableContainer.h"
 
+#include "SVGNames.h"
 #include "SVGShadowTreeElements.h"
 #include "SVGStyledTransformableElement.h"
 
