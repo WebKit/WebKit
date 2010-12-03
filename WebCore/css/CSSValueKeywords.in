@@ -768,3 +768,16 @@ horizontal-bt
 # -webkit-text-combine
 cluster
 upright
+
+# -webkit-text-emphasis-position
+over
+under
+
+# -webkit-text-emphasis-style
+filled
+open
+dot
+# circle
+double-circle
+triangle
+sesame

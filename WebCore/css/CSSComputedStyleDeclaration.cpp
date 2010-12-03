@@ -1218,6 +1218,30 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:
             return currentColorOrValidColor(style.get(), style->textFillColor());
+        case CSSPropertyWebkitTextEmphasisColor:
+            return currentColorOrValidColor(style.get(), style->textEmphasisColor());
+        case CSSPropertyWebkitTextEmphasisPosition:
+            return CSSPrimitiveValue::create(style->textEmphasisPosition());
+        case CSSPropertyWebkitTextEmphasisStyle:
+            switch (style->textEmphasisMark()) {
+            case TextEmphasisMarkNone:
+                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+            case TextEmphasisMarkCustom:
+                return CSSPrimitiveValue::create(style->textEmphasisCustomMark(), CSSPrimitiveValue::CSS_STRING);
+            case TextEmphasisMarkAuto:
+                ASSERT_NOT_REACHED();
+                // Fall through
+            case TextEmphasisMarkDot:
+            case TextEmphasisMarkCircle:
+            case TextEmphasisMarkDoubleCircle:
+            case TextEmphasisMarkTriangle:
+            case TextEmphasisMarkSesame: {
+                RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+                list->append(CSSPrimitiveValue::create(style->textEmphasisFill()));
+                list->append(CSSPrimitiveValue::create(style->textEmphasisMark()));
+                return list.release();
+            }
+            }
         case CSSPropertyTextIndent:
             return CSSPrimitiveValue::create(style->textIndent());
         case CSSPropertyTextShadow:
@@ -1555,6 +1579,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
+        case CSSPropertyWebkitTextEmphasis:
         case CSSPropertyTextLineThrough:
         case CSSPropertyTextLineThroughColor:
         case CSSPropertyTextLineThroughMode:

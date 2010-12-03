@@ -207,6 +207,12 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitTransformOrigin, transformOriginProperties);
     
+    static const int textEmphasisProperties[] = {
+        CSSPropertyWebkitTextEmphasisColor,
+        CSSPropertyWebkitTextEmphasisStyle
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitTextEmphasis, textEmphasisProperties);
+    
     #undef SET_SHORTHAND_MAP_ENTRY
 }
 

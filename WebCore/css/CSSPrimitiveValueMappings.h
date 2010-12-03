@@ -2072,6 +2072,110 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisPosition position)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (position) {
+    case TextEmphasisPositionOver:
+        m_value.ident = CSSValueOver;
+        break;
+    case TextEmphasisPositionUnder:
+        m_value.ident = CSSValueUnder;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextEmphasisPosition() const
+{
+    switch (m_value.ident) {
+    case CSSValueOver:
+        return TextEmphasisPositionOver;
+    case CSSValueUnder:
+        return TextEmphasisPositionUnder;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextEmphasisPositionOver;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisFill fill)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (fill) {
+    case TextEmphasisFillFilled:
+        m_value.ident = CSSValueFilled;
+        break;
+    case TextEmphasisFillOpen:
+        m_value.ident = CSSValueOpen;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextEmphasisFill() const
+{
+    switch (m_value.ident) {
+    case CSSValueFilled:
+        return TextEmphasisFillFilled;
+    case CSSValueOpen:
+        return TextEmphasisFillOpen;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextEmphasisFillFilled;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisMark mark)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (mark) {
+    case TextEmphasisMarkDot:
+        m_value.ident = CSSValueDot;
+        break;
+    case TextEmphasisMarkCircle:
+        m_value.ident = CSSValueCircle;
+        break;
+    case TextEmphasisMarkDoubleCircle:
+        m_value.ident = CSSValueDoubleCircle;
+        break;
+    case TextEmphasisMarkTriangle:
+        m_value.ident = CSSValueTriangle;
+        break;
+    case TextEmphasisMarkSesame:
+        m_value.ident = CSSValueSesame;
+        break;
+    case TextEmphasisMarkNone:
+    case TextEmphasisMarkAuto:
+    case TextEmphasisMarkCustom:
+        ASSERT_NOT_REACHED();
+        m_value.ident = CSSValueNone;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextEmphasisMark() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return TextEmphasisMarkNone;
+    case CSSValueDot:
+        return TextEmphasisMarkDot;
+    case CSSValueCircle:
+        return TextEmphasisMarkCircle;
+    case CSSValueDoubleCircle:
+        return TextEmphasisMarkDoubleCircle;
+    case CSSValueTriangle:
+        return TextEmphasisMarkTriangle;
+    case CSSValueSesame:
+        return TextEmphasisMarkSesame;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextEmphasisMarkNone;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

@@ -278,6 +278,10 @@ z-index
 -webkit-rtl-ordering
 -webkit-text-combine
 -webkit-text-decorations-in-effect
+-webkit-text-emphasis
+-webkit-text-emphasis-color
+-webkit-text-emphasis-position
+-webkit-text-emphasis-style
 -webkit-text-fill-color
 -webkit-text-security
 -webkit-text-stroke

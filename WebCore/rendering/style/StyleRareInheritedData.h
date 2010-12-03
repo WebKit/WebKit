@@ -55,6 +55,7 @@ public:
     Color textStrokeColor;
     float textStrokeWidth;
     Color textFillColor;
+    Color textEmphasisColor;
 
     ShadowData* textShadow; // Our text shadow information for shadowed text drawing.
     AtomicString highlight; // Apple-specific extension for custom highlight rendering.
@@ -79,9 +80,14 @@ public:
     unsigned colorSpace : 1; // ColorSpace
     unsigned speak : 3; // ESpeak
     unsigned hyphens : 2; // Hyphens
+    unsigned textEmphasisFill : 1; // TextEmphasisFill
+    unsigned textEmphasisMark : 3; // TextEmphasisMark
+    unsigned textEmphasisPosition : 1; // TextEmphasisPosition
 
     AtomicString hyphenationString;
     AtomicString hyphenationLocale;
+
+    AtomicString textEmphasisCustomMark;
 
 private:
     StyleRareInheritedData();

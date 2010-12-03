@@ -402,7 +402,10 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->textSecurity != other->rareInheritedData->textSecurity ||
             rareInheritedData->hyphens != other->rareInheritedData->hyphens ||
             rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString ||
-            rareInheritedData->hyphenationLocale != other->rareInheritedData->hyphenationLocale)
+            rareInheritedData->hyphenationLocale != other->rareInheritedData->hyphenationLocale ||
+            rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark ||
+            rareInheritedData->textEmphasisPosition != other->rareInheritedData->textEmphasisPosition ||
+            rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark)
             return StyleDifferenceLayout;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
@@ -553,7 +556,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag ||
         rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit ||
         rareInheritedData->textFillColor != other->rareInheritedData->textFillColor ||
-        rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor)
+        rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor ||
+        rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor ||
+        rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill)
         return StyleDifferenceRepaint;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1067,6 +1072,9 @@ const Color RenderStyle::colorIncludingFallback(int colorProperty, EBorderStyle 
     case CSSPropertyWebkitColumnRuleColor:
         result = columnRuleColor();
         break;
+    case CSSPropertyWebkitTextEmphasisColor:
+        result = textEmphasisColor();
+        break;
     case CSSPropertyWebkitTextFillColor:
         result = textFillColor();
         break;
@@ -1406,6 +1414,18 @@ Length RenderStyle::paddingEnd() const
     if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? paddingRight() : paddingLeft();
     return isLeftToRightDirection() ? paddingBottom() : paddingTop();
+}
+
+TextEmphasisMark RenderStyle::textEmphasisMark() const
+{
+    TextEmphasisMark mark = static_cast<TextEmphasisMark>(rareInheritedData->textEmphasisMark);
+    if (mark != TextEmphasisMarkAuto)
+        return mark;
+
+    if (isHorizontalWritingMode())
+        return TextEmphasisMarkDot;
+
+    return TextEmphasisMarkSesame;
 }
 
 } // namespace WebCore

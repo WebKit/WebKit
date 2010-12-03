@@ -713,6 +713,11 @@ public:
     Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
     float transformOriginZ() const { return rareNonInheritedData->m_transform->m_z; }
     bool hasTransform() const { return !rareNonInheritedData->m_transform->m_operations.operations().isEmpty(); }
+
+    TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(rareInheritedData->textEmphasisFill); }
+    TextEmphasisMark textEmphasisMark() const;
+    const AtomicString& textEmphasisCustomMark() const { return rareInheritedData->textEmphasisCustomMark; }
+    TextEmphasisPosition textEmphasisPosition() const { return static_cast<TextEmphasisPosition>(rareInheritedData->textEmphasisPosition); }
     
     // Return true if any transform related property (currently transform, transformStyle3D or perspective) 
     // indicates that we are transforming
@@ -1064,6 +1069,11 @@ public:
     void setTransformOriginZ(float f) { SET_VAR(rareNonInheritedData.access()->m_transform, m_z, f); }
     void setSpeak(ESpeak s) { SET_VAR(rareInheritedData, speak, s); }
     void setTextCombine(TextCombine v) { SET_VAR(rareNonInheritedData, m_textCombine, v); }
+    void setTextEmphasisColor(const Color& c) { SET_VAR(rareInheritedData, textEmphasisColor, c) }
+    void setTextEmphasisFill(TextEmphasisFill fill) { SET_VAR(rareInheritedData, textEmphasisFill, fill); }
+    void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(rareInheritedData, textEmphasisMark, mark); }
+    void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(rareInheritedData, textEmphasisCustomMark, mark); }
+    void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
     // End CSS3 Setters
 
     // Apple-specific property setters
@@ -1276,6 +1286,11 @@ public:
     static Length initialPerspectiveOriginX() { return Length(50.0, Percent); }
     static Length initialPerspectiveOriginY() { return Length(50.0, Percent); }
     static Color initialBackgroundColor() { return Color::transparent; }
+    static Color initialTextEmphasisColor() { return TextEmphasisFillFilled; }
+    static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFillFilled; }
+    static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMarkNone; }
+    static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
+    static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
 
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }
@@ -1308,6 +1323,7 @@ private:
     const Color& color() const { return inherited->color; }
     const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }
     const Color& outlineColor() const { return m_background->outline().color(); }
+    const Color& textEmphasisColor() const { return rareInheritedData->textEmphasisColor; }
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     

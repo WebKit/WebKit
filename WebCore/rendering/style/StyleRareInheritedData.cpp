@@ -46,6 +46,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , colorSpace(ColorSpaceDeviceRGB)
     , speak(SpeakNormal)
     , hyphens(HyphensManual)
+    , textEmphasisFill(TextEmphasisFillFilled)
+    , textEmphasisMark(TextEmphasisMarkNone)
+    , textEmphasisPosition(TextEmphasisPositionOver)
 {
 }
 
@@ -54,6 +57,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textStrokeColor(o.textStrokeColor)
     , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
+    , textEmphasisColor(o.textEmphasisColor)
     , textShadow(o.textShadow ? new ShadowData(*o.textShadow) : 0)
     , highlight(o.highlight)
     , cursorData(o.cursorData)
@@ -73,8 +77,12 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , colorSpace(o.colorSpace)
     , speak(o.speak)
     , hyphens(o.hyphens)
+    , textEmphasisFill(o.textEmphasisFill)
+    , textEmphasisMark(o.textEmphasisMark)
+    , textEmphasisPosition(o.textEmphasisPosition)
     , hyphenationString(o.hyphenationString)
     , hyphenationLocale(o.hyphenationLocale)
+    , textEmphasisCustomMark(o.textEmphasisCustomMark)
 {
 }
 
@@ -97,6 +105,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
     return textStrokeColor == o.textStrokeColor
         && textStrokeWidth == o.textStrokeWidth
         && textFillColor == o.textFillColor
+        && textEmphasisColor == o.textEmphasisColor
         && shadowDataEquivalent(o)
         && highlight == o.highlight
         && cursorDataEquivalent(cursorData.get(), o.cursorData.get())
@@ -116,8 +125,12 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && colorSpace == o.colorSpace
         && speak == o.speak
         && hyphens == o.hyphens
+        && textEmphasisFill == o.textEmphasisFill
+        && textEmphasisMark == o.textEmphasisMark
+        && textEmphasisPosition == o.textEmphasisPosition
         && hyphenationString == o.hyphenationString
-        && hyphenationLocale == o.hyphenationLocale;
+        && hyphenationLocale == o.hyphenationLocale
+        && textEmphasisCustomMark == o.textEmphasisCustomMark;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

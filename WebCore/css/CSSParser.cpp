@@ -827,6 +827,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyTextUnderlineColor:
     case CSSPropertyTextOverlineColor:
     case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
         if (id == CSSValueWebkitText)
@@ -1781,6 +1782,19 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNone || id == CSSValueCluster || id == CSSValueUpright)
             validPrimitive = true;
         break;
+
+    case CSSPropertyWebkitTextEmphasis: {
+        const int properties[] = { CSSPropertyWebkitTextEmphasisStyle, CSSPropertyWebkitTextEmphasisColor };
+        return parseShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
+    }
+
+    case CSSPropertyWebkitTextEmphasisPosition:
+        if (id == CSSValueOver || id == CSSValueUnder)
+            validPrimitive = true;
+        break;
+
+    case CSSPropertyWebkitTextEmphasisStyle:
+        return parseTextEmphasisStyle(important);
 
 #if ENABLE(SVG)
     default:
@@ -5078,6 +5092,63 @@ bool CSSParser::parsePerspectiveOrigin(int propId, int& propId1, int& propId2, R
     }
 
     return value;
+}
+
+bool CSSParser::parseTextEmphasisStyle(bool important)
+{
+    unsigned valueListSize = m_valueList->size();
+
+    RefPtr<CSSPrimitiveValue> fill;
+    RefPtr<CSSPrimitiveValue> shape;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit == CSSPrimitiveValue::CSS_STRING) {
+            if (fill || shape || (valueListSize != 1 && !inShorthand()))
+                return false;
+            addProperty(CSSPropertyWebkitTextEmphasisStyle, CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_STRING), important);
+            m_valueList->next();
+            return true;
+        }
+
+        if (value->id == CSSValueNone) {
+            if (fill || shape || (valueListSize != 1 && !inShorthand()))
+                return false;
+            addProperty(CSSPropertyWebkitTextEmphasisStyle, CSSPrimitiveValue::createIdentifier(CSSValueNone), important);
+            m_valueList->next();
+            return true;
+        }
+
+        if (value->id == CSSValueOpen || value->id == CSSValueFilled) {
+            if (fill)
+                return false;
+            fill = CSSPrimitiveValue::createIdentifier(value->id);
+        } else if (value->id == CSSValueDot || value->id == CSSValueCircle || value->id == CSSValueDoubleCircle || value->id == CSSValueTriangle || value->id == CSSValueSesame) {
+            if (shape)
+                return false;
+            shape = CSSPrimitiveValue::createIdentifier(value->id);
+        } else if (!inShorthand())
+            return false;
+        else
+            break;
+    }
+
+    if (fill && shape) {
+        RefPtr<CSSValueList> parsedValues = CSSValueList::createSpaceSeparated();
+        parsedValues->append(fill.release());
+        parsedValues->append(shape.release());
+        addProperty(CSSPropertyWebkitTextEmphasisStyle, parsedValues.release(), important);
+        return true;
+    }
+    if (fill) {
+        addProperty(CSSPropertyWebkitTextEmphasisStyle, fill.release(), important);
+        return true;
+    }
+    if (shape) {
+        addProperty(CSSPropertyWebkitTextEmphasisStyle, shape.release(), important);
+        return true;
+    }
+
+    return false;
 }
 
 static inline int yyerror(const char*) { return 1; }
