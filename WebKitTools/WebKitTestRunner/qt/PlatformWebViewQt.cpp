@@ -50,7 +50,7 @@ WebView::WebView(WKPageNamespaceRef namespaceRef)
     scene()->addItem(m_item);
 }
 
-PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
+PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef, WKPageGroupRef)
     : m_view(new WebView(namespaceRef))
     , m_window(new QMainWindow())
 {
