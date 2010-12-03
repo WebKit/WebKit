@@ -186,6 +186,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 #endif // XP_MACOSX
 
     string testIdentifier;
+    const char* onNewScript = 0;
     
     for (int i = 0; i < argc; i++) {
         if (strcasecmp(argn[i], "test") == 0)
@@ -201,6 +202,10 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             obj->returnErrorFromNewStream = TRUE;
         else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
             obj->onSetWindow = strdup(argv[i]);
+        else if (strcasecmp(argn[i], "onNew") == 0 && !onNewScript)
+            onNewScript = argv[i];
+        else if (strcasecmp(argn[i], "onPaintEvent") == 0 && !obj->onPaintEvent)
+            obj->onPaintEvent = strdup(argv[i]);
         else if (strcasecmp(argn[i], "logfirstsetwindow") == 0)
             obj->logSetWindow = TRUE;
         else if (strcasecmp(argn[i], "testnpruntime") == 0)
@@ -271,6 +276,9 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
     browser->setvalue(instance, NPPVpluginWindowBool, 0);
 #endif
 
+    if (onNewScript)
+        executeScript(obj, onNewScript);
+
     return obj->pluginTest->NPP_New(pluginType, mode, argc, argn, argv, saved);
 }
 
@@ -297,6 +305,9 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 
         if (obj->onSetWindow)
             free(obj->onSetWindow);
+
+        if (obj->onPaintEvent)
+            free(obj->onPaintEvent);
         
         if (obj->logDestroy)
             pluginLog(instance, "NPP_Destroy");
@@ -438,22 +449,28 @@ static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* e
             // these are delivered non-deterministically, don't log.
             break;
         case mouseDown:
-            GlobalToLocal(&pt);
-            pluginLog(instance, "mouseDown at (%d, %d)", pt.h, pt.v);
+            if (obj->eventLogging) {
+                GlobalToLocal(&pt);
+                pluginLog(instance, "mouseDown at (%d, %d)", pt.h, pt.v);
+            }
             if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
                 executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             break;
         case mouseUp:
-            GlobalToLocal(&pt);
-            pluginLog(instance, "mouseUp at (%d, %d)", pt.h, pt.v);
+            if (obj->eventLogging) {
+                GlobalToLocal(&pt);
+                pluginLog(instance, "mouseUp at (%d, %d)", pt.h, pt.v);
+            }
             break;
         case keyDown:
-            pluginLog(instance, "keyDown '%c'", (char)(event->message & 0xFF));
+            if (obj->eventLogging)
+                pluginLog(instance, "keyDown '%c'", (char)(event->message & 0xFF));
             if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
                 executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             break;
         case keyUp:
-            pluginLog(instance, "keyUp '%c'", (char)(event->message & 0xFF));
+            if (obj->eventLogging)
+                pluginLog(instance, "keyUp '%c'", (char)(event->message & 0xFF));
             if (obj->testKeyboardFocusForPlugins) {
                 obj->eventLogging = false;
                 obj->testKeyboardFocusForPlugins = FALSE;
@@ -461,18 +478,24 @@ static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* e
             }
             break;
         case autoKey:
-            pluginLog(instance, "autoKey '%c'", (char)(event->message & 0xFF));
+            if (obj->eventLogging)
+                pluginLog(instance, "autoKey '%c'", (char)(event->message & 0xFF));
             break;
         case updateEvt:
-            pluginLog(instance, "updateEvt");
+            if (obj->eventLogging)
+                pluginLog(instance, "updateEvt");
             break;
         case diskEvt:
-            pluginLog(instance, "diskEvt");
+            if (obj->eventLogging)
+                pluginLog(instance, "diskEvt");
             break;
         case activateEvt:
-            pluginLog(instance, "activateEvt");
+            if (obj->eventLogging)
+                pluginLog(instance, "activateEvt");
             break;
         case osEvt:
+            if (!obj->eventLogging)
+                break;
             printf("PLUGIN: osEvt - ");
             switch ((event->message & 0xFF000000) >> 24) {
                 case suspendResumeMessage:
@@ -486,20 +509,25 @@ static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* e
             }
             break;
         case kHighLevelEvent:
-            pluginLog(instance, "kHighLevelEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "kHighLevelEvent");
             break;
         // NPAPI events
         case NPEventType_GetFocusEvent:
-            pluginLog(instance, "getFocusEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "getFocusEvent");
             break;
         case NPEventType_LoseFocusEvent:
-            pluginLog(instance, "loseFocusEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "loseFocusEvent");
             break;
         case NPEventType_AdjustCursorEvent:
-            pluginLog(instance, "adjustCursorEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "adjustCursorEvent");
             break;
         default:
-            pluginLog(instance, "event %d", event->what);
+            if (obj->eventLogging)
+                pluginLog(instance, "event %d", event->what);
     }
     
     return 0;
@@ -512,24 +540,29 @@ static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* e
         case NPCocoaEventWindowFocusChanged:
             
         case NPCocoaEventFocusChanged:
-            if (event->data.focus.hasFocus)
-                pluginLog(instance, "getFocusEvent");
-            else
-                pluginLog(instance, "loseFocusEvent");
+            if (obj->eventLogging) {
+                if (event->data.focus.hasFocus)
+                    pluginLog(instance, "getFocusEvent");
+                else
+                    pluginLog(instance, "loseFocusEvent");
+            }
             return 1;
 
-        case NPCocoaEventDrawRect:
+        case NPCocoaEventDrawRect: {
+            if (obj->onPaintEvent)
+                executeScript(obj, obj->onPaintEvent);
             return 1;
+        }
 
         case NPCocoaEventKeyDown:
-            if (event->data.key.characters)
+            if (obj->eventLogging && event->data.key.characters)
                 pluginLog(instance, "keyDown '%c'", CFStringGetCharacterAtIndex(reinterpret_cast<CFStringRef>(event->data.key.characters), 0));
             if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
                 executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             return 1;
 
         case NPCocoaEventKeyUp:
-            if (event->data.key.characters) {
+            if (obj->eventLogging && event->data.key.characters) {
                 pluginLog(instance, "keyUp '%c'", CFStringGetCharacterAtIndex(reinterpret_cast<CFStringRef>(event->data.key.characters), 0));
                 if (obj->testKeyboardFocusForPlugins) {
                     obj->eventLogging = false;
@@ -543,16 +576,20 @@ static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* e
             return 1;
 
         case NPCocoaEventMouseDown:
-            pluginLog(instance, "mouseDown at (%d, %d)", 
-                   (int)event->data.mouse.pluginX,
-                   (int)event->data.mouse.pluginY);
+            if (obj->eventLogging) {
+                pluginLog(instance, "mouseDown at (%d, %d)", 
+                       (int)event->data.mouse.pluginX,
+                       (int)event->data.mouse.pluginY);
+            }
             if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
                 executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             return 1;
         case NPCocoaEventMouseUp:
-            pluginLog(instance, "mouseUp at (%d, %d)", 
-                   (int)event->data.mouse.pluginX,
-                   (int)event->data.mouse.pluginY);
+            if (obj->eventLogging) {
+                pluginLog(instance, "mouseUp at (%d, %d)", 
+                       (int)event->data.mouse.pluginX,
+                       (int)event->data.mouse.pluginY);
+            }
             return 1;
             
         case NPCocoaEventMouseMoved:
@@ -620,8 +657,6 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
 int16_t NPP_HandleEvent(NPP instance, void *event)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
-    if (!obj->eventLogging)
-        return 0;
 
 #ifdef XP_MACOSX
 #ifndef NP_NO_CARBON

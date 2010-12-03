@@ -1131,6 +1131,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->onDestroy = 0;
     newInstance->onURLNotify = 0;
     newInstance->onSetWindow = 0;
+    newInstance->onPaintEvent = 0;
     newInstance->logDestroy = FALSE;
     newInstance->logSetWindow = FALSE;
     newInstance->returnErrorFromNewStream = FALSE;

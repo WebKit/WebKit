@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script type="text/javascript" charset="utf-8">
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        function log(m)
+        {
+            document.getElementById('log').innerHTML += m + '<br>';
+        }
+        
+        function newWasCalled()
+        {
+            log("New called");
+        }
+
+        var didPaint = false;
+        function gotPaintEvent()
+        {
+            // Only log once to avoid paint differences betweeen platforms.
+            if (!didPaint) {
+                log("Paint event was handled");
+                didPaint = true;
+            }
+        }
+    </script>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape" onnew="newWasCalled()" onpaintevent="gotPaintEvent()"></embed>
+    <div id="log">
+    </div>
+</body>
+</html>

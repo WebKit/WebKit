@@ -1,3 +1,23 @@
+2010-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add the ability to run script on 'new' and 'paint' in the test plugin
+        https://bugs.webkit.org/show_bug.cgi?id=50425
+        
+        Add "onnew" and "onpaintevent" attributes to the test plugin,
+        so that tests can run JS at these times.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        (NPP_Destroy):
+        (handleEventCarbon):
+        (handleEventCocoa):
+        (NPP_HandleEvent):
+
 2010-12-02  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

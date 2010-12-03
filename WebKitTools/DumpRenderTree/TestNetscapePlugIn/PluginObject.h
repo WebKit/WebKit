@@ -67,6 +67,7 @@ typedef struct {
     char* onDestroy;
     char* onURLNotify;
     char* onSetWindow;
+    char* onPaintEvent;
     char* firstUrl;
     char* firstHeaders;
     char* lastUrl;
