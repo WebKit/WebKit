@@ -29,7 +29,7 @@
 QWKPreferences* QWKPreferencesPrivate::createPreferences(WKPageGroupRef pageGroupRef)
 {
     QWKPreferences* prefs = new QWKPreferences;
-    prefs->d->ref = WKContextGetPreferences(pageGroupRef);
+    prefs->d->ref = WKPageGroupGetPreferences(pageGroupRef);
     return prefs;
 }
 

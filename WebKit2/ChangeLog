@@ -1,5 +1,12 @@
 2010-12-02  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt.
+
+        * UIProcess/API/qt/qwkpreferences.cpp:
+        (QWKPreferencesPrivate::createPreferences):
+
+2010-12-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKit2 Preferences should be held off the PageGroup, not the Context
