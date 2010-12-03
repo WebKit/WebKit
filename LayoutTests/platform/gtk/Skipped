@@ -5584,3 +5584,6 @@ mathml/presentation
 # https://bugs.webkit.org/show_bug.cgi?id=50313
 css3/zoom-coords.xhtml
 svg/zoom/page/zoom-zoom-coords.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=50441
+media/controls-drag-timebar.html
