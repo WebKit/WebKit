@@ -227,6 +227,7 @@ private:
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*);
     virtual void mediaPlayerRenderingModeChanged(MediaPlayer*);
 #endif
+    virtual void mediaPlayerEngineUpdated(MediaPlayer*);
 
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);

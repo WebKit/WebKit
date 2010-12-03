@@ -136,6 +136,8 @@ public:
     // the movie size has changed
     virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
 
+    virtual void mediaPlayerEngineUpdated(MediaPlayer*) { }
+
 #if USE(ACCELERATED_COMPOSITING)
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) { return false; }

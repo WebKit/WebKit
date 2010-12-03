@@ -1961,6 +1961,15 @@ void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
 }
 #endif
 
+void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
+{
+    beginProcessingMediaPlayerCallback();
+    LOG(Media, "HTMLMediaElement::mediaPlayerEngineUpdated");
+    if (renderer())
+        renderer()->updateFromElement();
+    endProcessingMediaPlayerCallback();
+}
+
 PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 {
     if (!m_player)

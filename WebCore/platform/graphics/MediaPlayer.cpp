@@ -262,6 +262,8 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
         m_currentMediaEngine = engines[0];
         m_private.clear();
         m_private.set(engines[0]->constructor(this));
+        if (m_mediaPlayerClient)
+            m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
     }
 #endif
 }
@@ -303,6 +305,8 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
         m_currentMediaEngine = engine;
         m_private.clear();
         m_private.set(engine->constructor(this));
+        if (m_mediaPlayerClient)
+            m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         m_private->setMediaPlayerProxy(m_playerProxy);
 #endif
@@ -312,8 +316,11 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
 
     if (m_private)
         m_private->load(url);
-    else
+    else {
         m_private.set(createNullMediaPlayer(this));
+        if (m_mediaPlayerClient)
+            m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
+    }
 }    
 
 bool MediaPlayer::hasAvailableVideoFrame() const
