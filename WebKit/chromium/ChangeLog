@@ -1,3 +1,19 @@
+2010-12-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector protocol cleanup task.
+
+        The patch has just small renames and adjustments for the protocol things.
+        'handler' keyword in idl file was replaced with 'domain'.
+        'domain' property was assigned for the each backend to frontend messages.
+        At the next step WebInspector wrapper functions will be removed and 'agents' will be called directly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50337
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+
 2010-12-03  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

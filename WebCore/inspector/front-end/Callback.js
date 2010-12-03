@@ -57,5 +57,5 @@ WebInspector.Callback.prototype = {
 
 WebInspector.Callback._INSTANCE = new WebInspector.Callback();
 WebInspector.Callback.wrap = WebInspector.Callback._INSTANCE.wrap.bind(WebInspector.Callback._INSTANCE);
-WebInspector.processResponse = WebInspector.Callback._INSTANCE.processResponse.bind(WebInspector.Callback._INSTANCE);
-WebInspector.removeResponseCallbackEntry = WebInspector.Callback._INSTANCE.removeResponseCallbackEntry.bind(WebInspector.Callback._INSTANCE);
+WebInspector.Callback.processResponse = WebInspector.Callback._INSTANCE.processResponse.bind(WebInspector.Callback._INSTANCE);
+WebInspector.Callback.removeResponseCallbackEntry = WebInspector.Callback._INSTANCE.removeResponseCallbackEntry.bind(WebInspector.Callback._INSTANCE);
