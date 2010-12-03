@@ -233,7 +233,7 @@ bool WebGLFramebuffer::initializeRenderbuffers()
 
     float colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
     int stencilClearValue = 0;
-    unsigned char colorMask[] = {1, 1, 1, 1}, depthMask = 1;
+    unsigned char colorMask[] = {0, 0, 0, 0}, depthMask = 0;
     unsigned int stencilMask = 0xffffffff;
     bool isScissorEnabled = false;
     bool isDitherEnabled = false;

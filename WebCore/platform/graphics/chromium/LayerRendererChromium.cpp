@@ -843,6 +843,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
 
     // Get the max texture size supported by the system.
+    m_maxTextureSize = 0;
     GLC(m_context, m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize));
 
     // Create an FBO for doing offscreen rendering.

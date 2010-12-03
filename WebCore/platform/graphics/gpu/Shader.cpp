@@ -91,7 +91,7 @@ unsigned Shader::loadProgram(GraphicsContext3D* context, const char* vertexShade
     context->attachShader(program, vertexShader);
     context->attachShader(program, fragmentShader);
     context->linkProgram(program);
-    int linkStatus;
+    int linkStatus = 0;
     context->getProgramiv(program, GraphicsContext3D::LINK_STATUS, &linkStatus);
     if (!linkStatus)
         context->deleteProgram(program);

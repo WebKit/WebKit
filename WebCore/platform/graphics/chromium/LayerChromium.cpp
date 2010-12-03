@@ -59,7 +59,7 @@ static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char
     String sourceString(shaderSource);
     GLC(context, context->shaderSource(shader, sourceString));
     GLC(context, context->compileShader(shader));
-    int compiled;
+    int compiled = 0;
     GLC(context, context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compiled));
     if (!compiled) {
         GLC(context, context->deleteShader(shader));
@@ -228,7 +228,7 @@ unsigned LayerChromium::createShaderProgram(GraphicsContext3D* context, const ch
     GLC(context, context->bindAttribLocation(programObject, s_texCoordAttribLocation, "a_texCoord"));
 
     GLC(context, context->linkProgram(programObject));
-    int linked;
+    int linked = 0;
     GLC(context, context->getProgramiv(programObject, GraphicsContext3D::LINK_STATUS, &linked));
     if (!linked) {
         LOG_ERROR("Failed to link shader program");

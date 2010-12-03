@@ -113,7 +113,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
 
     // resize multisample FBO
     if (multisample()) {
-        int maxSampleCount;
+        int maxSampleCount = 0;
         
         m_context->getIntegerv(Extensions3D::MAX_SAMPLES, &maxSampleCount);
         int sampleCount = std::min(8, maxSampleCount);

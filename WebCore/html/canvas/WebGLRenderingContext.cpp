@@ -1375,7 +1375,7 @@ bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<Web
     m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ATTACHED_SHADERS, &numShaders);
     if (numShaders) {
         OwnArrayPtr<unsigned int> shaders(new unsigned int[numShaders]);
-        int count;
+        int count = 0;
         m_context->getAttachedShaders(objectOrZero(program), numShaders, &count, shaders.get());
         if (count != numShaders)
             return false;
@@ -1415,7 +1415,7 @@ WebGLGetInfo WebGLRenderingContext::getBufferParameter(unsigned long target, uns
     }
 
     WebGLStateRestorer(this, false);
-    int value;
+    int value = 0;
     m_context->getBufferParameteriv(target, pname, &value);
     if (pname == GraphicsContext3D::BUFFER_SIZE)
         return WebGLGetInfo(static_cast<long>(value));
@@ -1459,7 +1459,7 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
 
     if (pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) {
         WebGLStateRestorer(this, false);
-        int value;
+        int value = 0;
         m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return WebGLGetInfo(static_cast<unsigned long>(value));
@@ -3352,7 +3352,7 @@ WebGLShader* WebGLRenderingContext::findShader(Platform3DObject obj)
 
 WebGLGetInfo WebGLRenderingContext::getBooleanParameter(unsigned long pname)
 {
-    unsigned char value;
+    unsigned char value = 0;
     m_context->getBooleanv(pname, &value);
     return WebGLGetInfo(static_cast<bool>(value));
 }
@@ -3373,7 +3373,7 @@ WebGLGetInfo WebGLRenderingContext::getBooleanArrayParameter(unsigned long pname
 
 WebGLGetInfo WebGLRenderingContext::getFloatParameter(unsigned long pname)
 {
-    float value;
+    float value = 0;
     m_context->getFloatv(pname, &value);
     return WebGLGetInfo(static_cast<float>(value));
 }
@@ -3385,14 +3385,14 @@ WebGLGetInfo WebGLRenderingContext::getIntParameter(unsigned long pname)
 
 WebGLGetInfo WebGLRenderingContext::getLongParameter(unsigned long pname)
 {
-    int value;
+    int value = 0;
     m_context->getIntegerv(pname, &value);
     return WebGLGetInfo(static_cast<long>(value));
 }
 
 WebGLGetInfo WebGLRenderingContext::getUnsignedLongParameter(unsigned long pname)
 {
-    int value;
+    int value = 0;
     m_context->getIntegerv(pname, &value);
     unsigned int uValue = static_cast<unsigned int>(value);
     return WebGLGetInfo(static_cast<unsigned long>(uValue));

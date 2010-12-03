@@ -67,7 +67,7 @@ bool WebGLProgram::cacheActiveAttribLocations()
     if (!object())
         return false;
     GraphicsContext3D* context3d = context()->graphicsContext3D();
-    int linkStatus;
+    int linkStatus = 0;
     context3d->getProgramiv(object(), GraphicsContext3D::LINK_STATUS, &linkStatus);
     if (!linkStatus)
         return false;
