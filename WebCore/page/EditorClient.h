@@ -191,7 +191,7 @@ public:
 
 #if SUPPORT_AUTOCORRECTION_PANEL
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings, Editor*) = 0;
-    virtual void dismissCorrectionPanel(CorrectionWasRejectedOrNot) = 0;
+    virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) = 0;
     virtual bool isShowingCorrectionPanel() = 0;
 #endif
 

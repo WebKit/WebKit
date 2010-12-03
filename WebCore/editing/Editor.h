@@ -383,6 +383,7 @@ private:
     OwnPtr<KillRing> m_killRing;
     CorrectionPanelInfo m_correctionPanelInfo;
     Timer<Editor> m_correctionPanelTimer;
+    bool m_correctionPanelIsDismissedByEditor;
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
 
@@ -409,7 +410,7 @@ private:
     void correctionPanelTimerFired(Timer<Editor>*);
     Node* findEventTargetFromSelection() const;
     void stopCorrectionPanelTimer();
-    void dismissCorrectionPanel(CorrectionWasRejectedOrNot);
+    void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel);
     void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
 };
 

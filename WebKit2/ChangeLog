@@ -1,3 +1,17 @@
+2010-12-03  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need to move all code that applies correction into correction panel callback.
+        https://bugs.webkit.org/show_bug.cgi?id=50426
+        <rdar://problem/8720832>
+
+        Adopted new signature of dismissCorrectionPanel.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::dismissCorrectionPanel):
+
 2010-12-03  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.

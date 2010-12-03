@@ -228,7 +228,7 @@ void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelTyp
     notImplemented();
 }
 
-void WebEditorClient::dismissCorrectionPanel(WebCore::CorrectionWasRejectedOrNot)
+void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel)
 {
     notImplemented();
 }

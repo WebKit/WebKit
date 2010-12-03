@@ -481,7 +481,7 @@ public:
 #endif
 #if SUPPORT_AUTOCORRECTION_PANEL
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&, Editor*) { }
-    virtual void dismissCorrectionPanel(CorrectionWasRejectedOrNot) { }
+    virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) { }
     virtual bool isShowingCorrectionPanel() { return false; }
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }

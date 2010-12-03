@@ -1,3 +1,18 @@
+2010-12-03  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need to move all code that applies correction into correction panel callback.
+        https://bugs.webkit.org/show_bug.cgi?id=50426
+        <rdar://problem/8720832>
+
+        * WebCoreSupport/WebEditorClient.h: Adopted new signature of dismissCorrectionPanel.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::~WebEditorClient): Adopted new signature of dismissCorrectionPanel.
+        (WebEditorClient::showCorrectionPanel): Added more user dictionary learning code.
+        (WebEditorClient::dismissCorrectionPanel): Adopted new signature of dismissCorrectionPanel.
+
 2010-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r73217 and r73227 because of continued bustage.
