@@ -32,6 +32,7 @@
 
 @interface WebTiledLayer : CATiledLayer 
 {
+    WebCore::GraphicsLayer* m_layerOwner;
 }
 
 // implements WebLayerAdditions

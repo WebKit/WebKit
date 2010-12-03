@@ -38,6 +38,7 @@ public:
     virtual ~GraphicsLayerQt();
 
     // reimps from GraphicsLayer.h
+    virtual NativeLayer nativeLayer() const;
     virtual PlatformLayer* platformLayer() const;
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);

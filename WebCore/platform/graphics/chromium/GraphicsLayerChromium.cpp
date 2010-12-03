@@ -115,6 +115,11 @@ void GraphicsLayerChromium::setName(const String& inName)
     GraphicsLayer::setName(name);
 }
 
+NativeLayer GraphicsLayerChromium::nativeLayer() const
+{
+    return m_layer.get();
+}
+
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool childrenChanged = GraphicsLayer::setChildren(children);

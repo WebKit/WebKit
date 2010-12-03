@@ -1012,8 +1012,6 @@
 		494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7930F55C8EE00747828 /* WebKitPoint.h */; };
 		494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */; };
 		494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD79C0F55C94C00747828 /* JSWebKitPoint.h */; };
-		4958782112A57DDF007238AC /* PlatformCAAnimationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */; };
-		4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958782012A57DDF007238AC /* PlatformCALayerMac.mm */; };
 		4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */; };
 		498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */; };
 		498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */; };
@@ -1040,10 +1038,8 @@
 		498770F21242C535002226BA /* TilingData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D91242C535002226BA /* TilingData.cpp */; };
 		498770F31242C535002226BA /* TilingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770DA1242C535002226BA /* TilingData.h */; };
 		498771531243F9FA002226BA /* DrawingBufferMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 498771521243F9FA002226BA /* DrawingBufferMac.mm */; };
-		499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */; };
-		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
-		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; };
-		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; };
+		499B3C59128C641E00E726C2 /* GraphicsLayerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3C57128C641E00E726C2 /* GraphicsLayerMac.h */; };
+		499B3C5A128C641E00E726C2 /* GraphicsLayerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 499B3C58128C641E00E726C2 /* GraphicsLayerMac.mm */; };
 		49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */; };
 		49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */; };
 		49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E571254FEED007D57EB /* LoopBlinnConstants.h */; };
@@ -7136,8 +7132,6 @@
 		494BD7940F55C8EE00747828 /* WebKitPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPoint.idl; sourceTree = "<group>"; };
 		494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPoint.cpp; sourceTree = "<group>"; };
 		494BD79C0F55C94C00747828 /* JSWebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPoint.h; sourceTree = "<group>"; };
-		4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCAAnimationMac.mm; path = ca/mac/PlatformCAAnimationMac.mm; sourceTree = "<group>"; };
-		4958782012A57DDF007238AC /* PlatformCALayerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCALayerMac.mm; path = ca/mac/PlatformCALayerMac.mm; sourceTree = "<group>"; };
 		4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrix.h; sourceTree = "<group>"; };
 		4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSMatrix.h; sourceTree = "<group>"; };
@@ -7165,10 +7159,8 @@
 		498770D91242C535002226BA /* TilingData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TilingData.cpp; path = gpu/TilingData.cpp; sourceTree = "<group>"; };
 		498770DA1242C535002226BA /* TilingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TilingData.h; path = gpu/TilingData.h; sourceTree = "<group>"; };
 		498771521243F9FA002226BA /* DrawingBufferMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DrawingBufferMac.mm; path = gpu/mac/DrawingBufferMac.mm; sourceTree = "<group>"; };
-		499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayer.h; path = ca/PlatformCALayer.h; sourceTree = "<group>"; };
-		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayerCA.cpp; path = ca/GraphicsLayerCA.cpp; sourceTree = "<group>"; };
-		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsLayerCA.h; path = ca/GraphicsLayerCA.h; sourceTree = "<group>"; };
-		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAAnimation.h; path = ca/PlatformCAAnimation.h; sourceTree = "<group>"; };
+		499B3C57128C641E00E726C2 /* GraphicsLayerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerMac.h; sourceTree = "<group>"; };
+		499B3C58128C641E00E726C2 /* GraphicsLayerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsLayerMac.mm; sourceTree = "<group>"; };
 		49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnClassifier.cpp; path = gpu/LoopBlinnClassifier.cpp; sourceTree = "<group>"; };
 		49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnClassifier.h; path = gpu/LoopBlinnClassifier.h; sourceTree = "<group>"; };
 		49B69E571254FEED007D57EB /* LoopBlinnConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnConstants.h; path = gpu/LoopBlinnConstants.h; sourceTree = "<group>"; };
@@ -12718,15 +12710,6 @@
 			name = canvas;
 			sourceTree = "<group>";
 		};
-		4958781E12A57DBC007238AC /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */,
-				4958782012A57DDF007238AC /* PlatformCALayerMac.mm */,
-			);
-			name = mac;
-			sourceTree = "<group>";
-		};
 		498770C11242C50D002226BA /* gpu */ = {
 			isa = PBXGroup;
 			children = (
@@ -12766,18 +12749,6 @@
 				498771521243F9FA002226BA /* DrawingBufferMac.mm */,
 			);
 			name = mac;
-			sourceTree = "<group>";
-		};
-		499B3EC0128CCC1800E726C2 /* ca */ = {
-			isa = PBXGroup;
-			children = (
-				4958781E12A57DBC007238AC /* mac */,
-				499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */,
-				499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */,
-				499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */,
-				499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */,
-			);
-			name = ca;
 			sourceTree = "<group>";
 		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
@@ -16714,6 +16685,8 @@
 				B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */,
 				49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
+				499B3C57128C641E00E726C2 /* GraphicsLayerMac.h */,
+				499B3C58128C641E00E726C2 /* GraphicsLayerMac.mm */,
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				B275354E0B053814002CE64F /* ImageMac.mm */,
 				B275354F0B053814002CE64F /* IntPointMac.mm */,
@@ -16739,7 +16712,6 @@
 			isa = PBXGroup;
 			children = (
 				B27535290B053814002CE64F /* cg */,
-				499B3EC0128CCC1800E726C2 /* ca */,
 				B5320D68122A24E9002D1440 /* cocoa */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				498770C11242C50D002226BA /* gpu */,
@@ -19799,6 +19771,7 @@
 				A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */,
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
+				499B3C59128C641E00E726C2 /* GraphicsLayerMac.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
 				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
@@ -21457,9 +21430,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
-				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
-				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
-				499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22445,6 +22415,7 @@
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
+				499B3C5A128C641E00E726C2 /* GraphicsLayerMac.mm in Sources */,
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
@@ -24037,9 +24008,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
-				4958782112A57DDF007238AC /* PlatformCAAnimationMac.mm in Sources */,
-				4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
