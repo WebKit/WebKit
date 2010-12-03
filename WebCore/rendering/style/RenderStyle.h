@@ -1248,7 +1248,7 @@ public:
     static EBoxSizing initialBoxSizing() { return CONTENT_BOX; }
     static StyleReflection* initialBoxReflect() { return 0; }
     static int initialMarqueeLoopCount() { return -1; }
-    static unsigned initialMarqueeSpeed() { return 85; }
+    static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }
     static EMarqueeBehavior initialMarqueeBehavior() { return MSCROLL; }
     static EMarqueeDirection initialMarqueeDirection() { return MAUTO; }
