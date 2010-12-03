@@ -34,14 +34,6 @@ namespace WebCore {
     class GraphicsLayer;
 }
 
-// Category implemented by WebLayer and WebTiledLayer.
-@interface CALayer(WebLayerAdditions)
-
-- (void)setLayerOwner:(WebCore::GraphicsLayer*)layer;
-- (WebCore::GraphicsLayer*)layerOwner;
-
-@end
-
 #if defined(BUILDING_ON_LEOPARD)
 @interface CALayer(WebLayerInternal)
 - (CGAffineTransform)contentsTransform;
@@ -51,7 +43,6 @@ namespace WebCore {
 
 @interface WebLayer : CALayer 
 {
-    WebCore::GraphicsLayer* m_layerOwner;
 }
 @end
 

@@ -30,7 +30,8 @@
 #import "WebTiledLayer.h"
 
 #import "GraphicsContext.h"
-#import "GraphicsLayer.h"
+#import "GraphicsLayerCA.h"
+#import "PlatformCALayer.h"
 #import <wtf/UnusedParam.h>
 
 using namespace WebCore;
@@ -56,54 +57,35 @@ using namespace WebCore;
     return nil;
 }
 
-// Implement this so presentationLayer can get our custom attributes
-- (id)initWithLayer:(id)layer
-{
-    if ((self = [super initWithLayer:layer]))
-        m_layerOwner = [(WebLayer*)layer layerOwner];
-
-    return self;
-}
-
 - (void)setNeedsDisplay
 {
-    if (m_layerOwner && m_layerOwner->client() && m_layerOwner->drawsContent())
+    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
+    if (layer && layer->owner() && layer->owner()->client() && layer->owner()->drawsContent())
         [super setNeedsDisplay];
 }
 
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
 {
-    setLayerNeedsDisplayInRect(self, m_layerOwner, dirtyRect);
+    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
+    if (layer)
+        setLayerNeedsDisplayInRect(self, layer->owner(), dirtyRect);
 }
 
 - (void)display
 {
     [super display];
-    if (m_layerOwner)
-        m_layerOwner->didDisplay(self);
+    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
+    if (layer && layer->owner())
+        layer->owner()->didDisplay(self);
 }
 
 - (void)drawInContext:(CGContextRef)context
 {
-    drawLayerContents(context, self, m_layerOwner);
+    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
+    if (layer)
+        drawLayerContents(context, self, layer->owner());
 }
 
 @end // implementation WebTiledLayer
-
-#pragma mark -
-
-@implementation WebTiledLayer(LayerMacAdditions)
-
-- (void)setLayerOwner:(GraphicsLayer*)aLayer
-{
-    m_layerOwner = aLayer;
-}
-
-- (GraphicsLayer*)layerOwner
-{
-    return m_layerOwner;
-}
-
-@end
 
 #endif // USE(ACCELERATED_COMPOSITING)
