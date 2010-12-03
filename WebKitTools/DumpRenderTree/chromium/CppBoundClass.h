@@ -85,6 +85,10 @@ public:
     CppBoundClass() : m_boundToFrame(false) {}
     virtual ~CppBoundClass();
 
+    // Return the CppBoundClass bound to a CppVariant if it exists. Returns null
+    // otherwise.
+    static CppBoundClass* getFromCppVariant(const CppVariant&);
+
     // Return a CppVariant representing this class, for use with BindProperty().
     // The variant type is guaranteed to be NPVariantType_Object.
     CppVariant* getAsCppVariant();
