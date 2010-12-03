@@ -3158,6 +3158,9 @@ BUGCR64952 LINUX : fast/ruby/nested-ruby.html = CRASH IMAGE PASS
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
+// WebKit roll r73208:r73212.
+BUGCR65257 WIN DEBUG : storage/change-version-handle-reuse.html = CRASH
+
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
