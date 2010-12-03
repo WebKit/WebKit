@@ -3167,6 +3167,9 @@ BUG_YUTAK WIN LINUX : css2.1/t040105-import-10-b.html = IMAGE+TEXT
 // New test.
 BUG_YUTAK : media/controls-without-preload.html = MISSING
 
+// Flaky since Chromium r67828.
+BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = CRASH PASS
+
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
