@@ -47,31 +47,9 @@ void WebIDBKeyRange::assign(const WebIDBKey& lower, const WebIDBKey& upper, bool
         m_private = IDBKeyRange::create(lower, upper, lowerOpen, upperOpen);
 }
 
-// FIXME: Remove this after next roll.
-void WebIDBKeyRange::assign(const WebIDBKey& lower, const WebIDBKey& upper, unsigned short flags)
-{
-    bool lowerOpen = !!(flags & 1);
-    bool upperOpen = !!(flags & 2);
-
-    if (lower.type() == WebIDBKey::InvalidType && upper.type() == WebIDBKey::InvalidType)
-        m_private = 0;
-    else
-        m_private = IDBKeyRange::create(lower, upper, lowerOpen, upperOpen);
-}
-
 void WebIDBKeyRange::reset()
 {
     m_private.reset();
-}
-
-WebIDBKey WebIDBKeyRange::left() const
-{
-    return lower();
-}
-
-WebIDBKey WebIDBKeyRange::right() const
-{
-    return upper();
 }
 
 WebIDBKey WebIDBKeyRange::lower() const
@@ -96,20 +74,6 @@ bool WebIDBKeyRange::lowerOpen() const
 bool WebIDBKeyRange::upperOpen() const
 {
     return m_private.get() && m_private->upperOpen();
-}
-
-// FIXME: Remove this after next roll.
-unsigned short WebIDBKeyRange::flags() const
-{
-    if (!m_private.get())
-        return 0;
-
-    unsigned short flags = 0;
-    if (m_private->lowerOpen())
-        flags |= 1;
-    if (m_private->upperOpen())
-        flags |= 2;
-    return flags;
 }
 
 WebIDBKeyRange::WebIDBKeyRange(const PassRefPtr<IDBKeyRange>& value)

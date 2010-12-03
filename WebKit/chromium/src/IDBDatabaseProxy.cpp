@@ -61,11 +61,6 @@ String IDBDatabaseProxy::name() const
     return m_webIDBDatabase->name();
 }
 
-String IDBDatabaseProxy::description() const
-{
-    return m_webIDBDatabase->description();
-}
-
 String IDBDatabaseProxy::version() const
 {
     return m_webIDBDatabase->version();

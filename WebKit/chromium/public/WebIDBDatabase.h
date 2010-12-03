@@ -47,26 +47,22 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    // FIXME: remove after roll.
-    virtual WebString description() const
-    {
-        return WebString();
-    }
     virtual WebString version() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    virtual WebDOMStringList objectStores() const { return objectStoreNames(); } // FIXME: Remove after roll.
-    virtual WebDOMStringList objectStoreNames() const { return objectStores(); } // FIXME: Assert not reached after roll.
+    virtual WebDOMStringList objectStoreNames() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebDOMStringList();
+    }
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&)
     { 
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-    virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { removeObjectStore(name, transaction, ec); }
-    // FIXME: remove after roll.
-    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { deleteObjectStore(name, transaction, ec); }
+    virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBTransaction to the caller.
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&)

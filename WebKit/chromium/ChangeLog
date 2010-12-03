@@ -1,3 +1,23 @@
+2010-11-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Clean up IndexedDB 2 sided roll bits
+        https://bugs.webkit.org/show_bug.cgi?id=50160
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::version):
+        (WebKit::WebIDBDatabase::objectStoreNames):
+        (WebKit::WebIDBDatabase::deleteObjectStore):
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * public/WebIDBKeyRange.h:
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::deleteFunction):
+        * src/IDBDatabaseProxy.cpp:
+        * src/IDBDatabaseProxy.h:
+        * src/WebIDBKeyRange.cpp:
+
 2010-12-02  Chris Rogers  <crogers@google.com>
 
         Reviewed by Darin Fisher.

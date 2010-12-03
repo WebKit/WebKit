@@ -51,17 +51,10 @@ public:
 
     virtual ~WebIDBFactory() { }
 
-    // FIXME: Remove after roll.
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, const WebString& dataDir, unsigned long long maximumSize)
-    {
-        open(name, callbacks, origin, webFrame, dataDir, maximumSize);
-    }
-
     // The WebKit implementation of open ignores the WebFrame* parameter.
     virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, const WebString& dataDir, unsigned long long maximumSize)
     {
-        // WEBKIT_ASSERT_NOT_REACHED();
-        open(name, "", callbacks, origin, webFrame, dataDir, maximumSize);
+        WEBKIT_ASSERT_NOT_REACHED();
     }
 };
 

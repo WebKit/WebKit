@@ -43,7 +43,6 @@ public:
     virtual ~IDBDatabaseProxy();
 
     virtual String name() const;
-    virtual String description() const;
     virtual String version() const;
     virtual PassRefPtr<DOMStringList> objectStoreNames() const;
 
