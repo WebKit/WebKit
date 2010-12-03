@@ -34,51 +34,53 @@ namespace WebCore {
 
     struct GraphicsContextState {
         GraphicsContextState()
-            : textDrawingMode(TextModeFill)
-            , strokeStyle(SolidStroke)
-            , strokeThickness(0)
-            , strokeColor(Color::black)
-            , strokeColorSpace(ColorSpaceDeviceRGB)
-            , fillRule(RULE_NONZERO)
-            , fillColor(Color::black)
-            , fillColorSpace(ColorSpaceDeviceRGB)
-            , shouldAntialias(true)
-            , paintingDisabled(false)
+            : strokeThickness(0)
             , shadowBlur(0)
-            , shadowsIgnoreTransforms(false)
 #if PLATFORM(CAIRO)
             , globalAlpha(1)
 #endif
+            , textDrawingMode(TextModeFill)
+            , strokeColor(Color::black)
+            , fillColor(Color::black)
+            , strokeStyle(SolidStroke)
+            , fillRule(RULE_NONZERO)
+            , strokeColorSpace(ColorSpaceDeviceRGB)
+            , fillColorSpace(ColorSpaceDeviceRGB)
+            , shouldAntialias(true)
+            , paintingDisabled(false)
+            , shadowsIgnoreTransforms(false)
         {
         }
 
-        TextDrawingModeFlags textDrawingMode;
-        
-        StrokeStyle strokeStyle;
-        float strokeThickness;
-        Color strokeColor;
-        ColorSpace strokeColorSpace;
         RefPtr<Gradient> strokeGradient;
         RefPtr<Pattern> strokePattern;
         
-        WindRule fillRule;
-        Color fillColor;
-        ColorSpace fillColorSpace;
         RefPtr<Gradient> fillGradient;
         RefPtr<Pattern> fillPattern;
 
-        bool shouldAntialias;
-
-        bool paintingDisabled;
-        
         FloatSize shadowOffset;
-        float shadowBlur;
-        Color shadowColor;
 
-        bool shadowsIgnoreTransforms;
+        float strokeThickness;
+        float shadowBlur;
+
 #if PLATFORM(CAIRO)
         float globalAlpha;
 #endif
+        TextDrawingModeFlags textDrawingMode;
+
+        Color strokeColor;
+        Color fillColor;
+        Color shadowColor;
+
+        StrokeStyle strokeStyle;
+        WindRule fillRule;
+
+        ColorSpace strokeColorSpace;
+        ColorSpace fillColorSpace;
+
+        bool shouldAntialias;
+        bool paintingDisabled;
+        bool shadowsIgnoreTransforms;
     };
 
     class GraphicsContextPrivate : public Noncopyable {
