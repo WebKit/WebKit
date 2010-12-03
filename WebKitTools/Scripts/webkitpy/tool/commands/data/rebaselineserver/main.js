@@ -204,24 +204,58 @@ function selectFailureType()
  */
 function selectDirectory()
 {
+    var previouslySelectedTest = getSelectedTest();
+
     var selectedDirectory = getSelectValue('directory-selector');
     selectedTests = testsByDirectory[selectedDirectory];
-
     selectedTests.sort();
+
+    var testsByState = {};
+    selectedTests.forEach(function(testName) {
+        var state = results.tests[testName].state;
+        if (state == STATE_IN_QUEUE) {
+            state = STATE_NEEDS_REBASELINE;
+        }
+        if (!(state in testsByState)) {
+            testsByState[state] = [];
+        }
+        testsByState[state].push(testName);
+    });
+
+    var optionIndexByTest = {};
 
     var testSelector = $('test-selector');
     testSelector.innerHTML = '';
 
-    selectedTests.forEach(function(testName) {
-        var testOption = document.createElement('option');
-        testOption.value = testName;
-        var testDisplayName = testName;
-        if (testName.lastIndexOf(selectedDirectory) == 0) {
-            testDisplayName = testName.substring(selectedDirectory.length);
-        }
-        testOption.innerHTML = '&nbsp;&nbsp;' + testDisplayName;
-        testSelector.appendChild(testOption);
-    });
+    for (var state in testsByState) {
+        var stateOption = document.createElement('option');
+        stateOption.textContent = STATE_TO_DISPLAY_STATE[state];
+        stateOption.disabled = true;
+        testSelector.appendChild(stateOption);
+
+        testsByState[state].forEach(function(testName) {
+            var testOption = document.createElement('option');
+            testOption.value = testName;
+            var testDisplayName = testName;
+            if (testName.lastIndexOf(selectedDirectory) == 0) {
+                testDisplayName = testName.substring(selectedDirectory.length);
+            }
+            testOption.innerHTML = '&nbsp;&nbsp;' + testDisplayName;
+            optionIndexByTest[testName] = testSelector.options.length;
+            testSelector.appendChild(testOption);
+        });
+    }
+
+    if (previouslySelectedTest in optionIndexByTest) {
+        testSelector.selectedIndex = optionIndexByTest[previouslySelectedTest];
+    } else if (STATE_NEEDS_REBASELINE in testsByState) {
+        testSelector.selectedIndex =
+            optionIndexByTest[testsByState[STATE_NEEDS_REBASELINE][0]];
+        selectTest();
+    } else {
+        testSelector.selectedIndex = 1;
+        selectTest();
+    }
 
     selectTest();
 }

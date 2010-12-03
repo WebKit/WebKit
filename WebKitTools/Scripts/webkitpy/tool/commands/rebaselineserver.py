@@ -382,6 +382,7 @@ def _get_test_baselines(test_file, test_config):
 
     return all_test_baselines
 
+
 class RebaselineServer(AbstractDeclarativeCommand):
     name = "rebaseline-server"
     help_text = __doc__
@@ -396,6 +397,19 @@ class RebaselineServer(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         results_directory = args[0]
         filesystem = system.filesystem.FileSystem()
+        scm = self._tool.scm()
+
+        if options.dry_run:
+
+            def no_op_copyfile(src, dest):
+                pass
+
+            def no_op_add(path, return_exit_code=False):
+                if return_exit_code:
+                    return 0
+
+            filesystem.copyfile = no_op_copyfile
+            scm.add = no_op_add
 
         print 'Parsing unexpected_results.json...'
         results_json_path = filesystem.join(
@@ -414,7 +428,7 @@ class RebaselineServer(AbstractDeclarativeCommand):
             results_directory,
             platforms,
             filesystem,
-            self._tool.scm())
+            scm)
 
         print 'Gathering current baselines...'
         for test_file, test_json in results_json['tests'].items():

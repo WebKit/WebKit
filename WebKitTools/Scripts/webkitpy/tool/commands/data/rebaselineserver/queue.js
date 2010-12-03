@@ -159,6 +159,11 @@ RebaselineQueue.prototype._rebaselineTest = function(testName)
         self._inProgressRebaselineCount--;
         results.tests[testName].state = newState;
         updateState();
+        // If we're done with a set of rebaselines, regenerate the test menu
+        // (which is grouped by state) since test states have changed.
+        if (self._inProgressRebaselineCount == 0) {
+            selectDirectory();
+        }
     }
 
     function handleSuccess() {

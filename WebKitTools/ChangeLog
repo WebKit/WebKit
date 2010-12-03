@@ -1,3 +1,20 @@
+2010-12-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rebaseline server: organize tests by state, add dry run mode
+        https://bugs.webkit.org/show_bug.cgi?id=50473
+        
+        Group tests in the menu by state, so that it's easier to see after
+        processing the queue which failed.
+        
+        Add support for the --dry-run flag so that it's easier to test changes
+        such as this (stubs out filesystem and SCM operations).
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/queue.js:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2010-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
