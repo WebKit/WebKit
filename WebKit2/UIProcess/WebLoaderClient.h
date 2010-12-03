@@ -37,8 +37,11 @@ class ResourceError;
 namespace WebKit {
 
 class APIObject;
-class WebPageProxy;
+class AuthenticationChallengeProxy;
+class AuthenticationDecisionListener;
 class WebFrameProxy;
+class WebPageProxy;
+class WebProtectionSpace;
 
 class WebLoaderClient : public APIClient<WKPageLoaderClient> {
 public:
@@ -55,6 +58,9 @@ public:
     void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    
+    bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);
+    void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*, AuthenticationDecisionListener*);
 
     void didStartProgress(WebPageProxy*);
     void didChangeProgress(WebPageProxy*);

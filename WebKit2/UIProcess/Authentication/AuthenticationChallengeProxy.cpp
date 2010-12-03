@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "AuthenticationChallengeProxy.h"
+
+#include "AuthenticationDecisionListener.h"
+#include "AuthenticationManagerMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebCredential.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
+namespace WebKit {
+
+AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebPageProxy* page)
+    : m_coreAuthenticationChallenge(authenticationChallenge)
+    , m_challengeID(challengeID)
+    , m_page(page)
+{
+    ASSERT(m_challengeID);
+    m_listener = AuthenticationDecisionListener::create(this);
+}
+
+AuthenticationChallengeProxy::~AuthenticationChallengeProxy()
+{
+    // If an outstanding AuthenticationChallengeProxy is being destroyed even though it hasn't been responded to yet,
+    // we cancel it here so the WebProcess isn't waiting for an answer forever.
+    if (m_challengeID)
+        m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
+
+    if (m_listener)
+        m_listener->detachChallenge();
+}
+
+void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
+{
+    if (!m_challengeID)
+        return;
+
+    if (!credential)
+        m_page->process()->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), m_page->pageID());
+    else 
+        m_page->process()->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core()), m_page->pageID());
+
+    m_challengeID = 0;
+}
+
+void AuthenticationChallengeProxy::cancel()
+{
+    if (!m_challengeID)
+        return;
+
+    m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
+
+    m_challengeID = 0;
+}
+
+} // namespace WebKit

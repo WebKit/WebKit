@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class AuthenticationClient;
+
 class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge()
@@ -39,6 +41,9 @@ public:
         : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
     }
+
+    AuthenticationClient* authenticationClient() const { return 0; } // FIXME: Implement!
+
 };
 
 }

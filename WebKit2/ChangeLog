@@ -1,3 +1,120 @@
+2010-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Groundwork for <rdar://problem/7660733> and https://bugs.webkit.org/show_bug.cgi?id=50191
+        WebKit2 Authentication Support
+
+        With this patch in place, authentication challenges are sent up from WebCore and shipped over the IPC layer.
+        Client apps can implement the related client methods to attempt to continue without credentials or cancel a
+        challenge.
+
+        There's not yet API to inspect a challenge or create a credential to use in reply - that will come later.
+
+        Build-system changes:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+
+        Messages and casts for IPC and APIs:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
+        Stub out the AuthenticationChallenge class family:
+        * UIProcess/API/C/WKAuthenticationChallenge.cpp: Added.
+        (WKAuthenticationChallengeGetTypeID):
+        * UIProcess/API/C/WKAuthenticationChallenge.h: Added.
+        * UIProcess/API/C/WKCredential.cpp: Added.
+        (WKCredentialGetTypeID):
+        * UIProcess/API/C/WKCredential.h: Added.
+        * UIProcess/API/C/WKProtectionSpace.cpp: Added.
+        (WKProtectionSpaceGetTypeID):
+        * UIProcess/API/C/WKProtectionSpace.h: Added.
+
+        Add an Authentication listener for the client app to respond to:
+        * UIProcess/API/C/WKAuthenticationDecisionListener.cpp: Added.
+        (WKAuthenticationDecisionListenerGetTypeID):
+        (WKAuthenticationDecisionListenerUseCredential):
+        (WKAuthenticationDecisionListenerCancel):
+        * UIProcess/API/C/WKAuthenticationDecisionListener.h: Added.
+
+        Add Authentication related methods to the page loader client:
+        * UIProcess/API/C/WKPage.h:
+
+        Add empty implementations of the new API objects:
+        * UIProcess/Authentication: Added.
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp: Added.
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::~AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        (WebKit::AuthenticationChallengeProxy::cancel):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h: Added.
+        (WebKit::AuthenticationChallengeProxy::create):
+        (WebKit::AuthenticationChallengeProxy::listener):
+        (WebKit::AuthenticationChallengeProxy::type):
+
+        * UIProcess/Authentication/WebCredential.cpp: Added.
+        (WebKit::WebCredential::core):
+        * UIProcess/Authentication/WebCredential.h: Added.
+        (WebKit::WebCredential::create):
+        (WebKit::WebCredential::type):
+        * UIProcess/Authentication/WebProtectionSpace.cpp: Added.
+        (WebKit::WebProtectionSpace::WebProtectionSpace):
+        * UIProcess/Authentication/WebProtectionSpace.h: Added.
+        (WebKit::WebProtectionSpace::create):
+        (WebKit::WebProtectionSpace::type):
+
+        Add implementation of the Authentication decision listener:
+        * UIProcess/Authentication/AuthenticationDecisionListener.cpp: Added.
+        (WebKit::AuthenticationDecisionListener::AuthenticationDecisionListener):
+        (WebKit::AuthenticationDecisionListener::useCredential):
+        (WebKit::AuthenticationDecisionListener::cancel):
+        (WebKit::AuthenticationDecisionListener::detachChallenge):
+        * UIProcess/Authentication/AuthenticationDecisionListener.h: Added.
+        (WebKit::AuthenticationDecisionListener::create):
+        (WebKit::AuthenticationDecisionListener::type):
+
+        WebPage and PageLoaderClient glue:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebLoaderClient::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add a manager to map the actual platform authentication challenges to a challenge ID,
+        as at least some platforms require the object identity to persist:
+        * WebProcess/Authentication: Added.
+        * WebProcess/Authentication/AuthenticationManager.cpp: Added.
+        (WebKit::generateAuthenticationChallengeID):
+        (WebKit::AuthenticationManager::shared):
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        (WebKit::AuthenticationManager::didReceiveMessage):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge):
+        (WebKit::AuthenticationManager::cancelChallenge):
+        * WebProcess/Authentication/AuthenticationManager.h: Added.
+        * WebProcess/Authentication/AuthenticationManager.messages.in: Added.
+
+        Hand off Authentication challenges to the manager to be sent over IPC:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebKit::WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+
+        * UIProcess/API/qt/qwkpage.cpp:
+
 2010-12-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

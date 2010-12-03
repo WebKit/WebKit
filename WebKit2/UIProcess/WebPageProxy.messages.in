@@ -135,4 +135,8 @@ messages -> WebPageProxy {
     # Accelerated compsiting messages.
     DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaInfo newDrawingArea)
 #endif
+
+    # Authentication
+    CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)
+    DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 }

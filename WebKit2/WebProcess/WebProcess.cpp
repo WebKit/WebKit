@@ -25,6 +25,7 @@
 
 #include "WebProcess.h"
 
+#include "AuthenticationManager.h"
 #include "DownloadManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
@@ -455,6 +456,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 {
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         didReceiveWebProcessMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassAuthenticationManager>()) {
+        AuthenticationManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

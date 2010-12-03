@@ -35,6 +35,7 @@ enum MessageClass {
     MessageClassCoreIPC,
 
     // Messages sent by the UI process to the web process.
+    MessageClassAuthenticationManager,
     MessageClassDrawingArea,
     MessageClassInjectedBundle,
     MessageClassWebInspector,

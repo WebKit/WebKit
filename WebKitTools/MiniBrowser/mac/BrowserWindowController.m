@@ -554,6 +554,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         didRemoveFrameFromHierarchy,
         didDisplayInsecureContentForFrame,
         didRunInsecureContentForFrame,
+        0, // canAuthenticateAgainstProtectionSpaceInFrame
+        0, // didReceiveAuthenticationChallengeInFrame
         didStartProgress,
         didChangeProgress,
         didFinishProgress,

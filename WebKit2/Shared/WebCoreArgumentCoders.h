@@ -30,11 +30,14 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ViewportArguments.h>
@@ -106,6 +109,45 @@ template<> struct ArgumentCoder<WebCore::HTTPHeaderMap> {
     static bool decode(ArgumentDecoder* decoder, WebCore::HTTPHeaderMap& headerMap)
     {
         return decoder->decode(static_cast<HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::AuthenticationChallenge& challenge)
+    {
+        // FIXME: Implement
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::AuthenticationChallenge& credential)
+    {
+        // FIXME: Implement
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::ProtectionSpace& challenge)
+    {
+        // FIXME: Implement
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::ProtectionSpace& credential)
+    {
+        // FIXME: Implement
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::Credential> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::Credential& credential)
+    {
+        // FIXME: Implement
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::Credential& credential)
+    {
+        // FIXME: Implement
+        return true;
     }
 };
 

@@ -28,6 +28,7 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
+#include "AuthenticationManager.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
@@ -155,9 +156,16 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned 
     return false;
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
 {
-    notImplemented();
+    // FIXME: Authentication is a per-resource concept, but we don't do per-resource handling in the UIProcess at the API level quite yet.
+    // Once we do, we might need to make sure authentication fits with our solution.
+
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    AuthenticationManager::shared().didReceiveAuthenticationChallenge(m_frame, challenge);
 }
 
 void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&)    
@@ -166,10 +174,20 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long identifier, const ProtectionSpace&)
+bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace& protectionSpace)
 {
-    notImplemented();
-    return false;
+    // FIXME: Authentication is a per-resource concept, but we don't do per-resource handling in the UIProcess at the API level quite yet.
+    // Once we do, we might need to make sure authentication fits with our solution.
+    
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return false;
+        
+    bool canAuthenticate;
+    if (!webPage->sendSync(Messages::WebPageProxy::CanAuthenticateAgainstProtectionSpaceInFrame(m_frame->frameID(), protectionSpace), Messages::WebPageProxy::CanAuthenticateAgainstProtectionSpaceInFrame::Reply(canAuthenticate)))
+        return false;
+    
+    return canAuthenticate;
 }
 #endif
 

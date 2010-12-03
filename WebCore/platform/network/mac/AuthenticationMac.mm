@@ -41,6 +41,7 @@ using namespace WebCore;
     AuthenticationClient* m_client;
 }
 - (id)initWithAuthenticationClient:(AuthenticationClient*)client;
+- (AuthenticationClient*)client;
 - (void)detachClient;
 @end
 
@@ -53,6 +54,11 @@ using namespace WebCore;
         return nil;
     m_client = client;
     return self;
+}
+
+- (AuthenticationClient*)client
+{
+    return m_client;
 }
 
 - (void)detachClient
@@ -121,6 +127,14 @@ void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* clie
         if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
             [(WebCoreAuthenticationClientAsChallengeSender *)m_sender.get() detachClient];
     }
+}
+
+AuthenticationClient* AuthenticationChallenge::authenticationClient() const
+{
+    if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
+        return [static_cast<WebCoreAuthenticationClientAsChallengeSender*>(m_sender.get()) client];
+    
+    return 0;
 }
 
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)

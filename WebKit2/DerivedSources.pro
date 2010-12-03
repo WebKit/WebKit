@@ -85,6 +85,7 @@ defineReplace(message_receiver_generator_output) {
 
 VPATH = \
     PluginProcess \
+    WebProcess/Authentication \
     WebProcess/Plugins \
     WebProcess/WebPage \
     WebProcess \
@@ -93,6 +94,7 @@ VPATH = \
     UIProcess/Plugins
 
 MESSAGE_RECEIVERS = \
+    AuthenticationManager.messages.in \
     DownloadProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \

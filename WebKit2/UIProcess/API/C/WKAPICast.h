@@ -36,10 +36,13 @@
 
 namespace WebKit {
 
+class AuthenticationChallengeProxy;
+class AuthenticationDecisionListener;
 class DownloadProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
+class WebCredential;
 class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
@@ -49,10 +52,14 @@ class WebPageGroup;
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
+class WebProtectionSpace;
 
+WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
+WK_ADD_API_MAPPING(WKAuthenticationDecisionListenerRef, AuthenticationDecisionListener)
 WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)
 WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
+WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)
 WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)
 WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
@@ -65,6 +72,7 @@ WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
 WK_ADD_API_MAPPING(WKPageNamespaceRef, WebPageNamespace)
 WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
+WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 
 /* Enum conversions */
 

@@ -1099,6 +1099,22 @@
 				>
 			</File>
 			<Filter
+				Name="Authentication"
+				>
+				<File
+					RelativePath="..\WebProcess\Authentication\AuthenticationManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Authentication\AuthenticationManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Authentication\AuthenticationManager.messages.in"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="WebCoreSupport"
 				>
 				<File
@@ -2029,6 +2045,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKAuthenticationChallenge.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKAuthenticationChallenge.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKAuthenticationDecisionListener.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKAuthenticationDecisionListener.h"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardList.cpp"
 						>
 					</File>
@@ -2062,6 +2094,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\win\WKContextWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKCredential.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKCredential.h"
 						>
 					</File>
 					<File
@@ -2156,6 +2196,14 @@
 						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.h"
 						>
 					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKProtectionSpace.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKProtectionSpace.h"
+						>
+					</File>
 					<Filter
 						Name="win"
 						>
@@ -2193,6 +2241,42 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Authentication"
+				>
+				<File
+					RelativePath="..\UIProcess\Authentication\AuthenticationChallengeProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\AuthenticationChallengeProxy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\AuthenticationDecisionListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\AuthenticationDecisionListener.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\WebCredential.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\WebCredential.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\WebProtectionSpace.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Authentication\WebProtectionSpace.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="cf"
@@ -2594,6 +2678,14 @@
 		<Filter
 			Name="Derived Sources"
 			>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\AuthenticationManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\AuthenticationManagerMessages.h"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessageReceiver.cpp"
 				>

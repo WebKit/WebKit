@@ -60,9 +60,12 @@ typedef const struct OpaqueWKUserContentURLPattern* WKUserContentURLPatternRef;
 
 /* WebKit2 main API types */
 
+typedef const struct OpaqueWKAuthenticationChallenge* WKAuthenticationChallengeRef;
+typedef const struct OpaqueWKAuthenticationDecisionListener* WKAuthenticationDecisionListenerRef;
 typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
 typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKCredential* WKCredentialRef;
 typedef const struct OpaqueWKDownload* WKDownloadRef;
 typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef const struct OpaqueWKFrame* WKFrameRef;
@@ -73,6 +76,7 @@ typedef const struct OpaqueWKPage* WKPageRef;
 typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
 typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
+typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 
 /* WebKit2 Bundle types */
 

@@ -25,6 +25,8 @@
 
 #include "WebPageProxy.h"
 
+#include "AuthenticationChallengeProxy.h"
+#include "AuthenticationDecisionListener.h"
 #include "DrawingAreaProxy.h"
 #include "FindIndicator.h"
 #include "MessageID.h"
@@ -55,6 +57,7 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include "WebProtectionSpace.h"
 #include "WebURLRequest.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -1527,6 +1530,22 @@ void WebPageProxy::didLeaveAcceleratedCompositing()
 void WebPageProxy::backForwardClear()
 {
     m_backForwardList->clear();
+}
+
+void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace& coreProtectionSpace, bool& canAuthenticate)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    RefPtr<WebProtectionSpace> protectionSpace = WebProtectionSpace::create(coreProtectionSpace);
+    
+    canAuthenticate = m_loaderClient.canAuthenticateAgainstProtectionSpaceInFrame(this, frame, protectionSpace.get());
+}
+
+void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge& coreChallenge, uint64_t challengeID)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, this);
+    
+    m_loaderClient.didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get(), authenticationChallenge->listener());
 }
 
 } // namespace WebKit

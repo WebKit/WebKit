@@ -130,11 +130,13 @@ INCLUDEPATH = \
     UIProcess/API/cpp \
     UIProcess/API/cpp/qt \
     UIProcess/API/qt \
+    UIProcess/Authentication \
     UIProcess/Downloads \
     UIProcess/Launcher \
     UIProcess/Plugins \
     UIProcess/qt \
     WebProcess \
+    WebProcess/Authentication \
     WebProcess/Downloads \
     WebProcess/Downloads/qt \
     WebProcess/InjectedBundle \
@@ -159,6 +161,7 @@ QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 DEFINES += BUILDING_QT__
 
 WEBKIT2_GENERATED_HEADERS = \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
@@ -174,6 +177,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
@@ -262,10 +266,13 @@ HEADERS += \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
     UIProcess/API/C/WKAPICast.h \
+    UIProcess/API/C/WKAuthenticationChallenge.h \
+    UIProcess/API/C/WKAuthenticationDecisionListener.h \
     UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKBackForwardListItem.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
+    UIProcess/API/C/WKCredential.h \
     UIProcess/API/C/WKDownload.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
@@ -277,6 +284,7 @@ HEADERS += \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
+    UIProcess/API/C/WKProtectionSpace.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
     UIProcess/API/cpp/WKRetainPtr.h \
@@ -289,6 +297,10 @@ HEADERS += \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
     UIProcess/API/qt/qwkpreferences.h \
+    UIProcess/Authentication/AuthenticationChallengeProxy.h \
+    UIProcess/Authentication/AuthenticationDecisionListener.h \
+    UIProcess/Authentication/WebCredential.h \
+    UIProcess/Authentication/WebProtectionSpace.h \
     UIProcess/ChunkedUpdateDrawingAreaProxy.h \
     UIProcess/Downloads/DownloadProxy.h \
     UIProcess/DrawingAreaProxy.h \
@@ -329,6 +341,7 @@ HEADERS += \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
+    WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
@@ -448,9 +461,12 @@ SOURCES += \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
+    UIProcess/API/C/WKAuthenticationChallenge.cpp \
+    UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKContext.cpp \
+    UIProcess/API/C/WKCredential.cpp \
     UIProcess/API/C/WKDownload.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
@@ -460,6 +476,7 @@ SOURCES += \
     UIProcess/API/C/WKPageGroup.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
+    UIProcess/API/C/WKProtectionSpace.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
@@ -467,6 +484,10 @@ SOURCES += \
     UIProcess/API/qt/qwkhistory.cpp \
     UIProcess/API/qt/qwkpage.cpp \
     UIProcess/API/qt/qwkpreferences.cpp \
+    UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
+    UIProcess/Authentication/AuthenticationDecisionListener.cpp \
+    UIProcess/Authentication/WebCredential.cpp \
+    UIProcess/Authentication/WebProtectionSpace.cpp \
     UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
@@ -514,6 +535,7 @@ SOURCES += \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
+    WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \

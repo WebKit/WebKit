@@ -61,9 +61,11 @@ namespace CoreIPC {
 }
 
 namespace WebCore {
+    class AuthenticationChallenge;
     class Cursor;
     class FloatRect;
     class IntSize;
+    class ProtectionSpace;
     struct ViewportArguments;
     struct WindowFeatures;
 }
@@ -376,6 +378,9 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing, DrawingAreaInfo&);
 #endif
+
+    void canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace&, bool& canAuthenticate);
+    void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;

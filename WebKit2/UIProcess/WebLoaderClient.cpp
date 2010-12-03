@@ -136,6 +136,22 @@ void WebLoaderClient::didRunInsecureContentForFrame(WebPageProxy* page, WebFrame
     m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
 }
 
+bool WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy* page, WebFrameProxy* frame, WebProtectionSpace* protectionSpace)
+{
+    if (!m_client.canAuthenticateAgainstProtectionSpaceInFrame)
+        return false;
+
+    return m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(page), toAPI(frame), toAPI(protectionSpace), m_client.clientInfo);
+}
+
+void WebLoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy* page, WebFrameProxy* frame, AuthenticationChallengeProxy* authenticationChallenge, AuthenticationDecisionListener* listener)
+{
+    if (!m_client.didReceiveAuthenticationChallengeInFrame)
+        return;
+
+    m_client.didReceiveAuthenticationChallengeInFrame(toAPI(page), toAPI(frame), toAPI(authenticationChallenge), toAPI(listener), m_client.clientInfo);
+}
+
 void WebLoaderClient::didStartProgress(WebPageProxy* page)
 {
     if (!m_client.didStartProgress)

@@ -49,6 +49,7 @@ public:
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
 
     void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
+    AuthenticationClient* authenticationClient() const;
 
 private:
     friend class AuthenticationChallengeBase;

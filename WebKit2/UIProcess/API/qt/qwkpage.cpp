@@ -323,6 +323,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_didRemoveFrameFromHierarchy,
         0, /* didDisplayInsecureContentForFrame */
         0, /* didRunInsecureContentForFrame */
+        0, /* canAuthenticateAgainstProtectionSpaceInFrame */
+        0, /* didReceiveAuthenticationChallengeInFrame */
         qt_wk_didStartProgress,
         qt_wk_didChangeProgress,
         qt_wk_didFinishProgress,
