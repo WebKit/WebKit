@@ -64,114 +64,88 @@ class _WorkerMessageBroker(object):
     def __init__(self, port, options):
         self._port = port
         self._options = options
-        self._num_workers = int(self._options.child_processes)
 
-        # This maps worker names to their TestShellThread objects.
+        # This maps worker_names to TestShellThreads
         self._threads = {}
 
-    def start_workers(self, test_runner):
-        """Starts up the pool of workers for running the tests.
+    def start_worker(self, test_runner, worker_number):
+        """Start a worker with the given index number.
 
-        Args:
-            test_runner: a handle to the manager/TestRunner object
-        """
-        self._test_runner = test_runner
-        for worker_number in xrange(self._num_workers):
-            thread = self.start_worker(worker_number)
-            self._threads[thread.name()] = thread
-        return self._threads.values()
-
-    def start_worker(self, worker_number):
-        # FIXME: Replace with something that isn't a thread.
+        Returns the actual TestShellThread object."""
+        # FIXME: Remove dependencies on test_runner.
+        # FIXME: Replace with something that isn't a thread, and return
+        # the name of the worker, not the thread itself. We need to return
+        # the thread itself for now to allow TestRunner to access the object
+        # directly to read shared state.
+        thread = dump_render_tree_thread.TestShellThread(self._port,
+            self._options, worker_number, test_runner._current_filename_queue,
+            test_runner._result_queue)
+        self._threads[thread.name()] = thread
         # Note: Don't start() the thread! If we did, it would actually
         # create another thread and start executing it, and we'd no longer
         # be single-threaded.
-        return dump_render_tree_thread.TestShellThread(self._port,
-            self._options, worker_number,
-            self._test_runner._current_filename_queue,
-            self._test_runner._result_queue)
+        return thread
 
-    def run_message_loop(self):
-        """Loop processing messages until done."""
+    def cancel_worker(self, worker_name):
+        """Attempt to cancel a worker (best-effort). The worker may still be
+        running after this call returns."""
+        self._threads[worker_name].cancel()
+
+    def log_wedged_worker(self, worker_name):
+        """Log information about the given worker's state."""
         raise NotImplementedError
 
-    def cancel_workers(self):
-        """Cancel/interrupt any workers that are still alive."""
-        pass
-
-    def cleanup(self):
-        """Perform any necessary cleanup on shutdown."""
-        pass
+    def run_message_loop(self, test_runner):
+        """Loop processing messages until done."""
+        # FIXME: eventually we'll need a message loop that the workers
+        # can also call.
+        raise NotImplementedError
 
 
 class _InlineBroker(_WorkerMessageBroker):
-    def run_message_loop(self):
+    def run_message_loop(self, test_runner):
         thread = self._threads.values()[0]
-        thread.run_in_main_thread(self._test_runner,
-                                  self._test_runner._current_result_summary)
-        self._test_runner.update()
+        thread.run_in_main_thread(test_runner,
+                                  test_runner._current_result_summary)
+
+    def log_wedged_worker(self, worker_name):
+        raise AssertionError('_InlineBroker.log_wedged_worker() called')
 
 
 class _MultiThreadedBroker(_WorkerMessageBroker):
-    def start_worker(self, worker_number):
-        thread = _WorkerMessageBroker.start_worker(self, worker_number)
+    def start_worker(self, test_runner, worker_number):
+        thread = _WorkerMessageBroker.start_worker(self, test_runner,
+                                                   worker_number)
+        # Unlike the base implementation, here we actually want to start
+        # the thread.
         thread.start()
         return thread
 
-    def run_message_loop(self):
-        # Loop through all the threads waiting for them to finish.
-        some_thread_is_alive = True
-        while some_thread_is_alive:
-            some_thread_is_alive = False
-            t = time.time()
-            for thread in self._threads.values():
-                exception_info = thread.exception_info()
-                if exception_info is not None:
-                    # Re-raise the thread's exception here to make it
-                    # clear that testing was aborted. Otherwise,
-                    # the tests that did not run would be assumed
-                    # to have passed.
-                    raise exception_info[0], exception_info[1], exception_info[2]
+    def run_message_loop(self, test_runner):
+        # FIXME: Remove the dependencies on test_runner. Checking on workers
+        # should be done via a timer firing.
+        test_runner._check_on_workers()
 
-                if thread.isAlive():
-                    some_thread_is_alive = True
-                    next_timeout = thread.next_timeout()
-                    if next_timeout and t > next_timeout:
-                        log_wedged_worker(thread.name(), thread.id())
-                        thread.clear_next_timeout()
+    def log_wedged_worker(self, worker_name):
+        thread = self._threads[worker_name]
+        stack = self._find_thread_stack(thread.id())
+        assert(stack is not None)
+        _log.error("")
+        _log.error("%s (tid %d) is wedged" % (worker_name, thread.id()))
+        self._log_stack(stack)
+        _log.error("")
 
-            self._test_runner.update()
+    def _find_thread_stack(self, id):
+        """Returns a stack object that can be used to dump a stack trace for
+        the given thread id (or None if the id is not found)."""
+        for thread_id, stack in sys._current_frames().items():
+            if thread_id == id:
+                return stack
+        return None
 
-            if some_thread_is_alive:
-                time.sleep(0.01)
-
-    def cancel_workers(self):
-        for thread in self._threads.values():
-            thread.cancel()
-
-
-def log_wedged_worker(name, id):
-    """Log information about the given worker state."""
-    stack = _find_thread_stack(id)
-    assert(stack is not None)
-    _log.error("")
-    _log.error("%s (tid %d) is wedged" % (name, id))
-    _log_stack(stack)
-    _log.error("")
-
-
-def _find_thread_stack(id):
-    """Returns a stack object that can be used to dump a stack trace for
-    the given thread id (or None if the id is not found)."""
-    for thread_id, stack in sys._current_frames().items():
-        if thread_id == id:
-            return stack
-    return None
-
-
-def _log_stack(stack):
-    """Log a stack trace to log.error()."""
-    for filename, lineno, name, line in traceback.extract_stack(stack):
-        _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
-        if line:
-            _log.error('  %s' % line.strip())
+    def _log_stack(self, stack):
+        """Log a stack trace to log.error()."""
+        for filename, lineno, name, line in traceback.extract_stack(stack):
+            _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
+            if line:
+                _log.error('  %s' % line.strip())

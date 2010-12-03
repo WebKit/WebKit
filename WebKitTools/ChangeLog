@@ -1,3 +1,42 @@
+2010-12-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt multiprocessing - move logic back into run_webkit_tests
+
+        This change moves a bunch of logic that I had put into
+        message_broker back into run_webkit_tests, in a slightly
+        different format. WorkerMessageBroker needed to become less aware of
+        the logic the TestRunner class uses, and more generic.
+        Eventually the MessageBroker will only do generic messaging and
+        thread/process-pooling, and (almost) all of the
+        run-webkit-tests-specific logic will be moved to
+        run_webkit_tests.py and dump_render_tree_thread.py.
+        
+        The biggest changes are that the Broker can now start a single
+        worker, but the responsibility for starting all of them is pushed
+        back to the TestRunner (Manager), and the logic for checking if
+        the threads are done or wedged is moved back to TestRunner. We
+        also remove WorkerMessageBroker.cleanup (not needed) and
+        cancel_workers (they have to be cancelled individually).
+        
+        The  message_broker is now encapsulated inside
+        TestRunner._run_tests(); it only needs to exist while actually
+        running the tests.
+
+        Also, delete a bunch of tests in message_broker_unittest that no
+        longer make much sense.
+
+        This patch depends on bug 50372.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50374
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-12-02  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Eric Seidel.

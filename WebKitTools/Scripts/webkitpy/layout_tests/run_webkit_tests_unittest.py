@@ -489,7 +489,7 @@ class TestRunnerTest(unittest.TestCase):
         mock_port.filename_to_uri = lambda name: name
 
         runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(),
-            printer=Mock(), message_broker=Mock())
+                                             printer=Mock())
         expected_html = u"""<html>
   <head>
     <title>Layout Test Results (time)</title>
@@ -507,7 +507,7 @@ class TestRunnerTest(unittest.TestCase):
         # Test that _shard_tests in run_webkit_tests.TestRunner really
         # put the http tests first in the queue.
         runner = TestRunnerWrapper(port=Mock(), options=Mock(),
-            printer=Mock(), message_broker=Mock())
+                                   printer=Mock())
 
         test_list = [
           "LayoutTests/websocket/tests/unicode.htm",

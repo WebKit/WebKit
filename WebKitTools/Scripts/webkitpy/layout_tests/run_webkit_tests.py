@@ -228,6 +228,15 @@ def summarize_unexpected_results(port_obj, expectations, result_summary,
     return results
 
 
+class WorkerState(object):
+    """A class for the TestRunner/manager to use to track the current state
+    of the workers."""
+    def __init__(self, name, number, thread):
+        self.name = name
+        self.number = number
+        self.thread = thread
+
+
 class TestRunner:
     """A class for managing running a series of tests on a series of layout
     test files."""
@@ -240,19 +249,20 @@ class TestRunner:
     # in DumpRenderTree.
     DEFAULT_TEST_TIMEOUT_MS = 6 * 1000
 
-    def __init__(self, port, options, printer, message_broker):
+    def __init__(self, port, options, printer):
         """Initialize test runner data structures.
 
         Args:
           port: an object implementing port-specific
           options: a dictionary of command line options
           printer: a Printer object to record updates to.
-          message_broker: object used to communicate with workers.
         """
         self._port = port
         self._options = options
         self._printer = printer
-        self._message_broker = message_broker
+
+        # This maps worker names to the state we are tracking for each of them.
+        self._workers = {}
 
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
@@ -586,33 +596,39 @@ class TestRunner:
             result_summary: summary object to populate with the results
         """
 
+        self._workers = {}
+
         self._printer.print_update('Sharding tests ...')
         num_workers = self._num_workers()
         test_lists = self._shard_tests(file_list,
             num_workers > 1 and not self._options.experimental_fully_parallel)
+
+        broker = message_broker.get(self._port, self._options)
+        self._message_broker = broker
+
         filename_queue = Queue.Queue()
         for item in test_lists:
             filename_queue.put(item)
 
         self._printer.print_update('Starting %s ...' %
                                    grammar.pluralize('worker', num_workers))
-        message_broker = self._message_broker
         self._current_filename_queue = filename_queue
         self._current_result_summary = result_summary
 
-        if not self._options.dry_run:
-            threads = message_broker.start_workers(self)
-        else:
-            threads = []
+        for worker_number in xrange(num_workers):
+            thread = broker.start_worker(self, worker_number)
+            w = WorkerState(thread.name(), worker_number, thread)
+            self._workers[thread.name()] = w
 
         self._printer.print_update("Starting testing ...")
         keyboard_interrupted = False
         if not self._options.dry_run:
             try:
-                message_broker.run_message_loop()
+                broker.run_message_loop(self)
             except KeyboardInterrupt:
                 _log.info("Interrupted, exiting")
-                message_broker.cancel_workers()
+                for worker_name in self._workers.keys():
+                    broker.cancel_worker(worker_name)
                 keyboard_interrupted = True
             except:
                 # Unexpected exception; don't try to clean up workers.
@@ -620,21 +636,50 @@ class TestRunner:
                 raise
 
         thread_timings, test_timings, individual_test_timings = \
-            self._collect_timing_info(threads)
+            self._collect_timing_info(self._workers)
+        self._message_broker = None
 
         return (keyboard_interrupted, thread_timings, test_timings,
                 individual_test_timings)
 
-    def update(self):
-        self.update_summary(self._current_result_summary)
+    def _check_on_workers(self):
+        """Returns True iff all the workers have either completed or wedged."""
 
-    def _collect_timing_info(self, threads):
+        # Loop through all the threads waiting for them to finish.
+        some_thread_is_alive = True
+        while some_thread_is_alive:
+            some_thread_is_alive = False
+            t = time.time()
+            for worker in self._workers.values():
+                thread = worker.thread
+                exception_info = thread.exception_info()
+                if exception_info is not None:
+                    # Re-raise the thread's exception here to make it
+                    # clear that testing was aborted. Otherwise,
+                    # the tests that did not run would be assumed
+                    # to have passed.
+                    raise exception_info[0], exception_info[1], exception_info[2]
+
+                if thread.isAlive():
+                    some_thread_is_alive = True
+                    next_timeout = thread.next_timeout()
+                    if next_timeout and t > next_timeout:
+                        self._message_broker.log_wedged_worker(worker.name)
+                        thread.clear_next_timeout()
+
+            self.update_summary(self._current_result_summary)
+
+            if some_thread_is_alive:
+                time.sleep(0.01)
+
+    def _collect_timing_info(self, workers):
         test_timings = {}
         individual_test_timings = []
         thread_timings = []
 
-        for thread in threads:
-            thread_timings.append({'name': thread.getName(),
+        for w in workers.values():
+            thread = w.thread
+            thread_timings.append({'name': thread.name(),
                                    'num_tests': thread.get_num_tests(),
                                    'total_time': thread.get_total_time()})
             test_timings.update(thread.get_test_group_timing_stats())
@@ -1006,8 +1051,7 @@ class TestRunner:
                                   result_summary):
         """Prints the run times for slow, timeout and crash tests.
         Args:
-          individual_test_timings: List of dump_render_tree_thread.TestStats
-              for all tests.
+          individual_test_timings: List of TestStats for all tests.
           result_summary: summary object for test run
         """
         # Reverse-sort by the time spent in DumpRenderTree.
@@ -1295,13 +1339,11 @@ def run(port, options, args, regular_output=sys.stderr,
         printer.cleanup()
         return 0
 
-    broker = message_broker.get(port, options)
-
     # We wrap any parts of the run that are slow or likely to raise exceptions
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        test_runner = TestRunner(port, options, printer, broker)
+        test_runner = TestRunner(port, options, printer)
         test_runner._print_config()
 
         printer.print_update("Collecting tests ...")
@@ -1330,7 +1372,6 @@ def run(port, options, args, regular_output=sys.stderr,
             _log.debug("Testing completed, Exit status: %d" %
                        num_unexpected_results)
     finally:
-        broker.cleanup()
         printer.cleanup()
 
     return num_unexpected_results
