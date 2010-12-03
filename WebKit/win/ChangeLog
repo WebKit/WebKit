@@ -1,3 +1,17 @@
+2010-12-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        WebContextMenuClient::fixMenuReceivedFromOldSafari is no longer needed on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50486
+        
+        Remove the static fixMenuReceivedFromOldSafari and isPreInspectElementTagSafari methods 
+        from WebContextMenuClient. There were there for when WebKit had the Inspect Element context menu
+        item, but Safari didn't support it. We don't support that old Safari, so that code can go.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+
 2010-12-02  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.

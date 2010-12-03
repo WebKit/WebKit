@@ -54,44 +54,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-static bool isPreInspectElementTagSafari(IWebUIDelegate* uiDelegate)
-{
-    if (!uiDelegate)
-        return false;
-
-    TCHAR modulePath[MAX_PATH];
-    DWORD length = ::GetModuleFileName(0, modulePath, WTF_ARRAY_LENGTH(modulePath));
-    if (!length)
-        return false;
-
-    return String(modulePath, length).endsWith("Safari.exe", false);
-}
-
-static HMENU fixMenuReceivedFromOldSafari(IWebUIDelegate* uiDelegate, ContextMenu* originalMenu, HMENU menuFromClient)
-{
-    ASSERT_ARG(originalMenu, originalMenu);
-    if (!isPreInspectElementTagSafari(uiDelegate))
-        return menuFromClient;
-
-    int count = ::GetMenuItemCount(originalMenu->platformDescription());
-    if (count < 1)
-        return menuFromClient;
-
-    if (::GetMenuItemID(originalMenu->platformDescription(), count - 1) != WebMenuItemTagInspectElement)
-        return menuFromClient;
-
-    count = ::GetMenuItemCount(menuFromClient);
-    if (count < 1)
-        return menuFromClient;
-
-    if (::GetMenuItemID(menuFromClient, count - 1) == WebMenuItemTagInspectElement)
-        return menuFromClient;
-
-    originalMenu->setPlatformDescription(menuFromClient);
-    originalMenu->addInspectElementItem();
-    return originalMenu->platformDescription();
-}
-
 HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
@@ -106,7 +68,7 @@ HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
     // FIXME: We need to decide whether to do the default before calling this delegate method
     if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), (OLE_HANDLE)(ULONG64)menu->platformDescription(), (OLE_HANDLE*)&newMenu)))
         return menu->platformDescription();
-    return fixMenuReceivedFromOldSafari(uiDelegate.get(), menu, newMenu);
+    return newMenu;
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
