@@ -177,6 +177,16 @@
 
         Reviewed by Dan Bernstein.
 
+        Flip the destination context when painting a backing store into the destination
+        https://bugs.webkit.org/show_bug.cgi?id=50491
+
+        * Shared/cg/BackingStoreCG.cpp:
+        (WebKit::BackingStore::paint):
+
+2010-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         The chunked update drawing area is flipped twice when drawing
         https://bugs.webkit.org/show_bug.cgi?id=50465
         <rdar://problem/8726836>

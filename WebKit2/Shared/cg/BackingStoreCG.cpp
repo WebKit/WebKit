@@ -64,9 +64,17 @@ void BackingStore::paint(WebCore::GraphicsContext& context, const WebCore::IntPo
     CGContextRef cgContext = context.platformContext();
     
     CGContextSaveGState(cgContext);
+
     CGContextClipToRect(cgContext, CGRectMake(dstPoint.x(), dstPoint.y(), srcRect.width(), srcRect.height()));
-    CGContextTranslateCTM(cgContext, -srcRect.x(), -srcRect.y());
-    CGContextDrawImage(cgContext, CGRectMake(dstPoint.x(), dstPoint.y(), CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
+    CGContextScaleCTM(cgContext, 1, -1);
+
+    CGFloat imageHeight = CGImageGetHeight(image.get());
+    CGFloat imageWidth = CGImageGetWidth(image.get());
+
+    CGFloat destX = dstPoint.x() - srcRect.x();
+    CGFloat destY = -imageHeight - dstPoint.y() + srcRect.y();
+
+    CGContextDrawImage(cgContext, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
     CGContextRestoreGState(cgContext);
 }
         
