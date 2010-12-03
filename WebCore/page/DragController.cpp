@@ -268,6 +268,7 @@ static HTMLInputElement* asFileInput(Node* node)
     return inputElement;
 }
 
+// This can return null if an empty document is loaded.
 static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& p)
 {
     Frame* frame = documentUnderMouse->frame();
@@ -284,7 +285,6 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     if (n)
         n = n->shadowAncestorNode();
 
-    ASSERT(n);
     return static_cast<Element*>(n);
 }
 
@@ -327,6 +327,8 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
 
         IntPoint point = frameView->windowToContents(dragData->clientPosition());
         Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
+        if (!element)
+            return false;
         if (!asFileInput(element)) {
             VisibleSelection dragCaret = m_documentUnderMouse->frame()->visiblePositionForPoint(point);
             m_page->dragCaretController()->setSelection(dragCaret);
@@ -386,6 +388,8 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
     IntPoint point = m_documentUnderMouse->view()->windowToContents(dragData->clientPosition());
     Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
+    if (!element)
+        return false;
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 
