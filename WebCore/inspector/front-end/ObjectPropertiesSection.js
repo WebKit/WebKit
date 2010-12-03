@@ -202,8 +202,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     {
         function selectNode(nodeId)
         {
-            if (nodeId)
+            if (nodeId) {
+                WebInspector.currentPanel = WebInspector.panels.elements;
                 WebInspector.panels.elements.focusedDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+            }
         }
 
         function revealElement()

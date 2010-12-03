@@ -268,6 +268,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (this.showInElementsPanelEnabled) {
             function focusElement()
             {
+                WebInspector.currentPanel = WebInspector.panels.elements;
                 WebInspector.panels.elements.focusedDOMNode = listItem.treeElement.representedObject;
             }
             contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
