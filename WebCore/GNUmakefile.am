@@ -118,6 +118,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSArrayBufferView.h \
 	DerivedSources/WebCore/JSAttr.cpp \
 	DerivedSources/WebCore/JSAttr.h \
+	DerivedSources/WebCore/JSAudioContext.cpp \
+	DerivedSources/WebCore/JSAudioContext.h \
+	DerivedSources/WebCore/JSAudioPannerNode.cpp \
+	DerivedSources/WebCore/JSAudioPannerNode.h \
 	DerivedSources/WebCore/JSBarInfo.cpp \
 	DerivedSources/WebCore/JSBarInfo.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
@@ -4570,10 +4574,12 @@ DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 # ----
-# Web Audio Support - disable for now.
+# Web Audio Support
 # ----
-FEATURE_DEFINES += ENABLE_WEB_AUDIO=0
-webcore_cppflags += -DENABLE_WEB_AUDIO=0
+if ENABLE_WEB_AUDIO
+FEATURE_DEFINES += ENABLE_WEB_AUDIO=1
+webcore_cppflags += -DENABLE_WEB_AUDIO=1
+endif
 
 # ----
 # Web Sockets Support

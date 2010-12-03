@@ -635,6 +635,14 @@ AC_ARG_ENABLE(web_sockets,
               [],[enable_web_sockets="yes"])
 AC_MSG_RESULT([$enable_web_sockets])
 
+# check whether to enable Web Audio support
+AC_MSG_CHECKING([whether to enable Web Audio support])
+AC_ARG_ENABLE(web_audio,
+              AC_HELP_STRING([--enable-web-audio],
+                             [enable support for Web Audio [default=no]]),
+              [],[enable_web_audio="no"])
+AC_MSG_RESULT([$enable_web_audio])
+
 # check whether to enable Web Timing support
 AC_MSG_CHECKING([whether to enable Web Timing support])
 AC_ARG_ENABLE(web_timing,
@@ -957,6 +965,7 @@ AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
+AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 
@@ -1023,6 +1032,7 @@ Features:
  SVG as image support                                     : $enable_svg_as_image
  SVG use element support                                  : $enable_svg_use
  WML support                                              : $enable_wml
+ Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
