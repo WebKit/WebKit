@@ -2,6 +2,16 @@
 
         Reviewed by Andreas Kling.
 
+        Move StringWx.cpp into wtf directory
+        https://bugs.webkit.org/show_bug.cgi?id=50060
+
+        * wtf/wx/StringWx.cpp: Renamed from WebCore/platform/text/wx/StringWx.cpp.
+        (WTF::String::String):
+
+2010-12-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         Move StringBrew.cpp into wtf directory
         https://bugs.webkit.org/show_bug.cgi?id=50058
 

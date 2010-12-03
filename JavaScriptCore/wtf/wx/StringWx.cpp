@@ -26,9 +26,8 @@
 #include "config.h"
 #include "PlatformString.h"
 
-#include "unicode/ustring.h"
+#include <unicode/ustring.h>
 #include <wtf/text/CString.h>
-
 #include <wx/defs.h>
 #include <wx/string.h>
 
@@ -87,6 +86,4 @@ String::operator wxString() const
     return wxString(utf8().data(), wxConvUTF8);
 }
 
-}
-
-// vim: ts=4 sw=4 et
+} // namespace WebCore
