@@ -8,6 +8,18 @@
         The current available space isn't enough to display all
         pending results including position in the queue.
 
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Increase size of status bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=50496
+
+        The current available space isn't enough to display all
+        pending results including position in the queue.
+
         * template/en/custom/attachment/edit.html.tmpl:
         * template/en/custom/attachment/list.html.tmpl:
         * template/en/custom/attachment/reviewform.html.tmpl:
