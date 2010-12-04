@@ -1,0 +1,9 @@
+original scroll y for RTL page : Success
+vertical scroll: : Failure, actual: 0; expected: -1000
+continuously call window.scrollY : Failure, actual: 0; expected: -1000
+zoom in and out preserve scroll position: Failure, actual: 0; expected: -1000
+resize preserves scroll position: Failure, actual: 0; expected: -1000
+wheel scroll preserves vertical scroll position: Failure, actual: 0; expected: -1000
+KeyDown HOME move y-scroll position to bottom for RTL page: 0
+KeyDown END move y-scroll position to bottom for RTL page: 0
+selectAll selects all document: Success
