@@ -54,8 +54,6 @@ private:
 
     virtual void inspectedURLChanged(const String&);
 
-    virtual void sendMessageToBackend(const String&);
-
     WebPage* m_page;
 };
 

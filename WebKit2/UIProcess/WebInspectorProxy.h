@@ -36,9 +36,13 @@
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #ifdef __OBJC__
+@class NSWindow;
 @class WKView;
+@class WebInspectorProxyObjCAdapter;
 #else
+class NSWindow;
 class WKView;
+class WebInspectorProxyObjCAdapter;
 #endif
 #endif
 
@@ -95,6 +99,8 @@ private:
     virtual Type type() const { return APIType; }
 
     WebPageProxy* platformCreateInspectorPage();
+    void platformOpen();
+    void platformClose();
 
     // Implemented the platform WebInspectorProxy file
     String inspectorPageURL() const;
@@ -102,8 +108,15 @@ private:
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
     void didLoadInspectorPage();
+    void didClose();
 
     static WebPageGroup* inspectorPageGroup();
+
+    static const unsigned minimumWindowWidth = 500;
+    static const unsigned minimumWindowHeight = 400;
+
+    static const unsigned initialWindowWidth = 750;
+    static const unsigned initialWindowHeight = 650;
 
     WebPageProxy* m_page;
 
@@ -115,6 +128,8 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<WKView> m_inspectorView;
+    RetainPtr<NSWindow> m_inspectorWindow;
+    RetainPtr<WebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
 #endif
 };
 

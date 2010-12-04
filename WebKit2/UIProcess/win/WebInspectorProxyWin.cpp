@@ -40,6 +40,16 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return 0;
 }
 
+void WebInspectorProxy::platformOpen()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformClose()
+{
+    notImplemented();
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     notImplemented();

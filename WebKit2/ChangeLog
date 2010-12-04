@@ -1,3 +1,40 @@
+2010-12-03  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector window show and be usable on Mac.
+
+        https://webkit.org/b/50490
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::invalidate): Call platformClose.
+        (WebKit::WebInspectorProxy::didLoadInspectorPage): Call platformOpen.
+        (WebKit::WebInspectorProxy::didClose): Call platformClose.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Added DidClose.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WebInspectorProxyObjCAdapter initWithWebInspectorProxy:]): Added.
+        (-[WebInspectorProxyObjCAdapter windowWillClose:]): Added. Call WebInspectorProxy::close.
+        (WebKit::WebInspectorProxy::platformOpen): Added.
+        (WebKit::WebInspectorProxy::platformClose): Added.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformOpen): Added stub.
+        (WebKit::WebInspectorProxy::platformClose): Added stub.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformOpen): Added stub.
+        (WebKit::WebInspectorProxy::platformClose): Added stub.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::sendMessageToFrontend): Added more null checks to avoid a crash.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::closeWindow): Call WebInspector::didClose.
+        (WebKit::WebInspectorFrontendClient::disconnectFromBackend): Ditto.
+        (WebKit::WebInspectorFrontendClient::sendMessageToBackend): Removed. This does not need to be
+        implemented by our subclass since we are in a single process.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h: Removed sendMessageToBackend.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::didClose): Added. Send a DidClose message to the UI process.
+        * WebProcess/WebPage/WebInspector.h:
+
 2010-12-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig and Dan Bernstein.

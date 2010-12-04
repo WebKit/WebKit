@@ -30,9 +30,46 @@
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WebPageProxy.h"
+#import <WebKitSystemInterface.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
+using namespace WebKit;
+
+// The height needed to match a typical NSToolbar.
+static const CGFloat windowContentBorderThickness = 55;
+
+// WebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
+// for the sole purpose of getting back into the C++ code from an ObjC caller.
+
+@interface WebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate> {
+    WebInspectorProxy* _inspectorProxy; // Not retained to prevent cycles
+}
+
+- (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
+
+@end
+
+@implementation WebInspectorProxyObjCAdapter
+
+- (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy
+{
+    ASSERT_ARG(inspectorProxy, inspectorProxy);
+
+    if (!(self = [super init]))
+        return nil;
+
+    _inspectorProxy = inspectorProxy; // Not retained to prevent cycles
+
+    return self;
+}
+
+- (void)windowWillClose:(NSNotification *)notification;
+{
+    _inspectorProxy->close();
+}
+
+@end
 
 namespace WebKit {
 
@@ -45,6 +82,51 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_inspectorView);
 
     return toImpl([m_inspectorView.get() pageRef]);
+}
+
+void WebInspectorProxy::platformOpen()
+{
+    ASSERT(!m_inspectorWindow);
+
+    m_inspectorProxyObjCAdapter.adoptNS([[WebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
+
+    // FIXME: support opening in docked mode here.
+
+    NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask);
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
+    [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
+    [window setDelegate:m_inspectorProxyObjCAdapter.get()];
+    [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
+    [window setReleasedWhenClosed:NO];
+
+    // Center the window initially before setting the frame autosave name so that the window will be in a good
+    // position if there is no saved frame yet.
+    [window center];
+    [window setFrameAutosaveName:@"Web Inspector 2"];
+
+    WKNSWindowMakeBottomCornersSquare(window);
+
+    NSView *contentView = [window contentView];
+    [m_inspectorView.get() setFrame:[contentView bounds]];
+    [m_inspectorView.get() setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    [contentView addSubview:m_inspectorView.get()];
+
+    [window makeKeyAndOrderFront:nil];
+
+    m_inspectorWindow.adoptNS(window);
+}
+
+void WebInspectorProxy::platformClose()
+{
+    // FIXME: support closing in docked mode here.
+
+    [m_inspectorWindow.get() setDelegate:nil];
+    [m_inspectorWindow.get() orderOut:nil];
+
+    m_inspectorWindow = 0;
+    m_inspectorView = 0;
+    m_inspectorProxyObjCAdapter = 0;
 }
 
 String WebInspectorProxy::inspectorPageURL() const

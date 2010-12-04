@@ -70,12 +70,12 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    notImplemented();
+    m_page->inspector()->didClose();
 }
 
 void WebInspectorFrontendClient::disconnectFromBackend()
 {
-    notImplemented();
+    m_page->inspector()->didClose();
 }
 
 void WebInspectorFrontendClient::attachWindow()
@@ -94,11 +94,6 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned)
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String&)
-{
-    notImplemented();
-}
-
-void WebInspectorFrontendClient::sendMessageToBackend(const String&)
 {
     notImplemented();
 }

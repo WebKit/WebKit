@@ -58,6 +58,7 @@ private:
 
     // Called from WebInspectorFrontendClient
     void didLoadInspectorPage();
+    void didClose();
 
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;

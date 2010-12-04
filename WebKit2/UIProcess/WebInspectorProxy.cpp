@@ -62,7 +62,11 @@ WebInspectorProxy::~WebInspectorProxy()
 
 void WebInspectorProxy::invalidate()
 {
+    platformClose();
+
     m_page = 0;
+
+    m_isVisible = false;
     m_isDebuggingJavaScript = false;
     m_isProfilingJavaScript = false;
     m_isProfilingPage = false;
@@ -166,7 +170,16 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
 
 void WebInspectorProxy::didLoadInspectorPage()
 {
-    // FIXME: show the window or attach the inspector here.
+    m_isVisible = true;
+
+    platformOpen();
+}
+
+void WebInspectorProxy::didClose()
+{
+    platformClose();
+
+    m_isVisible = false;
 }
 
 } // namespace WebKit

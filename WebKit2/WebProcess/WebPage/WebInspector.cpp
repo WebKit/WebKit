@@ -75,6 +75,11 @@ void WebInspector::didLoadInspectorPage()
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidLoadInspectorPage(), m_page->pageID());
 }
 
+void WebInspector::didClose()
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
+}
+
 // Called by WebInspector messages
 void WebInspector::show()
 {
