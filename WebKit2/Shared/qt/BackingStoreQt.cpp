@@ -46,13 +46,6 @@ PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
     return context;
 }
 
-PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
-{
-    // This is CG specific so we should not use it.
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 void BackingStore::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
     QImage image = createQImage(data(), m_size.width(), m_size.height());

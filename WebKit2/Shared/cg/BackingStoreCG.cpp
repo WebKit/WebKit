@@ -45,21 +45,21 @@ PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
     return adoptPtr(new GraphicsContext(bitmapContext.get()));
 }
 
-PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
-{
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(data(), m_size.width(), m_size.height(), 8,  m_size.width() * 4, colorSpace.get(), 
-                                                                         kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-
-    return adoptPtr(new GraphicsContext(bitmapContext.get()));
-}
-
 void BackingStore::paint(WebCore::GraphicsContext& context, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
 {
     OwnPtr<GraphicsContext> sourceContext(createGraphicsContext());
 
-    // FIXME: This creates an extra copy.
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(sourceContext->platformContext()));
+    CGContextRef sourceCGContext = sourceContext->platformContext();
+
+    RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithData(0, data(), sizeInBytes(), 0));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(CGBitmapContextGetWidth(sourceCGContext), 
+                                                       CGBitmapContextGetHeight(sourceCGContext),
+                                                       CGBitmapContextGetBitsPerComponent(sourceCGContext),
+                                                       CGBitmapContextGetBitsPerPixel(sourceCGContext),
+                                                       CGBitmapContextGetBytesPerRow(sourceCGContext),
+                                                       CGBitmapContextGetColorSpace(sourceCGContext),
+                                                       CGBitmapContextGetBitmapInfo(sourceCGContext),
+                                                       dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     CGContextRef cgContext = context.platformContext();
     

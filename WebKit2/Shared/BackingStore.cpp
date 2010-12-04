@@ -26,6 +26,7 @@
 #include "BackingStore.h"
 
 #include "SharedMemory.h"
+#include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
@@ -33,7 +34,7 @@ namespace WebKit {
 
 PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size)
 {
-    size_t numBytes = size.width() * size.height() * 4;
+    size_t numBytes = numBytesForSize(size);
     
     void* data = 0;
     if (!tryFastMalloc(numBytes).getValue(data))
@@ -44,7 +45,7 @@ PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size)
 
 PassRefPtr<BackingStore> BackingStore::createSharable(const IntSize& size)
 {
-    size_t numBytes = size.width() * size.height() * 4;
+    size_t numBytes = numBytesForSize(size);
     
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(numBytes);
     if (!sharedMemory)
@@ -60,7 +61,7 @@ PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size, cons
     if (!sharedMemory)
         return 0;
 
-    size_t numBytes = size.width() * size.height() * 4;
+    size_t numBytes = numBytesForSize(size);
     ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
 
     return adoptRef(new BackingStore(size, sharedMemory));
@@ -100,7 +101,7 @@ bool BackingStore::resize(const IntSize& size)
     if (size == m_size)
         return true;
 
-    size_t newNumBytes = size.width() * size.height() * 4;
+    size_t newNumBytes = numBytesForSize(size);
     
     // Try to resize.
     char* newData = 0;
@@ -124,4 +125,15 @@ void* BackingStore::data() const
     return m_data;
 }
 
+PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
+{
+    OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
+
+    // Flip the coordinate system.
+    graphicsContext->translate(0, m_size.height());
+    graphicsContext->scale(FloatSize(1, -1));
+
+    return graphicsContext.release();
+}
+    
 } // namespace WebKit

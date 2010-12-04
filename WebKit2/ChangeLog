@@ -1,3 +1,33 @@
+2010-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Dan Bernstein.
+
+        Clean up the BackingStore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=50498
+
+        * Shared/BackingStore.cpp:
+        (WebKit::BackingStore::create):
+        (WebKit::BackingStore::createSharable):
+        (WebKit::BackingStore::resize):
+        Use new numBytesForSize helper function.
+
+        (WebKit::BackingStore::createFlippedGraphicsContext):
+        Make this function platform independent.
+
+        * Shared/BackingStore.h:
+        (WebKit::BackingStore::numBytesForSize):
+        Given a size, return the number of bytes needed for it.
+
+        (WebKit::BackingStore::sizeInBytes):
+        Implement.
+
+        * Shared/cg/BackingStoreCG.cpp:
+        (WebKit::BackingStore::paint):
+        Don't use CGBitmapContextCreateImage; it creates an extra copy of the image data.
+
+        * Shared/qt/BackingStoreQt.cpp:
+        Remove createFlippedGraphicsContext.
+
 2010-12-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

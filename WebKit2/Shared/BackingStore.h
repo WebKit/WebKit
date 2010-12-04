@@ -72,7 +72,10 @@ private:
     BackingStore(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
+    static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
+
     void* data() const;
+    size_t sizeInBytes() const { return numBytesForSize(m_size); }
 
     WebCore::IntSize m_size;
 
