@@ -137,9 +137,11 @@ public:
         return poolAllocate(n);
     }
     
-    void returnLastBytes(size_t count)
+    void tryShrink(void* allocation, size_t oldSize, size_t newSize)
     {
-        m_freePtr -= count;
+        if (static_cast<char*>(allocation) + oldSize != m_freePtr)
+            return;
+        m_freePtr = static_cast<char*>(allocation) + roundUpAllocationSize(newSize, sizeof(void*));
     }
 
     ~ExecutablePool()

@@ -265,7 +265,7 @@ private:
 
         jumpsToLink.clear();
         m_size = writePtr + m_assembler->size() - readPtr;
-        m_executablePool->returnLastBytes(initialSize - m_size);
+        m_executablePool->tryShrink(m_code, initialSize, m_size);
 
 #if DUMP_LINK_STATISTICS
         dumpLinkStatistics(m_code, initialSize, m_size);

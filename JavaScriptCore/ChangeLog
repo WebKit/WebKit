@@ -1,3 +1,26 @@
+2010-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Incorrect logic for returning memory at the end of linking.
+        Reviewed by Geoff Garen.
+
+        At the end of linking we return any space at the end of the
+        allocated executable region that was saved due to branch
+        compaction.  This is currently by done by subtracting the
+        different from the m_freePtr in the allocation pool.  This
+        can be incorrect if your allocation was made from a new
+        page that was not selected for subsequent allocations.
+
+        This patch corrects this behaviour by verifying that the
+        memory being returned actually comes from the current
+        allocation pool.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::linkCode):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::tryShrink):
+
 2010-12-03  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough
