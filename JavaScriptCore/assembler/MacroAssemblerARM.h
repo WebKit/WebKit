@@ -628,40 +628,40 @@ public:
         m_assembler.bx(linkRegister);
     }
 
-    void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmp_r(left, right);
         m_assembler.mov_r(dest, ARMAssembler::getOp2(0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         // ARM doesn't have byte registers
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
-    void set8(Condition cond, Address left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
     {
         // ARM doesn't have byte registers
         load32(left, ARMRegisters::S1);
-        set32(cond, ARMRegisters::S1, right, dest);
+        set32Compare32(cond, ARMRegisters::S1, right, dest);
     }
 
-    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         // ARM doesn't have byte registers
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
-    void setTest32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         load32(address, ARMRegisters::S1);
         if (mask.m_value == -1)
@@ -672,10 +672,10 @@ public:
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void setTest8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         // ARM doesn't have byte registers
-        setTest32(cond, address, mask, dest);
+        set32Test32(cond, address, mask, dest);
     }
 
     void add32(Imm32 imm, RegisterID src, RegisterID dest)

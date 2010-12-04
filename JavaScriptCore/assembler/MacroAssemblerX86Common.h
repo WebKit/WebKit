@@ -939,19 +939,19 @@ public:
         m_assembler.ret();
     }
 
-    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);
         m_assembler.setCC_r(x86Condition(cond), dest);
     }
 
-    void set8(Condition cond, Address left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_mr(left.offset, left.base, right);
         m_assembler.setCC_r(x86Condition(cond), dest);
     }
 
-    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -960,14 +960,14 @@ public:
         m_assembler.setCC_r(x86Condition(cond), dest);
     }
 
-    void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);
         m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -982,7 +982,7 @@ public:
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
 
-    void setTest8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
@@ -992,7 +992,7 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void setTest32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base);

@@ -806,7 +806,7 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
-    set32(Equal, regT1, regT0, regT0);
+    set32Compare32(Equal, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -854,7 +854,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
-    set32(NotEqual, regT1, regT0, regT0);
+    set32Compare32(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -1026,9 +1026,9 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(emitJumpIfImmediateNumber(regT2));
 
     if (type == OpStrictEq)
-        set32(Equal, regT1, regT0, regT0);
+        set32Compare32(Equal, regT1, regT0, regT0);
     else
-        set32(NotEqual, regT1, regT0, regT0);
+        set32Compare32(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
 
     emitPutVirtualRegister(dst);
@@ -1177,7 +1177,7 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    setTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
+    set32Test8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 
@@ -1202,7 +1202,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    setTest8(Zero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
+    set32Test8(Zero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 

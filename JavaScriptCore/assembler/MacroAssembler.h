@@ -232,7 +232,7 @@ public:
 
     void setPtr(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
     void storePtr(RegisterID src, ImplicitAddress address)

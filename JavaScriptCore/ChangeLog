@@ -1,3 +1,55 @@
+2010-12-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        Bug 50509 - set* methods on MacroAssembler are awfully named.
+
+        Methods set32 and setTest32 compare 32-bit operands, and set a 32-bit results based on the comparison.
+        set8 compares 32-bit operands, and sets an 8-bit result based on the comparison.
+        setTest8 compares 8-bit operands, and sets a 32-bit result based on the comparison.
+
+        Rename to clarify.
+
+        set32 -> set32Compare32
+        setTest32 -> set32Test32
+        set8 -> set8Compare32
+        setTest8 -> set32Test8
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::setPtr):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::set32Compare32):
+        (JSC::MacroAssemblerARM::set8Compare32):
+        (JSC::MacroAssemblerARM::set32Test32):
+        (JSC::MacroAssemblerARM::set32Test8):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::set32Compare32):
+        (JSC::MacroAssemblerARMv7::set8Compare32):
+        (JSC::MacroAssemblerARMv7::set32Test32):
+        (JSC::MacroAssemblerARMv7::set32Test8):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::set8Compare32):
+        (JSC::MacroAssemblerMIPS::set32Compare32):
+        (JSC::MacroAssemblerMIPS::set32Test8):
+        (JSC::MacroAssemblerMIPS::set32Test32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::set8Compare32):
+        (JSC::MacroAssemblerX86Common::set32Compare32):
+        (JSC::MacroAssemblerX86Common::set32Test8):
+        (JSC::MacroAssemblerX86Common::set32Test32):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+
 2010-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

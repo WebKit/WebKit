@@ -1127,7 +1127,7 @@ public:
         m_assembler.bx(linkRegister, ARMv7Assembler::JumpFixed);
     }
 
-    void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmp(left, right);
         m_assembler.it(armV7Condition(cond), false);
@@ -1135,13 +1135,13 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void set32(Condition cond, Address left, RegisterID right, RegisterID dest)
+    void set32Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
     {
         load32(left, dataTempRegister);
-        set32(cond, dataTempRegister, right, dest);
+        set32Compare32(cond, dataTempRegister, right, dest);
     }
 
-    void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         compare32(left, right);
         m_assembler.it(armV7Condition(cond), false);
@@ -1149,26 +1149,26 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
-    void set8(Condition cond, Address left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
     {
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
-    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
     // FIXME:
     // The mask should be optional... paerhaps the argument order should be
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
-    void setTest32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         load32(address, dataTempRegister);
         test32(dataTempRegister, mask);
@@ -1177,7 +1177,7 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void setTest8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         load8(address, dataTempRegister);
         test32(dataTempRegister, mask);

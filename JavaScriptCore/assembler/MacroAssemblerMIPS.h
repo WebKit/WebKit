@@ -1372,18 +1372,18 @@ public:
         m_assembler.nop();
     }
 
-    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
-        set32(cond, left, right, dest);
+        set32Compare32(cond, left, right, dest);
     }
 
-    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         move(right, immTempRegister);
-        set32(cond, left, immTempRegister, dest);
+        set32Compare32(cond, left, immTempRegister, dest);
     }
 
-    void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         if (cond == Equal || cond == Zero) {
             m_assembler.xorInsn(dest, left, right);
@@ -1434,13 +1434,13 @@ public:
         }
     }
 
-    void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
         move(right, immTempRegister);
-        set32(cond, left, immTempRegister, dest);
+        set32Compare32(cond, left, immTempRegister, dest);
     }
 
-    void setTest8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         load8(address, dataTempRegister);
@@ -1460,7 +1460,7 @@ public:
         }
     }
 
-    void setTest32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         load32(address, dataTempRegister);
