@@ -27,6 +27,7 @@
 #define PlatformUtilities_h
 
 #include <WebKit2/WebKit2.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <string>
 
 namespace TestWebKitAPI {
@@ -44,6 +45,13 @@ WKURLRef URLForNonExistentResource();
 bool isKeyDown(WKNativeEventPtr);
 
 std::string toSTD(WKStringRef string);
+WKRetainPtr<WKStringRef> toWK(const char* utf8String);
+
+
+template<typename T> static inline WKRetainPtr<T> adoptWK(T item)
+{
+    return WKRetainPtr<T>(AdoptWK, item);
+}
 
 } // namespace Util
 } // namespace TestWebKitAPI

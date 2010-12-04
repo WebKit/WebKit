@@ -862,6 +862,19 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
     m_loaderClient.didFailLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
+void WebPageProxy::didChangeLocationWithinPageForFrame(uint64_t frameID, const String& url, CoreIPC::ArgumentDecoder* arguments)
+{
+    RefPtr<APIObject> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+    if (!arguments->decode(messageDecoder))
+        return;
+
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    frame->didChangeURLWithoutNavigation(url);
+
+    m_loaderClient.didChangeLocationWithinPageForFrame(this, frame, userData.get());
+}
+
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;

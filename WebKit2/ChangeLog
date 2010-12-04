@@ -1,3 +1,38 @@
+2010-12-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        WebKit2: Need client functions to notify app when the url changes due to a fragment navigation
+        https://bugs.webkit.org/show_bug.cgi?id=50511
+
+        Pipe didChangeLocationWithinPageForFrame up through the UIProcess to the WKPageLoadClient,
+        updating the WebFrameProxy's URL on the way.
+
+        Test: PageLoadDidChangeLocationWithinPageForFrame
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didChangeURLWithoutNavigation):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didChangeLocationWithinPageForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeLocationWithinPageForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelClientRedirect): Fix typo.
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+
 2010-12-03  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector window show and be usable on Mac.

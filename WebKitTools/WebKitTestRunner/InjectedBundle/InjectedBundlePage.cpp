@@ -180,6 +180,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didFinishDocumentLoadForFrame,
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
+        didChangeLocationWithinPageForFrame,
         didReceiveTitleForFrame,
         0,
         0,
@@ -189,7 +190,6 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
-        didChangeLocationWithinPageForFrame,
         didHandleOnloadEventsForFrame
     };
     WKBundlePageSetLoaderClient(m_page, &loaderClient);
@@ -302,7 +302,7 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef page,
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willPerformClientRedirectForFrame(frame, url, delay, date);
 }
 
-void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChangeLocationWithinPageForFrame(frame);
 }

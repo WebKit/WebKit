@@ -1,3 +1,37 @@
+2010-12-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        WebKit2: Need client functions to notify app when the url changes due to a fragment navigation
+        https://bugs.webkit.org/show_bug.cgi?id=50511
+
+        Update tools for new didChangeLocationWithinPageForFrame client function (and changed bundle
+        signature) and added a test for the functionality (PageLoadDidChangeLocationWithinPageForFrame.cpp)
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (didChangeLocationWithinPageForFrame):
+        (-[BrowserWindowController awakeFromNib]):
+        (-[BrowserWindowController didChangeLocationWithinPageForFrame:]):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::toWK):
+        * TestWebKitAPI/PlatformUtilities.h:
+        (TestWebKitAPI::Util::adoptWK):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp: Added.
+        (TestWebKitAPI::nullJavaScriptCallback):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didChangeLocationWithinPageForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/file-with-anchor.html: Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::didChangeLocationWithinPageForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2010-11-08  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.

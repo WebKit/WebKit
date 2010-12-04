@@ -105,6 +105,16 @@ void InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame(WebPage* page,
     userData = adoptRef(toImpl(userDataToPass));
 }
 
+void InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didChangeLocationWithinPageForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didChangeLocationWithinPageForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
 void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage* page, const String& title, WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didReceiveTitleForFrame)
@@ -145,6 +155,26 @@ void InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy(WebPage* page ,
     userData = adoptRef(toImpl(userDataToPass));
 }
 
+void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didDisplayInsecureContentForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didDisplayInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
+void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didRunInsecureContentForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
 {
     if (!m_client.didClearWindowObjectForFrame)
@@ -169,40 +199,12 @@ void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage* 
     m_client.willPerformClientRedirectForFrame(toAPI(page), toAPI(frame), toURLRef(url.impl()), delay, date, m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame(WebPage* page, WebFrame* frame)
-{
-    if (!m_client.didChangeLocationWithinPageForFrame)
-        return;
-
-    m_client.didChangeLocationWithinPageForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
-}
-
 void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page, WebFrame* frame)
 {
     if (!m_client.didHandleOnloadEventsForFrame)
         return;
 
     m_client.didHandleOnloadEventsForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
-}
-
-void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
-{
-    if (!m_client.didDisplayInsecureContentForFrame)
-        return;
-
-    WKTypeRef userDataToPass = 0;
-    m_client.didDisplayInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-}
-
-void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
-{
-    if (!m_client.didRunInsecureContentForFrame)
-        return;
-
-    WKTypeRef userDataToPass = 0;
-    m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
 }
 
 } // namespace WebKit

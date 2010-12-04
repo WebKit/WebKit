@@ -115,6 +115,11 @@ void WebFrameProxy::didFailLoad()
     m_loadState = LoadStateFinished;
 }
 
+void WebFrameProxy::didChangeURLWithoutNavigation(const String& url)
+{
+    m_url = url;
+}
+
 void WebFrameProxy::didReceiveTitle(const String&)
 {
 }

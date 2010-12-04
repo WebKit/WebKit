@@ -256,7 +256,7 @@ void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didChangeLocationWithinPageForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didCancelClientRedirectForFrame(webPage, m_frame);
 }
 
 void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const KURL& url, double interval, double fireDate)
@@ -275,8 +275,13 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     if (!webPage)
         return;
 
+    RefPtr<APIObject> userData;
+
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didChangeLocationWithinPageForFrame(webPage, m_frame);
+    webPage->injectedBundleLoaderClient().didChangeLocationWithinPageForFrame(webPage, m_frame, userData);
+
+    // Notify the UIProcess.
+    webPage->send(Messages::WebPageProxy::DidChangeLocationWithinPageForFrame(m_frame->frameID(), m_frame->coreFrame()->loader()->url().string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()

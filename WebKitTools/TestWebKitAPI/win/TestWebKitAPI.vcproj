@@ -420,6 +420,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\file-with-anchor.html"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\Find.cpp"
 					>
 				</File>
@@ -441,6 +445,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\PageLoadBasic.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\PageLoadDidChangeLocationWithinPageForFrame.cpp"
 					>
 				</File>
 				<File

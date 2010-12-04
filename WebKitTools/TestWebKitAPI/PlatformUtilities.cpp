@@ -25,8 +25,6 @@
 
 #include "PlatformUtilities.h"
 
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WebKit2.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -58,6 +56,11 @@ std::string toSTD(WKStringRef string)
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
     size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
     return std::string(buffer.get(), stringLength - 1);
+}
+
+WKRetainPtr<WKStringRef> toWK(const char* utf8String)
+{
+    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(utf8String));
 }
 
 } // namespace Util

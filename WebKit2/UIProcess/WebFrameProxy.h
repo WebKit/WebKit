@@ -95,6 +95,7 @@ public:
     void didCommitLoad();
     void didFinishLoad();
     void didFailLoad();
+    void didChangeURLWithoutNavigation(const String&); // eg. anchor navigation, session state change.
     void didReceiveTitle(const String&);
 
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID);

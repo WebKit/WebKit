@@ -283,6 +283,7 @@ private:
     void didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);
     void didFinishLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);
     void didFailLoadForFrame(uint64_t frameID, const WebCore::ResourceError&, CoreIPC::ArgumentDecoder*);
+    void didChangeLocationWithinPageForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);
     void didReceiveTitleForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);
     void didFirstLayoutForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);
     void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);

@@ -58,6 +58,7 @@ typedef void (*WKPageDidCommitLoadForFrameCallback)(WKPageRef page, WKFrameRef f
 typedef void (*WKPageDidFinishDocumentLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFinishLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFailLoadWithErrorForFrameCallback)(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageDidChangeLocationWithinPageForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidReceiveTitleForFrameCallback)(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFirstLayoutForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
@@ -90,6 +91,7 @@ struct WKPageLoaderClient {
     WKPageDidFinishDocumentLoadForFrameCallback                         didFinishDocumentLoadForFrame;
     WKPageDidFinishLoadForFrameCallback                                 didFinishLoadForFrame;
     WKPageDidFailLoadWithErrorForFrameCallback                          didFailLoadWithErrorForFrame;
+    WKPageDidChangeLocationWithinPageForFrameCallback                   didChangeLocationWithinPageForFrame;
     WKPageDidReceiveTitleForFrameCallback                               didReceiveTitleForFrame;
     WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
     WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;
