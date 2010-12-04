@@ -89,9 +89,9 @@ WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext,
     // Fallback: We failed to create an RGBA colormap earlier, so we cannot properly paint 
     // to a temporary surface and preserve transparency. To ensure decent widget rendering, just
     // paint directly to the target drawable. This will not render CSS rotational transforms properly.
-    if (!theme->m_themePartsHaveRGBAColormap && graphicsContext->gdkDrawable()) {
+    if (!theme->m_themePartsHaveRGBAColormap && graphicsContext->gdkWindow()) {
         m_paintRect = graphicsContext->getCTM().mapRect(targetRect);
-        m_target = graphicsContext->gdkDrawable();
+        m_target = graphicsContext->gdkWindow();
         return;
     }
 
@@ -131,7 +131,7 @@ WidgetRenderingContext::~WidgetRenderingContext()
 {
     // We do not need to blit back to the target in the fallback case. See above.
     RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
-    if (!theme->m_themePartsHaveRGBAColormap && m_graphicsContext->gdkDrawable())
+    if (!theme->m_themePartsHaveRGBAColormap && m_graphicsContext->gdkWindow())
         return;
 
     // Don't paint the results back if there was an error.

@@ -44,7 +44,6 @@ typedef struct _GDir GDir;
 typedef struct _GdkAtom* GdkAtom;
 typedef struct _GdkCursor GdkCursor;
 typedef struct _GdkDragContext GdkDragContext;
-typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GdkEventConfigure GdkEventConfigure;
 typedef struct _GdkEventExpose GdkEventExpose;
 typedef struct _GdkPixbuf GdkPixbuf;
@@ -85,7 +84,9 @@ typedef struct _GtkWindow GtkWindow;
 
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
+typedef struct _GdkDrawable GdkWindow;
 #else
+typedef struct _GdkWindow GdkWindow;
 typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 typedef cairo_rectangle_int_t GdkRectangle;
 #endif

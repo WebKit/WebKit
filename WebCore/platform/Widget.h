@@ -60,7 +60,6 @@ typedef HWND PlatformWidget;
 #endif
 
 #if PLATFORM(GTK)
-typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkContainer GtkContainer;
 typedef GtkWidget* PlatformWidget;

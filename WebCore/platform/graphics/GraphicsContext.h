@@ -89,11 +89,6 @@ typedef struct HDC__ PlatformGraphicsContext;
 typedef void PlatformGraphicsContext;
 #endif
 
-#if PLATFORM(GTK)
-typedef struct _GdkDrawable GdkDrawable;
-typedef struct _GdkEventExpose GdkEventExpose;
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HDC__* HDC;
 #if !PLATFORM(CG)
@@ -407,7 +402,7 @@ namespace WebCore {
 
 #if PLATFORM(GTK)
         void setGdkExposeEvent(GdkEventExpose*);
-        GdkDrawable* gdkDrawable() const;
+        GdkWindow* gdkWindow() const;
         GdkEventExpose* gdkExposeEvent() const;
 #endif
 

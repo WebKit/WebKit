@@ -121,7 +121,7 @@ FloatRect screenAvailableRect(Widget* widget)
     if (!gtk_widget_get_realized(container))
         return screenRect(widget);
 
-    GdkDrawable* rootWindow = GDK_DRAWABLE(gtk_widget_get_root_window(container));
+    GdkWindow* rootWindow = gtk_widget_get_root_window(container);
     GdkDisplay* display = gdk_window_get_display(rootWindow);
     Atom xproperty = gdk_x11_get_xatom_by_name_for_display(display, "_NET_WORKAREA");
 

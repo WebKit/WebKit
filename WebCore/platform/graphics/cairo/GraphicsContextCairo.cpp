@@ -1085,12 +1085,12 @@ GdkEventExpose* GraphicsContext::gdkExposeEvent() const
     return m_data->expose;
 }
 
-GdkDrawable* GraphicsContext::gdkDrawable() const
+GdkWindow* GraphicsContext::gdkWindow() const
 {
     if (!m_data->expose)
         return 0;
 
-    return GDK_DRAWABLE(m_data->expose->window);
+    return m_data->expose->window;
 }
 #endif
 
