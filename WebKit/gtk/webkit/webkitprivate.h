@@ -338,54 +338,6 @@ extern "C" {
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 
-    WEBKIT_API GSList*
-    webkit_web_frame_get_children (WebKitWebFrame* frame);
-
-    WEBKIT_API gchar*
-    webkit_web_frame_get_inner_text (WebKitWebFrame* frame);
-
-    WEBKIT_API gchar*
-    webkit_web_frame_dump_render_tree (WebKitWebFrame* frame);
-
-    WEBKIT_API gchar*
-    webkit_web_frame_counter_value_for_element_by_id (WebKitWebFrame* frame, const gchar* id);
-
-    WEBKIT_API int
-    webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const gchar* id, float pageWidth, float pageHeight);
-
-    WEBKIT_API int
-    webkit_web_frame_number_of_pages(WebKitWebFrame* frame, float pageWidth, float pageHeight);
-
-    WEBKIT_API guint
-    webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame);
-
-    WEBKIT_API bool
-    webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
-
-    WEBKIT_API bool
-    webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
-
-    WEBKIT_API bool
-    webkit_web_frame_pause_svg_animation(WebKitWebFrame* frame, const gchar* animationId, double time, const gchar* elementId);
-
-    WEBKIT_API gchar*
-    webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject);
-
-    WEBKIT_API unsigned int
-    webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
-
-    WEBKIT_API void
-    webkit_web_frame_suspend_animations(WebKitWebFrame* frame);
-
-    WEBKIT_API void
-    webkit_web_frame_resume_animations(WebKitWebFrame* frame);
-
-    WEBKIT_API void
-    webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
-
-    WEBKIT_API AtkObject*
-    webkit_web_frame_get_focused_accessible_element(WebKitWebFrame* frame);
-
     WEBKIT_API gchar*
     webkit_web_view_get_selected_text (WebKitWebView* web_view);
 

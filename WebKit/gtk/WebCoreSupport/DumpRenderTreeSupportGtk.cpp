@@ -19,18 +19,37 @@
 #include "config.h"
 #include "DumpRenderTreeSupportGtk.h"
 
+#include "AccessibilityObjectWrapperAtk.h"
+#include "AnimationController.h"
 #include "APICast.h"
+#include "AXObjectCache.h"
 #include "Document.h"
+#include "FrameLoaderClientGtk.h"
+#include "FrameView.h"
+#include "FrameTree.h"
+#include "GraphicsContext.h"
 #include "JSDocument.h"
+#include "JSElement.h"
 #include "JSLock.h"
 #include "JSNodeList.h"
 #include "JSValue.h"
 #include "NodeList.h"
+#include "PlatformString.h"
+#include "PrintContext.h"
+#include "RenderListItem.h"
+#include "RenderView.h"
+#include "RenderTreeAsText.h"
+#if ENABLE(SVG)
+#include "SVGSMILElement.h"
+#endif
 #include "webkitprivate.h"
 #include "webkitwebview.h"
+#include "webkitwebframe.h"
+#include <JavaScriptCore/APICast.h>
 
 using namespace JSC;
 using namespace WebCore;
+using namespace WebKit;
 
 bool DumpRenderTreeSupportGtk::s_drtRun = false;
 bool DumpRenderTreeSupportGtk::s_linksIncludedInTabChain = true;
@@ -77,3 +96,255 @@ JSValueRef DumpRenderTreeSupportGtk::nodesFromRect(JSContextRef context, JSValue
     RefPtr<NodeList> nodes = document->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
     return toRef(exec, toJS(exec, jsDocument->globalObject(), nodes.get()));
 }
+
+/**
+ * getFrameChildren:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: child frames of @frame
+ */
+GSList* DumpRenderTreeSupportGtk::getFrameChildren(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return 0;
+
+    GSList* children = 0;
+    for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        FrameLoader* loader = child->loader();
+        WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(loader->client());
+        if (client)
+          children = g_slist_append(children, client->webFrame());
+    }
+
+    return children;
+}
+
+/**
+ * getInnerText:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: inner text of @frame
+ */
+CString DumpRenderTreeSupportGtk::getInnerText(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString(""));
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return CString("");
+
+    FrameView* view = coreFrame->view();
+
+    if (view && view->layoutPending())
+        view->layout();
+
+    Element* documentElement = coreFrame->document()->documentElement();
+    return documentElement->innerText().utf8();
+}
+
+/**
+ * dumpRenderTree:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: Non-recursive render tree dump of @frame
+ */
+CString DumpRenderTreeSupportGtk::dumpRenderTree(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString(""));
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return CString("");
+
+    FrameView* view = coreFrame->view();
+
+    if (view && view->layoutPending())
+        view->layout();
+
+    return externalRepresentation(coreFrame).utf8();
+}
+
+/**
+ * counterValueForElementById:
+ * @frame: a #WebKitWebFrame
+ * @id: an element ID string
+ *
+ * Return value: The counter value of element @id in @frame
+ */
+CString DumpRenderTreeSupportGtk::counterValueForElementById(WebKitWebFrame* frame, const char* id)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString());
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return CString();
+
+    Element* coreElement = coreFrame->document()->getElementById(AtomicString(id));
+    if (!coreElement)
+        return CString();
+
+    return counterValueForElement(coreElement).utf8();
+}
+
+/**
+ * numberForElementById
+ * @frame: a #WebKitWebFrame
+ * @id: an element ID string
+ * @pageWidth: width of a page
+ * @pageHeight: height of a page
+ *
+ * Return value: The number of page where the specified element will be put
+ */
+int DumpRenderTreeSupportGtk::pageNumberForElementById(WebKitWebFrame* frame, const char* id, float pageWidth, float pageHeight)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return -1;
+
+    Element* coreElement = coreFrame->document()->getElementById(AtomicString(id));
+    if (!coreElement)
+        return -1;
+    return PrintContext::pageNumberForElement(coreElement, FloatSize(pageWidth, pageHeight));
+}
+
+/**
+ * numberOfPagesForFrame
+ * @frame: a #WebKitWebFrame
+ * @pageWidth: width of a page
+ * @pageHeight: height of a page
+ *
+ * Return value: The number of pages to be printed.
+ */
+int DumpRenderTreeSupportGtk::numberOfPagesForFrame(WebKitWebFrame* frame, float pageWidth, float pageHeight)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return -1;
+
+    return PrintContext::numberOfPages(coreFrame, FloatSize(pageWidth, pageHeight));
+}
+
+/**
+ * getPendingUnloadEventCount:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: number of pending unload events
+ */
+guint DumpRenderTreeSupportGtk::getPendingUnloadEventCount(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    return core(frame)->domWindow()->pendingUnloadEventListeners();
+}
+
+bool DumpRenderTreeSupportGtk::pauseAnimation(WebKitWebFrame* frame, const char* name, double time, const char* element)
+{
+    ASSERT(core(frame));
+    Element* coreElement = core(frame)->document()->getElementById(AtomicString(element));
+    if (!coreElement || !coreElement->renderer())
+        return false;
+    return core(frame)->animation()->pauseAnimationAtTime(coreElement->renderer(), AtomicString(name), time);
+}
+
+bool DumpRenderTreeSupportGtk::pauseTransition(WebKitWebFrame* frame, const char* name, double time, const char* element)
+{
+    ASSERT(core(frame));
+    Element* coreElement = core(frame)->document()->getElementById(AtomicString(element));
+    if (!coreElement || !coreElement->renderer())
+        return false;
+    return core(frame)->animation()->pauseTransitionAtTime(coreElement->renderer(), AtomicString(name), time);
+}
+
+bool DumpRenderTreeSupportGtk::pauseSVGAnimation(WebKitWebFrame* frame, const char* animationId, double time, const char* elementId)
+{
+    ASSERT(core(frame));
+#if ENABLE(SVG)
+    Document* document = core(frame)->document();
+    if (!document || !document->svgExtensions())
+        return false;
+    Element* coreElement = document->getElementById(AtomicString(animationId));
+    if (!coreElement || !SVGSMILElement::isSMILElement(coreElement))
+        return false;
+    return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreElement), time);
+#else
+    return false;
+#endif
+}
+
+CString DumpRenderTreeSupportGtk::markerTextForListItem(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject)
+{
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, nodeObject));
+    if (!element)
+        return CString();
+
+    return WebCore::markerTextForListItem(element).utf8();
+}
+
+unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return 0;
+
+    return coreFrame->animation()->numberOfActiveAnimations();
+}
+
+void DumpRenderTreeSupportGtk::suspendAnimations(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    return coreFrame->animation()->suspendAnimations();
+}
+
+void DumpRenderTreeSupportGtk::resumeAnimations(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    return coreFrame->animation()->resumeAnimations();
+}
+
+void DumpRenderTreeSupportGtk::clearMainFrameName(WebKitWebFrame* frame)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+
+    core(frame)->tree()->clearName();
+}
+
+AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+#if HAVE(ACCESSIBILITY)
+    if (!AXObjectCache::accessibilityEnabled())
+        AXObjectCache::enableAccessibility();
+
+    WebKitWebFramePrivate* priv = frame->priv;
+    if (!priv->coreFrame || !priv->coreFrame->document())
+        return 0;
+
+    RenderView* root = toRenderView(priv->coreFrame->document()->renderer());
+    if (!root)
+        return 0;
+
+    AtkObject* wrapper =  priv->coreFrame->document()->axObjectCache()->getOrCreate(root)->wrapper();
+    if (!wrapper)
+        return 0;
+
+    return webkit_accessible_get_focused_element(WEBKIT_ACCESSIBLE(wrapper));
+#else
+    return 0;
+#endif
+}
+

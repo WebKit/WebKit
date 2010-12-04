@@ -63,13 +63,9 @@ extern "C" {
 extern G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
 extern gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
 extern GList* webkit_web_history_item_get_children(WebKitWebHistoryItem*);
-extern GSList* webkit_web_frame_get_children(WebKitWebFrame* frame);
-extern gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame);
-extern gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame);
-extern guint webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
-extern void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
+extern void webkit_web_view_set_group_name(WebKitWebView* view, const gchar* groupName);
 extern void webkit_reset_origin_access_white_lists();
 }
 
@@ -251,17 +247,16 @@ static gchar* dumpFramesAsText(WebKitWebFrame* frame)
     // Add header for all but the main frame.
     bool isMainFrame = (webkit_web_view_get_main_frame(webView) == frame);
 
-    gchar* innerText = webkit_web_frame_get_inner_text(frame);
+    CString innerText = DumpRenderTreeSupportGtk::getInnerText(frame);
     if (isMainFrame)
-        result = g_strdup_printf("%s\n", innerText);
+        result = g_strdup_printf("%s\n", innerText.data());
     else {
         const gchar* frameName = webkit_web_frame_get_name(frame);
-        result = g_strdup_printf("\n--------\nFrame: '%s'\n--------\n%s\n", frameName, innerText);
+        result = g_strdup_printf("\n--------\nFrame: '%s'\n--------\n%s\n", frameName, innerText.data());
     }
-    g_free(innerText);
 
     if (gLayoutTestController->dumpChildFramesAsText()) {
-        GSList* children = webkit_web_frame_get_children(frame);
+        GSList* children = DumpRenderTreeSupportGtk::getFrameChildren(frame);
         for (GSList* child = children; child; child = g_slist_next(child))
             appendString(result, dumpFramesAsText(static_cast<WebKitWebFrame* >(child->data)));
         g_slist_free(children);
@@ -420,7 +415,7 @@ static void resetDefaultsToConsistentValues()
                  "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC,
                  NULL);
 
-    webkit_web_frame_clear_main_frame_name(mainFrame);
+    DumpRenderTreeSupportGtk::clearMainFrameName(mainFrame);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
@@ -517,7 +512,7 @@ void dump()
             while (gtk_events_pending())
                 gtk_main_iteration();
 
-            result = webkit_web_frame_dump_render_tree(mainFrame);
+            result = g_strdup(DumpRenderTreeSupportGtk::dumpRenderTree(mainFrame).data());
         }
 
         if (!result) {
@@ -745,7 +740,7 @@ static void webViewDocumentLoadFinished(WebKitWebView* view, WebKitWebFrame* fra
         printf("%s - didFinishDocumentLoadForFrame\n", frameName);
         g_free(frameName);
     } else if (!done) {
-        guint pendingFrameUnloadEvents = webkit_web_frame_get_pending_unload_event_count(frame);
+        guint pendingFrameUnloadEvents = DumpRenderTreeSupportGtk::getPendingUnloadEventCount(frame);
         if (pendingFrameUnloadEvents) {
             char* frameName = getFrameNameSuitableForTestResult(view, frame);
             printf("%s - has %u onunload handler(s)\n", frameName, pendingFrameUnloadEvents);

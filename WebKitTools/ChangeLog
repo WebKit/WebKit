@@ -1,3 +1,32 @@
+2010-11-08  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Populate DumpRenderTreeSupportGtk
+        https://bugs.webkit.org/show_bug.cgi?id=48429
+
+        Made the previous calls to webkit_web_frame* functions defined as private
+        APIs in webkitprivate.h go through DRTSupportGtk.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::focusedElement):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (resetDefaultsToConsistentValues):
+        (dump):
+        (webViewDocumentLoadFinished):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::counterValueForElementById):
+        (LayoutTestController::pageNumberForElementById):
+        (LayoutTestController::numberOfPages):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        (LayoutTestController::numberOfActiveAnimations):
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        (LayoutTestController::markerTextForListItem):
+
 2010-12-03  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

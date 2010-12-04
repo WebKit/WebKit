@@ -29,14 +29,11 @@
 
 #include "AccessibilityUIElement.h"
 #include "DumpRenderTree.h"
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 
 #include <atk/atk.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
-
-extern "C" {
-extern AtkObject* webkit_web_frame_get_focused_accessible_element(WebKitWebFrame*);
-}
 
 AccessibilityController::AccessibilityController()
 {
@@ -54,7 +51,7 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
-    AtkObject* accessible =  webkit_web_frame_get_focused_accessible_element(mainFrame);
+    AtkObject* accessible =  DumpRenderTreeSupportGtk::getFocusedAccessibleElement(mainFrame);
     if (!accessible)
         return 0;
 

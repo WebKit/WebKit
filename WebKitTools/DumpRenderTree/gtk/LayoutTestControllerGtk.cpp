@@ -49,20 +49,10 @@
 #include <wtf/gobject/GOwnPtr.h>
 
 extern "C" {
-bool webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
-bool webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
-bool webkit_web_frame_pause_svg_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
-unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
-void webkit_web_frame_suspend_animations(WebKitWebFrame* frame);
-void webkit_web_frame_resume_animations(WebKitWebFrame* frame);
 void webkit_application_cache_set_maximum_size(unsigned long long size);
 unsigned int webkit_worker_thread_count(void);
 void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
-gchar* webkit_web_frame_counter_value_for_element_by_id(WebKitWebFrame* frame, const gchar* id);
-int webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const gchar* id, float pageWidth, float pageHeight);
-int webkit_web_frame_number_of_pages(WebKitWebFrame* frame, float pageWidth, float pageHeight);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
-gchar* webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject);
 void webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
 gboolean webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
 }
@@ -119,11 +109,11 @@ void LayoutTestController::display()
 JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
 {
     gchar* idGChar = JSStringCopyUTF8CString(id);
-    gchar* counterValueGChar = webkit_web_frame_counter_value_for_element_by_id(mainFrame, idGChar);
+    CString counterValueGChar = DumpRenderTreeSupportGtk::counterValueForElementById(mainFrame, idGChar);
     g_free(idGChar);
-    if (!counterValueGChar)
+    if (counterValueGChar.isNull())
         return 0;
-    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithUTF8CString(counterValueGChar));
+    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithUTF8CString(counterValueGChar.data()));
     return counterValue;
 }
 
@@ -153,14 +143,14 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
 {
     gchar* idGChar = JSStringCopyUTF8CString(id);
-    int pageNumber = webkit_web_frame_page_number_for_element_by_id(mainFrame, idGChar, pageWidth, pageHeight);
+    int pageNumber = DumpRenderTreeSupportGtk::pageNumberForElementById(mainFrame, idGChar, pageWidth, pageHeight);
     g_free(idGChar);
     return pageNumber;
 }
 
 int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 {
-    return webkit_web_frame_number_of_pages(mainFrame, pageWidth, pageHeight);
+    return DumpRenderTreeSupportGtk::numberOfPagesForFrame(mainFrame, pageWidth, pageHeight);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
@@ -627,7 +617,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
 {    
     gchar* name = JSStringCopyUTF8CString(animationName);
     gchar* element = JSStringCopyUTF8CString(elementId);
-    bool returnValue = webkit_web_frame_pause_animation(mainFrame, name, time, element);
+    bool returnValue = DumpRenderTreeSupportGtk::pauseAnimation(mainFrame, name, time, element);
     g_free(name);
     g_free(element);
     return returnValue;
@@ -637,7 +627,7 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
 {    
     gchar* name = JSStringCopyUTF8CString(propertyName);
     gchar* element = JSStringCopyUTF8CString(elementId);
-    bool returnValue = webkit_web_frame_pause_transition(mainFrame, name, time, element);
+    bool returnValue = DumpRenderTreeSupportGtk::pauseTransition(mainFrame, name, time, element);
     g_free(name);
     g_free(element);
     return returnValue;
@@ -647,7 +637,7 @@ bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animat
 {    
     gchar* name = JSStringCopyUTF8CString(animationId);
     gchar* element = JSStringCopyUTF8CString(elementId);
-    bool returnValue = webkit_web_frame_pause_svg_animation(mainFrame, name, time, element);
+    bool returnValue = DumpRenderTreeSupportGtk::pauseSVGAnimation(mainFrame, name, time, element);
     g_free(name);
     g_free(element);
     return returnValue;
@@ -655,17 +645,17 @@ bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animat
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
-    return webkit_web_frame_number_of_active_animations(mainFrame);
+    return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);
 }
 
 void LayoutTestController::suspendAnimations() const
 {
-    webkit_web_frame_suspend_animations(mainFrame);
+    DumpRenderTreeSupportGtk::suspendAnimations(mainFrame);
 }
 
 void LayoutTestController::resumeAnimations() const
 {
-    webkit_web_frame_resume_animations(mainFrame);
+    DumpRenderTreeSupportGtk::resumeAnimations(mainFrame);
 }
 
 void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
@@ -798,12 +788,11 @@ void LayoutTestController::setWebViewEditable(bool)
 
 JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
-    gchar* markerTextGChar = webkit_web_frame_marker_text_for_list_item(mainFrame, context, nodeObject);
-    if (!markerTextGChar)
+    CString markerTextGChar = DumpRenderTreeSupportGtk::markerTextForListItem(mainFrame, context, nodeObject);
+    if (markerTextGChar.isNull())
         return 0;
 
-    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithUTF8CString(markerTextGChar));
-    g_free(markerTextGChar);
+    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithUTF8CString(markerTextGChar.data()));
     return markerText;
 }
 
