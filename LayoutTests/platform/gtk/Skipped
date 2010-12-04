@@ -5087,7 +5087,6 @@ svg/css/stars-with-shadow.html
 svg/custom/gradient-with-1d-boundingbox.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
-
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
@@ -5587,3 +5586,6 @@ svg/zoom/page/zoom-zoom-coords.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=50441
 media/controls-drag-timebar.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50518
+media/controls-without-preload.html
