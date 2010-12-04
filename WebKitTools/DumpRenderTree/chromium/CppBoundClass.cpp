@@ -324,18 +324,6 @@ bool CppBoundClass::isMethodRegistered(const string& name) const
     return callback != m_methods.end();
 }
 
-// static
-CppBoundClass* CppBoundClass::getFromCppVariant(const CppVariant& value)
-{
-    if (!value.isObject())
-        return 0;
-    NPObject* npObj = NPVARIANT_TO_OBJECT(value);
-    if (!npObj || npObj->_class != &CppNPObject::npClass)
-        return 0;
-    CppNPObject* obj = reinterpret_cast<CppNPObject*>(npObj);
-    return obj->boundClass;
-}
-
 CppVariant* CppBoundClass::getAsCppVariant()
 {
     if (!m_selfVariant.isObject()) {

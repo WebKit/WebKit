@@ -269,7 +269,6 @@ protected:
     virtual bool isDetached() const { return !m_renderer; }
 
 private:
-    void addRenderWidgetChildren();
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool ariaIsHidden() const;
