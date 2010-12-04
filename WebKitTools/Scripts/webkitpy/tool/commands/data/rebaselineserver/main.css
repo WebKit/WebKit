@@ -180,7 +180,7 @@ a, .link {
   color: #666;
 }
 
-#text-outputs pre {
+#text-outputs .text-output {
   height: 600px;
   width: 800px;
   overflow: auto;

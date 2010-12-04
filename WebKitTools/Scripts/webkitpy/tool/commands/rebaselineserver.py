@@ -173,6 +173,8 @@ class RebaselineHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             file_name = test_name + '-actual.txt'
         elif mode == 'diff-text':
             file_name = test_name + '-diff.txt'
+        elif mode == 'diff-text-pretty':
+            file_name = test_name + '-pretty-diff.html'
 
         file_path = os.path.join(self.server.test_config.results_directory, file_name)
 

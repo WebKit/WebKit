@@ -486,10 +486,14 @@ function updateImageDiff() {
     }
 }
 
-function loadTextResult(testName, mode)
+function loadTextResult(testName, mode, responseIsHtml)
 {
     loadText(getTestResultUrl(testName, mode), function(text) {
-        $(mode).textContent = text;
+        if (responseIsHtml) {
+            $(mode).innerHTML = text;
+        } else {
+            $(mode).textContent = text;
+        }
     });
 }
 
@@ -497,7 +501,7 @@ function displayTextResults(testName)
 {
     loadTextResult(testName, 'expected-text');
     loadTextResult(testName, 'actual-text');
-    loadTextResult(testName, 'diff-text');
+    loadTextResult(testName, 'diff-text-pretty', true);
 }
 
 function nextTest()
