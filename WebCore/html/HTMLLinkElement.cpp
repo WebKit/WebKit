@@ -48,6 +48,9 @@ using namespace HTMLNames;
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
+#if ENABLE(LINK_PREFETCH)
+    , m_onloadTimer(this, &HTMLLinkElement::onloadTimerFired)
+#endif
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
@@ -70,6 +73,11 @@ HTMLLinkElement::~HTMLLinkElement()
         if (m_loading && !isDisabled() && !isAlternate())
             document()->removePendingSheet();
     }
+    
+#if ENABLE(LINK_PREFETCH)
+    if (m_cachedLinkPrefetch)
+        m_cachedLinkPrefetch->removeClient(this);
+#endif
 }
 
 void HTMLLinkElement::setDisabledState(bool _disabled)
@@ -133,6 +141,10 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
         setDisabledState(!attr->isNull());
     else if (attr->name() == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
+#if ENABLE(LINK_PREFETCH)
+    else if (attr->name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
+#endif
     else {
         if (attr->name() == titleAttr && m_sheet)
             m_sheet->setTitle(attr->value());
@@ -203,8 +215,11 @@ void HTMLLinkElement::process()
     }
 
 #if ENABLE(LINK_PREFETCH)
-    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame())
-        document()->cachedResourceLoader()->requestLinkPrefetch(m_url);
+    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame()) {
+        m_cachedLinkPrefetch = document()->cachedResourceLoader()->requestLinkPrefetch(m_url);
+        if (m_cachedLinkPrefetch)
+            m_cachedLinkPrefetch->addClient(this);
+    }
 #endif
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
@@ -355,6 +370,23 @@ bool HTMLLinkElement::isLoading() const
         return false;
     return static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading();
 }
+
+#if ENABLE(LINK_PREFETCH)
+void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_onloadTimer);
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+}
+
+void HTMLLinkElement::notifyFinished(CachedResource* resource)
+{
+    m_onloadTimer.startOneShot(0);
+    if (m_cachedLinkPrefetch.get() == resource) {
+        m_cachedLinkPrefetch->removeClient(this);
+        m_cachedLinkPrefetch = 0;
+    }
+}
+#endif
 
 bool HTMLLinkElement::sheetLoaded()
 {

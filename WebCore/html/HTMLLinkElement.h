@@ -27,10 +27,12 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "HTMLElement.h"
+#include "Timer.h"
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class CachedResource;
 class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
@@ -77,6 +79,9 @@ public:
 private:
     virtual void parseMappedAttribute(Attribute*);
 
+#if ENABLE(LINK_PREFETCH)
+    void onloadTimerFired(Timer<HTMLLinkElement>*);
+#endif
     void process();
     static void processCallback(Node*);
 
@@ -85,6 +90,9 @@ private:
 
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
+#if ENABLE(LINK_PREFETCH)
+    virtual void notifyFinished(CachedResource*);
+#endif
     virtual bool sheetLoaded();
 
     bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
@@ -112,6 +120,10 @@ private:
 
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
+#if ENABLE(LINK_PREFETCH)
+    CachedResourceHandle<CachedResource> m_cachedLinkPrefetch;
+    Timer<HTMLLinkElement> m_onloadTimer;
+#endif
     KURL m_url;
     String m_type;
     String m_media;

@@ -184,7 +184,9 @@ fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-device-orientation.html
 
 # Link prefetch is disabled by default
+fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/HTMLLinkElement/prefetch-onload.html
 http/tests/misc/prefetch-purpose.html
 
 # Filenames aren't filtered out from edit drags yet, see https://bugs.wekit.org/show_bug.cgi?id=38826

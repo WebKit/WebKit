@@ -115,6 +115,7 @@ void CachedResource::data(PassRefPtr<SharedBuffer>, bool allDataReceived)
     if (!allDataReceived)
         return;
     
+    setLoading(false);
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient* c = w.next())
         c->notifyFinished(this);

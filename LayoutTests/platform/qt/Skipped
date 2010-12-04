@@ -5149,7 +5149,9 @@ media/video-delay-load-event.html
 fast/dom/Geolocation/callback-to-remote-context2.html
 
 # Link prefetch is disabled by default
+fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/HTMLLinkElement/prefetch-onload.html
 http/tests/misc/prefetch-purpose.html
 
 # [Qt] Regression(r61749): inspector/debugger-pause-on-debugger-statement.html fails
