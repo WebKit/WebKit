@@ -50,8 +50,9 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     : m_data(new FontPlatformDataPrivate())
 {
     QFont& font = m_data->font;
+    int requestedSize = qRound(description.computedPixelSize());
     font.setFamily(familyName);
-    font.setPixelSize(qRound(description.computedSize()));
+    font.setPixelSize(qRound(requestedSize));
     font.setItalic(description.italic());
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
@@ -63,7 +64,10 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
 #endif
 
     m_data->bold = font.bold();
-    m_data->size = font.pointSizeF();
+    // WebKit allows font size zero but QFont does not. We will return
+    // m_data->size if a font size of zero is requested and pixelSize()
+    // otherwise.
+    m_data->size = (!requestedSize) ? requestedSize : font.pixelSize();
 }
 
 FontPlatformData::~FontPlatformData()

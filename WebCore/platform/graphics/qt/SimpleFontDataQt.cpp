@@ -40,6 +40,18 @@ bool SimpleFontData::containsCharacters(const UChar*, int) const
 
 void SimpleFontData::platformInit()
 {
+    if (!m_platformData.size()) {
+         m_ascent = 0;
+         m_descent = 0;
+         m_lineGap = 0;
+         m_lineSpacing = 0;
+         m_avgCharWidth = 0;
+         m_maxCharWidth = 0;
+         m_xHeight = 0;
+         m_unitsPerEm = 0;
+         return;
+    }
+
     QFontMetrics fm(m_platformData.font());
 
     m_ascent = fm.ascent();
@@ -52,6 +64,8 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformGlyphInit()
 {
+    if (!m_platformData.size())
+        return;
     m_spaceGlyph = 0;
     m_adjustedSpaceWidth = m_spaceWidth;
     determinePitch();
@@ -61,6 +75,8 @@ void SimpleFontData::platformGlyphInit()
 
 void SimpleFontData::platformCharWidthInit()
 {
+    if (!m_platformData.size())
+        return;
     QFontMetrics fm(m_platformData.font());
     m_avgCharWidth = fm.averageCharWidth();
     m_maxCharWidth = fm.maxWidth();

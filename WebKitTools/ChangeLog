@@ -1,3 +1,18 @@
+2010-12-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Zero-sized font does not yet work
+
+        Fix fast/text/font-size-zero.html
+
+        Copy other ports by setting minimumFontSize to 0 for DRT runs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49759
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+
 2010-12-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.

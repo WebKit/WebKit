@@ -138,7 +138,7 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
 
-    globalSettings->setFontSize(QWebSettings::MinimumFontSize, 5);
+    globalSettings->setFontSize(QWebSettings::MinimumFontSize, 0);
     globalSettings->setFontSize(QWebSettings::MinimumLogicalFontSize, 5);
     globalSettings->setFontSize(QWebSettings::DefaultFontSize, 16);
     globalSettings->setFontSize(QWebSettings::DefaultFixedFontSize, 13);

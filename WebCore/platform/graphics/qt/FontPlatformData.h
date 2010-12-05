@@ -36,7 +36,7 @@ class FontPlatformDataPrivate : public Noncopyable {
 public:
     FontPlatformDataPrivate()
         : refCount(1)
-        , size(font.pointSizeF())
+        , size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
     {}
@@ -49,7 +49,7 @@ public:
     FontPlatformDataPrivate(const QFont& font)
         : refCount(1)
         , font(font)
-        , size(font.pointSizeF())
+        , size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
     {}
@@ -150,8 +150,12 @@ public:
     int pixelSize() const
     {
         Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
+        if (m_data) {
+            // WebKit allows font size zero but QFont does not.
+            if (!m_data->size)
+                return m_data->size;
             return m_data->font.pixelSize();
+        }
         return 0;
     }
     
