@@ -1,3 +1,24 @@
+2010-12-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit part of <rdar://problem/8145955> Add text search API for counting/marking/highlighting matches in a range
+        https://bugs.webkit.org/show_bug.cgi?id=50530
+
+        * WebView/WebDocumentInternal.h: Added a DOMRange parameter to -countMatchesForText:options:limit:markMatches:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView countMatchesForText:inDOMRange:options:limit:markMatches:]): Added DOMRange parameter,
+        which is passed through to WebCore.
+        * WebView/WebPDFView.mm:
+        (isFrameInRange): Added this helper function.
+        (-[WebPDFView countMatchesForText:inDOMRange:options:limit:markMatches:]): Added DOMRange parameter and
+        a check if the frame is in the range.
+        * WebView/WebView.mm:
+        (-[WebView countMatchesForText:options:highlight:limit:markMatches:]): Now calls the inDOMRange: version.
+        (-[WebView countMatchesForText:inDOMRange:options:highlight:limit:markMatches:]): Added DOMRange
+        parameter, which is passed to document views' -countMatchesForText:inDOMRange:options:limit:markMatches:.
+        * WebView/WebViewPrivate.h:
+
 2010-12-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -348,6 +348,7 @@ public:
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
     unsigned countMatchesForText(const String&, FindOptions, unsigned limit, bool markMatches);
+    unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches);
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool);
 

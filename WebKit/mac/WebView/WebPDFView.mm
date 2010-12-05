@@ -28,6 +28,8 @@
 
 #import "WebPDFView.h"
 
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebDataSourceInternal.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebDocumentInternal.h"
@@ -53,6 +55,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
@@ -626,8 +629,23 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return NO;
 }
 
-- (NSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 {
+    BOOL inRange = NO;
+    for (HTMLFrameOwnerElement* ownerElement = core(frame)->ownerElement(); ownerElement; ownerElement = ownerElement->document()->frame()->ownerElement()) {
+        if (ownerElement->document() == core(range)->ownerDocument()) {
+            inRange = [range intersectsNode:kit(ownerElement)];
+            break;
+        }
+    }
+    return inRange;
+}
+
+- (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+{
+    if (range && !isFrameInRange([dataSource webFrame], range))
+        return 0;
+
     PDFSelection *previousMatch = nil;
     NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:limit];
     

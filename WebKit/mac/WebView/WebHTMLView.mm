@@ -6228,12 +6228,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
 }
 
-- (NSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+- (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
 {
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return 0;
-    return coreFrame->editor()->countMatchesForText(string, coreOptions(options), limit, markMatches);
+
+    return coreFrame->editor()->countMatchesForText(string, core(range), coreOptions(options), limit, markMatches);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue

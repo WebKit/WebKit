@@ -51,6 +51,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
@@ -3349,12 +3350,40 @@ bool Editor::findString(const String& target, FindOptions options)
     return true;
 }
 
+static bool isFrameInRange(Frame* frame, Range* range)
+{
+    bool inRange = false;
+    for (HTMLFrameOwnerElement* ownerElement = frame->ownerElement(); ownerElement; ownerElement = ownerElement->document()->ownerElement()) {
+        if (ownerElement->document() == range->ownerDocument()) {
+            ExceptionCode ec = 0;
+            inRange = range->intersectsNode(ownerElement, ec);
+            break;
+        }
+    }
+    return inRange;
+}
+
 unsigned Editor::countMatchesForText(const String& target, FindOptions options, unsigned limit, bool markMatches)
+{
+    return countMatchesForText(target, 0, options, limit, markMatches);
+}
+
+unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches)
 {
     if (target.isEmpty())
         return 0;
 
-    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    RefPtr<Range> originalSearchRange;
+    if (range) {
+        if (range->ownerDocument() == m_frame->document())
+            originalSearchRange = range;
+        else if (!isFrameInRange(m_frame, range))
+            return 0;
+    }
+    if (!originalSearchRange)
+        originalSearchRange = rangeOfContents(m_frame->document());
+
+    RefPtr<Range> searchRange(originalSearchRange);
 
     ExceptionCode exception = 0;
     unsigned matchCount = 0;
@@ -3364,7 +3393,7 @@ unsigned Editor::countMatchesForText(const String& target, FindOptions options, 
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
 
-            searchRange = rangeOfContents(m_frame->document());
+            searchRange = originalSearchRange;
             searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), exception);
             continue;
         }

@@ -62,7 +62,7 @@
 @protocol WebMultipleTextMatches <NSObject>
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
 - (BOOL)markedTextMatchesAreHighlighted;
-- (WebNSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+- (WebNSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 @end
