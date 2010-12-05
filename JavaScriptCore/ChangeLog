@@ -1,3 +1,19 @@
+2010-12-05  Adam Roben  <aroben@apple.com>
+
+        Windows production build fix
+
+        Put spaces after trailing backslashes when setting
+        %WebKitVSPropsRedirectionDir%. According to MSDN
+        <http://msdn.microsoft.com/en-us/library/2kzfk8c7(v=VS.80).aspx>:
+
+           A backslash ( \ ) followed by a newline character is interpreted as
+           a space in the command; use a backslash at the end of a line to
+           continue a command onto the next line. NMAKE interprets the
+           backslash literally if any other character, including a space or
+           tab, follows the backslash.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+
 2010-12-04  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, build fix after r69132.

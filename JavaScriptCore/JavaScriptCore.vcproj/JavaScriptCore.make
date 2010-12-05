@@ -8,7 +8,7 @@ install:
     set PRODUCTION=1
     set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
     set WebKitOutputDir=$(OBJROOT)
-    set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\
+    set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\ 
 !IF "$(BUILDSTYLE)"=="Release"
     devenv "JavaScriptCoreSubmit.sln" /rebuild Release_PGOInstrument
     set PATH=$(SYSTEMDRIVE)\cygwin\bin;$(PATH)
