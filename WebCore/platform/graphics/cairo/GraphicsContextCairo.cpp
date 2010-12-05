@@ -68,13 +68,6 @@ using namespace std;
 
 namespace WebCore {
 
-static inline void setColor(cairo_t* cr, const Color& col)
-{
-    float red, green, blue, alpha;
-    col.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(cr, red, green, blue, alpha);
-}
-
 static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr, GraphicsContextPrivate* gcp)
 {
     cairo_pattern_t* pattern = 0;
@@ -86,7 +79,7 @@ static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr, Graphi
     } else if (gcp->state.fillGradient)
         cairo_set_source(cr, gcp->state.fillGradient->platformGradient());
     else
-        setColor(cr, context->fillColor());
+        setSourceRGBAFromColor(cr, context->fillColor());
     cairo_clip_preserve(cr);
     cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
     cairo_restore(cr);
@@ -106,7 +99,7 @@ static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr, Grap
         cairo_set_source(cr, gcp->state.strokeGradient->platformGradient());
     else  {
         Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * gcp->state.globalAlpha);
-        setColor(cr, strokeColor);
+        setSourceRGBAFromColor(cr, strokeColor);
     }
     if (gcp->state.globalAlpha < 1.0f && (gcp->state.strokePattern || gcp->state.strokeGradient)) {
         cairo_push_group(cr);
@@ -122,7 +115,7 @@ static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr, Grap
 // A fillRect helper
 static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const Color& col)
 {
-    setColor(cr, col);
+    setSourceRGBAFromColor(cr, col);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
@@ -262,7 +255,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
         fillRectSourceOver(cr, rect, fillColor());
 
     if (strokeStyle() != NoStroke) {
-        setColor(cr, strokeColor());
+        setSourceRGBAFromColor(cr, strokeColor());
         FloatRect r(rect);
         r.inflate(-.5f);
         cairo_rectangle(cr, r.x(), r.y(), r.width(), r.height());
@@ -310,7 +303,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         break;
     }
 
-    setColor(cr, strokeColor());
+    setSourceRGBAFromColor(cr, strokeColor());
 
     cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
 
@@ -380,12 +373,12 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     cairo_restore(cr);
 
     if (fillColor().alpha()) {
-        setColor(cr, fillColor());
+        setSourceRGBAFromColor(cr, fillColor());
         cairo_fill_preserve(cr);
     }
 
     if (strokeStyle() != NoStroke) {
-        setColor(cr, strokeColor());
+        setSourceRGBAFromColor(cr, strokeColor());
         cairo_set_line_width(cr, strokeThickness());
         cairo_stroke(cr);
     } else
@@ -434,7 +427,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         break;
     }
 
-    setColor(cr, strokeColor());
+    setSourceRGBAFromColor(cr, strokeColor());
 
     if (patWidth) {
         // Example: 80 pixels with a width of 30 pixels.
@@ -493,13 +486,13 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     addConvexPolygonToContext(cr, npoints, points);
 
     if (fillColor().alpha()) {
-        setColor(cr, fillColor());
+        setSourceRGBAFromColor(cr, fillColor());
         cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
         cairo_fill_preserve(cr);
     }
 
     if (strokeStyle() != NoStroke) {
-        setColor(cr, strokeColor());
+        setSourceRGBAFromColor(cr, strokeColor());
         cairo_set_line_width(cr, strokeThickness());
         cairo_stroke(cr);
     } else
@@ -640,7 +633,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     cairo_region_destroy(reg);
 #endif
 
-    setColor(cr, color);
+    setSourceRGBAFromColor(cr, color);
     cairo_set_line_width(cr, 2.0f);
     setPlatformStrokeStyle(DottedStroke);
 #else
@@ -655,7 +648,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     Color ringColor(color.red(), color.green(), color.blue(), 127);
-    setColor(cr, ringColor);
+    setSourceRGBAFromColor(cr, ringColor);
     cairo_set_line_width(cr, width);
     setPlatformStrokeStyle(SolidStroke);
 #endif
@@ -1069,7 +1062,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     Path path;
     path.addRoundedRect(r, topLeft, topRight, bottomLeft, bottomRight);
     appendWebCorePathToCairoContext(cr, path);
-    setColor(cr, color);
+    setSourceRGBAFromColor(cr, color);
     cairo_fill(cr);
     cairo_restore(cr);
 }
