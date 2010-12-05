@@ -49,7 +49,7 @@ lower-armenian
 
 PASS list marker is -1.
 PASS list marker is 0.
-FAIL list marker should be 1. Was ա.
+PASS list marker is ա.
 lower-roman
 
 PASS list marker is -1.
@@ -89,7 +89,7 @@ upper-armenian
 
 PASS list marker is -1.
 PASS list marker is 0.
-FAIL list marker should be 1. Was Ա.
+PASS list marker is Ա.
 upper-roman
 
 PASS list marker is -1.
