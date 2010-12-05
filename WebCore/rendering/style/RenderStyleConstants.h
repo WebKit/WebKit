@@ -290,6 +290,8 @@ enum EListStyleType {
     Footnotes,
     Hebrew,
     Armenian,
+    LowerArmenian,
+    UpperArmenian,
     Georgian,
     CJKIdeographic,
     Hiragana,

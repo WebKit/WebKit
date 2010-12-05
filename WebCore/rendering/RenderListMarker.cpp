@@ -467,6 +467,7 @@ static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
     case Katakana:
     case KatakanaIroha:
     case LowerAlpha:
+    case LowerArmenian:
     case LowerGreek:
     case LowerLatin:
     case LowerNorwegian:
@@ -479,6 +480,7 @@ static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
     case TigrinyaEt:
     case TigrinyaEtAbegede:
     case UpperAlpha:
+    case UpperArmenian:
     case UpperGreek:
     case UpperLatin:
     case UpperNorwegian:
@@ -558,6 +560,7 @@ static UChar listMarkerSuffix(EListStyleType type, int value)
     case Khmer:
     case Lao:
     case LowerAlpha:
+    case LowerArmenian:
     case LowerGreek:
     case LowerHexadecimal:
     case LowerLatin:
@@ -573,6 +576,7 @@ static UChar listMarkerSuffix(EListStyleType type, int value)
     case Thai:
     case Tibetan:
     case UpperAlpha:
+    case UpperArmenian:
     case UpperGreek:
     case UpperHexadecimal:
     case UpperLatin:
@@ -1020,10 +1024,13 @@ String listMarkerText(EListStyleType type, int value)
             return toRoman(value, true);
 
         case Armenian:
+        case UpperArmenian:
             // CSS3 says "armenian" means "lower-armenian".
             // But the CSS2.1 test suite contains uppercase test results for "armenian",
             // so we'll match the test suite.
             return toArmenian(value, true);
+        case LowerArmenian:
+            return toArmenian(value, false);
         case Georgian:
             return toGeorgian(value);
         case Hebrew:
@@ -1207,6 +1214,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         case Khmer:
         case Lao:
         case LowerAlpha:
+        case LowerArmenian:
         case LowerGreek:
         case LowerHexadecimal:
         case LowerLatin:
@@ -1230,6 +1238,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         case TigrinyaEt:
         case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperArmenian:
         case UpperGreek:
         case UpperHexadecimal:
         case UpperLatin:
@@ -1409,6 +1418,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         case Khmer:
         case Lao:
         case LowerAlpha:
+        case LowerArmenian:
         case LowerGreek:
         case LowerHexadecimal:
         case LowerLatin:
@@ -1432,6 +1442,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         case TigrinyaEt:
         case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperArmenian:
         case UpperGreek:
         case UpperHexadecimal:
         case UpperLatin:
@@ -1631,6 +1642,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case Khmer:
         case Lao:
         case LowerAlpha:
+        case LowerArmenian:
         case LowerGreek:
         case LowerHexadecimal:
         case LowerLatin:
@@ -1654,6 +1666,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case TigrinyaEt:
         case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperArmenian:
         case UpperGreek:
         case UpperHexadecimal:
         case UpperLatin:

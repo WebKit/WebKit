@@ -1137,6 +1137,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case LowerAlpha:
         m_value.ident = CSSValueLowerAlpha;
         break;
+    case LowerArmenian:
+        m_value.ident = CSSValueLowerArmenian;
+        break;
     case LowerGreek:
         m_value.ident = CSSValueLowerGreek;
         break;
@@ -1211,6 +1214,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
         break;
     case UpperAlpha:
         m_value.ident = CSSValueUpperAlpha;
+        break;
+    case UpperArmenian:
+        m_value.ident = CSSValueUpperArmenian;
         break;
     case UpperGreek:
         m_value.ident = CSSValueUpperGreek;
