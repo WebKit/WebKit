@@ -66,7 +66,7 @@
     <h1>CSS3 Fallback to Decimal List Style</h1>
     <div id="description">
         <p>This tests that we fallback to the decimal list style type when the ordinal is outside the representable range for the list style type as per the <a href="http://www.w3.org/TR/css3-lists/">CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its marker for every list item (below).</p>
-        <p>Note, as of 08/23/2010, ethiopic-numeric; japanese-formal; japanese-informal; lower-armenian; simp-chinese-formal; simp-chinese-informal; syriac; tamil; trad-chinese-formal; trad-chinese-informal; and upper-armenian are unsupported and hence have expected failure results.</p> 
+        <p>Note, as of 12/04/2010, ethiopic-numeric; japanese-formal; japanese-informal; simp-chinese-formal; simp-chinese-informal; syriac; tamil; trad-chinese-formal; and trad-chinese-informal are unsupported and hence have expected failure results.</p>
     </div>
     <hr/>
     <h2>Algorithmic</h2>
@@ -147,12 +147,11 @@
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>lower-armenian</h2>
         <ol class="lower-armenian" start="-1">
             <li>-1</li>
             <li>0</li>
-            <li>1</li>
+            <li>&#x0561;</li>
         </ol>
     </div>
     <div class="test">
@@ -218,12 +217,11 @@
         </ol>
     </div>
     <div class="test">
-        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
         <h2>upper-armenian</h2>
         <ol class="upper-armenian" start="-1">
             <li>-1</li>
             <li>0</li>
-            <li>1</li>
+            <li>&#x0531;</li>
         </ol>
     </div>
     <div class="test">
