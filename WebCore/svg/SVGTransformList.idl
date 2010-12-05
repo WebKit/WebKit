@@ -44,7 +44,9 @@ module svg {
         [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform appendItem(in SVGTransform item)
             raises(DOMException, SVGException);
 
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
+            raises(DOMException);
+
         SVGTransform consolidate()
             raises(DOMException);
     };

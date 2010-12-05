@@ -12,5 +12,7 @@ shouldThrow("transform.createSVGTransformFromMatrix(svgElement)");
 shouldThrow("transform.createSVGTransformFromMatrix('aString')");
 shouldThrow("transform.createSVGTransformFromMatrix(1)");
 shouldThrow("transform.createSVGTransformFromMatrix(true)");
+shouldThrow("transform.createSVGTransformFromMatrix(undefined)");
+shouldThrow("transform.createSVGTransformFromMatrix(null)");
 
 successfullyParsed = true;
