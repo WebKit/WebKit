@@ -1,3 +1,14 @@
+2010-12-05  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix compilation warnings reported by clang
+        https://bugs.webkit.org/show_bug.cgi?id=50252
+
+        * GtkLauncher/main.c:
+        (create_window): The create_statusbar function does not have
+        parameters.
+
 2010-12-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

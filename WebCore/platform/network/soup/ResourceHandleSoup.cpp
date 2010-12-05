@@ -492,7 +492,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
         if (isTransportError || (error->domain == G_IO_ERROR)) {
             SoupURI* uri = webkit_soup_request_get_uri(d->m_soupRequest.get());
             GOwnPtr<char> uriStr(soup_uri_to_string(uri, false));
-            gint errorCode = isTransportError ? soupMsg->status_code : error->code;
+            gint errorCode = isTransportError ? static_cast<gint>(soupMsg->status_code) : error->code;
             const gchar* errorMsg = isTransportError ? soupMsg->reason_phrase : error->message;
             const gchar* quarkStr = isTransportError ? g_quark_to_string(SOUP_HTTP_ERROR) : g_quark_to_string(G_IO_ERROR);
             ResourceError resourceError(quarkStr, errorCode, uriStr.get(), String::fromUTF8(errorMsg));

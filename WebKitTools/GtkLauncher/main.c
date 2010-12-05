@@ -218,7 +218,7 @@ create_window (WebKitWebView** out_web_view)
     uri_entry = gtk_entry_new ();
 
     vbox = gtk_vbox_new (FALSE, 0);
-    statusbar = create_statusbar (web_view);
+    statusbar = create_statusbar ();
     gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (uri_entry, web_view), FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), create_browser (window, uri_entry, statusbar, web_view), TRUE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), statusbar, FALSE, FALSE, 0);

@@ -46,7 +46,7 @@ class wxGraphicsPath;
 typedef wxGraphicsPath PlatformPath;
 #elif PLATFORM(CAIRO)
 namespace WebCore {
-    struct CairoPath;
+class CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
 #elif PLATFORM(SKIA)
