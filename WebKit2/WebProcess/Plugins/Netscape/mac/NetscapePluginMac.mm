@@ -32,7 +32,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#ifndef NP_NO_QUICKDRAW
+#ifndef NP_NO_CARBON
 static const double nullEventIntervalActive = 0.02;
 static const double nullEventIntervalNotActive = 0.25;
 #endif
@@ -79,6 +79,17 @@ NPError NetscapePlugin::setEventModel(NPEventModel eventModel)
     
     return NPERR_NO_ERROR;
 }
+
+#ifndef NP_NO_CARBON
+typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
+
+static WindowMap& windowMap()
+{
+    DEFINE_STATIC_LOCAL(WindowMap, windowMap, ());
+
+    return windowMap;
+}
+#endif
 
 bool NetscapePlugin::platformPostInitialize()
 {
@@ -137,6 +148,9 @@ bool NetscapePlugin::platformPostInitialize()
 
         m_npWindow.window = &m_npCGContext;
 
+        ASSERT(!windowMap().contains(windowRef()));
+        windowMap().set(windowRef(), this);
+
         // Start the null event timer.
         // FIXME: Throttle null events when the plug-in isn't visible on screen.
         m_nullEventTimer.startRepeating(nullEventIntervalActive);
@@ -153,6 +167,9 @@ void NetscapePlugin::platformDestroy()
         // Destroy the fake Carbon window.
         if (m_npCGContext.window)
             DisposeWindow(static_cast<WindowRef>(m_npCGContext.window));
+
+        ASSERT(windowMap().contains(windowRef()));
+        windowMap().remove(windowRef());
 
         // Stop the null event timer.
         m_nullEventTimer.stop();
@@ -180,6 +197,11 @@ static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
 }
 
 #ifndef NP_NO_CARBON
+NetscapePlugin* NetscapePlugin::netscapePluginFromWindow(WindowRef windowRef)
+{
+    return windowMap().get(windowRef);
+}
+
 WindowRef NetscapePlugin::windowRef() const
 {
     ASSERT(m_eventModel == NPEventModelCarbon);
@@ -602,6 +624,8 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
         
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
+            m_isWindowActive = hasFocus;
+            
             HiliteWindow(windowRef(), hasFocus);
             if (hasFocus)
                 SetUserFocusWindow(windowRef());

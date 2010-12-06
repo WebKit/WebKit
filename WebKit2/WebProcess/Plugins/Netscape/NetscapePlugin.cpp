@@ -42,7 +42,7 @@ namespace WebKit {
 
 // The plug-in that we're currently calling NPP_New for.
 static NetscapePlugin* currentNPPNewPlugin;
-    
+
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginController(0)
     , m_nextRequestID(0)
@@ -62,6 +62,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #ifndef NP_NO_CARBON
     , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
+    , m_isWindowActive(false)
 #endif    
 #endif
 {

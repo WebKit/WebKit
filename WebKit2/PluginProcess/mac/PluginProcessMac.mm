@@ -27,6 +27,7 @@
  
 #include "PluginProcess.h"
 
+#include "NetscapePlugin.h"
 #include "PluginProcessShim.h"
 #include <dlfcn.h>
 
@@ -49,11 +50,23 @@ static bool shouldCallRealDebugger()
     
     return isUserbreakSet;
 }
-    
+
+static bool isWindowActive(WindowRef windowRef, bool& result)
+{
+#ifndef NP_NO_CARBON
+    if (NetscapePlugin* plugin = NetscapePlugin::netscapePluginFromWindow(windowRef)) {
+        result = plugin->isWindowActive();
+        return true;
+    }
+#endif
+    return false;
+}
+
 void PluginProcess::initializeShim()
 {
     const PluginProcessShimCallbacks callbacks = {
         shouldCallRealDebugger,
+        isWindowActive,
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));

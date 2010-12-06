@@ -58,6 +58,9 @@ public:
     NPError setEventModel(NPEventModel);
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
+    bool isWindowActive() const { return m_isWindowActive; }
+
+    static NetscapePlugin* netscapePluginFromWindow(WindowRef);
 #endif
 #elif PLATFORM(WIN)
     HWND containingWindow() const;
@@ -200,6 +203,7 @@ private:
     // We should investigate having one per window.
     RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
+    bool m_isWindowActive;
 #endif
 #elif PLATFORM(WIN)
     HWND m_window;

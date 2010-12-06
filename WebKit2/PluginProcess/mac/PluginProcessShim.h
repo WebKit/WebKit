@@ -26,10 +26,13 @@
 #ifndef PluginProcessShim_h
 #define PluginProcessShim_h
 
+#include <Carbon/Carbon.h>
+
 namespace WebKit {
 
 struct PluginProcessShimCallbacks {
     bool (*shouldCallRealDebugger)();
+    bool (*isWindowActive)(WindowRef, bool& result);
 };
 
 typedef void (*PluginProcessShimInitializeFunc)(const PluginProcessShimCallbacks&);

@@ -1,5 +1,41 @@
 2010-12-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Add a shim for IsWindowActive
+        https://bugs.webkit.org/show_bug.cgi?id=50582
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::isWindowActive):
+        Get the NetscapePlugin from the WindowRef and check if the plug-in's window is active.
+
+        (WebKit::PluginProcess::initializeShim):
+        * PluginProcess/mac/PluginProcessShim.cpp        
+        (WebKit::shimIsWindowActive):
+        Call isWindowActive. If it returns true, return the result value. Otherwise, call the real
+        IsWindowActive function.
+
+        * PluginProcess/mac/PluginProcessShim.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_isWindowactive.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::isWindowActive):
+        Return whether the window is active.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::windowMap):
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::netscapePluginFromWindow):
+        Add a mapping between windows and the corresponding NetscapePlugin objects.
+
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        Update the window focus member variable.
+
+2010-12-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         REGERSSION (r73310?): Contents of <select> popup menus are upside-down on Windows

@@ -53,7 +53,18 @@ static void shimDebugger(void)
     Debugger();
 }
 
+static Boolean shimIsWindowActive(WindowRef window)
+{
+    bool result;
+    if (pluginProcessShimCallbacks.isWindowActive(window, result))
+        return result;
+    
+    return IsWindowActive(window);
+}
+    
 DYLD_INTERPOSE(shimDebugger, Debugger);
+DYLD_INTERPOSE(shimIsWindowActive, IsWindowActive);
+    
 #endif
 
 } // namespace WebKit
