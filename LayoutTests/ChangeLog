@@ -2,6 +2,29 @@
 
         Unreviewed.
 
+        [Chromium] update chromium mac test baselines affected by http://trac.webkit.org/changeset/73385
+
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.txt:
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.txt: Added.
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png: Added.
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum:
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.png:
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+
+2010-12-06  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed.
+
         [Chromium] update chromium layout test baselines affected by http://trac.webkit.org/changeset/73385
 
         * platform/chromium-linux/css2.1/t0905-c414-flt-02-c-expected.txt:
