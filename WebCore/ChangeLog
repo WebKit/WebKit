@@ -1,3 +1,15 @@
+2010-12-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] use ResourceHandle::setDefersLoading in WebKitWebSourceGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=44157
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcEnoughDataMainCb): Replaced platform-specific code
+        with cross-platform ResourceHandle::setDefersLoading calls.
+
 2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Leopard build fix for r73388.

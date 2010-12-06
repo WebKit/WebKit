@@ -541,13 +541,7 @@ static gboolean webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-#if USE(NETWORK_SOUP)
-    ResourceHandleInternal* d = priv->resourceHandle->getInternal();
-    if (d->m_msg)
-        soup_session_unpause_message(ResourceHandle::defaultSession(), d->m_msg);
-#endif
-    // Ports not using libsoup need to call the unpause/schedule API of their
-    // underlying network implementation here.
+    priv->resourceHandle->setDefersLoading(false);
 
     GST_OBJECT_LOCK(src);
     priv->paused = FALSE;
@@ -577,12 +571,7 @@ static gboolean webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-#if USE(NETWORK_SOUP)
-    ResourceHandleInternal* d = priv->resourceHandle->getInternal();
-    soup_session_pause_message(ResourceHandle::defaultSession(), d->m_msg);
-#endif
-    // Ports not using libsoup need to call the pause/unschedule API of their
-    // underlying network implementation here.
+    priv->resourceHandle->setDefersLoading(true);
 
     GST_OBJECT_LOCK(src);
     priv->paused = TRUE;
