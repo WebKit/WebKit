@@ -36,7 +36,11 @@
 #include "webkit/support/webkit_support.h"
 
 WebTask::WebTask(TaskList* list): m_taskList(list) { m_taskList->registerTask(this); }
-WebTask::~WebTask() { m_taskList->unregisterTask(this); }
+WebTask::~WebTask()
+{
+    if (m_taskList)
+        m_taskList->unregisterTask(this);
+}
 
 void TaskList::unregisterTask(WebTask* task)
 {
@@ -47,9 +51,8 @@ void TaskList::unregisterTask(WebTask* task)
 
 void TaskList::revokeAll()
 {
-    for (unsigned i = 0; i < m_tasks.size(); ++i)
-        m_tasks[i]->cancel();
-    m_tasks.clear();
+    while (!m_tasks.isEmpty())
+        m_tasks[0]->cancel();
 }
 
 static void invokeTask(void* context)

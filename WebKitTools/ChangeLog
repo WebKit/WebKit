@@ -1,3 +1,29 @@
+2010-12-03  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] fix 2 bugs with inspector tests in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50492
+
+        Tasks can outlive the tasklist (even when canceled) so this was
+        causing a crash when ~WebTask() ran.  Avoid this by unregistering
+        when a task is canceled.
+
+        Also fix an assert when closing devtool windows by copying some
+        logic from test_shell.
+
+        * DumpRenderTree/chromium/Task.cpp:
+        (WebTask::~WebTask):
+        (TaskList::revokeAll):
+        * DumpRenderTree/chromium/Task.h: Canceling a task now removes it from
+            the tasklist (since the task can outlive the tasklist).
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::devToolsWebView):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::~WebViewHost): Don't load about:blank when closing
+            a window if the window has devtools loaded.  This avoids an
+            ASSERT and matches test_shell.
+
 2010-12-06  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

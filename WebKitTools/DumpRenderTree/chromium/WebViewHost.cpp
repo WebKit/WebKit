@@ -1111,9 +1111,13 @@ WebViewHost::WebViewHost(TestShell* shell)
 
 WebViewHost::~WebViewHost()
 {
-    // Navigate to an empty page to fire all the destruction logic for the
-    // current page.
-    loadURLForFrame(GURL("about:blank"), WebString());
+    // DevTools frontend page is supposed to be navigated only once and
+    // loading another URL in that Page is an error.
+    if (m_shell->devToolsWebView() != this) {
+        // Navigate to an empty page to fire all the destruction logic for the
+        // current page.
+        loadURLForFrame(GURL("about:blank"), WebString());
+    }
 
     // Call GC twice to clean up garbage.
     m_shell->callJSGC();

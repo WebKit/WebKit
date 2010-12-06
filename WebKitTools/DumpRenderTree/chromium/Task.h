@@ -45,7 +45,7 @@ public:
     virtual void run() = 0;
     virtual void cancel() = 0;
     virtual ~WebTask();
-private:
+protected:
     TaskList* m_taskList;
 };
 
@@ -71,7 +71,12 @@ public:
         if (m_object)
             runIfValid();
     }
-    virtual void cancel() { m_object = 0; }
+    virtual void cancel()
+    {
+        m_object = 0;
+        m_taskList->unregisterTask(this);
+        m_taskList = 0;
+    }
     virtual void runIfValid() = 0;
 protected:
     T* m_object;

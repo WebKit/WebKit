@@ -163,6 +163,7 @@ public:
 
     DRTDevToolsAgent* drtDevToolsAgent() { return m_drtDevToolsAgent.get(); }
     DRTDevToolsClient* drtDevToolsClient() { return m_drtDevToolsClient.get(); }
+    WebViewHost* devToolsWebView() { return m_devTools; }
 
     static const int virtualWindowBorder = 3;
 
