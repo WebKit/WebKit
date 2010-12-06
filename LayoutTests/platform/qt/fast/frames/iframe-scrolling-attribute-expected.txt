@@ -21,7 +21,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (0,0) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -36,7 +36,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (208,0) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -51,7 +51,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (416,0) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -66,7 +66,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (0,209) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -81,7 +81,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (208,209) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -96,7 +96,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (416,209) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x495
             RenderView at (0,0) size 200x200
-          layer at (0,0) size 408x495
+          layer at (0,0) size 200x495
             RenderBlock {HTML} at (0,0) size 200x495
               RenderBody {BODY} at (8,8) size 184x479
                 RenderBlock {P} at (0,0) size 184x63
@@ -110,7 +110,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (0,418) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84
@@ -125,7 +125,7 @@ layer at (0,0) size 784x701
         RenderPartObject {IFRAME} at (208,418) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184
-          layer at (0,0) size 408x516
+          layer at (0,0) size 184x516
             RenderBlock {HTML} at (0,0) size 184x516
               RenderBody {BODY} at (8,8) size 168x500
                 RenderBlock {P} at (0,0) size 168x84

@@ -1,3 +1,198 @@
+2010-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Update Qt specific expected results after r73385.
+
+        * platform/qt/css1/box_properties/margin-expected.checksum: Added.
+        * platform/qt/css1/box_properties/margin-expected.png: Added.
+        * platform/qt/css1/box_properties/margin-expected.txt:
+        * platform/qt/css1/box_properties/margin_right-expected.checksum: Added.
+        * platform/qt/css1/box_properties/margin_right-expected.png: Added.
+        * platform/qt/css1/box_properties/margin_right-expected.txt:
+        * platform/qt/css1/formatting_model/inline_elements-expected.checksum: Added.
+        * platform/qt/css1/formatting_model/inline_elements-expected.png: Added.
+        * platform/qt/css1/formatting_model/inline_elements-expected.txt:
+        * platform/qt/css2.1/t1202-counter-08-b-expected.checksum: Added.
+        * platform/qt/css2.1/t1202-counter-08-b-expected.png: Added.
+        * platform/qt/css2.1/t1202-counter-08-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-08-b-expected.checksum: Added.
+        * platform/qt/css2.1/t1202-counters-08-b-expected.png: Added.
+        * platform/qt/css2.1/t1202-counters-08-b-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-001-expected.checksum:
+        * platform/qt/editing/deleting/delete-after-span-ws-001-expected.png:
+        * platform/qt/editing/deleting/delete-after-span-ws-001-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-002-expected.checksum:
+        * platform/qt/editing/deleting/delete-after-span-ws-002-expected.png:
+        * platform/qt/editing/deleting/delete-after-span-ws-002-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-003-expected.checksum:
+        * platform/qt/editing/deleting/delete-after-span-ws-003-expected.png:
+        * platform/qt/editing/deleting/delete-after-span-ws-003-expected.txt:
+        * platform/qt/editing/deleting/delete-line-end-ws-001-expected.checksum:
+        * platform/qt/editing/deleting/delete-line-end-ws-001-expected.png:
+        * platform/qt/editing/deleting/delete-line-end-ws-001-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.checksum: Added.
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.png: Added.
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/qt/fast/backgrounds/size/backgroundSize15-expected.checksum: Added.
+        * platform/qt/fast/backgrounds/size/backgroundSize15-expected.png: Added.
+        * platform/qt/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * platform/qt/fast/block/float/008-expected.checksum: Added.
+        * platform/qt/fast/block/float/008-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png.
+        * platform/qt/fast/block/float/008-expected.txt:
+        * platform/qt/fast/block/float/019-expected.checksum: Added.
+        * platform/qt/fast/block/float/019-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png.
+        * platform/qt/fast/block/float/019-expected.txt:
+        * platform/qt/fast/block/float/033-expected.checksum: Added.
+        * platform/qt/fast/block/float/033-expected.png: Added.
+        * platform/qt/fast/block/float/033-expected.txt:
+        * platform/qt/fast/block/float/035-expected.checksum:
+        * platform/qt/fast/block/float/035-expected.png:
+        * platform/qt/fast/block/float/035-expected.txt:
+        * platform/qt/fast/block/float/avoidance-percent-width-strict-expected.checksum: Added.
+        * platform/qt/fast/block/float/avoidance-percent-width-strict-expected.png: Added.
+        * platform/qt/fast/block/float/avoidance-percent-width-strict-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/004-expected.checksum: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/004-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/004-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/005-expected.checksum: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/005-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/qt/fast/block/positioning/049-expected.checksum: Added.
+        * platform/qt/fast/block/positioning/049-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png.
+        * platform/qt/fast/block/positioning/049-expected.txt:
+        * platform/qt/fast/blockflow/block-level-images-expected.checksum:
+        * platform/qt/fast/blockflow/block-level-images-expected.png:
+        * platform/qt/fast/blockflow/block-level-images-expected.txt:
+        * platform/qt/fast/blockflow/border-radius-clipping-vertical-lr-expected.checksum:
+        * platform/qt/fast/blockflow/border-radius-clipping-vertical-lr-expected.png:
+        * platform/qt/fast/blockflow/border-radius-clipping-vertical-lr-expected.txt:
+        * platform/qt/fast/blockflow/box-shadow-vertical-lr-expected.checksum:
+        * platform/qt/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/qt/fast/blockflow/box-shadow-vertical-lr-expected.txt:
+        * platform/qt/fast/blockflow/box-shadow-vertical-rl-expected.checksum:
+        * platform/qt/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/qt/fast/blockflow/box-shadow-vertical-rl-expected.txt:
+        * platform/qt/fast/blockflow/floats-in-block-layout-expected.checksum:
+        * platform/qt/fast/blockflow/floats-in-block-layout-expected.png:
+        * platform/qt/fast/blockflow/floats-in-block-layout-expected.txt:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/qt/fast/css/negative-leading-expected.png:
+        * platform/qt/fast/css/negative-leading-expected.txt:
+        * platform/qt/fast/dynamic/window-resize-scrollbars-test-expected.checksum: Added.
+        * platform/qt/fast/dynamic/window-resize-scrollbars-test-expected.png: Added.
+        * platform/qt/fast/dynamic/window-resize-scrollbars-test-expected.txt:
+        * platform/qt/fast/flexbox/flex-hang-expected.checksum: Added.
+        * platform/qt/fast/flexbox/flex-hang-expected.png: Copied from LayoutTests/platform/qt/fast/table/height-percent-test-vertical-expected.png.
+        * platform/qt/fast/flexbox/flex-hang-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.checksum: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.png: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-grid-expected.checksum: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-grid-expected.png: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-simple-expected.checksum: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-simple-expected.png: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-simple-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.checksum: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.png: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframesets-expected.checksum: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframesets-expected.png: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframesets-expected.txt:
+        * platform/qt/fast/frames/frame-scrolling-attribute-expected.checksum: Added.
+        * platform/qt/fast/frames/frame-scrolling-attribute-expected.png: Added.
+        * platform/qt/fast/frames/frame-scrolling-attribute-expected.txt:
+        * platform/qt/fast/frames/iframe-scrolling-attribute-expected.checksum: Added.
+        * platform/qt/fast/frames/iframe-scrolling-attribute-expected.png: Added.
+        * platform/qt/fast/frames/iframe-scrolling-attribute-expected.txt:
+        * platform/qt/fast/images/gif-large-checkerboard-expected.checksum:
+        * platform/qt/fast/images/gif-large-checkerboard-expected.png:
+        * platform/qt/fast/images/gif-large-checkerboard-expected.txt:
+        * platform/qt/fast/lists/001-vertical-expected.checksum:
+        * platform/qt/fast/lists/001-vertical-expected.png:
+        * platform/qt/fast/lists/001-vertical-expected.txt:
+        * platform/qt/fast/lists/003-vertical-expected.checksum:
+        * platform/qt/fast/lists/003-vertical-expected.png:
+        * platform/qt/fast/lists/003-vertical-expected.txt:
+        * platform/qt/fast/multicol/column-count-with-rules-expected.checksum:
+        * platform/qt/fast/multicol/column-count-with-rules-expected.png:
+        * platform/qt/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/qt/fast/multicol/float-paginate-complex-expected.checksum:
+        * platform/qt/fast/multicol/float-paginate-complex-expected.png:
+        * platform/qt/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/qt/fast/multicol/float-paginate-expected.checksum:
+        * platform/qt/fast/multicol/float-paginate-expected.png:
+        * platform/qt/fast/multicol/float-paginate-expected.txt:
+        * platform/qt/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/qt/fast/multicol/layers-in-multicol-expected.png:
+        * platform/qt/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/qt/fast/multicol/nested-columns-expected.checksum:
+        * platform/qt/fast/multicol/nested-columns-expected.png:
+        * platform/qt/fast/multicol/nested-columns-expected.txt:
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.checksum:
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.png:
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.checksum: Added.
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.png: Added.
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.txt:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.checksum:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.checksum:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/qt/fast/multicol/table-vertical-align-expected.checksum:
+        * platform/qt/fast/multicol/table-vertical-align-expected.png:
+        * platform/qt/fast/multicol/table-vertical-align-expected.txt:
+        * platform/qt/fast/repaint/content-into-overflow-expected.checksum: Added.
+        * platform/qt/fast/repaint/content-into-overflow-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png.
+        * platform/qt/fast/repaint/content-into-overflow-expected.txt:
+        * platform/qt/fast/repaint/overflow-into-content-expected.checksum: Added.
+        * platform/qt/fast/repaint/overflow-into-content-expected.png: Copied from LayoutTests/platform/qt/fast/block/float/035-expected.png.
+        * platform/qt/fast/repaint/overflow-into-content-expected.txt:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.checksum:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.checksum:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.png:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.checksum:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.png:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/qt/fast/table/wide-colspan-expected.checksum: Added.
+        * platform/qt/fast/table/wide-colspan-expected.png: Added.
+        * platform/qt/fast/table/wide-colspan-expected.txt:
+        * platform/qt/fast/table/wide-column-expected.checksum: Added.
+        * platform/qt/fast/table/wide-column-expected.png: Copied from LayoutTests/platform/qt/fast/table/height-percent-test-vertical-expected.png.
+        * platform/qt/fast/table/wide-column-expected.txt:
+        * platform/qt/fast/text/text-letter-spacing-expected.checksum: Added.
+        * platform/qt/fast/text/text-letter-spacing-expected.png: Added.
+        * platform/qt/fast/text/text-letter-spacing-expected.txt:
+        * platform/qt/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum:
+        * platform/qt/scrollbars/custom-scrollbar-with-incomplete-style-expected.png:
+        * platform/qt/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.checksum: Added.
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.png: Added.
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.checksum:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt:
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.checksum:
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-009-expected.checksum: Added.
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.checksum:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.png:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug29314-expected.checksum: Added.
+        * platform/qt/tables/mozilla/bugs/bug29314-expected.png: Added.
+        * platform/qt/tables/mozilla/bugs/bug29314-expected.txt:
+
 2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Leopard rebaseline for r73385.  The actual results now match that of Snow Leopard.

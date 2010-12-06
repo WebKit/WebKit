@@ -14,7 +14,7 @@ layer at (0,0) size 800x296
               RenderText {#text} at (0,0) size 27x13
                 text run at (0,0) width 27: "TEST"
         RenderText {#text} at (0,0) size 0x0
-layer at (18,186) size 390x130
+layer at (18,186) size 390x110
   RenderBlock (relative positioned) {div} at (0,166) size 390x110 [color=#000080] [bgcolor=#D3D3D3]
     RenderBlock {div} at (0,0) size 390x130
       RenderText {#text} at (0,0) size 257x130

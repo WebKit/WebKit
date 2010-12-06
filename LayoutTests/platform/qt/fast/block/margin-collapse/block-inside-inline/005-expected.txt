@@ -34,7 +34,7 @@ layer at (0,0) size 800x507
             text run at (274,0) width 51: "test 006"
         RenderText {#text} at (325,0) size 4x21
           text run at (325,0) width 4: "."
-layer at (11,106) size 36x345
+layer at (11,106) size 36x295
   RenderBlock (relative positioned) {DIV} at (0,0) size 36x295 [bgcolor=#0000FF]
     RenderBlock (anonymous) at (0,0) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
@@ -62,7 +62,7 @@ layer at (11,106) size 36x345
     RenderBlock (anonymous) at (0,345) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (11,106) size 36x115
+layer at (11,106) size 36x65
   RenderBlock (relative positioned) {DIV} at (0,0) size 36x65 [bgcolor=#FF0000]
     RenderBlock (anonymous) at (0,0) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
@@ -74,7 +74,7 @@ layer at (11,106) size 36x115
     RenderBlock (anonymous) at (0,115) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-layer at (11,106) size 36x115
+layer at (11,106) size 36x65
   RenderBlock (relative positioned) {DIV} at (0,0) size 36x65 [bgcolor=#FF0000]
     RenderBlock (anonymous) at (0,0) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
@@ -85,7 +85,7 @@ layer at (11,106) size 36x65
   RenderBlock (relative positioned) {DIV} at (0,0) size 36x65 [bgcolor=#FFFF00]
     RenderText {#text} at (0,0) size 36x65
       text run at (0,0) width 36: "A"
-layer at (11,221) size 36x115
+layer at (11,221) size 36x65
   RenderBlock (relative positioned) {DIV} at (0,0) size 36x65 [bgcolor=#FF0000]
     RenderBlock (anonymous) at (0,0) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0

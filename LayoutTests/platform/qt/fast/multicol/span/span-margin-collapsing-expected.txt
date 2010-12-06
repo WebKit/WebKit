@@ -53,7 +53,7 @@ layer at (8,100) size 750x400
       text run at (188,715) width 150: "Lorem ipsum dolor sit"
       text run at (0,736) width 349: "amet, consectetuer adipiscing elit. Nulla varius enim"
       text run at (0,757) width 40: "ac mi."
-layer at (8,516) size 750x482
+layer at (8,516) size 750x481
   RenderBlock {DIV} at (0,497) size 750x481 [bgcolor=#EEEEEE]
     RenderBlock (anonymous multi-column span) at (0,419) size 750x62
       RenderBlock {H2} at (0,0) size 750x62 [bgcolor=#CCCCCC]

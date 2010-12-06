@@ -1,9 +1,9 @@
 layer at (0,0) size 1006x584
   RenderView at (0,0) size 800x584
-layer at (0,0) size 1006x584
+layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x560
-layer at (8,8) size 998x160
+layer at (8,8) size 784x160
   RenderBlock {P} at (0,0) size 784x160 [border: (10px solid #800000)]
     RenderText {#text} at (30,30) size 169x21
       text run at (30,30) width 169: "This is some column text."
