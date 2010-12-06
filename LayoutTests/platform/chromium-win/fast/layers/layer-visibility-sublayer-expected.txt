@@ -41,7 +41,7 @@ layer at (0,188) size 800x34
     RenderBlock {DIV} at (2,10) size 796x24 [border: (2px solid #008000)]
       RenderText {#text} at (2,2) size 16x19
         text run at (2,2) width 16: "ok"
-layer at (0,268) size 800x54
+layer at (0,268) size 800x34
   RenderBlock (positioned) {DIV} at (0,268) size 800x34 [border: (2px solid #FF0000)]
     RenderBlock {DIV} at (2,2) size 796x24 [border: (2px solid #FF0000)]
       RenderBlock {DIV} at (2,2) size 792x20

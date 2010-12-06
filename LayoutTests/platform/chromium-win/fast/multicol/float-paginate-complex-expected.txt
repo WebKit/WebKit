@@ -1,9 +1,9 @@
 layer at (0,0) size 1164x1680
   RenderView at (0,0) size 785x585
-layer at (0,0) size 1164x1680
+layer at (0,0) size 785x1680
   RenderBlock {HTML} at (0,0) size 785x1680
     RenderBody {BODY} at (8,8) size 769x1664
-layer at (8,8) size 1156x404
+layer at (8,8) size 769x404
   RenderBlock {DIV} at (0,0) size 769x404 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 374x280
       RenderText {#text} at (0,0) size 104x19
@@ -130,7 +130,7 @@ layer at (8,8) size 1156x404
       RenderText {#text} at (0,604) size 104x19
         text run at (0,604) width 104: "This is some text."
       RenderBR {BR} at (104,619) size 0x0
-layer at (8,428) size 1156x404
+layer at (8,428) size 769x404
   RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 374x280
       RenderText {#text} at (0,0) size 104x19

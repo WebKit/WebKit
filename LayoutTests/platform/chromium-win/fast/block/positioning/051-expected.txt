@@ -21,7 +21,7 @@ layer at (34,2269) size 200x200
   RenderBlock (positioned) zI: -30 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
     RenderText zI: -30 {#text} at (71,42) size 57x97
       text run at (71,42) width 57: "7"
-layer at (84,847) size 519x200
+layer at (84,847) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {#text} at (50,42) size 469x97
       text run at (50,42) width 469: " 8 hide me"
@@ -99,7 +99,7 @@ layer at (0,0) size 785x5275 layerType: foreground only
           text run at (0,0) width 329: "Using assumed default value of z-index (may not pass):"
 layer at (24,151) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,130) size 620x620 [border: (10px solid #000000)]
-layer at (84,211) size 519x200
+layer at (84,211) size 200x200
   RenderBlock (positioned) {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText {#text} at (50,42) size 469x97
       text run at (50,42) width 469: " 8 hide me"

@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (202,20) width 313: "If you do not see a scrollbar, then the test has failed."
 layer at (8,64) size 104x104 clip at (10,66) size 85x100 scrollHeight 1000
   RenderFlexibleBox {DIV} at (0,56) size 104x104 [bgcolor=#008000] [border: (2px solid #808000)]
-    RenderBlock {DIV} at (2,2) size 0x1000
+    RenderBlock {DIV} at (2,2) size 85x1000

@@ -2208,7 +2208,7 @@ layer at (0,0) size 785x8148
             RenderTableCell {TD} at (176,0) size 88x23 [border: (1px solid #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 85x19
                 text run at (2,2) width 85: "Row 5, Cell 3"
-layer at (393,24) size 392x164
+layer at (393,24) size 392x150
   RenderBlock (positioned) {TABLE} at (393,24) size 392x150
     RenderTable at (0,0) size 360x164
       RenderBlock {CAPTION} at (0,0) size 360x20

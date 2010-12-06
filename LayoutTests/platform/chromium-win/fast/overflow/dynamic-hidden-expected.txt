@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x8
   RenderBlock {HTML} at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
-layer at (8,8) size 300x300 scrollHeight 739
+layer at (8,8) size 300x300 scrollHeight 740
   RenderBlock (positioned) {DIV} at (8,8) size 300x300
     RenderText {#text} at (0,0) size 299x739
       text run at (0,0) width 242: "Lorem ipsum dolor sit amet, consectetur"

@@ -12,7 +12,7 @@ layer at (0,0) size 785x1190
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 308x316
             RenderView at (0,0) size 285x135
-          layer at (0,0) size 308x316
+          layer at (0,0) size 285x316
             RenderBlock {HTML} at (0,0) size 285x316
               RenderBody {BODY} at (8,8) size 269x300
           layer at (8,8) size 300x300 clip at (8,8) size 285x300 scrollY 545 scrollHeight 1270

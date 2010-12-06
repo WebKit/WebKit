@@ -1,6 +1,6 @@
 layer at (0,0) size 1287x676
   RenderView at (0,0) size 785x585
-layer at (0,0) size 1287x676
+layer at (0,0) size 785x676
   RenderBlock {HTML} at (0,0) size 785x676
     RenderBody {BODY} at (8,8) size 769x660
       RenderBlock (anonymous) at (0,0) size 769x20
@@ -9,7 +9,7 @@ layer at (0,0) size 1287x676
       RenderBlock (anonymous) at (0,330) size 769x20
         RenderText {#text} at (0,0) size 82x19
           text run at (0,0) width 82: "RTL Version:"
-layer at (8,28) size 1279x310
+layer at (8,28) size 769x310
   RenderBlock {DIV} at (0,20) size 769x310 [border: (5px solid #800000)]
     RenderBlock (anonymous) at (5,5) size 242x260
       RenderText {#text} at (0,0) size 100x19

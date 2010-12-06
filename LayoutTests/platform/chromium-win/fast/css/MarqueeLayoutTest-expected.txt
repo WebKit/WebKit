@@ -47,7 +47,7 @@ layer at (0,0) size 785x891
           RenderText {#text} at (0,0) size 106x19
             text run at (0,0) width 106: "This is 100px tall."
         RenderText {#text} at (0,0) size 0x0
-layer at (8,186) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 19
+layer at (8,186) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 20
   RenderBlock {MARQUEE} at (0,0) size 769x16 [bgcolor=#00FFFF]
     RenderInline {B} at (0,0) size 1640x19
       RenderText {#text} at (0,0) size 1640x19
@@ -55,7 +55,7 @@ layer at (8,186) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 19
         text run at (706,0) width 112: "Paul O' Connell, "
         text run at (818,0) width 822: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,202) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 19
+layer at (8,202) size 769x16 scrollX -769 scrollWidth 1640 scrollHeight 20
   RenderBlock {MARQUEE} at (0,16) size 769x16 [bgcolor=#FFFF00]
     RenderInline {B} at (0,0) size 1640x19
       RenderText {#text} at (0,0) size 1640x19
@@ -87,7 +87,7 @@ layer at (8,258) size 769x100 scrollX -769 scrollWidth 1640
         text run at (706,0) width 112: "Paul O' Connell, "
         text run at (818,0) width 822: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (118,398) size 200x200 scrollY -200 scrollHeight 359
+layer at (118,398) size 200x200 scrollY -200 scrollHeight 360
   RenderBlock {MARQUEE} at (110,212) size 200x200 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 197x359
       text run at (0,0) width 169: "Lorem ipsum dolor sit amet,"
@@ -108,7 +108,7 @@ layer at (118,398) size 200x200 scrollY -200 scrollHeight 359
       text run at (0,300) width 176: "praesent luptatum zzril delenit"
       text run at (0,320) width 195: "augue duis dolore te feugait nulla"
       text run at (0,340) width 40: "facilisi."
-layer at (322,498) size 200x100 scrollY -100 scrollHeight 359
+layer at (322,498) size 200x100 scrollY -100 scrollHeight 360
   RenderBlock {MARQUEE} at (314,312) size 200x100 [bgcolor=#FFFF00]
     RenderText {#text} at (0,0) size 197x359
       text run at (0,0) width 169: "Lorem ipsum dolor sit amet,"
@@ -129,7 +129,7 @@ layer at (322,498) size 200x100 scrollY -100 scrollHeight 359
       text run at (0,300) width 176: "praesent luptatum zzril delenit"
       text run at (0,320) width 195: "augue duis dolore te feugait nulla"
       text run at (0,340) width 40: "facilisi."
-layer at (526,498) size 200x100 scrollY -100 scrollHeight 359
+layer at (526,498) size 200x100 scrollY -100 scrollHeight 360
   RenderBlock {MARQUEE} at (518,312) size 200x100 [bgcolor=#FF0000]
     RenderText {#text} at (0,0) size 197x359
       text run at (0,0) width 169: "Lorem ipsum dolor sit amet,"

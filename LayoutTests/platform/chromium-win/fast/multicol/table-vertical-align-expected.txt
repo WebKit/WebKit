@@ -1,11 +1,11 @@
 layer at (0,0) size 1952x1010
   RenderView at (0,0) size 785x585
-layer at (0,0) size 1952x1010
+layer at (0,0) size 785x1010
   RenderBlock {HTML} at (0,0) size 785x1010
     RenderBody {BODY} at (8,8) size 769x994
       RenderBlock {HR} at (0,358) size 769x2 [border: (1px inset #000000)]
       RenderBlock {HR} at (0,676) size 769x2 [border: (1px inset #000000)]
-layer at (8,8) size 1552x350
+layer at (8,8) size 769x350
   RenderBlock {DIV} at (0,0) size 769x350
     RenderTable {TABLE} at (0,0) size 376x1287 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1285
@@ -136,7 +136,7 @@ layer at (8,8) size 1552x350
               RenderText {#text} at (11,12) size 145x149
                 text run at (11,12) width 145: "Other"
                 text run at (11,88) width 106: "cell."
-layer at (8,376) size 1944x300
+layer at (8,376) size 769x300
   RenderBlock {DIV} at (0,368) size 769x300
     RenderTable {TABLE} at (0,0) size 376x1233 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1231
@@ -267,7 +267,7 @@ layer at (8,376) size 1944x300
               RenderText {#text} at (11,72) size 145x149
                 text run at (11,72) width 145: "Other"
                 text run at (11,148) width 106: "cell."
-layer at (8,702) size 1944x300
+layer at (8,702) size 769x300
   RenderBlock {DIV} at (0,694) size 769x300
     RenderTable {TABLE} at (0,0) size 376x1233 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1231

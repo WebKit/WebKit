@@ -27,10 +27,10 @@ layer at (18,304) size 102x102 clip at (19,305) size 100x85 scrollWidth 125
   RenderBlock {DIV} at (10,296) size 102x102 [border: (1px solid #000000)]
 layer at (18,416) size 102x102 clip at (19,417) size 85x100 scrollHeight 125
   RenderBlock {DIV} at (10,408) size 102x102 [border: (1px solid #000000)]
-layer at (69,81) size 75x75 backgroundClip at (19,81) size 100x85 clip at (19,81) size 100x85 outlineClip at (19,81) size 100x85
+layer at (69,81) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
-layer at (19,243) size 75x75 backgroundClip at (19,193) size 85x100 clip at (19,193) size 85x100 outlineClip at (19,193) size 85x100
+layer at (19,243) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
 layer at (69,305) size 25x25

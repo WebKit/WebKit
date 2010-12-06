@@ -1,4 +1,4 @@
-layer at (0,0) size 785x1443
+layer at (0,0) size 785x1435
   RenderView at (0,0) size 785x600
 layer at (8,8) size 769x1427
   RenderBlock {HTML} at (8,8) size 769x1427 [bgcolor=#008000] [border: (16px solid #00FF00)]

@@ -8,7 +8,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 2008x2096
   RenderView at (0,0) size 785x585
-layer at (0,0) size 2008x2096
+layer at (0,0) size 785x2096
   RenderBlock {HTML} at (0,0) size 785x2096
     RenderBody {BODY} at (8,8) size 769x2080
       RenderBlock (anonymous) at (0,0) size 769x60
