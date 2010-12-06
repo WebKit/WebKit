@@ -36,11 +36,10 @@
 
 namespace WebCore {
 
-ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scriptName, unsigned lineNumber, unsigned column)
+ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& urlString, unsigned lineNumber)
     : m_functionName(functionName)
-    , m_scriptName(scriptName)
+    , m_sourceURL(urlString)
     , m_lineNumber(lineNumber)
-    , m_column(column)
 {
 }
 
@@ -51,7 +50,7 @@ ScriptCallFrame::~ScriptCallFrame()
 bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 {
     return m_functionName == o.m_functionName
-        && m_scriptName == o.m_scriptName
+        && m_sourceURL == o.m_sourceURL
         && m_lineNumber == o.m_lineNumber;
 }
 
@@ -60,9 +59,8 @@ PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
 {
     RefPtr<InspectorObject> frame = InspectorObject::create();
     frame->setString("functionName", m_functionName);
-    frame->setString("scriptName", m_scriptName);
+    frame->setString("sourceURL", m_sourceURL);
     frame->setNumber("lineNumber", m_lineNumber);
-    frame->setNumber("column", m_column);
     return frame;
 }
 #endif

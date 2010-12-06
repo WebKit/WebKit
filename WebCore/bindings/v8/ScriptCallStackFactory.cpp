@@ -56,13 +56,13 @@ static ScriptCallFrame toScriptCallFrame(v8::Handle<v8::StackFrame> frame)
         functionName = toWebCoreString(functionNameValue);
 
     int sourceLineNumber = frame->GetLineNumber();
-    int sourceColumn = frame->GetColumn();
-    return ScriptCallFrame(functionName, sourceName, sourceLineNumber, sourceColumn);
+    return ScriptCallFrame(functionName, sourceName, sourceLineNumber);
 }
 
-static void toScriptCallFramesVector(v8::Handle<v8::StackTrace> stackTrace, Vector<ScriptCallFrame>& scriptCallFrames, size_t maxStackSize)
+static void toScriptCallFramesVector(v8::Local<v8::Context> context, v8::Handle<v8::StackTrace> stackTrace, Vector<ScriptCallFrame>& scriptCallFrames, size_t maxStackSize)
 {
-    ASSERT(v8::Context::InContext());
+    // TODO(yurys): remove this???
+    v8::Context::Scope contextScope(context);
     int frameCount = stackTrace->GetFrameCount();
     if (frameCount > static_cast<int>(maxStackSize))
         frameCount = maxStackSize;
@@ -70,24 +70,32 @@ static void toScriptCallFramesVector(v8::Handle<v8::StackTrace> stackTrace, Vect
         v8::Local<v8::StackFrame> stackFrame = stackTrace->GetFrame(i);
         scriptCallFrames.append(toScriptCallFrame(stackFrame));
     }
+    
+    if (!frameCount) {
+        // Successfully grabbed stack trace, but there are no frames. It may happen in case of a syntax error for example.
+        // Fallback to setting lineNumber to 0, and source and function name to "undefined".
+        scriptCallFrames.append(ScriptCallFrame("undefined", "undefined", 0));
+    }
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Handle<v8::StackTrace> stackTrace, size_t maxStackSize)
+PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Local<v8::Context> context, v8::Handle<v8::StackTrace> stackTrace, size_t maxStackSize)
 {
-    ASSERT(v8::Context::InContext());
     v8::HandleScope scope;
+    v8::Context::Scope contextScope(context);
+
     Vector<ScriptCallFrame> scriptCallFrames;
-    toScriptCallFramesVector(stackTrace, scriptCallFrames, maxStackSize);
+    toScriptCallFramesVector(context, stackTrace, scriptCallFrames, maxStackSize);
     return ScriptCallStack::create(scriptCallFrames);
 }
 
 PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize)
 {
-    if (!v8::Context::InContext())
-        return 0;
-    v8::HandleScope handleScope;
+    v8::HandleScope scope;
+    v8::Local<v8::Context> context = v8::Context::GetCurrent();
+    // TODO(yurys): remove?
+    v8::Context::Scope contextScope(context);
     v8::Handle<v8::StackTrace> stackTrace(v8::StackTrace::CurrentStackTrace(maxStackSize, stackTraceOptions));
-    return createScriptCallStack(stackTrace, maxStackSize);
+    return createScriptCallStack(context, stackTrace, maxStackSize);
 }
 
 PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount)
@@ -101,6 +109,37 @@ PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8argumen
         arguments.append(ScriptValue(v8arguments[i]));
 
     return ScriptArguments::create(state, arguments);
+}
+
+bool ScriptCallStack::stackTrace(int frameLimit, const RefPtr<InspectorArray>& stackTrace)
+{
+#if ENABLE(INSPECTOR)
+    if (!v8::Context::InContext())
+        return false;
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context.IsEmpty())
+        return false;
+    v8::HandleScope scope;
+    v8::Context::Scope contextScope(context);
+    v8::Handle<v8::StackTrace> trace(v8::StackTrace::CurrentStackTrace(frameLimit));
+    int frameCount = trace->GetFrameCount();
+    if (trace.IsEmpty() || !frameCount)
+        return false;
+    for (int i = 0; i < frameCount; ++i) {
+        v8::Handle<v8::StackFrame> frame = trace->GetFrame(i);
+        RefPtr<InspectorObject> frameObject = InspectorObject::create();
+        v8::Local<v8::String> scriptName = frame->GetScriptName();
+        frameObject->setString("scriptName", scriptName.IsEmpty() ? "" : toWebCoreString(scriptName));
+        v8::Local<v8::String> functionName = frame->GetFunctionName();
+        frameObject->setString("functionName", functionName.IsEmpty() ? "" : toWebCoreString(functionName));
+        frameObject->setNumber("lineNumber", frame->GetLineNumber());
+        frameObject->setNumber("column", frame->GetColumn());
+        stackTrace->pushObject(frameObject);
+    }
+    return true;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore
