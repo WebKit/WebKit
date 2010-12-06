@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsLayerMac_h
-#define GraphicsLayerMac_h
+#ifndef GraphicsLayerCA_h
+#define GraphicsLayerCA_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayer.h"
-#include "WebLayer.h"
+#include "Image.h"
+#include "PlatformCAAnimation.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
 
-@class CABasicAnimation;
-@class CAKeyframeAnimation;
-@class CAMediaTimingFunction;
-@class CAPropertyAnimation;
-@class WebAnimationDelegate;
-
 namespace WebCore {
 
-class GraphicsLayerMac : public GraphicsLayer {
-public:
+class PlatformCALayer;
 
-    GraphicsLayerMac(GraphicsLayerClient*);
-    virtual ~GraphicsLayerMac();
+class GraphicsLayerCA : public GraphicsLayer {
+public:
+    // The width and height of a single tile in a tiled layer. Should be large enough to
+    // avoid lots of small tiles (and therefore lots of drawing callbacks), but small enough
+    // to keep the overall tile cost low.
+    static const int kTiledLayerTileSize = 512;
+
+    GraphicsLayerCA(GraphicsLayerClient*);
+    virtual ~GraphicsLayerCA();
+    
+    virtual void animationStarted(CFTimeInterval beginTime);
 
     virtual void setName(const String&);
 
-    // for hosting this GraphicsLayer in a native layer hierarchy
-    virtual NativeLayer nativeLayer() const;
+    virtual PlatformLayer* platformLayer() const;
 
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
@@ -106,8 +108,6 @@ public:
 
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
-    virtual PlatformLayer* platformLayer() const;
-
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
 
@@ -118,24 +118,21 @@ public:
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
 
-    // Should only be called by animationDidStart: callback
-    void animationDidStart(CAAnimation*);
-    
 protected:
     virtual void setOpacityInternal(float);
 
 private:
     void updateOpacityOnLayer();
 
-    CALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
-    CALayer* hostLayerForSublayers() const;
-    CALayer* layerForSuperlayer() const;
-    CALayer* animatedLayer(AnimatedPropertyID) const;
+    PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
+    PlatformCALayer* hostLayerForSublayers() const;
+    PlatformCALayer* layerForSuperlayer() const;
+    PlatformCALayer* animatedLayer(AnimatedPropertyID) const;
 
     typedef String CloneID; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
-    typedef HashMap<CloneID, RetainPtr<CALayer> > LayerMap;
+    typedef HashMap<CloneID, RefPtr<PlatformCALayer> > LayerMap;
     LayerMap* primaryLayerClones() const { return m_structuralLayer.get() ? m_structuralLayerClones.get() : m_layerClones.get(); }
     LayerMap* animatedLayerClones(AnimatedPropertyID) const;
 
@@ -143,17 +140,17 @@ private:
     bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset, const IntSize& boxSize);
 
     // Return autoreleased animation (use RetainPtr?)
-    CABasicAnimation* createBasicAnimation(const Animation*, AnimatedPropertyID, bool additive);
-    CAKeyframeAnimation* createKeyframeAnimation(const Animation*, AnimatedPropertyID, bool additive);
-    void setupAnimation(CAPropertyAnimation*, const Animation*, bool additive);
+    PassRefPtr<PlatformCAAnimation> createBasicAnimation(const Animation*, AnimatedPropertyID, bool additive);
+    PassRefPtr<PlatformCAAnimation> createKeyframeAnimation(const Animation*, AnimatedPropertyID, bool additive);
+    void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive);
     
-    CAMediaTimingFunction* timingFunctionForAnimationValue(const AnimationValue*, const Animation*);
+    const TimingFunction* timingFunctionForAnimationValue(const AnimationValue*, const Animation*);
     
-    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, CABasicAnimation*);
-    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, CAKeyframeAnimation*);
+    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
+    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
 
-    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, CABasicAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
-    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, CAKeyframeAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
     
     bool animationIsRunning(const String& animationName) const
     {
@@ -171,8 +168,8 @@ private:
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
     void updateContentsTransform();
     
-    void setupContentsLayer(CALayer*);
-    CALayer* contentsLayer() const { return m_contentsLayer.get(); }
+    void setupContentsLayer(PlatformCALayer*);
+    PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     virtual void setReplicatedByLayer(GraphicsLayer*);
 
@@ -224,15 +221,15 @@ private:
         Vector<ReplicaBranchType> m_replicaBranches;
         size_t m_replicaDepth;
     };
-    CALayer *replicatedLayerRoot(ReplicaState&);
+    PassRefPtr<PlatformCALayer>replicatedLayerRoot(ReplicaState&);
 
     enum CloneLevel { RootCloneLevel, IntermediateCloneLevel };
-    CALayer *fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
+    PassRefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
     
-    CALayer *cloneLayer(CALayer *, CloneLevel);
-    CALayer *findOrMakeClone(CloneID, CALayer *, LayerMap*, CloneLevel);
+    PassRefPtr<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
+    PassRefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
 
-    void ensureCloneLayers(CloneID index, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel);
+    void ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer, RefPtr<PlatformCALayer>& contentsLayer, CloneLevel cloneLevel);
 
     bool hasCloneLayers() const { return m_layerClones; }
     void removeCloneLayers();
@@ -273,18 +270,18 @@ private:
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
-    void setCAAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
+    void setAnimationOnLayer(PlatformCAAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
     bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index);
     void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, double timeOffset);
 
     enum MoveOrCopy { Move, Copy };
-    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, CALayer *fromLayer, CALayer *toLayer);
-    void moveOrCopyAnimationsForProperty(MoveOrCopy, AnimatedPropertyID, CALayer * fromLayer, CALayer * toLayer);
+    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
+    void moveOrCopyAnimationsForProperty(MoveOrCopy, AnimatedPropertyID, PlatformCALayer * fromLayer, PlatformCALayer * toLayer);
     
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,
-        ChildrenChanged = 1 << 2,   // also used for content layer, and preserves-3d, and size if tiling changes?
+        ChildrenChanged = 1 << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
         PositionChanged = 1 << 3,
         AnchorPointChanged = 1 << 4,
         SizeChanged = 1 << 5,
@@ -292,7 +289,7 @@ private:
         ChildrenTransformChanged = 1 << 7,
         Preserves3DChanged = 1 << 8,
         MasksToBoundsChanged = 1 << 9,
-        DrawsContentChanged = 1 << 10,  // need this?
+        DrawsContentChanged = 1 << 10, // need this?
         BackgroundColorChanged = 1 << 11,
         ContentsOpaqueChanged = 1 << 12,
         BackfaceVisibilityChanged = 1 << 13,
@@ -313,9 +310,9 @@ private:
 
     void repaintLayerDirtyRects();
 
-    RetainPtr<WebLayer> m_layer; // The main layer
-    RetainPtr<CALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
-    RetainPtr<CALayer> m_contentsLayer; // A layer used for inner content, like image and video
+    RefPtr<PlatformCALayer> m_layer; // The main layer
+    RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
+    RefPtr<PlatformCALayer> m_contentsLayer; // A layer used for inner content, like image and video
 
     // References to clones of our layers, for replicated layers.
     OwnPtr<LayerMap> m_layerClones;
@@ -332,15 +329,13 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
 
-    RetainPtr<WebAnimationDelegate> m_animationDelegate;
-
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(CAPropertyAnimation* caAnimation, const String& animationName, AnimatedPropertyID property, int index, double timeOffset)
+        LayerPropertyAnimation(PassRefPtr<PlatformCAAnimation> caAnimation, const String& animationName, AnimatedPropertyID property, int index, double timeOffset)
         : m_animation(caAnimation)
         , m_name(animationName)
         , m_property(property)
@@ -348,7 +343,7 @@ private:
         , m_timeOffset(timeOffset)
         { }
 
-        RetainPtr<CAPropertyAnimation*> m_animation;
+        RefPtr<PlatformCAAnimation> m_animation;
         String m_name;
         AnimatedPropertyID m_property;
         int m_index;
@@ -385,4 +380,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // GraphicsLayerMac_h
+#endif // GraphicsLayerCA_h

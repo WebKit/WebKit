@@ -153,11 +153,6 @@ void GraphicsLayerCACF::setName(const String& name)
     m_layer->setName(longName);
 }
 
-NativeLayer GraphicsLayerCACF::nativeLayer() const
-{
-    return m_layer.get();
-}
-
 bool GraphicsLayerCACF::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool childrenChanged = GraphicsLayer::setChildren(children);

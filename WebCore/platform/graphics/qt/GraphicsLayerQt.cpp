@@ -686,7 +686,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         // try to snatch that ownership.
         if (!m_layer->parent() && !parentItem())
             setParentItem(0);
-        else if (m_layer && m_layer->parent() && m_layer->parent()->nativeLayer() != parentItem())
+        else if (m_layer && m_layer->parent() && m_layer->parent()->platformLayer() != parentItem())
             setParentItem(m_layer->parent()->platformLayer());
     }
 
@@ -1315,13 +1315,6 @@ void GraphicsLayerQt::syncCompositingStateForThisLayerOnly()
     // We can't call flushChanges recursively here
     m_impl->flushChanges(false);
     GraphicsLayer::syncCompositingStateForThisLayerOnly();
-}
-
-/* \reimp (GraphicsLayer.h)
- */
-NativeLayer GraphicsLayerQt::nativeLayer() const
-{
-    return m_impl.get();
 }
 
 /* \reimp (GraphicsLayer.h)

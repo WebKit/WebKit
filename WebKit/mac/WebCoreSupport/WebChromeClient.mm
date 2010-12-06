@@ -773,7 +773,7 @@ void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graph
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     if (graphicsLayer)
-        [webHTMLView attachRootLayer:graphicsLayer->nativeLayer()];
+        [webHTMLView attachRootLayer:graphicsLayer->platformLayer()];
     else
         [webHTMLView detachRootLayer];
     END_BLOCK_OBJC_EXCEPTIONS;

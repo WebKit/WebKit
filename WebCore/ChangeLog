@@ -1,3 +1,52 @@
+2010-12-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Replaced GraphicsLayerMac with GraphicsLayerCA. GraphicsLayerCA is essentially 
+        identical to GraphicsLayerMac, but replaces all the CoreAnimation specific calls 
+        with calls to PlatformCALayer and PlatformCAAnimation. This makes GraphicsLayerCA 
+        platform neutral as long as implementations of those two classes are available. 
+        Added implementations in PlatformCALayerMac and PlatformCAAnimationMac. Also got 
+        rid of GraphicsLayer::nativeLayer() and replaced it with GraphicsLayer::platformLayer() 
+        to avoid confusion since both names were used to refer to the same thing. 
+
+        This patch is only for Mac. Windows implementation has not changed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Copied from WebCore/platform/graphics/ca/GraphicsLayerCA.cpp.
+        * platform/graphics/ca/GraphicsLayerCA.h: Copied from WebCore/platform/graphics/ca/GraphicsLayerCA.h.
+        * platform/graphics/ca/PlatformCAAnimation.h: Copied from WebCore/platform/graphics/ca/PlatformCAAnimation.h.
+        * platform/graphics/ca/PlatformCALayer.h: Copied from WebCore/platform/graphics/ca/PlatformCALayer.h.
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm: Copied from WebCore/platform/graphics/ca/mac/PlatformCAAnimationMac.mm.
+        (toCAMediaTimingFunction):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Copied from WebCore/platform/graphics/ca/mac/PlatformCALayerMac.mm.
+        (PlatformCALayer::PlatformCALayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/mac/GraphicsLayerMac.h: Removed.
+        * platform/graphics/mac/GraphicsLayerMac.mm: Removed.
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer setNeedsDisplay]):
+        (-[WebLayer setNeedsDisplayInRect:]):
+        (-[WebLayer display]):
+        (-[WebLayer drawInContext:]):
+        * platform/graphics/mac/WebTiledLayer.h:
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplay]):
+        (-[WebTiledLayer setNeedsDisplayInRect:]):
+        (-[WebTiledLayer display]):
+        (-[WebTiledLayer drawInContext:]):
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        * platform/graphics/win/GraphicsLayerCACF.h:
+
 2010-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
