@@ -50,7 +50,6 @@ public:
 
     const ScriptCallFrame &at(size_t) const;
     size_t size() const;
-    static bool stackTrace(int, const RefPtr<InspectorArray>&);
 
     bool isEqual(ScriptCallStack*) const;
     PassRefPtr<InspectorArray> buildInspectorObject() const;

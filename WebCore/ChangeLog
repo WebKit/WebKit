@@ -1,1 +1,32 @@
+2010-12-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Web Inspector: remove duplicate code for capturing stack trace
+        https://bugs.webkit.org/show_bug.cgi?id=50461
+
+        No new tests. Covered with existing inspector tests.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+        * bindings/js/ScriptCallStackFactory.h:
+        * bindings/v8/ScriptCallStackFactory.cpp:
+        (WebCore::toScriptCallFrame):
+        (WebCore::toScriptCallFramesVector):
+        (WebCore::createScriptCallStack):
+        * bindings/v8/ScriptCallStackFactory.h:
+        * bindings/v8/V8ConsoleMessage.cpp:
+        (WebCore::V8ConsoleMessage::handler):
+        * inspector/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        (WebCore::ScriptCallFrame::isEqual):
+        (WebCore::ScriptCallFrame::buildInspectorObject):
+        * inspector/ScriptCallFrame.h:
+        (WebCore::ScriptCallFrame::sourceURL):
+        * inspector/ScriptCallStack.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+
 == Rolled over to ChangeLog-2010-12-06 ==

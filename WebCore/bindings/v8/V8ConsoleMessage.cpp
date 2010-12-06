@@ -116,10 +116,8 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     v8::Handle<v8::StackTrace> stackTrace = message->GetStackTrace();
     RefPtr<ScriptCallStack> callStack;
     // Currently stack trace is only collected when inspector is open.
-    if (!stackTrace.IsEmpty() && stackTrace->GetFrameCount() > 0) {
-        v8::Local<v8::Context> context = v8::Context::GetEntered();
-        callStack = createScriptCallStack(context, stackTrace, ScriptCallStack::maxCallStackSizeToCapture);
-    }
+    if (!stackTrace.IsEmpty() && stackTrace->GetFrameCount() > 0)
+        callStack = createScriptCallStack(stackTrace, ScriptCallStack::maxCallStackSizeToCapture);
 
     v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
     bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
