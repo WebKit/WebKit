@@ -35,11 +35,11 @@ namespace WTF {
 
 void* OSAllocator::reserve(size_t bytes)
 {
-    // From a bookkeeping perspective, POSIX reservations start out in the committed state.
     void* result = mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (result == MAP_FAILED)
         CRASH();
 #if HAVE(MADV_FREE_REUSE)
+    // To support the "reserve then commit" model, we have to initially decommit.
     while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
 #endif
     return result;
@@ -47,8 +47,11 @@ void* OSAllocator::reserve(size_t bytes)
 
 void* OSAllocator::reserveAndCommit(size_t bytes)
 {
-    // From a bookkeeping perspective, POSIX reservations start out in the committed state.
-    return reserve(bytes);
+    // All POSIX reservations start out logically committed.
+    void* result = mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (result == MAP_FAILED)
+        CRASH();
+    return result;
 }
 
 void OSAllocator::commit(void* address, size_t bytes)
@@ -56,6 +59,7 @@ void OSAllocator::commit(void* address, size_t bytes)
 #if HAVE(MADV_FREE_REUSE)
     while (madvise(address, bytes, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }
 #else
+    // Non-MADV_FREE_REUSE reservations automatically commit on demand.
     UNUSED_PARAM(address);
     UNUSED_PARAM(bytes);
 #endif
