@@ -1,3 +1,13 @@
+2010-12-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        make webkit-patch command work when the git branch is not synced to the remote svn branch
+        https://bugs.webkit.org/show_bug.cgi?id=50424
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-12-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

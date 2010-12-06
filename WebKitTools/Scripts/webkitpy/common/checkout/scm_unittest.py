@@ -962,10 +962,13 @@ class GitSVNTest(SCMTest):
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
 
+    def _local_commit(self, filename, contents, message):
+        write_into_file_at_path(filename, contents)
+        run_command(['git', 'add', filename])
+        self.scm.commit_locally_with_message(message)
+
     def _one_local_commit(self):
-        write_into_file_at_path('test_file_commit1', 'more test content')
-        run_command(['git', 'add', 'test_file_commit1'])
-        self.scm.commit_locally_with_message("another test commit")
+        self._local_commit('test_file_commit1', 'more test content', 'another test commit')
 
     def _one_local_commit_plus_working_copy_changes(self):
         self._one_local_commit()
@@ -974,14 +977,10 @@ class GitSVNTest(SCMTest):
 
     def _two_local_commits(self):
         self._one_local_commit()
-        write_into_file_at_path('test_file_commit2', 'still more test content')
-        run_command(['git', 'add', 'test_file_commit2'])
-        self.scm.commit_locally_with_message("yet another test commit")
+        self._local_commit('test_file_commit2', 'still more test content', 'yet another test commit')
 
     def _three_local_commits(self):
-        write_into_file_at_path('test_file_commit0', 'more test content')
-        run_command(['git', 'add', 'test_file_commit0'])
-        self.scm.commit_locally_with_message("another test commit")
+        self._local_commit('test_file_commit0', 'more test content', 'another test commit')
         self._two_local_commits()
 
     def test_revisions_changing_files_with_local_commit(self):
@@ -1083,6 +1082,21 @@ class GitSVNTest(SCMTest):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         self.assertRaises(AmbiguousCommitError, scm.commit_with_message, "another test commit")
+        commit_text = scm.commit_with_message("another test commit", force_squash=True)
+
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertFalse(re.search(r'test_file2', svn_log))
+        self.assertTrue(re.search(r'test_file_commit2', svn_log))
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+
+    def test_commit_with_message_not_synced_with_conflict(self):
+        run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
+        self._local_commit('test_file2', 'asdf', 'asdf commit')
+
+        scm = detect_scm_system(self.git_checkout_path)
+        # There's a conflict between trunk and the test_file2 modification.
         self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", force_squash=True)
 
     def test_remote_branch_ref(self):
@@ -1158,7 +1172,10 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(ScriptError, scm.create_patch)
+        patch = scm.create_patch()
+        self.assertFalse(re.search(r'test_file2', patch))
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+        self.assertTrue(re.search(r'test_file_commit1', patch))
 
     def test_create_binary_patch(self):
         # Create a git binary patch and check the contents.
@@ -1226,7 +1243,19 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(ScriptError, scm.changed_files)
+        files = scm.changed_files()
+        self.assertFalse('test_file2' in files)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertTrue('test_file_commit1' in files)
+
+    def test_changed_files_not_synced(self):
+        run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files()
+        self.assertFalse('test_file2' in files)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertTrue('test_file_commit1' in files)
 
     def test_changed_files(self):
         self._shared_test_changed_files()

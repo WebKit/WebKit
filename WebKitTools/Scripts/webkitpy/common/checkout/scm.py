@@ -642,10 +642,6 @@ class Git(SCM):
     def delete(self, path):
         return self.run(["git", "rm", "-f", path])
 
-    def _assert_synced(self):
-        if len(run_command(['git', 'rev-list', '--max-count=1', self.remote_branch_ref(), '^HEAD'])):
-            raise ScriptError(message="Not fully merged/rebased to %s. This branch needs to be synced first." % self.remote_branch_ref())
-
     def merge_base(self, git_commit):
         if git_commit:
             # Special-case HEAD.. to mean working-copy changes only.
@@ -656,7 +652,6 @@ class Git(SCM):
                 git_commit = git_commit + "^.." + git_commit
             return git_commit
 
-        self._assert_synced()
         return self.remote_merge_base()
 
     def changed_files(self, git_commit=None):
@@ -788,8 +783,7 @@ class Git(SCM):
 
         if not force_squash:
             self._assert_can_squash(working_directory_is_clean)
-        self._assert_synced()
-        self.run(['git', 'reset', '--soft', self.remote_branch_ref()])
+        self.run(['git', 'reset', '--soft', self.remote_merge_base()])
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server()
 
