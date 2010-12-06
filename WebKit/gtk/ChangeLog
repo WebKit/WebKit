@@ -1,3 +1,17 @@
+2010-12-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Build is broken after r73353
+        https://bugs.webkit.org/show_bug.cgi?id=50568
+
+        Fix the gtk-doc build by making all members of the cache model
+        enum public. gtk-doc does not support making only some enum
+        members private. We should also expose it so that users querying
+        the cache model do not get mysterious, undocumented results.
+
+        * webkit/webkitwebview.h: Fix gtk-doc for the cache model enum.
+
 2010-12-06  Derek Weitzel  <djw8605@gmail.com>
 
         Reviewed by Martin Robinson.

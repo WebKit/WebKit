@@ -52,18 +52,18 @@ typedef enum {
 
 /*  
  * WebKitCacheModel:
+ * @WEBKIT_CACHE_MODEL_DEFAULT: The default cache model. This is
+ *   WEBKIT_CACHE_MODEL_WEB_BROWSER.
  * @WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER: Disable the cache completely, which 
  *   substantially reduces memory usage. Useful for applications that only
  *   access local files.
  * @WEBKIT_CACHE_MODEL_WEB_BROWSER: Improve document load speed substantially
- *   by caching previously viewed content. This is the default setting.
+ *   by caching previously viewed content.
  * 
  * Enum values used for determining the webview cache model.
  */
 typedef enum {
-    /*< private >*/
     WEBKIT_CACHE_MODEL_DEFAULT,
-    /*< public >*/
     WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,
     WEBKIT_CACHE_MODEL_WEB_BROWSER
 } WebKitCacheModel;
