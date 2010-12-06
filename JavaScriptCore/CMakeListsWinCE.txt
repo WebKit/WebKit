@@ -1,0 +1,5 @@
+LIST(APPEND JavaScriptCore_SOURCES
+    jit/ExecutableAllocator.cpp
+
+    runtime/MarkStackWin.cpp
+)

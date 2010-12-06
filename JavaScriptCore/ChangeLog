@@ -1,3 +1,14 @@
+2010-12-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Add build system
+        https://bugs.webkit.org/show_bug.cgi?id=50522
+
+        * CMakeListsWinCE.txt: Added.
+        * shell/CMakeListsWinCE.txt: Added.
+        * wtf/CMakeListsWinCE.txt: Added.
+
 2010-12-06  John Tantalo  <john.tantalo@gmail.com>
 
         Reviewed by Geoffrey Garen.
