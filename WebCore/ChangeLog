@@ -1,3 +1,10 @@
+2010-12-06  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * WebCore.xcodeproj/project.pbxproj: Don't force WebCore to build against the 10.5 SDK.
+        That's just plain wrong.
+
 2010-12-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
