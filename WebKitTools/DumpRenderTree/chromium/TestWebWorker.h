@@ -48,6 +48,9 @@ class TestWebWorker : public WebKit::WebWorker,
 public:
     TestWebWorker()
     {
+        // This class expects refcounting semantics like those found in
+        // Chromium's base::RefCounted, so it's OK to call ref() directly.
+        relaxAdoptionRequirement();
         ref();
         // The initial counter value should be 2. One for a worker object,
         // another for a worker context object. We need to call ref() just once
