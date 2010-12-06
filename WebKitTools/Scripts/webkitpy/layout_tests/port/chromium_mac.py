@@ -49,7 +49,13 @@ class ChromiumMacPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
-        port_names = ["chromium-mac", "chromium", "mac" + self.version(), "mac"]
+        port_names = [
+            "chromium-mac" + self.version(),
+            "chromium-mac",
+            "chromium",
+            "mac" + self.version(),
+            "mac",
+        ]
         return map(self._webkit_baseline_path, port_names)
 
     def check_build(self, needs_http):

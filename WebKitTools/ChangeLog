@@ -1,3 +1,12 @@
+2010-12-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Allow the Chromium port to have Leopard-specific baselines
+        https://bugs.webkit.org/show_bug.cgi?id=50506
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+
 2010-12-03  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
