@@ -42,6 +42,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UnusedParam.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
 #include "WebCoreSystemInterface.h"
@@ -1118,8 +1119,11 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
+    UNUSED_PARAM(allowsFontSmoothing);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
+#endif
 }
 
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)

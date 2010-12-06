@@ -1,3 +1,10 @@
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for Leopard after r73379.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setAllowsFontSmoothing):
+
 2010-12-06  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
