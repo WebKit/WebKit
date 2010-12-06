@@ -1,3 +1,12 @@
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Leopard rebaseline for r73385.  The actual results now match that of Snow Leopard.
+
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.txt Removed.
+        * platform/mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.checksum: Removed.
+        * platform/mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.png: Removed.
+        * platform/mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.txt: Removed.
+
 2010-12-06  Victor Wang  <victorw@chromium.org>
 
         Unreviewed.
