@@ -1,3 +1,31 @@
+2010-12-06  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] update chromium test expectations.
+
+        * platform/chromium-linux/fast/css/focus-ring-outline-color-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-linux/fast/css/focus-ring-outline-offset-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/focus-ring-outline-offset-expected.png: Added.
+        * platform/chromium-linux/fast/css/focus-ring-outline-width-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/focus-ring-outline-width-expected.png: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-color-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-offset-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-offset-expected.png: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-width-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/focus-ring-outline-width-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-color-expected.checksum: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-offset-expected.checksum: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-offset-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-offset-expected.txt: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-width-expected.checksum: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-width-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-outline-width-expected.txt: Added.
+
 2010-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
