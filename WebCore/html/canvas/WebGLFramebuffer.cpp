@@ -190,8 +190,7 @@ bool WebGLFramebuffer::onAccess()
 
 void WebGLFramebuffer::deleteObjectImpl(Platform3DObject object)
 {
-    if (!isDeleted())
-        context()->graphicsContext3D()->deleteFramebuffer(object);
+    context()->graphicsContext3D()->deleteFramebuffer(object);
     m_colorAttachment = 0;
     m_depthAttachment = 0;
     m_stencilAttachment = 0;

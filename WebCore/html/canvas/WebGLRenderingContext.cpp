@@ -1685,6 +1685,7 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, u
     int value = 0;
     switch (pname) {
     case GraphicsContext3D::DELETE_STATUS:
+        return WebGLGetInfo(program->isDeleted());
     case GraphicsContext3D::VALIDATE_STATUS:
         m_context->getProgramiv(objectOrZero(program), pname, &value);
         return WebGLGetInfo(static_cast<bool>(value));
@@ -1791,6 +1792,7 @@ WebGLGetInfo WebGLRenderingContext::getShaderParameter(WebGLShader* shader, unsi
     int value = 0;
     switch (pname) {
     case GraphicsContext3D::DELETE_STATUS:
+        return WebGLGetInfo(shader->isDeleted());
     case GraphicsContext3D::COMPILE_STATUS:
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
         return WebGLGetInfo(static_cast<bool>(value));

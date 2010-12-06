@@ -1,3 +1,32 @@
+2010-12-03  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Postpone gl delete* calls until shaders/programs are no longer attached
+        https://bugs.webkit.org/show_bug.cgi?id=50501
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::deleteObjectImpl): Simply delete GL resource.
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::deleteObjectImpl): Ditto.
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::deleteObject): Tracking whether deleteObjectImpl should be called or not.
+        * html/canvas/WebGLObject.h:
+        (WebCore::WebGLObject::detachContext): Set attachmentCount to 0 to ensure OpenGL resource deletion.
+        (WebCore::WebGLObject::onDetached): No need to track attachmentCount here as we track it in deleteObject.
+        (WebCore::WebGLObject::isDeleted): Make this public.
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::deleteObjectImpl): Simply delete GL resource.
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::deleteObjectImpl): Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getProgramParameter): intercept DELETE_STATUS.
+        (WebCore::WebGLRenderingContext::getShaderParameter): Ditto.
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::deleteObjectImpl): Simply delete GL resource.
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::deleteObjectImpl): Simply delete GL resource.
+
 2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet unreviewed another Leopard build fix for r73380.

@@ -52,8 +52,7 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
 
 void WebGLBuffer::deleteObjectImpl(Platform3DObject object)
 {
-    if (!isDeleted())
-        context()->graphicsContext3D()->deleteBuffer(object);
+    context()->graphicsContext3D()->deleteBuffer(object);
 }
 
 bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, unsigned byteOffset, unsigned byteLength)

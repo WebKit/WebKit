@@ -52,8 +52,7 @@ WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContext* ctx)
 
 void WebGLRenderbuffer::deleteObjectImpl(Platform3DObject object)
 {
-    if (!isDeleted())
-        context()->graphicsContext3D()->deleteRenderbuffer(object);
+    context()->graphicsContext3D()->deleteRenderbuffer(object);
 }
 
 }

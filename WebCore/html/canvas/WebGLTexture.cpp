@@ -202,8 +202,7 @@ bool WebGLTexture::needToUseBlackTexture() const
 
 void WebGLTexture::deleteObjectImpl(Platform3DObject object)
 {
-    if (!isDeleted())
-        context()->graphicsContext3D()->deleteTexture(object);
+    context()->graphicsContext3D()->deleteTexture(object);
 }
 
 int WebGLTexture::mapTargetToIndex(unsigned long target)

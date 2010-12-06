@@ -47,17 +47,14 @@ WebGLProgram::WebGLProgram(WebGLRenderingContext* ctx)
 
 void WebGLProgram::deleteObjectImpl(Platform3DObject obj)
 {
-    if (!isDeleted())
-        context()->graphicsContext3D()->deleteProgram(obj);
-    if (!getAttachmentCount()) {
-        if (m_vertexShader) {
-            m_vertexShader->onDetached();
-            m_vertexShader = 0;
-        }
-        if (m_fragmentShader) {
-            m_fragmentShader->onDetached();
-            m_fragmentShader = 0;
-        }
+    context()->graphicsContext3D()->deleteProgram(obj);
+    if (m_vertexShader) {
+        m_vertexShader->onDetached();
+        m_vertexShader = 0;
+    }
+    if (m_fragmentShader) {
+        m_fragmentShader->onDetached();
+        m_fragmentShader = 0;
     }
 }
 

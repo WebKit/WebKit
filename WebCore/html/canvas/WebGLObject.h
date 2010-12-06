@@ -40,10 +40,15 @@ public:
     virtual ~WebGLObject();
 
     Platform3DObject object() const { return m_object; }
+
+    // deleteObject may not always delete the OpenGL resource.  For programs and
+    // shaders, deletion is delayed until they are no longer attached.
+    // FIXME: revisit this when resource sharing between contexts are implemented.
     void deleteObject();
 
     void detachContext()
     {
+        m_attachmentCount = 0; // Make sure OpenGL resource is deleted.
         deleteObject();
         m_context = 0;
     }
@@ -62,10 +67,14 @@ public:
     {
         if (m_attachmentCount)
             --m_attachmentCount;
-        if (!m_attachmentCount && m_deleted)
+        if (m_deleted)
             deleteObject();
     }
-    unsigned getAttachmentCount() { return m_attachmentCount; }
+
+    // This indicates whether the client side issue a delete call already, not
+    // whether the OpenGL resource is deleted.
+    // object()==0 indicates the OpenGL resource is deleted.
+    bool isDeleted() { return m_deleted; }
 
 protected:
     WebGLObject(WebGLRenderingContext*);
@@ -73,12 +82,8 @@ protected:
     // setObject should be only called once right after creating a WebGLObject.
     void setObject(Platform3DObject);
 
-    // deleteObjectImpl() may be called multiple times for the same object;
-    // isDeleted() needs to be tested in implementations when deciding whether
-    // to delete the OpenGL resource.
+    // deleteObjectImpl should be only called once to delete the OpenGL resource.
     virtual void deleteObjectImpl(Platform3DObject) = 0;
-    bool isDeleted() { return m_deleted; }
-    void setDeteled() { m_deleted = true; }
 
 private:
     Platform3DObject m_object;
