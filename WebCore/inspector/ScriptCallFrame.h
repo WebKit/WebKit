@@ -40,11 +40,11 @@ class InspectorObject;
 
 class ScriptCallFrame  {
 public:
-    ScriptCallFrame(const String& functionName, const String& urlString, unsigned lineNumber);
+    ScriptCallFrame(const String& functionName, const String& scriptName, unsigned lineNumber, unsigned column = 0);
     ~ScriptCallFrame();
 
     const String& functionName() const { return m_functionName; }
-    const String& sourceURL() const { return m_sourceURL; }
+    const String& sourceURL() const { return m_scriptName; }
     unsigned lineNumber() const { return m_lineNumber; }
 
     bool isEqual(const ScriptCallFrame&) const;
@@ -52,8 +52,9 @@ public:
 
 private:
     String m_functionName;
-    String m_sourceURL;
+    String m_scriptName;
     unsigned m_lineNumber;
+    unsigned m_column;
 };
 
 } // namespace WebCore

@@ -863,7 +863,7 @@ WebInspector.ConsoleMessage.prototype = {
             messageTextElement.appendChild(document.createTextNode(functionName));
             content.appendChild(messageTextElement);
 
-            var urlElement = WebInspector.linkifyResourceAsNode(frame.sourceURL, "scripts", frame.lineNumber, "console-message-url"); 
+            var urlElement = WebInspector.linkifyResourceAsNode(frame.scriptName, "scripts", frame.lineNumber, "console-message-url");
             content.appendChild(urlElement);
 
             var treeElement = new TreeElement(content);

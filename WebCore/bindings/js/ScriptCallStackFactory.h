@@ -42,6 +42,7 @@ namespace WebCore {
 class ScriptArguments;
 class ScriptCallStack;
 
+PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize);
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
 PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
 

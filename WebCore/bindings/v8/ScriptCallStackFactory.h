@@ -46,7 +46,7 @@ const v8::StackTrace::StackTraceOptions stackTraceOptions = static_cast<v8::Stac
     | v8::StackTrace::kScriptNameOrSourceURL
     | v8::StackTrace::kFunctionName);
 
-PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Local<v8::Context>, v8::Handle<v8::StackTrace>, size_t maxStackSize);
+PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Handle<v8::StackTrace>, size_t maxStackSize);
 PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize);
 PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount);
 

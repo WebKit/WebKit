@@ -39,6 +39,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 
 namespace WebCore {
 
@@ -47,9 +48,9 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double st
     RefPtr<InspectorObject> record = InspectorObject::create();
     record->setNumber("startTime", startTime);
 
-    RefPtr<InspectorArray> stackTrace = InspectorArray::create();
-    if (ScriptCallStack::stackTrace(5, stackTrace))
-        record->setArray("stackTrace", stackTrace);
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(5);
+    if (stackTrace && stackTrace->size())
+        record->setArray("stackTrace", stackTrace->buildInspectorObject());
     return record.release();
 }
 
