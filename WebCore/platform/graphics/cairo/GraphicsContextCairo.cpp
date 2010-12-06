@@ -144,7 +144,7 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
 
     // Calculate the extents of the rendered solid paths.
     cairo_t* cairoContext = context->platformContext();
-    cairo_path_t* path = cairo_copy_path(cairoContext);
+    OwnPtr<cairo_path_t> path(cairo_copy_path(cairoContext));
 
     FloatRect solidFigureExtents;
     double x0 = 0;
@@ -168,7 +168,7 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     // It's important to copy the context properties to the new shadow
     // context to preserve things such as the fill rule and stroke width.
     copyContextProperties(cairoContext, shadowContext);
-    cairo_append_path(shadowContext, path);
+    cairo_append_path(shadowContext, path.get());
 
     if (drawingStyle & Fill)
         setPlatformFill(context, shadowContext, contextPrivate);
