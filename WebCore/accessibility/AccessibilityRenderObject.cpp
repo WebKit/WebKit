@@ -2766,6 +2766,9 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
         listBox->updateChildrenIfNecessary();
         return listBox->doAccessibilityHitTest(point);
     }
+    
+    if (result->isInputSlider()) 
+        return result->doAccessibilityHitTest(point);
 
     if (result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.

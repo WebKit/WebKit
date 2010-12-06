@@ -1,3 +1,38 @@
+2010-12-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Slider does not work correctly with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=50505
+
+        Address a few problems with the Mac implementation for the accessibility slider.
+            1) The value indicator is not hit testable.
+            2) The value indicator does not return an AXValue.
+            3) In the slider, the min/max values are not correct when min/max attributes are not present.
+            4) When you change the value with the keyboard, it doesn't send out the right notification.
+            5) Sliders were returning AXValue and AXTopLevelUIElement attributes twice in their list of attributes.
+ 
+        Test: platform/mac/accessibility/html-slider-indicator.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getAttribute):
+            Use fastGetAttribute on Element, instead of getAttribute.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isInputSlider):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::doAccessibilityHitTest):
+        (WebCore::AccessibilitySlider::maxValueForRange):
+        (WebCore::AccessibilitySlider::minValueForRange):
+        * accessibility/AccessibilitySlider.h:
+        (WebCore::AccessibilitySlider::isInputSlider):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::applyStep):
+
 2010-12-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

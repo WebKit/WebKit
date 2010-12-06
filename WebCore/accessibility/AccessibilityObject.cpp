@@ -847,7 +847,7 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
         return nullAtom;
     
     Element* element = static_cast<Element*>(elementNode);
-    return element->getAttribute(attribute);
+    return element->fastGetAttribute(attribute);
 }
     
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;

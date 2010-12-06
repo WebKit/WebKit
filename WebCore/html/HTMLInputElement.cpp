@@ -376,6 +376,9 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
     if (newValue > m_inputType->maximum())
         newValue = m_inputType->maximum();
     setValueAsNumber(newValue, ec);
+    
+    if (AXObjectCache::accessibilityEnabled())
+         document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
 }
 
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
