@@ -293,7 +293,7 @@ void RenderMarquee::timerFired(Timer<RenderMarquee>*)
         }
         bool positive = range > 0;
         int clientSize = (isHorizontal() ? m_layer->renderBox()->clientWidth() : m_layer->renderBox()->clientHeight());
-        int increment = max(1, abs(m_layer->renderer()->style()->marqueeIncrement().calcValue(clientSize)));
+        int increment = abs(m_layer->renderer()->style()->marqueeIncrement().calcValue(clientSize));
         int currentPos = (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
         newPos =  currentPos + (addIncrement ? increment : -increment);
         if (positive)

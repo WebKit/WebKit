@@ -1,3 +1,15 @@
+2010-12-06  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Marquee elements do not stop animating when scrollAmount is set to 0.
+        https://bugs.webkit.org/show_bug.cgi?id=50434
+
+        Test: fast/html/marquee-scrollamount.html
+
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::timerFired): Allow increment to be 0.
+
 2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Leopard buildfix for r73380.
