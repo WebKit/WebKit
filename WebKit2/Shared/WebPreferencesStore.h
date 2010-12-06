@@ -64,9 +64,13 @@ namespace WebKit {
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
     \
 
+#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    macro(DefaultTextEncodingName, defaultTextEncodingName, String, String, "ISO-8859-1") \
+    \
+
 #if PLATFORM(WIN)
 
-#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+#define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times New Roman") \
     macro(CursiveFontFamily, cursiveFontFamily, String, String, "Comic Sans MS") \
     macro(FantasyFontFamily, fantasyFontFamily, String, String, "Comic Sans MS") \
@@ -77,7 +81,7 @@ namespace WebKit {
 
 #else
 
-#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+#define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
     macro(CursiveFontFamily, cursiveFontFamily, String, String, "Apple Chancery") \
     macro(FantasyFontFamily, fantasyFontFamily, String, String, "Papyrus") \
@@ -92,6 +96,7 @@ namespace WebKit {
     FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     \
 
 namespace WebPreferencesKey {

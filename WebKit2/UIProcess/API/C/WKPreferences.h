@@ -99,9 +99,20 @@ WK_EXPORT WKStringRef WKPreferencesCopyCursiveFontFamily(WKPreferencesRef prefer
 WK_EXPORT void WKPreferencesSetFantasyFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef);
 
+// Defaults to 16.
+WK_EXPORT void WKPreferencesSetDefaultFontSize(WKPreferencesRef preferencesRef, uint32_t);
+WK_EXPORT uint32_t WKPreferencesGetDefaultFontSize(WKPreferencesRef preferencesRef);
+
+// Defaults to 13.
+WK_EXPORT void WKPreferencesSetDefaultFixedFontSize(WKPreferencesRef preferencesRef, uint32_t);
+WK_EXPORT uint32_t WKPreferencesGetDefaultFixedFontSize(WKPreferencesRef preferencesRef);
+
 // Defaults to 0.
 WK_EXPORT void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t);
 WK_EXPORT uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef);
+
+WK_EXPORT void WKPreferencesSetDefaultTextEncodingName(WKPreferencesRef preferencesRef, WKStringRef name);
+WK_EXPORT WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preferencesRef);
 
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled);

@@ -210,6 +210,26 @@ WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
     return toCopiedAPI(toImpl(preferencesRef)->fantasyFontFamily());
 }
 
+void WKPreferencesSetDefaultFontSize(WKPreferencesRef preferencesRef, uint32_t size)
+{
+    toImpl(preferencesRef)->setDefaultFontSize(size);
+}
+
+uint32_t WKPreferencesGetDefaultFontSize(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->defaultFontSize();
+}
+
+void WKPreferencesSetDefaultFixedFontSize(WKPreferencesRef preferencesRef, uint32_t size)
+{
+    toImpl(preferencesRef)->setDefaultFixedFontSize(size);
+}
+
+uint32_t WKPreferencesGetDefaultFixedFontSize(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->defaultFixedFontSize();
+}
+
 void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t size)
 {
     toImpl(preferencesRef)->setMinimumFontSize(size);
@@ -218,6 +238,16 @@ void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t s
 uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->minimumFontSize();
+}
+
+void WKPreferencesSetDefaultTextEncodingName(WKPreferencesRef preferencesRef, WKStringRef name)
+{
+    toImpl(preferencesRef)->setDefaultTextEncodingName(toWTFString(name));
+}
+
+WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preferencesRef)
+{
+    return toCopiedAPI(toImpl(preferencesRef)->defaultTextEncodingName());
 }
 
 void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)

@@ -1,3 +1,35 @@
+2010-12-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50504
+        Expose some more WebCore settings in WebKit2 preferences
+
+        * Shared/WebPreferencesStore.h:
+        Changed name of existing FOR_EACH_WEBKIT_STRING_PREFERENCE macro to
+        FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE since it was all about platform-specific
+        font families, and I'm now introducing a non-platform-spacific string, and
+        I didn't want to put the new preference in two platform-specific lists. Then
+        added a new FOR_EACH_WEBKIT_STRING_PREFERENCE to hold the new preference. Note
+        that the other preferences exposed in this patch were already declared here.
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDefaultFontSize):
+        New wrapper.
+        (WKPreferencesGetDefaultFontSize):
+        Ditto.
+        (WKPreferencesSetDefaultFixedFontSize):
+        Ditto.
+        (WKPreferencesGetDefaultFixedFontSize):
+        Ditto.
+        (WKPreferencesSetDefaultTextEncodingName):
+        Ditto.
+        (WKPreferencesCopyDefaultTextEncodingName):
+        Ditto.
+        
+        * UIProcess/API/C/WKPreferences.h:
+        Declare new wrappers.
+
 2010-12-05  Adam Roben  <aroben@apple.com>
 
         Windows production build fix
