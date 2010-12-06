@@ -262,6 +262,9 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
 
 float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
+    if (!primaryFont()->platformData().size())
+        return 0;
+
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     if (!run.length())
         return 0;
@@ -278,12 +281,15 @@ float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer
     return w + run.padding();
 #else
     Q_ASSERT(false);
-    return 0.0f;
+    return 0;
 #endif
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
 {
+    if (!primaryFont()->platformData().size())
+        return 0;
+
     if (!run.length())
         return 0;
 
