@@ -62,6 +62,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::GraphicsLa
 
         GraphicsContext graphicsContext(context);
 
+        // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
+        graphicsContext.setAllowsFontSmoothing(false);
+        
         // It's important to get the clip from the context, because it may be significantly
         // smaller than the layer bounds (e.g. tiled layers)
         CGRect clipBounds = CGContextGetClipBoundingBox(context);

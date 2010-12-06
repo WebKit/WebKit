@@ -1,3 +1,19 @@
+2010-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Font antialiasing (smoothing) changes when elements are rendered into compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=23364
+
+        Text rendered by Core Graphics over a transparent background looks bad because of 
+        font smoothing, so turn off smoothing when rendering text into compositing layers.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setAllowsFontSmoothing):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2010-12-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -1116,6 +1116,12 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return InterpolationDefault;
 }
 
+void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
+{
+    CGContextRef context = platformContext();
+    CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
+}
+
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())

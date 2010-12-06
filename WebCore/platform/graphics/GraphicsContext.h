@@ -193,6 +193,9 @@ namespace WebCore {
         void applyStrokePattern();
         void applyFillPattern();
         void drawPath(const Path&);
+        
+        // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
+        void setAllowsFontSmoothing(bool);
 #endif
 
         void save();
