@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 760x42
+          text run at (0,0) width 760: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that the focus ring color is not"
+          text run at (0,21) width 289: "inherited for an <area> (by default) as per "
+        RenderInline {A} at (0,0) size 754x42 [color=#0000EE]
+          RenderText {#text} at (289,21) size 754x42
+            text run at (289,21) width 465: "section 18.4 \"Dynamic outlines: the 'outline' property\" of the CSS2.1"
+            text run at (0,42) width 29: "spec"
+        RenderText {#text} at (29,42) size 677x21
+          text run at (29,42) width 677: ". This test FAILED if a red-colored focus ring is drawn around the <area> in the imagemap (below)."
+      RenderBlock (anonymous) at (0,79) size 784x128
+        RenderInline {MAP} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (0,0) size 128x128
+        RenderText {#text} at (0,0) size 0x0

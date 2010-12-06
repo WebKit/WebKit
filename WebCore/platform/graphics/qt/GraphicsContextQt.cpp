@@ -832,15 +832,18 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, con
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
 
+    const QPen oldPen = p->pen();
     const QBrush oldBrush = p->brush();
 
     QPen nPen = p->pen();
-    nPen.setColor(color);
+    nPen.setColor(QColor(color.red(), color.green(), color.blue(), 127));
+    nPen.setWidth(width);
     p->setBrush(Qt::NoBrush);
-    nPen.setStyle(Qt::DotLine);
+    nPen.setStyle(Qt::SolidLine);
 
     p->strokePath(path.platformPath(), nPen);
     p->setBrush(oldBrush);
+    p->setPen(oldPen);
 
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
