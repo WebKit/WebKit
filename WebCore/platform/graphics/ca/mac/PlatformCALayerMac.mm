@@ -181,7 +181,7 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Grap
     } else {
         m_layerType = layerType;
     
-        Class layerClass;
+        Class layerClass = Nil;
         switch(layerType) {
             case LayerTypeLayer:
                 layerClass = [CALayer class];

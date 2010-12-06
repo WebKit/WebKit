@@ -578,7 +578,7 @@ void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>
 {
     NSMutableArray* array = [NSMutableArray array];
 
-    for (size_t i; i < value.size(); ++i)
+    for (size_t i = 0; i < value.size(); ++i)
         [array addObject:toCAMediaTimingFunction(value[i])];
     
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:array];

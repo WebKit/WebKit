@@ -1,3 +1,12 @@
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Leopard buildfix for r73380.
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::setTimingFunctions):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::PlatformCALayer):
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
