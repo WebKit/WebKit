@@ -1,3 +1,15 @@
+2010-12-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed move of Chromium baselines.
+        
+        In preparation for making pixel tests pass for Chromium on Snow Leopard,
+        move baselines for 273 tests from chromium-mac to chromium-mac-leopard.
+        These tests will then use the mac baselines, which will enable them
+        to pass on Snow Leopard, but keep passing for Leopard too.
+
+        List of files omitted due to length but composed entirely of moves from
+        platform/chromium-mac to platform/chromium-mac-leopard.
+
 2010-12-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
