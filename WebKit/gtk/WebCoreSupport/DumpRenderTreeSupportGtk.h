@@ -59,6 +59,13 @@ public:
     static void clearMainFrameName(WebKitWebFrame* frame);
     static AtkObject* getFocusedAccessibleElement(WebKitWebFrame* frame);
 
+    // WebKitWebView
+    static void executeCoreCommandByName(WebKitWebView* webView, const gchar* name, const gchar* value);
+    static bool isCommandEnabled(WebKitWebView* webView, const gchar* name);
+
+    static void whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
+    static void resetOriginAccessWhiteLists();
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;

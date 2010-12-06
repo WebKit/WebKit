@@ -51,10 +51,7 @@
 extern "C" {
 void webkit_application_cache_set_maximum_size(unsigned long long size);
 unsigned int webkit_worker_thread_count(void);
-void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
-void webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
-gboolean webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -279,7 +276,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
     gchar* sourceOriginGChar = JSStringCopyUTF8CString(sourceOrigin);
     gchar* protocolGChar = JSStringCopyUTF8CString(protocol);
     gchar* hostGChar = JSStringCopyUTF8CString(host);
-    webkit_white_list_access_from_origin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
+    DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
     g_free(sourceOriginGChar);
     g_free(protocolGChar);
     g_free(hostGChar);
@@ -545,7 +542,7 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
 
     gchar* cName = JSStringCopyUTF8CString(name);
     gchar* cValue = JSStringCopyUTF8CString(value);
-    webkit_web_view_execute_core_command_by_name(view, cName, cValue);
+    DumpRenderTreeSupportGtk::executeCoreCommandByName(view, cName, cValue);
     g_free(cName);
     g_free(cValue);
 }
@@ -562,7 +559,7 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     ASSERT(view);
 
     gchar* cName = JSStringCopyUTF8CString(name);
-    gboolean result = webkit_web_view_is_command_enabled(view, cName);
+    bool result = DumpRenderTreeSupportGtk::isCommandEnabled(view, cName);
     g_free(cName);
     return result;
 }

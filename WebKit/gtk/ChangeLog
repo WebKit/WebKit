@@ -1,3 +1,23 @@
+2010-12-04  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Populate DumpRenderTreeSupportGtk (Part II)
+        https://bugs.webkit.org/show_bug.cgi?id=48429
+
+        Moved more private method declared with WEBKIT_API to
+        DumpRenderTreeSupportGtk, since they were only being used by DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::executeCoreCommandByName):
+        (DumpRenderTreeSupportGtk::isCommandEnabled):
+        (DumpRenderTreeSupportGtk::whiteListAccessFromOrigin):
+        (DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * webkit/webkitprivate.cpp:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+
 2010-11-08  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.

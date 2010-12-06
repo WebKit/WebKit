@@ -43,7 +43,6 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
-#include "SecurityOrigin.h"
 #include "TextEncodingRegistry.h"
 #include "WebKitDOMBinding.h"
 #include "webkitnetworkresponse.h"
@@ -322,17 +321,6 @@ void webkit_init()
 
     soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
 }
-
-void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)
-{
-    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
-}
-
-void webkit_reset_origin_access_white_lists()
-{
-    SecurityOrigin::resetOriginAccessWhitelists();
-}
-
 
 void webkitWebViewEnterFullscreen(WebKitWebView* webView, Node* node)
 {

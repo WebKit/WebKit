@@ -301,12 +301,6 @@ extern "C" {
     GtkMenu*
     webkit_web_view_get_context_menu(WebKitWebView*);
 
-    WEBKIT_API void
-    webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
-
-    WEBKIT_API gboolean
-    webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
-
     WebKitDownload*
     webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response);
 
@@ -368,12 +362,6 @@ extern "C" {
     WEBKIT_API unsigned int
     webkit_worker_thread_count();
     
-    WEBKIT_API void
-    webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
-    
-    WEBKIT_API void
-    webkit_reset_origin_access_white_lists();
-
     // WebKitWebDataSource private
     WebKitWebDataSource*
     webkit_web_data_source_new_with_loader(PassRefPtr<WebKit::DocumentLoader>);

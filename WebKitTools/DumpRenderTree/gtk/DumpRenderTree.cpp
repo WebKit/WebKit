@@ -65,7 +65,6 @@ extern gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
 extern GList* webkit_web_history_item_get_children(WebKitWebHistoryItem*);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
-extern void webkit_reset_origin_access_white_lists();
 }
 
 volatile bool done;
@@ -421,7 +420,7 @@ static void resetDefaultsToConsistentValues()
 
     webkit_web_view_set_zoom_level(webView, 1.0);
 
-    webkit_reset_origin_access_white_lists();
+    DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists();
 
     WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
     webkit_web_back_forward_list_clear(list);

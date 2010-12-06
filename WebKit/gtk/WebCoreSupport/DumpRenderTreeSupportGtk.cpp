@@ -24,6 +24,7 @@
 #include "APICast.h"
 #include "AXObjectCache.h"
 #include "Document.h"
+#include "FocusController.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -39,6 +40,7 @@
 #include "RenderListItem.h"
 #include "RenderView.h"
 #include "RenderTreeAsText.h"
+#include "SecurityOrigin.h"
 #if ENABLE(SVG)
 #include "SVGSMILElement.h"
 #endif
@@ -346,5 +348,32 @@ AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame*
 #else
     return 0;
 #endif
+}
+
+void DumpRenderTreeSupportGtk::executeCoreCommandByName(WebKitWebView* webView, const gchar* name, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(name);
+    g_return_if_fail(value);
+
+    core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);
+}
+
+bool DumpRenderTreeSupportGtk::isCommandEnabled(WebKitWebView* webView, const gchar* name)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    return core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
+}
+
+void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)
+{
+    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+void DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists()
+{
+    SecurityOrigin::resetOriginAccessWhitelists();
 }
 
