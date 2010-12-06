@@ -550,6 +550,9 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
         }
     }
 
+    if (d->m_defersLoading)
+         soup_session_pause_message(handle->defaultSession(), d->m_soupMessage.get());
+
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, 0);
 }
@@ -660,8 +663,11 @@ static bool startHttp(ResourceHandle* handle)
     if (!soup_message_headers_get_one(soupMessage->request_headers, "Accept"))
         soup_message_headers_append(soupMessage->request_headers, "Accept", "*/*");
 
-    d->m_cancellable = adoptPlatformRef(g_cancellable_new());
-    webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+    // Send the request only if it's not been explicitely deferred.
+    if (!d->m_defersLoading) {
+        d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+        webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+    }
 
     return true;
 }
@@ -734,9 +740,28 @@ bool ResourceHandle::supportsBufferedData()
     return false;
 }
 
-void ResourceHandle::platformSetDefersLoading(bool)
+void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 {
-    notImplemented();
+    // Initial implementation of this method was required for bug #44157.
+
+    if (d->m_cancelled)
+        return;
+
+    if (!defersLoading && !d->m_cancellable && d->m_soupRequest.get()) {
+        d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+        webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+        return;
+    }
+
+    // Only supported for http(s) transfers. Something similar would
+    // probably be needed for data transfers done with GIO.
+    if (!d->m_soupMessage)
+        return;
+
+    if (defersLoading)
+        soup_session_pause_message(defaultSession(), d->m_soupMessage.get());
+    else
+        soup_session_unpause_message(defaultSession(), d->m_soupMessage.get());
 }
 
 bool ResourceHandle::loadsBlocked()
@@ -758,7 +783,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     // FIXME: we should use the ResourceHandle::create method here,
     // but it makes us timeout in a couple of tests. See
     // https://bugs.webkit.org/show_bug.cgi?id=41823
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, true, false));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/));
     handle->start(context);
 
     syncLoader.run();
