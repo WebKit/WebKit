@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {H2} at (0,0) size 784x31 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 58x32
+          text run at (0,0) width 58: "PASS"
+layer at (8,58) size 760x234
+  RenderBlock {DIV} at (0,50) size 760x234 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,24) size 750x31
+      RenderBlock {H2} at (0,0) size 750x31 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 58x32
+          text run at (0,0) width 58: "PASS"
+layer at (13,132) size 750x139
+  RenderBlock (anonymous multi-column) at (5,74) size 750x139
+    RenderBlock {SPAN} at (0,0) size 367x262
+      RenderBlock (anonymous) at (0,0) size 367x265
+        RenderText {#text} at (0,0) size 367x265
+          text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
+          text run at (0,21) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
+          text run at (0,42) width 329: "felis quis lectus. Quisque adipiscing rhoncus sem."
+          text run at (0,63) width 367: "Proin nulla purus, vulputate vel, varius ut, euismod et,"
+          text run at (0,84) width 325: "nisi. Sed vitae felis vel orci sagittis aliquam. Cras"
+          text run at (0,105) width 315: "convallis adipiscing sem. Nam nonummy enim."
+          text run at (0,139) width 341: "Nullam bibendum lobortis neque. Vestibulum velit"
+          text run at (0,160) width 348: "orci, tempus euismod, pretium quis, interdum vitae,"
+          text run at (0,181) width 326: "nulla. Phasellus eget ante et tortor condimentum"
+          text run at (0,202) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
+          text run at (0,223) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
+          text run at (0,244) width 184: "consectetuer adipiscing elit."
+      RenderBlock {DL} at (0,278) size 367x0
