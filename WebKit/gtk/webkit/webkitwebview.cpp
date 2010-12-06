@@ -125,7 +125,7 @@
  */
 
 static const double defaultDPI = 96.0;
-static WebKitCacheModel cacheModel;
+static WebKitCacheModel cacheModel = WEBKIT_CACHE_MODEL_DEFAULT;
 static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
 
 using namespace WebKit;
@@ -4994,6 +4994,8 @@ void webkit_set_cache_model(WebKitCacheModel model)
         deadDecodedDataDeletionInterval = 0;
         break;
     case WEBKIT_CACHE_MODEL_WEB_BROWSER:
+        // Page cache capacity (in pages). Comment from Mac port:
+        // (Research indicates that value / page drops substantially after 3 pages.)
         pageCacheCapacity = 3;
         cacheTotalCapacity = 32 * 1024 * 1024;
         cacheMinDeadCapacity = cacheTotalCapacity / 4;

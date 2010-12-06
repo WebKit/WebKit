@@ -283,11 +283,6 @@ void webkit_init()
     // that may only be done by the main thread.
     atomicCanonicalTextEncodingName("UTF-8");
 
-    // Page cache capacity (in pages). Comment from Mac port:
-    // (Research indicates that value / page drops substantially after 3 pages.)
-    // FIXME: Expose this with an API and/or calculate based on available resources
-    webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER);
-
 #if ENABLE(DATABASE)
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);

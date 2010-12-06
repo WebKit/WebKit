@@ -50,8 +50,21 @@ typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
 } WebKitNavigationResponse;
 
+/*  
+ * WebKitCacheModel:
+ * @WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER: Disable the cache completely, which 
+ *   substantially reduces memory usage. Useful for applications that only
+ *   access local files.
+ * @WEBKIT_CACHE_MODEL_WEB_BROWSER: Improve document load speed substantially
+ *   by caching previously viewed content. This is the default setting.
+ * 
+ * Enum values used for determining the webview cache model.
+ */
 typedef enum {
-    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER = 1,
+    /*< private >*/
+    WEBKIT_CACHE_MODEL_DEFAULT,
+    /*< public >*/
+    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,
     WEBKIT_CACHE_MODEL_WEB_BROWSER
 } WebKitCacheModel;
 

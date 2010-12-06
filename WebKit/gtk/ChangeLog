@@ -1,3 +1,15 @@
+2010-12-06  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The webkit cache model needs to be set when WebFrameLoaderClient::didPerformFirstNavigation() is called
+        https://bugs.webkit.org/show_bug.cgi?id=50430
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::didPerformFirstNavigation): Set the webview cache model.
+        * webkit/webkitprivate.cpp:
+        (webkit_init): Removed the code of setting the webview cache model.
+
 2010-12-04  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.
