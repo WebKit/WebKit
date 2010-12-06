@@ -230,8 +230,8 @@ void HTMLLinkElement::process()
         // also, don't load style sheets for standalone documents
         
         String charset = getAttribute(charsetAttr);
-        if (charset.isEmpty() && document()->frame())
-            charset = document()->frame()->loader()->writer()->encoding();
+        if (charset.isEmpty())
+            charset = document()->loader()->writer()->encoding();
 
         if (m_cachedSheet) {
             if (m_loading)

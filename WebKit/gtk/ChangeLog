@@ -1,3 +1,15 @@
+2010-12-06  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update calls to DocumentWriter.
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::finishedLoading):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding):
+
 2010-12-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

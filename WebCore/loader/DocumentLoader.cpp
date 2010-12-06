@@ -37,6 +37,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
+#include "DocumentWriter.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -49,7 +50,7 @@
 #include "PlatformString.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-
+#include "TextResourceDecoder.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
@@ -77,6 +78,7 @@ static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_deferMainResourceDataLoad(true)
     , m_frame(0)
+    , m_writer(m_frame)
     , m_originalRequest(req)
     , m_substituteData(substituteData)
     , m_originalRequestCopy(req)
@@ -276,7 +278,7 @@ void DocumentLoader::finishedLoading()
     commitIfReady();
     if (FrameLoader* loader = frameLoader()) {
         loader->finishedLoadingDocument(this);
-        loader->writer()->end();
+        m_writer.end();
     }
 }
 
@@ -304,10 +306,9 @@ void DocumentLoader::commitData(const char* bytes, int length)
         userChosen = false;
         encoding = response().textEncodingName();
     }
-    // FIXME: DocumentWriter should be owned by DocumentLoader.
-    m_frame->loader()->writer()->setEncoding(encoding, userChosen);
+    m_writer.setEncoding(encoding, userChosen);
     ASSERT(m_frame->document()->parsing());
-    m_frame->loader()->writer()->addData(bytes, length);
+    m_writer.addData(bytes, length);
 }
 
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
@@ -337,7 +338,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     }
     
     frameLoader()->finishedLoadingDocument(this);
-    m_frame->loader()->writer()->end();
+    m_writer.end();
     
     frameLoader()->setReplacing();
     m_gotFirstByte = false;
@@ -374,6 +375,7 @@ void DocumentLoader::setFrame(Frame* frame)
         return;
     ASSERT(frame && !m_frame);
     m_frame = frame;
+    m_writer.setFrame(frame);
     attachToFrame();
 }
 
