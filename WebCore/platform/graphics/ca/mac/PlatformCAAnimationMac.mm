@@ -562,7 +562,7 @@ void PlatformCAAnimation::setKeyTimes(const Vector<float>& value)
 {
     NSMutableArray* array = [NSMutableArray array];
 
-    for (size_t i; i < value.size(); ++i)
+    for (size_t i = 0; i < value.size(); ++i)
         [array addObject:[NSNumber numberWithFloat:value[i]]];
     
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setKeyTimes:array];

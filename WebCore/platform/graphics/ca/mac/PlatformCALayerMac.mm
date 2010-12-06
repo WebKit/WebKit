@@ -237,7 +237,7 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
         return 0;
         
     // Pointer to PlatformCALayer is kept in a key of the CALayer
-    PlatformCALayer* platformCALayer;
+    PlatformCALayer* platformCALayer = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     platformCALayer = static_cast<PlatformCALayer*>([[static_cast<CALayer*>(platformLayer) valueForKey:platformCALayerPointer] pointerValue]);
     END_BLOCK_OBJC_EXCEPTIONS

@@ -1,3 +1,12 @@
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Yet unreviewed another Leopard build fix for r73380.
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::setKeyTimes):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::platformCALayer):
+
 2010-12-06  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
