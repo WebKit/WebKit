@@ -1,3 +1,300 @@
+2010-12-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=49220 <<rdar://problem/8644849>, REGRESSION: transforms now
+        O(n^3) from pathological behavior in lowestPosition, rightmostPosition, leftmostPosition and topmostPosition.
+
+        This patch throws out the lowest/rightmost/leftmost/topmostPosition functions and re-architects layout overflow
+        in the engine to cache all the information required to properly handle scrolling.
+
+        In the old code, there were two types of overflow: layout overflow and visual overflow.  The former could
+        affect scrolling and the latter could not.  The distinction was largely meaningless, since layout overflow
+        wasn't actually used to determine scroll width or scroll height.  It didn't propagate across self-painting layer
+        boundaries either.  In the old code, the term visible overflow meant the union of the layout overflow and
+        visual overflow rects.
+
+        In the new code, the two types of overflow remain, but the distinction between the two is now clear.  Visual overflow
+        is used purely for painting and hit testing checks and layout overflow is used specifically for scrolling.  It has
+        been expanded to propagate across self-painting layers, to factor in relative positioning and transforms, and to
+        work with writing modes.
+
+        In order to minimize layout test changes, layers no longer incorporate right/bottom overflow into their width/height members.
+        Doing so uncovered two bugs where left/top overflow was ignored (proof that even having layer dimensions is harmful).
+        A render tree dump hack has been put into the code to keep this overflow dumping for the RenderView's layer, since otherwise
+        a huge number of tests would change.
+
+        Added fast/overflow/overflow-rtl-vertical.html to test vertical writing-mode overflow.  Existing tests cover the rest.
+
+        * compositing/checkerboard-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * fast/backgrounds/size/contain-and-cover-expected.txt:
+        * fast/flexbox/009.html:
+        * fast/overflow/overflow-rtl-vertical.html: Added.
+        * fast/spatial-navigation/snav-clipped-overflowed-content-expected.txt:
+        * fast/spatial-navigation/snav-clipped-overflowed-content.html:
+        * platform/mac/compositing/direct-image-compositing-expected.txt:
+        * platform/mac/compositing/geometry/fixed-position-expected.txt:
+        * platform/mac/compositing/geometry/video-opacity-overlay-expected.txt:
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.txt:
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.txt:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.txt:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.txt:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.txt:
+        * platform/mac/css1/box_properties/margin-expected.txt:
+        * platform/mac/css1/box_properties/margin_right-expected.txt:
+        * platform/mac/css1/classification/white_space-expected.txt:
+        * platform/mac/css1/color_and_background/background_attachment-expected.txt:
+        * platform/mac/css1/color_and_background/background_repeat-expected.txt:
+        * platform/mac/css2.1/t0803-c5502-mrgn-r-02-c-expected.txt:
+        * platform/mac/css2.1/t0803-c5505-mrgn-02-c-expected.txt:
+        * platform/mac/css2.1/t0804-c5508-ipadn-b-02-b-a-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-00-d-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/mac/css2.1/t1202-counters-08-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-09-b-expected.txt:
+        * platform/mac/editing/deleting/delete-after-span-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-after-span-ws-002-expected.txt:
+        * platform/mac/editing/deleting/delete-after-span-ws-003-expected.txt:
+        * platform/mac/editing/deleting/delete-line-end-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-line-end-ws-002-expected.txt:
+        * platform/mac/editing/selection/25228-expected.txt:
+        * platform/mac/editing/selection/focus_editable_html-expected.txt:
+        * platform/mac/editing/selection/select-all-001-expected.txt:
+        * platform/mac/editing/selection/select-all-002-expected.txt:
+        * platform/mac/editing/selection/select-all-003-expected.txt:
+        * platform/mac/editing/selection/select-all-004-expected.txt:
+        * platform/mac/editing/selection/unrendered-001-expected.txt:
+        * platform/mac/editing/selection/unrendered-002-expected.txt:
+        * platform/mac/editing/selection/unrendered-003-expected.txt:
+        * platform/mac/editing/selection/unrendered-004-expected.txt:
+        * platform/mac/editing/selection/unrendered-005-expected.txt:
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/mac/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * platform/mac/fast/block/basic/010-expected.txt:
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+        * platform/mac/fast/block/float/008-expected.txt:
+        * platform/mac/fast/block/float/013-expected.txt:
+        * platform/mac/fast/block/float/019-expected.txt:
+        * platform/mac/fast/block/float/021-expected.txt:
+        * platform/mac/fast/block/float/029-expected.txt:
+        * platform/mac/fast/block/float/031-expected.txt:
+        * platform/mac/fast/block/float/033-expected.txt:
+        * platform/mac/fast/block/float/035-expected.txt:
+        * platform/mac/fast/block/float/avoidance-percent-width-strict-expected.txt:
+        * platform/mac/fast/block/float/clamped-right-float-expected.txt:
+        * platform/mac/fast/block/float/float-in-float-painting-expected.txt:
+        * platform/mac/fast/block/float/nested-clearance-expected.txt:
+        * platform/mac/fast/block/float/relative-painted-twice-expected.txt:
+        * platform/mac/fast/block/margin-collapse/004-expected.txt:
+        * platform/mac/fast/block/margin-collapse/062-expected.txt:
+        * platform/mac/fast/block/margin-collapse/063-expected.txt:
+        * platform/mac/fast/block/margin-collapse/104-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/004-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/mac/fast/block/positioning/002-expected.txt:
+        * platform/mac/fast/block/positioning/047-expected.txt:
+        * platform/mac/fast/block/positioning/049-expected.txt:
+        * platform/mac/fast/block/positioning/051-expected.txt:
+        * platform/mac/fast/block/positioning/auto-height-with-top-and-bottom-expected.txt:
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt:
+        * platform/mac/fast/blockflow/block-level-images-expected.txt:
+        * platform/mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.txt:
+        * platform/mac/fast/blockflow/box-shadow-vertical-lr-expected.txt:
+        * platform/mac/fast/blockflow/box-shadow-vertical-rl-expected.txt:
+        * platform/mac/fast/blockflow/floats-in-block-layout-expected.txt:
+        * platform/mac/fast/body-propagation/background-color/002-expected.txt:
+        * platform/mac/fast/body-propagation/background-color/002-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/background-image/002-expected.txt:
+        * platform/mac/fast/body-propagation/background-image/002-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/001-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/001-xhtml-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/005-declarative-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/005-expected.txt:
+        * platform/mac/fast/body-propagation/overflow/005-xhtml-expected.txt:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/mac/fast/box-sizing/box-sizing-expected.txt:
+        * platform/mac/fast/clip/008-expected.txt:
+        * platform/mac/fast/clip/009-expected.txt:
+        * platform/mac/fast/clip/010-expected.txt:
+        * platform/mac/fast/clip/011-expected.txt:
+        * platform/mac/fast/clip/012-expected.txt:
+        * platform/mac/fast/compact/001-expected.txt:
+        * platform/mac/fast/css/color-correction-on-background-image-expected.txt:
+        * platform/mac/fast/css/negative-leading-expected.txt:
+        * platform/mac/fast/css/percentage-non-integer-expected.txt:
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/dom/clone-node-dynamic-style-expected.txt:
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.txt:
+        * platform/mac/fast/events/focusingUnloadedFrame-expected.txt:
+        * platform/mac/fast/flexbox/009-expected.txt:
+        * platform/mac/fast/flexbox/016-expected.txt:
+        * platform/mac/fast/flexbox/flex-hang-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/file-input-direction-expected.txt:
+        * platform/mac/fast/forms/floating-textfield-relayout-expected.txt:
+        * platform/mac/fast/forms/textfield-overflow-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-simple-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframesets-expected.txt:
+        * platform/mac/fast/frames/frame-scrolling-attribute-expected.txt:
+        * platform/mac/fast/frames/iframe-scrolling-attribute-expected.txt:
+        * platform/mac/fast/frames/inline-object-inside-frameset-expected.txt:
+        * platform/mac/fast/gradients/background-clipped-expected.txt:
+        * platform/mac/fast/images/gif-large-checkerboard-expected.txt:
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+        * platform/mac/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/mac/fast/inline/long-wrapped-line-expected.txt:
+        * platform/mac/fast/layers/layer-visibility-expected.txt:
+        * platform/mac/fast/layers/layer-visibility-sublayer-expected.txt:
+        * platform/mac/fast/lists/001-expected.txt:
+        * platform/mac/fast/lists/001-vertical-expected.txt:
+        * platform/mac/fast/lists/003-expected.txt:
+        * platform/mac/fast/lists/003-vertical-expected.txt:
+        * platform/mac/fast/lists/li-br-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-02-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-03-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-04-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-05-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-06-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-07-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-08-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-09-expected.txt:
+        * platform/mac/fast/media/mq-width-absolute-01-expected.txt:
+        * platform/mac/fast/media/mq-width-absolute-02-expected.txt:
+        * platform/mac/fast/media/mq-width-absolute-03-expected.txt:
+        * platform/mac/fast/media/mq-width-absolute-04-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-expected.txt:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/mac/fast/multicol/table-vertical-align-expected.txt:
+        * platform/mac/fast/overflow/006-expected.txt:
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/mac/fast/overflow/overflow-auto-table-expected.txt:
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.checksum: Added.
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.png: Added.
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.txt: Added.
+        * platform/mac/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/mac/fast/reflections/reflection-direction-expected.txt:
+        * platform/mac/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/mac/fast/repaint/box-shadow-h-expected.txt:
+        * platform/mac/fast/repaint/box-shadow-v-expected.txt:
+        * platform/mac/fast/repaint/content-into-overflow-expected.txt:
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt:
+        * platform/mac/fast/repaint/float-overflow-expected.txt:
+        * platform/mac/fast/repaint/float-overflow-right-expected.txt:
+        * platform/mac/fast/repaint/overflow-into-content-expected.txt:
+        * platform/mac/fast/repaint/overflow-scroll-body-appear-expected.txt:
+        * platform/mac/fast/repaint/subtree-root-clip-expected.txt:
+        * platform/mac/fast/repaint/transform-absolute-in-positioned-container-expected.txt:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.checksum:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/mac/fast/replaced/004-expected.txt:
+        * platform/mac/fast/table/034-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-expected.txt:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/mac/fast/table/wide-colspan-expected.txt:
+        * platform/mac/fast/table/wide-column-expected.txt:
+        * platform/mac/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/mac/fast/text/large-text-composed-char-expected.txt:
+        * platform/mac/fast/text/letter-spacing-negative-opacity-expected.txt:
+        * platform/mac/fast/text/text-letter-spacing-expected.txt:
+        * platform/mac/fast/text/whitespace/012-expected.txt:
+        * platform/mac/mathml/presentation/fenced-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/printing/return-from-printing-mode-expected.txt:
+        * platform/mac/svg/custom/altglyph-expected.txt:
+        * platform/mac/svg/custom/getscreenctm-in-mixed-content-expected.txt:
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt:
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/mac/svg/text/kerning-expected.txt:
+        * platform/mac/svg/text/multichar-glyph-expected.txt:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug120364-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug196870-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug23151-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug29314-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug43039-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug43854-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug45055-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug5797-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug625-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug72359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug83786-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/mac/tables/mozilla/core/nested1-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_index-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_table_align_right-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_td_nowrap-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_th_nowrap-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug220653-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug67915-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-2-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-origins-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt:
+        * platform/mac/transforms/svg-vs-css-expected.txt:
+        * svg/custom/text-zoom-expected.txt:
+
 2010-12-06  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed move of Chromium baselines.

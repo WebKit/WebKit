@@ -615,8 +615,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
             while (box) {
-                repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(box));
-                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(box));
+                repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(box));
+                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(box));
                 RootInlineBox* next = box->nextRootBox();
                 box->deleteLine(arena);
                 box = next;
@@ -764,6 +764,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                         }
 #endif
 
+                        // Compute our overflow now.
+                        lineBox->computeOverflow(lineBox->lineTop(), lineBox->lineBottom(), document()->inNoQuirksMode(), textBoxDataMap);
+    
 #if PLATFORM(MAC)
                         // Highlight acts as an overflow inflation.
                         if (style()->highlight() != nullAtom)
@@ -777,8 +780,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 if (lineBox) {
                     lineBox->setLineBreakInfo(end.obj, end.pos, resolver.status());
                     if (useRepaintBounds) {
-                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(lineBox));
-                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(lineBox));
+                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(lineBox));
+                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(lineBox));
                     }
                     
                     if (paginated) {
@@ -788,7 +791,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                             int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, firstLine);
                             lineBox->adjustPosition(0, adjustment);
                             if (useRepaintBounds) // This can only be a positive adjustment, so no need to update repaintTop.
-                                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(lineBox));
+                                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(lineBox));
                                 
                             if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, firstLine) != oldLineWidth) {
                                 // We have to delete this line, remove all floats that got added, and let line layout re-run.
@@ -842,8 +845,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                         adjustLinePositionForPagination(line, delta);
                     }
                     if (delta) {
-                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(line) + min(delta, 0));
-                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(line) + max(delta, 0));
+                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(line) + min(delta, 0));
+                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(line) + max(delta, 0));
                         line->adjustPosition(0, delta);
                     }
                     if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
@@ -861,8 +864,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 RootInlineBox* line = endLine;
                 RenderArena* arena = renderArena();
                 while (line) {
-                    repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(line));
-                    repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(line));
+                    repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(line));
+                    repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(line));
                     RootInlineBox* next = line->nextRootBox();
                     line->deleteLine(arena);
                     line = next;
@@ -874,7 +877,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             // This has to be done before adding in the bottom border/padding, or the float will
             // include the padding incorrectly. -dwh
             if (checkForFloatsFromLastLine) {
-                int bottomVisualOverflow = afterSideVisibleOverflowForLine(lastRootBox());
+                int bottomVisualOverflow = afterSideVisualOverflowForLine(lastRootBox());
                 int bottomLayoutOverflow = afterSideLayoutOverflowForLine(lastRootBox());
                 TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
                 m_lineBoxes.appendLineBox(trailingFloatsLineBox);
@@ -882,7 +885,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 GlyphOverflowAndFallbackFontsMap textBoxDataMap;
                 VerticalPositionCache verticalPositionCache;
                 trailingFloatsLineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache);
-                trailingFloatsLineBox->setBlockDirectionOverflowPositions(logicalHeight(), bottomLayoutOverflow, logicalHeight(), bottomVisualOverflow);
+                IntRect logicalLayoutOverflow(0, logicalHeight(), 1, bottomLayoutOverflow);
+                IntRect logicalVisualOverflow(0, logicalHeight(), 1, bottomVisualOverflow);
+                trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow);
                 trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
             }
             if (lastFloat) {
@@ -955,8 +960,8 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                     if (!useRepaintBounds)
                         useRepaintBounds = true;
                         
-                    repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(curr) + min(paginationDelta, 0));
-                    repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(curr) + max(paginationDelta, 0));
+                    repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(curr) + min(paginationDelta, 0));
+                    repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(curr) + max(paginationDelta, 0));
                     curr->adjustPosition(0, paginationDelta);
                 }                
             }
@@ -1172,8 +1177,8 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
             RootInlineBox* boxToDelete = endLine;
             RenderArena* arena = renderArena();
             while (boxToDelete && boxToDelete != result) {
-                repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(boxToDelete));
-                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(boxToDelete));
+                repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(boxToDelete));
+                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(boxToDelete));
                 RootInlineBox* next = boxToDelete->nextRootBox();
                 boxToDelete->deleteLine(arena);
                 boxToDelete = next;
@@ -2029,29 +2034,33 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
 void RenderBlock::addOverflowFromInlineChildren()
 {
+    int endPadding = hasOverflowClip() ? paddingEnd() : 0;
+    // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
+    if (hasOverflowClip() && !endPadding && node() && node()->isContentEditable() && node() == node()->rootEditableElement() && style()->isLeftToRightDirection())
+        endPadding = 1;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        addLayoutOverflow(curr->layoutOverflowRect());
+        addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
         if (!hasOverflowClip())
             addVisualOverflow(curr->visualOverflowRect());
     }
 }
 
-int RenderBlock::beforeSideVisibleOverflowForLine(RootInlineBox* line) const
+int RenderBlock::beforeSideVisualOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
     // we continue to use top and left overflow even though physically it's bottom and right.
     if (style()->isHorizontalWritingMode())
-        return line->topVisibleOverflow();
-    return line->leftVisibleOverflow();
+        return line->topVisualOverflow();
+    return line->leftVisualOverflow();
 }
 
-int RenderBlock::afterSideVisibleOverflowForLine(RootInlineBox* line) const
+int RenderBlock::afterSideVisualOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
     // we continue to use bottom and right overflow even though physically it's top and left.
     if (style()->isHorizontalWritingMode())
-        return line->bottomVisibleOverflow();
-    return line->rightVisibleOverflow();
+        return line->bottomVisualOverflow();
+    return line->rightVisualOverflow();
 }
 
 int RenderBlock::beforeSideLayoutOverflowForLine(RootInlineBox* line) const

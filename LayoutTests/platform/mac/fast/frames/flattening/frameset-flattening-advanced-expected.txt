@@ -1,6 +1,6 @@
 layer at (0,0) size 866x607
   RenderView at (0,0) size 785x585
-layer at (0,0) size 866x607
+layer at (0,0) size 785x607
   RenderBlock {HTML} at (0,0) size 785x607
     RenderFrameSet {FRAMESET} at (0,0) size 866x607
       RenderFrameSet {FRAMESET} at (0,0) size 866x207

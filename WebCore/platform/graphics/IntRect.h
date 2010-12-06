@@ -117,6 +117,29 @@ public:
 
     void move(const IntSize& s) { m_location += s; } 
     void move(int dx, int dy) { m_location.move(dx, dy); } 
+    
+    void shiftLeftEdgeTo(int edge)
+    {
+        int delta = edge - x();
+        setX(edge);
+        setWidth(std::max(0, width() - delta));
+    }
+    void shiftRightEdgeTo(int edge)
+    {
+        int delta = edge - right();
+        setWidth(std::max(0, width() + delta));
+    }
+    void shiftTopEdgeTo(int edge)
+    {
+        int delta = edge - y();
+        setY(edge);
+        setHeight(std::max(0, height() - delta));
+    }
+    void shiftBottomEdgeTo(int edge)
+    {
+        int delta = edge - bottom();
+        setHeight(std::max(0, height() + delta));
+    }
 
     bool intersects(const IntRect&) const;
     bool contains(const IntRect&) const;

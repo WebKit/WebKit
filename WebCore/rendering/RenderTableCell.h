@@ -121,7 +121,9 @@ public:
 
     virtual void setOverrideSize(int);
 
-    bool hasVisibleOverflow() const { return m_overflow; }
+    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
+
+    virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged);
 
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

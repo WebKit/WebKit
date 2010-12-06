@@ -19,7 +19,7 @@ layer at (173,32) size 453x453
       RenderInline {SPAN} at (0,0) size 0x0
     RenderBlock {DIV} at (0,0) size 453x0
       RenderInline {SPAN} at (0,0) size 0x0
-layer at (173,47) size 453x189
+layer at (173,47) size 453x188
   RenderBlock (positioned) {H1} at (0,15) size 453x188 [color=#DD9955]
     RenderInline {SPAN} at (0,0) size 340x190
       RenderText {#text} at (63,-1) size 340x190
@@ -80,7 +80,7 @@ layer at (173,351) size 453x134
           text run at (11,98) width 431: "Learn to use the (yet to be) time-honored techniques in new"
           text run at (11,112) width 350: "and invigorating fashion. Become one with the web."
     RenderText {#text} at (0,0) size 0x0
-layer at (322,236) size 304x82
+layer at (322,236) size 304x80
   RenderBlock (positioned) {H3} at (149,-115) size 304x80 [color=#CCCC77] [bgcolor=#888811] [border: (3px solid #888811) none (3px solid #888811)]
     RenderInline {SPAN} at (0,0) size 277x83
       RenderText {#text} at (44,-1) size 277x83

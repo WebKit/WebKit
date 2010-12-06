@@ -136,11 +136,6 @@ private:
 
     virtual void removeChild(RenderObject* oldChild);
 
-    virtual int topmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform = IncludeTransform) const;
-    virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform = IncludeTransform) const;
-    virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform = IncludeTransform) const;
-    virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform = IncludeTransform) const;
-
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintCell(RenderTableCell*, PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);

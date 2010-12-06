@@ -1,6 +1,6 @@
 layer at (0,0) size 843x585
   RenderView at (0,0) size 800x585
-layer at (0,0) size 843x513
+layer at (0,0) size 800x513
   RenderBlock {HTML} at (0,0) size 800x513
     RenderBody {BODY} at (8,17) size 784x479
 layer at (8,17) size 835x479

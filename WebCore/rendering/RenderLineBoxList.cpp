@@ -176,10 +176,10 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    int firstLineTop = firstLineBox()->logicalTopVisibleOverflow();
+    int firstLineTop = firstLineBox()->logicalTopVisualOverflow();
     if (usePrintRect && !firstLineBox()->parent())
         firstLineTop = min(firstLineTop, firstLineBox()->root()->lineTop());
-    int lastLineBottom = lastLineBox()->logicalBottomVisibleOverflow();
+    int lastLineBottom = lastLineBox()->logicalBottomVisualOverflow();
     if (usePrintRect && !lastLineBox()->parent())
         lastLineBottom = max(lastLineBottom, lastLineBox()->root()->lineBottom());
     int logicalTop = firstLineTop - outlineSize;
@@ -190,8 +190,8 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
 
 bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, int tx, int ty) const
 {
-    int logicalTop = min(box->logicalTopVisibleOverflow(), box->root()->selectionTop()) - renderer->maximalOutlineSize(paintInfo.phase);
-    int logicalBottom = box->logicalBottomVisibleOverflow() + renderer->maximalOutlineSize(paintInfo.phase);
+    int logicalTop = min(box->logicalTopVisualOverflow(), box->root()->selectionTop()) - renderer->maximalOutlineSize(paintInfo.phase);
+    int logicalBottom = box->logicalBottomVisualOverflow() + renderer->maximalOutlineSize(paintInfo.phase);
     
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, tx, ty);
 }
@@ -230,8 +230,8 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             // FIXME: This is the deprecated pagination model that is still needed
             // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
             // text pages, so we don't have to deal with vertical lines at all here.
-            int topForPaginationCheck = curr->topVisibleOverflow();
-            int bottomForPaginationCheck = curr->bottomVisibleOverflow();
+            int topForPaginationCheck = curr->topVisualOverflow();
+            int bottomForPaginationCheck = curr->bottomVisualOverflow();
             if (!curr->parent()) {
                 // We're a root box.  Use lineTop and lineBottom as well here.
                 topForPaginationCheck = min(topForPaginationCheck, curr->root()->lineTop());
@@ -240,7 +240,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
                 if (ty + bottomForPaginationCheck > v->printRect().bottom()) {
                     if (RootInlineBox* nextRootBox = curr->root()->nextRootBox())
-                        bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->topVisibleOverflow(), nextRootBox->lineTop()));
+                        bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->topVisualOverflow(), nextRootBox->lineTop()));
                 }
                 if (ty + bottomForPaginationCheck > v->printRect().bottom()) {
                     if (ty + topForPaginationCheck < v->truncatedAt())
@@ -292,7 +292,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // them further.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
-        if (rangeIntersectsRect(renderer, curr->logicalTopVisibleOverflow(), curr->logicalBottomVisibleOverflow(), rect, tx, ty)) {
+        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(), curr->logicalBottomVisualOverflow(), rect, tx, ty)) {
             bool inside = curr->nodeAtPoint(request, result, x, y, tx, ty);
             if (inside) {
                 renderer->updateHitTestResult(result, IntPoint(x - tx, y - ty));

@@ -106,12 +106,9 @@ public:
     IntRect frameRect() const { return m_frameRect; }
     void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
 
-    IntRect transformedFrameRect() const;
-    IntRect applyLayerTransformToRect(const IntRect&) const;
-
     IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }
     virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
-    
+
     // The content area of the box (excludes padding and border).
     IntRect contentBoxRect() const { return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
     // The content box in absolute coords. Ignores transforms.
@@ -128,17 +125,11 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* parentBox() const;
 
-    IntRect visibleOverflowRect() const { return hasOverflowClip() ? visualOverflowRect() : (m_overflow ? m_overflow->visibleOverflowRect() : borderBoxRect()); }
-    int topVisibleOverflow() const { return hasOverflowClip() ? topVisualOverflow() : std::min(topLayoutOverflow(), topVisualOverflow()); }
-    int bottomVisibleOverflow() const { return hasOverflowClip() ? bottomVisualOverflow() : std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
-    int leftVisibleOverflow() const { return hasOverflowClip() ? leftVisualOverflow() : std::min(leftLayoutOverflow(), leftVisualOverflow()); }
-    int rightVisibleOverflow() const { return hasOverflowClip() ? rightVisualOverflow() :  std::max(rightLayoutOverflow(), rightVisualOverflow()); }
-
-    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : borderBoxRect(); }
-    int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : 0; }
-    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : height(); }
-    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : 0; }
-    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : width(); }
+    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : clientBoxRect(); }
+    int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : borderTop(); }
+    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : borderTop() + clientHeight(); }
+    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : borderLeft(); }
+    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : borderLeft() + clientWidth(); }
     int logicalLeftLayoutOverflow() const { return style()->isHorizontalWritingMode() ? leftLayoutOverflow() : topLayoutOverflow(); }
     int logicalRightLayoutOverflow() const { return style()->isHorizontalWritingMode() ? rightLayoutOverflow() : bottomLayoutOverflow(); }
     
@@ -179,6 +170,8 @@ public:
     int clientTop() const { return borderTop(); }
     int clientWidth() const;
     int clientHeight() const;
+    int clientLogicalBottom() const { return style()->isHorizontalWritingMode() ? clientTop() + clientHeight() : clientLeft() + clientWidth(); }
+    IntRect clientBoxRect() const { return IntRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
     // object has overflow:hidden/scroll/auto specified and also has overflow.
@@ -269,12 +262,6 @@ public:
     InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
     void setInlineBoxWrapper(InlineBox* boxWrapper) { m_inlineBoxWrapper = boxWrapper; }
     void deleteLineBoxWrapper();
-
-    enum ApplyTransform { IncludeTransform, ExcludeTransform };
-    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true,  ApplyTransform = IncludeTransform) const;
-    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
@@ -389,6 +376,11 @@ public:
     IntSize flipForWritingMode(const IntSize&) const;
     void flipForWritingMode(IntRect&) const;
     IntSize locationOffsetIncludingFlipping() const;
+
+    IntRect logicalVisualOverflowRectForPropagation(RenderStyle*) const;
+    IntRect visualOverflowRectForPropagation(RenderStyle*) const;
+    IntRect logicalLayoutOverflowRectForPropagation(RenderStyle*) const;
+    IntRect layoutOverflowRectForPropagation(RenderStyle*) const;
 
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

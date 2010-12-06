@@ -579,7 +579,7 @@ IntRect RenderInline::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderInline::linesVisibleOverflowBoundingBox() const
+IntRect RenderInline::linesVisualOverflowBoundingBox() const
 {
     if (!firstLineBox() || !lastLineBox())
         return IntRect();
@@ -588,16 +588,16 @@ IntRect RenderInline::linesVisibleOverflowBoundingBox() const
     int logicalLeftSide = numeric_limits<int>::max();
     int logicalRightSide = numeric_limits<int>::min();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisibleOverflow());
-        logicalRightSide = max(logicalRightSide, curr->logicalRightVisibleOverflow());
+        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisualOverflow());
+        logicalRightSide = max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
 
     bool isHorizontal = style()->isHorizontalWritingMode();
         
-    int x = isHorizontal ? logicalLeftSide : firstLineBox()->leftVisibleOverflow();
-    int y = isHorizontal ? firstLineBox()->topVisibleOverflow() : logicalLeftSide;
-    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->rightVisibleOverflow() - firstLineBox()->leftVisibleOverflow();
-    int height = isHorizontal ? lastLineBox()->bottomVisibleOverflow() - firstLineBox()->topVisibleOverflow() : logicalRightSide - logicalLeftSide;
+    int x = isHorizontal ? logicalLeftSide : firstLineBox()->leftVisualOverflow();
+    int y = isHorizontal ? firstLineBox()->topVisualOverflow() : logicalLeftSide;
+    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->rightVisualOverflow() - firstLineBox()->leftVisualOverflow();
+    int height = isHorizontal ? lastLineBox()->bottomVisualOverflow() - firstLineBox()->topVisualOverflow() : logicalRightSide - logicalLeftSide;
     return IntRect(x, y, width, height);
 }
 
@@ -610,7 +610,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
         return IntRect();
 
     // Find our leftmost position.
-    IntRect boundingBox(linesVisibleOverflowBoundingBox());
+    IntRect boundingBox(linesVisualOverflowBoundingBox());
     int left = boundingBox.x();
     int top = boundingBox.y();
 

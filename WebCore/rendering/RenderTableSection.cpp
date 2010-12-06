@@ -654,84 +654,12 @@ int RenderTableSection::layoutRows(int toAdd)
             if (r < totalRows - 1 && cell == primaryCellAt(r + 1, c))
                 continue;
             addOverflowFromChild(cell);
-            m_hasOverflowingCell |= cell->hasVisibleOverflow();
+            m_hasOverflowingCell |= cell->hasVisualOverflow();
         }
     }
 
     statePusher.pop();
     return height();
-}
-
-int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
-{
-    int top = RenderBox::topmostPosition(includeOverflowInterior, includeSelf, applyTransform);
-    if (!includeOverflowInterior && hasOverflowClip())
-        return top;
-
-    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
-        for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
-            if (curr->isTableCell()) {
-                RenderTableCell* cell = toRenderTableCell(curr);
-                top = min(top, cell->transformedFrameRect().y() + cell->topmostPosition(false));
-            }
-        }
-    }
-    
-    return top;
-}
-
-int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
-{
-    int bottom = RenderBox::lowestPosition(includeOverflowInterior, includeSelf, applyTransform);
-    if (!includeOverflowInterior && hasOverflowClip())
-        return bottom;
-
-    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
-        for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
-            if (curr->isTableCell()) {
-                RenderTableCell* cell = toRenderTableCell(curr);
-                bottom = max(bottom, cell->transformedFrameRect().y() + cell->lowestPosition(false));
-            }
-        }
-    }
-    
-    return bottom;
-}
-
-int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
-{
-    int right = RenderBox::rightmostPosition(includeOverflowInterior, includeSelf, applyTransform);
-    if (!includeOverflowInterior && hasOverflowClip())
-        return right;
-
-    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
-        for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
-            if (curr->isTableCell()) {
-                RenderTableCell* cell = toRenderTableCell(curr);
-                right = max(right, cell->transformedFrameRect().x() + cell->rightmostPosition(false));
-            }
-        }
-    }
-    
-    return right;
-}
-
-int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
-{
-    int left = RenderBox::leftmostPosition(includeOverflowInterior, includeSelf, applyTransform);
-    if (!includeOverflowInterior && hasOverflowClip())
-        return left;
-    
-    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
-        for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
-            if (curr->isTableCell()) {
-                RenderTableCell* cell = toRenderTableCell(curr);
-                left = min(left, cell->transformedFrameRect().x() + cell->leftmostPosition(false));
-            }
-        }
-    }
-    
-    return left;
 }
 
 int RenderTableSection::calcOuterBorderBefore() const

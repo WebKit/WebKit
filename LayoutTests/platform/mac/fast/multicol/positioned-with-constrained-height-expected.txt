@@ -3,7 +3,7 @@ layer at (0,0) size 1090x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-layer at (8,8) size 1082x300
+layer at (8,8) size 106x300
   RenderBlock (positioned) {DIV} at (8,8) size 106x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 106x18
       text run at (0,0) width 106: "This is some text"

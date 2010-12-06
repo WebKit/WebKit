@@ -150,8 +150,7 @@ void RootInlineBox::addHighlightOverflow()
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
     IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
-    setInlineDirectionOverflowPositions(leftLayoutOverflow(), rightLayoutOverflow(), min(leftVisualOverflow(), inflatedRect.x()), max(rightVisualOverflow(), inflatedRect.right()));
-    setBlockDirectionOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()));
+    setOverflowFromLogicalRects(inflatedRect, inflatedRect);
 }
 
 void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
@@ -252,7 +251,6 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     bool containsRuby = false;
     placeBoxesInBlockDirection(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom, setLineTop,
                                lineTopIncludingMargins, lineBottomIncludingMargins, containsRuby, m_baselineType);
-    computeBlockDirectionOverflow(lineTop, lineBottom, noQuirksMode, textBoxDataMap);
     setLineTopBottomPositions(lineTop, lineBottom);
 
     m_containsRuby = containsRuby;
@@ -507,6 +505,27 @@ void RootInlineBox::extractLineBoxFromRenderObject()
 void RootInlineBox::attachLineBoxToRenderObject()
 {
     block()->lineBoxes()->attachLineBox(this);
+}
+
+IntRect RootInlineBox::paddedLayoutOverflowRect(int endPadding) const
+{
+    IntRect lineLayoutOverflow = layoutOverflowRect();
+    if (!endPadding)
+        return lineLayoutOverflow;
+    
+    if (isHorizontal()) {
+        if (isLeftToRightDirection())
+            lineLayoutOverflow.shiftRightEdgeTo(max(lineLayoutOverflow.right(), logicalRight() + endPadding));
+        else
+            lineLayoutOverflow.shiftLeftEdgeTo(min(lineLayoutOverflow.x(), logicalLeft() - endPadding));
+    } else {
+        if (isLeftToRightDirection())
+            lineLayoutOverflow.shiftBottomEdgeTo(max(lineLayoutOverflow.bottom(), logicalRight() + endPadding));
+        else
+            lineLayoutOverflow.shiftTopEdgeTo(min(lineLayoutOverflow.y(), logicalRight() - endPadding));
+    }
+    
+    return lineLayoutOverflow;
 }
 
 } // namespace WebCore

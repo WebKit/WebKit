@@ -581,6 +581,11 @@ private:
     // Only safe to call from RenderBoxModelObject::destroyLayer(RenderArena*)
     void destroy(RenderArena*);
 
+    int overflowTop() const;
+    int overflowBottom() const;
+    int overflowLeft() const;
+    int overflowRight() const;
+
 protected:
     RenderBoxModelObject* m_renderer;
 

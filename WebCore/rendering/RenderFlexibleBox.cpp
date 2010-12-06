@@ -246,6 +246,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
     else
         layoutVerticalBox(relayoutChildren);
 
+    int oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
 
     if (previousHeight != height())
@@ -271,13 +272,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
         setMaxMarginAfterValues(0, 0);
     }
     
-    // Add in the overflow from children.
-    FlexBoxIterator iterator(this);
-    for (RenderBox* child = iterator.first(); child; child = iterator.next())
-        addOverflowFromChild(child);
-
-    // Add visual overflow from box-shadow and reflections.
-    addShadowOverflow();
+    computeOverflow(oldClientAfterEdge);
 
     statePusher.pop();
 

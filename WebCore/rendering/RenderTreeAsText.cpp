@@ -616,8 +616,17 @@ static void write(TextStream& ts, RenderLayer& l,
 }
 
 static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLayer* l,
-                        const IntRect& paintDirtyRect, int indent, RenderAsTextBehavior behavior)
+                        const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
+    // FIXME: Apply overflow to the root layer to not break every test.  Complete hack.  Sigh.
+    IntRect paintDirtyRect(paintRect);
+    if (rootLayer == l) {
+        paintDirtyRect.setWidth(max(paintDirtyRect.width(), rootLayer->renderBox()->rightLayoutOverflow()));
+        paintDirtyRect.setHeight(max(paintDirtyRect.height(), rootLayer->renderBox()->bottomLayoutOverflow()));
+        l->setWidth(max(l->width(), l->renderBox()->rightLayoutOverflow()));
+        l->setHeight(max(l->height(), l->renderBox()->bottomLayoutOverflow()));
+    }
+    
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, true);

@@ -9,7 +9,7 @@ layer at (0,0) size 785x600
           text run at (0,18) width 760: "The original source of this text was ICU, and the test program said \"by it's very nature, Thai word breaking is not exact\","
           text run at (0,36) width 759: "so the columns don't match exactly. In a future version we might decide to tweak the right column to match our expected"
           text run at (0,54) width 59: "behavior."
-layer at (235,96) size 83x22824
+layer at (235,96) size 1x22824
   RenderBlock (positioned) {DIV} at (235,96) size 1x22824
     RenderText {#text} at (0,0) size 83x22824
       text run at (0,0) width 20: "\x{E1A}\x{E17}"
@@ -1280,7 +1280,7 @@ layer at (235,96) size 83x22824
       text run at (0,22770) width 34: "\x{E04}\x{E23}\x{E32}\x{E07}"
       text run at (0,22788) width 28: "\x{E2B}\x{E27}\x{E35}\x{E14}"
       text run at (0,22806) width 27: "\x{E2B}\x{E27}\x{E37}\x{E2D}"
-layer at (471,96) size 72x24030
+layer at (471,96) size 1x24030
   RenderBlock (positioned) {DIV} at (471,96) size 1x24030
     RenderText {#text} at (0,0) size 72x24030
       text run at (0,0) width 20: "\x{E1A}\x{E17}"

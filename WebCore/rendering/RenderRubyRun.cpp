@@ -278,7 +278,7 @@ void RenderRubyRun::layout()
 
     // Update our overflow to account for the new RenderRubyText position.
     m_overflow.clear();
-    addOverflowFromBlockChildren();
+    computeOverflow(clientLogicalBottom());
 }
 
 } // namespace WebCore

@@ -116,7 +116,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
     if (isHorizontal()) {
         bool ltr = s->isLeftToRightDirection();
         int clientWidth = box->clientWidth();
-        int contentWidth = ltr ? box->rightmostPosition(true, false) : box->leftmostPosition(true, false);
+        int contentWidth = ltr ? box->rightLayoutOverflow() : box->leftLayoutOverflow();
         if (ltr)
             contentWidth += (box->paddingRight() - box->borderLeft());
         else {
@@ -137,8 +137,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
         }
     }
     else {
-        int contentHeight = box->lowestPosition(true, false) - 
-                            box->borderTop() + box->paddingBottom();
+        int contentHeight = box->bottomLayoutOverflow() - box->borderTop() + box->paddingBottom();
         int clientHeight = box->clientHeight();
         if (dir == MUP) {
             if (stopAtContentEdge)

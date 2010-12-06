@@ -13,7 +13,7 @@ layer at (0,0) size 800x52
       RenderBR {br} at (507,0) size 0x18
       RenderText {#text} at (0,18) size 315x18
         text run at (0,18) width 315: "If the test passes you should see a green rectangle."
-layer at (30,100) size 400x204
+layer at (30,100) size 400x200
   RenderBlock (positioned) {div} at (30,100) size 400x200
     RenderSVGRoot {svg} at (30,100) size 400x200
       RenderSVGPath {rect} at (30,100) size 400x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=100.00]

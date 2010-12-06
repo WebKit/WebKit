@@ -51,7 +51,7 @@ layer at (8,8) size 512x839
         text run at (320,31) width 192: " (hit it a few times on"
         text run at (0,60) width 501: "this page). This is a crippling flaw for people who need"
         text run at (0,89) width 370: "to enlarge the fonts to read comfortably."
-layer at (546,179) size 200x49
+layer at (546,179) size 200x48
   RenderBlock (positioned) {SPAN} at (538,171) size 200x48
     RenderText {#text} at (0,-1) size 199x50
       text run at (0,-1) width 199: "\x{2190} this should be to the right of"

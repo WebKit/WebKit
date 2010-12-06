@@ -1,3 +1,305 @@
+2010-12-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=49220 <<rdar://problem/8644849>, REGRESSION: transforms now
+        O(n^3) from pathological behavior in lowestPosition, rightmostPosition, leftmostPosition and topmostPosition.
+
+        This patch throws out the lowest/rightmost/leftmost/topmostPosition functions and re-architects layout overflow
+        in the engine to cache all the information required to properly handle scrolling.
+
+        In the old code, there were two types of overflow: layout overflow and visual overflow.  The former could
+        affect scrolling and the latter could not.  The distinction was largely meaningless, since layout overflow
+        wasn't actually used to determine scroll width or scroll height.  It didn't propagate across self-painting layer
+        boundaries either.  In the old code, the term visible overflow meant the union of the layout overflow and
+        visual overflow rects.
+
+        In the new code, the two types of overflow remain, but the distinction between the two is now clear.  Visual overflow
+        is used purely for painting and hit testing checks and layout overflow is used specifically for scrolling.  It has
+        been expanded to propagate across self-painting layers, to factor in relative positioning and transforms, and to
+        work with writing modes.
+
+        In order to minimize layout test changes, layers no longer incorporate right/bottom overflow into their width/height members.
+        Doing so uncovered two bugs where left/top overflow was ignored (proof that even having layer dimensions is harmful).
+        A render tree dump hack has been put into the code to keep this overflow dumping for the RenderView's layer, since otherwise
+        a huge number of tests would change.
+
+        Added fast/overflow/overflow-rtl-vertical.html to test vertical writing-mode overflow.  Existing tests cover the rest.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::forceLayoutForPagination):
+        Changed to use RenderView's docTop/Left/Width/Height accessors, which simply grab the overflow and properly flip it
+        to account for writing modes.
+
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::shiftLeftEdgeTo):
+        (WebCore::IntRect::shiftRightEdgeTo):
+        (WebCore::IntRect::shiftTopEdgeTo):
+        (WebCore::IntRect::shiftBottomEdgeTo):
+        New helper functions for sliding the edge of a rectangle without moving any of the other three edges.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::frameRect):
+        frameRect is a helper for obtaining the x, y, width, height of an InlineBox as an IntRect.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        All of the overflow setting in the inline direction has been removed from this function.  All line overflow is computed
+        at once now in a single function: computeOverflow.
+
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::addReplacedChildOverflow):
+        Helper for propagating overflow from specific types of children that occur on a line into the InlineFlowBox's overflow.
+
+        (WebCore::InlineFlowBox::computeOverflow):
+        The new function that computes both horizontal and vertical overflow for a line box.
+
+        (WebCore::InlineFlowBox::setLayoutOverflow):
+        (WebCore::InlineFlowBox::setVisualOverflow):
+        (WebCore::InlineFlowBox::setOverflowFromLogicalRects):
+        New functions that set the overflow computed by computeOverflow.  These replace setBlockDirectionOverflowPositions
+        and setInlineDirectionOverflowPositions.  They essentially do the same thing, but they operate on rectangles.
+
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        Changed to use visual overflow instead of visible overflow.  (Visible overflow as a union of layout and visual
+        overflow is no longer necessary, since visual overflow is now equivalent to the old visible overflow concept.)
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::logicalLayoutOverflowRect):
+        (WebCore::InlineFlowBox::logicalVisualOverflowRect):
+        Helpers for obtaining logical overflow rectangles, since lines compute their overflow in logical terms before
+        converting to block coordinates at the end.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects):
+        Blocks now have a computeOverflow function called at the end of layout that adds in all the types of overflow.  The addOverflowFromChildren
+        method is virtual so that RenderListItem and RenderTable can subclass it.  RenderListItem has to position its list marker and
+        propagate marker overflow up, and RenderTable adds in overflow from its sections.
+
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        When only positioned objects lay out, overflow must still be recomputed.  The refactoring of overflow computation into a single
+        callable method: computeOverflow, makes it possible for this to be done easily.
+
+        (WebCore::RenderBlock::paint):
+        visible -> visual.
+
+        (WebCore::RenderBlock::addOverhangingFloats):
+        The propagation of float overflow has changed substantially.  The basic rules are:
+            (1) The float must be in our floating objects list to contribute to overflow.
+            (2) The float must be a descendant to contribute to overflow.
+            (3) The block must have the outermost list that contains the float, or it has a self-painting layer and
+                so the float needs to be included in its overflow.
+
+        (WebCore::RenderBlock::nodeAtPoint):
+        visible -> visual.
+
+        (WebCore::RenderBlock::layoutColumns):
+        Remove column overflow computation from layoutColumns and move it to computeOverflow.
+
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        visible -> visual.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::scrollbarsChanged):
+        Added a new virtual method used by table cells when scrollbars in an overflow:auto/scroll table cell come and go.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        (WebCore::RenderBlock::beforeSideVisualOverflowForLine):
+        (WebCore::RenderBlock::afterSideVisualOverflowForLine):
+        visible -> visual.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        Patched to use layoutOverflow functions instead of the old rightmost/leftmostPosition functions.
+
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        Use docLeft and docTop here, so that writing modes are handled.
+
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        visible -> visual.
+
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::addVisualOverflow):
+        (WebCore::RenderBox::logicalVisualOverflowRectForPropagation):
+        (WebCore::RenderBox::visualOverflowRectForPropagation):
+        (WebCore::RenderBox::logicalLayoutOverflowRectForPropagation):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        The new overflow system for boxes.  Layout overflow now crosses self-painting layer boundaries and adjusts child boxes
+        for transforms, relative positioning and writing mode differences.
+
+        (WebCore::RenderBox::layoutOverflowRect):
+        (WebCore::RenderBox::topLayoutOverflow):
+        (WebCore::RenderBox::bottomLayoutOverflow):
+        (WebCore::RenderBox::leftLayoutOverflow):
+        (WebCore::RenderBox::rightLayoutOverflow):
+        Changed the default rectangle for layout overflow to be the client box to match the scrollable areas of overflow regions.
+
+        (WebCore::RenderBox::clientLogicalBottom):
+        New helper for obtaining the logical bottom of the client box.
+
+        (WebCore::RenderBox::clientBoxRect):
+        New helper for obtaining the clientLeft/Top/Width/Height box.
+
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::relativePositionLogicalOffset):
+        Helper for obtaining the relative position offset transposed for vertical writing modes.  Used by line overflow.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        Changed flexible boxes to just call the base class computeOverflow method.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        visible -> visual.
+
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        Changed layers to no longer incorporate right/bottom overflow into width/height.  This is the reason many layout
+        tests change.  (Not doing this makes the layout test changes far worse, since overflow propagates across self-painting
+        layers now.)
+
+        (WebCore::RenderLayer::overflowTop):
+        (WebCore::RenderLayer::overflowBottom):
+        (WebCore::RenderLayer::overflowLeft):
+        (WebCore::RenderLayer::overflowRight):
+        overflowTop/Bottom/Left/Right return overflow that accounts for writing modes, i.e., purely physical overflow that can be used
+        to set up the scroll area.
+
+        (WebCore::RenderLayer::computeScrollDimensions):
+        Drastically simplified this method now that overflowTop/Bottom/Left/Right just do the right thing regarding unreachable overflow.
+
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        Make sure to explicitly set the vertical scrollbar's position just as we did with horizontal scrollbars, so that clamping to the
+        bottom works.
+
+        (WebCore::performOverlapTests):
+        (WebCore::RenderLayer::paintLayer):
+        Fix a bug in performOverlapTests.  It incorrectly used the layer's bounds, and so it didn't account for left/top overflow out
+        of the layer (see why I hate layers even having dimensions?).  Changed it to use the bounding box of the layer instead.
+
+        (WebCore::RenderLayer::hitTest):
+        Fix a bug in hit testing.  It incorrectly used the root layer's bounds as the limit of the hit test, and so it didn't account
+        for left/top overflow in a ScrollView (hate hate hate layers having dimensions).  I changed it to use the hit test rect instead,
+        so that the damage rect never stops the point from being tested (unless the hit test request says not to ignore clipping).
+
+        (WebCore::RenderLayer::localBoundingBox):
+        visible -> visual.
+
+        * rendering/RenderLayer.h:
+        Added the new overflowTop/Left/Right/Bottom accessors.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        visible -> visual.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::addOverflowFromChildren):
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListItem.h:
+        RenderListItem now positions the list marker when computing its overflow, since the marker propagates overflow back up to the list item.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        visible -> visual.
+
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        Changed to use overflow functions instead of rightmost/lowestPosition.
+
+        * rendering/RenderMedia.cpp:
+        * rendering/RenderMedia.h:
+        Removed the lowest/topmost/rightmost/leftmostPosition functions, since control overflow is handled properly already.
+
+        * rendering/RenderOverflow.h:
+        (WebCore::RenderOverflow::RenderOverflow):
+        (WebCore::RenderOverflow::setLayoutOverflow):
+        (WebCore::RenderOverflow::setVisualOverflow):
+        Add new setters for layout and visual overflow as rects.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        visible -> visual.
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        Call computeOverflow to recompute our overflow information after we adjust the ruby.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::addOverflowFromChildren):
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTable.h:
+        Move section overflow propagation into addOverflowFromChildren, and change RenderTable to just call computeOverflow.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        visible -> visual.
+
+        (WebCore::RenderTableCell::scrollbarsChanged):
+        Adding unreachable overflow support (something that in the old code only existed for positioned objects in the root view) exposed
+        a bug in table layout.  If scrollbars are added during the layout that occurs after intrinsic padding was incorporated into the
+        cell, then the cell won't lay out properly the second time (after the scrollbars have been added).  We have to adjust the intrinsic
+        padding accounting for the presence of the new scrollbar so the second layout will get the right dimensions.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::hasVisualOverflow):
+        visible -> visual.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTableSection.h:
+        visible -> visual.  Removed the leftmost/rightmost/topmost/bottommostPosition functions.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        Added a hack to render tree dumping to include right/bottom overflow for the root layer only.  This keeps a zillion layout tests
+        from failing.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::docTop):
+        (WebCore::RenderView::docBottom):
+        (WebCore::RenderView::docLeft):
+        (WebCore::RenderView::docRight):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::docHeight):
+        (WebCore::RenderView::docWidth):
+        RenderView now uses docLeft/Top/Height/Width functions, which are just overflow queries that account for writing modes.  These methods
+        are now the preferred way to query for the physical dimensions of a document.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        Changed to call setOverflowFromLogicalRects instead of the block/inline position functions.
+
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        Remove the computation of block direction overflow, since it now all happens at once after the line is built.
+
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        * rendering/RootInlineBox.h:
+        Added a new helper function for incorporating the end padding into a line.  This end padding also includes the single pixel for a caret
+        in LTR if needed.
+
 2010-12-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

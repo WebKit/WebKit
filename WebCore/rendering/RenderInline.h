@@ -53,7 +53,7 @@ public:
     virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
 
     IntRect linesBoundingBox() const;
-    IntRect linesVisibleOverflowBoundingBox() const;
+    IntRect linesVisualOverflowBoundingBox() const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
 

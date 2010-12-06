@@ -676,14 +676,6 @@ void RenderLayer::updateLayerPosition()
     } else if (RenderBox* box = renderBox()) {
         setWidth(box->width());
         setHeight(box->height());
-
-        if (!box->hasOverflowClip()) {
-            if (box->rightLayoutOverflow() > box->width())
-                setWidth(box->rightLayoutOverflow());
-            if (box->bottomLayoutOverflow() > box->height())
-                setHeight(box->bottomLayoutOverflow());
-        }
-        
         localPoint += box->locationOffsetIncludingFlipping();
     }
 
@@ -1966,38 +1958,57 @@ int RenderLayer::scrollHeight()
     return m_scrollHeight;
 }
 
+int RenderLayer::overflowTop() const
+{
+    RenderBox* box = renderBox();
+    IntRect overflowRect(box->layoutOverflowRect());
+    box->flipForWritingMode(overflowRect);
+    return overflowRect.y();
+}
+
+int RenderLayer::overflowBottom() const
+{
+    RenderBox* box = renderBox();
+    IntRect overflowRect(box->layoutOverflowRect());
+    box->flipForWritingMode(overflowRect);
+    return overflowRect.bottom();
+}
+
+int RenderLayer::overflowLeft() const
+{
+    RenderBox* box = renderBox();
+    IntRect overflowRect(box->layoutOverflowRect());
+    box->flipForWritingMode(overflowRect);
+    return overflowRect.x();
+}
+
+int RenderLayer::overflowRight() const
+{
+    RenderBox* box = renderBox();
+    IntRect overflowRect(box->layoutOverflowRect());
+    box->flipForWritingMode(overflowRect);
+    return overflowRect.right();
+}
+
 void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
 {
     RenderBox* box = renderBox();
     ASSERT(box);
     
     m_scrollDimensionsDirty = false;
+
+    m_scrollLeftOverflow = overflowLeft() - box->borderLeft();
+    m_scrollTopOverflow = overflowTop() - box->borderTop();
+
+    m_scrollWidth = overflowRight() - overflowLeft();
+    m_scrollHeight = overflowBottom() - overflowTop();
     
-    int clientWidth = box->clientWidth();
-    int clientHeight = box->clientHeight();
-
-    bool hasLeftOverflow = (!box->style()->isHorizontalWritingMode() || !box->style()->isLeftToRightDirection()) && box->style()->writingMode() != LeftToRightWritingMode;
-    bool hasTopOverflow = (box->style()->isHorizontalWritingMode() || !box->style()->isLeftToRightDirection()) && box->style()->writingMode() != TopToBottomWritingMode;
-
-    m_scrollLeftOverflow = !hasLeftOverflow ? 0 : min(0, box->leftmostPosition(true, false) - box->borderLeft());
-    m_scrollTopOverflow = !hasTopOverflow ? 0 : min(0, box->topmostPosition(true, false) - box->borderTop());
-
-    int rightPos = !hasLeftOverflow ?
-                    box->rightmostPosition(true, false) - box->borderLeft() :
-                    clientWidth - m_scrollLeftOverflow;
-    int bottomPos = !hasTopOverflow ?
-                    box->lowestPosition(true, false) - box->borderTop() :
-                    clientHeight - m_scrollTopOverflow;
-
-    m_scrollWidth = max(rightPos, clientWidth);
-    m_scrollHeight = max(bottomPos, clientHeight);
-    
-    m_scrollOrigin = IntPoint(!hasLeftOverflow ? 0 : m_scrollWidth - clientWidth, !hasTopOverflow ? 0 : m_scrollHeight - clientHeight);
+    m_scrollOrigin = IntPoint(-m_scrollLeftOverflow, -m_scrollTopOverflow);
 
     if (needHBar)
-        *needHBar = rightPos > clientWidth;
+        *needHBar = m_scrollWidth > box->clientWidth();
     if (needVBar)
-        *needVBar = bottomPos > clientHeight;
+        *needVBar = m_scrollHeight > box->clientHeight();
 }
 
 void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
@@ -2092,9 +2103,12 @@ RenderLayer::updateScrollInfoAfterLayout()
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
                 renderer()->setNeedsLayout(true, false);
-                if (renderer()->isRenderBlock())
-                    toRenderBlock(renderer())->layoutBlock(true);
-                else
+                if (renderer()->isRenderBlock()) {
+                    RenderBlock* block = toRenderBlock(renderer());
+                    block->scrollbarsChanged(box->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow,
+                                             box->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);
+                    block->layoutBlock(true);
+                } else
                     renderer()->layout();
                 m_inOverflowRelayout = false;
             }
@@ -2118,9 +2132,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         // top right corner of the content doesn't shift with respect to the top
         // right corner of the area. Conceptually, right-to-left areas have
         // their origin at the top-right, but RenderLayer is top-left oriented,
-        // so this is needed to keep everything working (see how scrollXOffset()
-        // differs from scrollYOffset() to get an idea of why the horizontal and
-        // vertical scrollbars need to be treated differently).
+        // so this is needed to keep everything working.
         m_hBar->setValue(scrollXOffset(), Scrollbar::NotFromScrollAnimator);
     }
     if (m_vBar) {
@@ -2128,6 +2140,13 @@ RenderLayer::updateScrollInfoAfterLayout()
         int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
+        // Explicitly set the vertical scroll value.  This ensures that when a
+        // right-to-left vertical writing-mode scrollable area's height (or content height) changes, the
+        // bottom right corner of the content doesn't shift with respect to the bottom
+        // right corner of the area. Conceptually, right-to-left vertical writing-mode areas have
+        // their origin at the bottom-right, but RenderLayer is top-left oriented,
+        // so this is needed to keep everything working.
+        m_vBar->setValue(scrollYOffset(), Scrollbar::NotFromScrollAnimator);
     }
  
     if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
@@ -2324,12 +2343,13 @@ static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const
     p->restore();
 }
 
-static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const IntRect& layerBounds)
+static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const RenderLayer* rootLayer, const RenderLayer* layer)
 {
     Vector<OverlapTestRequestClient*> overlappedRequestClients;
     OverlapTestRequestMap::iterator end = overlapTestRequests.end();
+    IntRect boundingBox = layer->boundingBox(rootLayer);
     for (OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it) {
-        if (!layerBounds.intersects(it->second))
+        if (!boundingBox.intersects(it->second))
             continue;
 
         it->first->setOverlapTestResult(true);
@@ -2456,7 +2476,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         paintingRootForRenderer = paintingRoot;
 
     if (overlapTestRequests && isSelfPaintingLayer())
-        performOverlapTests(*overlapTestRequests, layerBounds);
+        performOverlapTests(*overlapTestRequests, rootLayer, this);
 
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect, rootLayer) && m_hasVisibleContent && isSelfPaintingLayer();
@@ -2665,11 +2685,11 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
     renderer()->document()->updateLayout();
     
-    IntRect boundsRect(m_x, m_y, width(), height());
+    IntRect hitTestArea = result.rectForPoint(result.point());
     if (!request.ignoreClipping())
-        boundsRect.intersect(frameVisibleRect(renderer()));
+        hitTestArea.intersect(frameVisibleRect(renderer()));
 
-    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, boundsRect, result.point(), false);
+    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, result.point(), false);
     if (!insideLayer) {
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
@@ -3375,8 +3395,8 @@ IntRect RenderLayer::localBoundingBox() const
         InlineFlowBox* firstBox = inlineFlow->firstLineBox();
         if (!firstBox)
             return result;
-        int top = firstBox->topVisibleOverflow();
-        int bottom = inlineFlow->lastLineBox()->bottomVisibleOverflow();
+        int top = firstBox->topVisualOverflow();
+        int bottom = inlineFlow->lastLineBox()->bottomVisualOverflow();
         int left = firstBox->x();
         for (InlineFlowBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
             left = min(left, curr->x());
@@ -3387,7 +3407,7 @@ IntRect RenderLayer::localBoundingBox() const
             if (child->isTableCell()) {
                 IntRect bbox = toRenderBox(child)->borderBoxRect();
                 result.unite(bbox);
-                IntRect overflowRect = renderBox()->visibleOverflowRect();
+                IntRect overflowRect = renderBox()->visualOverflowRect();
                 if (bbox != overflowRect)
                     result.unite(overflowRect);
             }
@@ -3400,7 +3420,7 @@ IntRect RenderLayer::localBoundingBox() const
         else {
             IntRect bbox = box->borderBoxRect();
             result = bbox;
-            IntRect overflowRect = box->visibleOverflowRect();
+            IntRect overflowRect = box->visualOverflowRect();
             if (bbox != overflowRect)
                 result.unite(overflowRect);
         }

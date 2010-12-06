@@ -259,18 +259,7 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
 {
     // Set our x position.
     setLogicalLeft(logicalLeft);
-
-    int logicalLeftLayoutOverflow = logicalLeft;
-    int logicalRightLayoutOverflow = logicalLeft;
-    int logicalLeftVisualOverflow = logicalLeft;
-    int logicalRightVisualOverflow = logicalLeft;
-
-    int boxShadowLogicalLeft;
-    int boxShadowLogicalRight;
-    renderer()->style(m_firstLine)->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
-
-    logicalLeftVisualOverflow = min(logicalLeft + boxShadowLogicalLeft, logicalLeftVisualOverflow);
-
+  
     int startLogicalLeft = logicalLeft;
     logicalLeft += borderLogicalLeft() + paddingLogicalLeft();
     
@@ -284,30 +273,6 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[text->end()]);
             }
             text->setLogicalLeft(logicalLeft);
-            
-            int strokeOverflow = static_cast<int>(ceilf(rt->style()->textStrokeWidth() / 2.0f));
-            
-            // If letter-spacing is negative, we should factor that into right layout overflow. (Even in RTL, letter-spacing is
-            // applied to the right, so this is not an issue with left overflow.
-            int letterSpacing = min(0, (int)rt->style(m_firstLine)->font().letterSpacing());
-            logicalRightLayoutOverflow = max(logicalLeft + text->logicalWidth() - letterSpacing, logicalRightLayoutOverflow);
-
-            GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(static_cast<InlineTextBox*>(curr));
-            GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
-
-            int logicalLeftGlyphOverflow = -strokeOverflow - (glyphOverflow ? glyphOverflow->left : 0);
-            int logicalRightGlyphOverflow = strokeOverflow - letterSpacing + (glyphOverflow ? glyphOverflow->right : 0);
-            
-            int childOverflowLogicalLeft = logicalLeftGlyphOverflow;
-            int childOverflowLogicalRight = logicalRightGlyphOverflow;
-            int textShadowLogicalLeft;
-            int textShadowLogicalRight;
-            rt->style(m_firstLine)->getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
-            childOverflowLogicalLeft = min(childOverflowLogicalLeft, textShadowLogicalLeft + logicalLeftGlyphOverflow);
-            childOverflowLogicalRight = max(childOverflowLogicalRight, textShadowLogicalRight + logicalRightGlyphOverflow);
-            logicalLeftVisualOverflow = min(logicalLeft + childOverflowLogicalLeft, logicalLeftVisualOverflow);
-            logicalRightVisualOverflow = max(logicalLeft + text->logicalWidth() + childOverflowLogicalRight, logicalRightVisualOverflow);
-            
             logicalLeft += text->logicalWidth();
         } else {
             if (curr->renderer()->isPositioned()) {
@@ -325,10 +290,6 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
                 logicalLeft += flow->marginLogicalLeft();
                 logicalLeft = flow->placeBoxesInInlineDirection(logicalLeft, needsWordSpacing, textBoxDataMap);
                 logicalLeft += flow->marginLogicalRight();
-                logicalLeftLayoutOverflow = min(logicalLeftLayoutOverflow, flow->logicalLeftLayoutOverflow());
-                logicalRightLayoutOverflow = max(logicalRightLayoutOverflow, flow->logicalRightLayoutOverflow());
-                logicalLeftVisualOverflow = min(logicalLeftVisualOverflow, flow->logicalLeftVisualOverflow());
-                logicalRightVisualOverflow = max(logicalRightVisualOverflow, flow->logicalRightVisualOverflow());
             } else if (!curr->renderer()->isListMarker() || toRenderListMarker(curr->renderer())->isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
@@ -337,18 +298,6 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
                 
                 logicalLeft += logicalLeftMargin;
                 curr->setLogicalLeft(logicalLeft);
-                       
-                RenderBox* box = toRenderBox(curr->renderer());
-
-                int childOverflowLogicalLeft = box->hasOverflowClip() ? 0 : (isHorizontal() ? box->leftLayoutOverflow() : box->topLayoutOverflow());
-                int childOverflowLogicalRight = box->hasOverflowClip() ? curr->logicalWidth() : (isHorizontal() ? box->rightLayoutOverflow() : box->bottomLayoutOverflow());
-                
-                logicalLeftLayoutOverflow = min(logicalLeft + childOverflowLogicalLeft, logicalLeftLayoutOverflow);
-                logicalRightLayoutOverflow = max(logicalLeft + childOverflowLogicalRight, logicalRightLayoutOverflow);
-
-                logicalLeftVisualOverflow = min(logicalLeft + (isHorizontal() ? box->leftVisualOverflow() : box->topVisualOverflow()), logicalLeftVisualOverflow);
-                logicalRightVisualOverflow = max(logicalLeft + (isHorizontal() ? box->rightVisualOverflow() : box->bottomVisualOverflow()), logicalRightVisualOverflow);
-               
                 logicalLeft += curr->logicalWidth() + logicalRightMargin;
             }
         }
@@ -356,10 +305,6 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
 
     logicalLeft += borderLogicalRight() + paddingLogicalRight();
     setLogicalWidth(logicalLeft - startLogicalLeft);
-    logicalRightVisualOverflow = max(logicalLeft + boxShadowLogicalRight, logicalRightVisualOverflow);
-    logicalRightLayoutOverflow = max(logicalLeft, logicalRightLayoutOverflow);
-
-    setInlineDirectionOverflowPositions(logicalLeftLayoutOverflow, logicalRightLayoutOverflow, logicalLeftVisualOverflow, logicalRightVisualOverflow);
     return logicalLeft;
 }
 
@@ -743,32 +688,112 @@ void InlineFlowBox::flipLinesInBlockDirection(int lineTop, int lineBottom)
     }
 }
 
-void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void InlineFlowBox::addBoxShadowVisualOverflow(IntRect& logicalVisualOverflow)
 {
+    if (!parent())
+        return; // Box-shadow doesn't apply to root line boxes.
+
+    int boxShadowLogicalTop;
+    int boxShadowLogicalBottom;
+    renderer()->style(m_firstLine)->getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
+    
+    int logicalTopVisualOverflow = min(logicalTop() + boxShadowLogicalTop, logicalVisualOverflow.y());
+    int logicalBottomVisualOverflow = max(logicalBottom() + boxShadowLogicalBottom, logicalVisualOverflow.bottom());
+    
+    int boxShadowLogicalLeft;
+    int boxShadowLogicalRight;
+    renderer()->style(m_firstLine)->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
+
+    int logicalLeftVisualOverflow = min(logicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
+    int logicalRightVisualOverflow = max(logicalRight() + boxShadowLogicalRight, logicalVisualOverflow.right());
+    
+    logicalVisualOverflow = IntRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
+                                    logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+}
+
+void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, IntRect& logicalVisualOverflow)
+{
+    int strokeOverflow = static_cast<int>(ceilf(renderer()->style()->textStrokeWidth() / 2.0f));
+
+    GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
+    GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
+
     bool isFlippedLine = renderer()->style(m_firstLine)->isFlippedLinesWritingMode();
 
-    int boxHeight = logicalHeight();
+    int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;
+    int bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0;
+    int leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0;
+    int rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0;
+    
+    int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
+    int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
+    int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
+    int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
+    // If letter-spacing is negative, we should factor that into right layout overflow. (Even in RTL, letter-spacing is
+    // applied to the right, so this is not an issue with left overflow.
+    int letterSpacing = min(0, (int)renderer()->style(m_firstLine)->font().letterSpacing());
+    rightGlyphOverflow -= letterSpacing;
+
+    int textShadowLogicalTop;
+    int textShadowLogicalBottom;
+    renderer()->style(m_firstLine)->getTextShadowBlockDirectionExtent(textShadowLogicalTop, textShadowLogicalBottom);
+    
+    int childOverflowLogicalTop = min(textShadowLogicalTop + topGlyphOverflow, topGlyphOverflow);
+    int childOverflowLogicalBottom = max(textShadowLogicalBottom + bottomGlyphOverflow, bottomGlyphOverflow);
+   
+    int textShadowLogicalLeft;
+    int textShadowLogicalRight;
+    renderer()->style(m_firstLine)->getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
+   
+    int childOverflowLogicalLeft = min(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
+    int childOverflowLogicalRight = max(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
+
+    int logicalTopVisualOverflow = min(textBox->logicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
+    int logicalBottomVisualOverflow = max(textBox->logicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.bottom());
+    int logicalLeftVisualOverflow = min(textBox->logicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
+    int logicalRightVisualOverflow = max(textBox->logicalRight() + childOverflowLogicalRight, logicalVisualOverflow.right());
+    
+    logicalVisualOverflow = IntRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
+                                    logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+}
+
+void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, IntRect& logicalLayoutOverflow, IntRect& logicalVisualOverflow)
+{
+    RenderBox* box = toRenderBox(inlineBox->renderer());
+    
+    // Visual overflow only propagates if the box doesn't have a self-painting layer.  This rectangle does not include
+    // transforms or relative positioning (since those objects always have self-painting layers), but it does need to be adjusted
+    // for writing-mode differences.
+    if (!box->hasSelfPaintingLayer()) {
+        IntRect childLogicalVisualOverflow = box->logicalVisualOverflowRectForPropagation(renderer()->style());
+        childLogicalVisualOverflow.move(inlineBox->logicalLeft(), inlineBox->logicalTop());
+        logicalVisualOverflow.unite(childLogicalVisualOverflow);
+    }
+
+    // Layout overflow internal to the child box only propagates if the child box doesn't have overflow clip set.
+    // Otherwise the child border box propagates as layout overflow.  This rectangle must include transforms and relative positioning
+    // and be adjusted for writing-mode differences.
+    IntRect childLogicalLayoutOverflow = box->logicalLayoutOverflowRectForPropagation(renderer()->style());
+    childLogicalLayoutOverflow.move(inlineBox->logicalLeft(), inlineBox->logicalTop());
+    logicalLayoutOverflow.unite(childLogicalLayoutOverflow);
+}
+
+void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+{
     // Any spillage outside of the line top and bottom is not considered overflow.  We just ignore this, since it only happens
     // from the "your ascent/descent don't affect the line" quirk.
     int topOverflow = max(logicalTop(), lineTop);
-    int bottomOverflow = min(logicalTop() + boxHeight, lineBottom);
+    int bottomOverflow = min(logicalBottom(), lineBottom);
     
-    int topLayoutOverflow = topOverflow;
-    int bottomLayoutOverflow = bottomOverflow;
-    
-    int topVisualOverflow = topOverflow;
-    int bottomVisualOverflow = bottomOverflow;
+    // Visual overflow just includes overflow for stuff we need to repaint ourselves.  Self-painting layers are ignored.
+    // Layout overflow is used to determine scrolling extent, so it still includes child layers and also factors in
+    // transforms, relative positioning, etc.
+    IntRect logicalLayoutOverflow(logicalLeft(), topOverflow, logicalWidth(), bottomOverflow - topOverflow);
+    IntRect logicalVisualOverflow(logicalLayoutOverflow);
   
     // box-shadow on root line boxes is applying to the block and not to the lines.
-    if (parent()) {
-        int boxShadowTop;
-        int boxShadowBottom;
-        renderer()->style(m_firstLine)->getBoxShadowBlockDirectionExtent(boxShadowTop, boxShadowBottom);
-        
-        topVisualOverflow = min(logicalTop() + boxShadowTop, topVisualOverflow);
-        bottomVisualOverflow = max(logicalTop() + boxHeight + boxShadowBottom, bottomVisualOverflow);
-    }
+    addBoxShadowVisualOverflow(logicalVisualOverflow);
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
@@ -779,64 +804,70 @@ void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, b
             RenderText* rt = toRenderText(text->renderer());
             if (rt->isBR())
                 continue;
-
-            int strokeOverflow = static_cast<int>(ceilf(rt->style()->textStrokeWidth() / 2.0f));
-
-            GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(static_cast<InlineTextBox*>(curr));
-            GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
-
-            int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;
-            int bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0;
-
-            int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
-            int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
-
-            int textShadowTop;
-            int textShadowBottom;
-            curr->renderer()->style(m_firstLine)->getTextShadowBlockDirectionExtent(textShadowTop, textShadowBottom);
-        
-            int childOverflowTop = min(textShadowTop + topGlyphOverflow, topGlyphOverflow);
-            int childOverflowBottom = max(textShadowBottom + bottomGlyphOverflow, bottomGlyphOverflow);
-    
-            topVisualOverflow = min(curr->logicalTop() + childOverflowTop, topVisualOverflow);
-            bottomVisualOverflow = max(curr->logicalTop() + text->logicalHeight() + childOverflowBottom, bottomVisualOverflow);
+            addTextBoxVisualOverflow(text, textBoxDataMap, logicalVisualOverflow);
         } else  if (curr->renderer()->isRenderInline()) {
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
-            flow->computeBlockDirectionOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
-            topLayoutOverflow = min(topLayoutOverflow, flow->logicalTopLayoutOverflow());
-            bottomLayoutOverflow = max(bottomLayoutOverflow, flow->logicalBottomLayoutOverflow());
-            topVisualOverflow = min(topVisualOverflow, flow->logicalTopVisualOverflow());
-            bottomVisualOverflow = max(bottomVisualOverflow, flow->logicalBottomVisualOverflow());
-        } else if (!curr->boxModelObject()->hasSelfPaintingLayer()){
-            // Only include overflow from replaced inlines if they do not paint themselves.
-            int boxLogicalTop = curr->logicalTop();
-            int childTopLayoutOverflow;
-            int childBottomLayoutOverflow;
-            int childTopVisualOverflow;
-            int childBottomVisualOverflow;
-            
-            RenderBox* box = toRenderBox(curr->renderer());
-            box->blockDirectionOverflow(isHorizontal(), childTopLayoutOverflow, childBottomLayoutOverflow,
-                                        childTopVisualOverflow, childBottomVisualOverflow);
-            
-            if (box->hasOverflowClip()) {
-                childTopLayoutOverflow = 0;
-                childBottomLayoutOverflow = curr->logicalHeight();
-            }
-
-            topLayoutOverflow = min(boxLogicalTop + childTopLayoutOverflow, topLayoutOverflow);
-            bottomLayoutOverflow = max(boxLogicalTop + childBottomLayoutOverflow, bottomLayoutOverflow);
-            topVisualOverflow = min(boxLogicalTop + childTopVisualOverflow, topVisualOverflow);
-            bottomVisualOverflow = max(boxLogicalTop + childBottomVisualOverflow, bottomVisualOverflow);
-        }
+            flow->computeOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
+            if (!flow->boxModelObject()->hasSelfPaintingLayer())
+                logicalVisualOverflow.unite(flow->logicalVisualOverflowRect());
+            IntRect childLayoutOverflow = flow->logicalLayoutOverflowRect();
+            childLayoutOverflow.move(flow->boxModelObject()->relativePositionLogicalOffset());
+            logicalLayoutOverflow.unite(childLayoutOverflow);
+        } else
+            addReplacedChildOverflow(curr, logicalLayoutOverflow, logicalVisualOverflow);
     }
     
-    setBlockDirectionOverflowPositions(topLayoutOverflow, bottomLayoutOverflow, topVisualOverflow, bottomVisualOverflow);
+    setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow);
+}
+
+// FIXME: You will notice there is no contains() check here.  If the rect is smaller than the frame box it actually
+// becomes the new overflow.  The reason for this is that in quirks mode we don't let inline flow boxes paint
+// outside of the root line box's lineTop and lineBottom values.  We accomplish this visual clamping by actually
+// insetting the overflow rect so that it's smaller than the frame rect.
+//
+// The reason we don't just mutate the frameRect in quirks mode is that we'd have to put the m_height member variable
+// back into InlineBox.  Basically the tradeoff is 4 bytes in all modes (for m_height) added to InlineFlowBox, or
+// the allocation of a RenderOverflow struct for InlineFlowBoxes in quirks mode only.  For now, we're opting to award
+// the smaller memory consumption to strict mode pages.
+//
+// It might be possible to hash a custom height, or to require that lineTop and lineBottom be passed in to
+// all functions that query overflow.   
+void InlineFlowBox::setLayoutOverflow(const IntRect& rect)
+{
+    IntRect frameBox = frameRect();
+    if (frameBox == rect || rect.isEmpty())
+        return;
+        
+    if (!m_overflow)
+        m_overflow.set(new RenderOverflow(frameBox, frameBox));
+    
+    m_overflow->setLayoutOverflow(rect);
+}
+
+void InlineFlowBox::setVisualOverflow(const IntRect& rect)
+{
+    IntRect frameBox = frameRect();
+    if (frameBox == rect || rect.isEmpty())
+        return;
+        
+    if (!m_overflow)
+        m_overflow.set(new RenderOverflow(frameBox, frameBox));
+    
+    m_overflow->setVisualOverflow(rect);
+}
+
+void InlineFlowBox::setOverflowFromLogicalRects(const IntRect& logicalLayoutOverflow, const IntRect& logicalVisualOverflow)
+{
+    IntRect layoutOverflow(isHorizontal() ? logicalLayoutOverflow : logicalLayoutOverflow.transposedRect());
+    setLayoutOverflow(layoutOverflow);
+    
+    IntRect visualOverflow(isHorizontal() ? logicalVisualOverflow : logicalVisualOverflow.transposedRect());
+    setVisualOverflow(visualOverflow);
 }
 
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
-    IntRect overflowRect(visibleOverflowRect());
+    IntRect overflowRect(visualOverflowRect());
     flipForWritingMode(overflowRect);
     overflowRect.move(tx, ty);
     if (!overflowRect.intersects(result.rectForPoint(x, y)))
@@ -865,7 +896,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    IntRect overflowRect(visibleOverflowRect());
+    IntRect overflowRect(visualOverflowRect());
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     flipForWritingMode(overflowRect);
     overflowRect.move(tx, ty);

@@ -62,11 +62,13 @@ private:
     virtual void layout();
     virtual void computePreferredLogicalWidths();
 
-    virtual void positionListMarker();
+    void positionListMarker();
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
+    virtual void addOverflowFromChildren();
 
     void updateMarkerLocation();
     inline int calcValue() const;

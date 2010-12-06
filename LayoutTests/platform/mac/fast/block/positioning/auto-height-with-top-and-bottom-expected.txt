@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 634: "The red box should be entirely inside the black box with the text content spilling out of both of them."
 layer at (8,42) size 404x104
   RenderBlock (relative positioned) {DIV} at (0,34) size 404x104 [border: (2px solid #000000)]
-layer at (10,64) size 400x146
+layer at (10,64) size 400x60
   RenderBlock (positioned) {DIV} at (2,22) size 400x60 [border: (2px solid #FF0000)]
     RenderText {#text} at (2,2) size 396x144
       text run at (2,2) width 396: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do"

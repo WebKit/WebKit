@@ -39,15 +39,15 @@ namespace WebCore
 // This object is allocated only when some of these fields have non-default values in the owning box.
 class RenderOverflow : public Noncopyable {
 public:
-    RenderOverflow(const IntRect& defaultRect = IntRect()) 
-        : m_topLayoutOverflow(defaultRect.y())
-        , m_bottomLayoutOverflow(defaultRect.bottom())
-        , m_leftLayoutOverflow(defaultRect.x())
-        , m_rightLayoutOverflow(defaultRect.right())
-        , m_topVisualOverflow(defaultRect.y())
-        , m_bottomVisualOverflow(defaultRect.bottom())
-        , m_leftVisualOverflow(defaultRect.x())
-        , m_rightVisualOverflow(defaultRect.right())
+    RenderOverflow(const IntRect& layoutRect, const IntRect& visualRect) 
+        : m_topLayoutOverflow(layoutRect.y())
+        , m_bottomLayoutOverflow(layoutRect.bottom())
+        , m_leftLayoutOverflow(layoutRect.x())
+        , m_rightLayoutOverflow(layoutRect.right())
+        , m_topVisualOverflow(visualRect.y())
+        , m_bottomVisualOverflow(visualRect.bottom())
+        , m_leftVisualOverflow(visualRect.x())
+        , m_rightVisualOverflow(visualRect.right())
     {
     }
    
@@ -63,8 +63,6 @@ public:
     int rightVisualOverflow() const { return m_rightVisualOverflow; }
     IntRect visualOverflowRect() const;
 
-    IntRect visibleOverflowRect() const;
-
     void setTopLayoutOverflow(int overflow) { m_topLayoutOverflow = overflow; }
     void setBottomLayoutOverflow(int overflow) { m_bottomLayoutOverflow = overflow; }
     void setLeftLayoutOverflow(int overflow) { m_leftLayoutOverflow = overflow; }
@@ -79,6 +77,9 @@ public:
     
     void addLayoutOverflow(const IntRect&);
     void addVisualOverflow(const IntRect&);
+
+    void setLayoutOverflow(const IntRect&);
+    void setVisualOverflow(const IntRect&);
 
     void resetLayoutOverflow(const IntRect& defaultRect);
 
@@ -102,13 +103,6 @@ inline IntRect RenderOverflow::layoutOverflowRect() const
 inline IntRect RenderOverflow::visualOverflowRect() const
 {
     return IntRect(m_leftVisualOverflow, m_topVisualOverflow, m_rightVisualOverflow - m_leftVisualOverflow, m_bottomVisualOverflow - m_topVisualOverflow);
-}
-
-inline IntRect RenderOverflow::visibleOverflowRect() const
-{
-    IntRect combinedRect(layoutOverflowRect());
-    combinedRect.unite(visualOverflowRect());
-    return combinedRect;
 }
 
 inline void RenderOverflow::move(int dx, int dy)
@@ -138,6 +132,22 @@ inline void RenderOverflow::addVisualOverflow(const IntRect& rect)
     m_bottomVisualOverflow = std::max(rect.bottom(), m_bottomVisualOverflow);
     m_leftVisualOverflow = std::min(rect.x(), m_leftVisualOverflow);
     m_rightVisualOverflow = std::max(rect.right(), m_rightVisualOverflow);
+}
+
+inline void RenderOverflow::setLayoutOverflow(const IntRect& rect)
+{
+    m_topLayoutOverflow = rect.y();
+    m_bottomLayoutOverflow = rect.bottom();
+    m_leftLayoutOverflow = rect.x();
+    m_rightLayoutOverflow = rect.right();
+}
+
+inline void RenderOverflow::setVisualOverflow(const IntRect& rect)
+{
+    m_topVisualOverflow = rect.y();
+    m_bottomVisualOverflow = rect.bottom();
+    m_leftVisualOverflow = rect.x();
+    m_rightVisualOverflow = rect.right();
 }
 
 inline void RenderOverflow::resetLayoutOverflow(const IntRect& rect)

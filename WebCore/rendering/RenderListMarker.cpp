@@ -1110,7 +1110,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     IntPoint boxOrigin(tx + x(), ty + y());
-    IntRect overflowRect(visibleOverflowRect());
+    IntRect overflowRect(visualOverflowRect());
     overflowRect.move(boxOrigin.x(), boxOrigin.y());
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 

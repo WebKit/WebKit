@@ -9,7 +9,7 @@ layer at (0,0) size 100x100
   RenderVideo {VIDEO} at (0,0) size 100x100
 layer at (50,50) size 100x100
   RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF0000]
-layer at (50,50) size 202x272
+layer at (50,50) size 200x200
   RenderBlock (positioned) {DIV} at (50,50) size 200x200
     RenderBlock {P} at (0,218) size 200x54
       RenderText {#text} at (0,0) size 191x54

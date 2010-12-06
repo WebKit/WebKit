@@ -129,12 +129,6 @@ void RenderView::layout()
     if (needsLayout())
         RenderBlock::layout();
 
-    // Reset overflow and then replace it with docWidth and docHeight.
-    m_overflow.clear();
-    int leftOverflow = docLeft();
-    int topOverflow = docTop();
-    addLayoutOverflow(IntRect(leftOverflow, topOverflow, docWidth(leftOverflow), docHeight(topOverflow)));
-
     ASSERT(layoutDelta() == IntSize());
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == &state);
@@ -620,50 +614,30 @@ IntRect RenderView::viewRect() const
 
 int RenderView::docTop() const
 {
-    // Clip out top overflow in vertical LTR pages or horizontal-tb pages.
-    if ((!style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == TopToBottomWritingMode)
-        return 0;
-    return std::min(0, topmostPosition());
+    IntRect overflowRect(0, topLayoutOverflow(), 0, bottomLayoutOverflow() - topLayoutOverflow());
+    flipForWritingMode(overflowRect);
+    return overflowRect.y();
 }
 
-int RenderView::docHeight(int topOverflow) const
+int RenderView::docBottom() const
 {
-    int h = ((!style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == TopToBottomWritingMode) ?
-                lowestPosition() : height() - topOverflow;
-
-    // FIXME: This doesn't do any margin collapsing.
-    // Instead of this dh computation we should keep the result
-    // when we call RenderBlock::layout.
-    int dh = 0;
-    for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox())
-        dh += c->height() + c->marginTop() + c->marginBottom();
-
-    if (dh > h)
-        h = dh;
-
-    return h;
+    IntRect overflowRect(layoutOverflowRect());
+    flipForWritingMode(overflowRect);
+    return overflowRect.bottom();
 }
 
 int RenderView::docLeft() const
 {
-    // Clip out left overflow in horizontal LTR pages or vertical-lr pages.
-    if ((style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == LeftToRightWritingMode)
-        return 0;
-    return std::min(0, leftmostPosition());
+    IntRect overflowRect(layoutOverflowRect());
+    flipForWritingMode(overflowRect);
+    return overflowRect.x();
 }
 
-int RenderView::docWidth(int leftOverflow) const
+int RenderView::docRight() const
 {
-    int w = ((style()->isHorizontalWritingMode() && style()->isLeftToRightDirection()) || style()->writingMode() == LeftToRightWritingMode) ? 
-                rightmostPosition() : width() - leftOverflow;
-
-    for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox()) {
-        int dw = c->width() + c->marginLeft() + c->marginRight();
-        if (dw > w)
-            w = dw;
-    }
-
-    return w;
+    IntRect overflowRect(layoutOverflowRect());
+    flipForWritingMode(overflowRect);
+    return overflowRect.right();
 }
 
 int RenderView::viewHeight() const

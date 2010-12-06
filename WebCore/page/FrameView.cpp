@@ -435,9 +435,9 @@ void FrameView::adjustViewSize()
     if (!root)
         return;
 
-    IntSize size = IntSize(root->rightLayoutOverflow() - root->leftLayoutOverflow(), root->bottomLayoutOverflow() - root->topLayoutOverflow());
+    IntSize size = IntSize(root->docWidth(), root->docHeight());
 
-    ScrollView::setScrollOrigin(IntPoint(-root->leftLayoutOverflow(), -root->topLayoutOverflow()), size == contentsSize());
+    ScrollView::setScrollOrigin(IntPoint(-root->docLeft(), -root->docTop()), size == contentsSize());
     
     setContentsSize(size);
 }
@@ -2239,15 +2239,15 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         // page width when shrunk, we will lay out at maximum shrink and clip extra content.
         // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
-        int rightmostPos = root->rightmostPosition();
-        if (rightmostPos > pageSize.width()) {
-            pageW = std::min<int>(rightmostPos, ceilf(pageSize.width() * maximumShrinkFactor));
+        int docWidth = root->docWidth();
+        if (docWidth > pageSize.width()) {
+            pageW = std::min<int>(docWidth, ceilf(pageSize.width() * maximumShrinkFactor));
             if (pageSize.height())
                 root->setPageHeight(pageW / pageSize.width() * pageSize.height());
             root->setWidth(pageW);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
-            int docHeight = root->bottomLayoutOverflow();
+            int docHeight = root->docHeight();
             root->clearLayoutOverflow();
             root->addLayoutOverflow(IntRect(0, 0, pageW, docHeight)); // This is how we clip in case we overflow again.
         }

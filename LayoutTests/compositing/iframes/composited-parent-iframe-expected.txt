@@ -3,11 +3,10 @@
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer
-      (position -12.00 0.00)
-      (bounds 812.00 600.00)
+      (bounds 800.00 600.00)
       (children 1
         (GraphicsLayer
-          (position 0.00 -12.00)
+          (position -12.00 -12.00)
           (bounds 370.00 220.00)
           (drawsContent 1)
           (children 1

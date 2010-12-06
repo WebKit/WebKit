@@ -266,9 +266,9 @@ IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
             right = max(right, below->borderHalfRight(true));
         }
     }
-    left = max(left, -leftVisibleOverflow());
-    top = max(top, -topVisibleOverflow());
-    IntRect r(-left, - top, left + max(width() + right, rightVisibleOverflow()), top + max(height() + bottom, bottomVisibleOverflow()));
+    left = max(left, -leftVisualOverflow());
+    top = max(top, -topVisualOverflow());
+    IntRect r(-left, - top, left + max(width() + right, rightVisualOverflow()), top + max(height() + bottom, bottomVisualOverflow()));
 
     if (RenderView* v = view()) {
         // FIXME: layoutDelta needs to be applied in parts before/after transforms and
@@ -1031,6 +1031,30 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
     int h = height();
    
     paintMaskImages(paintInfo, tx, ty, w, h);
+}
+
+void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)
+{
+    int scrollbarHeight = scrollbarLogicalHeight();
+    if (!scrollbarHeight)
+        return; // Not sure if we should be doing something when a scrollbar goes away or not.
+    
+    // We only care if the scrollbar that affects our intrinsic padding has been added.
+    if ((style()->isHorizontalWritingMode() && !horizontalScrollbarChanged) ||
+        (!style()->isHorizontalWritingMode() && !verticalScrollbarChanged))
+        return;
+
+    // Shrink our intrinsic padding as much as possible to accommodate the scrollbar.
+    if (style()->verticalAlign() == MIDDLE) {
+        int totalHeight = logicalHeight();
+        int heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();
+        totalHeight -= scrollbarHeight;
+        int newBeforePadding = (totalHeight - heightWithoutIntrinsicPadding) / 2;
+        int newAfterPadding = totalHeight - heightWithoutIntrinsicPadding - newBeforePadding;
+        setIntrinsicPaddingBefore(newBeforePadding);
+        setIntrinsicPaddingAfter(newAfterPadding);
+    } else
+        setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
 } // namespace WebCore

@@ -130,6 +130,8 @@ public:
 
     bool containsRuby() const { return m_containsRuby; }
 
+    IntRect paddedLayoutOverflowRect(int endPadding) const;
+
 private:
     bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }

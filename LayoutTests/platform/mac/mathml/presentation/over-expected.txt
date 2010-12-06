@@ -89,11 +89,11 @@ layer at (45,258) size 10x8 scrollHeight 14
       text run at (0,-3) width 10: "\x{23AE}"
 layer at (45,266) size 10x11 scrollHeight 14
   RenderBlock {mo} at (0,38) size 10x11
-layer at (45,229) size 10x14 backgroundClip at (45,228) size 10x10 clip at (45,228) size 10x10 outlineClip at (45,228) size 10x10
+layer at (45,229) size 10x11 backgroundClip at (45,228) size 10x10 clip at (45,228) size 10x10 outlineClip at (45,228) size 10x10
   RenderBlock (relative positioned) {mo} at (0,0) size 10x11
     RenderText {mo} at (0,-3) size 10x17
       text run at (0,-3) width 10: "\x{2320}"
-layer at (45,263) size 10x14 backgroundClip at (45,266) size 10x11 clip at (45,266) size 10x11 outlineClip at (45,266) size 10x11
+layer at (45,263) size 10x11 backgroundClip at (45,266) size 10x11 clip at (45,266) size 10x11 outlineClip at (45,266) size 10x11
   RenderBlock (relative positioned) {mo} at (0,0) size 10x11
     RenderText {mo} at (0,-3) size 10x17
       text run at (0,-3) width 10: "\x{2321}"

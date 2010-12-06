@@ -166,6 +166,13 @@ public:
     bool usesCompositing() const;
 #endif
 
+    int docTop() const;
+    int docBottom() const;
+    int docHeight() const { return docBottom() - docTop(); }
+    int docLeft() const;
+    int docRight() const;
+    int docWidth() const { return docRight() - docLeft(); }
+
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
@@ -173,11 +180,6 @@ protected:
 private:
     bool shouldRepaint(const IntRect& r) const;
     
-    int docTop() const;
-    int docHeight(int topOverflow) const;
-    int docLeft() const;
-    int docWidth(int leftOverflow) const;
-
     // These functions may only be accessed by LayoutStateMaintainer.
     bool pushLayoutState(RenderBox* renderer, const IntSize& offset, int pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
     {

@@ -271,59 +271,59 @@ layer at (165,215) size 7x6 scrollHeight 14
       text run at (0,-3) width 7: "\x{23AA}"
 layer at (165,221) size 7x11 scrollHeight 14
   RenderBlock {mo} at (0,52) size 7x11
-layer at (69,170) size 8x14 backgroundClip at (69,169) size 8x10 clip at (69,169) size 8x10 outlineClip at (69,169) size 8x10
+layer at (69,170) size 8x11 backgroundClip at (69,169) size 8x10 clip at (69,169) size 8x10 outlineClip at (69,169) size 8x10
   RenderBlock (relative positioned) {mo} at (0,0) size 8x11
     RenderText {mo} at (0,-3) size 8x17
       text run at (0,-3) width 8: "\x{23D0}"
-layer at (69,218) size 8x14 backgroundClip at (69,221) size 8x11 clip at (69,221) size 8x11 outlineClip at (69,221) size 8x11
+layer at (69,218) size 8x11 backgroundClip at (69,221) size 8x11 clip at (69,221) size 8x11 outlineClip at (69,221) size 8x11
   RenderBlock (relative positioned) {mo} at (0,0) size 8x11
     RenderText {mo} at (0,-3) size 8x17
       text run at (0,-3) width 8: "\x{23D0}"
-layer at (78,170) size 10x14 backgroundClip at (78,169) size 10x10 clip at (78,169) size 10x10 outlineClip at (78,169) size 10x10
+layer at (78,170) size 10x11 backgroundClip at (78,169) size 10x10 clip at (78,169) size 10x10 outlineClip at (78,169) size 10x10
   RenderBlock (relative positioned) {mo} at (0,0) size 10x11
     RenderText {mo} at (0,-3) size 10x17
       text run at (0,-3) width 10: "\x{2320}"
-layer at (78,218) size 10x14 backgroundClip at (78,221) size 10x11 clip at (78,221) size 10x11 outlineClip at (78,221) size 10x11
+layer at (78,218) size 10x11 backgroundClip at (78,221) size 10x11 clip at (78,221) size 10x11 outlineClip at (78,221) size 10x11
   RenderBlock (relative positioned) {mo} at (0,0) size 10x11
     RenderText {mo} at (0,-3) size 10x17
       text run at (0,-3) width 10: "\x{2321}"
-layer at (89,170) size 7x14 backgroundClip at (89,169) size 7x10 clip at (89,169) size 7x10 outlineClip at (89,169) size 7x10
+layer at (89,170) size 7x11 backgroundClip at (89,169) size 7x10 clip at (89,169) size 7x10 outlineClip at (89,169) size 7x10
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23A7}"
-layer at (89,194) size 7x14 backgroundClip at (89,195) size 7x10 clip at (89,195) size 7x10 outlineClip at (89,195) size 7x10
+layer at (89,194) size 7x11 backgroundClip at (89,195) size 7x10 clip at (89,195) size 7x10 outlineClip at (89,195) size 7x10
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23A8}"
-layer at (89,218) size 7x14 backgroundClip at (89,221) size 7x11 clip at (89,221) size 7x11 outlineClip at (89,221) size 7x11
+layer at (89,218) size 7x11 backgroundClip at (89,221) size 7x11 clip at (89,221) size 7x11 outlineClip at (89,221) size 7x11
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23A9}"
-layer at (97,170) size 5x14 backgroundClip at (97,169) size 5x10 clip at (97,169) size 5x10 outlineClip at (97,169) size 5x10
+layer at (97,170) size 5x11 backgroundClip at (97,169) size 5x10 clip at (97,169) size 5x10 outlineClip at (97,169) size 5x10
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A1}"
-layer at (97,218) size 5x14 backgroundClip at (97,221) size 5x11 clip at (97,221) size 5x11 outlineClip at (97,221) size 5x11
+layer at (97,218) size 5x11 backgroundClip at (97,221) size 5x11 clip at (97,221) size 5x11 outlineClip at (97,221) size 5x11
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A3}"
-layer at (159,170) size 5x14 backgroundClip at (159,169) size 5x10 clip at (159,169) size 5x10 outlineClip at (159,169) size 5x10
+layer at (159,170) size 5x11 backgroundClip at (159,169) size 5x10 clip at (159,169) size 5x10 outlineClip at (159,169) size 5x10
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A4}"
-layer at (159,218) size 5x14 backgroundClip at (159,221) size 5x11 clip at (159,221) size 5x11 outlineClip at (159,221) size 5x11
+layer at (159,218) size 5x11 backgroundClip at (159,221) size 5x11 clip at (159,221) size 5x11 outlineClip at (159,221) size 5x11
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A6}"
-layer at (165,170) size 7x14 backgroundClip at (165,169) size 7x10 clip at (165,169) size 7x10 outlineClip at (165,169) size 7x10
+layer at (165,170) size 7x11 backgroundClip at (165,169) size 7x10 clip at (165,169) size 7x10 outlineClip at (165,169) size 7x10
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23AB}"
-layer at (165,194) size 7x14 backgroundClip at (165,195) size 7x10 clip at (165,195) size 7x10 outlineClip at (165,195) size 7x10
+layer at (165,194) size 7x11 backgroundClip at (165,195) size 7x10 clip at (165,195) size 7x10 outlineClip at (165,195) size 7x10
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23AC}"
-layer at (165,218) size 7x14 backgroundClip at (165,221) size 7x11 clip at (165,221) size 7x11 outlineClip at (165,221) size 7x11
+layer at (165,218) size 7x11 backgroundClip at (165,221) size 7x11 clip at (165,221) size 7x11 outlineClip at (165,221) size 7x11
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-3) size 7x17
       text run at (0,-3) width 7: "\x{23AD}"

@@ -98,11 +98,6 @@ public:
     int availableLogicalWidthForLine(int position, bool firstLine) const;
     int logicalRightOffsetForLine(int position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
     int logicalLeftOffsetForLine(int position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
-
-    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
     
     virtual VisiblePosition positionForPoint(const IntPoint&);
     
@@ -209,6 +204,8 @@ public:
     };
     MarginValues marginValuesForChild(RenderBox* child);
 
+    virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
+
 protected:
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
@@ -286,6 +283,13 @@ protected:
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
 
+    void computeOverflow(int oldClientAfterEdge, bool recomputeFloats = false);
+    virtual void addOverflowFromChildren();
+    void addOverflowFromFloats();
+    void addOverflowFromPositionedObjects();
+    void addOverflowFromBlockChildren();
+    void addOverflowFromInlineChildren();
+
 #if ENABLE(SVG)
 protected:
 
@@ -297,8 +301,6 @@ protected:
         layoutInlineChildren(true, repaintLogicalTop, repaintLogicalBottom);
     }
 #endif
-
-    void addOverflowFromBlockChildren();
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -329,8 +331,6 @@ private:
 
     void layoutBlockChildren(bool relayoutChildren, int& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom);
-
-    virtual void positionListMarker() { }
 
     virtual void borderFitAdjust(int& x, int& w) const; // Shrink the box in which the border paints if border-fit is set.
 
@@ -463,14 +463,11 @@ private:
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
-    void addOverflowFromInlineChildren();
-    int beforeSideVisibleOverflowForLine(RootInlineBox*) const;
-    int afterSideVisibleOverflowForLine(RootInlineBox*) const;
+    int beforeSideVisualOverflowForLine(RootInlineBox*) const;
+    int afterSideVisualOverflowForLine(RootInlineBox*) const;
     int beforeSideLayoutOverflowForLine(RootInlineBox*) const;
     int afterSideLayoutOverflowForLine(RootInlineBox*) const;
     // End of functions defined in RenderBlockLineLayout.cpp.
-
-    void addOverflowFromFloats();
 
     void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);
     void paintContents(PaintInfo&, int tx, int ty);

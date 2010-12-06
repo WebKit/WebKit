@@ -85,11 +85,6 @@ private:
     virtual bool isMedia() const { return true; }
     virtual bool isImage() const { return false; }
 
-    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
-
     void createControlsShadowRoot();
     void destroyControlsShadowRoot();
     void createPanel();

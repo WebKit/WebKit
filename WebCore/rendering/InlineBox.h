@@ -233,6 +233,8 @@ public:
     int width() const { return isHorizontal() ? logicalWidth() : logicalHeight(); }
     int height() const { return isHorizontal() ? logicalHeight() : logicalWidth(); }
 
+    IntRect frameRect() const { return IntRect(x(), y(), width(), height()); }
+
     // The logicalLeft position is the left edge of the line box in a horizontal line and the top edge in a vertical line.
     int logicalLeft() const { return isHorizontal() ? m_x : m_y; }
     int logicalRight() const { return logicalLeft() + logicalWidth(); }
@@ -265,7 +267,6 @@ public:
     virtual int baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     
-
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

@@ -75,7 +75,7 @@ layer at (43,413) size 20x20
   RenderBlock (positioned) {DIV} at (43,413) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
 layer at (73,413) size 20x20
   RenderBlock (positioned) {DIV} at (73,413) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (103,413) size 20x60
+layer at (103,413) size 20x20
   RenderBlock (positioned) {DIV} at (103,413) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
     RenderBR {BR} at (6,6) size 0x18
     RenderBR {BR} at (6,24) size 0x18
