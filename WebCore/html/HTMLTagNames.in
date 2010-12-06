@@ -36,7 +36,7 @@ dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID
 drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
-details interfaceName=HTMLElement
+details
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div

@@ -231,6 +231,7 @@ onwebkitbeginfullscreen
 onwebkitendfullscreen
 onwebkitfullscreenchange
 onwebkittransitionend
+open
 optimum
 pattern
 placeholder

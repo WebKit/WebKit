@@ -228,6 +228,7 @@ IDL_BINDINGS += \
     html/HTMLDataGridColElement.idl \
     html/HTMLDataGridRowElement.idl \
     html/HTMLDataListElement.idl \
+    html/HTMLDetailsElement.idl \
     html/HTMLDirectoryElement.idl \
     html/HTMLDivElement.idl \
     html/HTMLDListElement.idl \

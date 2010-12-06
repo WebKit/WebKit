@@ -213,6 +213,7 @@ SET(WebCore_IDL_FILES
     html/HTMLDataGridElement.idl
     html/HTMLDataGridRowElement.idl
     html/HTMLDataListElement.idl
+    html/HTMLDetailsElement.idl
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
     html/HTMLDListElement.idl
@@ -1009,6 +1010,7 @@ SET(WebCore_SOURCES
     html/HTMLDataGridElement.cpp
     html/HTMLDataGridRowElement.cpp
     html/HTMLDataListElement.cpp
+    html/HTMLDetailsElement.cpp
     html/HTMLDirectoryElement.cpp
     html/HTMLDivElement.cpp
     html/HTMLDocument.cpp
@@ -1441,6 +1443,8 @@ SET(WebCore_SOURCES
     rendering/RenderButton.cpp
     rendering/RenderCounter.cpp
     rendering/RenderDataGrid.cpp
+    rendering/RenderDetails.cpp
+    rendering/RenderDetailsMarker.cpp
     rendering/RenderEmbeddedObject.cpp
     rendering/RenderFieldset.cpp
     rendering/RenderFileUploadControl.cpp
@@ -1477,6 +1481,7 @@ SET(WebCore_SOURCES
     rendering/RenderScrollbarPart.cpp
     rendering/RenderScrollbarTheme.cpp
     rendering/RenderSlider.cpp
+    rendering/RenderSummary.cpp
     rendering/RenderTable.cpp
     rendering/RenderTableCell.cpp
     rendering/RenderTableCol.cpp

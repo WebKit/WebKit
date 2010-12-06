@@ -306,6 +306,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLDataGridRowElement.h \
 	DerivedSources/WebCore/JSHTMLDataListElement.cpp \
 	DerivedSources/WebCore/JSHTMLDataListElement.h \
+	DerivedSources/WebCore/JSHTMLDetailsElement.cpp \
+	DerivedSources/WebCore/JSHTMLDetailsElement.h \
 	DerivedSources/WebCore/JSHTMLDirectoryElement.cpp \
 	DerivedSources/WebCore/JSHTMLDirectoryElement.h \
 	DerivedSources/WebCore/JSHTMLDivElement.cpp \
@@ -1623,6 +1625,8 @@ webcore_sources += \
 	WebCore/html/HTMLDataGridRowElement.h \
 	WebCore/html/HTMLDataListElement.cpp \
 	WebCore/html/HTMLDataListElement.h \
+	WebCore/html/HTMLDetailsElement.cpp \
+	WebCore/html/HTMLDetailsElement.h \
 	WebCore/html/HTMLDirectoryElement.cpp \
 	WebCore/html/HTMLDirectoryElement.h \
 	WebCore/html/HTMLDivElement.cpp \
@@ -2691,6 +2695,10 @@ webcore_sources += \
 	WebCore/rendering/RenderCounter.h \
 	WebCore/rendering/RenderDataGrid.cpp \
 	WebCore/rendering/RenderDataGrid.h \
+	WebCore/rendering/RenderDetails.cpp \
+	WebCore/rendering/RenderDetails.h \
+	WebCore/rendering/RenderDetailsMarker.cpp \
+	WebCore/rendering/RenderDetailsMarker.h \
 	WebCore/rendering/RenderEmbeddedObject.cpp \
 	WebCore/rendering/RenderEmbeddedObject.h \
 	WebCore/rendering/RenderFieldset.cpp \
@@ -2770,6 +2778,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderSlider.h \
+	WebCore/rendering/RenderSummary.cpp \
+	WebCore/rendering/RenderSummary.h \
 	WebCore/rendering/RenderSVGBlock.cpp \
 	WebCore/rendering/RenderSVGBlock.h \
 	WebCore/rendering/RenderSVGContainer.cpp \

@@ -902,6 +902,7 @@ SOURCES += \
     html/HTMLDataGridRowElement.cpp \
     html/HTMLDataListElement.cpp \
     html/HTMLDirectoryElement.cpp \
+    html/HTMLDetailsElement.cpp \
     html/HTMLDivElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
@@ -1281,6 +1282,8 @@ SOURCES += \
     rendering/RenderButton.cpp \
     rendering/RenderCounter.cpp \
     rendering/RenderDataGrid.cpp \
+    rendering/RenderDetails.cpp \
+    rendering/RenderDetailsMarker.cpp \
     rendering/RenderEmbeddedObject.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
@@ -1319,6 +1322,7 @@ SOURCES += \
     rendering/RenderScrollbarPart.cpp \
     rendering/RenderScrollbarTheme.cpp \
     rendering/RenderSlider.cpp \
+    rendering/RenderSummary.cpp \
     rendering/RenderTable.cpp \
     rendering/RenderTableCell.cpp \
     rendering/RenderTableCol.cpp \
@@ -1811,6 +1815,7 @@ HEADERS += \
     html/HTMLDataGridElement.h \
     html/HTMLDataGridRowElement.h \
     html/HTMLDirectoryElement.h \
+    html/HTMLDetailsElement.h \
     html/HTMLDivElement.h \
     html/HTMLDListElement.h \
     html/HTMLDocument.h \
@@ -2236,6 +2241,8 @@ HEADERS += \
     rendering/RenderButton.h \
     rendering/RenderCounter.h \
     rendering/RenderDataGrid.h \
+    rendering/RenderDetails.h \
+    rendering/RenderDetailsMarker.h \
     rendering/RenderEmbeddedObject.h \
     rendering/RenderFieldset.h \
     rendering/RenderFileUploadControl.h \
@@ -2277,6 +2284,7 @@ HEADERS += \
     rendering/RenderScrollbarPart.h \
     rendering/RenderScrollbarTheme.h \
     rendering/RenderSlider.h \
+    rendering/RenderSummary.h \
     rendering/RenderSVGBlock.h \
     rendering/RenderSVGContainer.h \
     rendering/RenderSVGGradientStop.h \

@@ -90,6 +90,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLCanvasElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLCollection.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLCollectionPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLDetailsElement.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLDetailsElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLDirectoryElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLDirectoryElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLDivElement.cpp \
@@ -305,6 +307,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLDivElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLDListElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLDocument.h \
+	DerivedSources/webkit/WebKitDOMHTMLDetailsElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLEmbedElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLFieldSetElement.h \

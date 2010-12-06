@@ -213,6 +213,7 @@ DOM_CLASSES = \
     HTMLDataGridColElement \
     HTMLDataGridRowElement \
     HTMLDataListElement \
+    HTMLDetailsElement \
     HTMLDListElement \
     HTMLDirectoryElement \
     HTMLDivElement \

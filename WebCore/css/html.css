@@ -759,6 +759,14 @@ iframe {
     border: 2px inset
 }
 
+details {
+    display: block
+}
+
+summary {
+    display: block
+}
+
 /* page */
 
 @page {
