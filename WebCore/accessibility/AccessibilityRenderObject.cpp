@@ -2098,6 +2098,10 @@ bool AccessibilityRenderObject::isRequired() const
     if (equalIgnoringCase(getAttribute(aria_requiredAttr), "true"))
         return true;
     
+    Node* n = node();
+    if (n && (n->isElementNode() && static_cast<Element*>(n)->isFormControlElement()))
+        return static_cast<HTMLFormControlElement*>(n)->required();
+    
     return false;
 }
 

@@ -1,3 +1,13 @@
+2010-12-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        AX does not support HTML5 "required"
+        https://bugs.webkit.org/show_bug.cgi?id=50507
+
+        * platform/mac/accessibility/html5-required-attribute-expected.txt: Added.
+        * platform/mac/accessibility/html5-required-attribute.html: Added.
+
 2010-12-06  Victor Wang  <victorw@chromium.org>
 
         Unreviewed.
