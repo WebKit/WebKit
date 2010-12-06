@@ -1,3 +1,18 @@
+2010-12-06  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] update chromium test expectations for fast/html/marquee-scrollamount.html
+
+        * platform/chromium-linux/fast/html/marquee-scrollamount-expected.checksum: Added.
+        * platform/chromium-linux/fast/html/marquee-scrollamount-expected.png: Added.
+        * platform/chromium-mac/fast/html: Added.
+        * platform/chromium-mac/fast/html/marquee-scrollamount-expected.checksum: Added.
+        * platform/chromium-mac/fast/html/marquee-scrollamount-expected.png: Added.
+        * platform/chromium-win/fast/html/marquee-scrollamount-expected.checksum: Added.
+        * platform/chromium-win/fast/html/marquee-scrollamount-expected.png: Added.
+        * platform/chromium-win/fast/html/marquee-scrollamount-expected.txt: Added.
+
 2010-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
