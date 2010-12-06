@@ -1,1 +1,11 @@
+2010-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add Qt specific expected result for test introduced in r73257.
+
+        * platform/qt/media/controls-without-preload-expected.checksum: Added.
+        * platform/qt/media/controls-without-preload-expected.png: Added.
+        * platform/qt/media/controls-without-preload-expected.txt: Added.
+
 == Rolled over to ChangeLog-2010-12-06 ==
