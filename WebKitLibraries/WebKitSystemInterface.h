@@ -303,13 +303,11 @@ void WKWindowBounceAnimationSetAnimationProgress(WKWindowBounceAnimationContextR
 
 #if defined(__x86_64__)
 #import <mach/mig.h>
-
 CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_t serverPort);
+#endif // defined(__x86_64__)
 
 NSUInteger WKGetInputPanelWindowStyle(void);
- 
 UInt8 WKGetNSEventKeyChar(NSEvent *);
-#endif // defined(__x86_64__)
 #endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
 @class CAPropertyAnimation;

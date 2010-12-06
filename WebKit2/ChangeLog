@@ -1,3 +1,30 @@
+2010-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Dispatch keyboard events in the Carbon event model
+        https://bugs.webkit.org/show_bug.cgi?id=50503
+
+        * Shared/WebEvent.h:
+        (WebKit::WebKeyboardEvent::macCharCode):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::encode):
+        (WebKit::WebKeyboardEvent::decode):
+        Add macCharCode field.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        Pass along the Mac char code.
+        
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        Convert the event to a Carobn event.
+
 2010-12-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben.

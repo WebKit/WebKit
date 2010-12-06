@@ -1013,13 +1013,14 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView 
     String keyIdentifier            = keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode       = windowsKeyCodeForKeyEvent(event);
     int nativeVirtualKeyCode        = [event keyCode];
+    int macCharCode                 = WKGetNSEventKeyChar(event);
     bool autoRepeat                 = ([event type] != NSFlagsChanged) && [event isARepeat];
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
     double timestamp                = [event timestamp];
 
-    return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
+    return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
 
 } // namespace WebKit

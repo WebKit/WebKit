@@ -450,13 +450,14 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message
     String keyIdentifier            = keyIdentifierFromEvent(wparam, type);
     int windowsVirtualKeyCode       = static_cast<int>(wparam);
     int nativeVirtualKeyCode        = static_cast<int>(wparam);
+    int macCharCode                 = 0;
     bool autoRepeat                 = HIWORD(lparam) & KF_REPEAT;
     bool isKeypad                   = isKeypadEvent(wparam, lparam, type);
     bool isSystemKey                = isSystemKeyEvent(message);
     WebEvent::Modifiers modifiers   = modifiersForCurrentKeyState();
     double timestamp                = ::GetTickCount() * 0.001; // ::GetTickCount returns milliseconds (Chrome uses GetMessageTime() / 1000.0)
 
-    return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
+    return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
 
 } // namespace WebKit

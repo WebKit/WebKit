@@ -532,13 +532,33 @@ static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEven
 bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     switch (m_eventModel) {
-        case NPEventModelCocoa: {
-            NPCocoaEvent event  = initializeKeyboardEvent(keyboardEvent);
-            return NPP_HandleEvent(&event);
-        }
+    case NPEventModelCocoa: {
+        NPCocoaEvent event = initializeKeyboardEvent(keyboardEvent);
+        return NPP_HandleEvent(&event);
+    }
 
+    case NPEventModelCarbon: {
+        EventKind eventKind = nullEvent;
+
+        switch (keyboardEvent.type()) {
+        case WebEvent::KeyDown:
+            eventKind = keyboardEvent.isAutoRepeat() ? autoKey : keyDown;
+            break;
+        case WebEvent::KeyUp:
+            eventKind = keyUp;
+            break;
         default:
             ASSERT_NOT_REACHED();
+        }
+
+        EventRecord event = initializeEventRecord(eventKind);
+        event.modifiers = modifiersForEvent(keyboardEvent);
+        event.message = keyboardEvent.nativeVirtualKeyCode() << 8 | keyboardEvent.macCharCode();
+        return NPP_HandleEvent(&event);
+    }
+
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     return false;
