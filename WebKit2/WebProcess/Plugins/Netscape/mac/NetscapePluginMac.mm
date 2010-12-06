@@ -571,6 +571,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         return NPP_HandleEvent(&event);
     }
 
+#ifndef NP_NO_CARBON
     case NPEventModelCarbon: {
         EventKind eventKind = nullEvent;
 
@@ -590,6 +591,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         event.message = keyboardEvent.nativeVirtualKeyCode() << 8 | keyboardEvent.macCharCode();
         return NPP_HandleEvent(&event);
     }
+#endif
 
     default:
         ASSERT_NOT_REACHED();

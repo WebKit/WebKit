@@ -1,3 +1,10 @@
+2010-12-06  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent): Wrap Carbon-specific code in #ifndef NP_NO_CARBON.
+
 2010-12-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
