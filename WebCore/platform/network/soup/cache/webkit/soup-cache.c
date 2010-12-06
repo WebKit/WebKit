@@ -1615,6 +1615,7 @@ webkit_soup_cache_load (WebKitSoupCache *cache)
 	filename = g_build_filename (priv->cache_dir, WEBKIT_SOUP_CACHE_FILE, NULL);
 	if (!g_file_get_contents (filename, &contents, &length, NULL)) {
 		g_free (filename);
+		g_free (contents);
 		return;
 	}
 	g_free (filename);
