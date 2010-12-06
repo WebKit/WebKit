@@ -561,5 +561,8 @@ static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& 
     fclose(f);
     buffer[bufferSize] = '\0';
 
+    if (buffer[0] == '#' && buffer[1] == '!')
+        buffer[0] = buffer[1] = '/';
+
     return true;
 }
