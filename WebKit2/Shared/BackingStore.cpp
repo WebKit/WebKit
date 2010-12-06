@@ -125,15 +125,4 @@ void* BackingStore::data() const
     return m_data;
 }
 
-PassOwnPtr<GraphicsContext> BackingStore::createFlippedGraphicsContext()
-{
-    OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
-
-    // Flip the coordinate system.
-    graphicsContext->translate(0, m_size.height());
-    graphicsContext->scale(FloatSize(1, -1));
-
-    return graphicsContext.release();
-}
-    
 } // namespace WebKit

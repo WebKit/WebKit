@@ -78,8 +78,8 @@ void WebPopupMenu::setUpPlatformData(PlatformPopupMenuData& data)
     data.m_notSelectedBackingStore = BackingStore::createSharable(data.m_backingStoreSize);
     data.m_selectedBackingStore = BackingStore::createSharable(data.m_backingStoreSize);
 
-    OwnPtr<GraphicsContext> notSelectedBackingStoreContext = data.m_notSelectedBackingStore->createFlippedGraphicsContext();
-    OwnPtr<GraphicsContext> selectedBackingStoreContext = data.m_selectedBackingStore->createFlippedGraphicsContext();
+    OwnPtr<GraphicsContext> notSelectedBackingStoreContext = data.m_notSelectedBackingStore->createGraphicsContext();
+    OwnPtr<GraphicsContext> selectedBackingStoreContext = data.m_selectedBackingStore->createGraphicsContext();
 
     Color activeOptionBackgroundColor = RenderTheme::defaultTheme()->activeListBoxSelectionBackgroundColor();
     Color activeOptionTextColor = RenderTheme::defaultTheme()->activeListBoxSelectionForegroundColor();

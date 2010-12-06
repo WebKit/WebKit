@@ -62,7 +62,6 @@ public:
 
     // Create a graphics context that can be used to paint into the backing store.
     PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext();
-    PassOwnPtr<WebCore::GraphicsContext> createFlippedGraphicsContext();
 
     // Paint the backing store into the given context.
     void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect);
