@@ -1,5 +1,13 @@
 2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Leopard build fix for r73388.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::maxValueForRange):
+        (WebCore::AccessibilitySlider::minValueForRange):
+
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix for Leopard after r73379.
 
         * platform/graphics/cg/GraphicsContextCG.cpp:

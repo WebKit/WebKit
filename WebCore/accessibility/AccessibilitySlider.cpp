@@ -128,12 +128,12 @@ float AccessibilitySlider::valueForRange() const
 
 float AccessibilitySlider::maxValueForRange() const
 {
-    return element()->maximum();
+    return static_cast<float>(element()->maximum());
 }
 
 float AccessibilitySlider::minValueForRange() const
 {
-    return element()->minimum();
+    return static_cast<float>(element()->minimum());
 }
 
 void AccessibilitySlider::setValue(const String& value)
