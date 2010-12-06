@@ -1,3 +1,13 @@
+2010-12-04  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Removed extern webkit_web_view_set_group_name from gtk/DumpRenderTree.cpp
+
+        Method was removed by http://trac.webkit.org/changeset/71604
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+
 2010-12-05  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
