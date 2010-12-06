@@ -853,7 +853,7 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, con
  * RenderTheme handles drawing focus on widgets which 
  * need it. It is still handled here for links.
  */
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (paintingDisabled() || !color.isValid())
         return;
@@ -871,9 +871,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width *
     const QBrush oldBrush = p->brush();
 
     QPen nPen = p->pen();
-    nPen.setColor(color);
+    int radius = (width - 1) / 2;
+
+    nPen.setColor(QColor(color.red(), color.green(), color.blue(), 127));
+    nPen.setWidth(width);
+
     p->setBrush(Qt::NoBrush);
-    nPen.setStyle(Qt::DotLine);
+    nPen.setStyle(Qt::SolidLine);
     p->setPen(nPen);
 #if 0
     // FIXME How do we do a bounding outline with Qt?
@@ -884,8 +888,10 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width *
     QPainterPath newPath = stroker.createStroke(path);
     p->strokePath(newPath, nPen);
 #else
-    for (unsigned i = 0; i < rectCount; ++i)
-        p->drawRect(QRectF(rects[i]));
+    for (unsigned i = 0; i < rectCount; ++i) {
+        QRect rect = QRect((rects[i])).adjusted(-offset - radius, -offset - radius, offset + radius, offset + radius);
+        p->drawRoundedRect(rect, radius, radius);
+    }
 #endif
     p->setPen(oldPen);
     p->setBrush(oldBrush);
