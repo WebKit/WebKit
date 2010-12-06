@@ -35,6 +35,9 @@ namespace WebKit {
 #ifndef NP_NO_CARBON
 static const double nullEventIntervalActive = 0.02;
 static const double nullEventIntervalNotActive = 0.25;
+
+static unsigned buttonStateFromLastMouseEvent;
+
 #endif
 
 NPError NetscapePlugin::setDrawingModel(NPDrawingModel drawingModel)
@@ -207,6 +210,11 @@ WindowRef NetscapePlugin::windowRef() const
     ASSERT(m_eventModel == NPEventModelCarbon);
 
     return reinterpret_cast<WindowRef>(m_npCGContext.window);
+}
+
+unsigned NetscapePlugin::buttonState()
+{
+    return buttonStateFromLastMouseEvent;
 }
 
 static inline EventRecord initializeEventRecord(EventKind eventKind)
@@ -402,9 +410,11 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             switch (mouseEvent.type()) {
             case WebEvent::MouseDown:
                 eventKind = mouseDown;
+                buttonStateFromLastMouseEvent |= (1 << buttonNumber(mouseEvent.button()));
                 break;
             case WebEvent::MouseUp:
                 eventKind = mouseUp;
+                buttonStateFromLastMouseEvent &= ~(1 << buttonNumber(mouseEvent.button()));
                 break;
             case WebEvent::MouseMove:
                 eventKind = nullEvent;
@@ -414,8 +424,10 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             }
 
             EventRecord event = initializeEventRecord(eventKind);
+            event.modifiers = modifiersForEvent(mouseEvent);
             event.where.h = mouseEvent.globalPosition().x();
             event.where.v = mouseEvent.globalPosition().y();
+
             return NPP_HandleEvent(&event);
         }
 #endif

@@ -62,11 +62,22 @@ static bool isWindowActive(WindowRef windowRef, bool& result)
     return false;
 }
 
+static UInt32 getCurrentEventButtonState()
+{
+#ifndef NP_NO_CARBON
+    return NetscapePlugin::buttonState();
+#else
+    ASSERT_NOT_REACHED();
+    return 0;
+#endif
+}
+    
 void PluginProcess::initializeShim()
 {
     const PluginProcessShimCallbacks callbacks = {
         shouldCallRealDebugger,
         isWindowActive,
+        getCurrentEventButtonState
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));

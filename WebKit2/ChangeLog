@@ -2,6 +2,34 @@
 
         Reviewed by Adam Roben.
 
+        Add a shim for GetCurrentEventButtonState
+        https://bugs.webkit.org/show_bug.cgi?id=50583
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::getCurrentEventButtonState):
+        Get the event button state from the plug-in.
+
+        (WebKit::PluginProcess::initializeShim):
+        Add new shim callback.
+
+        * PluginProcess/mac/PluginProcessShim.cpp:
+        (WebKit::shimGetCurrentEventButtonState):
+        Add shim.
+
+        * PluginProcess/mac/PluginProcessShim.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::buttonState):
+        Return the button state.
+
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        Update the button state. Also, make sure to actually pass the modifiers to NPP_HandleEvent.
+        
+
+2010-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add a shim for IsWindowActive
         https://bugs.webkit.org/show_bug.cgi?id=50582
 

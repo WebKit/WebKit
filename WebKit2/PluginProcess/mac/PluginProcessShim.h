@@ -33,6 +33,7 @@ namespace WebKit {
 struct PluginProcessShimCallbacks {
     bool (*shouldCallRealDebugger)();
     bool (*isWindowActive)(WindowRef, bool& result);
+    UInt32 (*getCurrentEventButtonState)();
 };
 
 typedef void (*PluginProcessShimInitializeFunc)(const PluginProcessShimCallbacks&);

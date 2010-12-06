@@ -53,6 +53,11 @@ static void shimDebugger(void)
     Debugger();
 }
 
+static UInt32 shimGetCurrentEventButtonState()
+{
+    return pluginProcessShimCallbacks.getCurrentEventButtonState();
+}
+
 static Boolean shimIsWindowActive(WindowRef window)
 {
     bool result;
@@ -61,8 +66,9 @@ static Boolean shimIsWindowActive(WindowRef window)
     
     return IsWindowActive(window);
 }
-    
+
 DYLD_INTERPOSE(shimDebugger, Debugger);
+DYLD_INTERPOSE(shimGetCurrentEventButtonState, GetCurrentEventButtonState);
 DYLD_INTERPOSE(shimIsWindowActive, IsWindowActive);
     
 #endif

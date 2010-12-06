@@ -61,7 +61,9 @@ public:
     bool isWindowActive() const { return m_isWindowActive; }
 
     static NetscapePlugin* netscapePluginFromWindow(WindowRef);
+    static unsigned buttonState();
 #endif
+
 #elif PLATFORM(WIN)
     HWND containingWindow() const;
 #endif
