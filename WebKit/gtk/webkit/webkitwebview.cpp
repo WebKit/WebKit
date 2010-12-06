@@ -107,7 +107,7 @@
  *
  * <programlisting>
  * /<!-- -->* Create the widgets *<!-- -->/
- * GtkWidget *main_window = gtk_window_new (GTK_WIDGET_TOPLEVEL);
+ * GtkWidget *main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
  * GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
  * GtkWidget *web_view = webkit_web_view_new ();
  *
