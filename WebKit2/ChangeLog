@@ -1,3 +1,16 @@
+2010-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Text in Find indicator is vertically flipped
+        https://bugs.webkit.org/show_bug.cgi?id=50524
+        <rdar://problem/8732978>
+
+        Don't flip the graphics context.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+
 2010-12-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

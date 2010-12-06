@@ -164,8 +164,7 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         graphicsContext.restore();
 
         graphicsContext.save();
-        graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness) + m_contentImage->bounds().height()));
-        graphicsContext.scale(FloatSize(1, -1));
+        graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
         m_contentImage->paint(graphicsContext, IntPoint(0, 0), m_contentImage->bounds());
         graphicsContext.restore();
     }
