@@ -1,3 +1,22 @@
+2010-12-06  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Throw webglcontextlost and webglcontextrestored events when a WebGL context is lost and restored.
+        https://bugs.webkit.org/show_bug.cgi?id=50364
+
+        No new tests since there is currently no way to force a context lost event.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired):
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::isContextLost):
+        (WebCore::WebGLRenderingContext::loseContext):
+        (WebCore::WebGLRenderingContext::restoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContextRestoreTimer::WebGLRenderingContextRestoreTimer):
+
 2010-12-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

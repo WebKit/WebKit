@@ -32,6 +32,7 @@
 #include "GraphicsContext3D.h"
 #include "Int32Array.h"
 #include "PlatformString.h"
+#include "Timer.h"
 #include "Uint8Array.h"
 #include "WebGLGetInfo.h"
 
@@ -175,7 +176,7 @@ public:
 
     void hint(unsigned long target, unsigned long mode);
     bool isBuffer(WebGLBuffer*);
-    bool isContextLost() const;
+    bool isContextLost();
     bool isEnabled(unsigned long cap);
     bool isFramebuffer(WebGLFramebuffer*);
     bool isProgram(WebGLProgram*);
@@ -294,7 +295,7 @@ public:
   private:
     friend class WebGLObject;
 
-    WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>);
+    WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
     void setupFlags();
 
@@ -343,6 +344,17 @@ public:
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement* video);
 
     RefPtr<GraphicsContext3D> m_context;
+
+    class WebGLRenderingContextRestoreTimer : public TimerBase {
+    public:
+        WebGLRenderingContextRestoreTimer(WebGLRenderingContext* context) : m_context(context) { }
+    private:
+        virtual void fired();
+        WebGLRenderingContext* m_context;
+    };
+
+    WebGLRenderingContextRestoreTimer m_restoreTimer;
+
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
     HashSet<RefPtr<WebGLObject> > m_canvasObjects;
@@ -431,6 +443,7 @@ public:
     bool m_unpackPremultiplyAlpha;
     unsigned long m_unpackColorspaceConversion;
     bool m_contextLost;
+    GraphicsContext3D::Attributes m_attributes;
 
     long m_stencilBits;
     unsigned long m_stencilMask;

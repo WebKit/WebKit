@@ -62,6 +62,8 @@
 
 namespace WebCore {
 
+const double secondsBetweenRestoreAttempts = 1.0;
+
 static inline Platform3DObject objectOrZero(WebGLObject* object)
 {
     return object ? object->object() : 0;
@@ -86,25 +88,49 @@ private:
     bool m_changed;
 };
 
+void WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired()
+{
+    // Timer is started when m_contextLost is false.  It will first call
+    // loseContext, which will set m_contextLost to true.  Then it will keep
+    // calling restoreContext and reschedule itself until m_contextLost is back
+    // to false.
+    if (!m_context->m_contextLost) {
+        m_context->loseContext();
+        startOneShot(secondsBetweenRestoreAttempts);
+    } else {
+        // The rendering context is not restored if there is no handler for
+        // the context restored event.
+        if (!m_context->canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent))
+            return;
+
+        m_context->restoreContext();
+        if (m_context->m_contextLost)
+            startOneShot(secondsBetweenRestoreAttempts);
+    }
+}
+
 PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
     HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
-    GraphicsContext3D::Attributes emptyAttributes;
-    RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attrs ? attrs->attributes() : emptyAttributes, hostWindow));
+    GraphicsContext3D::Attributes attributes = attrs ? attrs->attributes() : GraphicsContext3D::Attributes();
+    RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context) {
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
         return 0;
     }
         
-    return new WebGLRenderingContext(canvas, context);
+    return new WebGLRenderingContext(canvas, context, attributes);
 }
 
-WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, PassRefPtr<GraphicsContext3D> context)
+WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, PassRefPtr<GraphicsContext3D> context,
+                                             GraphicsContext3D::Attributes attributes)
     : CanvasRenderingContext(passedCanvas)
     , m_context(context)
+    , m_restoreTimer(this)
     , m_videoCache(4)
     , m_contextLost(false)
+    , m_attributes(attributes)
 {
     ASSERT(m_context);
     setupFlags();
@@ -2092,8 +2118,16 @@ bool WebGLRenderingContext::isBuffer(WebGLBuffer* buffer)
     return m_context->isBuffer(buffer->object());
 }
 
-bool WebGLRenderingContext::isContextLost() const
+bool WebGLRenderingContext::isContextLost()
 {
+    if (m_restoreTimer.isActive())
+        return true;
+
+    bool newContextLost = m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
+
+    if (newContextLost != m_contextLost)
+        m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
+
     return m_contextLost;
 }
 
@@ -3247,9 +3281,6 @@ void WebGLRenderingContext::viewport(long x, long y, unsigned long width, unsign
 
 void WebGLRenderingContext::loseContext()
 {
-    if (isContextLost())
-        return;
-
     m_contextLost = true;
 
     detachAndRemoveAllObjects();
@@ -3269,17 +3300,13 @@ void WebGLRenderingContext::loseContext()
 
 void WebGLRenderingContext::restoreContext()
 {
-    if (!isContextLost())
+    RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(m_attributes, canvas()->document()->view()->root()->hostWindow()));
+    if (!context)
         return;
 
-    // The rendering context is not restored if there is no handler for
-    // the context restored event.
-    if (!canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent))
-        return;
-
-    m_contextLost = false;
+    m_context = context;
     initializeNewContext();
-
+    m_contextLost = false;
     canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, ""));
 }
 
