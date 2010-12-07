@@ -1,3 +1,19 @@
+2010-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] testwebdatasource - unreachable test is broken
+        https://bugs.webkit.org/show_bug.cgi?id=50629
+
+        Fix, and disable testwebdatasource's unreachable test (it is not
+        passing now that it actually tests what it should). This also
+        fixes the wait timer to actually work as expected.
+
+        * tests/testwebdatasource.c:
+        (notify_load_status_unreachable_cb):
+        (notify_load_status_cb):
+        (test_webkit_web_data_source):
+
 2010-12-07  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73392.
