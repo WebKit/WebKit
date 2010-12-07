@@ -1,5 +1,19 @@
 2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed.
+
+        Add Qt specific expected results for tests introduced in r73385 and r73398.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/fast/html/marquee-scrollamount-expected.checksum: Added.
+        * platform/qt/fast/html/marquee-scrollamount-expected.png: Added.
+        * platform/qt/fast/html/marquee-scrollamount-expected.txt: Added.
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.checksum: Added.
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.png: Added.
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.txt: Added.
+
+2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed. Rolling out r73421, because it made transitions/color-transition-all.html flakey.
 
         * transitions/border-radius-transition-expected.txt: Removed.
