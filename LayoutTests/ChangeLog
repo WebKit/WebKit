@@ -1,3 +1,19 @@
+2010-12-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: switch http/tests/inspector/console-resource-errors.html to inspector-tests2
+        https://bugs.webkit.org/show_bug.cgi?id=50551
+
+        We need to be sure that front-end has already opened by the time the messages are
+        recorded in console because the data we collect for errors may differ depending
+        on whether the front-end is open.
+
+        * http/tests/inspector/console-resource-errors-expected.txt:
+        * http/tests/inspector/console-resource-errors.html:
+        * http/tests/inspector/console-tests2.js:
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessagesWithClasses):
+
 2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

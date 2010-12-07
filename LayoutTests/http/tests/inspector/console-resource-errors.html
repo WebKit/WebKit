@@ -1,24 +1,30 @@
 <html>
 <head>
-<script src="console-tests.js"></script>
-<script src="inspector-test.js"></script>
+<script src="console-tests2.js"></script>
+<script src="inspector-test2.js"></script>
 
 <link rel="stylesheet" type="text/css" href="missing.css">
 
 <script>
-function doit()
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET","non-existent-xhr", false);
-    xhr.send(null);
+var xhr = new XMLHttpRequest();
+xhr.open("GET","non-existent-xhr", false);
+xhr.send(null);
 
-    dumpConsoleMessagesWithClasses(true);
+function test()
+{
+    InspectorTest.reloadPage(function() {
+        InspectorTest.expandConsoleMessages();
+        InspectorTest.dumpConsoleMessagesWithClasses(true);
+        InspectorTest.completeTest();
+    });
 }
+
+
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 <script src="non-existent-script.js"></script>
 <iframe src="non-existent-iframe.html"></iframe>
