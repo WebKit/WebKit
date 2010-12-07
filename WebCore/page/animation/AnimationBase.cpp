@@ -731,7 +731,8 @@ static void addShorthandProperties()
         CSSPropertyWebkitMask,      // for mask-position
         CSSPropertyWebkitMaskPosition,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
-        CSSPropertyBorderColor, 
+        CSSPropertyBorderColor,
+        CSSPropertyBorderRadius,
         CSSPropertyBorderWidth,
         CSSPropertyBorder,
         CSSPropertyBorderSpacing,

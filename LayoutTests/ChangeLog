@@ -1,5 +1,17 @@
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        CSS animation doesn't work for border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=48340
+        
+        Test for border-radius and -webkit-border-radius transition.
+
+        * transitions/border-radius-transition-expected.txt: Added.
+        * transitions/border-radius-transition.html: Added.
+
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Chris Marrin.
 
         Make use of pause API more explicit before landing fix for borer-radius animation.
