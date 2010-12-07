@@ -21,10 +21,10 @@
   <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
-      // [time, element-id, property, expected-value, tolerance]
-      [0.5, 'outer', 'color', [0, 127, 127], 2],
-      [0.5, 'inner', 'color', [255, 0, 0], 2],
-      [0.5, 'inner', '-webkit-text-fill-color', [255, 0, 0], 2],
+      // [time, element-id, property, expected-value, tolerance, post-completion callback, should-be-transitioning]
+      [0.5, 'outer', 'color', [0, 127, 127], 2, null, shouldBeTransitioning],
+      [0.5, 'inner', 'color', [255, 0, 0], 2, null, shouldNotBeTransitioning],
+      [0.5, 'inner', '-webkit-text-fill-color', [255, 0, 0], 2, null, shouldNotBeTransitioning],
     ];
 
     function setupTest()
@@ -32,7 +32,7 @@
       document.getElementById('outer').className = 'changed';
     }
 
-    runTransitionTest(expectedValues, setupTest, true);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

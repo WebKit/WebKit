@@ -1,3 +1,19 @@
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Make use of pause API more explicit before landing fix for borer-radius animation.
+        https://bugs.webkit.org/show_bug.cgi?id=48340
+        
+        * transitions/transition-test-helpers.js: Add some constants that
+        we can use to make the tests more readable.
+        Handle an extra value in the expected values arrays, to tell us if
+        we should expect a property to be animated, and therefore whether
+        we should try to pause it.
+        * transitions/color-transition-all.html:
+        * transitions/zero-duration-in-list.html:
+        Adjust to make use of the above changes.
+
 2010-12-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kent Tamura.

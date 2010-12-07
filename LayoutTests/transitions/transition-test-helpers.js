@@ -21,6 +21,12 @@ Function parameters:
 
 */
 
+const usePauseAPI = true;
+const dontUsePauseAPI = false;
+
+const shouldBeTransitioning = true;
+const shouldNotBeTransitioning = false;
+
 function roundNumber(num, decimalPlaces)
 {
   return Math.round(num * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
@@ -166,9 +172,16 @@ function runTest(expected, usePauseAPI)
         if (!property.indexOf("-webkit-transform"))
             property = "-webkit-transform";
 
+        var tryToPauseTransition = expected[i][6];
+        if (tryToPauseTransition === undefined)
+          tryToPauseTransition = shouldBeTransitioning;
+
         // We can only use the transition fast-forward mechanism if DRT implements pauseTransitionAtTimeOnElementWithId()
         if (hasPauseTransitionAPI && usePauseAPI) {
-            layoutTestController.pauseTransitionAtTimeOnElementWithId(property, time, elementId);
+            if (tryToPauseTransition) {
+              if (!layoutTestController.pauseTransitionAtTimeOnElementWithId(property, time, elementId))
+                window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
+            }
             checkExpectedValue(expected, i);
         } else {
             if (time > maxTime)
