@@ -1,3 +1,32 @@
+2010-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] ::buffered() should return multiple ranges in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=45101
+
+        Improved the ::buffered() method thanks to the new buffering query
+        support that landed in GStreamer 0.10.31. The method now
+        queries the media buffered-ranges on the pipeline and queue2
+        handles it if it's buffering the media to disk.
+
+        The webkitwebsrc element also gained BYTES duration query
+        support. This is needed in the rare cases where uridecodebin
+        configures its queue before the HTTP server returns the media
+        Content-Length.
+
+        Test: http/tests/media/video-buffered.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcQuery): Make webkitwebsrc handle the duration queries
+        if it's aware of the media content-length.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack): Fix position of
+        the second and next buffered ranges.
+
 2010-12-07  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

@@ -19,21 +19,62 @@ my $chunkPerSec = $kbPerSec * 1024 / CHUNK_SIZE_BYTES;
 # Get MIME type if provided.  Default to video/mp4.
 my $type = $query->param('type') || "video/mp4";
 
-# Print HTTP Header, disabling cache.
-print "Content-type: " . $type . "\n"; 
-print "Content-Length: " . $filesize . "\n";
-print "Cache-Control: no-cache\n";
+my $nph = $query->param('nph') || 0;
+CGI->nph($nph);
+
+my $contentRange = $ENV{'HTTP_RANGE'};
+
+my $rangeEnd = $filesize - 1;
+my @parsedRange = (0, $rangeEnd);
+
+if ($nph) {
+    # Handle HTTP Range requests.
+    my $httpContentRange;
+    my $httpStatus;
+
+    if ($contentRange) {
+        my @values = split('=', $contentRange);
+        my $rangeType = $values[0];
+        @parsedRange = split("-", $values[1]);
+
+        if (!$parsedRange[1]) {
+            $parsedRange[1] = $rangeEnd;
+        }
+        $httpStatus = "206 Partial Content";
+        $httpContentRange = "bytes " . $parsedRange[0] . "-" . $parsedRange[1] . "/" . $filesize;
+    } else {
+        $httpStatus = "200 OK";
+    }
+
+    print "Status: " . $httpStatus . "\n";
+    print "Connection: close\n";
+    print "Content-Length: " . $filesize . "\n";
+    print "Content-Type: " . $type . "\n";
+    print "Accept-Ranges: bytes\n";
+    if ($httpContentRange) {
+        print "Content-Range: " . $httpContentRange . "\n";
+    }
+} else {
+    # Print HTTP Header, disabling cache.
+    print "Cache-Control: no-cache\n";
+    print "Content-Length: " . $filesize . "\n";
+    print "Content-Type: " . $type . "\n";
+}
+
 print "\n";
 
 open FILE, $name or die;
 binmode FILE;
 my ($data, $n);
 my $total = 0;
+
+seek(FILE, $parsedRange[0], 0);
+
 while (($n = read FILE, $data, 1024) != 0) {
     print $data;
 
     $total += $n;
-    if ($total >= $filesize) {
+    if (($total >= $filesize) || ($total > $parsedRange[1])) {
         last;
     }
 

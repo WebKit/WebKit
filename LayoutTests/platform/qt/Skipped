@@ -661,6 +661,9 @@ media/media-can-play-mpeg4-video.html
 # https://bugs.webkit.org/show_bug.cgi?id=48617
 media/video-seek-by-small-increment.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 # ============================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
 # Skip these until a proper solution for the Phonon related crashes found.      #

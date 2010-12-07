@@ -786,6 +786,9 @@ BUG13907 BUG60355 : http/tests/security/local-video-src-from-remote.html = PASS 
 // KNOWNISSUE : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
 BUG59635 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 
+// video.buffered multiple TimeRanges support.
+BUG49165 SKIP : http/tests/media/video-buffered.html = PASS
+
 // These tests need to be changed to not rely on setTimeout().
 BUG13907 BUG60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
 BUG13907 BUG60740 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL

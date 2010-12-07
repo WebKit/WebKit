@@ -299,6 +299,9 @@ editing/selection/context-menu-on-text.html
 # and https://bugs.webkit.org/show_bug.cgi?id=45021
 media/context-menu-actions.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 # Assertion failure in replaySavedEvents http://webkit.org/b/21796
 editing/pasteboard/drop-text-events.html
 editing/selection/drag-in-iframe.html

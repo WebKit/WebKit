@@ -1,3 +1,31 @@
+2010-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] ::buffered() should return multiple ranges in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=45101
+
+        New test for video.buffered attribute. The test is skipped for
+        ports not returning multiple timeranges for video.buffered.
+
+        * http/tests/media/video-buffered-expected.txt: Added.
+        * http/tests/media/video-buffered.html: Added.
+        * http/tests/resources/counting-captioned.mov: Added.
+        * http/tests/media/video-throttled-load.cgi: added Range
+        requests/responses support.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt-win/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win/Skipped:
+
 2010-12-07  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

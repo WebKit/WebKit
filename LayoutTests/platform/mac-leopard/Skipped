@@ -50,6 +50,9 @@ media/video-controls-zoomed.html
 media/video-zoom-controls.html
 media/video-volume.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 # Disable flakey webgl test to make the bots green again.
 # https://bugs.webkit.org/show_bug.cgi?id=33924
 fast/canvas/webgl/texImage2DImageDataTest.html

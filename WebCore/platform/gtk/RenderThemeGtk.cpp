@@ -853,7 +853,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
             rangeRect = trackRect;
             rangeRect.setWidth(width);
         } else {
-            rangeRect.setLocation(IntPoint((start * totalWidth) / mediaDuration, trackRect.y()));
+            rangeRect.setLocation(IntPoint(trackRect.x() + start / mediaDuration* totalWidth, trackRect.y()));
             rangeRect.setSize(IntSize(width, trackRect.height()));
         }
 

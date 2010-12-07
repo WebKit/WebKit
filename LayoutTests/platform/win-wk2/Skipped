@@ -147,3 +147,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 
 # Unexplained test timeouts.
 fast/js/exceptions-thrown-in-callbacks.html
+
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html

@@ -99,6 +99,9 @@ http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
 # https://bugs.webkit.org/show_bug.cgi?id=33323 - http/tests/media/video-error-abort.html times out
 http/tests/media/video-error-abort.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 # Fails on all mac variants
 # https://bugs.webkit.org/show_bug.cgi?id=34933
 media/video-display-aspect-ratio.html

@@ -2290,3 +2290,6 @@ platform/mac/fast/events/objc-keyboard-event-creation.html
 # WebKit2 does not (should not?) support setting WebKitUsePreHTML5ParserQuirks
 # in its WebPreferences implementation.
 fast/parser/pre-html5-parser-quirks.html
+
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html

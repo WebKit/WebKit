@@ -747,9 +747,40 @@ MediaPlayer::ReadyState MediaPlayerPrivateGStreamer::readyState() const
 PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    if (m_errorOccured || m_isStreaming)
+        return timeRanges.release();
+
+#if GST_CHECK_VERSION(0, 10, 31)
+    float mediaDuration(duration());
+    if (!mediaDuration || isinf(mediaDuration))
+        return timeRanges.release();
+
+    GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
+
+    if (!gst_element_query(m_playBin, query)) {
+        gst_query_unref(query);
+        return timeRanges.release();
+    }
+
+    gint64 rangeStart = 0, rangeStop = 0;
+    for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
+        if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
+            timeRanges->add(static_cast<float>((rangeStart * mediaDuration) / 100),
+                            static_cast<float>((rangeStop * mediaDuration) / 100));
+    }
+
+    // Fallback to the more general maxTimeLoaded() if no range has
+    // been found.
+    if (!timeRanges->length())
+        if (float loaded = maxTimeLoaded())
+            timeRanges->add(0, loaded);
+
+    gst_query_unref(query);
+#else
     float loaded = maxTimeLoaded();
     if (!m_errorOccured && !m_isStreaming && loaded > 0)
         timeRanges->add(0, loaded);
+#endif
     return timeRanges.release();
 }
 

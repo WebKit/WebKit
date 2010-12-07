@@ -252,6 +252,9 @@ fast/viewport
 # see also https://bugs.webkit.org/show_bug.cgi?id=45021
 media/context-menu-actions.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 # FileSystem API is not supported.
 fast/filesystem
 

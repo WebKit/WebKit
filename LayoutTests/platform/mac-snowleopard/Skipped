@@ -73,6 +73,9 @@ media/unsupported-tracks.html
 # https://bugs.webkit.org/show_bug.cgi?id=33434
 media/video-error-does-not-exist.html
 
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
 #  Test times out due to CoreGraphics bug
 # <rdar://problem/7499927>
 fast/images/size-failure.html
