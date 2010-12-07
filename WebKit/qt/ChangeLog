@@ -1,3 +1,10 @@
+2010-12-07  Darin Adler  <darin@apple.com>
+
+        Try to fix build.
+
+        * Api/qwebpage.cpp:
+        (frameLoadRequest): Added missing parentheses.
+
 2010-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

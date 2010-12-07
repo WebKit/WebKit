@@ -2244,7 +2244,7 @@ bool QWebPage::supportsContentType(const QString& mimeType) const
 
 static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
 {
-    return WebCore::FrameLoadRequest(frame->document()->securityOrigin,
+    return WebCore::FrameLoadRequest(frame->document()->securityOrigin(),
         WebCore::ResourceRequest(url, frame->loader()->outgoingReferrer()));
 }
 
