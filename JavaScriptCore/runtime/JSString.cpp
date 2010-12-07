@@ -31,6 +31,8 @@
 #include "StringPrototype.h"
 
 namespace JSC {
+    
+static const unsigned substringFromRopeCutoff = 4;
 
 // Overview: this methods converts a JSString from holding a string in rope form
 // down to a simple UString representation.  It does so by building up the string
@@ -104,6 +106,60 @@ void JSString::resolveRope(ExecState* exec) const
             workQueue.removeLast();
         }
     }
+}
+    
+// This function construsts a substring out of a rope without flattening by reusing the existing fibers.
+// This can reduce memory usage substantially. Since traversing ropes is slow the function will revert 
+// back to flattening if the rope turns out to be long.
+JSString* JSString::substringFromRope(ExecState* exec, unsigned substringStart, unsigned substringLength)
+{
+    ASSERT(isRope());
+    ASSERT(substringLength);
+    
+    JSGlobalData* globalData = &exec->globalData();
+
+    UString substringFibers[3];
+    
+    unsigned fiberCount = 0;
+    unsigned substringFiberCount = 0;
+    unsigned substringEnd = substringStart + substringLength;
+    unsigned fiberEnd = 0;
+
+    RopeIterator end;
+    for (RopeIterator it(m_other.m_fibers.data(), m_fiberCount); it != end; ++it) {
+        ++fiberCount;
+        StringImpl* fiberString = *it;
+        unsigned fiberStart = fiberEnd;
+        fiberEnd = fiberStart + fiberString->length();
+        if (fiberEnd <= substringStart)
+            continue;
+        unsigned copyStart = std::max(substringStart, fiberStart);
+        unsigned copyEnd = std::min(substringEnd, fiberEnd);
+        if (copyStart == fiberStart && copyEnd == fiberEnd)
+            substringFibers[substringFiberCount++] = UString(fiberString);
+        else
+            substringFibers[substringFiberCount++] = UString(StringImpl::create(fiberString, copyStart - fiberStart, copyEnd - copyStart));
+        if (fiberEnd >= substringEnd)
+            break;
+        if (fiberCount > substringFromRopeCutoff || substringFiberCount >= 3) {
+            // This turned out to be a really inefficient rope. Just flatten it.
+            resolveRope(exec);
+            return jsSubstring(&exec->globalData(), m_value, substringStart, substringLength);
+        }
+    }
+    ASSERT(substringFiberCount && substringFiberCount <= 3);
+
+    if (substringLength == 1) {
+        ASSERT(substringFiberCount == 1);
+        UChar c = substringFibers[0].characters()[0];
+        if (c <= 0xFF)
+            return globalData->smallStrings.singleCharacterString(globalData, c);
+    }
+    if (substringFiberCount == 1)
+        return new (globalData) JSString(globalData, substringFibers[0]);
+    if (substringFiberCount == 2)
+        return new (globalData) JSString(globalData, substringFibers[0], substringFibers[1]);
+    return new (globalData) JSString(globalData, substringFibers[0], substringFibers[1], substringFibers[2]);
 }
 
 JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)

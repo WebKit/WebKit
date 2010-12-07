@@ -356,6 +356,7 @@ namespace JSC {
         }
 
         void resolveRope(ExecState*) const;
+        JSString* substringFromRope(ExecState*, unsigned offset, unsigned length);
 
         void appendStringInConstruct(unsigned& index, const UString& string)
         {
@@ -435,6 +436,7 @@ namespace JSC {
         friend JSValue jsString(ExecState* exec, Register* strings, unsigned count);
         friend JSValue jsString(ExecState* exec, JSValue thisValue);
         friend JSString* jsStringWithFinalizer(ExecState*, const UString&, JSStringFinalizerCallback callback, void* context);
+        friend JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length);
     };
 
     JSString* asString(JSValue);
@@ -518,6 +520,19 @@ namespace JSC {
         ASSERT(s.length() && (s.length() > 1 || s.characters()[0] > 0xFF));
         JSGlobalData* globalData = &exec->globalData();
         return fixupVPtr(globalData, new (globalData) JSString(globalData, s, callback, context));
+    }
+    
+    inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)
+    {
+        ASSERT(offset <= static_cast<unsigned>(s->length()));
+        ASSERT(length <= static_cast<unsigned>(s->length()));
+        ASSERT(offset + length <= static_cast<unsigned>(s->length()));
+        JSGlobalData* globalData = &exec->globalData();
+        if (!length)
+            return globalData->smallStrings.emptyString(globalData);
+        if (s->isRope())
+            return s->substringFromRope(exec, offset, length);
+        return jsSubstring(globalData, s->m_value, offset, length);
     }
 
     inline JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)

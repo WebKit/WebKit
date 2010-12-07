@@ -772,8 +772,16 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
-    int len = s.length();
+    unsigned len;
+    JSString* jsString = 0;
+    UString uString;
+    if (thisValue.isString()) {
+        jsString = static_cast<JSString*>(thisValue.asCell());
+        len = jsString->length();
+    } else {
+        uString = thisValue.toThisObject(exec)->toString(exec);
+        len = uString.length();
+    }
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -789,7 +797,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     }
     if (start + length > len)
         length = len - start;
-    return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(length)));
+    unsigned substringStart = static_cast<unsigned>(start);
+    unsigned substringLength = static_cast<unsigned>(length);
+    if (jsString)
+        return JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength));
+    return JSValue::encode(jsSubstring(exec, uString, substringStart, substringLength));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
@@ -797,8 +809,16 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
-    int len = s.length();
+    int len;
+    JSString* jsString = 0;
+    UString uString;
+    if (thisValue.isString()) {
+        jsString = static_cast<JSString*>(thisValue.asCell());
+        len = jsString->length();
+    } else {
+        uString = thisValue.toThisObject(exec)->toString(exec);
+        len = uString.length();
+    }
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -823,7 +843,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
         end = start;
         start = temp;
     }
-    return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(end) - static_cast<unsigned>(start)));
+    unsigned substringStart = static_cast<unsigned>(start);
+    unsigned substringLength = static_cast<unsigned>(end) - substringStart;
+    if (jsString)
+        return JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength));
+    return JSValue::encode(jsSubstring(exec, uString, substringStart, substringLength));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
