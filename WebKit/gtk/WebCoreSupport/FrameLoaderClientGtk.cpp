@@ -333,11 +333,19 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
     request.updateFromSoupMessage(message);
 }
 
-void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const ResourceRequest& request)
+void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader* loader, const ResourceRequest& request)
 {
     GOwnPtr<gchar> identifierString(toString(identifier));
-    webkit_web_view_add_resource(getViewFromFrame(m_frame), identifierString.get(),
-                                 WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0)));
+
+    WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0));
+
+    if (loader == loader->frameLoader()->provisionalDocumentLoader()
+        && loader->frameLoader()->isLoadingMainFrame()) {
+        webkit_web_view_add_main_resource(getViewFromFrame(m_frame), identifierString.get(), webResource);
+        return;
+    }
+
+    webkit_web_view_add_resource(getViewFromFrame(m_frame), identifierString.get(), webResource);
 }
 
 void FrameLoaderClient::postProgressStartedNotification()
@@ -1029,17 +1037,17 @@ void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
 
 void FrameLoaderClient::provisionalLoadStarted()
 {
-    WebKitWebView* webView = getViewFromFrame(m_frame);
-
-    if (m_frame == webkit_web_view_get_main_frame(webView))
-        webkit_web_view_clear_resources(webView);
+    notImplemented();
 }
 
 void FrameLoaderClient::didFinishLoad() {
     notImplemented();
 }
 
-void FrameLoaderClient::prepareForDataSourceReplacement() { notImplemented(); }
+void FrameLoaderClient::prepareForDataSourceReplacement() 
+{
+    notImplemented();
+}
 
 void FrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
@@ -1279,6 +1287,8 @@ void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, bool resetValues)
 {
     WebKitWebView* containingWindow = getViewFromFrame(frame);
+    webkit_web_view_clear_resources(containingWindow);
+
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
     view->setGtkAdjustments(priv->horizontalAdjustment.get(), priv->verticalAdjustment.get(), resetValues);
 

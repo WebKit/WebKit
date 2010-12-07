@@ -4756,16 +4756,17 @@ gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
 }
 
 // Internal subresource management
-void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier, WebKitWebResource* webResource)
+void webkit_web_view_add_main_resource(WebKitWebView* webView, const char* identifier, WebKitWebResource* webResource)
 {
     WebKitWebViewPrivate* priv = webView->priv;
 
-    if (!priv->mainResource) {
-        priv->mainResource = adoptPlatformRef(webResource);
-        priv->mainResourceIdentifier = identifier;
-        return;
-    }
+    priv->mainResource = adoptPlatformRef(webResource);
+    priv->mainResourceIdentifier = identifier;
+}
 
+void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier, WebKitWebResource* webResource)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
     g_hash_table_insert(priv->subResources.get(), g_strdup(identifier), webResource);
 }
 
@@ -4806,8 +4807,6 @@ WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView* webView)
 void webkit_web_view_clear_resources(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    priv->mainResourceIdentifier = "";
-    priv->mainResource = 0;
 
     if (priv->subResources)
         g_hash_table_remove_all(priv->subResources.get());

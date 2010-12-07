@@ -1,5 +1,31 @@
 2010-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Martin Robinson.
+
+        [GTK] clears the subresources prematurely
+        https://bugs.webkit.org/show_bug.cgi?id=50634
+
+        Make adding the main resource explicit, and only clear
+        subresources when the new load is committed, avoid clearing them
+        prematurely.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::FrameLoaderClient::provisionalLoadStarted):
+        (WebKit::FrameLoaderClient::prepareForDataSourceReplacement):
+        (WebKit::postCommitFrameViewSetup):
+        * tests/testwebdatasource.c:
+        (notify_load_status_lifetime_cb):
+        (test_webkit_web_data_source_lifetime):
+        (main):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_add_main_resource):
+        (webkit_web_view_add_resource):
+        (webkit_web_view_clear_resources):
+
+2010-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         [GTK] testwebdatasource - unreachable test is broken

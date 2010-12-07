@@ -281,6 +281,9 @@ extern "C" {
     webkit_web_view_add_resource(WebKitWebView*, const char*, WebKitWebResource*);
 
     void
+    webkit_web_view_add_main_resource(WebKitWebView*, const char*, WebKitWebResource*);
+
+    void
     webkit_web_view_remove_resource(WebKitWebView*, const char*);
 
     WebKitWebResource*

@@ -139,6 +139,64 @@ static void test_webkit_web_data_source()
     g_object_unref(view);
 }
 
+static void notify_load_status_lifetime_cb(WebKitWebView* view, GParamSpec* pspec, GMainLoop* loop)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status (view);
+    WebKitWebFrame* frame = webkit_web_view_get_main_frame(view);
+    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(frame);
+
+    if (status == WEBKIT_LOAD_COMMITTED) {
+        g_assert(webkit_web_data_source_is_loading(dataSource));
+        return;
+    } else if (status != WEBKIT_LOAD_FINISHED)
+        return;
+
+    g_main_loop_quit(loop);
+}
+
+static void test_webkit_web_data_source_lifetime()
+{
+    WebKitWebView* view;
+    GMainLoop* loop;
+
+    view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(view);
+    loop = g_main_loop_new(NULL, TRUE);
+    g_signal_connect(view, "notify::load-status", G_CALLBACK(notify_load_status_lifetime_cb), loop);
+    webkit_web_view_load_uri(view, "http://webkit.org");
+
+    waitTimer = g_timeout_add_seconds(defaultTimeout, (GSourceFunc)wait_timer_fired, loop);
+
+    g_main_loop_run(loop);
+
+    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(webkit_web_view_get_main_frame(view));
+    GList* subResources = webkit_web_data_source_get_subresources(dataSource);
+    gint numberOfResources = g_list_length(subResources);
+    g_list_free(subResources);
+
+    g_assert_cmpint(webkit_web_view_get_load_status(view), ==, WEBKIT_LOAD_FINISHED);
+
+    webkit_web_view_load_uri(view, "http://gnome.org");
+
+    g_assert_cmpint(webkit_web_view_get_load_status(view), ==, WEBKIT_LOAD_PROVISIONAL);
+
+    webkit_web_view_stop_loading(view);
+
+    g_assert_cmpint(webkit_web_view_get_load_status(view), ==, WEBKIT_LOAD_FAILED);
+
+    subResources = webkit_web_data_source_get_subresources(dataSource);
+    g_assert_cmpint(numberOfResources, ==, g_list_length(subResources));
+    g_list_free(subResources);
+
+    if (waitTimer)
+        g_source_remove(waitTimer);
+
+    waitTimer = 0;
+
+    g_main_loop_unref(loop);
+    g_object_unref(view);
+}
+
 static void test_webkit_web_data_source_unreachable_uri()
 {
     /* FIXME: this test fails currently. */
@@ -179,6 +237,9 @@ int main(int argc, char** argv)
                     test_webkit_web_data_source);
     g_test_add_func("/webkit/webdatasource/unreachable_uri",
                     test_webkit_web_data_source_unreachable_uri);
+    g_test_add_func("/webkit/webdatasource/lifetime",
+                    test_webkit_web_data_source_lifetime);
+
     return g_test_run ();
 }
 
