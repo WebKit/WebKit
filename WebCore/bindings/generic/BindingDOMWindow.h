@@ -93,7 +93,7 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
     String referrer = enteredFrame->loader()->outgoingReferrer();
     request.setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, enteredFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(request, frameName);
+    FrameLoadRequest frameRequest(callingFrame->document()->securityOrigin(), request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL,
     // here where we know what URL we are going to open. Unfortunately, this

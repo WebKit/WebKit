@@ -1,5 +1,12 @@
 2010-12-07  Darin Adler  <darin@apple.com>
 
+        Try to fix V8 build.
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::BindingDOMWindow::createWindow): Pass security origin.
+
+2010-12-07  Darin Adler  <darin@apple.com>
+
         Another build fix.
 
         * loader/CrossOriginAccessControl.cpp: Added a missing include.

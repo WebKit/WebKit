@@ -1,3 +1,10 @@
+2010-12-07  Darin Adler  <darin@apple.com>
+
+        Get a bit closer to making Qt WebKit2 compile again.
+
+        * WebKit2.pro: Add the WebDatabaseManager source files.
+        Still missing: The Qt version of the databaseDirectory function.
+
 2010-12-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

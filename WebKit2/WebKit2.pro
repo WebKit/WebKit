@@ -378,6 +378,7 @@ HEADERS += \
     WebProcess/Plugins/PluginView.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
+    WebProcess/WebCoreSupport/WebDatabaseManager.h \
     WebProcess/WebCoreSupport/WebDragClient.h \
     WebProcess/WebCoreSupport/WebEditorClient.h \
     WebProcess/WebCoreSupport/WebErrors.h \
@@ -579,6 +580,7 @@ SOURCES += \
     WebProcess/Plugins/PluginView.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
+    WebProcess/WebCoreSupport/WebDatabaseManager.cpp \
     WebProcess/WebCoreSupport/WebDragClient.cpp \
     WebProcess/WebCoreSupport/WebEditorClient.cpp \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
