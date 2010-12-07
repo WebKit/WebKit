@@ -95,5 +95,5 @@ int jsc_pcre_ucp_othercase(unsigned c)
     int offset = ucp_table[mid].f1 & f1_casemask;
     if (offset & f1_caseneg)
         offset |= f1_caseneg;
-    return !offset ? -1 : c + offset;
+    return !offset ? -1 : c + static_cast<int>(offset);
 }
