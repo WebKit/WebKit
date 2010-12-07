@@ -3280,6 +3280,7 @@ BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edg
 BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Not investigated.
+BUG_DRT LINUX : animations/suspend-resume-animation-events.html = CRASH PASS
 BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
 BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
 BUG_DRT WIN LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT IMAGE
@@ -3295,6 +3296,7 @@ BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
+BUG_DRT LINUX : fast/frames/calculate-round.html = TIMEOUT PASS
 BUG_DRT BUG43890 LINUX : fast/forms/implicit-submission.html = CRASH PASS TEXT
 BUG_DRT WIN : fast/forms/search-styled.html = IMAGE+TEXT
 BUG_DRT BUG21141 LINUX : fast/forms/select-double-onchange.html = CRASH FAIL
@@ -3313,6 +3315,7 @@ BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
 BUG_DRT WIN LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE IMAGE+TEXT
 BUG_DRT WIN : fast/text/atsui-negative-spacing-features.html = IMAGE
 BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
+BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
 BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
 BUG_DRT WIN : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
@@ -3353,14 +3356,17 @@ BUG_AWESOME BUG22777 MAC : fast/overflow/hit-test-overflow-controls.html = PASS 
 BUG10370 LINUX WIN : fast/css/font-weight-1.html = IMAGE+TEXT
 BUG_AWESOME MAC : fast/css/font-weight-1.html = PASS IMAGE+TEXT TIMEOUT
 
+// These tests work with DRT but not test shell
+// Remove them once we switch from test shell to DRT
+BUG65210 : fast/frames/location-redirect-user-gesture.html = TEXT
+BUG65210 : fast/frames/meta-refresh-user-gesture.html = TEXT
+
+// End DRT failures
+/////////////////////////////////////////////////////////////////////////////
+
 BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
 BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
-
-// These tests work with DRT but not test shell
-// Remove them once we switch from test shell to DRT
-BUG65210 : fast/frames/location-redirect-user-gesture.html = TEXT
-BUG65210 : fast/frames/meta-refresh-user-gesture.html = TEXT
