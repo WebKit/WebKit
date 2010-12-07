@@ -50,11 +50,6 @@ using std::min;
 namespace WebCore
 {
 
-void FontCache::platformInit()
-{
-    // Not needed on Windows.
-}
-
 // FIXME: consider adding to WebKit String class
 static bool charactersAreAllASCII(const String& s)
 {
@@ -329,6 +324,86 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     return cmap->contains(character);
 }
 
+// Tries the given font and save it |outFontFamilyName| if it succeeds.
+static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font, wchar_t* outFontFamilyName)
+{
+    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, font.lfFaceName);
+    if (fontData)
+        memcpy(outFontFamilyName, font.lfFaceName, sizeof(font.lfFaceName));
+    return fontData;
+}
+
+static LONG toGDIFontWeight(FontWeight fontWeight)
+{
+    static LONG gdiFontWeights[] = {
+        FW_THIN, // FontWeight100
+        FW_EXTRALIGHT, // FontWeight200
+        FW_LIGHT, // FontWeight300
+        FW_NORMAL, // FontWeight400
+        FW_MEDIUM, // FontWeight500
+        FW_SEMIBOLD, // FontWeight600
+        FW_BOLD, // FontWeight700
+        FW_EXTRABOLD, // FontWeight800
+        FW_HEAVY // FontWeight900
+    };
+    return gdiFontWeights[fontWeight];
+}
+
+static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont)
+{
+    // The size here looks unusual.  The negative number is intentional.
+    // Unlike WebKit trunk, we don't multiply the size by 32.  That seems to be
+    // some kind of artifact of their CG backend, or something.
+    winfont->lfHeight = -fontDescription.computedPixelSize();
+    winfont->lfWidth = 0;
+    winfont->lfEscapement = 0;
+    winfont->lfOrientation = 0;
+    winfont->lfUnderline = false;
+    winfont->lfStrikeOut = false;
+    winfont->lfCharSet = DEFAULT_CHARSET;
+    winfont->lfOutPrecision = OUT_TT_ONLY_PRECIS;
+    winfont->lfQuality = ChromiumBridge::layoutTestMode() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
+    winfont->lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+    winfont->lfItalic = fontDescription.italic();
+    winfont->lfWeight = toGDIFontWeight(fontDescription.weight());
+}
+
+struct TraitsInFamilyProcData {
+    TraitsInFamilyProcData(const AtomicString& familyName)
+        : m_familyName(familyName)
+    {
+    }
+
+    const AtomicString& m_familyName;
+    HashSet<unsigned> m_traitsMasks;
+};
+
+static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
+{
+    TraitsInFamilyProcData* procData = reinterpret_cast<TraitsInFamilyProcData*>(lParam);
+
+    unsigned traitsMask = 0;
+    traitsMask |= logFont->lfItalic ? FontStyleItalicMask : FontStyleNormalMask;
+    traitsMask |= FontVariantNormalMask;
+    LONG weight = logFont->lfWeight;
+    traitsMask |= weight == FW_THIN ? FontWeight100Mask :
+        weight == FW_EXTRALIGHT ? FontWeight200Mask :
+        weight == FW_LIGHT ? FontWeight300Mask :
+        weight == FW_NORMAL ? FontWeight400Mask :
+        weight == FW_MEDIUM ? FontWeight500Mask :
+        weight == FW_SEMIBOLD ? FontWeight600Mask :
+        weight == FW_BOLD ? FontWeight700Mask :
+        weight == FW_EXTRABOLD ? FontWeight800Mask :
+                                 FontWeight900Mask;
+    procData->m_traitsMasks.add(traitsMask);
+    return 1;
+}
+
+void FontCache::platformInit()
+{
+    // Not needed on Windows.
+}
+
 // Given the desired base font, this will create a SimpleFontData for a specific
 // font that can be used to render the given range of characters.
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
@@ -421,15 +496,6 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-// Tries the given font and save it |outFontFamilyName| if it succeeds.
-static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font, wchar_t* outFontFamilyName)
-{
-    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, font.lfFaceName);
-    if (fontData)
-        memcpy(outFontFamilyName, font.lfFaceName, sizeof(font.lfFaceName));
-    return fontData;
-}
-
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description)
 {
     FontDescription::GenericFamilyType generic = description.genericFamily();
@@ -484,72 +550,6 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
 
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-static LONG toGDIFontWeight(FontWeight fontWeight)
-{
-    static LONG gdiFontWeights[] = {
-        FW_THIN,        // FontWeight100
-        FW_EXTRALIGHT,  // FontWeight200
-        FW_LIGHT,       // FontWeight300
-        FW_NORMAL,      // FontWeight400
-        FW_MEDIUM,      // FontWeight500
-        FW_SEMIBOLD,    // FontWeight600
-        FW_BOLD,        // FontWeight700
-        FW_EXTRABOLD,   // FontWeight800
-        FW_HEAVY        // FontWeight900
-    };
-    return gdiFontWeights[fontWeight];
-}
-
-static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont)
-{
-    // The size here looks unusual.  The negative number is intentional.
-    // Unlike WebKit trunk, we don't multiply the size by 32.  That seems to be
-    // some kind of artifact of their CG backend, or something.
-    winfont->lfHeight = -fontDescription.computedPixelSize();
-    winfont->lfWidth = 0;
-    winfont->lfEscapement = 0;
-    winfont->lfOrientation = 0;
-    winfont->lfUnderline = false;
-    winfont->lfStrikeOut = false;
-    winfont->lfCharSet = DEFAULT_CHARSET;
-    winfont->lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    winfont->lfQuality = ChromiumBridge::layoutTestMode() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
-    winfont->lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-    winfont->lfItalic = fontDescription.italic();
-    winfont->lfWeight = toGDIFontWeight(fontDescription.weight());
-}
-
-struct TraitsInFamilyProcData {
-    TraitsInFamilyProcData(const AtomicString& familyName)
-        : m_familyName(familyName)
-    {
-    }
-
-    const AtomicString& m_familyName;
-    HashSet<unsigned> m_traitsMasks;
-};
-
-static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
-{
-    TraitsInFamilyProcData* procData = reinterpret_cast<TraitsInFamilyProcData*>(lParam);
-
-    unsigned traitsMask = 0;
-    traitsMask |= logFont->lfItalic ? FontStyleItalicMask : FontStyleNormalMask;
-    traitsMask |= FontVariantNormalMask;
-    LONG weight = logFont->lfWeight;
-    traitsMask |= weight == FW_THIN ? FontWeight100Mask :
-        weight == FW_EXTRALIGHT ? FontWeight200Mask :
-        weight == FW_LIGHT ? FontWeight300Mask :
-        weight == FW_NORMAL ? FontWeight400Mask :
-        weight == FW_MEDIUM ? FontWeight500Mask :
-        weight == FW_SEMIBOLD ? FontWeight600Mask :
-        weight == FW_BOLD ? FontWeight700Mask :
-        weight == FW_EXTRABOLD ? FontWeight800Mask :
-                                 FontWeight900Mask;
-    procData->m_traitsMasks.add(traitsMask);
-    return 1;
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)

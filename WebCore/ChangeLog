@@ -1,3 +1,22 @@
+2010-12-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Refactor FontCacheChromiumWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50611
+        
+        This change just moved the helper functions for the WebCore::FontCache class to the beginning of ths file.
+
+        No new tests are added since this is a refactoring.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontDataFromDescriptionAndLogFont): Moved to the beginning of the file.
+        (WebCore::toGDIFontWeight): Moved to the beginning of the file.
+        (WebCore::FillLogFont): Moved to the beginning of the file.
+        (WebCore::TraitsInFamilyProcData::TraitsInFamilyProcData): Moved to the beginning of the file.
+        (WebCore::traitsInFamilyEnumProc): Moved to the beginning of the file.
+        (WebCore::FontCache::platformInit): Moved after the static functions.
+
 2010-12-06  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.
