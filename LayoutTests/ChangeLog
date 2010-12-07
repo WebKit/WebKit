@@ -1,3 +1,11 @@
+2010-12-06  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
+        Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

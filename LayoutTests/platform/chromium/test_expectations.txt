@@ -3175,6 +3175,18 @@ BUG_YUTAK : media/controls-without-preload.html = MISSING
 // Flaky since Chromium r67828.
 BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = CRASH PASS
 
+// Flaky since r73421.
+BUG_YUTAK WIN LINUX : transitions/border-radius-transition.html = TEXT PASS
+BUG_YUTAK : transitions/color-transition-all.html = TEXT PASS
+
+// New test in r73423.
+// Win/Linux: Characters are rotated 90 degrees.
+// Mac: Some image differences, and the message "scrolled to 3999,0" is missing.
+BUG_YUTAK: fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+
+// Regressed at r73423. All areas are painted green.
+BUG_YUTAK : fast/repaint/positioned-document-element.html = IMAGE
+
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
