@@ -32,7 +32,6 @@
 #include "WKPage.h"
 #include "WKPreferencesPrivate.h"
 #include "WKSharedAPICast.h"
-#include <WebCore/FrameLoaderTypes.h>
 
 namespace WebKit {
 
@@ -75,34 +74,6 @@ WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 
 /* Enum conversions */
-
-inline WKFrameNavigationType toAPI(WebCore::NavigationType type)
-{
-    WKFrameNavigationType wkType = kWKFrameNavigationTypeOther;
-
-    switch (type) {
-    case WebCore::NavigationTypeLinkClicked:
-        wkType = kWKFrameNavigationTypeLinkClicked;
-        break;
-    case WebCore::NavigationTypeFormSubmitted:
-        wkType = kWKFrameNavigationTypeFormSubmitted;
-        break;
-    case WebCore::NavigationTypeBackForward:
-        wkType = kWKFrameNavigationTypeBackForward;
-        break;
-    case WebCore::NavigationTypeReload:
-        wkType = kWKFrameNavigationTypeReload;
-        break;
-    case WebCore::NavigationTypeFormResubmitted:
-        wkType = kWKFrameNavigationTypeFormResubmitted;
-        break;
-    case WebCore::NavigationTypeOther:
-        wkType = kWKFrameNavigationTypeOther;
-        break;
-    }
-    
-    return wkType;
-}
 
 inline CacheModel toCacheModel(WKCacheModel wkCacheModel)
 {

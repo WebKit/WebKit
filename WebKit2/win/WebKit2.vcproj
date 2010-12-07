@@ -479,6 +479,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\SameDocumentNavigationType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\StringPairVector.h"
 				>
 			</File>
@@ -755,6 +759,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKNumber.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKPageLoadTypes.h"
 					>
 				</File>
 				<File

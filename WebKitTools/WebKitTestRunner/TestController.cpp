@@ -251,7 +251,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didFinishDocumentLoadForFrame
         didFinishLoadForFrame,
         0, // didFailLoadWithErrorForFrame
-        0, // didChangeLocationWithinPageForFrame
+        0, // didSameDocumentNavigationForFrame
         0, // didReceiveTitleForFrame
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame

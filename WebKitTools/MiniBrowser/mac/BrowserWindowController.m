@@ -38,7 +38,7 @@
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame;
 - (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame;
 - (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame;
-- (void)didChangeLocationWithinPageForFrame:(WKFrameRef)frame;
+- (void)didSameDocumentNavigationForFrame:(WKFrameRef)frame;
 @end
 
 @implementation BrowserWindowController
@@ -284,9 +284,9 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
     [(BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
 }
 
-static void didChangeLocationWithinPageForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo)
 {
-    [(BrowserWindowController *)clientInfo didChangeLocationWithinPageForFrame:frame];
+    [(BrowserWindowController *)clientInfo didSameDocumentNavigationForFrame:frame];
 }
 
 static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
@@ -554,7 +554,7 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         didFinishDocumentLoadForFrame,
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
-        didChangeLocationWithinPageForFrame,
+        didSameDocumentNavigationForFrame,
         didReceiveTitleForFrame,
         didFirstLayoutForFrame,
         didFirstVisuallyNonEmptyLayoutForFrame,
@@ -679,7 +679,7 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     [self updateProvisionalURLForFrame:frame];
 }
 
-- (void)didChangeLocationWithinPageForFrame:(WKFrameRef)frame
+- (void)didSameDocumentNavigationForFrame:(WKFrameRef)frame
 {
 }
 

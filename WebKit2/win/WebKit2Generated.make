@@ -21,6 +21,7 @@ all:
     xcopy /y /d "..\Shared\API\c\WKMutableArray.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKMutableDictionary.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKNumber.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\Shared\API\c\WKPageLoadTypes.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\C\WKSecurityOrigin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKSerializedScriptValue.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKSerializedScriptValuePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

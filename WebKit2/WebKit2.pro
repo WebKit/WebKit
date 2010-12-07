@@ -218,6 +218,7 @@ HEADERS += \
     Shared/API/c/WKContextMenuItemTypes.h \
     Shared/API/c/WKGeometry.h \
     Shared/API/c/WKNumber.h \
+    Shared/API/c/WKPageLoadTypes.h \
     Shared/API/c/WKSecurityOrigin.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
@@ -241,6 +242,7 @@ HEADERS += \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
     Shared/PlatformPopupMenuData.h \
+    Shared/SameDocumentNavigationType.h \
     Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \

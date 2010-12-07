@@ -27,6 +27,7 @@
 #define InjectedBundlePageLoaderClient_h
 
 #include "APIClient.h"
+#include "SameDocumentNavigationType.h"
 #include "WKBundlePage.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
@@ -51,7 +52,7 @@ public:
     void didFinishDocumentLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFinishLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<APIObject>& userData);
-    void didChangeLocationWithinPageForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
+    void didSameDocumentNavigationForFrame(WebPage*, WebFrame*, SameDocumentNavigationType, RefPtr<APIObject>& userData);
     void didReceiveTitleForFrame(WebPage*, const String&, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);

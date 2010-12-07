@@ -180,7 +180,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didFinishDocumentLoadForFrame,
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
-        didChangeLocationWithinPageForFrame,
+        didSameDocumentNavigationForFrame,
         didReceiveTitleForFrame,
         0,
         0,
@@ -302,9 +302,9 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef page,
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willPerformClientRedirectForFrame(frame, url, delay, date);
 }
 
-void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
+void InjectedBundlePage::didSameDocumentNavigationForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef*, const void* clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChangeLocationWithinPageForFrame(frame);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didSameDocumentNavigationForFrame(frame, type);
 }
 
 void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
@@ -535,7 +535,7 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundleFrameRef fram
 {
 }
 
-void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundleFrameRef frame)
+void InjectedBundlePage::didSameDocumentNavigationForFrame(WKBundleFrameRef frame, WKSameDocumentNavigationType type)
 {
 }
 

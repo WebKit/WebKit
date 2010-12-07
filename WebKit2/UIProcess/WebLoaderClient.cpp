@@ -88,12 +88,12 @@ void WebLoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* page, WebFrameP
     m_client.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.clientInfo);
 }
 
-void WebLoaderClient::didChangeLocationWithinPageForFrame(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
+void WebLoaderClient::didSameDocumentNavigationForFrame(WebPageProxy* page, WebFrameProxy* frame, SameDocumentNavigationType type, APIObject* userData)
 {
-    if (!m_client.didChangeLocationWithinPageForFrame)
+    if (!m_client.didSameDocumentNavigationForFrame)
         return;
 
-    m_client.didChangeLocationWithinPageForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
+    m_client.didSameDocumentNavigationForFrame(toAPI(page), toAPI(frame), toAPI(type), toAPI(userData), m_client.clientInfo);
 }
 
 void WebLoaderClient::didReceiveTitleForFrame(WebPageProxy* page, const String& title, WebFrameProxy* frame, APIObject* userData)

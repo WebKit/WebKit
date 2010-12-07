@@ -862,7 +862,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
     m_loaderClient.didFailLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
-void WebPageProxy::didChangeLocationWithinPageForFrame(uint64_t frameID, const String& url, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t opaqueSameDocumentNavigationType, const String& url, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
@@ -870,9 +870,9 @@ void WebPageProxy::didChangeLocationWithinPageForFrame(uint64_t frameID, const S
         return;
 
     WebFrameProxy* frame = process()->webFrame(frameID);
-    frame->didChangeURLWithoutNavigation(url);
+    frame->didSameDocumentNavigation(url);
 
-    m_loaderClient.didChangeLocationWithinPageForFrame(this, frame, userData.get());
+    m_loaderClient.didSameDocumentNavigationForFrame(this, frame, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
 }
 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, CoreIPC::ArgumentDecoder* arguments)

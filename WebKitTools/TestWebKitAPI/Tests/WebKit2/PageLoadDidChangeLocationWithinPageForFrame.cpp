@@ -43,8 +43,9 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 }
 
 static bool didChangeLocationWithinPage;
-static void didChangeLocationWithinPageForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
 {
+    TEST_ASSERT(type == kWKSameDocumentNavigationAnchorNavigation);
     didChangeLocationWithinPage = true;
 }
 
@@ -58,7 +59,7 @@ TEST(WebKit2, PageLoadDidChangeLocationWithinPageForFrame)
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.didChangeLocationWithinPageForFrame = didChangeLocationWithinPageForFrame;
+    loaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("file-with-anchor", "html"));

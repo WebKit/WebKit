@@ -31,6 +31,7 @@
 #include <WebKit2/WKFindOptions.h>
 #include <WebKit2/WKGeometry.h>
 #include <WebKit2/WKNativeEvent.h>
+#include <WebKit2/WKPageLoadTypes.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -40,16 +41,6 @@
 extern "C" {
 #endif
 
-enum {
-    kWKFrameNavigationTypeLinkClicked = 0,
-    kWKFrameNavigationTypeFormSubmitted = 1,
-    kWKFrameNavigationTypeBackForward = 2,
-    kWKFrameNavigationTypeReload = 3,
-    kWKFrameNavigationTypeFormResubmitted = 4,
-    kWKFrameNavigationTypeOther = 5
-};
-typedef uint32_t WKFrameNavigationType;
-
 // FrameLoad Client
 typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
@@ -58,7 +49,7 @@ typedef void (*WKPageDidCommitLoadForFrameCallback)(WKPageRef page, WKFrameRef f
 typedef void (*WKPageDidFinishDocumentLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFinishLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFailLoadWithErrorForFrameCallback)(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo);
-typedef void (*WKPageDidChangeLocationWithinPageForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageDidSameDocumentNavigationForFrameCallback)(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidReceiveTitleForFrameCallback)(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFirstLayoutForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
@@ -91,7 +82,7 @@ struct WKPageLoaderClient {
     WKPageDidFinishDocumentLoadForFrameCallback                         didFinishDocumentLoadForFrame;
     WKPageDidFinishLoadForFrameCallback                                 didFinishLoadForFrame;
     WKPageDidFailLoadWithErrorForFrameCallback                          didFailLoadWithErrorForFrame;
-    WKPageDidChangeLocationWithinPageForFrameCallback                   didChangeLocationWithinPageForFrame;
+    WKPageDidSameDocumentNavigationForFrameCallback                     didSameDocumentNavigationForFrame;
     WKPageDidReceiveTitleForFrameCallback                               didReceiveTitleForFrame;
     WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
     WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;

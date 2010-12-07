@@ -1,3 +1,57 @@
+2010-12-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Generalize didChangeLocationWithinPageForFrame for all same document navigations
+        https://bugs.webkit.org/show_bug.cgi?id=50584
+
+          - Rename didChangeLocationWithinPageForFrame callbacks to didSameDocumentNavigationForFrame
+          - Add WKSameDocumentNavigationType to didChangeLocationWithinPageForFrame.
+          - Call didSameDocumentNavigationForFrame for HTML session state changes.
+
+        * Shared/API/c/WKPageLoadTypes.h: Added.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        Moved WKFrameNavigationType here from WKPage.h and add WKSameDocumentNavigationType.
+
+        * Shared/SameDocumentNavigationType.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        Moved WKFrameNavigationType conversion from here.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        Update comment.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didSameDocumentNavigation):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didSameDocumentNavigationForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didSameDocumentNavigationForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        Pipe new name through.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        Call didChangeLocationWithinPageForFrame for session state changes.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add new files.
+
 2010-12-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Dan Bernstein.

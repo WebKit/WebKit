@@ -105,13 +105,13 @@ void InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame(WebPage* page,
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+void InjectedBundlePageLoaderClient::didSameDocumentNavigationForFrame(WebPage* page, WebFrame* frame, SameDocumentNavigationType type, RefPtr<APIObject>& userData)
 {
-    if (!m_client.didChangeLocationWithinPageForFrame)
+    if (!m_client.didSameDocumentNavigationForFrame)
         return;
 
     WKTypeRef userDataToPass = 0;
-    m_client.didChangeLocationWithinPageForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    m_client.didSameDocumentNavigationForFrame(toAPI(page), toAPI(frame), toAPI(type), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 
