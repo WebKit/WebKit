@@ -1,5 +1,29 @@
 2010-12-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Simplified some ASLR-related code in PageAllocation/Reservation
+        https://bugs.webkit.org/show_bug.cgi?id=50599
+        
+        Removed reserveAt, allocateAt, and friends, since they all existed to
+        serve one feature: ASLR for executable memory on x86_64 on Mac. Moved
+        ASLR code down into systemAllocate -- now, any time you allocate
+        executable memory on a supporting platform, the memory's location is
+        randomized.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator): No need for the caller
+        to randomize anything.
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::systemAllocate): Removed some *At() functions, and
+        beefed up executable allocation with randomization.
+
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::systemReserve): Removed some *At() functions.
+
+2010-12-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         reserveAndCommit doesn't commit on MADVISE_FREE_REUSE systems

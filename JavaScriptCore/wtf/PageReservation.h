@@ -49,9 +49,6 @@ namespace WTF {
     is deallocated.  Values in memory may not be retained accross a pair of calls if
     the region of memory is decommitted and then committed again.
 
-    Where HAVE(PAGE_ALLOCATE_AT) is available a PageReservation::reserveAt method
-    also exists, with behaviour mirroring PageAllocation::allocateAt.
-
     Memory protection should not be changed on decommitted memory, and if protection
     is changed on memory while it is committed it should be returned to the orignal
     protection before decommit is called.
@@ -100,15 +97,6 @@ public:
         return systemReserve(size, usage, writable, executable);
     }
 
-#if HAVE(PAGE_ALLOCATE_AT)
-    static PageReservation reserveAt(void* address, bool fixed, size_t size, Usage usage = UnknownUsage, bool writable = true, bool executable = false)
-    {
-        ASSERT(isPageAligned(address));
-        ASSERT(isPageAligned(size));
-        return systemReserveAt(address, fixed, size, usage, writable, executable);
-    }
-#endif
-
     void deallocate()
     {
         ASSERT(m_base);
@@ -137,9 +125,6 @@ private:
     bool systemCommit(void*, size_t);
     void systemDecommit(void*, size_t);
     static PageReservation systemReserve(size_t, Usage, bool, bool);
-#if HAVE(PAGE_ALLOCATE_AT)
-    static PageReservation systemReserveAt(void*, bool, size_t, Usage, bool, bool);
-#endif
 
 #if HAVE(VIRTUALALLOC)
     DWORD m_protection;
@@ -180,12 +165,7 @@ inline void PageReservation::systemDecommit(void* start, size_t size)
 
 inline PageReservation PageReservation::systemReserve(size_t size, Usage usage, bool writable, bool executable)
 {
-    return systemReserveAt(0, false, size, usage, writable, executable);
-}
-
-inline PageReservation PageReservation::systemReserveAt(void* address, bool fixed, size_t size, Usage usage, bool writable, bool executable)
-{
-    void* base = systemAllocateAt(address, fixed, size, usage, writable, executable).base();
+    void* base = systemAllocate(size, usage, writable, executable).base();
 #if HAVE(MADV_FREE_REUSE)
     // When using MADV_FREE_REUSE we keep all decommitted memory marked as REUSABLE.
     // We call REUSE on commit, and REUSABLE on decommit.

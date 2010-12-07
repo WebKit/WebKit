@@ -76,12 +76,8 @@ namespace WTF {
     system memory usage tracking tools, where implemented), and boolean values
     specifying the required protection (defaulting to writable, non-executable).
 
-    Where HAVE(PAGE_ALLOCATE_AT) and HAVE(PAGE_ALLOCATE_ALIGNED) are available
-    memory may also be allocated at a specified address, or with a specified
-    alignment respectively.  PageAllocation::allocateAt take an address to try
-    to allocate at, and a boolean indicating whether this behaviour is strictly
-    required (if this address is unavailable, should memory at another address
-    be allocated instead).  PageAllocation::allocateAligned requires that the
+    Where HAVE(PAGE_ALLOCATE_ALIGNED) is available memory may also be allocated
+    with a specified alignment.  PageAllocation::allocateAligned requires that the
     size is a power of two that is >= system page size.
 */
 class PageAllocation {
@@ -112,15 +108,6 @@ public:
         ASSERT(isPageAligned(size));
         return systemAllocate(size, usage, writable, executable);
     }
-
-#if HAVE(PAGE_ALLOCATE_AT)
-    static PageAllocation allocateAt(void* address, bool fixed, size_t size, Usage usage = UnknownUsage, bool writable = true, bool executable = false)
-    {
-        ASSERT(isPageAligned(address));
-        ASSERT(isPageAligned(size));
-        return systemAllocateAt(address, fixed, size, usage, writable, executable);
-    }
-#endif
 
 #if HAVE(PAGE_ALLOCATE_ALIGNED)
     static PageAllocation allocateAligned(size_t size, Usage usage = UnknownUsage)
@@ -169,9 +156,6 @@ protected:
 #endif
 
     static PageAllocation systemAllocate(size_t, Usage, bool, bool);
-#if HAVE(PAGE_ALLOCATE_AT)
-    static PageAllocation systemAllocateAt(void*, bool, size_t, Usage, bool, bool);
-#endif
 #if HAVE(PAGE_ALLOCATE_ALIGNED)
     static PageAllocation systemAllocateAligned(size_t, Usage);
 #endif
@@ -195,11 +179,6 @@ protected:
 
 inline PageAllocation PageAllocation::systemAllocate(size_t size, Usage usage, bool writable, bool executable)
 {
-    return systemAllocateAt(0, false, size, usage, writable, executable);
-}
-
-inline PageAllocation PageAllocation::systemAllocateAt(void* address, bool fixed, size_t size, Usage usage, bool writable, bool executable)
-{
     int protection = PROT_READ;
     if (writable)
         protection |= PROT_WRITE;
@@ -207,8 +186,6 @@ inline PageAllocation PageAllocation::systemAllocateAt(void* address, bool fixed
         protection |= PROT_EXEC;
 
     int flags = MAP_PRIVATE | MAP_ANON;
-    if (fixed)
-        flags |= MAP_FIXED;
 
 #if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
     int fd = usage;
@@ -216,7 +193,27 @@ inline PageAllocation PageAllocation::systemAllocateAt(void* address, bool fixed
     int fd = -1;
 #endif
 
-    void* base = mmap(address, size, protection, flags, fd, 0);
+    void* base = 0;
+#if (OS(DARWIN) && CPU(X86_64))
+    if (executable) {
+        // Cook up an address to allocate at, using the following recipe:
+        //   17 bits of zero, stay in userspace kids.
+        //   26 bits of randomness for ASLR.
+        //   21 bits of zero, at least stay aligned within one level of the pagetables.
+        //
+        // But! - as a temporary workaround for some plugin problems (rdar://problem/6812854),
+        // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
+        // 2^24, which should put up somewhere in the middle of userspace (in the address range
+        // 0x200000000000 .. 0x5fffffffffff).
+        intptr_t randomLocation = 0;
+        randomLocation = arc4random() & ((1 << 25) - 1);
+        randomLocation += (1 << 24);
+        randomLocation <<= 21;
+        base = reinterpret_cast<void*>(randomLocation);
+    }
+#endif
+
+    base = mmap(base, size, protection, flags, fd, 0);
     if (base == MAP_FAILED)
         base = 0;
     return PageAllocation(base, size);
