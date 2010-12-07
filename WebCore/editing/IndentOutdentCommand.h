@@ -53,7 +53,7 @@ private:
     void indentIntoBlockquote(const Position&, const Position&, RefPtr<Element>&);
 
     void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection);
-    void formatRange(const Position&, const Position&, RefPtr<Element>& blockquoteForNextIndent);
+    void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>& blockquoteForNextIndent);
 
     EIndentType m_typeOfAction;
     int m_marginInPixels;

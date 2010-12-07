@@ -222,7 +222,7 @@ void IndentOutdentCommand::formatSelection(const VisiblePosition& startOfSelecti
         outdentRegion(startOfSelection, endOfSelection);
 }
 
-void IndentOutdentCommand::formatRange(const Position& start, const Position& end, RefPtr<Element>& blockquoteForNextIndent)
+void IndentOutdentCommand::formatRange(const Position& start, const Position& end, const Position&, RefPtr<Element>& blockquoteForNextIndent)
 {
     if (tryIndentingAsListItem(start, end))
         blockquoteForNextIndent = 0;

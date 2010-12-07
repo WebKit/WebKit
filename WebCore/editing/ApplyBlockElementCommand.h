@@ -46,13 +46,14 @@ protected:
 
 private:
     virtual void doApply();
-    virtual void formatRange(const Position& start, const Position&, RefPtr<Element>&) = 0;
+    virtual void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>&) = 0;
     void rangeForParagraphSplittingTextNodesIfNeeded(const VisiblePosition&, Position&, Position&);
     VisiblePosition endOfNextParagrahSplittingTextNodesIfNeeded(VisiblePosition&, Position&, Position&);
 
     QualifiedName m_tagName;
     AtomicString m_className;
     AtomicString m_inlineStyle;
+    Position m_endOfLastParagraph;
 };
 
 }

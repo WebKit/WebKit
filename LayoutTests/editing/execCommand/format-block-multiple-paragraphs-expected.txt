@@ -57,11 +57,10 @@ Formatting:
 by p yields:
 | "
 "
-| <div>
-|   <p>
-|     "<#selection-anchor>hello"
-|     <br>
-|     "world<#selection-focus>"
+| <p>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "world<#selection-focus>"
 | "
 "
 
@@ -132,8 +131,8 @@ by blockquote yields:
 |     "<#selection-anchor>hello"
 |     <br>
 |     "world<#selection-focus>"
-|     <br>
-|     "webkit"
+|   "webkit
+"
 | "
 "
 

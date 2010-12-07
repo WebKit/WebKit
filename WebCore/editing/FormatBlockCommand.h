@@ -45,7 +45,7 @@ private:
     FormatBlockCommand(Document*, const QualifiedName& tagName);
 
     void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection);
-    void formatRange(const Position&, const Position&, RefPtr<Element>&);
+    void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>&);
     EditAction editingAction() const { return EditActionFormatBlock; }
 
     bool m_didApply;

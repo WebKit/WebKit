@@ -58,15 +58,17 @@ void FormatBlockCommand::formatSelection(const VisiblePosition& startOfSelection
     m_didApply = true;
 }
 
-void FormatBlockCommand::formatRange(const Position& start, const Position& end, RefPtr<Element>& blockNode)
+void FormatBlockCommand::formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>& blockNode)
 {
     Node* nodeToSplitTo = enclosingBlockToSplitTreeTo(start.node());
     RefPtr<Node> outerBlock = (start.node() == nodeToSplitTo) ? start.node() : splitTreeToNode(start.node(), nodeToSplitTo);
     RefPtr<Node> nodeAfterInsertionPosition = outerBlock;
 
+    RefPtr<Range> range = Range::create(document(), start, endOfSelection);
     Element* refNode = enclosingBlockFlowElement(end);
     Element* root = editableRootForPosition(start);
-    if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start) && end == endOfBlock(end)
+    if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start)
+        && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(refNode, range.get()))
         && refNode != root && !root->isDescendantOf(refNode)) {
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))

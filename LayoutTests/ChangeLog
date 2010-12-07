@@ -1,3 +1,21 @@
+2010-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Executing FormatBlock on multiple paragraphs inside pre does not remove the outer pre
+        https://bugs.webkit.org/show_bug.cgi?id=47300
+
+        Added a test to ensure execCommand('FormatBlock') correctly removes pre when formatting paragraphs within.
+        Also rebaselined several tests because WebKit no longer erroneously format the paragraphs immediately
+        after the selection.
+
+        * editing/execCommand/format-block-multiple-paragraphs-in-pre-expected.txt: Added.
+        * editing/execCommand/format-block-multiple-paragraphs-in-pre.html: Added.
+        * editing/execCommand/format-block-multiple-paragraphs-expected.txt: No longer erroneously format
+        the last paragraph in a pre by a blockquote when formatting all but the last paragraph in the pre.
+        * editing/execCommand/indent-pre-expected.txt: No longer erroneously format the last paragraph in
+        the pre-list by a blockquote.
+
 2010-12-06  Victor Wang  <victorw@chromium.org>
 
         Unreviewed.

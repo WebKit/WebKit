@@ -109,12 +109,12 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     RefPtr<Element> blockquoteForNextIndent;
     VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
-    VisiblePosition endOfLastParagraph = endOfParagraph(endOfSelection);
+    m_endOfLastParagraph = endOfParagraph(endOfSelection).deepEquivalent();
 
     bool atEnd = false;
     Position end;
     while (endOfCurrentParagraph != endAfterSelection && !atEnd) {
-        if (endOfCurrentParagraph == endOfLastParagraph)
+        if (endOfCurrentParagraph.deepEquivalent() == m_endOfLastParagraph)
             atEnd = true;
 
         rangeForParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
@@ -124,7 +124,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
         VisiblePosition endOfNextParagraph = endOfNextParagrahSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
 
-        formatRange(start, end, blockquoteForNextIndent);
+        formatRange(start, end, m_endOfLastParagraph, blockquoteForNextIndent);
 
         // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
         // the next paragraph is in the same cell.
@@ -180,7 +180,11 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
     end = endOfCurrentParagraph.deepEquivalent();
 
     RenderStyle* startStyle = renderStyleOfEnclosingTextNode(start);
+    bool isStartAndEndOnSameNode = false;
     if (startStyle) {
+        isStartAndEndOnSameNode = renderStyleOfEnclosingTextNode(end) && start.node() == end.node();
+        bool isStartAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && start.node() == m_endOfLastParagraph.node();
+
         // Avoid obtanining the start of next paragraph for start
         if (startStyle->preserveNewline() && isNewLineAtPosition(start) && !isNewLineAtPosition(start.previous()) && start.offsetInContainerNode() > 0)
             start = startOfParagraph(end.previous()).deepEquivalent();
@@ -190,29 +194,44 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
             int startOffset = start.offsetInContainerNode();
             splitTextNode(static_cast<Text*>(start.node()), startOffset);
             start = positionBeforeNode(start.node());
-            if (start.node() == end.node()) {
+            if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
                 end = Position(end.node(), end.offsetInContainerNode() - startOffset, Position::PositionIsOffsetInAnchor);
+            }
+            if (isStartAndEndOfLastParagraphOnSameNode) {
+                ASSERT(m_endOfLastParagraph.offsetInContainerNode() >= startOffset);
+                m_endOfLastParagraph = Position(m_endOfLastParagraph.node(), m_endOfLastParagraph.offsetInContainerNode() - startOffset,
+                    Position::PositionIsOffsetInAnchor);
             }
         }
     }
 
     RenderStyle* endStyle = renderStyleOfEnclosingTextNode(end);
     if (endStyle) {
+        bool isEndAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && end.node() == m_endOfLastParagraph.node();
         // Include \n at the end of line if we're at an empty paragraph
         if (endStyle->preserveNewline() && start == end
             && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             int endOffset = end.offsetInContainerNode();
             if (!isNewLineAtPosition(end.previous()) && isNewLineAtPosition(end))
                 end = Position(end.node(), endOffset + 1, Position::PositionIsOffsetInAnchor);
+            if (isEndAndEndOfLastParagraphOnSameNode && end.offsetInContainerNode() >= m_endOfLastParagraph.offsetInContainerNode())
+                m_endOfLastParagraph = end;
         }
 
         // If end is in the middle of a text node, split.
         if (!endStyle->collapseWhiteSpace() && end.offsetInContainerNode()
             && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             splitTextNode(static_cast<Text*>(end.node()), end.offsetInContainerNode());
-            if (start.node() == end.node())
+            if (isStartAndEndOnSameNode)
                 start = positionBeforeNode(end.node()->previousSibling());
+            if (isEndAndEndOfLastParagraphOnSameNode) {
+                if (m_endOfLastParagraph.offsetInContainerNode() == end.offsetInContainerNode())
+                    m_endOfLastParagraph = lastPositionInNode(end.node()->previousSibling());
+                else
+                    m_endOfLastParagraph = Position(end.node(), m_endOfLastParagraph.offsetInContainerNode() - end.offsetInContainerNode(),
+                                                    Position::PositionIsOffsetInAnchor);
+            }
             end = lastPositionInNode(end.node()->previousSibling());
         }
     }
@@ -243,6 +262,12 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
     if (end.anchorType() == Position::PositionIsOffsetInAnchor && containerNode.get() == end.containerNode()) {
         ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
         end = Position(containerNode->previousSibling(), end.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+    }
+    if (m_endOfLastParagraph.anchorType() == Position::PositionIsOffsetInAnchor && containerNode.get() == m_endOfLastParagraph.containerNode()) {
+        if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode())
+            m_endOfLastParagraph = Position(containerNode->previousSibling(), m_endOfLastParagraph.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+        else
+            m_endOfLastParagraph = Position(containerNode, m_endOfLastParagraph.offsetInContainerNode() - 1, Position::PositionIsOffsetInAnchor);
     }
 
     return Position(containerNode.get(), position.offsetInContainerNode() - 1, Position::PositionIsOffsetInAnchor);

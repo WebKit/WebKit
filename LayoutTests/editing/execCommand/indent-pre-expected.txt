@@ -46,8 +46,8 @@ does not crash."
 |               "list two"
 |               <br>
 |               "list three"
-|               <br>
-|               "list four"
+|             "list four
+"
 |       "
 
 "
