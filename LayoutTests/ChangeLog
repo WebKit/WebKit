@@ -1,3 +1,18 @@
+2010-12-06  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Clean up fast/events/multiline-link-arrow-navigation.html
+        https://bugs.webkit.org/show_bug.cgi?id=50616
+
+        fast/events/multiline-link-arrow-navigation.html is setting both
+        WebKitEnableCaretBrowsing and -webkit-user-modify CSS property. Since
+        both work similarly for the purposes of this test, and the former is
+        not support by Mac and Windows DRTs, lets stick with using the later
+        only.
+
+        * fast/events/multiline-link-arrow-navigation.html:
+
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
