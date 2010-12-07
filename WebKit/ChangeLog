@@ -1,3 +1,9 @@
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Update Xcode project for newer Xcode.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-11-18  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated for recent changes.
