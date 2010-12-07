@@ -46,7 +46,7 @@
 using namespace WebCore;
 
 // This value must be the same as in PlatformCAAnimationMac.mm
-static const NSString* WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
+static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
 
 static double mediaTimeToCurrentTime(CFTimeInterval t)
 {
@@ -93,7 +93,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 - (void)setContentsChanged;
 @end
 
-static const NSString* platformCALayerPointer = @"WKPlatformCALayer";
+static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 
 static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
 {

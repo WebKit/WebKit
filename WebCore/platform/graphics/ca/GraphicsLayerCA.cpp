@@ -1921,8 +1921,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     if (useTiledLayer == m_usingTiledLayer)
         return;
 
-    CGSize tileSize = CGSizeMake(kTiledLayerTileSize, kTiledLayerTileSize);
-
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);

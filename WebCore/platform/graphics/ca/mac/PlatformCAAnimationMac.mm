@@ -40,7 +40,7 @@
 using namespace WebCore;
 
 // This value must be the same as in PlatformCALayerMac.mm
-static const NSString* WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
+static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
 
 static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
 {

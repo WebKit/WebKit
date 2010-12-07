@@ -1,3 +1,15 @@
+2010-12-07  Anders Carlsson  <andersca@apple.com>
+
+        Fix some clang++ build errors.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        Remove unused variable.
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        Fix constness of pointers.
+
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.
