@@ -1,3 +1,27 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of Layering Violation in ContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        Move WebMenuTarget from ContextMenuMac to here, because having it in ContextMenuMac
+        was a layering violation. Also, make sure we set the menu item targets for all menu
+        items before showing them, because the ContextMenu constructor doesn't do that anymore.
+
+        * WebView/WebHTMLView.mm:
+        (+[WebMenuTarget sharedMenuTarget]): Moved from ContextMenuMac.mm.
+        (-[WebMenuTarget WebCore::]): Ditto.
+        (-[WebMenuTarget setMenuController:WebCore::]): Ditto.
+        (-[WebMenuTarget forwardContextMenuAction:]): Ditto.
+        (-[WebMenuTarget validateMenuItem:]): Ditto.
+
+        (setMenuItemTarget): Sets the target of the NSMenuItem to the shared WebMenuTarget.
+        (setMenuTargets): Recursively iterates over all NSMenuItems in an NSMenu (including
+            submenus), and calls setMenuItemTarget on them.
+        (-[WebHTMLView menuForEvent:]): Call setMenuTarget on all the menu items before adding
+            them to the menu.
+
 2010-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

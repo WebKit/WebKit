@@ -1,3 +1,28 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of Layering Violation in ContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        ContextMenuMac.mm had a WebCoreMenuTarget class, which was responsible for wrapping
+        a ContextMenuItem, and calling through to the ContextMenuController to validate it
+        and call a function when it was selected.
+        
+        It was a layering violation to have this class here, because ContextMenu can't know
+        about ContextMenuController.
+        
+        This patch moves the class that wraps the ContextMenuItems to WebKit/mac/WebHTMLView.mm,
+        and sets up the menu targets there.
+
+        No change in behavior, no new tests.
+
+        * WebCore.exp.in: Added function that needs to be exported.
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::ContextMenu): Don't set the sharedMenuTarget anymore.
+        (WebCore::ContextMenu::appendItem): Don't call setMenuItemTarget (this is done in WebKit now).
+        (WebCore::ContextMenu::insertItem): Ditto.
+
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

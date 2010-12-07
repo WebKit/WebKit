@@ -129,6 +129,53 @@ using namespace HTMLNames;
 using namespace WTF;
 using namespace std;
 
+@interface WebMenuTarget : NSObject {
+    WebCore::ContextMenuController* _menuController;
+}
++ (WebMenuTarget*)sharedMenuTarget;
+- (WebCore::ContextMenuController*)menuController;
+- (void)setMenuController:(WebCore::ContextMenuController*)menuController;
+- (void)forwardContextMenuAction:(id)sender;
+- (BOOL)validateMenuItem:(NSMenuItem *)item;
+@end
+
+static WebMenuTarget* target;
+
+@implementation WebMenuTarget
+
++ (WebMenuTarget*)sharedMenuTarget
+{
+    if (!target)
+        target = [[WebMenuTarget alloc] init];
+    return target;
+}
+
+- (WebCore::ContextMenuController*)menuController
+{
+    return _menuController;
+}
+
+- (void)setMenuController:(WebCore::ContextMenuController*)menuController
+{
+    _menuController = menuController;
+}
+
+- (void)forwardContextMenuAction:(id)sender
+{
+    WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
+    _menuController->contextMenuItemSelected(&item);
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item
+{
+    WebCore::ContextMenuItem coreItem(item);
+    ASSERT(_menuController->contextMenu());
+    _menuController->contextMenu()->checkOrEnableIfNeeded(coreItem);
+    return coreItem.enabled();
+}
+
+@end
+
 @interface NSWindow (BorderViewAccess)
 - (NSView*)_web_borderView;
 @end
@@ -3223,6 +3270,23 @@ WEBCORE_COMMAND(yankAndSelect)
         coreframe->eventHandler()->mouseUp(event);
 }
 
+static void setMenuItemTarget(NSMenuItem* menuItem)
+{
+    [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
+    [menuItem setAction:@selector(forwardContextMenuAction:)];
+}
+
+static void setMenuTargets(NSMenu* menu)
+{
+    NSInteger itemCount = [menu numberOfItems];
+    for (NSInteger i = 0; i < itemCount; ++i) {
+        NSMenuItem *item = [menu itemAtIndex:i];
+        setMenuItemTarget(item);
+        if ([item hasSubmenu])
+            setMenuTargets([item submenu]);
+    }
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
     // There's a chance that if we run a nested event loop the event will be released.
@@ -3270,6 +3334,10 @@ WEBCORE_COMMAND(yankAndSelect)
     NSMenu* menu = [[[NSMenu alloc] init] autorelease];
     for (NSUInteger i = 0; i < count; i++)
         [menu addItem:[menuItems objectAtIndex:i]];
+    setMenuTargets(menu);
+    
+    [[WebMenuTarget sharedMenuTarget] setMenuController:page->contextMenuController()];
+    
     return menu;
 }
 
