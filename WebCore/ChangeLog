@@ -1,3 +1,14 @@
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Fix the Color -> CGColorRef conversions for the debug colors
+        used for compositing layers.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setBackgroundColor):
+        (PlatformCALayer::setBorderColor):
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

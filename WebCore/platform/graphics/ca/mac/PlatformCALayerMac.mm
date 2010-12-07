@@ -623,14 +623,15 @@ Color PlatformCALayer::backgroundColor() const
 
 void PlatformCALayer::setBackgroundColor(const Color& value)
 {
-    const CGFloat components[5] = { value.red(), value.green(), value.blue(), value.alpha() };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGColorRef color = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
+    CGFloat components[4];
+    value.getRGBA(components[0], components[1], components[2], components[3]);
+
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setBackgroundColor:color];
+    [m_layer.get() setBackgroundColor:color.get()];
     END_BLOCK_OBJC_EXCEPTIONS
-    CGColorRelease(color);
 }
 
 float PlatformCALayer::borderWidth() const
@@ -652,14 +653,15 @@ Color PlatformCALayer::borderColor() const
 
 void PlatformCALayer::setBorderColor(const Color& value)
 {
-    const CGFloat components[5] = { value.red(), value.green(), value.blue(), value.alpha() };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGColorRef color = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
+    CGFloat components[4];
+    value.getRGBA(components[0], components[1], components[2], components[3]);
+
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setBorderColor:color];
+    [m_layer.get() setBorderColor:color.get()];
     END_BLOCK_OBJC_EXCEPTIONS
-    CGColorRelease(color);
 }
 
 float PlatformCALayer::opacity() const
