@@ -1700,25 +1700,12 @@ BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 BUG10441 WIN DEBUG : transitions/transition-end-event-transform.html = FAIL PASS
 BUG10441 MAC WIN RELEASE : transitions/transition-end-event-transform.html = FAIL PASS
 
-// This test hits a stack-overflow exception earlier in debug mode than in
-// release mode on Windows.
-//
-// Hits the stack overflow earlier than before the new compiler in both
-// release and debug mode on Linux and Mac.
-//
-//   http://code.google.com/p/v8/issues/detail?id=277
-BUG10457 RELEASE LINUX : fast/js/large-expressions.html = FAIL PASS
-BUG10457 RELEASE MAC : fast/js/large-expressions.html = FAIL
-BUG10457 DEBUG WIN SLOW : fast/js/large-expressions.html = FAIL
-
-
 // Merge 41768:41807
 // Perhaps just needs new baseline?
 // These tests were rebaselined with failure long ago. We shouldn't do this, and
 // instead work upstream to improve tests so that they don't fail.
 // Just need rebaseline
 BUG10458 LINUX : fast/forms/textarea-width.html = FAIL
-
 
 // New failures from merge
 BUG27486 WIN : fast/forms/listbox-hit-test-zoomed.html = FAIL
@@ -3084,9 +3071,6 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
 
-// Disable font-size-zero test for mac platform. The problem was introduced at r72567.
-BUG49967 MAC : fast/text/font-size-zero.html = TEXT
-
 // Was introduced by ap http://trac.webkit.org/changeset/72590
 BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 
@@ -3253,7 +3237,6 @@ BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUG8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
-BUG_DRT MAC : media/video-play-pause-events.html = CRASH
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 // Crashes with DRT and is a text failure with TestShell

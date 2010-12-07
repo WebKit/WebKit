@@ -1,5 +1,13 @@
 2010-12-07  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, remove more passing tests (mac) from test_expecatations.txt
+        after DRT switch.  Also remove a test that is passing because of
+        crankshaft.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-07  Tony Chang  <tony@chromium.org>
+
         Unreviewed, remove more passing tests (win) from test_expectations.txt
         after DRT switch.
 
