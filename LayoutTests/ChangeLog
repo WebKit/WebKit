@@ -1,3 +1,24 @@
+2010-12-06  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix testcase: textPath cannot be inside another textPath
+        https://bugs.webkit.org/show_bug.cgi?id=50211
+
+        * platform/mac/svg/custom/text-linking-expected.checksum: Updated.
+        * platform/mac/svg/custom/text-linking-expected.png: Updated.
+        * platform/mac/svg/custom/text-linking-expected.txt: Updated.
+        * platform/chromium-linux/svg/custom/text-linking-expected.checksum: Updated.
+        * platform/chromium-linux/svg/custom/text-linking-expected.png: Updated.
+        * platform/chromium-linux/svg/custom/text-linking-expected.txt: Updated.
+        * platform/chromium-win-vista/svg/custom/text-linking-expected.checksum: Deleted.
+        * platform/chromium-win-vista/svg/custom/text-linking-expected.png: Deleted.
+        * platform/chromium-win-vista/svg/custom/text-linking-expected.txt: Deleted.
+        * platform/chromium-win-xp/svg/custom/text-linking-expected.checksum: Deleted.
+        * platform/chromium-win-xp/svg/custom/text-linking-expected.png: Deleted.
+        * platform/chromium-win-xp/svg/custom/text-linking-expected.txt: Deleted.
+        * svg/custom/text-linking.svg: Removed test for <textPath> inside <textPath>.
+
 2010-12-06  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Update Windows results after r73385.
