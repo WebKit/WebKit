@@ -142,7 +142,7 @@ void CSSImportRule::insertedIntoParent()
         // if the import rule is issued dynamically, the sheet may be
         // removed from the pending sheet count, so let the doc know
         // the sheet being imported is pending.
-        if (parentSheet && parentSheet->loadCompleted() && parentSheet->document())
+        if (parentSheet && parentSheet->loadCompleted() && root == parentSheet)
             parentSheet->document()->addPendingSheet();
         m_loading = true;
         m_cachedSheet->addClient(this);

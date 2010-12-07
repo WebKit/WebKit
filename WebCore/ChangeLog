@@ -1,3 +1,10 @@
+2010-12-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out r72988 for breaking iframes.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+
 2010-12-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by David Levin.
