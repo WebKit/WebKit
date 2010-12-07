@@ -1,3 +1,24 @@
+2010-12-07  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
+        Add Chromium-specific expected results for two tests.
+
+        * platform/chromium-linux/css2.1/t040105-import-10-b-expected.checksum: Added.
+        * platform/chromium-linux/css2.1/t040105-import-10-b-expected.png: Added.
+        * platform/chromium-linux/media/controls-without-preload-expected.checksum: Added.
+        * platform/chromium-linux/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-mac/media/controls-without-preload-expected.checksum: Added.
+        * platform/chromium-mac/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-mac/media/controls-without-preload-expected.txt: Added.
+        * platform/chromium-win/css2.1/t040105-import-10-b-expected.checksum: Added.
+        * platform/chromium-win/css2.1/t040105-import-10-b-expected.png: Added.
+        * platform/chromium-win/css2.1/t040105-import-10-b-expected.txt: Added.
+        * platform/chromium-win/media/controls-without-preload-expected.checksum: Added.
+        * platform/chromium-win/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-win/media/controls-without-preload-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-07  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.
