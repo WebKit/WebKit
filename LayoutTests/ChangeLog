@@ -2,6 +2,12 @@
 
         Unreviewed.
 
+        Update Chromium test expectations for svg/custom/text-linking.svg.
+
+2010-12-06  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
         Update Chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
