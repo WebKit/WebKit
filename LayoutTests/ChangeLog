@@ -1,5 +1,12 @@
 2010-12-07  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, remove passing tests (linux) from test_expectations
+        after DRT switch.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-07  Tony Chang  <tony@chromium.org>
+
         Unreviewed, update chromium test_expectations for DRT based
         on Linux bot cycles and debug try bot.
 

@@ -792,6 +792,8 @@ BUG49165 SKIP : http/tests/media/video-buffered.html = PASS
 // These tests need to be changed to not rely on setTimeout().
 BUG13907 BUG60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
 BUG13907 BUG60740 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
+// Flakey test
+BUG13907 LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT PASS
 
 // We sometimes emit an error from the same source element twice.
 BUG13907 BUG59226 : media/video-source-error.html = PASS FAIL TIMEOUT
@@ -887,9 +889,6 @@ BUG23270 WIN LINUX : fast/css/font-smoothing.html = FAIL
 // Make canvas shadow work with drawImage.
 BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
-
-// Repaint issues are revealed by these tests.
-BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
@@ -1304,7 +1303,7 @@ BUG23498 MAC : fast/inline/inline-continuation-borders.html = IMAGE
 BUG23498 MAC : fast/inline/long-wrapped-line.html = IMAGE
 BUG23498 MAC : fast/inline-block/inline-block-vertical-align.html = IMAGE
 BUG23498 MAC : fast/layers/scroll-rect-to-visible.html = IMAGE
-BUG23498 MAC LINUX : fast/lists/001.html = IMAGE
+BUG23498 MAC : fast/lists/001.html = IMAGE
 BUG23498 MAC : fast/lists/008.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
@@ -1740,8 +1739,6 @@ BUG27486 WIN LINUX : fast/forms/slider-zoomed.html = FAIL
 // See WebKit 41948
 // Regressed further at 57820, jamesr investigating
 BUG10468 MAC SKIP : fast/replaced/border-radius-clip.html = IMAGE+TEXT
-// Failure after 63609
-BUG60384 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
 // Mac flaky failures.
 BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
@@ -2166,9 +2163,6 @@ BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 
 // WebKit roll 53941 -> 54015
 BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
-
-// WebKit roll 54016 -> 54045
-BUG33486 LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 
 // WebKit roll 54059 -> 54075
 BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
@@ -3104,15 +3098,6 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
-// Next SVG change: http://trac.webkit.org/changeset/72381 .  Diffs should be fine, but let's suppress tests for now.
-
-// Seems like it started failing with r72364.
-BUG_LEVIN LINUX MAC : svg/custom/use-infinite-recursion.svg = IMAGE
-BUG_LEVIN WIN : svg/custom/use-infinite-recursion.svg = IMAGE PASS
-
-BUG_LEVIN LINUX MAC : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE
-BUG_LEVIN WIN : fast/xsl/xslt-mismatched-tags-in-xslt.xml = IMAGE PASS
-
 // New test added with http://trac.webkit.org/changeset/72472
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
@@ -3319,11 +3304,9 @@ BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
 BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
 BUG_DRT WIN : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
-BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = CRASH
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUG8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
-BUG_DRT LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG_DRT MAC : media/video-play-pause-events.html = CRASH
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
@@ -3356,11 +3339,6 @@ BUG_AWESOME BUG22777 MAC : fast/overflow/hit-test-overflow-controls.html = PASS 
 BUG10370 LINUX WIN : fast/css/font-weight-1.html = IMAGE+TEXT
 BUG_AWESOME MAC : fast/css/font-weight-1.html = PASS IMAGE+TEXT TIMEOUT
 
-// These tests work with DRT but not test shell
-// Remove them once we switch from test shell to DRT
-BUG65210 : fast/frames/location-redirect-user-gesture.html = TEXT
-BUG65210 : fast/frames/meta-refresh-user-gesture.html = TEXT
-
 // End DRT failures
 /////////////////////////////////////////////////////////////////////////////
 
@@ -3368,5 +3346,3 @@ BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
-
-BUGWK50352 : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
