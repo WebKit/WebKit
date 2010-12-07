@@ -1,3 +1,11 @@
+2010-12-07  Jessie Berlin  <jberlin@apple.com>
+
+        Build fix. Unreviewed.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        FrameLoader::urlSelected does not take a SecurityOrigin as a parameter.
+
 2010-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
