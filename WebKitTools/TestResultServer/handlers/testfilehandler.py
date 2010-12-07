@@ -158,7 +158,8 @@ class GetFile(webapp.RequestHandler):
         if json:
             self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
             self.response.out.write(json)
-
+        else:
+            self.error(404)
 
 class Upload(webapp.RequestHandler):
     """Upload test results file to datastore."""
