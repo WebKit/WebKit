@@ -2244,8 +2244,8 @@ bool QWebPage::supportsContentType(const QString& mimeType) const
 
 static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
 {
-    WebCore::ResourceRequest rr(url, frame->loader()->outgoingReferrer());
-    return WebCore::FrameLoadRequest(rr);
+    return WebCore::FrameLoadRequest(frame->document()->securityOrigin,
+        WebCore::ResourceRequest(url, frame->loader()->outgoingReferrer()));
 }
 
 static void openNewWindow(const QUrl& url, WebCore::Frame* frame)

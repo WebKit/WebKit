@@ -749,12 +749,12 @@ String PluginView::userAgent()
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
                          const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
-    FrameLoadRequest frameLoadRequest;
-    frameLoadRequest.setFrameName(target);
+    FrameLoadRequest frameLoadRequest(m_pluginElement->document()->securityOrigin());
     frameLoadRequest.resourceRequest().setHTTPMethod(method);
     frameLoadRequest.resourceRequest().setURL(m_pluginElement->document()->completeURL(urlString));
     frameLoadRequest.resourceRequest().addHTTPHeaderFields(headerFields);
     frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
+    frameLoadRequest.setFrameName(target);
 
     m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
     m_pendingURLRequestsTimer.startOneShot(0);

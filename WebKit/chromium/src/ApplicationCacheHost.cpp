@@ -106,9 +106,9 @@ void ApplicationCacheHost::selectCacheWithManifest(const KURL& manifestURL)
             // same resource being loaded, because "foreign" entries are never picked
             // during navigation.
             // see WebCore::ApplicationCacheGroup::selectCache()
-            const KURL& docURL = m_documentLoader->frame()->document()->url();
-            String referrer = m_documentLoader->frameLoader()->referrer();
-            m_documentLoader->frame()->navigationScheduler()->scheduleLocationChange(docURL, referrer);
+            Frame* frame = m_documentLoader->frame();
+            frame->navigationScheduler()->scheduleLocationChange(frame->document()->securityOrigin(),
+                frame->document()->url(), frame->loader()->referrer());
         }
     }
 }

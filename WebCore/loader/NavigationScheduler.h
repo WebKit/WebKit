@@ -43,9 +43,10 @@ namespace WebCore {
 class FormState;
 class FormSubmission;
 class Frame;
+class ScheduledNavigation;
+class SecurityOrigin;
 
 struct FrameLoadRequest;
-class ScheduledNavigation;
 
 class NavigationScheduler : public Noncopyable {
 public:
@@ -56,7 +57,7 @@ public:
     bool locationChangePending();
 
     void scheduleRedirect(double delay, const String& url);
-    void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
+    void scheduleLocationChange(PassRefPtr<SecurityOrigin>, const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
     void scheduleRefresh();
     void scheduleHistoryNavigation(int steps);

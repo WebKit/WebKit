@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,27 +27,33 @@
 #define FrameLoadRequest_h
 
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
     struct FrameLoadRequest {
     public:
-        FrameLoadRequest()
+        explicit FrameLoadRequest(PassRefPtr<SecurityOrigin> requester)
+            : m_requester(requester)
         {
         }
 
-        FrameLoadRequest(const ResourceRequest& resourceRequest)
-            : m_resourceRequest(resourceRequest)
+        FrameLoadRequest(PassRefPtr<SecurityOrigin> requester, const ResourceRequest& resourceRequest)
+            : m_requester(requester)
+            , m_resourceRequest(resourceRequest)
         {
         }
 
-        FrameLoadRequest(const ResourceRequest& resourceRequest, const String& frameName)
-            : m_resourceRequest(resourceRequest)
+        FrameLoadRequest(PassRefPtr<SecurityOrigin> requester, const ResourceRequest& resourceRequest, const String& frameName)
+            : m_requester(requester)
+            , m_resourceRequest(resourceRequest)
             , m_frameName(frameName)
         {
         }
 
         bool isEmpty() const { return m_resourceRequest.isEmpty(); }
+
+        const SecurityOrigin* requester() const { return m_requester.get(); }
 
         ResourceRequest& resourceRequest() { return m_resourceRequest; }
         const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
@@ -56,6 +62,7 @@ namespace WebCore {
         void setFrameName(const String& frameName) { m_frameName = frameName; }
 
     private:
+        RefPtr<SecurityOrigin> m_requester;
         ResourceRequest m_resourceRequest;
         String m_frameName;
     };

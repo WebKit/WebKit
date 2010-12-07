@@ -1757,19 +1757,20 @@ void InspectorController::drawElementTitle(GraphicsContext& context, const IntRe
 
 void InspectorController::openInInspectedWindow(const String& url)
 {
-    ResourceRequest request;
-    FrameLoadRequest frameRequest(request, "_blank");
-    bool created;
     Frame* mainFrame = m_inspectedPage->mainFrame();
+
+    FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
+
+    bool created;
     WindowFeatures windowFeatures;
-    Frame* newFrame = WebCore::createWindow(mainFrame, mainFrame, frameRequest, windowFeatures, created);
+    Frame* newFrame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
     if (!newFrame)
         return;
 
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     newFrame->loader()->setOpener(mainFrame);
     newFrame->page()->setOpenedByDOM();
-    newFrame->loader()->changeLocation(newFrame->loader()->completeURL(url), "", false, false);
+    newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
 }
 
 void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)

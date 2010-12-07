@@ -1,3 +1,85 @@
+2010-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass security origin to make local file decision correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48603
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::BindingDOMWindow::createWindow): Pass security origin.
+        (WebCore::BindingDOMWindow::open): Ditto.
+        * bindings/generic/BindingFrame.h:
+        (WebCore::BindingFrame::navigateIfAllowed): Ditto.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Pass security origin.
+        (WebCore::createWindow): Ditto.
+        (WebCore::JSDOMWindow::open): Ditto.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation): Pass security origin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Pass security origin.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::openInInspectedWindow):
+        Pass security origin.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation): Added a security origin
+        argument, passed through to urlSelected.
+        (WebCore::FrameLoader::urlSelected): Replaced the resource request
+        and frame name arguments with a frame load request arguments in one
+        overload, and changed the other overload to pass in the current
+        frame's document for the security origin.
+        (WebCore::FrameLoader::loadFrameRequest): Moved the canDisplay
+        check before the referrer computation because it no longer needs
+        to look at the referrer. Replaced the call to canDisplay that
+        used the target frame's security origin and the call to
+        deprecatedCanDisplay with a single call to canDisplay that uses
+        the requester security origin.
+
+        * loader/FrameLoader.h: Updated for argument changes above.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation): Added
+        a security origin.
+        (WebCore::ScheduledURLNavigation::fire): Pass the security origin
+        in to FrameLoader::changeLocation.
+        (WebCore::ScheduledURLNavigation::securityOrigin): Added.
+        (WebCore::ScheduledRedirect::ScheduledRedirect): Added a security
+        origin argument.
+        (WebCore::ScheduledLocationChange::ScheduledLocationChange): Ditto.
+        (WebCore::ScheduledRefresh::ScheduledRefresh): Ditto.
+        (WebCore::ScheduledRefresh::fire): Pass the security origin in to
+        FrameLoader::changeLocation.
+        (WebCore::ScheduledFormSubmission::fire): Include the security
+        origin when constructing form submission.
+        (WebCore::NavigationScheduler::scheduleRedirect): Include the security
+        origin when creating the scheduled navigation object.
+        (WebCore::NavigationScheduler::scheduleLocationChange): Ditto.
+        (WebCore::NavigationScheduler::scheduleRefresh): Ditto.
+
+        * loader/NavigationScheduler.h: Added the security origin argument
+        to scheduleLocationChange.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadOrRedirectSubframe): Pass in the security
+        origin when calling scheduleLocationChange.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache): Ditto.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow): Pass in the security origin.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+
+        * page/FrameLoadRequest.h: Added a security origin called the requester
+        to all FrameLoadRequest objects.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest): Added the security origin.
+
 2010-12-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

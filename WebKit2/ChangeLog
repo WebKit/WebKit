@@ -1,3 +1,15 @@
+2010-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass security origin to make local file decision correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48603
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL): Pass security origin.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage): Ditto.
+
 2010-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

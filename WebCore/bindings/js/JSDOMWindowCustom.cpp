@@ -517,8 +517,9 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
         return;
 
     if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
-        // We want a new history item if this JS was called via a user gesture
-        frame->navigationScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
+        // We want a new history item if this JS was called via a user gesture.
+        frame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(),
+            url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
     }
 }
 
@@ -676,9 +677,8 @@ JSValue JSDOMWindow::webSocket(ExecState* exec) const
 // Custom functions
 
 // Helper for window.open() and window.showModalDialog()
-static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicFrame,
-                           Frame* openerFrame, const String& url, const String& frameName, 
-                           const WindowFeatures& windowFeatures, JSValue dialogArgs)
+static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicFrame, Frame* openerFrame,
+    const String& url, const String& frameName, const WindowFeatures& windowFeatures, JSValue dialogArgs)
 {
     ASSERT(lexicalFrame);
     ASSERT(dynamicFrame);
@@ -686,11 +686,11 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     ResourceRequest request;
 
     // For whatever reason, Firefox uses the dynamicGlobalObject to determine
-    // the outgoingReferrer.  We replicate that behavior here.
+    // the outgoingReferrer. We replicate that behavior here.
     String referrer = dynamicFrame->loader()->outgoingReferrer();
     request.setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, dynamicFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(request, frameName);
+    FrameLoadRequest frameRequest(lexicalFrame->document()->securityOrigin(), request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
     // know what URL we are going to open. Unfortunately, this code passes the empty string
@@ -718,9 +718,9 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     if (!protocolIsJavaScript(url) || newWindow->allowsAccessFrom(exec)) {
         KURL completedURL = url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(exec, url);
         if (created)
-            newFrame->loader()->changeLocation(completedURL, referrer, false, false);
+            newFrame->loader()->changeLocation(lexicalFrame->document()->securityOrigin(), completedURL, referrer, false, false);
         else if (!url.isEmpty())
-            newFrame->navigationScheduler()->scheduleLocationChange(completedURL.string(), referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
+            newFrame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), completedURL.string(), referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
     }
 
     return newFrame;
@@ -779,11 +779,11 @@ JSValue JSDOMWindow::open(ExecState* exec)
         const JSDOMWindow* targetedWindow = toJSDOMWindow(frame, currentWorld(exec));
         if (!completedURL.isEmpty() && (!protocolIsJavaScript(completedURL) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
             // For whatever reason, Firefox uses the dynamicGlobalObject to
-            // determine the outgoingReferrer.  We replicate that behavior
-            // here.
+            // determine the outgoing referrer. We replicate that behavior here.
             String referrer = dynamicFrame->loader()->outgoingReferrer();
 
-            frame->navigationScheduler()->scheduleLocationChange(completedURL, referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
+            frame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(),
+                completedURL, referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
         }
         return toJS(exec, frame->domWindow());
     }

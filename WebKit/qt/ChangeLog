@@ -1,3 +1,13 @@
+2010-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass security origin to make local file decision correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48603
+
+        * Api/qwebpage.cpp:
+        (frameLoadRequest): Pass security origin.
+
 2010-12-07  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73392.

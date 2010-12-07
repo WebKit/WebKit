@@ -817,7 +817,8 @@ Frame* FrameLoaderClientImpl::dispatchCreatePage(const NavigationAction& action)
 {
     struct WindowFeatures features;
     Page* newPage = m_webFrame->frame()->page()->chrome()->createWindow(
-        m_webFrame->frame(), FrameLoadRequest(), features, action);
+        m_webFrame->frame(), FrameLoadRequest(m_webFrame->frame()->document()->securityOrigin()),
+        features, action);
 
     // Make sure that we have a valid disposition.  This should have been set in
     // the preceeding call to dispatchDecidePolicyForNewWindowAction.
@@ -1378,7 +1379,8 @@ PassRefPtr<Frame> FrameLoaderClientImpl::createFrame(
     int marginWidth,
     int marginHeight)
 {
-    FrameLoadRequest frameRequest(ResourceRequest(url, referrer), name);
+    FrameLoadRequest frameRequest(m_webFrame->frame()->document()->securityOrigin(),
+        ResourceRequest(url, referrer), name);
     return m_webFrame->createChildFrame(frameRequest, ownerElement);
 }
 

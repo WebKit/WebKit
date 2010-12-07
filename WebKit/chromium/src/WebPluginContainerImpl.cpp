@@ -365,8 +365,8 @@ void WebPluginContainerImpl::loadFrameRequest(
         WebDataSourceImpl::setNextPluginLoadObserver(observer);
     }
 
-    FrameLoadRequest frameRequest(request.toResourceRequest());
-    frameRequest.setFrameName(target);
+    FrameLoadRequest frameRequest(frame->document()->securityOrigin(),
+        request.toResourceRequest(), target);
 
     frame->loader()->loadFrameRequest(
         frameRequest,

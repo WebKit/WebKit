@@ -2615,7 +2615,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
             FrameLoader* frameLoader = frame->loader();
             if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url())) {
                 frameLoader->stopAllLoaders();
-                frame->navigationScheduler()->scheduleLocationChange(blankURL(), String());
+                frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
 
                 DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to display document because display forbidden by X-Frame-Options.\n"));
                 frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
