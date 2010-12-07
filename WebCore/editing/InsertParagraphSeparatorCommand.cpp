@@ -98,7 +98,7 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnc
 
     m_style->prepareToApplyAt(endingSelection().start());
     if (!m_style->isEmpty())
-        applyStyle(m_style->style());
+        applyStyle(m_style.get());
 }
 
 bool InsertParagraphSeparatorCommand::shouldUseDefaultParagraphElement(Node* enclosingBlock) const

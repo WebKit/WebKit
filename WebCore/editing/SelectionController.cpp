@@ -1590,6 +1590,13 @@ void SelectionController::paintDragCaret(GraphicsContext* p, int tx, int ty, con
 #endif
 }
 
+PassRefPtr<CSSMutableStyleDeclaration> SelectionController::copyTypingStyle() const
+{
+    if (!m_typingStyle || !m_typingStyle->style())
+        return 0;
+    return m_typingStyle->style()->copy();
+}
+
 bool SelectionController::shouldDeleteSelection(const VisibleSelection& selection) const
 {
     return m_frame->editor()->client()->shouldDeleteRange(selection.toNormalizedRange().get());

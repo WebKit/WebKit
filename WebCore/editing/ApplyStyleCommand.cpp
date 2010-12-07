@@ -34,6 +34,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "EditingStyle.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
@@ -429,9 +430,9 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* style
     return result;
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, EditAction editingAction, EPropertyLevel propertyLevel)
+ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)
-    , m_style(style->makeMutable())
+    , m_style(style->copy())
     , m_editingAction(editingAction)
     , m_propertyLevel(propertyLevel)
     , m_start(endingSelection().start().downstream())
@@ -443,9 +444,9 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* st
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
+ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)
-    , m_style(style->makeMutable())
+    , m_style(style->copy())
     , m_editingAction(editingAction)
     , m_propertyLevel(propertyLevel)
     , m_start(start)
@@ -459,7 +460,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* st
 
 ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnly, EditAction editingAction)
     : CompositeEditCommand(element->document())
-    , m_style(CSSMutableStyleDeclaration::create())
+    , m_style(EditingStyle::create())
     , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
     , m_start(endingSelection().start().downstream())
@@ -471,9 +472,9 @@ ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnl
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
+ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
     : CompositeEditCommand(document)
-    , m_style(style->makeMutable())
+    , m_style(style->copy())
     , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
     , m_start(endingSelection().start().downstream())
@@ -516,25 +517,23 @@ Position ApplyStyleCommand::endPosition()
 void ApplyStyleCommand::doApply()
 {
     switch (m_propertyLevel) {
-        case PropertyDefault: {
-            // apply the block-centric properties of the style
-            RefPtr<CSSMutableStyleDeclaration> blockStyle = m_style->copyBlockProperties();
-            if (blockStyle->length())
-                applyBlockStyle(blockStyle.get());
-            // apply any remaining styles to the inline elements
-            // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
-            if (blockStyle->length() < m_style->length() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
-                RefPtr<CSSMutableStyleDeclaration> inlineStyle = m_style->copy();
-                applyRelativeFontStyleChange(inlineStyle.get());
-                blockStyle->diff(inlineStyle.get());
-                applyInlineStyle(inlineStyle.get());
-            }
-            break;
+    case PropertyDefault: {
+        // Apply the block-centric properties of the style.
+        RefPtr<EditingStyle> blockStyle = m_style->extractAndRemoveBlockProperties();
+        if (!blockStyle->isEmpty())
+            applyBlockStyle(blockStyle->style());
+        // Apply any remaining styles to the inline elements.
+        if (!m_style->isEmpty() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
+            RefPtr<CSSMutableStyleDeclaration> style = m_style->style() ? m_style->style() : CSSMutableStyleDeclaration::create();
+            applyRelativeFontStyleChange(style.get());
+            applyInlineStyle(style.get());
         }
-        case ForceBlockProperties:
-            // Force all properties to be applied as block styles.
-            applyBlockStyle(m_style.get());
-            break;
+        break;
+    }
+    case ForceBlockProperties:
+        // Force all properties to be applied as block styles.
+        applyBlockStyle(m_style->style());
+        break;
     }
 }
 

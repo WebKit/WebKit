@@ -1143,7 +1143,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
 
         if (m_matchStyle) {
             ASSERT(m_insertionStyle);
-            applyStyle(m_insertionStyle->style(), start, end);
+            applyStyle(m_insertionStyle.get(), start, end);
         }    
         
         if (lastPositionToSelect.isNotNull())

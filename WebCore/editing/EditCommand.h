@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class CompositeEditCommand;
-class CSSMutableStyleDeclaration;
 
 class EditCommand : public RefCounted<EditCommand> {
 public:

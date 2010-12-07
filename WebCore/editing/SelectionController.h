@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-class Frame;
 class CSSMutableStyleDeclaration;
+class Frame;
 class GraphicsContext;
 class HTMLFormElement;
 class RenderObject;
@@ -237,13 +237,6 @@ private:
 inline EditingStyle* SelectionController::typingStyle() const
 {
     return m_typingStyle.get();
-}
-
-inline PassRefPtr<CSSMutableStyleDeclaration> SelectionController::copyTypingStyle() const
-{
-    if (!m_typingStyle || !m_typingStyle->style())
-        return 0;
-    return m_typingStyle->style()->copy();
 }
 
 inline void SelectionController::clearTypingStyle()

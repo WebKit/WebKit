@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CSSStyleDeclaration;
+class EditingStyle;
 class HTMLElement;
 class StyledElement;
 class Text;
@@ -51,8 +52,8 @@ protected:
     //
     void appendNode(PassRefPtr<Node>, PassRefPtr<Element> parent);
     void applyCommandToComposite(PassRefPtr<EditCommand>);
-    void applyStyle(CSSStyleDeclaration*, EditAction = EditActionChangeAttributes);
-    void applyStyle(CSSStyleDeclaration*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
+    void applyStyle(const EditingStyle*, EditAction = EditActionChangeAttributes);
+    void applyStyle(const EditingStyle*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
     void applyStyledElement(PassRefPtr<Element>);
     void removeStyledElement(PassRefPtr<Element>);
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);

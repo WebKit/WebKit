@@ -708,13 +708,13 @@ void CSSMutableStyleDeclaration::setCssText(const String& text, ExceptionCode& e
     setNeedsStyleRecalc();
 }
 
-void CSSMutableStyleDeclaration::merge(CSSMutableStyleDeclaration* other, bool argOverridesOnConflict)
+void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, bool argOverridesOnConflict)
 {
     ASSERT(!m_iteratorCount);
 
     unsigned size = other->m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
-        CSSProperty& toMerge = other->m_properties[n];
+        const CSSProperty& toMerge = other->m_properties[n];
         CSSProperty* old = findPropertyWithId(toMerge.id());
         if (old) {
             if (!argOverridesOnConflict && old->value())

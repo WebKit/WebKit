@@ -1,3 +1,59 @@
+2010-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        ApplyStyleCommand should take EditingStyle instead of CSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=49938
+
+        Modified ApplyStyleCommand::ApplyStyleCommand and ApplyStyleCommand::create to take EditingStyle*
+        instead of CSSStyleDeclaration*. Also replaced much of code in Editor::computeAndSetTypingStyle
+        by calls to EditingStyle's member functions and extracted EditingStyle::overrideWith and
+        EditingStyle::extractAndRemoveBlockProperties.
+
+        No new tests are added since this is a refactoring.
+
+        * WebCore.exp.in: Added SelectionController::copyTypingStyle and EditingStyle::~EditingStyle.
+        * css/CSSMutableStyleDeclaration.cpp: Made CSSMutableStyleDeclaration* in the argument list const.
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        * css/CSSMutableStyleDeclaration.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand): Takes EditingStyle* instead of CSSStyleDeclaration*.
+        (WebCore::ApplyStyleCommand::doApply): Uses EditingStyle.
+        * editing/ApplyStyleCommand.h: m_style is now a ref-pointer to EditingStyle instead of CSSMutableStyleDeclaration.
+        (WebCore::ApplyStyleCommand::create): Takes EditingStyle* instead of CSSStyleDeclaration*.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyStyle): Ditto.
+        (WebCore::CompositeEditCommand::moveParagraphs): Calls applyStyle.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Ditto.
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Ditto.
+        * editing/EditCommand.cpp:
+        * editing/EditCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::~EditingStyle): Added.
+        (WebCore::EditingStyle::overrideWithStyle): Extracted from Editor::calculateTypingStyleAfterDelete.
+        (WebCore::EditingStyle::copy): Added.
+        (WebCore::EditingStyle::extractAndRemoveBlockProperties): Extracted from Editor::calculateTypingStyleAfterDelete.
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle): Calls ApplyStyleCommand::create.
+        (WebCore::Editor::applyParagraphStyle): Ditto.
+        (WebCore::Editor::computeAndSetTypingStyle): Ditto.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Calls applyStyle.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::applyStyleAfterInsertion): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Ditto.
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply): Calls ApplyStyleCommand::create.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement): Calls applyStyle.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::copyTypingStyle): Moved from SelectionController.h
+        * editing/SelectionController.h:
+
 2010-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

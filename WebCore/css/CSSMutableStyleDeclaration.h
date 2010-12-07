@@ -129,7 +129,7 @@ public:
     void removeBlockProperties();
     void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged = true);
 
-    void merge(CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
+    void merge(const CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
 
     void setStrictParsing(bool b) { m_strictParsing = b; }
     bool useStrictParsing() const { return m_strictParsing; }

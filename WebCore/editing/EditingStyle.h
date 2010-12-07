@@ -31,7 +31,6 @@
 #ifndef EditingStyle_h
 #define EditingStyle_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "Position.h"
 
@@ -39,6 +38,7 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
+class CSSMutableStyleDeclaration;
 
 enum WritingDirection { NaturalWritingDirection, LeftToRightWritingDirection, RightToLeftWritingDirection };
 
@@ -67,14 +67,19 @@ public:
         return adoptRef(new EditingStyle(style));
     }
 
+    ~EditingStyle();
+
     CSSMutableStyleDeclaration* style() { return m_mutableStyle.get(); }
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
     void setStyle(PassRefPtr<CSSMutableStyleDeclaration>);
+    void overrideWithStyle(const CSSMutableStyleDeclaration*);
     void clear();
+    PassRefPtr<EditingStyle> copy() const;
+    PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
     void removeBlockProperties();
-    void removeStyleAddedByNode(Node* node);
-    void removeStyleConflictingWithStyleOfNode(Node* node);
+    void removeStyleAddedByNode(Node*);
+    void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
 

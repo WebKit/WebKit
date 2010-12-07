@@ -103,6 +103,10 @@ EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
 {
 }
 
+EditingStyle::~EditingStyle()
+{
+}
+
 void EditingStyle::init(Node* node)
 {
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
@@ -177,10 +181,40 @@ void EditingStyle::setStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
     m_shouldUseFixedDefaultFontSize = false;
 }
 
+void EditingStyle::overrideWithStyle(const CSSMutableStyleDeclaration* style)
+{
+    if (!style || !style->length())
+        return;
+    if (!m_mutableStyle)
+        m_mutableStyle = CSSMutableStyleDeclaration::create();
+    m_mutableStyle->merge(style);
+}
+
 void EditingStyle::clear()
 {
     m_mutableStyle.clear();
     m_shouldUseFixedDefaultFontSize = false;
+}
+
+PassRefPtr<EditingStyle> EditingStyle::copy() const
+{
+    RefPtr<EditingStyle> copy = EditingStyle::create();
+    if (m_mutableStyle)
+        copy->m_mutableStyle = m_mutableStyle->copy();
+    copy->m_shouldUseFixedDefaultFontSize = m_shouldUseFixedDefaultFontSize;
+    return copy;
+}
+
+PassRefPtr<EditingStyle> EditingStyle::extractAndRemoveBlockProperties()
+{
+    RefPtr<EditingStyle> blockProperties = EditingStyle::create();
+    if (!m_mutableStyle)
+        return blockProperties;
+
+    blockProperties->m_mutableStyle = m_mutableStyle->copyBlockProperties();
+    m_mutableStyle->removeBlockProperties();
+
+    return blockProperties;
 }
 
 void EditingStyle::removeBlockProperties()

@@ -193,7 +193,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
     if (RefPtr<EditingStyle> typingStyle = document()->frame()->selection()->typingStyle()) {
         typingStyle->prepareToApplyAt(endPosition, EditingStyle::PreserveWritingDirection);
         if (!typingStyle->isEmpty())
-            applyStyle(typingStyle->style());
+            applyStyle(typingStyle.get());
     }
 
     if (!selectInsertedText)

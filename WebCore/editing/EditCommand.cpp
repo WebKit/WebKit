@@ -27,8 +27,6 @@
 #include "EditCommand.h"
 
 #include "CompositeEditCommand.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "DeleteButtonController.h"
 #include "Document.h"
 #include "Editor.h"

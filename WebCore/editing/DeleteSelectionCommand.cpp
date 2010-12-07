@@ -691,7 +691,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
         // then move it back (which will clear typing style).
 
         setEndingSelection(visibleEnd);
-        applyStyle(m_typingStyle->style(), EditActionUnspecified);
+        applyStyle(m_typingStyle.get(), EditActionUnspecified);
         // applyStyle can destroy the placeholder that was at m_endingPosition if it needs to 
         // move it, but it will set an endingSelection() at [movedPlaceholder, 0] if it does so.
         m_endingPosition = endingSelection().start();

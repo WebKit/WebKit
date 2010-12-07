@@ -87,7 +87,7 @@ void RemoveFormatCommand::doApply()
     Node* root = frame->selection()->rootEditableElement();
     RefPtr<EditingStyle> defaultStyle = EditingStyle::create(root);
 
-    applyCommandToComposite(ApplyStyleCommand::create(document(), defaultStyle->style(), isElementForRemoveFormatCommand, editingAction()));
+    applyCommandToComposite(ApplyStyleCommand::create(document(), defaultStyle.get(), isElementForRemoveFormatCommand, editingAction()));
 }
 
 }

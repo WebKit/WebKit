@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSSPrimitiveValue;
+class EditingStyle;
 class HTMLElement;
 class StyleChange;
 
@@ -47,11 +48,11 @@ public:
     enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
     typedef bool (*IsInlineElementToRemoveFunction)(const Element*);
 
-    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, const EditingStyle* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
         return adoptRef(new ApplyStyleCommand(document, style, action, level));
     }
-    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, const Position& start, const Position& end, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
         return adoptRef(new ApplyStyleCommand(document, style, start, end, action, level));
     }
@@ -59,21 +60,19 @@ public:
     {
         return adoptRef(new ApplyStyleCommand(element, removeOnly, action));
     }
-    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditActionChangeAttributes)
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditActionChangeAttributes)
     {
         return adoptRef(new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
     }
 
 private:
-    ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction, EPropertyLevel);
-    ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction, EPropertyLevel);
+    ApplyStyleCommand(Document*, const EditingStyle*, EditAction, EPropertyLevel);
+    ApplyStyleCommand(Document*, const EditingStyle*, const Position& start, const Position& end, EditAction, EPropertyLevel);
     ApplyStyleCommand(PassRefPtr<Element>, bool removeOnly, EditAction);
-    ApplyStyleCommand(Document*, CSSStyleDeclaration*, bool (*isInlineElementToRemove)(const Element*), EditAction);
+    ApplyStyleCommand(Document*, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
-
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
@@ -119,7 +118,7 @@ private:
     Position startPosition();
     Position endPosition();
 
-    RefPtr<CSSMutableStyleDeclaration> m_style;
+    RefPtr<EditingStyle> m_style;
     EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
     Position m_start;

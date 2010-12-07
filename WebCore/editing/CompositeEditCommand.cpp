@@ -28,8 +28,6 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CharacterNames.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
@@ -105,12 +103,12 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> cmd)
     m_commands.append(cmd);
 }
 
-void CompositeEditCommand::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
+void CompositeEditCommand::applyStyle(const EditingStyle* style, EditAction editingAction)
 {
     applyCommandToComposite(ApplyStyleCommand::create(document(), style, editingAction));
 }
 
-void CompositeEditCommand::applyStyle(CSSStyleDeclaration* style, const Position& start, const Position& end, EditAction editingAction)
+void CompositeEditCommand::applyStyle(const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction)
 {
     applyCommandToComposite(ApplyStyleCommand::create(document(), style, start, end, editingAction));
 }
@@ -983,7 +981,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
     bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());
     if (styleInEmptyParagraph && selectionIsEmptyParagraph)
-        applyStyle(styleInEmptyParagraph->style());
+        applyStyle(styleInEmptyParagraph.get());
 
     if (preserveSelection && startIndex != -1) {
         // Fragment creation (using createMarkup) incorrectly uses regular
@@ -1056,7 +1054,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
 
     style->prepareToApplyAt(endingSelection().start());
     if (!style->isEmpty())
-        applyStyle(style->style());
+        applyStyle(style.get());
 
     return true;
 }

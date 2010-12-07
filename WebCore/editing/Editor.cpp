@@ -892,7 +892,7 @@ void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
         break;
     case VisibleSelection::RangeSelection:
         if (style)
-            applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction));
+            applyCommand(ApplyStyleCommand::create(m_frame->document(), EditingStyle::create(style).get(), editingAction));
         break;
     }
 }
@@ -911,7 +911,7 @@ void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingA
     case VisibleSelection::CaretSelection:
     case VisibleSelection::RangeSelection:
         if (style)
-            applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
+            applyCommand(ApplyStyleCommand::create(m_frame->document(), EditingStyle::create(style).get(), editingAction, ApplyStyleCommand::ForceBlockProperties));
         break;
     }
 }
@@ -3086,40 +3086,22 @@ void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction edi
     }
 
     // Calculate the current typing style.
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
-    if (typingStyle && typingStyle->style()) {
-        typingStyle->style()->merge(mutableStyle.get());
-        mutableStyle = typingStyle->style();
-    }
+    RefPtr<EditingStyle> typingStyle;
+    if (m_frame->selection()->typingStyle()) {
+        typingStyle = m_frame->selection()->typingStyle()->copy();
+        typingStyle->overrideWithStyle(style->makeMutable().get());
+    } else
+        typingStyle = EditingStyle::create(style);
 
-    RefPtr<CSSValue> unicodeBidi;
-    RefPtr<CSSValue> direction;
-    if (editingAction == EditActionSetWritingDirection) {
-        unicodeBidi = mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-        direction = mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
-    }
-
-    Node* node = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
-    computedStyle(node)->diff(mutableStyle.get());
-
-    if (editingAction == EditActionSetWritingDirection && unicodeBidi) {
-        ASSERT(unicodeBidi->isPrimitiveValue());
-        mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
-        if (direction) {
-            ASSERT(direction->isPrimitiveValue());
-            mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
-        }
-    }
+    typingStyle->prepareToApplyAt(m_frame->selection()->selection().visibleStart().deepEquivalent(), EditingStyle::PreserveWritingDirection);
 
     // Handle block styles, substracting these from the typing style.
-    RefPtr<CSSMutableStyleDeclaration> blockStyle = mutableStyle->copyBlockProperties();
-    blockStyle->diff(mutableStyle.get());
-    if (blockStyle->length() > 0)
+    RefPtr<EditingStyle> blockStyle = typingStyle->extractAndRemoveBlockProperties();
+    if (!blockStyle->isEmpty())
         applyCommand(ApplyStyleCommand::create(m_frame->document(), blockStyle.get(), editingAction));
 
     // Set the remaining style as the typing style.
-    m_frame->selection()->setTypingStyle(EditingStyle::create(mutableStyle.get()));
+    m_frame->selection()->setTypingStyle(typingStyle);
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> Editor::selectionComputedStyle(bool& shouldUseFixedFontDefaultSize) const
