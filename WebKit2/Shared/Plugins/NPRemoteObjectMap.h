@@ -60,6 +60,7 @@ public:
     NPVariant npVariantDataToNPVariant(const NPVariantData&);
 
     CoreIPC::Connection* connection() const { return m_connection; }
+    bool isInvalidating() const { return m_isInvalidating; }
 
     void invalidate();
 
@@ -68,6 +69,8 @@ public:
 private:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);
     CoreIPC::Connection* m_connection;
+
+    bool m_isInvalidating;
 
     // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
     // other end of the connection.

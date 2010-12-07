@@ -32,6 +32,9 @@
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
 
+// FIXME: This code shouldn't know about NPJSObject.
+#include "NPJSObject.h"
+
 namespace WebKit {
 
 PassOwnPtr<NPObjectMessageReceiver> NPObjectMessageReceiver::create(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject)
@@ -43,6 +46,7 @@ NPObjectMessageReceiver::NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObje
     : m_npRemoteObjectMap(npRemoteObjectMap)
     , m_npObjectID(npObjectID)
     , m_npObject(npObject)
+    , m_shouldReleaseObjectWhenInvalidating(!NPJSObject::isNPJSObject(npObject))
 {
     retainNPObject(m_npObject);
 }
@@ -50,6 +54,13 @@ NPObjectMessageReceiver::NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObje
 NPObjectMessageReceiver::~NPObjectMessageReceiver()
 {
     m_npRemoteObjectMap->unregisterNPObject(m_npObjectID);
+
+    // If we're invalidating the remote object map, we don't always want to release the underlying NPObject.
+    // One example of this is NPJSObjects in the Web process, which have already been deallocated by the plug-in view.
+    // FIXME: This is not the ideal way to handle this. Maybe NPObjectMessageReceiver should be notified somehow when the underlying
+    // NPObject is deallocated.
+    if (m_npRemoteObjectMap->isInvalidating() && !m_shouldReleaseObjectWhenInvalidating)
+        return;
 
     releaseNPObject(m_npObject);
 }

@@ -68,6 +68,7 @@ private:
     NPRemoteObjectMap* m_npRemoteObjectMap;
     uint64_t m_npObjectID;
     NPObject* m_npObject;
+    bool m_shouldReleaseObjectWhenInvalidating;
 };
     
 } // namespace WebKit

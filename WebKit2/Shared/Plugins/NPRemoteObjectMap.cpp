@@ -49,6 +49,7 @@ PassRefPtr<NPRemoteObjectMap> NPRemoteObjectMap::create(CoreIPC::Connection* con
 
 NPRemoteObjectMap::NPRemoteObjectMap(CoreIPC::Connection* connection)
     : m_connection(connection)
+    , m_isInvalidating(false)
 {
 }
 
@@ -187,6 +188,10 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
 
 void NPRemoteObjectMap::invalidate()
 {
+    ASSERT(!m_isInvalidating);
+
+    m_isInvalidating = true;
+
     Vector<NPObjectMessageReceiver*> messageReceivers;
     copyValuesToVector(m_registeredNPObjects, messageReceivers);
 
@@ -198,6 +203,8 @@ void NPRemoteObjectMap::invalidate()
     for (HashSet<NPObject*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it)
         NPObjectProxy::toNPObjectProxy(*it)->invalidate();
     m_npObjectProxies.clear();
+
+    m_isInvalidating = false;
 }
 
 CoreIPC::SyncReplyMode NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)

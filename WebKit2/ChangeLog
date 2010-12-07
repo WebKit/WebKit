@@ -1,3 +1,27 @@
+2010-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebProcess crash in NPRemoteObjectMap::invalidate when closing tab
+        https://bugs.webkit.org/show_bug.cgi?id=50597
+        <rdar://problem/8655584>
+
+        When invalidating the NPRemoteObjectMap, we don't want NPObjectMessageReceiver to
+        release all objects NPObjects blindly because NPJSObjects have already been deallocated by the plug-in view.
+
+        This is not an ideal solution; an ideal solution would involve NPJSObjects notifying any NPObjectMessageReceiver objects
+        that the NPJSObject is being destroyed. The NPObjectMessageReceiver could then simply null out the NPObject pointer.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::NPObjectMessageReceiver):
+        (WebKit::NPObjectMessageReceiver::~NPObjectMessageReceiver):
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::NPRemoteObjectMap):
+        (WebKit::NPRemoteObjectMap::invalidate):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        (WebKit::NPRemoteObjectMap::isInvalidating):
+
 2010-12-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
