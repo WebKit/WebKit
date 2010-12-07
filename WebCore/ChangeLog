@@ -1,5 +1,21 @@
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        -webkit-transition Fails on Multiple text-shadow Shadows
+        https://bugs.webkit.org/show_bug.cgi?id=42281
+        
+        When transitioning multiple shadows, the blend function for
+        ShadowData dropped all but the first and last shadow because
+        of a failure to append to the end of the list. Fixed.
+
+        Test: transitions/multiple-text-shadow-transition.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperShadow::blend):
+
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Beth Dakin.
 
         CSS animation doesn't work for border-radius

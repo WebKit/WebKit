@@ -1,5 +1,16 @@
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        -webkit-transition Fails on Multiple text-shadow Shadows
+        https://bugs.webkit.org/show_bug.cgi?id=42281
+        
+        Testcase that transitions multiple shadows.
+
+        * transitions/multiple-text-shadow-transition.html: Added.
+
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Beth Dakin.
 
         CSS animation doesn't work for border-radius

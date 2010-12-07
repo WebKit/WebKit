@@ -357,15 +357,19 @@ public:
         ShadowData defaultShadowData(0, 0, 0, 0, Normal, Color::transparent);
 
         ShadowData* newShadowData = 0;
+        ShadowData* lastShadow = 0;
         
         while (shadowA || shadowB) {
             const ShadowData* srcShadow = shadowA ? shadowA : &defaultShadowData;
             const ShadowData* dstShadow = shadowB ? shadowB : &defaultShadowData;
             
-            if (!newShadowData)
-                newShadowData = blendFunc(anim, srcShadow, dstShadow, progress);
+            ShadowData* blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
+            if (!lastShadow)
+                newShadowData = blendedShadow;
             else
-                newShadowData->setNext(blendFunc(anim, srcShadow, dstShadow, progress));
+                lastShadow->setNext(blendedShadow);
+
+            lastShadow = blendedShadow;
 
             shadowA = shadowA ? shadowA->next() : 0;
             shadowB = shadowB ? shadowB->next() : 0;
