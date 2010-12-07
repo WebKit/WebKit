@@ -168,9 +168,7 @@ function runTest(expected, usePauseAPI)
 
         // We can only use the transition fast-forward mechanism if DRT implements pauseTransitionAtTimeOnElementWithId()
         if (hasPauseTransitionAPI && usePauseAPI) {
-            var paused = layoutTestController.pauseTransitionAtTimeOnElementWithId(property, time, elementId);
-            if (!paused)
-              window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
+            layoutTestController.pauseTransitionAtTimeOnElementWithId(property, time, elementId);
             checkExpectedValue(expected, i);
         } else {
             if (time > maxTime)

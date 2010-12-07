@@ -1,3 +1,14 @@
+2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Rolling out r73421, because it made transitions/color-transition-all.html flakey.
+
+        * transitions/border-radius-transition-expected.txt: Removed.
+        * transitions/border-radius-transition.html: Removed.
+        * transitions/color-transition-all.html:
+        * transitions/transition-test-helpers.js:
+        (expected):
+        * transitions/zero-duration-in-list.html:
+
 2010-12-07  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline GTK+ results after r73385.

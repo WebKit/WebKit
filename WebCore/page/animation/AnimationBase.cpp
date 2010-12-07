@@ -734,7 +734,6 @@ static void addShorthandProperties()
         CSSPropertyBorderColor, 
         CSSPropertyBorderWidth,
         CSSPropertyBorder,
-        CSSPropertyBorderRadius,
         CSSPropertyBorderSpacing,
         CSSPropertyMargin,
         CSSPropertyOutline,

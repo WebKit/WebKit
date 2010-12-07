@@ -1,3 +1,10 @@
+2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Rolling out r73421, because it made transitions/color-transition-all.html flakey.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::addShorthandProperties):
+
 2010-12-07  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73392.
