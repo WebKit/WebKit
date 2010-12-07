@@ -2048,11 +2048,18 @@ FOREACH (_feature ${FEATURE_DEFINES})
     SET(FEATURE_DEFINES_JAVASCRIPT "${FEATURE_DEFINES_JAVASCRIPT} ${_feature}")
 ENDFOREACH ()
 
-FOREACH (_file ${WebCore_IDL_FILES})
-    GENERATE_JS_FROM_IDL(${_file})
-ENDFOREACH ()
 
-LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES})
+# Create JavaScript C++ code given an IDL input
+FOREACH (_file ${WebCore_IDL_FILES})
+    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  ${DERIVED_SOURCES_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_DIR}/JS${_name}.h
+        MAIN_DEPENDENCY ${_file}
+        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${_file}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" ${WEBCORE_DIR}/${_file}
+        VERBATIM)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/JS${_name}.cpp)
+ENDFOREACH ()
 
  
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm

@@ -16,7 +16,7 @@ SET(WEBKITTOOLS_DIR "${CMAKE_SOURCE_DIR}/WebKitTools")
 SET(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
 
 INCLUDE(WebKitMacros)
-INCLUDE(WebKitGenerators)
+INCLUDE(WebKitFS)
 INCLUDE(WebKitHelpers)
 INCLUDE(WebKitFeatures)
 

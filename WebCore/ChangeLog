@@ -1,3 +1,14 @@
+2010-12-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Remove WebKitGenerators
+        https://bugs.webkit.org/show_bug.cgi?id=50445
+
+        Move remaining logic into main CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2010-12-07  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

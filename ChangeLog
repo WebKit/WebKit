@@ -1,3 +1,13 @@
+2010-12-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Remove WebKitGenerators
+        https://bugs.webkit.org/show_bug.cgi?id=50445
+
+        * CMakeLists.txt:
+        * cmake/WebKitGenerators.cmake: Removed.
+
 2010-12-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
