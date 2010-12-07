@@ -1,5 +1,11 @@
 2010-12-07  Darin Adler  <darin@apple.com>
 
+        Another build fix.
+
+        * loader/CrossOriginAccessControl.cpp: Added a missing include.
+
+2010-12-07  Darin Adler  <darin@apple.com>
+
         Try to fix build.
 
         * plugins/PluginView.cpp:
