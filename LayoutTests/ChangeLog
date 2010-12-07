@@ -1,3 +1,14 @@
+2010-12-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement HTML5 hidden attribute
+        https://bugs.webkit.org/show_bug.cgi?id=40511
+        
+        * fast/forms/caret-rtl.html: Fixed a non-closed comment which added an "hidden" attribute.
+        * fast/html/hidden-attr-expected.txt: Added.
+        * fast/html/hidden-attr.html: Added. Test static and dynamic cases of hidden attribute.
+
 2010-12-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

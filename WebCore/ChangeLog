@@ -1,3 +1,16 @@
+2010-12-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement HTML5 hidden attribute
+        https://bugs.webkit.org/show_bug.cgi?id=40511
+
+        Test: fast/html/hidden-attr.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapToEntry): Pick up hidden as a global mapped attribute.
+        (WebCore::HTMLElement::parseMappedAttribute): Map hidden attribute to display: none.
+
 2010-12-07  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.
