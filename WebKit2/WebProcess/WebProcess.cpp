@@ -33,6 +33,7 @@
 #include "RunLoop.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDatabaseManager.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -105,6 +106,11 @@ WebProcess::WebProcess()
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
 #endif // USE(PLATFORM_STRATEGIES)
+
+#if ENABLE(DATABASE)
+    // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
+    WebDatabaseManager::shared();
+#endif
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)

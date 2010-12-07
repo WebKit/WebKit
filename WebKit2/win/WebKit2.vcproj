@@ -1142,6 +1142,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebDatabaseManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebDatabaseManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebDragClient.cpp"
 					>
 				</File>
@@ -1212,6 +1220,10 @@
 				<Filter
 					Name="win"
 					>
+					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebDatabaseManagerWin.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebErrorsWin.cpp"
 						>
