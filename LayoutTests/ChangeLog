@@ -1,5 +1,12 @@
 2010-12-07  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, remove more passing tests (win) from test_expectations.txt
+        after DRT switch.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-07  Tony Chang  <tony@chromium.org>
+
         Unreviewed, remove passing tests (linux) from test_expectations
         after DRT switch.
 

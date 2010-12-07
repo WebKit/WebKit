@@ -206,8 +206,6 @@ WONTFIX SKIP : java/lc3 = TEXT
 // TODO: move to platform/chromium-linux/.
 WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
-// Passes with DRT, fails in test_shell.
-BUGWK42151 : fast/loader/non-deferred-substitute-load.html = TEXT PASS
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -732,7 +730,7 @@ BUG38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 // than chromium's old forked copy.  We can remove the PASS on these once we
 // switch.
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
-BUGWK48655 : plugins/js-from-destroy.html = CRASH
+BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
 BUG_TONY WIN : plugins/mouse-events.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin is currently named
@@ -931,16 +929,8 @@ BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 
 // May require re-baseline.
-BUGWK42370 WIN MAC : svg/custom/image-rescale.svg = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
-
-// Some re-baselining will be needed.
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-1.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-2.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-3.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-4.html = FAIL
-BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-5.html = FAIL
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -2880,9 +2870,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
-// New test added in 68808.
-BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
-
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
@@ -2943,11 +2930,8 @@ BUG58931 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE PASS
 // Failing from around r62021
 BUG15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 
-// Failing from r69420
-BUG58735 SLOW WIN : http/tests/misc/prefetch-purpose.html = TEXT
-BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
-// Failing from r71493:r71496
-BUG58735 MAC : http/tests/misc/prefetch-purpose.html = PASS TEXT
+// Failing from r69420, mac failing from r71493:r71496
+BUG58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
 
 // New test added in r69516.
 BUG58936 : fast/js/basic-strict-mode.html = TEXT
@@ -3003,9 +2987,6 @@ BUGWK48256 : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
 BUGWK48263 : media/adopt-node-crash.html = TIMEOUT PASS
 BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
-
-// Chromium-mac-specific test.
-BUGWK46868 WONTFIX WIN : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGWK48459 WIN LINUX : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
@@ -3126,8 +3107,6 @@ BUGCR64695 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 
-BUGWK50272 MAC : fast/filesystem/async-operations.html = CRASH PASS
-
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
 // FIXME: Need to add tooling support for V8 bugs.
@@ -3147,7 +3126,7 @@ BUG50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Started to flake since http://src.chromium.org/viewvc/chrome?view=rev&revision=66937
 // (72440; 72514] range
-BUGCR64952 LINUX : fast/ruby/nested-ruby.html = CRASH IMAGE PASS
+BUGCR64952 LINUX : fast/ruby/nested-ruby.html = IMAGE
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
@@ -3189,30 +3168,9 @@ BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 // Inspector-related failures
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
-BUG_DRT WIN : inspector/report-API-errors.html = CRASH
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
-
-// File API failures
-BUG48498 WIN : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT
-BUG_DRT WIN : fast/filesystem/async-operations.html = TIMEOUT
-BUG_DRT WIN : fast/filesystem/file-from-file-entry.html = TEXT
-BUG_DRT WIN : fast/filesystem/file-writer-truncate-extend.html = TIMEOUT
-BUG_DRT WIN : fast/filesystem/filesystem-reference.html = TEXT
-BUG_DRT MAC : fast/filesystem/filesystem-reference.html = CRASH
-BUG_DRT WIN : fast/filesystem/flags-passing.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-copy.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-get-entry.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-get-parent.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-move.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-read-directory.html = TEXT TIMEOUT
-BUG_DRT WIN : fast/filesystem/op-remove.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-restricted-chars.html = TEXT
-BUG_DRT WIN : fast/filesystem/op-restricted-names.html = TEXT
-BUG_DRT WIN : fast/filesystem/read-directory.html = TIMEOUT
-BUG_DRT WIN : fast/filesystem/simple-persistent.html = TEXT
-BUG_DRT WIN : fast/filesystem/simple-temporary.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -3266,16 +3224,9 @@ BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Not investigated.
 BUG_DRT LINUX : animations/suspend-resume-animation-events.html = CRASH PASS
-BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
-BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
-BUG_DRT WIN LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT IMAGE
-BUG_DRT WIN LINUX : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT IMAGE
-BUG_DRT WIN : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-BUG_DRT WIN : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUG_DRT WIN : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUG_DRT WIN : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUG_DRT WIN : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUG_DRT : fast/css/line-height-determined-by-primary-font.html = IMAGE TIMEOUT
+BUG_DRT LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
+BUG_DRT LINUX : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
+BUG_DRT MAC LINUX : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUG_DRT MAC : fast/dom/Window/Plug-ins.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
@@ -3283,26 +3234,21 @@ BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
 BUG_DRT LINUX : fast/frames/calculate-round.html = TIMEOUT PASS
 BUG_DRT BUG43890 LINUX : fast/forms/implicit-submission.html = CRASH PASS TEXT
-BUG_DRT WIN : fast/forms/search-styled.html = IMAGE+TEXT
 BUG_DRT BUG21141 LINUX : fast/forms/select-double-onchange.html = CRASH FAIL
 BUG_DRT BUG21141 LINUX : fast/forms/select-script-onchange.html = CRASH FAIL
 BUG_DRT MAC : fast/images/extra-image-in-image-document.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/font-face-empty.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/for-window-event-onload-scripts.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/fragment-after-redirect-gets-back-entry.html = TIMEOUT PASS
-BUG_DRT WIN : fast/repaint/4774354.html = TIMEOUT
+BUG_DRT DEBUG : fast/loader/non-deferred-substitute-load.html = CRASH
 BUG_DRT WIN : fast/repaint/iframe-scroll-repaint.html = IMAGE
-BUG_DRT WIN LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT IMAGE
-BUG_DRT WIN LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT IMAGE
-BUG_DRT WIN LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUG_DRT WIN : fast/ruby/nested-ruby.html = IMAGE
+BUG_DRT LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
+BUG_DRT LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
+BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
-BUG_DRT WIN LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE IMAGE+TEXT
-BUG_DRT WIN : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUG_DRT LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE
 BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
 BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
-BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
-BUG_DRT WIN : fast/text/international/hebrew-vowels.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
@@ -3313,7 +3259,6 @@ BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyl
 // Crashes with DRT and is a text failure with TestShell
 BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
-BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG_DRT WIN LINUX : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT PASS
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
@@ -3325,7 +3270,6 @@ BUG_AWESOME SKIP : platform/chromium/accessibility = PASS
 BUG_AWESOME : fast/events/show-modal-dialog-onblur-onfocus.html = PASS TIMEOUT FAIL
 BUG_AWESOME : fast/harness/show-modal-dialog.html = PASS TIMEOUT FAIL
 BUG_AWESOME : fast/notifications/notifications-click-event.html = PASS TIMEOUT
-BUG_AWESOME LINUX MAC : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = PASS TEXT
 BUG_AWESOME WIN : fast/media/color-does-not-include-alpha.html = PASS TEXT
 BUG_AWESOME BUG22777 MAC : fast/css/resize-corner-tracking-transformed.html = PASS IMAGE+TEXT
 BUG_AWESOME BUG10364 MAC : fast/css/resize-corner-tracking.html = PASS IMAGE+TEXT
