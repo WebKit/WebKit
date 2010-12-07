@@ -32,7 +32,8 @@
       document.getElementById('outer').className = 'changed';
     }
 
-    runTransitionTest(expectedValues, setupTest, true);
+    var usePauseAPI = false;
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

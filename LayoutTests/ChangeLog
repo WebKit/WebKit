@@ -1,3 +1,22 @@
+2010-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CSS animation doesn't work for border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=48340
+
+        * transitions/border-radius-transition-expected.txt: Added.
+        * transitions/border-radius-transition.html: Added.
+        New test.
+        
+        * transitions/color-transition-all.html:
+        * transitions/zero-duration-in-list.html:
+        Don't use the pause API for tests that test whether something is not
+        animating.
+        
+        * transitions/transition-test-helpers.js: Log if the pause API returns
+        failure.
+
 2010-12-06  Victor Wang  <victorw@chromium.org>
 
         Unreviewed.
