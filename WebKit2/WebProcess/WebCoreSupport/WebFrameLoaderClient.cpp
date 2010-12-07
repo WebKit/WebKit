@@ -619,6 +619,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
         return;
     }
 
+    // Always ignore requests with empty URLs.
+    if (request.isEmpty()) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyIgnore);
+        return;
+    }
+    
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
