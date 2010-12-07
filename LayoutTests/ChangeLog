@@ -1,3 +1,60 @@
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline GTK+ results after r73385.
+
+        * platform/gtk/css1/box_properties/margin-expected.txt:
+        * platform/gtk/css1/box_properties/margin_right-expected.txt:
+        * platform/gtk/css1/classification/white_space-expected.txt:
+        * platform/gtk/css1/color_and_background/background_attachment-expected.txt:
+        * platform/gtk/css1/color_and_background/background_repeat-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-end-ws-001-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-end-ws-002-expected.txt:
+        * platform/gtk/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/gtk/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/004-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/gtk/fast/blockflow/block-level-images-expected.txt:
+        * platform/gtk/fast/blockflow/border-radius-clipping-vertical-lr-expected.txt:
+        * platform/gtk/fast/blockflow/box-shadow-vertical-lr-expected.txt:
+        * platform/gtk/fast/blockflow/box-shadow-vertical-rl-expected.txt:
+        * platform/gtk/fast/blockflow/floats-in-block-layout-expected.txt:
+        * platform/gtk/fast/borders/fieldsetBorderRadius-expected.txt:
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/gtk/fast/css/negative-leading-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/fast/forms/file-input-direction-expected.txt:
+        * platform/gtk/fast/forms/floating-textfield-relayout-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-simple-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-subframesets-expected.txt:
+        * platform/gtk/fast/frames/frame-scrolling-attribute-expected.txt:
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.txt:
+        * platform/gtk/fast/frames/inline-object-inside-frameset-expected.txt:
+        * platform/gtk/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/gtk/fast/images/gif-large-checkerboard-expected.txt:
+        * platform/gtk/fast/lists/001-vertical-expected.txt:
+        * platform/gtk/fast/lists/003-vertical-expected.txt:
+        * platform/gtk/fast/multicol/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/gtk/fast/multicol/float-paginate-expected.txt:
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/gtk/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/gtk/fast/multicol/positioned-with-constrained-height-expected.txt:
+        * platform/gtk/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/gtk/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+        * platform/gtk/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/gtk/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/gtk/svg/custom/text-zoom-expected.txt:
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/gtk/transforms/svg-vs-css-expected.txt:
+
 2010-12-07  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

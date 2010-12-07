@@ -977,7 +977,7 @@ layer at (0,0) size 781x2031
                 text run at (0,304) width 29: "jklm"
                 text run at (0,323) width 36: "nopq"
                 text run at (0,342) width 34: "rstuv"
-        layer at (1,266) size 60x82 clip at (3,268) size 40x62 scrollWidth 56 scrollHeight 1028
+        layer at (1,266) size 60x82 clip at (3,268) size 40x78 scrollHeight 1028
           RenderTextControl {TEXTAREA} at (1,45) size 60x82 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
             RenderBlock {DIV} at (22,22) size 16x988
               RenderText {#text} at (0,0) size 16x988
