@@ -1562,16 +1562,32 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
             g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
             gst_bin_add(GST_BIN(m_videoSinkBin), m_fpsSink);
+#if GST_CHECK_VERSION(0, 10, 30)
+            // Faster elements linking, if possible.
+            gst_element_link_pads_full(queue, "src", m_fpsSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+#else
             gst_element_link(queue, m_fpsSink);
+#endif
         } else {
             m_fpsSink = 0;
             gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
+#if GST_CHECK_VERSION(0, 10, 30)
+            // Faster elements linking, if possible.
+            gst_element_link_pads_full(queue, "src", m_webkitVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+#else
             gst_element_link(queue, m_webkitVideoSink);
+#endif
             LOG_VERBOSE(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
         }
     } else {
         gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
+#if GST_CHECK_VERSION(0, 10, 30)
+        // Faster elements linking, if possible.
+        gst_element_link_pads_full(queue, "src", identity, "sink", GST_PAD_LINK_CHECK_NOTHING);
+        gst_element_link_pads_full(identity, "src", m_webkitVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+#else
         gst_element_link_many(queue, identity, m_webkitVideoSink, NULL);
+#endif
     }
 
     // Add a ghostpad to the bin so it can proxy to tee.

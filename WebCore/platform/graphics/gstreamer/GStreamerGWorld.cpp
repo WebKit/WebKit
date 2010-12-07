@@ -91,9 +91,16 @@ bool GStreamerGWorld::enterFullscreen()
 
     g_object_set(valve, "drop-probability", 1.0, NULL);
 
-    // Add and link a queue, ffmpegcolorspace and sink in the bin.
+    // Add and link a queue, ffmpegcolorspace, videoscale and sink in the bin.
     gst_bin_add_many(GST_BIN(videoSink.get()), platformVideoSink, videoScale, colorspace, queue, NULL);
+#if GST_CHECK_VERSION(0, 10, 30)
+    // Faster elements linking, if possible.
+    gst_element_link_pads_full(queue, "src", colorspace, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(colorspace, "src", videoScale, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(videoScale, "src", platformVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+#else
     gst_element_link_many(queue, colorspace, videoScale, platformVideoSink, NULL);
+#endif
 
     // Link a new src pad from tee to queue.
     GstPad* srcPad = gst_element_get_request_pad(tee, "src%d");
