@@ -1,3 +1,16 @@
+2010-12-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50593
+        
+        Fix background canvas painting for documents with left/top overflow.  The math from the original RTL patch was incorrect.
+        
+        Just use the RenderView's document dimensions always.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+
 2010-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.
