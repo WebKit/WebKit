@@ -1,3 +1,13 @@
+2010-12-07  Jessie Berlin  <jberlin@apple.com>
+
+        Build fix. Unreviewed.
+
+        * WebKit2.pro:
+        Added WebDatabaseManagerQt.cpp.
+        * WebProcess/WebCoreSupport/qt/WebDatabaseManagerQt.cpp: Added.
+        (WebKit::WebDatabaseManager::databaseDirectory):
+        Added a FIXME to implement and return an empty string.
+
 2010-12-07  Darin Adler  <darin@apple.com>
 
         Get a bit closer to making Qt WebKit2 compile again.
