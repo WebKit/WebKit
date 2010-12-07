@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include <algorithm>
+#include <wtf/MathExtras.h>
 
 using namespace std;
 
@@ -324,7 +325,7 @@ void AudioBufferSourceNode::readFromBufferWithGrainEnvelope(float* sourceL, floa
         m_grainFrameCount++;
 
         x = min(1.0f, x);
-        float grainEnvelope = sinf(M_PI * x);
+        float grainEnvelope = sinf(piFloat * x);
         
         *destinationL++ = grainEnvelope * *sourceL++;
 

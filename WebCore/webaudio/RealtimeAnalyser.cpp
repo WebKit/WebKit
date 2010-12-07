@@ -40,6 +40,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <wtf/Complex.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
 
 using namespace std;
@@ -137,7 +138,7 @@ void applyWindow(float* p, size_t n)
     
     for (unsigned i = 0; i < n; ++i) {
         double x = static_cast<double>(i) / static_cast<double>(n);
-        double window = a0 - a1 * cos(2.0 * M_PI * x) + a2 * cos(4.0 * M_PI * x);
+        double window = a0 - a1 * cos(2.0 * piDouble * x) + a2 * cos(4.0 * piDouble * x);
         p[i] *= float(window);
     }
 }

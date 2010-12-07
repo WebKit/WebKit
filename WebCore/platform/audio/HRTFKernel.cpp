@@ -35,6 +35,7 @@
 #include "AudioChannel.h"
 #include "Biquad.h"
 #include "FFTFrame.h"
+#include <wtf/MathExtras.h>
 
 using namespace std;
 

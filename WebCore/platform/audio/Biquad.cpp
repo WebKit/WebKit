@@ -33,9 +33,8 @@
 #include "Biquad.h"
 
 #include <algorithm>
-#include <float.h>
-#include <math.h>
 #include <stdio.h>
+#include <wtf/MathExtras.h>
 
 #if OS(DARWIN)
 #include <Accelerate/Accelerate.h>
@@ -197,7 +196,7 @@ void Biquad::setLowpassParams(double cutoff, double resonance)
     double d = sqrt((4.0 - sqrt(16.0 - 16.0 / (g * g))) / 2.0);
 
     // Compute biquad coefficients for lopass filter
-    double theta = M_PI * cutoff;
+    double theta = piDouble * cutoff;
     double sn = 0.5 * d * sin(theta);
     double beta = 0.5 * (1.0 - sn) / (1.0 + sn);
     double gamma = (0.5 + beta) * cos(theta);
@@ -218,7 +217,7 @@ void Biquad::setHighpassParams(double cutoff, double resonance)
     double d = sqrt((4.0 - sqrt(16.0 - 16.0 / (g * g))) / 2.0);
 
     // Compute biquad coefficients for highpass filter
-    double theta = M_PI * cutoff;
+    double theta = piDouble * cutoff;
     double sn = 0.5 * d * sin(theta);
     double beta = 0.5 * (1.0 - sn) / (1.0 + sn);
     double gamma = (0.5 + beta) * cos(theta);
@@ -233,7 +232,7 @@ void Biquad::setHighpassParams(double cutoff, double resonance)
 
 void Biquad::setLowShelfParams(double cutoff, double dbGain)
 {
-    double theta = M_PI * cutoff;
+    double theta = piDouble * cutoff;
 
     double A = pow(10.0, dbGain / 40.0);
     double S = 1.0; // filter slope (1.0 is max value)

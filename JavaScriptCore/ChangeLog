@@ -1,3 +1,15 @@
+2010-12-07  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Fix compilation of core web audio files on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50603
+
+        Added log2 definition to MathExtras.h on Windows platform.
+
+        * wtf/MathExtras.h:
+        (log2):
+
 2010-12-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Gavin Barraclough.

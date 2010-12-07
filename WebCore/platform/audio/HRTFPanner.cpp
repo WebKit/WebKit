@@ -33,7 +33,7 @@
 #include "HRTFDatabase.h"
 #include "HRTFDatabaseLoader.h"
 #include <algorithm>
-#include <math.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RefPtr.h>
 
 using namespace std;

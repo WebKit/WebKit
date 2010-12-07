@@ -30,7 +30,6 @@
 #define AudioParam_h
 
 #include "PlatformString.h"
-#include <math.h>
 #include <sys/types.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,8 +38,8 @@ namespace WebCore {
 
 class AudioParam : public RefCounted<AudioParam> {
 public:
-    static const double DefaultSmoothingConstant = 0.05;
-    static const double SnapThreshold = 0.001;
+    static const double DefaultSmoothingConstant;
+    static const double SnapThreshold;
 
     static PassRefPtr<AudioParam> create(const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
     {
@@ -61,13 +60,7 @@ public:
 
     float value() const { return static_cast<float>(m_value); }
     
-    void setValue(float value)
-    {
-        // Check against JavaScript giving us bogus floating-point values.
-        // Don't ASSERT, since this can happen if somebody writes bad JS.
-        if (!isnan(value) && !isinf(value))
-            m_value = value;
-    }
+    void setValue(float);
 
     String name() const { return m_name; }
 
@@ -84,22 +77,7 @@ public:
 
     // Smoothly exponentially approaches to (de-zippers) the desired value.
     // Returns true if smoothed value has already snapped exactly to value.
-    bool smooth()
-    {
-        if (m_smoothedValue == m_value) {
-            // Smoothed value has already approached and snapped to value.
-            return true;
-        }
-
-        // Exponential approach
-        m_smoothedValue += (m_value - m_smoothedValue) * m_smoothingConstant;
-
-        // If we get close enough then snap to actual value.
-        if (fabs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
-            m_smoothedValue = m_value;
-
-        return false;
-    }
+    bool smooth();
 
     void resetSmoothedValue() { m_smoothedValue = m_value; }
     void setSmoothingConstant(double k) { m_smoothingConstant = k; }

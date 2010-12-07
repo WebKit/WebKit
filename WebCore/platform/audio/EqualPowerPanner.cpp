@@ -30,7 +30,7 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 // Use a 50ms smoothing / de-zippering time-constant.
 const double SmoothingTimeConstant = 0.050;
@@ -76,7 +76,7 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, AudioBus* input
     else
         desiredPanPosition = (azimuth + 30.0) / 60.0;
 
-    double desiredGainL = 0.5 * cos(M_PI * desiredPanPosition) + 0.5;
+    double desiredGainL = 0.5 * cos(piDouble * desiredPanPosition) + 0.5;
     double desiredGainR = sqrt(1.0 - desiredGainL*desiredGainL);
 
     // Don't de-zipper on first render call.

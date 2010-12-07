@@ -4437,6 +4437,7 @@
             'webaudio/AudioNodeOutput.h',
             'webaudio/AudioPannerNode.h',
             'webaudio/AudioPannerNode.cpp',
+            'webaudio/AudioParam.cpp',
             'webaudio/AudioParam.h',
             'webaudio/AudioProcessingEvent.h',
             'webaudio/AudioProcessingEvent.cpp',

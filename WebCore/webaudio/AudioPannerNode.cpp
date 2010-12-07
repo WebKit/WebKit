@@ -193,7 +193,7 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
     FloatPoint3D projectedSource = sourceListener - upProjection * up;
     projectedSource.normalize();
 
-    azimuth = 180.0 * acos(projectedSource.dot(listenerRight)) / M_PI;
+    azimuth = 180.0 * acos(projectedSource.dot(listenerRight)) / piDouble;
     fixNANs(azimuth); // avoid illegal values
 
     // Source  in front or behind the listener
@@ -208,7 +208,7 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
         azimuth = 450.0 - azimuth;
 
     // Elevation
-    double elevation = 90.0 - 180.0 * acos(sourceListener.dot(up)) / M_PI;
+    double elevation = 90.0 - 180.0 * acos(sourceListener.dot(up)) / piDouble;
     fixNANs(azimuth); // avoid illegal values
 
     if (elevation > 90.0)

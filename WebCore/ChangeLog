@@ -1,3 +1,43 @@
+2010-12-07  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Fix compilation of core web audio files on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50603
+
+        Changed a few constructs using C99 features of math.h to use
+        wtf/MathExtras.h instead. Changed inline definitions of a couple of
+        const static doubles in classes to out-of-line. Built Chrome with
+        web audio enabled on Windows and Mac OS X to test these changes.
+
+        No new tests since audio API is not yet implemented.
+
+        * WebCore.gypi:
+        * platform/audio/AudioResampler.cpp:
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+        (WebCore::Biquad::setLowShelfParams):
+        * platform/audio/Cone.cpp:
+        (WebCore::ConeEffect::gain):
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::interpolateFrequencyComponents):
+        (WebCore::FFTFrame::extractAverageGroupDelay):
+        (WebCore::FFTFrame::addConstantGroupDelay):
+        * platform/audio/HRTFKernel.cpp:
+        * platform/audio/HRTFPanner.cpp:
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::readFromBufferWithGrainEnvelope):
+        * webaudio/AudioPannerNode.cpp:
+        (WebCore::AudioPannerNode::getAzimuthElevation):
+        * webaudio/AudioParam.cpp: Added.
+        (AudioParam::setValue):
+        (AudioParam::smooth):
+        * webaudio/AudioParam.h:
+        * webaudio/RealtimeAnalyser.cpp:
+
 2010-11-25  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
