@@ -1,0 +1,14 @@
+ 
+
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "5"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+This test tests that areas of an imagemap can be reached with spatial navigation.

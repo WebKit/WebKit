@@ -32,7 +32,10 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLAreaElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLMapElement.h"
 #include "IntRect.h"
 #include "Node.h"
 #include "Page.h"
@@ -52,7 +55,8 @@ static void entryAndExitPointsForDirection(FocusDirection direction, const IntRe
 
 
 FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
-    : node(n)
+    : visibleNode(n)
+    , focusableNode(n)
     , enclosingScrollableBox(0)
     , distance(maxDistance())
     , parentDistance(maxDistance())
@@ -62,6 +66,28 @@ FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
     , isOffscreen(hasOffscreenRect(n))
     , isOffscreenAfterScrolling(hasOffscreenRect(n, direction))
 {
+}
+
+FocusCandidate::FocusCandidate(HTMLAreaElement* area, FocusDirection direction)
+    : visibleNode(0)
+    , focusableNode(0)
+    , enclosingScrollableBox(0)
+    , distance(maxDistance())
+    , parentDistance(maxDistance())
+    , alignment(None)
+    , parentAlignment(None)
+    , isOffscreen(true)
+    , isOffscreenAfterScrolling(true)
+{
+    HTMLImageElement* image = area->imageElement();
+    if (!image)
+        return;
+
+    focusableNode = area;
+    visibleNode = image;
+    rect = virtualRectForAreaElementAndDirection(direction, area);
+    isOffscreen = hasOffscreenRect(image);
+    isOffscreenAfterScrolling = hasOffscreenRect(image, direction);
 }
 
 bool isSpatialNavigationEnabled(const Frame* frame)
@@ -571,7 +597,7 @@ void distanceDataForNode(FocusDirection direction, FocusCandidate& current, Focu
 {
     if (candidate.isNull())
         return;
-    if (!candidate.node->renderer())
+    if (!candidate.visibleNode->renderer())
         return;
     IntRect nodeRect = candidate.rect;
     IntRect currentRect = current.rect;
@@ -618,15 +644,15 @@ void distanceDataForNode(FocusDirection direction, FocusCandidate& current, Focu
 
     float distance = euclidianDistance + sameAxisDistance + 2 * otherAxisDistance;
     candidate.distance = roundf(distance);
-    IntSize viewSize = candidate.node->document()->page()->mainFrame()->view()->visibleContentRect().size();
+    IntSize viewSize = candidate.visibleNode->document()->page()->mainFrame()->view()->visibleContentRect().size();
     candidate.alignment = alignmentForRects(direction, currentRect, nodeRect, viewSize);
 }
 
 bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candidate)
 {
-    ASSERT(candidate.node && candidate.isOffscreen);
+    ASSERT(candidate.visibleNode && candidate.isOffscreen);
     IntRect candidateRect = candidate.rect;
-    for (Node* parentNode = candidate.node->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
+    for (Node* parentNode = candidate.visibleNode->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
         IntRect parentRect = nodeRectInAbsoluteCoordinates(parentNode);
         if (!candidateRect.intersects(parentRect)) {
             if (((direction == FocusDirectionLeft || direction == FocusDirectionRight) && parentNode->renderer()->style()->overflowX() == OHIDDEN)
@@ -643,29 +669,37 @@ bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candi
 // Compose a virtual starting rect if there is no focused node or if it is off screen.
 // The virtual rect is the edge of the container or frame. We select which
 // edge depending on the direction of the navigation.
-IntRect virtualRectForDirection(FocusDirection direction, const IntRect& startingRect)
+IntRect virtualRectForDirection(FocusDirection direction, const IntRect& startingRect, int width)
 {
     IntRect virtualStartingRect = startingRect;
     switch (direction) {
     case FocusDirectionLeft:
-        virtualStartingRect.setX(virtualStartingRect.right());
-        virtualStartingRect.setWidth(0);
+        virtualStartingRect.setX(virtualStartingRect.right() - width);
+        virtualStartingRect.setWidth(width);
         break;
     case FocusDirectionUp:
-        virtualStartingRect.setY(virtualStartingRect.bottom());
-        virtualStartingRect.setHeight(0);
+        virtualStartingRect.setY(virtualStartingRect.bottom() - width);
+        virtualStartingRect.setHeight(width);
         break;
     case FocusDirectionRight:
-        virtualStartingRect.setWidth(0);
+        virtualStartingRect.setWidth(width);
         break;
     case FocusDirectionDown:
-        virtualStartingRect.setHeight(0);
+        virtualStartingRect.setHeight(width);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
     return virtualStartingRect;
+}
+
+IntRect virtualRectForAreaElementAndDirection(FocusDirection direction, HTMLAreaElement* area)
+{
+    // Area elements tend to overlap more than other focusable elements. We flatten the rect of the area elements
+    // to minimize the effect of overlapping areas.
+    IntRect rect = virtualRectForDirection(direction, rectToAbsoluteCoordinates(area->document()->frame(), area->getRect(area->imageElement()->renderer())), 1);
+    return rect;
 }
 
 

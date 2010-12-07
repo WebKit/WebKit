@@ -31,6 +31,7 @@ namespace WebCore {
 
 class Element;
 class Frame;
+class HTMLAreaElement;
 class IntRect;
 class RenderObject;
 
@@ -99,7 +100,8 @@ enum RectsAlignment {
 
 struct FocusCandidate {
     FocusCandidate()
-        : node(0)
+        : visibleNode(0)
+        , focusableNode(0)
         , enclosingScrollableBox(0)
         , distance(maxDistance())
         , parentDistance(maxDistance())
@@ -111,11 +113,16 @@ struct FocusCandidate {
     }
 
     FocusCandidate(Node* n, FocusDirection);
-    bool isNull() const { return !node; }
-    bool inScrollableContainer() const { return node && enclosingScrollableBox; }
-    Document* document() const { return node ? node->document() : 0; }
+    explicit FocusCandidate(HTMLAreaElement* area, FocusDirection);
+    bool isNull() const { return !visibleNode; }
+    bool inScrollableContainer() const { return visibleNode && enclosingScrollableBox; }
+    Document* document() const { return visibleNode ? visibleNode->document() : 0; }
 
-    Node* node;
+    // We handle differently visibleNode and FocusableNode to properly handle the areas of imagemaps,
+    // where visibleNode would represent the image element and focusableNode would represent the area element.
+    // In all other cases, visibleNode and focusableNode are one and the same.
+    Node* visibleNode;
+    Node* focusableNode;
     Node* enclosingScrollableBox;
     long long distance;
     long long parentDistance;
@@ -138,7 +145,8 @@ IntRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
 IntRect frameRectInAbsoluteCoordinates(Frame*);
 void distanceDataForNode(FocusDirection, FocusCandidate& current, FocusCandidate& candidate);
 bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
-IntRect virtualRectForDirection(FocusDirection, const IntRect& startingRect);
+IntRect virtualRectForDirection(FocusDirection, const IntRect& startingRect, int width = 0);
+IntRect virtualRectForAreaElementAndDirection(FocusDirection, HTMLAreaElement*);
 } // namspace WebCore
 
 #endif // SpatialNavigation_h

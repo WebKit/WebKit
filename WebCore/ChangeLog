@@ -1,3 +1,30 @@
+2010-12-07  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial navigation not Working for Map and Area Tags
+        https://bugs.webkit.org/show_bug.cgi?id=47142
+
+        Give area elements special treatment in spatial navigation algorithm by getting the
+        rect of the area from the associated image. Since area elements are likely to overlap
+        if they are not rects, or if authors are not careful, we flatten the rect of area elements.
+
+        Tests: fast/spatial-navigation/snav-imagemap-area-not-focusable.html
+               fast/spatial-navigation/snav-imagemap-area-without-image.html
+               fast/spatial-navigation/snav-imagemap-overlapped-areas.html
+               fast/spatial-navigation/snav-imagemap-simple.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer):
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/SpatialNavigation.cpp:
+        (WebCore::FocusCandidate::FocusCandidate):
+        (WebCore::virtualRectForDirection):
+        (WebCore::virtualRectForAreaElementAndDirection):
+        * page/SpatialNavigation.h:
+        (WebCore::FocusCandidate::FocusCandidate):
+
 2010-12-07  Darin Adler  <darin@apple.com>
 
         Try to fix V8 build.
