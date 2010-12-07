@@ -196,12 +196,36 @@ bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy 
 
 void SVGElement::setCursorElement(SVGCursorElement* cursorElement)
 {
-    ensureRareSVGData()->setCursorElement(cursorElement);
+    SVGElementRareData* rareData = ensureRareSVGData();
+    if (SVGCursorElement* oldCursorElement = rareData->cursorElement()) {
+        if (cursorElement == oldCursorElement)
+            return;
+        oldCursorElement->removeReferencedElement(this);
+    }
+    rareData->setCursorElement(cursorElement);
+}
+
+void SVGElement::cursorElementRemoved() 
+{
+    ASSERT(hasRareSVGData());
+    rareSVGData()->setCursorElement(0);
 }
 
 void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
 {
-    ensureRareSVGData()->setCursorImageValue(cursorImageValue);
+    SVGElementRareData* rareData = ensureRareSVGData();
+    if (CSSCursorImageValue* oldCursorImageValue = rareData->cursorImageValue()) {
+        if (cursorImageValue == oldCursorImageValue)
+            return;
+        oldCursorImageValue->removeReferencedElement(this);
+    }
+    rareData->setCursorImageValue(cursorImageValue);
+}
+
+void SVGElement::cursorImageElementRemoved()
+{
+    ASSERT(hasRareSVGData());
+    rareSVGData()->setCursorImageValue(0);
 }
 
 void SVGElement::parseMappedAttribute(Attribute* attr)

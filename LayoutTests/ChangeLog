@@ -1,3 +1,13 @@
+2010-12-07  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Clear old SVG cursor entry before adding a new one
+        https://bugs.webkit.org/show_bug.cgi?id=50549
+
+        * svg/css/cursor-replace-expected.txt: Added.
+        * svg/css/cursor-replace.svg: Added.
+
 2010-12-07  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed.

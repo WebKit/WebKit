@@ -1,3 +1,26 @@
+2010-12-07  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Clear old SVG cursor entry before adding a new one
+        https://bugs.webkit.org/show_bug.cgi?id=50549
+
+        Test: svg/css/cursor-replace.svg
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::~SVGCursorElement):
+        (WebCore::SVGCursorElement::removeClient):
+        (WebCore::SVGCursorElement::removeReferencedElement):
+        * svg/SVGCursorElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::setCursorElement):
+        (WebCore::SVGElement::cursorElementRemoved):
+        (WebCore::SVGElement::setCursorImageValue):
+        (WebCore::SVGElement::cursorImageElementRemoved):
+        * svg/SVGElement.h:
+
 2010-12-07  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.
