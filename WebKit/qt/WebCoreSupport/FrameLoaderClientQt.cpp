@@ -619,7 +619,7 @@ void FrameLoaderClientQt::finishedLoading(DocumentLoader* loader)
         // However, we only want to do this if makeRepresentation has been called, to
         // match the behavior on the Mac.
         if (m_hasRepresentation)
-            loader->writer()->setEncoding("", false);
+            loader->frameLoader()->writer()->setEncoding("", false);
         return;
     }
     if (m_pluginView->isPluginView())

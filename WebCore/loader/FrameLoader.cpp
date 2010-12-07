@@ -178,6 +178,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_policyChecker(frame)
     , m_history(frame)
     , m_notifer(frame)
+    , m_writer(frame)
     , m_subframeLoader(frame)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
@@ -231,8 +232,8 @@ void FrameLoader::init()
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
-    m_documentLoader->writer()->begin(KURL(), false);
-    m_documentLoader->writer()->end();
+    writer()->begin(KURL(), false);
+    writer()->end();
     m_frame->document()->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_didCallImplicitClose = true;
@@ -591,6 +592,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     // Do not drop the document before the ScriptController and view are cleared
     // as some destructors might still try to access the document.
     m_frame->setDocument(0);
+    writer()->clear();
 
     m_subframeLoader.clear();
 
@@ -609,8 +611,8 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 
 void FrameLoader::receivedFirstData()
 {
-    activeDocumentLoader()->writer()->begin(m_workingURL, false);
-    activeDocumentLoader()->writer()->setDocumentWasLoadedAsPartOfNavigation();
+    writer()->begin(m_workingURL, false);
+    writer()->setDocumentWasLoadedAsPartOfNavigation();
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
@@ -2010,7 +2012,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
             ASSERT_NOT_REACHED();
     }
 
-    m_documentLoader->writer()->setMIMEType(dl->responseMIMEType());
+    writer()->setMIMEType(dl->responseMIMEType());
 
     // Tell the client we've committed this URL.
     ASSERT(m_frame->view());
@@ -2146,6 +2148,8 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_frame->domWindow()->setURL(document->url());
     m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 
+    writer()->setDecoder(document->decoder());
+
     updateFirstPartyForCookies();
 
     cachedFrame.restore();
@@ -2238,7 +2242,7 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     ArchiveResource* mainResource = archive->mainResource();
     loader->setParsedArchiveData(mainResource->data());
 
-    loader->writer()->setMIMEType(mainResource->mimeType());
+    writer()->setMIMEType(mainResource->mimeType());
 
     closeURL();
     didOpenURL(mainResource->url());
@@ -2246,8 +2250,8 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     ASSERT(m_frame->document());
     String userChosenEncoding = documentLoader()->overrideEncoding();
     bool encodingIsUserChosen = !userChosenEncoding.isNull();
-    loader->writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
-    loader->writer()->addData(mainResource->data()->data(), mainResource->data()->size());
+    writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
+    writer()->addData(mainResource->data()->data(), mainResource->data()->size());
 }
 
 bool FrameLoader::isReplacing() const
@@ -2671,7 +2675,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
     // For a newly opened frame with an empty URL, encoding() should not be used, because this methods asks decoder, which uses ISO-8859-1.
     Settings* settings = m_frame->settings();
-    request.setResponseContentDispositionEncodingFallbackArray("UTF-8", activeDocumentLoader()->writer()->deprecatedFrameEncoding(), settings ? settings->defaultTextEncodingName() : String());
+    request.setResponseContentDispositionEncodingFallbackArray("UTF-8", writer()->deprecatedFrameEncoding(), settings ? settings->defaultTextEncodingName() : String());
 }
 
 void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)

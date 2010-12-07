@@ -32,6 +32,7 @@
 #define FrameLoader_h
 
 #include "CachePolicy.h"
+#include "DocumentWriter.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
@@ -97,6 +98,7 @@ public:
     PolicyChecker* policyChecker() const { return &m_policyChecker; }
     HistoryController* history() const { return &m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
+    DocumentWriter* writer() const { return &m_writer; }
     SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
 
     // FIXME: This is not cool, people. There are too many different functions that all start loads.
@@ -425,6 +427,7 @@ private:
     mutable PolicyChecker m_policyChecker;
     mutable HistoryController m_history;
     mutable ResourceLoadNotifier m_notifer;
+    mutable DocumentWriter m_writer;
     mutable SubframeLoader m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
 

@@ -33,7 +33,6 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
@@ -56,7 +55,6 @@ class Attr;
 class AXObjectCache;
 class CDATASection;
 class CachedCSSStyleSheet;
-class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
@@ -69,6 +67,7 @@ class DOMImplementation;
 class DOMSelection;
 class DOMWindow;
 class DatabaseThread;
+class CachedResourceLoader;
 class DocumentFragment;
 class DocumentType;
 class DocumentWeakReference;
@@ -550,9 +549,6 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
-    
-    void setDocumentLoader(DocumentLoader* documentLoader) { m_documentLoader = documentLoader; }
-    DocumentLoader* loader() const { return m_documentLoader; }
 
     void open(Document* ownerDocument = 0);
     void implicitOpen();
@@ -1141,7 +1137,6 @@ private:
     bool m_didCalculateStyleSelector;
 
     Frame* m_frame;
-    DocumentLoader* m_documentLoader;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     bool m_wellFormed;

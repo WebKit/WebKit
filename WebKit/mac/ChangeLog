@@ -1,3 +1,14 @@
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73392.
+        http://trac.webkit.org/changeset/73392
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        This commit caused crashes on the GTK+ bots
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _canProvideDocumentSource]):
+
 2010-12-07  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

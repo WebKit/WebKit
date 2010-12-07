@@ -1,3 +1,26 @@
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73392.
+        http://trac.webkit.org/changeset/73392
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        This commit caused crashes on the GTK+ bots
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::finishedLoading):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::encoding):
+        (WebKit::WebFrameImpl::loadJavaScriptURL):
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::preActionBeforeSerializeOpenTag):
+        (WebKit::WebPageSerializerImpl::serialize):
+        * src/WebSearchableFormData.cpp:
+        (WebCore::GetFormEncoding):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::pageEncoding):
+
 2010-12-07  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

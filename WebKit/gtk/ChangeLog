@@ -1,3 +1,16 @@
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73392.
+        http://trac.webkit.org/changeset/73392
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        This commit caused crashes on the GTK+ bots
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::finishedLoading):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding):
+
 2010-12-06  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

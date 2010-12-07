@@ -168,7 +168,7 @@ void ProcessingInstruction::checkStyleSheet()
             {
                 String charset = attrs.get("charset");
                 if (charset.isEmpty())
-                    charset = document()->loader()->writer()->encoding();
+                    charset = document()->frame()->loader()->writer()->encoding();
 
                 m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(url, charset);
             }

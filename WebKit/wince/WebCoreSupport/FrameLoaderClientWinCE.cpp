@@ -450,7 +450,8 @@ String FrameLoaderClientWinCE::generatedMIMETypeForURLScheme(const String&) cons
 void FrameLoaderClientWinCE::finishedLoading(DocumentLoader* documentLoader)
 {
     if (!m_pluginView) {
-        documentLoader->writer()->setEncoding(m_response.textEncodingName(), false);
+        FrameLoader* loader = documentLoader->frameLoader();
+        loader->writer()->setEncoding(m_response.textEncodingName(), false);
         return;
     }
 

@@ -1,3 +1,16 @@
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73392.
+        http://trac.webkit.org/changeset/73392
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        This commit caused crashes on the GTK+ bots
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setUrl):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+
 2010-12-06  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

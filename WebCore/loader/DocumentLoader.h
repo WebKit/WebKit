@@ -30,7 +30,6 @@
 #define DocumentLoader_h
 
 #include "DocumentLoadTiming.h"
-#include "DocumentWriter.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -73,8 +72,6 @@ namespace WebCore {
         FrameLoader* frameLoader() const;
         MainResourceLoader* mainResourceLoader() const { return m_mainResourceLoader.get(); }
         PassRefPtr<SharedBuffer> mainResourceData() const;
-        
-        DocumentWriter* writer() const { return &m_writer; }
 
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& originalRequestCopy() const;
@@ -249,8 +246,6 @@ namespace WebCore {
         ResourceLoaderSet m_plugInStreamLoaders;
 
         RefPtr<SharedBuffer> m_mainResourceData;
-        
-        mutable DocumentWriter m_writer;
 
         // A reference to actual request used to create the data source.
         // This should only be used by the resourceLoadDelegate's

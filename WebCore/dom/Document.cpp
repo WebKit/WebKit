@@ -428,7 +428,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     m_ignoreAutofocus = false;
 
     m_frame = frame;
-    m_documentLoader = frame ? frame->loader()->activeDocumentLoader() : 0;
 
     if (frame || !url.isEmpty())
         setURL(url);
@@ -2055,8 +2054,9 @@ void Document::close()
     Frame* frame = this->frame();
     if (frame) {
         // This code calls implicitClose() if all loading has completed.
-        loader()->writer()->endIfNotLoadingMainResource();
-        frame->loader()->checkCompleted();
+        FrameLoader* frameLoader = frame->loader();
+        frameLoader->writer()->endIfNotLoadingMainResource();
+        frameLoader->checkCompleted();
     } else {
         // Because we have no frame, we don't know if all loading has completed,
         // so we just call implicitClose() immediately. FIXME: This might fire
@@ -3713,7 +3713,7 @@ String Document::lastModified() const
     DateComponents date;
     bool foundDate = false;
     if (m_frame) {
-        String httpLastModified = m_documentLoader->response().httpHeaderField("Last-Modified");
+        String httpLastModified = m_frame->loader()->documentLoader()->response().httpHeaderField("Last-Modified");
         if (!httpLastModified.isEmpty()) {
             date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
             foundDate = true;
@@ -4231,7 +4231,7 @@ void Document::finishedParsing()
             return;
 
         if (InspectorController* controller = page()->inspectorController())
-            controller->mainResourceFiredDOMContentEvent(m_documentLoader, url());
+            controller->mainResourceFiredDOMContentEvent(f->loader()->documentLoader(), url());
 #endif
     }
 }
@@ -4445,7 +4445,8 @@ void Document::initSecurityContext()
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
         // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
         // discussion.
-        if (m_documentLoader->substituteData().isValid())
+        DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+        if (documentLoader && documentLoader->substituteData().isValid())
             securityOrigin()->grantLoadLocalResources();
     }
 
@@ -4525,7 +4526,7 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
     // FIXME: Eliminate this redundancy.
     setURL(url);
     f->loader()->setURL(url);
-    m_documentLoader->replaceRequestURLForSameDocumentNavigation(url);
+    f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
 }
 
 void Document::statePopped(SerializedScriptValue* stateObject)

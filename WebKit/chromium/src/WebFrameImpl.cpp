@@ -545,7 +545,7 @@ WebURL WebFrameImpl::openSearchDescriptionURL() const
 
 WebString WebFrameImpl::encoding() const
 {
-    return frame()->document()->loader()->writer()->encoding();
+    return frame()->loader()->writer()->encoding();
 }
 
 WebSize WebFrameImpl::scrollOffset() const
@@ -2271,7 +2271,7 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
         return;
 
     if (!m_frame->navigationScheduler()->locationChangePending())
-        m_frame->document()->loader()->writer()->replaceDocument(scriptResult);
+        m_frame->loader()->writer()->replaceDocument(scriptResult);
 }
 
 } // namespace WebKit
