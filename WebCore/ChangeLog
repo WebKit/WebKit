@@ -1,3 +1,14 @@
+2010-12-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: avoid initializing Context on when creating attaching listener to ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=50627
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::addListener): don't try to collect already parsed scripts if context has
+        not been initialized yet.
+
 2010-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Rolling out r73421, because it made transitions/color-transition-all.html flakey.

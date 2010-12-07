@@ -113,8 +113,10 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
     }
     m_listenersMap.set(page, listener);
 
-    v8::Local<v8::Context> context = proxy->mainWorldContext();
-
+    V8DOMWindowShell* shell = proxy->windowShell();
+    if (!shell->isContextInitialized())
+        return;
+    v8::Handle<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));
     v8::Handle<v8::Value> argv[] = { context->GetData() };
     v8::Handle<v8::Value> value = getScriptsFunction->Call(m_debuggerScript.get(), 1, argv);
