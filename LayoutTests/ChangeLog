@@ -1,3 +1,14 @@
+2010-12-06  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Update Windows results after r73385.
+
+        Unreviewed.
+
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum:
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.png:
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+
 2010-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
