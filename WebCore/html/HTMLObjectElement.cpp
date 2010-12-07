@@ -46,17 +46,28 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, bool createdByParser) 
+inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser) 
     : HTMLPlugInImageElement(tagName, document, createdByParser)
+    , FormAssociatedElement(form)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
+    if (!this->form())
+        setForm(findFormAncestor());
+    if (this->form())
+        this->form()->registerFormElement(this);
 }
 
-PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+inline HTMLObjectElement::~HTMLObjectElement()
 {
-    return adoptRef(new HTMLObjectElement(tagName, document, createdByParser));
+    if (form())
+        form()->removeFormElement(this);
+}
+
+PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
+{
+    return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
 }
 
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
@@ -313,6 +324,14 @@ void HTMLObjectElement::removedFromDocument()
     HTMLPlugInImageElement::removedFromDocument();
 }
 
+void HTMLObjectElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    if (attr->name() == formAttr)
+        formAttributeChanged();
+    else
+        HTMLPlugInImageElement::attributeChanged(attr, preserveDecls);
+}
+
 void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     updateDocNamedItem();
@@ -451,6 +470,29 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
     const AtomicString& useMap = getAttribute(usemapAttr);
     if (useMap.startsWith("#"))
         addSubresourceURL(urls, document()->completeURL(useMap));
+}
+
+void HTMLObjectElement::insertedIntoTree(bool deep)
+{
+    FormAssociatedElement::insertedIntoTree();
+    HTMLPlugInImageElement::insertedIntoTree(deep);
+}
+
+void HTMLObjectElement::removedFromTree(bool deep)
+{
+    FormAssociatedElement::removedFromTree();
+    HTMLPlugInImageElement::removedFromTree(deep);
+}
+
+bool HTMLObjectElement::appendFormData(FormDataList&, bool)
+{
+    // FIXME: Implements this function.
+    return false;
+}
+
+const AtomicString& HTMLObjectElement::formControlName() const
+{
+    return m_name.isNull() ? emptyAtom : m_name;
 }
 
 }

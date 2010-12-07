@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 This test does not add object element as a listed element. Separate test will cover that.
-PASS owner.elements.length is 22
+PASS owner.elements.length is 23
 PASS owner.elements[0].id is 'button1'
 PASS owner.elements[1].id is 'fieldset1'
 PASS owner.elements[2].id is 'inputhidden'
@@ -24,9 +24,10 @@ PASS owner.elements[15].id is 'inputsubmit'
 PASS owner.elements[16].id is 'inputreset'
 PASS owner.elements[17].id is 'inputbutton'
 PASS owner.elements[18].id is 'keygen1'
-PASS owner.elements[19].id is 'output1'
-PASS owner.elements[20].id is 'select1'
-PASS owner.elements[21].id is 'textarea1'
+PASS owner.elements[19].id is 'object1'
+PASS owner.elements[20].id is 'output1'
+PASS owner.elements[21].id is 'select1'
+PASS owner.elements[22].id is 'textarea1'
 PASS successfullyParsed is true
 
 TEST COMPLETE

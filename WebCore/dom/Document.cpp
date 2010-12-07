@@ -61,6 +61,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
+#include "FormAssociatedElement.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -4388,23 +4389,23 @@ void Document::setIconURL(const String& iconURL, const String& type)
         f->loader()->setIconURL(m_iconURL);
 }
 
-void Document::registerFormElementWithFormAttribute(Element* control)
+void Document::registerFormElementWithFormAttribute(FormAssociatedElement* element)
 {
-    ASSERT(control->fastHasAttribute(formAttr));
-    m_formElementsWithFormAttribute.add(control);
+    ASSERT(toHTMLElement(element)->fastHasAttribute(formAttr));
+    m_formElementsWithFormAttribute.add(element);
 }
 
-void Document::unregisterFormElementWithFormAttribute(Element* control)
+void Document::unregisterFormElementWithFormAttribute(FormAssociatedElement* element)
 {
-    m_formElementsWithFormAttribute.remove(control);
+    m_formElementsWithFormAttribute.remove(element);
 }
 
 void Document::resetFormElementsOwner(HTMLFormElement* form)
 {
-    typedef FormElementListHashSet::iterator Iterator;
+    typedef FormAssociatedElementListHashSet::iterator Iterator;
     Iterator end = m_formElementsWithFormAttribute.end();
     for (Iterator it = m_formElementsWithFormAttribute.begin(); it != end; ++it)
-        static_cast<HTMLFormControlElement*>(*it)->resetFormOwner(form);
+        (*it)->resetFormOwner(form);
 }
 
 void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)

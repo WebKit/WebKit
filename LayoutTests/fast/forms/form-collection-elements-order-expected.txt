@@ -1,0 +1,31 @@
+This test examines the order of form associated elements which are classified as 'listed'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+- Checks the order of form associated elements.
+PASS checkOrder([button, fieldset, input, keygen, object, output, select, textarea]) is "OK"
+
+- Checks the order after some elements removed/inserted.
+PASS checkOrder([button, fieldset, input, keygen, output, select, textarea]) is "OK"
+PASS checkOrder([fieldset, input, keygen, output, select, textarea]) is "OK"
+PASS checkOrder([object, fieldset, input, keygen, output, select, textarea]) is "OK"
+PASS checkOrder([object, fieldset, input, keygen, output, select, textarea, button]) is "OK"
+
+- Checks the order of form associated elements with form attribute.
+PASS checkOrder([button, fieldset, input, keygen, object, output, select, textarea]) is "OK"
+
+- Checks the order after some elements removed/inserted with form attribute.
+PASS checkOrder([button, fieldset, input, keygen, output, select, textarea]) is "OK"
+PASS checkOrder([fieldset, input, keygen, output, select, textarea]) is "OK"
+PASS checkOrder([fieldset, input, keygen, output, select]) is "OK"
+PASS checkOrder([fieldset, input, keygen, object, output, select]) is "OK"
+PASS checkOrder([textarea, fieldset, input, keygen, object, output, select]) is "OK"
+PASS checkOrder([textarea, fieldset, input, keygen, object, output, select, button]) is "OK"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+
+
+

@@ -285,12 +285,12 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (!formElement)
         return nil;
-    const Vector<HTMLFormControlElement*>& elements = formElement->associatedElements();
+    const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     AtomicString targetName = name;
     for (unsigned i = 0; i < elements.size(); i++) {
-        HTMLFormControlElement* elt = elements[i];
+        FormAssociatedElement* elt = elements[i];
         if (elt->name() == targetName)
-            return kit(elt);
+            return kit(toHTMLElement(elt));
     }
     return nil;
 }
@@ -333,10 +333,10 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     if (!formElement)
         return nil;
     NSMutableArray *results = nil;
-    const Vector<HTMLFormControlElement*>& elements = formElement->associatedElements();
+    const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     for (unsigned i = 0; i < elements.size(); i++) {
         if (elements[i]->isEnumeratable()) { // Skip option elements, other duds
-            DOMElement* de = kit(elements[i]);
+            DOMElement* de = kit(toHTMLElement(elements[i]));
             if (!results)
                 results = [NSMutableArray arrayWithObject:de];
             else

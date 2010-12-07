@@ -1164,6 +1164,8 @@
 		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
 		49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */; };
 		49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */; };
+		4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */; };
+		4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */; };
 		4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */; };
 		4ACBC0BF12713CBD0094F9B2 /* ClassList.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ACBC0BD12713CBD0094F9B2 /* ClassList.h */; };
@@ -7319,6 +7321,8 @@
 		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DMac.mm; sourceTree = "<group>"; };
 		49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLLayer.h; sourceTree = "<group>"; };
 		49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLLayer.mm; sourceTree = "<group>"; };
+		4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormAssociatedElement.cpp; sourceTree = "<group>"; };
+		4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormAssociatedElement.h; sourceTree = "<group>"; };
 		4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionControllerMac.mm; path = mac/SelectionControllerMac.mm; sourceTree = "<group>"; };
 		4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassList.cpp; sourceTree = "<group>"; };
 		4ACBC0BD12713CBD0094F9B2 /* ClassList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassList.h; sourceTree = "<group>"; };
@@ -14843,6 +14847,8 @@
 				F55B3D881251F12D003EF269 /* EmailInputType.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
 				F55B3D8A1251F12D003EF269 /* FileInputType.h */,
+				4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */,
+				4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
 				97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */,
@@ -19796,6 +19802,7 @@
 				3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */,
 				B734B183119B991D006587BD /* FontTranscoder.h in Headers */,
 				A80E6CED0A1989CA007FB8C5 /* FontValue.h in Headers */,
+				4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */,
 				D05CED2A0A40BB2C00C5AF38 /* FormatBlockCommand.h in Headers */,
 				514C76700CE923A1007EF3CD /* FormData.h in Headers */,
 				085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */,
@@ -22461,6 +22468,7 @@
 				B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */,
 				B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* FontValue.cpp in Sources */,
+				4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */,
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,
 				514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */,
 				085B92BA0EFDE73D00E6123C /* FormDataBuilder.cpp in Sources */,

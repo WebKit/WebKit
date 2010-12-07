@@ -89,7 +89,7 @@ nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
-object constructorNeedsCreatedByParser
+object constructorNeedsFormElement, constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement
 option constructorNeedsFormElement

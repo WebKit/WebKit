@@ -4,14 +4,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 - Checks the existence of the form attribute for each form-associated elements.
-FIXME: <label> and <object> don't support the form attribute for now.
+FIXME: <label> doesn't support the form attribute for now.
 PASS document.getElementsByTagName("button")[0].form is owner
 PASS document.getElementsByTagName("fieldset")[0].form is owner
 PASS document.getElementsByTagName("input")[0].form is owner
 PASS document.getElementsByTagName("keygen")[0].form is owner
 FAIL document.getElementsByTagName("label")[0].form should be [object HTMLFormElement]. Was null.
 PASS document.getElementsByTagName("meter")[0].form is owner
-FAIL document.getElementsByTagName("object")[0].form should be [object HTMLFormElement]. Was null.
+PASS document.getElementsByTagName("object")[0].form is owner
 PASS document.getElementsByTagName("output")[0].form is owner
 PASS document.getElementsByTagName("progress")[0].form is owner
 PASS document.getElementsByTagName("select")[0].form is owner

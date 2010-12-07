@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Event;
+class FormAssociatedElement;
 class FormData;
 class HTMLFormControlElement;
 class HTMLImageElement;
@@ -64,8 +65,8 @@ public:
 
     // FIXME: Should rename these two functions to say "form control"
     // or "form-associated element" instead of "form element".
-    void registerFormElement(HTMLFormControlElement*);
-    void removeFormElement(HTMLFormControlElement*);
+    void registerFormElement(FormAssociatedElement*);
+    void removeFormElement(FormAssociatedElement*);
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
@@ -109,7 +110,7 @@ public:
 
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
 
-    const Vector<HTMLFormControlElement*>& associatedElements() const { return m_associatedElements; }
+    const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
 
 private:
     HTMLFormElement(const QualifiedName&, Document*);
@@ -131,13 +132,13 @@ private:
 
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
-    unsigned formElementIndexWithFormAttribute(HTMLFormControlElement*);
-    unsigned formElementIndex(HTMLFormControlElement*);
+    unsigned formElementIndexWithFormAttribute(Element*);
+    unsigned formElementIndex(FormAssociatedElement*);
     // Returns true if the submission should be proceeded.
     bool validateInteractively(Event*);
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector.
-    void collectUnhandledInvalidControls(Vector<RefPtr<HTMLFormControlElement> >&);
+    void collectUnhandledInvalidControls(Vector<RefPtr<FormAssociatedElement> >&);
 
     friend class HTMLFormCollection;
 
@@ -151,7 +152,7 @@ private:
 
     unsigned m_associatedElementsBeforeIndex;
     unsigned m_associatedElementsAfterIndex;
-    Vector<HTMLFormControlElement*> m_associatedElements;
+    Vector<FormAssociatedElement*> m_associatedElements;
     Vector<HTMLImageElement*> m_imageElements;
 
     bool m_wasUserSubmitted;

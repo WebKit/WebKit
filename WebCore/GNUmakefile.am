@@ -1585,6 +1585,8 @@ webcore_sources += \
 	WebCore/html/EmailInputType.h \
 	WebCore/html/FileInputType.cpp \
 	WebCore/html/FileInputType.h \
+	WebCore/html/FormAssociatedElement.cpp \
+	WebCore/html/FormAssociatedElement.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/FTPDirectoryDocument.cpp \

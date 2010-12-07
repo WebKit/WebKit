@@ -175,10 +175,11 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     Vector<pair<String, String> > formValues;
 
     for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
-        HTMLFormControlElement* control = form->associatedElements()[i];
-        if (!control->disabled())
+        FormAssociatedElement* control = form->associatedElements()[i];
+        HTMLElement* element = toHTMLElement(control);
+        if (!element->disabled())
             control->appendFormData(*domFormData, isMultiPartForm);
-        if (control->hasLocalName(inputTag)) {
+        if (element->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
                 formValues.append(pair<String, String>(input->name(), input->value()));

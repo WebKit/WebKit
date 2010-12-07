@@ -37,25 +37,26 @@ using namespace HTMLNames;
 
 String ValidityState::validationMessage() const
 {
-    if (!m_control->willValidate())
+    if (!toHTMLElement(m_control)->willValidate())
         return String();
 
     if (customError())
         return m_customErrorMessage;
-    bool isInputElement = m_control->hasTagName(inputTag);
-    bool isTextAreaElement = m_control->hasTagName(textareaTag);
+    HTMLElement* element = toHTMLElement(m_control);
+    bool isInputElement = element->isFormControlElement() && element->hasTagName(inputTag);
+    bool isTextAreaElement = element->isFormControlElement() && element->hasTagName(textareaTag);
     // The order of the following checks is meaningful. e.g. We'd like to show the
     // valueMissing message even if the control has other validation errors.
     if (valueMissing()) {
-        if (m_control->hasTagName(selectTag))
+        if (element->hasTagName(selectTag))
             return validationMessageValueMissingForSelectText();
         if (isInputElement)
-            return static_cast<HTMLInputElement*>(m_control)->valueMissingText();
+            return static_cast<HTMLInputElement*>(element)->valueMissingText();
         return validationMessageValueMissingText();
     }
     if (typeMismatch()) {
         if (isInputElement)
-            return static_cast<HTMLInputElement*>(m_control)->typeMismatchText();
+            return static_cast<HTMLInputElement*>(element)->typeMismatchText();
         return validationMessageTypeMismatchText();
     }
     if (patternMismatch())
@@ -65,7 +66,7 @@ String ValidityState::validationMessage() const
             ASSERT_NOT_REACHED();
             return String();
         }
-        HTMLTextFormControlElement* text = static_cast<HTMLTextFormControlElement*>(m_control);
+        HTMLTextFormControlElement* text = static_cast<HTMLTextFormControlElement*>(element);
         return validationMessageTooLongText(numGraphemeClusters(text->value()), text->maxLength());
     }
     if (rangeUnderflow()) {
@@ -73,21 +74,21 @@ String ValidityState::validationMessage() const
             ASSERT_NOT_REACHED();
             return String();
         }
-        return validationMessageRangeUnderflowText(static_cast<HTMLInputElement*>(m_control)->minimumString());
+        return validationMessageRangeUnderflowText(static_cast<HTMLInputElement*>(element)->minimumString());
     }
     if (rangeOverflow()) {
         if (!isInputElement) {
             ASSERT_NOT_REACHED();
             return String();
         }
-        return validationMessageRangeOverflowText(static_cast<HTMLInputElement*>(m_control)->maximumString());
+        return validationMessageRangeOverflowText(static_cast<HTMLInputElement*>(element)->maximumString());
     }
     if (stepMismatch()) {
         if (!isInputElement) {
             ASSERT_NOT_REACHED();
             return String();
         }
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         return validationMessageStepMismatchText(input->stepBaseString(), input->stepString());
     }
 
@@ -97,17 +98,19 @@ String ValidityState::validationMessage() const
 void ValidityState::setCustomErrorMessage(const String& message)
 {
     m_customErrorMessage = message;
-    m_control->setNeedsValidityCheck();
+    if (m_control->isFormControlElement())
+        static_cast<HTMLFormControlElement*>(m_control)->setNeedsValidityCheck();
 }
 
 bool ValidityState::valueMissing() const
 {
-    if (m_control->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
+    HTMLElement* element = toHTMLElement(m_control);
+    if (element->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         return input->valueMissing(input->value());
     }
-    if (m_control->hasTagName(textareaTag)) {
-        HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(m_control);
+    if (element->hasTagName(textareaTag)) {
+        HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(element);
         return textArea->valueMissing(textArea->value());
     }
     return false;
@@ -115,14 +118,14 @@ bool ValidityState::valueMissing() const
 
 bool ValidityState::typeMismatch() const
 {
-    if (!m_control->hasTagName(inputTag))
+    if (!toHTMLElement(m_control)->hasTagName(inputTag))
         return false;
     return static_cast<HTMLInputElement*>(m_control)->typeMismatch();
 }
 
 bool ValidityState::patternMismatch() const
 {
-    if (!m_control->hasTagName(inputTag))
+    if (!toHTMLElement(m_control)->hasTagName(inputTag))
         return false;
     HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
     return input->patternMismatch(input->value());
@@ -130,11 +133,11 @@ bool ValidityState::patternMismatch() const
 
 bool ValidityState::tooLong() const
 {
-    if (m_control->hasTagName(inputTag)) {
+    if (toHTMLElement(m_control)->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
         return input->tooLong(input->value(), HTMLTextFormControlElement::CheckDirtyFlag);
     }
-    if (m_control->hasTagName(textareaTag)) {
+    if (toHTMLElement(m_control)->hasTagName(textareaTag)) {
         HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(m_control);
         return textArea->tooLong(textArea->value(), HTMLTextFormControlElement::CheckDirtyFlag);
     }
@@ -143,7 +146,7 @@ bool ValidityState::tooLong() const
 
 bool ValidityState::rangeUnderflow() const
 {
-    if (!m_control->hasTagName(inputTag))
+    if (!toHTMLElement(m_control)->hasTagName(inputTag))
         return false;
     HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
     return input->rangeUnderflow(input->value());
@@ -151,7 +154,7 @@ bool ValidityState::rangeUnderflow() const
 
 bool ValidityState::rangeOverflow() const
 {
-    if (!m_control->hasTagName(inputTag))
+    if (!toHTMLElement(m_control)->hasTagName(inputTag))
         return false;
     HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
     return input->rangeOverflow(input->value());
@@ -159,7 +162,7 @@ bool ValidityState::rangeOverflow() const
 
 bool ValidityState::stepMismatch() const
 {
-    if (!m_control->hasTagName(inputTag))
+    if (!toHTMLElement(m_control)->hasTagName(inputTag))
         return false;
     HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
     return input->stepMismatch(input->value());

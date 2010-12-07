@@ -24,6 +24,7 @@
 #ifndef HTMLFormControlElement_h
 #define HTMLFormControlElement_h
 
+#include "FormAssociatedElement.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -35,14 +36,14 @@ class ValidationMessage;
 class ValidityState;
 class VisibleSelection;
 
-// FIXME: The HTML5 specification calls these form-associated elements.
-// So consider renaming this to HTMLFormAssociatedElement.
-class HTMLFormControlElement : public HTMLElement {
+// HTMLFormControlElement is the default implementation of FormAssociatedElement,
+// and form-associated element implementations should use HTMLFormControlElement
+// unless there is a special reason.
+class HTMLFormControlElement : public HTMLElement, public FormAssociatedElement {
 public:
     virtual ~HTMLFormControlElement();
 
-    HTMLFormElement* form() const { return m_form; }
-    ValidityState* validity();
+    HTMLFormElement* form() const { return FormAssociatedElement::form(); }
 
     bool formNoValidate() const;
 
@@ -53,7 +54,7 @@ public:
 
     virtual void dispatchFormControlChangeEvent();
 
-    bool disabled() const { return m_disabled; }
+    virtual bool disabled() const { return m_disabled; }
     void setDisabled(bool);
 
     virtual bool isFocusable() const;
@@ -65,7 +66,6 @@ public:
     bool required() const;
 
     const AtomicString& type() const { return formControlType(); }
-    const AtomicString& name() const { return formControlName(); }
 
     void setName(const AtomicString& name);
 
@@ -87,20 +87,20 @@ public:
     String validationMessage();
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();
-    bool checkValidity(Vector<RefPtr<HTMLFormControlElement> >* unhandledInvalidControls = 0);
+    bool checkValidity(Vector<RefPtr<FormAssociatedElement> >* unhandledInvalidControls = 0);
     // This must be called when a validation constraint or control value is changed.
     void setNeedsValidityCheck();
     void setCustomValidity(const String&);
 
-    void formDestroyed() { m_form = 0; }
-
     bool isLabelable() const;
     PassRefPtr<NodeList> labels();
-    
+
     bool readOnly() const { return m_readOnly; }
 
-    void resetFormOwner(HTMLFormElement*);
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+
+    using TreeShared<ContainerNode>::ref;
+    using TreeShared<ContainerNode>::deref;
 
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
@@ -119,8 +119,6 @@ protected:
     virtual void dispatchBlurEvent();
     virtual void detach();
 
-    void removeFromForm();
-
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();
     virtual bool recalcWillValidate() const;
@@ -128,6 +126,9 @@ protected:
 private:
     virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const = 0;
+
+    virtual void refFormAssociatedElement() { ref(); }
+    virtual void derefFormAssociatedElement() { deref(); }
 
     virtual bool isFormControlElement() const { return true; }
 
@@ -140,8 +141,6 @@ private:
     virtual bool isValidFormControlElement();
     String visibleValidationMessage() const;
 
-    HTMLFormElement* m_form;
-    OwnPtr<ValidityState> m_validityState;
     OwnPtr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;
     bool m_readOnly : 1;

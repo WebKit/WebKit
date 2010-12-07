@@ -50366,6 +50366,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FormAssociatedElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FormAssociatedElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FormDataList.cpp"
 				>
 			</File>

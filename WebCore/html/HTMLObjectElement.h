@@ -23,13 +23,17 @@
 #ifndef HTMLObjectElement_h
 #define HTMLObjectElement_h
 
+#include "FormAssociatedElement.h"
 #include "HTMLPlugInImageElement.h"
 
 namespace WebCore {
 
-class HTMLObjectElement : public HTMLPlugInImageElement {
+class HTMLFormElement;
+
+class HTMLObjectElement : public HTMLPlugInImageElement, public FormAssociatedElement {
 public:
-    static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document*, bool createdByParser);
+    static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
+    virtual ~HTMLObjectElement();
 
     bool isDocNamedItem() const { return m_docNamedItem; }
 
@@ -40,10 +44,25 @@ public:
     virtual bool useFallbackContent() const { return m_useFallbackContent; }
     void renderFallbackContent();
 
+    // Implementations of FormAssociatedElement
+    HTMLFormElement* form() const { return FormAssociatedElement::form(); }
+
+    virtual bool isFormControlElement() const { return false; }
+
+    virtual bool isEnumeratable() const { return true; }
+    virtual bool appendFormData(FormDataList&, bool);
+
+    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+
+    using TreeShared<ContainerNode>::ref;
+    using TreeShared<ContainerNode>::deref;
+
 private:
-    HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
+    HTMLObjectElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
 
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual void insertedIntoDocument();
@@ -68,6 +87,11 @@ private:
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType);
     
     bool hasValidClassId();
+
+    virtual void refFormAssociatedElement() { ref(); }
+    virtual void derefFormAssociatedElement() { deref(); }
+
+    virtual const AtomicString& formControlName() const;
 
     AtomicString m_id;
     String m_classId;

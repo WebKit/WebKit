@@ -82,6 +82,8 @@ public:
 
     static void addHTMLAlignmentToStyledElement(StyledElement*, Attribute*);
 
+    HTMLFormElement* findFormAncestor() const;
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 
@@ -89,8 +91,6 @@ protected:
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
-
-    HTMLFormElement* findFormAncestor() const;
 
 private:
     virtual String nodeName() const;

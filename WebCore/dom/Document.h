@@ -77,6 +77,7 @@ class Element;
 class EntityReference;
 class Event;
 class EventListener;
+class FormAssociatedElement;
 class Frame;
 class FrameView;
 class HTMLCanvasElement;
@@ -491,8 +492,8 @@ public:
     bool hasStateForNewFormElements() const;
     bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
 
-    void registerFormElementWithFormAttribute(Element*);
-    void unregisterFormElementWithFormAttribute(Element*);
+    void registerFormElementWithFormAttribute(FormAssociatedElement*);
+    void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
     void resetFormElementsOwner(HTMLFormElement*);
 
     FrameView* view() const; // can be NULL
@@ -1216,7 +1217,8 @@ private:
 
     typedef ListHashSet<Element*, 64> FormElementListHashSet;
     FormElementListHashSet m_formElementsWithState;
-    FormElementListHashSet m_formElementsWithFormAttribute;
+    typedef ListHashSet<FormAssociatedElement*, 32> FormAssociatedElementListHashSet;
+    FormAssociatedElementListHashSet m_formElementsWithFormAttribute;
 
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     FormElementStateMap m_stateForNewFormElements;

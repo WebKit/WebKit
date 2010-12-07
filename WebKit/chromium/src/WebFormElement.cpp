@@ -92,9 +92,12 @@ void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& re
     // re-evaluating size each time. Also, consider refactoring this code so that
     // we don't call form->associatedElements() multiple times.
     for (size_t i = 0; i < form->associatedElements().size(); i++) {
-        if (form->associatedElements()[i]->hasLocalName(HTMLNames::inputTag)
-            || form->associatedElements()[i]->hasLocalName(HTMLNames::selectTag))
-            tempVector.append(form->associatedElements()[i]);
+        if (!form->associatedElements()[i]->isFormControlElement())
+            continue;
+        HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(form->associatedElements()[i]);
+        if (element->hasLocalName(HTMLNames::inputTag)
+            || element->hasLocalName(HTMLNames::selectTag))
+            tempVector.append(element);
     }
     result.assign(tempVector);
 }

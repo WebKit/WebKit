@@ -1134,12 +1134,14 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     if (!form)
         return E_INVALIDARG;
 
-    HTMLFormElement *formElement = formElementFromDOMElement(form);
+    HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (formElement) {
-        const Vector<HTMLFormControlElement*>& elements = formElement->associatedElements();
+        const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
         AtomicString targetName((UChar*)name, SysStringLen(name));
         for (unsigned int i = 0; i < elements.size(); i++) {
-            HTMLFormControlElement *elt = elements[i];
+            if (!elements[i]->isFormControlElement())
+                continue;
+            HTMLFormControlElement* elt = static_cast<HTMLFormControlElement*>(elements[i]);
             // Skip option elements, other duds
             if (elt->name() == targetName) {
                 *element = DOMElement::createInstance(elt);
@@ -1349,7 +1351,7 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
     if (!form)
         return E_INVALIDARG;
 
-    HTMLFormElement *formElement = formElementFromDOMElement(form);
+    HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (!formElement)
         return E_FAIL;
 
@@ -1362,10 +1364,10 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
         return E_FAIL;
 
     *cControls = 0;
-    const Vector<HTMLFormControlElement*>& elements = formElement->associatedElements();
+    const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     for (int i = 0; i < count; i++) {
         if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-            controls[*cControls] = DOMElement::createInstance(elements.at(i));
+            controls[*cControls] = DOMElement::createInstance(toHTMLElement(elements.at(i)));
             (*cControls)++;
         }
     }

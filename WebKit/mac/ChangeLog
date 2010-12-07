@@ -1,3 +1,17 @@
+2010-12-07  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Let HTMLObjectElement be a form associated element
+        https://bugs.webkit.org/show_bug.cgi?id=48821
+
+        Modified to use FormAssociatedElement instead of HTMLFormControlElement.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation elementWithName:inForm:]): Modified to use
+        FormAssociatedElement instead of HTMLFormControlElement.
+        (-[WebHTMLRepresentation controlsInForm:]): Ditto.
+
 2010-12-06  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,22 @@
+2010-12-07  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Let HTMLObjectElement be a form associated element
+        https://bugs.webkit.org/show_bug.cgi?id=48821
+
+        Adds a test to ensure the order of form.elements attribute.
+        Updates two tests to check whether object elements are handled
+        correctly in form.elements attribute.
+
+        * fast/forms/form-attribute-expected.txt: Updated.
+        * fast/forms/form-collection-elements-order-expected.txt: Added.
+        * fast/forms/form-collection-elements-order.html: Added.
+        * fast/forms/script-tests/form-attribute.js: Updated.
+        * fast/forms/script-tests/form-collection-elements-order.js: Added.
+        (checkOrder):
+        * fast/forms/script-tests/form-collection-elements.js: Updated.
+
 2010-12-06  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed.

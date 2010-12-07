@@ -4,7 +4,7 @@ var container = document.createElement('div');
 document.body.appendChild(container);
 
 debug('- Checks the existence of the form attribute for each form-associated elements.');
-debug('FIXME: &lt;label&gt; and &lt;object&gt; don\'t support the form attribute for now.');
+debug('FIXME: &lt;label&gt; doesn\'t support the form attribute for now.');
 container.innerHTML = '<form id=owner></form>' +
     '<button name=victim form=owner />' +
     '<fieldset name=victim form=owner />' +

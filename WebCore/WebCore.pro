@@ -882,6 +882,7 @@ SOURCES += \
     html/EmailInputType.cpp \
     html/FTPDirectoryDocument.cpp \
     html/FileInputType.cpp \
+    html/FormAssociatedElement.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
@@ -1795,6 +1796,7 @@ HEADERS += \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
+    html/FormAssociatedElement.h \
     html/FormDataList.h \
     html/FTPDirectoryDocument.h \
     html/HTMLAllCollection.h \

@@ -1,3 +1,129 @@
+2010-12-07  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Let HTMLObjectElement be a form associated element
+        https://bugs.webkit.org/show_bug.cgi?id=48821
+
+        Introduces FormAssociatedElement class which would be a super class
+        of form assocated elements. Some of member functions and variables of
+        HTMLFormControlElement are migrated into this class.
+        Following the HTML5 spec, HTMLFormControlElement class and
+        HTMLObjectElement class are subclasses of it for now.
+
+        Test: fast/forms/form-collection-elements-order.html
+
+        * Android.mk: Added FormAssociatedElement.cpp
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Added FormAssociatedElement.{cpp,h}
+        * WebCore.exp.in: Added the symbol for toHTMLElement(FormAssociatedElement*)
+        * WebCore.gypi: Added FormAssociatedElement.{cpp,h}
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/CheckedRadioButtons.h: Fixed class forward declaration order.
+        * dom/Document.cpp:
+        (WebCore::Document::registerFormElementWithFormAttribute): Modified to
+        use FormAssociatedElement instead of HTMLFormControlElement
+        (WebCore::Document::unregisterFormElementWithFormAttribute): Ditto.
+        (WebCore::Document::resetFormElementsOwner):
+        * dom/Document.h: Ditto.
+        * html/DOMFormData.cpp: Ditto.
+        (WebCore::DOMFormData::DOMFormData):
+        * html/FormAssociatedElement.cpp: Copied and renamed from WebCore/html/HTMLFormControlElement.cpp.
+        (WebCore::FormAssociatedElement::FormAssociatedElement):
+        (WebCore::FormAssociatedElement::~FormAssociatedElement):
+        (WebCore::FormAssociatedElement::validity):
+        (WebCore::FormAssociatedElement::insertedIntoTree):
+        (WebCore::FormAssociatedElement::removedFromTree):
+        (WebCore::FormAssociatedElement::removeFromForm):
+        (WebCore::FormAssociatedElement::resetFormOwner):
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        (WebCore::toHTMLElement):
+        * html/FormAssociatedElement.h: Ditto.
+        (WebCore::FormAssociatedElement::ref):
+        (WebCore::FormAssociatedElement::deref):
+        (WebCore::FormAssociatedElement::formDestroyed):
+        (WebCore::FormAssociatedElement::setForm):
+        * html/HTMLElement.h: Changed the access level of findFormAncestor().
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::item): Modified to use FormAssociatedElement
+        instead of HTMLFormControlElement.
+        (WebCore::HTMLFormCollection::getNamedFormItem): Ditto.
+        (WebCore::HTMLFormCollection::updateNameCache): Ditto.
+        * html/HTMLFormControlElement.cpp: Modified regarding with the change of class
+        hierarchy.
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::~HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::insertedIntoTree):
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        (WebCore::HTMLFormControlElement::supportsFocus):
+        (WebCore::HTMLFormControlElement::checkValidity):
+        (WebCore::HTMLFormControlElement::virtualForm):
+        (WebCore::HTMLFormControlElement::isDefaultButtonForForm):
+        (WebCore::HTMLFormControlElement::attributeChanged):
+        * html/HTMLFormControlElement.h: Ditto.
+        (WebCore::HTMLFormControlElement::form):
+        (WebCore::HTMLFormControlElement::disabled):
+        (WebCore::HTMLFormControlElement::type):
+        (WebCore::HTMLFormControlElement::refFormAssociatedElement):
+        (WebCore::HTMLFormControlElement::derefFormAssociatedElement):
+        * html/HTMLFormElement.cpp: Modified to use FormAssociatedElement
+        instead of HTMLFormControlElement.
+        (WebCore::HTMLFormElement::submitImplicitly):
+        (WebCore::HTMLFormElement::validateInteractively):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::formElementIndexWithFormAttribute):
+        (WebCore::HTMLFormElement::formElementIndex):
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::defaultButton):
+        (WebCore::HTMLFormElement::checkValidity):
+        (WebCore::HTMLFormElement::collectUnhandledInvalidControls):
+        (WebCore::HTMLFormElement::documentDidBecomeActive):
+        * html/HTMLFormElement.h: Ditto.
+        (WebCore::HTMLFormElement::associatedElements):
+        * html/HTMLInputElement.cpp: Ditto.
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        * html/HTMLObjectElement.cpp: Modified regarding with the change of class
+        hierarchy.
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::~HTMLObjectElement):
+        (WebCore::HTMLObjectElement::create):
+        (WebCore::HTMLObjectElement::attributeChanged):
+        (WebCore::HTMLObjectElement::insertedIntoTree):
+        (WebCore::HTMLObjectElement::removedFromTree):
+        (WebCore::HTMLObjectElement::appendFormData):
+        (WebCore::HTMLObjectElement::formControlName):
+        * html/HTMLObjectElement.h: Ditto.
+        (WebCore::HTMLObjectElement::form):
+        (WebCore::HTMLObjectElement::isFormControlElement):
+        (WebCore::HTMLObjectElement::isEnumeratable):
+        (WebCore::HTMLObjectElement::refFormAssociatedElement):
+        (WebCore::HTMLObjectElement::derefFormAssociatedElement):
+        * html/HTMLTagNames.in: Added constructorNeedsFormElement to object tag.
+        * html/ValidationMessage.cpp: Modified to use FormAssociatedElement
+        instead of HTMLFormControlElement.
+        (WebCore::ValidationMessage::ValidationMessage):
+        (WebCore::ValidationMessage::create):
+        * html/ValidationMessage.h: Ditto.
+        * html/ValidityState.cpp: Ditto.
+        (WebCore::ValidityState::validationMessage):
+        (WebCore::ValidityState::setCustomErrorMessage):
+        (WebCore::ValidityState::valueMissing):
+        (WebCore::ValidityState::typeMismatch):
+        (WebCore::ValidityState::patternMismatch):
+        (WebCore::ValidityState::tooLong):
+        (WebCore::ValidityState::rangeUnderflow):
+        (WebCore::ValidityState::rangeOverflow):
+        (WebCore::ValidityState::stepMismatch):
+        * html/ValidityState.h: Ditto.
+        (WebCore::ValidityState::create):
+        (WebCore::ValidityState::ValidityState):
+        * loader/FormSubmission.cpp: Ditto.
+        (WebCore::FormSubmission::create):
+
 2010-12-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out r72988 for breaking iframes.

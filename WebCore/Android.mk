@@ -277,6 +277,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/DateTimeLocalInputType.cpp \
 	html/EmailInputType.cpp \
 	html/FileInputType.cpp \
+	html/FormAssociatedElement.cpp \
 	html/FormDataList.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \

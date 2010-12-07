@@ -1,3 +1,17 @@
+2010-12-07  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Let HTMLObjectElement be a form associated element
+        https://bugs.webkit.org/show_bug.cgi?id=48821
+
+        Modified to use FormAssociatedElement instead of HTMLFormControlElement.
+
+        * WebFrame.cpp:
+        (WebFrame::elementWithName): Modified to use FormAssociatedElement
+        instead of HTMLFormControlElement.
+        (WebFrame::controlsInForm): Ditto.
+
 2010-12-05  Adam Roben  <aroben@apple.com>
 
         Windows production build fix

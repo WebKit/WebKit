@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-ALWAYS_INLINE ValidationMessage::ValidationMessage(HTMLFormControlElement* element)
+ALWAYS_INLINE ValidationMessage::ValidationMessage(FormAssociatedElement* element)
     : m_element(element)
 {
 }
@@ -45,7 +45,7 @@ ValidationMessage::~ValidationMessage()
     hideMessage();
 }
 
-PassOwnPtr<ValidationMessage> ValidationMessage::create(HTMLFormControlElement* element)
+PassOwnPtr<ValidationMessage> ValidationMessage::create(FormAssociatedElement* element)
 {
     return adoptPtr(new ValidationMessage(element));
 }

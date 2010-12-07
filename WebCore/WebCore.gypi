@@ -1642,6 +1642,8 @@
             'html/FTPDirectoryDocument.h',
             'html/FileInputType.cpp',
             'html/FileInputType.h',
+            'html/FormAssociatedElement.cpp',
+            'html/FormAssociatedElement.h',
             'html/FormDataList.cpp',
             'html/FormDataList.h',
             'html/HTMLAllCollection.cpp',

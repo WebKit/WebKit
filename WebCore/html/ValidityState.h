@@ -24,14 +24,14 @@
 #ifndef ValidityState_h
 #define ValidityState_h
 
-#include "HTMLFormControlElement.h"
+#include "FormAssociatedElement.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class ValidityState : public Noncopyable {
 public:
-    static PassOwnPtr<ValidityState> create(HTMLFormControlElement* control)
+    static PassOwnPtr<ValidityState> create(FormAssociatedElement* control)
     {
         return adoptPtr(new ValidityState(control));
     }
@@ -54,12 +54,12 @@ public:
     bool valid() const;
 
 private:
-    ValidityState(HTMLFormControlElement* control) : m_control(control) { }
+    ValidityState(FormAssociatedElement* control) : m_control(control) { }
 
     static bool isValidColorString(const String&);
     static bool isValidEmailAddress(const String&);
 
-    HTMLFormControlElement* m_control;
+    FormAssociatedElement* m_control;
     String m_customErrorMessage;
 };
 

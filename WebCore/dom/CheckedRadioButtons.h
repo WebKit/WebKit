@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-class HTMLInputElement;
 class HTMLFormControlElement;
+class HTMLInputElement;
 
 class CheckedRadioButtons {
 public:

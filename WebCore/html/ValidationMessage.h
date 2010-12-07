@@ -38,20 +38,20 @@
 
 namespace WebCore {
 
-class HTMLFormControlElement;
+class FormAssociatedElement;
 
 class ValidationMessage : public Noncopyable {
 public:
-    static PassOwnPtr<ValidationMessage> create(HTMLFormControlElement*);
+    static PassOwnPtr<ValidationMessage> create(FormAssociatedElement*);
     ~ValidationMessage();
     String message() const { return m_message; }
     void setMessage(const String&);
 
 private:
-    ValidationMessage(HTMLFormControlElement*);
+    ValidationMessage(FormAssociatedElement*);
     void hideMessage(Timer<ValidationMessage>* = 0);
 
-    HTMLFormControlElement* m_element;
+    FormAssociatedElement* m_element;
     String m_message;
     OwnPtr<Timer<ValidationMessage> > m_timer;
 };

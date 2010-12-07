@@ -57,7 +57,7 @@ using namespace std;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
-    , m_form(form)
+    , FormAssociatedElement(form)
     , m_disabled(false)
     , m_readOnly(false)
     , m_required(false)
@@ -66,16 +66,16 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidate(true)
     , m_isValid(true)
 {
-    if (!m_form)
-        m_form = findFormAncestor();
-    if (m_form)
-        m_form->registerFormElement(this);
+    if (!this->form())
+        setForm(findFormAncestor());
+    if (this->form())
+        this->form()->registerFormElement(this);
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()
 {
-    if (m_form)
-        m_form->removeFormElement(this);
+    if (form())
+        form()->removeFormElement(this);
 }
 
 void HTMLFormControlElement::detach()
@@ -87,14 +87,6 @@ void HTMLFormControlElement::detach()
 bool HTMLFormControlElement::formNoValidate() const
 {
     return !getAttribute(formnovalidateAttr).isNull();
-}
-
-ValidityState* HTMLFormControlElement::validity()
-{
-    if (!m_validityState)
-        m_validityState = ValidityState::create(this);
-
-    return m_validityState.get();
 }
 
 void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
@@ -154,51 +146,16 @@ void HTMLFormControlElement::attach()
 
 void HTMLFormControlElement::insertedIntoTree(bool deep)
 {
-    if (fastHasAttribute(formAttr)) {
-        document()->registerFormElementWithFormAttribute(this);
-        Element* element = document()->getElementById(fastGetAttribute(formAttr));
-        if (element && element->hasTagName(formTag)) {
-            if (m_form)
-                m_form->removeFormElement(this);
-            m_form = static_cast<HTMLFormElement*>(element);
-            m_form->registerFormElement(this);
-        }
-    }
-    if (!m_form) {
-        // This handles the case of a new form element being created by
-        // JavaScript and inserted inside a form.  In the case of the parser
-        // setting a form, we will already have a non-null value for m_form, 
-        // and so we don't need to do anything.
-        m_form = findFormAncestor();
-        if (m_form)
-            m_form->registerFormElement(this);
-        else
-            document()->checkedRadioButtons().addButton(this);
-    }
+    FormAssociatedElement::insertedIntoTree();
+    if (!form())
+        document()->checkedRadioButtons().addButton(this);
 
     HTMLElement::insertedIntoTree(deep);
 }
 
-static inline Node* findRoot(Node* n)
-{
-    Node* root = n;
-    for (; n; n = n->parentNode())
-        root = n;
-    return root;
-}
-
 void HTMLFormControlElement::removedFromTree(bool deep)
 {
-    if (fastHasAttribute(formAttr))
-        document()->unregisterFormElementWithFormAttribute(this);
-
-    // If the form and element are both in the same tree, preserve the connection to the form.
-    // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    if (m_form && findRoot(this) != findRoot(m_form)) {
-        m_form->removeFormElement(this);
-        m_form = 0;
-    }
-
+    FormAssociatedElement::removedFromTree();
     HTMLElement::removedFromTree(deep);
 }
 
@@ -254,7 +211,7 @@ void HTMLFormControlElement::recalcStyle(StyleChange change)
 
 bool HTMLFormControlElement::supportsFocus() const
 {
-    return !disabled();
+    return !m_disabled;
 }
 
 bool HTMLFormControlElement::isFocusable() const
@@ -366,7 +323,7 @@ String HTMLFormControlElement::visibleValidationMessage() const
     return m_validationMessage ? m_validationMessage->message() : String();
 }
 
-bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement> >* unhandledInvalidControls)
+bool HTMLFormControlElement::checkValidity(Vector<RefPtr<FormAssociatedElement> >* unhandledInvalidControls)
 {
     if (!willValidate() || isValidFormControlElement())
         return true;
@@ -408,7 +365,7 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
 {
     validity()->setCustomErrorMessage(error);
 }
-    
+
 void HTMLFormControlElement::dispatchFocusEvent()
 {
     if (document()->page())
@@ -428,64 +385,22 @@ void HTMLFormControlElement::dispatchBlurEvent()
 
 HTMLFormElement* HTMLFormControlElement::virtualForm() const
 {
-    return m_form;
+    return FormAssociatedElement::form();
 }
 
 bool HTMLFormControlElement::isDefaultButtonForForm() const
 {
-    return isSuccessfulSubmitButton() && m_form && m_form->defaultButton() == this;
-}
-
-void HTMLFormControlElement::removeFromForm()
-{
-    if (!m_form)
-        return;
-    m_form->removeFormElement(this);
-    m_form = 0;
-}
-
-void HTMLFormControlElement::resetFormOwner(HTMLFormElement* form)
-{
-    if (m_form) {
-        if (!fastHasAttribute(formAttr))
-            return;
-        m_form->removeFormElement(this);
-    }
-    m_form = 0;
-    if (fastHasAttribute(formAttr)) {
-        // The HTML5 spec says that the element should be associated with
-        // the first element in the document to have an ID that equal to
-        // the value of form attribute, so we put the result of
-        // document()->getElementById() over the given element.
-        Element* firstElement = document()->getElementById(fastGetAttribute(formAttr));
-        if (firstElement && firstElement->hasTagName(formTag))
-            m_form = static_cast<HTMLFormElement*>(firstElement);
-        else
-            m_form = form;
-    } else
-        m_form = findFormAncestor();
-    if (m_form)
-        m_form->registerFormElement(this);
-    else
-        document()->checkedRadioButtons().addButton(this);
+    return isSuccessfulSubmitButton() && form() && form()->defaultButton() == this;
 }
 
 void HTMLFormControlElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     if (attr->name() == formAttr) {
-        if (!fastHasAttribute(formAttr)) {
-            // The form attribute removed. We need to reset form owner here.
-            if (m_form)
-                m_form->removeFormElement(this);
-            m_form = findFormAncestor();
-            if (m_form)
-                m_form->registerFormElement(this);
-            else
-                document()->checkedRadioButtons().addButton(this);
-        } else
-            resetFormOwner(0);
-    }
-    HTMLElement::attributeChanged(attr, preserveDecls);
+        formAttributeChanged();
+        if (!form())
+            document()->checkedRadioButtons().addButton(this);
+    } else
+        HTMLElement::attributeChanged(attr, preserveDecls);
 }
 
 bool HTMLFormControlElement::isLabelable() const
@@ -516,7 +431,7 @@ PassRefPtr<NodeList> HTMLFormControlElement::labels()
     
     return LabelsNodeList::create(this);
 }
-    
+
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
 {

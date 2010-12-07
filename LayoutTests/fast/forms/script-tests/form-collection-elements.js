@@ -27,6 +27,7 @@ container.innerHTML = '<form id="form1">' +
     '<keygen id=keygen1></keygen>' +
     '<label id=label1></label>' +
     '<meter id=meter1></meter>' +
+    '<object id=object1></object>' +
     '<output id=output1></output>' +
     '<progress id=progress1></progress>' +
     '<select id=select1>' +
@@ -38,7 +39,7 @@ container.innerHTML = '<form id="form1">' +
 
 var owner = document.getElementById('form1');
 
-shouldBe('owner.elements.length', '22');
+shouldBe('owner.elements.length', '23');
 shouldBe('owner.elements[0].id', "'button1'");
 shouldBe('owner.elements[1].id', "'fieldset1'");
 shouldBe('owner.elements[2].id', "'inputhidden'");
@@ -58,9 +59,10 @@ shouldBe('owner.elements[15].id', "'inputsubmit'");
 shouldBe('owner.elements[16].id', "'inputreset'");
 shouldBe('owner.elements[17].id', "'inputbutton'");
 shouldBe('owner.elements[18].id', "'keygen1'");
-shouldBe('owner.elements[19].id', "'output1'");
-shouldBe('owner.elements[20].id', "'select1'");
-shouldBe('owner.elements[21].id', "'textarea1'");
+shouldBe('owner.elements[19].id', "'object1'");
+shouldBe('owner.elements[20].id', "'output1'");
+shouldBe('owner.elements[21].id', "'select1'");
+shouldBe('owner.elements[22].id', "'textarea1'");
 
 
 var successfullyParsed = true;

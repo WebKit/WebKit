@@ -51,9 +51,9 @@ DOMFormData::DOMFormData(HTMLFormElement* form)
         return;
 
     for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
-        HTMLFormControlElement* control = form->associatedElements()[i];
-        if (!control->disabled())
-            control->appendFormData(*this, true);
+        FormAssociatedElement* element = form->associatedElements()[i];
+        if (!toHTMLElement(element)->disabled())
+            element->appendFormData(*this, true);
     }
 }
 

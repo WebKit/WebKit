@@ -991,6 +991,7 @@ SET(WebCore_SOURCES
     html/EmailInputType.cpp
     html/FTPDirectoryDocument.cpp
     html/FileInputType.cpp
+    html/FormAssociatedElement.cpp
     html/FormDataList.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp
