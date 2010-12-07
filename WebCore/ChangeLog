@@ -1,3 +1,13 @@
+2010-12-07  Darin Adler  <darin@apple.com>
+
+        Try to fix build.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start): Pass security origin.
+        (WebCore::PluginView::getURLNotify): Ditto.
+        (WebCore::PluginView::getURL): Ditto.
+        (WebCore::PluginView::handlePost): Ditto.
+
 2010-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

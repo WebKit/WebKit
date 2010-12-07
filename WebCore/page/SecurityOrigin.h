@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007,2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,9 @@
 #ifndef SecurityOrigin_h
 #define SecurityOrigin_h
 
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
-#include <wtf/text/StringHash.h>
-
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include <wtf/ThreadSafeShared.h>
 
 namespace WebCore {
 
@@ -93,9 +88,6 @@ public:
     // in an iframe or as an image). For example, web sites generally cannot
     // display content from the user's files system.
     bool canDisplay(const KURL&) const;
-
-    // FIXME: Remove this function. This function exists only to service FrameLoader.
-    static bool deprecatedCanDisplay(const String& referrer, const KURL& targetURL);
 
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.

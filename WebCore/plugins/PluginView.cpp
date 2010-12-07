@@ -258,7 +258,7 @@ bool PluginView::start()
     m_isStarted = true;
 
     if (!m_url.isEmpty() && !m_loadManually) {
-        FrameLoadRequest frameLoadRequest;
+        FrameLoadRequest frameLoadRequest(m_parentFrame->document()->securityOrigin());
         frameLoadRequest.resourceRequest().setHTTPMethod("GET");
         frameLoadRequest.resourceRequest().setURL(m_url);
         load(frameLoadRequest, false, 0);
@@ -563,7 +563,7 @@ static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
 
 NPError PluginView::getURLNotify(const char* url, const char* target, void* notifyData)
 {
-    FrameLoadRequest frameLoadRequest;
+    FrameLoadRequest frameLoadRequest(m_parentFrame->document()->securityOrigin());
 
     frameLoadRequest.setFrameName(target);
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
@@ -574,7 +574,7 @@ NPError PluginView::getURLNotify(const char* url, const char* target, void* noti
 
 NPError PluginView::getURL(const char* url, const char* target)
 {
-    FrameLoadRequest frameLoadRequest;
+    FrameLoadRequest frameLoadRequest(m_parentFrame->document()->securityOrigin());
 
     frameLoadRequest.setFrameName(target);
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
@@ -1168,7 +1168,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
     if (!url || !len || !buf)
         return NPERR_INVALID_PARAM;
 
-    FrameLoadRequest frameLoadRequest;
+    FrameLoadRequest frameLoadRequest(m_parentFrame->document()->securityOrigin());
 
     HTTPHeaderMap headerFields;
     Vector<char> buffer;

@@ -319,17 +319,6 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     return canLoadLocalResources();
 }
 
-bool SecurityOrigin::deprecatedCanDisplay(const String& referrer, const KURL& url)
-{
-    if (!restrictAccessToLocal())
-        return true;
-
-    if (!SchemeRegistry::shouldTreatURLAsLocal(url.string()))
-        return true;
-
-    return SchemeRegistry::shouldTreatURLAsLocal(referrer);
-}
-
 void SecurityOrigin::grantLoadLocalResources()
 {
     // This function exists only to support backwards compatibility with older
