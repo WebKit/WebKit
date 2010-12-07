@@ -70,6 +70,9 @@ bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
     ASSERT(!m_plugin);
 
     m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
+    if (!m_plugin)
+        return false;
+
     if (!m_plugin->initialize(this, parameters)) {
         m_plugin = 0;
         return false;

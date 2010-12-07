@@ -2,6 +2,35 @@
 
         Reviewed by Sam Weinig.
 
+        The plug-in process crashes if it can't load the plug-in module
+        https://bugs.webkit.org/show_bug.cgi?id=50601
+        <rdar://problem/8692654>
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        Handle m_plugin being 0.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::netscapePluginModule):
+        Create the plug-in module if it doesn't exist.
+
+        (WebKit::PluginProcess::initialize):
+        Store the plug-in path.
+
+        * PluginProcess/PluginProcess.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::create):
+        Return null if the plug-in module doesn't exist.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Simplify code.
+
+2010-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         WebProcess crash in NPRemoteObjectMap::invalidate when closing tab
         https://bugs.webkit.org/show_bug.cgi?id=50597
         <rdar://problem/8655584>

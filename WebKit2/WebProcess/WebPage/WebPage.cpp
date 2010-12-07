@@ -227,11 +227,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 
     return PluginProxy::create(pluginProcessConnection);
 #else
-    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
-    if (!pluginModule)
-        return 0;
-
-    return NetscapePlugin::create(pluginModule.release());
+    return NetscapePlugin::create(NetscapePluginModule::getOrCreate(pluginPath));
 #endif
 }
 

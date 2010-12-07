@@ -43,6 +43,14 @@ namespace WebKit {
 // The plug-in that we're currently calling NPP_New for.
 static NetscapePlugin* currentNPPNewPlugin;
 
+PassRefPtr<NetscapePlugin> NetscapePlugin::create(PassRefPtr<NetscapePluginModule> pluginModule)
+{
+    if (!pluginModule)
+        return 0;
+
+    return adoptRef(new NetscapePlugin(pluginModule));
+}
+    
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     : m_pluginController(0)
     , m_nextRequestID(0)

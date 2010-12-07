@@ -45,10 +45,7 @@ class NetscapePluginStream;
     
 class NetscapePlugin : public Plugin {
 public:
-    static PassRefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule> pluginModule)
-    {
-        return adoptRef(new NetscapePlugin(pluginModule));
-    }
+    static PassRefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule> pluginModule);
     virtual ~NetscapePlugin();
 
     static PassRefPtr<NetscapePlugin> fromNPP(NPP);
