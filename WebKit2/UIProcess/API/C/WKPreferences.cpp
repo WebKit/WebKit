@@ -90,6 +90,16 @@ bool WKPreferencesGetLocalStorageEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->localStorageEnabled();
 }
 
+void WKPreferencesSetDatabasesEnabled(WKPreferencesRef preferencesRef, bool databasesEnabled)
+{
+    toImpl(preferencesRef)->setDatabasesEnabled(databasesEnabled);
+}
+
+bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->databasesEnabled();
+}
+
 void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferencesRef, bool xssAuditorEnabled)
 {
     toImpl(preferencesRef)->setXSSAuditorEnabled(xssAuditorEnabled);

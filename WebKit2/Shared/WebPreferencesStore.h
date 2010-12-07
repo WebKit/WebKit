@@ -43,6 +43,7 @@ namespace WebKit {
     macro(JavaEnabled, javaEnabled, Bool, bool, true) \
     macro(OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled, Bool, bool, false) \
     macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true) \
+    macro(DatabasesEnabled, databasesEnabled, Bool, bool, true) \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true) \
     macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, false) \
     macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \

@@ -57,6 +57,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/AbstractDatabase.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/EventHandler.h>
@@ -916,6 +917,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
     settings->setShowDebugBorders(store.getBoolValueForKey(WebPreferencesKey::compositingBordersVisibleKey()));
     settings->setShowRepaintCounter(store.getBoolValueForKey(WebPreferencesKey::compositingRepaintCountersVisibleKey()));
+
+#if ENABLE(DATABASE)
+    AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
+#endif
     
     platformPreferencesDidChange(store);
 }

@@ -1,3 +1,22 @@
+2010-12-06  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Expose the preference to enable or disable HTML5 Databases.
+        https://bugs.webkit.org/show_bug.cgi?id=50411
+
+        * Shared/WebPreferencesStore.h:
+        Make the preference to enable HTML5 Databases default ot true.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDatabasesEnabled):
+        (WKPreferencesGetDatabasesEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Set AbstractDatabase::isAvailable (mimicking how the preference is set in WebKit1).
+
 2010-12-06  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
