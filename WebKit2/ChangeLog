@@ -1,3 +1,19 @@
+2010-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix two WebKit2 prefs issues.
+
+        * Shared/WebPreferencesStore.h: Include font-family preferences
+        in the FOR_EACH_WEBKIT_STRING_PREFERENCE macro, actually propagating
+        font family prefs to WebCore settings.
+        
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::~WebPageGroup): Add and remove the WebPageGroup
+        from the preference object it creates. This allows preference changes
+        to actually be propagated to the web process.
+
 2010-12-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

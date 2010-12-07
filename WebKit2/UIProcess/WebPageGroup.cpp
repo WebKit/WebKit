@@ -71,12 +71,14 @@ WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundl
         m_data.identifer = m_data.identifer = makeString("__uniquePageGroupID-", String::number(m_data.pageGroupID));
         m_preferences = WebPreferences::create();
     }
+    m_preferences->addPageGroup(this);
 
     m_data.visibleToInjectedBundle = visibleToInjectedBundle;    
 }
 
 WebPageGroup::~WebPageGroup()
 {
+    m_preferences->removePageGroup(this);
     webPageGroupMap().remove(pageGroupID());
 }
 

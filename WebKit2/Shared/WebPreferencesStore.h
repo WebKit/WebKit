@@ -65,10 +65,6 @@ namespace WebKit {
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
     \
 
-#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
-    macro(DefaultTextEncodingName, defaultTextEncodingName, String, String, "ISO-8859-1") \
-    \
-
 #if PLATFORM(WIN)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
@@ -93,11 +89,16 @@ namespace WebKit {
 
 #endif
 
+#define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
+    macro(DefaultTextEncodingName, defaultTextEncodingName, String, String, "ISO-8859-1") \
+    \
+
+
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
-    FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     \
 
 namespace WebPreferencesKey {
