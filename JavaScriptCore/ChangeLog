@@ -1,5 +1,12 @@
 2010-12-07  Anders Carlsson  <andersca@apple.com>
 
+        Build fix follow up build fix.
+
+        * pcre/pcre_ucp_searchfuncs.cpp:
+        (jsc_pcre_ucp_othercase):
+
+2010-12-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix clang++ build
