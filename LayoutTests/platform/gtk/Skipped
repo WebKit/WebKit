@@ -5285,10 +5285,6 @@ fast/forms/textarea-metrics.html
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
 
-# This test crashes randomly on some of our bots
-# https://bugs.webkit.org/show_bug.cgi?id=40859
-media/video-controls-rendering.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=44235
 media/video-layer-crash.html
 media/video-zoom-controls.html
