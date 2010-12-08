@@ -1,3 +1,33 @@
+2010-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Move DOMWindow::setLocation logic into DOMWindow class and out of JavaScript binding
+        https://bugs.webkit.org/show_bug.cgi?id=50640
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::printErrorMessageForFrame): Removed body; just call through to
+        DOMWindow::printErrorMessage.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::crossDomainAccessErrorMessage): Removed body;
+        just call through to DOMWindow::crossDomainAccessErrorMessage.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Changed terminology to use activeFrame and
+        firstFrame, rather than the older lexicalFrame and dynamicFrame. Removed most
+        of the body and moved it into DOMWindow::setLocation.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation): Added. Does all the same work that
+        JSDOMWindow::setLocation used to do, but in a way that's not specific
+        to JavaScript.
+        (WebCore::DOMWindow::printErrorMessage): Added.
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage): Added.
+
+        * page/DOMWindow.h: Added setLocation, printErrorMessage, and
+        crossDomainAccessErrorMessage.
+
 2010-12-08  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, rolling out r73494.
