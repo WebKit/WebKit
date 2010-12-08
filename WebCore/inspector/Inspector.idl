@@ -32,7 +32,7 @@
 
 module core {
     interface [Conditional=INSPECTOR] Inspector {
-        [notify] void addRecordToTimeline(out Object record);
+        [notify, domain=Timeline] void addRecordToTimeline(out Object record);
         [notify] void addNodesToSearchResult(out Array nodeIds);
         [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
         [notify] void bringToFront();
@@ -52,8 +52,8 @@ module core {
         [notify, domain=DOM] void setDetachedRoot(out Object root);
         [notify, domain=DOM] void setDocument(out Value root);
         [notify] void showPanel(out String panel);
-        [notify] void timelineProfilerWasStarted();
-        [notify] void timelineProfilerWasStopped();
+        [notify, domain=Timeline] void timelineProfilerWasStarted();
+        [notify, domain=Timeline] void timelineProfilerWasStopped();
         [notify] void updateFocusedNode(out long nodeId);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER

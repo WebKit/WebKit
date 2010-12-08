@@ -98,6 +98,8 @@ WebInspector.TimelinePanel = function()
     this._calculator._showShortEvents = this.toggleFilterButton.toggled;
     this._markTimelineRecords = [];
     this._expandOffset = 15;
+
+    InspectorBackend.registerDomainDispatcher("Timeline", this);
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -283,12 +285,12 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(true);
     },
 
-    timelineWasStarted: function()
+    timelineProfilerWasStarted: function()
     {
         this.toggleTimelineButton.toggled = true;
     },
 
-    timelineWasStopped: function()
+    timelineProfilerWasStopped: function()
     {
         this.toggleTimelineButton.toggled = false;
     },

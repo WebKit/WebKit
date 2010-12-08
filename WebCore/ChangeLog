@@ -1,3 +1,19 @@
+2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Protocol cleanup task. Remove WebInspector wrappers
+        for TimelineAgent functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50690
+
+        * inspector/Inspector.idl:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.timelineProfilerWasStarted):
+        (WebInspector.TimelinePanel.prototype.timelineProfilerWasStopped):
+
 2010-12-08  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

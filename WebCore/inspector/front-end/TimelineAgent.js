@@ -56,18 +56,3 @@ WebInspector.TimelineAgent.RecordType = {
     MarkLoadEventType : 19,
     ScheduleResourceRequest : 20
 };
-
-WebInspector.addRecordToTimeline = function(record) {
-    if (WebInspector.panels.timeline)
-        WebInspector.panels.timeline.addRecordToTimeline(record);
-}
-
-WebInspector.timelineProfilerWasStarted = function() {
-    if (WebInspector.panels.timeline)
-        WebInspector.panels.timeline.timelineWasStarted();
-}
-
-WebInspector.timelineProfilerWasStopped = function() {
-    if (WebInspector.panels.timeline)
-        WebInspector.panels.timeline.timelineWasStopped();
-}
