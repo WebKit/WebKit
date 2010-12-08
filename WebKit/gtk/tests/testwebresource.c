@@ -218,8 +218,8 @@ static void resource_request_starting_sub_cb(WebKitWebView* web_view, WebKitWebF
 {
     if (!main_resource)
         main_resource = g_object_ref(web_resource);
-    else
-        sub_resource = g_object_ref(web_resource);
+    else if (!sub_resource)
+      sub_resource = g_object_ref(web_resource);
 }
 
 static void notify_load_status_sub_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
