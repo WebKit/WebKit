@@ -5059,27 +5059,6 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)
 #endif
 }
 
-namespace WebKit {
-
-WebCore::Page* core(WebKitWebView* webView)
-{
-    if (!webView)
-        return 0;
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    return priv ? priv->corePage : 0;
-}
-
-WebKitWebView* kit(WebCore::Page* corePage)
-{
-    if (!corePage)
-        return 0;
-
-    ASSERT(corePage->chrome());
-    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
-    return client ? client->webView() : 0;
-}
-
 void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
 {
     if (!node->hasTagName(HTMLNames::videoTag))
@@ -5106,6 +5085,27 @@ void webViewExitFullscreen(WebKitWebView* webView)
     if (priv->fullscreenVideoController)
         priv->fullscreenVideoController->exitFullscreen();
 #endif
+}
+
+namespace WebKit {
+
+WebCore::Page* core(WebKitWebView* webView)
+{
+    if (!webView)
+        return 0;
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv ? priv->corePage : 0;
+}
+
+WebKitWebView* kit(WebCore::Page* corePage)
+{
+    if (!corePage)
+        return 0;
+
+    ASSERT(corePage->chrome());
+    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
+    return client ? client->webView() : 0;
 }
 
 }
