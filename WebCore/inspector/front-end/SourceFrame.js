@@ -377,7 +377,7 @@ WebInspector.SourceFrame.prototype = {
         }
 
         for (var i = 0; i < rowMessages.length; ++i) {
-            if (rowMessages[i].isEqual(msg, true)) {
+            if (rowMessages[i].isEqual(msg)) {
                 this._incrementMessageRepeatCount(rowMessages[i], msg.repeatDelta);
                 return;
             }

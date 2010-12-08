@@ -145,7 +145,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_cssAgent(new InspectorCSSAgent())
     , m_mainResourceIdentifier(0)
     , m_expiredConsoleMessageCount(0)
-    , m_groupLevel(0)
     , m_previousMessage(0)
     , m_settingsLoaded(false)
     , m_inspectorBackend(InspectorBackend::create(this))
@@ -333,7 +332,7 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageType 
     if (!enabled())
         return;
 
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack, m_groupLevel));
+    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -341,7 +340,7 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageType 
     if (!enabled())
         return;
 
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, lineNumber, sourceID, m_groupLevel));
+    addConsoleMessage(new ConsoleMessage(source, type, level, message, lineNumber, sourceID));
 }
 
 void InspectorController::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
@@ -371,7 +370,6 @@ void InspectorController::clearConsoleMessages()
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
-    m_groupLevel = 0;
     m_injectedScriptHost->releaseWrapperObjectGroup(0 /* release the group in all scripts */, "console");
     if (m_domAgent)
         m_domAgent->releaseDanglingNodes();
@@ -381,19 +379,12 @@ void InspectorController::clearConsoleMessages()
 
 void InspectorController::startGroup(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, bool collapsed)
 {
-    ++m_groupLevel;
-
-    addConsoleMessage(new ConsoleMessage(JSMessageSource, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, "", arguments, callStack, m_groupLevel));
+    addConsoleMessage(new ConsoleMessage(JSMessageSource, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, "", arguments, callStack));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
 {
-    if (!m_groupLevel)
-        return;
-
-    --m_groupLevel;
-
-    addConsoleMessage(new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
+    addConsoleMessage(new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL));
 }
 
 void InspectorController::markTimeline(const String& message)

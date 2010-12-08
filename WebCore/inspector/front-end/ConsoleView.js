@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -50,9 +50,8 @@ WebInspector.ConsoleView = function(drawer)
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
     this.prompt.history = WebInspector.settings.consoleHistory;
 
-    this.topGroup = new WebInspector.ConsoleGroup(null, 0);
+    this.topGroup = new WebInspector.ConsoleGroup(null);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
-    this.groupLevel = 0;
     this.currentGroup = this.topGroup;
 
     this.toggleConsoleButton = document.getElementById("console-status-bar-item");
@@ -72,7 +71,7 @@ WebInspector.ConsoleView = function(drawer)
     function createFilterElement(category) {
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
-        categoryElement.addStyleClass(categoryElement.category);            
+        categoryElement.addStyleClass(categoryElement.category);
         categoryElement.addEventListener("click", updateFilterHandler, false);
 
         var label = category.toString();
@@ -81,7 +80,7 @@ WebInspector.ConsoleView = function(drawer)
         this.filterBarElement.appendChild(categoryElement);
         return categoryElement;
     }
-    
+
     this.allElement = createFilterElement.call(this, WebInspector.UIString("All"));
     createDividerElement.call(this);
     this.errorElement = createFilterElement.call(this, WebInspector.UIString("Errors"));
@@ -92,7 +91,7 @@ WebInspector.ConsoleView = function(drawer)
     this._registerShortcuts();
 
     this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
-    
+
     this._customFormatters = {
         "object": this._formatobject,
         "array":  this._formatarray,
@@ -113,7 +112,7 @@ WebInspector.ConsoleView.prototype = {
 
         this.filter(e.target, selectMultiple);
     },
-    
+
     filter: function(target, selectMultiple)
     {
         function unselectAll()
@@ -122,13 +121,13 @@ WebInspector.ConsoleView.prototype = {
             this.errorElement.removeStyleClass("selected");
             this.warningElement.removeStyleClass("selected");
             this.logElement.removeStyleClass("selected");
-            
+
             this.messagesElement.removeStyleClass("filter-all");
             this.messagesElement.removeStyleClass("filter-errors");
             this.messagesElement.removeStyleClass("filter-warnings");
             this.messagesElement.removeStyleClass("filter-logs");
         }
-        
+
         var targetFilterClass = "filter-" + target.category.toLowerCase();
 
         if (target.category == "All") {
@@ -145,18 +144,18 @@ WebInspector.ConsoleView.prototype = {
                 this.messagesElement.removeStyleClass("filter-all");
             }
         }
-        
+
         if (!selectMultiple) {
             // If multiple selection is off, we want to unselect everything else
             // and just select ourselves.
             unselectAll.call(this);
-            
+
             target.addStyleClass("selected");
             this.messagesElement.addStyleClass(targetFilterClass);
-            
+
             return;
         }
-        
+
         if (target.hasStyleClass("selected")) {
             // If selectMultiple is turned on, and we were selected, we just
             // want to unselect ourselves.
@@ -169,7 +168,7 @@ WebInspector.ConsoleView.prototype = {
             this.messagesElement.addStyleClass(targetFilterClass);
         }
     },
-    
+
     _toggleConsoleButtonClicked: function()
     {
         this.drawer.visibleView = this;
@@ -192,7 +191,7 @@ WebInspector.ConsoleView.prototype = {
 
     afterShow: function()
     {
-        WebInspector.currentFocusElement = this.promptElement;  
+        WebInspector.currentFocusElement = this.promptElement;
     },
 
     hide: function()
@@ -230,17 +229,12 @@ WebInspector.ConsoleView.prototype = {
         this.messages.push(msg);
 
         if (msg.type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
-            if (this.groupLevel < 1)
-                return;
-
-            this.groupLevel--;
-
-            this.currentGroup = this.currentGroup.parentGroup;
+            var parentGroup = this.currentGroup.parentGroup
+            if (parentGroup)
+                this.currentGroup = parentGroup;
         } else {
             if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
-                this.groupLevel++;
-
-                var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
+                var group = new WebInspector.ConsoleGroup(this.currentGroup);
                 this.currentGroup.messagesElement.appendChild(group.element);
                 this.currentGroup = group;
             }
@@ -255,7 +249,7 @@ WebInspector.ConsoleView.prototype = {
     {
         var msg = this.previousMessage;
         var prevRepeatCount = msg.totalRepeatCount;
-        
+
         if (!this.commandSincePreviousMessage) {
             msg.repeatDelta = count - prevRepeatCount;
             msg.repeatCount = msg.repeatCount + msg.repeatDelta;
@@ -263,7 +257,7 @@ WebInspector.ConsoleView.prototype = {
             msg._updateRepeatCount();
             this._incrementErrorWarningCount(msg);
         } else {
-            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, msg.groupLevel, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace);
+            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace);
             msgCopy.totalRepeatCount = count;
             msgCopy._formatMessage();
             this.addMessage(msgCopy);
@@ -293,7 +287,6 @@ WebInspector.ConsoleView.prototype = {
 
         this.messages = [];
 
-        this.groupLevel = 0;
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
 
@@ -634,14 +627,13 @@ WebInspector.ConsoleView.prototype = {
 
 WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLevel, repeatCount, message, parameters, stackTrace)
+WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace)
 {
     this.source = source;
     this.type = type;
     this.level = level;
     this.line = line;
     this.url = url;
-    this.groupLevel = groupLevel;
     this.repeatCount = repeatCount;
     this.repeatDelta = repeatCount;
     this.totalRepeatCount = repeatCount;
@@ -654,7 +646,7 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLeve
 WebInspector.ConsoleMessage.createTextMessage = function(text, level)
 {
     level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
-    return new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, null, 1, null, [text], null);
+    return new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
 }
 
 WebInspector.ConsoleMessage.prototype = {
@@ -790,27 +782,6 @@ WebInspector.ConsoleMessage.prototype = {
 
         this._element = element;
 
-        switch (this.source) {
-            case WebInspector.ConsoleMessage.MessageSource.HTML:
-                element.addStyleClass("console-html-source");
-                break;
-            case WebInspector.ConsoleMessage.MessageSource.WML:
-                element.addStyleClass("console-wml-source");
-                break;
-            case WebInspector.ConsoleMessage.MessageSource.XML:
-                element.addStyleClass("console-xml-source");
-                break;
-            case WebInspector.ConsoleMessage.MessageSource.JS:
-                element.addStyleClass("console-js-source");
-                break;
-            case WebInspector.ConsoleMessage.MessageSource.CSS:
-                element.addStyleClass("console-css-source");
-                break;
-            case WebInspector.ConsoleMessage.MessageSource.Other:
-                element.addStyleClass("console-other-source");
-                break;
-        }
-
         switch (this.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 element.addStyleClass("console-tip-level");
@@ -874,7 +845,7 @@ WebInspector.ConsoleMessage.prototype = {
     _addMessageHeader: function(parentElement, formattedMessage)
     {
         if (this.url && this.url !== "undefined") {
-            var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url"); 
+            var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url");
             parentElement.appendChild(urlElement);
         }
 
@@ -890,7 +861,7 @@ WebInspector.ConsoleMessage.prototype = {
         if (!this.repeatCountElement) {
             this.repeatCountElement = document.createElement("span");
             this.repeatCountElement.className = "bubble";
-    
+
             this._element.insertBefore(this.repeatCountElement, this._element.firstChild);
             this._element.addStyleClass("repeated-message");
         }
@@ -947,7 +918,7 @@ WebInspector.ConsoleMessage.prototype = {
                 typeString = "Result";
                 break;
         }
-        
+
         var levelString;
         switch (this.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Tip:
@@ -975,14 +946,12 @@ WebInspector.ConsoleMessage.prototype = {
         if (!msg)
             return false;
 
-        var ret = (this.source == msg.source)
-            && (this.type == msg.type)
-            && (this.level == msg.level)
-            && (this.line == msg.line)
-            && (this.url == msg.url)
-            && (this.message == msg.message);
-
-        return (disreguardGroup ? ret : (ret && (this.groupLevel == msg.groupLevel)));
+        return (this.source === msg.source)
+            && (this.type === msg.type)
+            && (this.level === msg.level)
+            && (this.line === msg.line)
+            && (this.url === msg.url)
+            && (this.message === msg.message);
     }
 }
 
@@ -1041,7 +1010,7 @@ WebInspector.ConsoleCommandResult = function(result, originatingCommand)
 {
     var level = (result.isError() ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, null, 1, null, [result]);
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, [result]);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {
@@ -1055,10 +1024,9 @@ WebInspector.ConsoleCommandResult.prototype = {
 
 WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
 
-WebInspector.ConsoleGroup = function(parentGroup, level)
+WebInspector.ConsoleGroup = function(parentGroup)
 {
     this.parentGroup = parentGroup;
-    this.level = level;
 
     var element = document.createElement("div");
     element.className = "console-group";

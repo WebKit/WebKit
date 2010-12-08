@@ -608,7 +608,6 @@ WebInspector.Resource.prototype = {
                         WebInspector.ConsoleMessage.MessageLevel.Warning,
                         -1,
                         this.url,
-                        null,
                         1,
                         String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message, WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
                         null,

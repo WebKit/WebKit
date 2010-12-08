@@ -48,8 +48,8 @@ class ScriptValue;
 
 class ConsoleMessage : public Noncopyable {
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, unsigned g);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
 
     void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
     void updateRepeatCountInConsole(InspectorFrontend* frontend);
@@ -68,7 +68,6 @@ private:
     RefPtr<ScriptCallStack> m_callStack;
     unsigned m_line;
     String m_url;
-    unsigned m_groupLevel;
     unsigned m_repeatCount;
 };
 

@@ -370,7 +370,6 @@ private:
 #endif
     String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
-    unsigned m_groupLevel;
     ConsoleMessage* m_previousMessage;
     bool m_settingsLoaded;
     RefPtr<InspectorBackend> m_inspectorBackend;

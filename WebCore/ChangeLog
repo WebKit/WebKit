@@ -1,3 +1,47 @@
+2010-12-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove groupLevel counter from console messages
+        https://bugs.webkit.org/show_bug.cgi?id=50672
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::startGroup):
+        (WebCore::InspectorController::endGroup):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createFilterElement):
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype.filter):
+        (WebInspector.ConsoleView.prototype.afterShow):
+        (WebInspector.ConsoleView.prototype.addMessage):
+        (WebInspector.ConsoleView.prototype.updateMessageRepeatCount):
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype._addMessageHeader):
+        (WebInspector.ConsoleMessage.prototype._updateRepeatCount):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        (WebInspector.ConsoleGroup):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._checkWarning):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addConsoleMessage):
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+
 2010-12-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

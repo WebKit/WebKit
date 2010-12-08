@@ -43,26 +43,24 @@
 
 namespace WebCore {
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u, unsigned g)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u)
     : m_source(s)
     , m_type(t)
     , m_level(l)
     , m_message(m)
     , m_line(li)
     , m_url(u)
-    , m_groupLevel(g)
     , m_repeatCount(1)
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned g)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
     : m_source(s)
     , m_type(t)
     , m_level(l)
     , m_message(m)
     , m_arguments(arguments)
     , m_callStack(callStack)
-    , m_groupLevel(g)
     , m_repeatCount(1)
 {
     const ScriptCallFrame& lastCaller = m_callStack->at(0);
@@ -83,7 +81,6 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
     jsonObj->setNumber("level", static_cast<int>(m_level));
     jsonObj->setNumber("line", static_cast<int>(m_line));
     jsonObj->setString("url", m_url);
-    jsonObj->setNumber("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
     jsonObj->setString("message", m_message);
     if (m_arguments && m_arguments->argumentCount()) {
@@ -130,8 +127,7 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
         && msg->m_level == m_level
         && msg->m_message == m_message
         && msg->m_line == m_line
-        && msg->m_url == m_url
-        && msg->m_groupLevel == m_groupLevel;
+        && msg->m_url == m_url;
 }
 
 } // namespace WebCore
