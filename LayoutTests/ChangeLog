@@ -1,3 +1,10 @@
+2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Just enable inspector's tests for chromium linux.
+        This change is related to switching to DumpRenderTree.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Adam Roben  <aroben@apple.com>
 
         Land Windows results for test added in 73423
