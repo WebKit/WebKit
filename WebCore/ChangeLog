@@ -1,3 +1,18 @@
+2010-12-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/8740920> Gestures: Frame::scalePage() broken by r73885
+
+        Make sure the transform applied to the RenderView for page scaling is incorporated into the
+        docTop/Bottom/Left/Right accessors.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::docTop):
+        (WebCore::RenderView::docBottom):
+        (WebCore::RenderView::docLeft):
+        (WebCore::RenderView::docRight):
+
 2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

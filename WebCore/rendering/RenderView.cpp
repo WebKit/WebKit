@@ -616,6 +616,8 @@ int RenderView::docTop() const
 {
     IntRect overflowRect(0, topLayoutOverflow(), 0, bottomLayoutOverflow() - topLayoutOverflow());
     flipForWritingMode(overflowRect);
+    if (hasTransform())
+        overflowRect = layer()->currentTransform().mapRect(overflowRect);
     return overflowRect.y();
 }
 
@@ -623,6 +625,8 @@ int RenderView::docBottom() const
 {
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
+    if (hasTransform())
+        overflowRect = layer()->currentTransform().mapRect(overflowRect);
     return overflowRect.bottom();
 }
 
@@ -630,6 +634,8 @@ int RenderView::docLeft() const
 {
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
+    if (hasTransform())
+        overflowRect = layer()->currentTransform().mapRect(overflowRect);
     return overflowRect.x();
 }
 
@@ -637,6 +643,8 @@ int RenderView::docRight() const
 {
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
+    if (hasTransform())
+        overflowRect = layer()->currentTransform().mapRect(overflowRect);
     return overflowRect.right();
 }
 
