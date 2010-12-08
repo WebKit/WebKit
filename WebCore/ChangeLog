@@ -1,3 +1,115 @@
+2010-12-08  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, rolling out r73492.
+        http://trac.webkit.org/changeset/73492
+        https://bugs.webkit.org/show_bug.cgi?id=49914
+
+        Caused a lot of pixel test failures and broke Windows build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createGraphicsContextPrivate):
+        (WebCore::GraphicsContext::destroyGraphicsContextPrivate):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::getShadow):
+        (WebCore::GraphicsContext::strokeThickness):
+        (WebCore::GraphicsContext::strokeStyle):
+        (WebCore::GraphicsContext::strokeColor):
+        (WebCore::GraphicsContext::strokeColorSpace):
+        (WebCore::GraphicsContext::fillRule):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::fillColor):
+        (WebCore::GraphicsContext::fillColorSpace):
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::shouldAntialias):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::fillGradient):
+        (WebCore::GraphicsContext::strokeGradient):
+        (WebCore::GraphicsContext::fillPattern):
+        (WebCore::GraphicsContext::strokePattern):
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContext::updatingControlTints):
+        (WebCore::GraphicsContext::setUpdatingControlTints):
+        (WebCore::GraphicsContext::setPaintingDisabled):
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::textDrawingMode):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h: Added.
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill):
+        (WebCore::setPlatformStroke):
+        (WebCore::drawPathShadow):
+        (WebCore::fillCurrentCairoPath):
+        (WebCore::strokeCurrentCairoPath):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::getAlpha):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+
 2010-12-08  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

@@ -41,6 +41,7 @@
 #include "FloatRect.h"
 #include "Font.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
+#include "GraphicsContextPrivate.h"
 #include "OwnPtrCairo.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -68,46 +69,42 @@ using namespace std;
 
 namespace WebCore {
 
-static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr)
+static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr, GraphicsContextPrivate* gcp)
 {
     cairo_pattern_t* pattern = 0;
     cairo_save(cr);
-    
-    const GraphicsContextState& state = context->state();
-    if (state.fillPattern) {
+    if (gcp->state.fillPattern) {
         AffineTransform affine;
-        pattern = state.fillPattern->createPlatformPattern(affine);
+        pattern = gcp->state.fillPattern->createPlatformPattern(affine);
         cairo_set_source(cr, pattern);
-    } else if (state.fillGradient)
-        cairo_set_source(cr, state.fillGradient->platformGradient());
+    } else if (gcp->state.fillGradient)
+        cairo_set_source(cr, gcp->state.fillGradient->platformGradient());
     else
         setSourceRGBAFromColor(cr, context->fillColor());
     cairo_clip_preserve(cr);
-    cairo_paint_with_alpha(cr, state.globalAlpha);
+    cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
     cairo_restore(cr);
     if (pattern)
         cairo_pattern_destroy(pattern);
 }
 
-static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr)
+static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr, GraphicsContextPrivate* gcp)
 {
     cairo_pattern_t* pattern = 0;
     cairo_save(cr);
-    
-    const GraphicsContextState& state = context->state();
-    if (state.strokePattern) {
+    if (gcp->state.strokePattern) {
         AffineTransform affine;
-        pattern = state.strokePattern->createPlatformPattern(affine);
+        pattern = gcp->state.strokePattern->createPlatformPattern(affine);
         cairo_set_source(cr, pattern);
-    } else if (state.strokeGradient)
-        cairo_set_source(cr, state.strokeGradient->platformGradient());
+    } else if (gcp->state.strokeGradient)
+        cairo_set_source(cr, gcp->state.strokeGradient->platformGradient());
     else  {
-        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * state.globalAlpha);
+        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * gcp->state.globalAlpha);
         setSourceRGBAFromColor(cr, strokeColor);
     }
-    if (state.globalAlpha < 1.0f && (state.strokePattern || state.strokeGradient)) {
+    if (gcp->state.globalAlpha < 1.0f && (gcp->state.strokePattern || gcp->state.strokeGradient)) {
         cairo_push_group(cr);
-        cairo_paint_with_alpha(cr, state.globalAlpha);
+        cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
         cairo_pop_group_to_source(cr);
     }
     cairo_stroke_preserve(cr);
@@ -139,7 +136,7 @@ enum PathDrawingStyle {
     FillAndStroke = Fill + Stroke
 };
 
-static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle drawingStyle)
+static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPrivate* contextPrivate, PathDrawingStyle drawingStyle)
 {
     ContextShadow* shadow = context->contextShadow();
     ASSERT(shadow);
@@ -175,39 +172,41 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
     cairo_append_path(shadowContext, path.get());
 
     if (drawingStyle & Fill)
-        setPlatformFill(context, shadowContext);
+        setPlatformFill(context, shadowContext, contextPrivate);
     if (drawingStyle & Stroke)
-        setPlatformStroke(context, shadowContext);
+        setPlatformStroke(context, shadowContext, contextPrivate);
 
     shadow->endShadowLayer(cairoContext);
 }
 
-static void fillCurrentCairoPath(GraphicsContext* context, cairo_t* cairoContext)
+static void fillCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
 {
     cairo_set_fill_rule(cairoContext, context->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    drawPathShadow(context, Fill);
+    drawPathShadow(context, gcp, Fill);
 
-    setPlatformFill(context, cairoContext);
+    setPlatformFill(context, cairoContext, gcp);
     cairo_new_path(cairoContext);
 }
 
-static void strokeCurrentCairoPath(GraphicsContext* context,  cairo_t* cairoContext)
+static void strokeCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
 {
-    drawPathShadow(context, Stroke);
-    setPlatformStroke(context, cairoContext);
+    drawPathShadow(context, gcp, Stroke);
+    setPlatformStroke(context, cairoContext, gcp);
     cairo_new_path(cairoContext);
 }
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* cr)
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* cr)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate)
 {
-    m_data = new GraphicsContextPlatformPrivate;
     m_data->cr = cairo_reference(cr);
     m_data->syncContext(cr);
     setPaintingDisabled(!cr);
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 
@@ -533,7 +532,7 @@ void GraphicsContext::fillPath(const Path& path)
 
     cairo_t* cr = m_data->cr;
     setPathOnCairoContext(cr, path.platformPath()->context());
-    fillCurrentCairoPath(this, cr);
+    fillCurrentCairoPath(this, m_common, cr);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -543,7 +542,7 @@ void GraphicsContext::strokePath(const Path& path)
 
     cairo_t* cr = m_data->cr;
     setPathOnCairoContext(cr, path.platformPath()->context());
-    strokeCurrentCairoPath(this, cr);
+    strokeCurrentCairoPath(this, m_common, cr);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -554,7 +553,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    fillCurrentCairoPath(this, cr);
+    fillCurrentCairoPath(this, m_common, cr);
     cairo_restore(cr);
 }
 
@@ -864,10 +863,10 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
 void GraphicsContext::setPlatformShadow(FloatSize const& size, float blur, Color const& color, ColorSpace)
 {
     // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions
-    if (m_state.shadowsIgnoreTransforms) {
+    if (m_common->state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_state.shadowOffset = FloatSize(size.width(), -size.height());
+        m_common->state.shadowOffset = FloatSize(size.width(), -size.height());
         m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), -size.height()));
     } else
         m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), size.height()));
@@ -930,7 +929,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, width);
-    strokeCurrentCairoPath(this, cr);
+    strokeCurrentCairoPath(this, m_common, cr);
     cairo_restore(cr);
 }
 
@@ -989,12 +988,12 @@ void GraphicsContext::setMiterLimit(float miter)
 
 void GraphicsContext::setAlpha(float alpha)
 {
-    m_state.globalAlpha = alpha;
+    m_common->state.globalAlpha = alpha;
 }
 
 float GraphicsContext::getAlpha()
 {
-    return m_state.globalAlpha;
+    return m_common->state.globalAlpha;
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator op)

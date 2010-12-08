@@ -31,6 +31,7 @@
 #include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "GraphicsContextPlatformPrivateCG.h"
+#include "GraphicsContextPrivate.h"
 #include "ImageBuffer.h"
 #include "KURL.h"
 #include "Path.h"
@@ -107,9 +108,10 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 #endif
 }
 
-void GraphicsContext::platformInit(CGContextRef cgContext)
+GraphicsContext::GraphicsContext(CGContextRef cgContext)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(cgContext))
 {
-    m_data = new GraphicsContextPlatformPrivate(cgContext);
     setPaintingDisabled(!cgContext);
     if (cgContext) {
         // Make sure the context starts in sync with our state.
@@ -118,8 +120,9 @@ void GraphicsContext::platformInit(CGContextRef cgContext)
     }
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 
@@ -450,7 +453,7 @@ void GraphicsContext::applyStrokePattern()
 {
     CGContextRef cgContext = platformContext();
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.strokePattern->createPlatformPattern(getCTM()));
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_common->state.strokePattern->createPlatformPattern(getCTM()));
     if (!platformPattern)
         return;
 
@@ -465,7 +468,7 @@ void GraphicsContext::applyFillPattern()
 {
     CGContextRef cgContext = platformContext();
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.fillPattern->createPlatformPattern(getCTM()));
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_common->state.fillPattern->createPlatformPattern(getCTM()));
     if (!platformPattern)
         return;
 
@@ -509,7 +512,7 @@ void GraphicsContext::drawPath(const Path& path)
         return;
 
     CGContextRef context = platformContext();
-    const GraphicsContextState& state = m_state;
+    const GraphicsContextState& state = m_common->state;
 
     if (state.fillGradient || state.strokeGradient) {
         // We don't have any optimized way to fill & stroke a path using gradients
@@ -550,19 +553,19 @@ void GraphicsContext::fillPath(const Path& path)
     CGContextBeginPath(context);
     CGContextAddPath(context, path.platformPath());
 
-    if (m_state.fillGradient) {
+    if (m_common->state.fillGradient) {
         CGContextSaveGState(context);
         if (fillRule() == RULE_EVENODD)
             CGContextEOClip(context);
         else
             CGContextClip(context);
-        CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
-        m_state.fillGradient->paint(this);
+        CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
+        m_common->state.fillGradient->paint(this);
         CGContextRestoreGState(context);
         return;
     }
 
-    if (m_state.fillPattern)
+    if (m_common->state.fillPattern)
         applyFillPattern();
     fillPathWithFillRule(context, fillRule());
 }
@@ -577,17 +580,17 @@ void GraphicsContext::strokePath(const Path& path)
     CGContextBeginPath(context);
     CGContextAddPath(context, path.platformPath());
 
-    if (m_state.strokeGradient) {
+    if (m_common->state.strokeGradient) {
         CGContextSaveGState(context);
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
-        CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
-        m_state.strokeGradient->paint(this);
+        CGContextConcatCTM(context, m_common->state.strokeGradient->gradientSpaceTransform());
+        m_common->state.strokeGradient->paint(this);
         CGContextRestoreGState(context);
         return;
     }
 
-    if (m_state.strokePattern)
+    if (m_common->state.strokePattern)
         applyStrokePattern();
     CGContextStrokePath(context);
 }
@@ -599,16 +602,16 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     CGContextRef context = platformContext();
 
-    if (m_state.fillGradient) {
+    if (m_common->state.fillGradient) {
         CGContextSaveGState(context);
         CGContextClipToRect(context, rect);
-        CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
-        m_state.fillGradient->paint(this);
+        CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
+        m_common->state.fillGradient->paint(this);
         CGContextRestoreGState(context);
         return;
     }
 
-    if (m_state.fillPattern)
+    if (m_common->state.fillPattern)
         applyFillPattern();
     CGContextFillRect(context, rect);
 }
@@ -738,7 +741,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     CGFloat blurRadius = blur;
     CGContextRef context = platformContext();
 
-    if (!m_state.shadowsIgnoreTransforms) {
+    if (!m_common->state.shadowsIgnoreTransforms) {
         CGAffineTransform userToBaseCTM = wkGetUserToBaseCTM(context);
 
         CGFloat A = userToBaseCTM.a * userToBaseCTM.a + userToBaseCTM.b * userToBaseCTM.b;
@@ -813,18 +816,18 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
 
     CGContextRef context = platformContext();
 
-    if (m_state.strokeGradient) {
+    if (m_common->state.strokeGradient) {
         CGContextSaveGState(context);
         setStrokeThickness(lineWidth);
         CGContextAddRect(context, r);
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
-        m_state.strokeGradient->paint(this);
+        m_common->state.strokeGradient->paint(this);
         CGContextRestoreGState(context);
         return;
     }
 
-    if (m_state.strokePattern)
+    if (m_common->state.strokePattern)
         applyStrokePattern();
     CGContextStrokeRectWithWidth(context, r, lineWidth);
 }

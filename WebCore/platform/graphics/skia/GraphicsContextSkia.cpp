@@ -37,6 +37,7 @@
 #include "GLES2Canvas.h"
 #include "Gradient.h"
 #include "GraphicsContextPlatformPrivate.h"
+#include "GraphicsContextPrivate.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NativeImageSkia.h"
@@ -218,15 +219,17 @@ void addCornerArc(SkPath* path, const SkRect& rect, const IntSize& size, int sta
 
 // This may be called with a NULL pointer to create a graphics context that has
 // no painting.
-void GraphicsContext::platformInit(PlatformGraphicsContext* gc)
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* gc)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(gc))
 {
-    m_data = new GraphicsContextPlatformPrivate(gc);
     setPaintingDisabled(!gc || !platformContext()->canvas());
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContext::~GraphicsContext()
 {
     delete m_data;
+    this->destroyGraphicsContextPrivate(m_common);
 }
 
 PlatformGraphicsContext* GraphicsContext::platformContext() const
@@ -739,7 +742,7 @@ void GraphicsContext::fillPath(const Path& pathToFill)
 
     platformContext()->prepareForSoftwareDraw();
 
-    const GraphicsContextState& state = m_state;
+    const GraphicsContextState& state = m_common->state;
     path.setFillType(state.fillRule == RULE_EVENODD ?
         SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
 
@@ -1068,7 +1071,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
 
     // TODO(tc): This still does not address the issue that shadows
     // within canvas elements should ignore transforms.
-    if (m_state.shadowsIgnoreTransforms)  {
+    if (m_common->state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
         // CanvasRenderingContext for HTMLCanvasElement have shadows ignore
         // Transforms. So with this flag set, we know this state is associated

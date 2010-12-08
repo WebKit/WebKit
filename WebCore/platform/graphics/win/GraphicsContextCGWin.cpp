@@ -61,9 +61,10 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
     return context;
 }
 
-void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
+GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha)))
 {
-    m_data = new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha));
     CGContextRelease(m_data->m_cgContext.get());
     m_data->m_hdc = hdc;
     setPaintingDisabled(!m_data->m_cgContext);

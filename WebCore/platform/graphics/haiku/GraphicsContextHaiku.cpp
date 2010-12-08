@@ -62,14 +62,16 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
 }
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* context)
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(context))
 {
-    m_data = new GraphicsContextPlatformPrivate(context);
     setPaintingDisabled(!context);
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 

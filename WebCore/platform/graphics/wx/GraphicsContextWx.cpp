@@ -112,11 +112,11 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 }
 
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* context)
-{
-    m_data = new GraphicsContextPlatformPrivate;
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate)
+{    
     setPaintingDisabled(!context);
-
     if (context) {
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), ColorSpaceDeviceRGB);
@@ -129,8 +129,9 @@ void GraphicsContext::platformInit(PlatformGraphicsContext* context)
 #endif
 }
 
-void GraphicsContext::platformDestroy()
+GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 

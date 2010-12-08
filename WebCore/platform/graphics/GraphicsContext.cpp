@@ -29,6 +29,7 @@
 #include "BidiResolver.h"
 #include "Font.h"
 #include "Generator.h"
+#include "GraphicsContextPrivate.h"
 #include "ImageBuffer.h"
 
 using namespace std;
@@ -73,14 +74,14 @@ private:
     int m_offset;
 };
 
-GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
+GraphicsContextPrivate* GraphicsContext::createGraphicsContextPrivate()
 {
-    platformInit(platformGraphicsContext);
+    return new GraphicsContextPrivate;
 }
 
-GraphicsContext::~GraphicsContext()
+void GraphicsContext::destroyGraphicsContextPrivate(GraphicsContextPrivate* deleteMe)
 {
-    platformDestroy();
+    delete deleteMe;
 }
 
 void GraphicsContext::save()
@@ -88,7 +89,7 @@ void GraphicsContext::save()
     if (paintingDisabled())
         return;
 
-    m_stack.append(m_state);
+    m_common->stack.append(m_common->state);
 
     savePlatformState();
 }
@@ -98,125 +99,120 @@ void GraphicsContext::restore()
     if (paintingDisabled())
         return;
 
-    if (m_stack.isEmpty()) {
+    if (m_common->stack.isEmpty()) {
         LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
-    m_state = m_stack.last();
-    m_stack.removeLast();
+    m_common->state = m_common->stack.last();
+    m_common->stack.removeLast();
 
     restorePlatformState();
 }
 
 void GraphicsContext::setStrokeThickness(float thickness)
 {
-    m_state.strokeThickness = thickness;
+    m_common->state.strokeThickness = thickness;
     setPlatformStrokeThickness(thickness);
 }
 
 void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
 {
-    m_state.strokeStyle = style;
+    m_common->state.strokeStyle = style;
     setPlatformStrokeStyle(style);
 }
 
 void GraphicsContext::setStrokeColor(const Color& color, ColorSpace colorSpace)
 {
-    m_state.strokeColor = color;
-    m_state.strokeColorSpace = colorSpace;
-    m_state.strokeGradient.clear();
-    m_state.strokePattern.clear();
+    m_common->state.strokeColor = color;
+    m_common->state.strokeColorSpace = colorSpace;
+    m_common->state.strokeGradient.clear();
+    m_common->state.strokePattern.clear();
     setPlatformStrokeColor(color, colorSpace);
 }
 
 void GraphicsContext::setShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)
 {
-    m_state.shadowOffset = offset;
-    m_state.shadowBlur = blur;
-    m_state.shadowColor = color;
+    m_common->state.shadowOffset = offset;
+    m_common->state.shadowBlur = blur;
+    m_common->state.shadowColor = color;
     setPlatformShadow(offset, blur, color, colorSpace);
 }
 
 void GraphicsContext::clearShadow()
 {
-    m_state.shadowOffset = FloatSize();
-    m_state.shadowBlur = 0;
-    m_state.shadowColor = Color();
+    m_common->state.shadowOffset = FloatSize();
+    m_common->state.shadowBlur = 0;
+    m_common->state.shadowColor = Color();
     clearPlatformShadow();
 }
 
 bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color) const
 {
-    offset = m_state.shadowOffset;
-    blur = m_state.shadowBlur;
-    color = m_state.shadowColor;
+    offset = m_common->state.shadowOffset;
+    blur = m_common->state.shadowBlur;
+    color = m_common->state.shadowColor;
 
     return color.isValid() && color.alpha() && (blur || offset.width() || offset.height());
 }
 
 float GraphicsContext::strokeThickness() const
 {
-    return m_state.strokeThickness;
+    return m_common->state.strokeThickness;
 }
 
 StrokeStyle GraphicsContext::strokeStyle() const
 {
-    return m_state.strokeStyle;
+    return m_common->state.strokeStyle;
 }
 
 Color GraphicsContext::strokeColor() const
 {
-    return m_state.strokeColor;
+    return m_common->state.strokeColor;
 }
 
 ColorSpace GraphicsContext::strokeColorSpace() const
 {
-    return m_state.strokeColorSpace;
+    return m_common->state.strokeColorSpace;
 }
 
 WindRule GraphicsContext::fillRule() const
 {
-    return m_state.fillRule;
+    return m_common->state.fillRule;
 }
 
 void GraphicsContext::setFillRule(WindRule fillRule)
 {
-    m_state.fillRule = fillRule;
+    m_common->state.fillRule = fillRule;
 }
 
 void GraphicsContext::setFillColor(const Color& color, ColorSpace colorSpace)
 {
-    m_state.fillColor = color;
-    m_state.fillColorSpace = colorSpace;
-    m_state.fillGradient.clear();
-    m_state.fillPattern.clear();
+    m_common->state.fillColor = color;
+    m_common->state.fillColorSpace = colorSpace;
+    m_common->state.fillGradient.clear();
+    m_common->state.fillPattern.clear();
     setPlatformFillColor(color, colorSpace);
 }
 
 Color GraphicsContext::fillColor() const
 {
-    return m_state.fillColor;
+    return m_common->state.fillColor;
 }
 
 ColorSpace GraphicsContext::fillColorSpace() const
 {
-    return m_state.fillColorSpace;
+    return m_common->state.fillColorSpace;
 }
 
 void GraphicsContext::setShouldAntialias(bool b)
 {
-    m_state.shouldAntialias = b;
+    m_common->state.shouldAntialias = b;
     setPlatformShouldAntialias(b);
 }
 
 bool GraphicsContext::shouldAntialias() const
 {
-    return m_state.shouldAntialias;
-}
-
-const GraphicsContextState& GraphicsContext::state() const
-{
-    return m_state;
+    return m_common->state.shouldAntialias;
 }
 
 void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
@@ -226,9 +222,9 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
         setStrokeColor(Color::black, ColorSpaceDeviceRGB);
         return;
     }
-    m_state.strokeGradient.clear();
-    m_state.strokePattern = pattern;
-    setPlatformStrokePattern(m_state.strokePattern.get());
+    m_common->state.strokeGradient.clear();
+    m_common->state.strokePattern = pattern;
+    setPlatformStrokePattern(m_common->state.strokePattern.get());
 }
 
 void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
@@ -238,9 +234,9 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
         setFillColor(Color::black, ColorSpaceDeviceRGB);
         return;
     }
-    m_state.fillGradient.clear();
-    m_state.fillPattern = pattern;
-    setPlatformFillPattern(m_state.fillPattern.get());
+    m_common->state.fillGradient.clear();
+    m_common->state.fillPattern = pattern;
+    setPlatformFillPattern(m_common->state.fillPattern.get());
 }
 
 void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
@@ -250,9 +246,9 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
         setStrokeColor(Color::black, ColorSpaceDeviceRGB);
         return;
     }
-    m_state.strokeGradient = gradient;
-    m_state.strokePattern.clear();
-    setPlatformStrokeGradient(m_state.strokeGradient.get());
+    m_common->state.strokeGradient = gradient;
+    m_common->state.strokePattern.clear();
+    setPlatformStrokeGradient(m_common->state.strokeGradient.get());
 }
 
 void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
@@ -262,55 +258,55 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
         setFillColor(Color::black, ColorSpaceDeviceRGB);
         return;
     }
-    m_state.fillGradient = gradient;
-    m_state.fillPattern.clear();
-    setPlatformFillGradient(m_state.fillGradient.get());
+    m_common->state.fillGradient = gradient;
+    m_common->state.fillPattern.clear();
+    setPlatformFillGradient(m_common->state.fillGradient.get());
 }
 
 Gradient* GraphicsContext::fillGradient() const
 {
-    return m_state.fillGradient.get();
+    return m_common->state.fillGradient.get();
 }
 
 Gradient* GraphicsContext::strokeGradient() const
 {
-    return m_state.strokeGradient.get();
+    return m_common->state.strokeGradient.get();
 }
 
 Pattern* GraphicsContext::fillPattern() const
 {
-    return m_state.fillPattern.get();
+    return m_common->state.fillPattern.get();
 }
 
 Pattern* GraphicsContext::strokePattern() const
 {
-    return m_state.strokePattern.get();
+    return m_common->state.strokePattern.get();
 }
 
 void GraphicsContext::setShadowsIgnoreTransforms(bool ignoreTransforms)
 {
-    m_state.shadowsIgnoreTransforms = ignoreTransforms;
+    m_common->state.shadowsIgnoreTransforms = ignoreTransforms;
 }
 
 bool GraphicsContext::updatingControlTints() const
 {
-    return m_updatingControlTints;
+    return m_common->m_updatingControlTints;
 }
 
 void GraphicsContext::setUpdatingControlTints(bool b)
 {
     setPaintingDisabled(b);
-    m_updatingControlTints = b;
+    m_common->m_updatingControlTints = b;
 }
 
 void GraphicsContext::setPaintingDisabled(bool f)
 {
-    m_state.paintingDisabled = f;
+    m_common->state.paintingDisabled = f;
 }
 
 bool GraphicsContext::paintingDisabled() const
 {
-    return m_state.paintingDisabled;
+    return m_common->state.paintingDisabled;
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
@@ -532,12 +528,12 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
 
 TextDrawingModeFlags GraphicsContext::textDrawingMode() const
 {
-    return m_state.textDrawingMode;
+    return m_common->state.textDrawingMode;
 }
 
 void GraphicsContext::setTextDrawingMode(TextDrawingModeFlags mode)
 {
-    m_state.textDrawingMode = mode;
+    m_common->state.textDrawingMode = mode;
     if (paintingDisabled())
         return;
     setPlatformTextDrawingMode(mode);
