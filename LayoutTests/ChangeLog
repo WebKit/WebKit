@@ -1,5 +1,14 @@
 2010-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed. Add new tests introduced in r73484 to the Skipped list,
+        because layoutTestController.testRepaint() is unimplemented in Qt DRT.
+
+        * platform/qt/Skipped:
+         - fast/repaint/table-writing-modes-h.html added
+         - fast/repaint/table-writing-modes-v.html added
+
+2010-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed. Update Qt specific expected results after r73488.
         Compared to Mac png files and Mac expected files.
 
