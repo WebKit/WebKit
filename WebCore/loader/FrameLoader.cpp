@@ -917,32 +917,24 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
 {
     ASSERT(childFrame);
 
-    HistoryItem* parentItem = history()->currentItem();
-    FrameLoadType loadType = this->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
+    RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->uniqueName());    
+    if (subframeArchive) {
+        childFrame->loader()->loadArchive(subframeArchive.release());
+        return;
+    }
 
-    KURL workingURL = url;
-    
+    HistoryItem* parentItem = history()->currentItem();
     // If we're moving in the back/forward list, we might want to replace the content
     // of this child frame with whatever was there at that point.
-    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType)) {
+    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType())) {
         HistoryItem* childItem = parentItem->childItemWithTarget(childFrame->tree()->uniqueName());
         if (childItem) {
-            // Use the original URL to ensure we get all the side-effects, such as
-            // onLoad handlers, of any redirects that happened. An example of where
-            // this is needed is Radar 3213556.
-            workingURL = KURL(ParsedURLString, childItem->originalURLString());
-            childLoadType = loadType;
-            childFrame->loader()->history()->setProvisionalItem(childItem);
+            childFrame->loader()->loadDifferentDocumentItem(childItem, loadType());
+            return;
         }
     }
 
-    RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->uniqueName());
-    
-    if (subframeArchive)
-        childFrame->loader()->loadArchive(subframeArchive.release());
-    else
-        childFrame->loader()->loadURL(workingURL, referer, String(), false, childLoadType, 0, 0);
+    childFrame->loader()->loadURL(url, referer, String(), false, FrameLoadTypeRedirectWithLockedBackForwardList, 0, 0);
 }
 
 void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
@@ -3123,7 +3115,7 @@ Frame* FrameLoader::findFrameForNavigation(const AtomicString& name)
     return frame;
 }
 
-void FrameLoader::navigateWithinDocument(HistoryItem* item)
+void FrameLoader::loadSameDocumentItem(HistoryItem* item)
 {
     ASSERT(item->documentSequenceNumber() == history()->currentItem()->documentSequenceNumber());
 
@@ -3145,7 +3137,7 @@ void FrameLoader::navigateWithinDocument(HistoryItem* item)
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
-void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType loadType)
+void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loadType)
 {
     // Remember this item so we can traverse any child items as child frames load
     history()->setProvisionalItem(item);
@@ -3248,9 +3240,9 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 #endif
 
     if (sameDocumentNavigation)
-        navigateWithinDocument(item);
+        loadSameDocumentItem(item);
     else
-        navigateToDifferentDocument(item, loadType);
+        loadDifferentDocumentItem(item, loadType);
 }
 
 void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)

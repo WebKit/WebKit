@@ -336,8 +336,8 @@ public:
 private:
     void checkTimerFired(Timer<FrameLoader>*);
     
-    void navigateWithinDocument(HistoryItem*);
-    void navigateToDifferentDocument(HistoryItem*, FrameLoadType);
+    void loadSameDocumentItem(HistoryItem*);
+    void loadDifferentDocumentItem(HistoryItem*, FrameLoadType);
     
     void loadProvisionalItemFromCachedPage();
 

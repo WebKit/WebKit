@@ -1,3 +1,36 @@
+2010-11-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        returning to a POST result within a frame does a GET instead of a POST
+        https://bugs.webkit.org/show_bug.cgi?id=10199
+        
+        Re-enable postredirect-frames-goback1.html and post-frames-goback1.html
+        now that the big that made them be checked in disabled was fixed.
+        
+        The tests were also re-written to not be pixel tests, since that just
+        adds extra per-platform baseline pain.
+        
+        Add fast/history/history-back-initial-vs-final-url.html since there did
+        not appear to be any tests for whether we used the initial or final URL
+        of a frame's history item (and this patch changes it from the former to
+        the latter).
+
+        * fast/history/history-back-initial-vs-final-url-expected.txt: Added.
+        * fast/history/history-back-initial-vs-final-url.html: Added.
+        * fast/history/resources/frame-final-url.html: Added.
+        * fast/history/resources/frame-initial-url.html: Added.
+        * http/tests/navigation/post-frames-goback1-expected.txt: Added.
+        * http/tests/navigation/post-frames-goback1.html: Added.
+        * http/tests/navigation/post-frames-goback1.html-disabled: Removed.
+        * http/tests/navigation/post-frames.html:
+        * http/tests/navigation/postredirect-frames-goback1-expected.txt: Added.
+        * http/tests/navigation/postredirect-frames-goback1.html: Added.
+        * http/tests/navigation/postredirect-frames-goback1.html-disabled: Removed.
+        * http/tests/navigation/resources/form-target.pl:
+        * http/tests/navigation/resources/redirect-to-go-back.pl: Added.
+        * http/tests/navigation/resources/top-go-back.html: Added.
+
 2010-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

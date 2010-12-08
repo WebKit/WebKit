@@ -41,6 +41,16 @@ if (sessionStorage.formTargetShouldNavAndGoBack) {
   }
 }
 
+if (sessionStorage.topShouldNavAndGoBack) {
+  if (!sessionStorage.didNav) {
+      isDone = false;
+      sessionStorage.didNav = true;
+      onload = function() {
+          setTimeout(function() {top.location.href = 'go-back.html'}, 0);
+      };
+  }
+}
+
 if (isDone && window.layoutTestController)
     layoutTestController.notifyDone();
 

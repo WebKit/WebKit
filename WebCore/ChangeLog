@@ -1,3 +1,40 @@
+2010-11-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        returning to a POST result within a frame does a GET instead of a POST
+        https://bugs.webkit.org/show_bug.cgi?id=10199
+        
+        FrameLoader::loadURLIntoChildFrame had a check for whether a frame
+        had a HistoryItem, and if so used that item's URL. However, that did
+        not handle the case where the HistoryItem had FormData and thus was the
+        result of a POST request. FrameLoader::navigateToDifferentDocument (now
+        renamed to loadDifferentDocumentItem) does all that, so just switch to
+        using it instead.
+        
+        Besides the bug fix, the only difference in behavior is that we use the
+        HistoryItem's URL instead of original URL when restoring it in a child
+        frame. This seems desirable too (for consistency with other browsers, and
+        so that we can avoid form double-submits for forms that that do
+        POST-then-redirect), and is tested by
+        fast/history/history-back-initial-vs-final-url.html.
+        
+        Tests: fast/history/history-back-initial-vs-final-url.html
+               http/tests/navigation/post-frames-goback1.html
+               http/tests/navigation/postredirect-frames-goback1.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Switch to using
+            loadDifferentDocumentItem. Also cleaned up ordering slightly (if
+            on the archive path, there's no need to do any of the other checks).
+        (WebCore::FrameLoader::loadDifferentDocumentItem): Renamed from
+            navigateToDifferentDocument so that calling it from loadItem and
+            loadURLIntoChildFrame flows more easily.
+        (WebCore::FrameLoader::loadSameDocumentItem): Similarly, renamed from
+            navigateWithinDocument.
+        (WebCore::FrameLoader::loadItem): Update callsites to the above methods.
+        * loader/FrameLoader.h:
+
 2010-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
