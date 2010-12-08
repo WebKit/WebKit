@@ -33,7 +33,7 @@
 #include <wtf/FastAllocBase.h>
 
 #if PLATFORM(CA)
-#include <QuartzCore/QuartzCore.h>
+#include <QuartzCore/CATransform3D.h>
 #endif
 #if PLATFORM(CG)
 #include <CoreGraphics/CGAffineTransform.h>
