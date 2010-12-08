@@ -49,9 +49,7 @@
       box.className = 'final';
     }
     
-    // We can't use the pause API because it only works for individual properties, and
-    // -webkit-transform-origin is a compound property.
-    runTransitionTest(expectedValues, setupTest, false);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

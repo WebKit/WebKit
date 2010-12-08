@@ -50,7 +50,7 @@
   <script type="text/javascript" charset="utf-8">
     
     const expectedValues = [
-      // [time, element-id, property, expected-value, tolerance]
+      // [time, element-id, property, expected-value, tolerance, callback, should-be-transitioning]
       // color and width of each side should be animating
       [0.5, 'box', 'border-top-color', [128, 0, 128], 30],
       [0.5, 'box', 'border-right-color', [128, 0, 128], 30],
@@ -63,7 +63,7 @@
 
       // only border-width should be animating
       [0.5, 'box1', 'border-top-width', 10, 2],
-      [0.5, 'box1', 'border-top-color', [255, 0, 255], 0],  // initial value
+      [0.5, 'box1', 'border-top-color', [255, 0, 255], 0, null, shouldNotBeTransitioning],
 
       // border-width should be animating
       [0.5, 'box2', 'border-top-width', 10, 2],
@@ -82,7 +82,7 @@
       box2.className = 'final';
     }
     
-    runTransitionTest(expectedValues, setupTest, false);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

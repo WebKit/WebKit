@@ -578,6 +578,8 @@ public:
             (*it)->blend(anim, dst, a, b, progress);
     }
 
+    const Vector<PropertyWrapperBase*> propertyWrappers() const { return m_propertyWrappers; }
+
 private:
     Vector<PropertyWrapperBase*> m_propertyWrappers;
 };
@@ -866,6 +868,39 @@ bool AnimationBase::animationOfPropertyIsAccelerated(int prop)
     return wrapper ? wrapper->animationIsAccelerated() : false;
 }
 #endif
+
+static bool gatherEnclosingShorthandProperties(int property, PropertyWrapperBase* wrapper, HashSet<int>& propertySet)
+{
+    if (!wrapper->isShorthandWrapper())
+        return false;
+
+    ShorthandPropertyWrapper* shorthandWrapper = static_cast<ShorthandPropertyWrapper*>(wrapper);
+    
+    bool contained = false;
+    for (size_t i = 0; i < shorthandWrapper->propertyWrappers().size(); ++i) {
+        PropertyWrapperBase* currWrapper = shorthandWrapper->propertyWrappers()[i];
+
+        if (gatherEnclosingShorthandProperties(property, currWrapper, propertySet) || currWrapper->property() == property)
+            contained = true;
+    }
+    
+    if (contained)
+        propertySet.add(wrapper->property());
+
+    return contained;
+}
+
+// Note: this is inefficient. It's only called from pauseTransitionAtTime().
+HashSet<int> AnimationBase::animatableShorthandsAffectingProperty(int property)
+{
+    ensurePropertyMap();
+
+    HashSet<int> foundProperties;
+    for (int i = 0; i < getNumProperties(); ++i)
+        gatherEnclosingShorthandProperties(property, (*gPropertyWrappers)[i], foundProperties);
+
+    return foundProperties;
+}
 
 void AnimationBase::setNeedsStyleRecalc(Node* node)
 {

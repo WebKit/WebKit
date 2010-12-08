@@ -169,7 +169,7 @@ function runTest(expected, usePauseAPI)
         var time = expected[i][0];
         var elementId = expected[i][1];
         var property = expected[i][2];
-        if (!property.indexOf("-webkit-transform"))
+        if (!property.indexOf("-webkit-transform."))
             property = "-webkit-transform";
 
         var tryToPauseTransition = expected[i][6];

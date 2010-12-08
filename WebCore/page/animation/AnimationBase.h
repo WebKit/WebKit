@@ -31,6 +31,7 @@
 
 #include "RenderStyleConstants.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -180,6 +181,8 @@ public:
     static bool animationOfPropertyIsAccelerated(int prop);
 #endif
 
+    static HashSet<int> animatableShorthandsAffectingProperty(int property);
+    
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }

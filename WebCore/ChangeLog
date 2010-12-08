@@ -1,3 +1,29 @@
+2010-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix pauseAnimation API to work with shorthand properties
+        https://bugs.webkit.org/show_bug.cgi?id=50639
+        
+        The pause API is always called with a long-hand property, but that
+        property may be animating via a shorthand. Detect this, and pause
+        such shorthand animations.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::ShorthandPropertyWrapper::propertyWrappers): Expose the vector
+        of wrappers used by a shorthand wrapper.
+
+        (WebCore::gatherEnclosingShorthandProperties): Utility function that walks
+        through the shorthand wrappers, keeping track of which can affect the given
+        property.
+        (WebCore::AnimationBase::animatableShorthandsAffectingProperty): Return a set
+        of shorthand properties that can affect the given property.
+
+        * page/animation/AnimationBase.h: New method.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::pauseTransitionAtTime): If we don't find the
+        property itself, check whether it's being animated via shorthands.
+
 2010-12-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
