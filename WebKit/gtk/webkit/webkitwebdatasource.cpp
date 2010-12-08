@@ -22,18 +22,18 @@
 
 #include "ArchiveResource.h"
 #include "DocumentLoaderGtk.h"
-#include "FrameLoaderClientGtk.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClientGtk.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
-#include "runtime/InitializeThreading.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
-#include "webkitwebresource.h"
+#include "runtime/InitializeThreading.h"
 #include "webkitprivate.h"
+#include "webkitwebresource.h"
+#include "webkitwebviewprivate.h"
 #include "wtf/Assertions.h"
-
 #include <glib.h>
 
 /**

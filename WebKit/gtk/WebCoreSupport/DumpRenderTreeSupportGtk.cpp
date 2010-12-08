@@ -47,6 +47,7 @@
 #include "SVGSMILElement.h"
 #endif
 #include "webkitprivate.h"
+#include "webkitwebviewprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebframe.h"
 #include <JavaScriptCore/APICast.h>

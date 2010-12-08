@@ -27,37 +27,38 @@
 #include "Console.h"
 #include "DumpRenderTreeSupportGtk.h"
 #include "Element.h"
-#include "FileSystem.h"
 #include "FileChooser.h"
+#include "FileSystem.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "GtkVersioning.h"
 #include "HTMLNames.h"
-#include "IntRect.h"
 #include "HitTestResult.h"
 #include "Icon.h"
+#include "IntRect.h"
 #include "KURL.h"
 #include "NavigationAction.h"
+#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuGtk.h"
 #include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
+#include "WindowFeatures.h"
 #include "webkitgeolocationpolicydecision.h"
-#include "webkitwebview.h"
 #include "webkitnetworkrequest.h"
 #include "webkitprivate.h"
-#include "NotImplemented.h"
-#include "WindowFeatures.h"
-#if ENABLE(DATABASE)
-#include "DatabaseTracker.h"
-#endif
-#include <wtf/text/CString.h>
-
+#include "webkitwebview.h"
+#include "webkitwebviewprivate.h"
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
+#include <wtf/text/CString.h>
+
+#if ENABLE(DATABASE)
+#include "DatabaseTracker.h"
+#endif
 
 using namespace WebCore;
 
@@ -668,7 +669,7 @@ void ChromeClient::enterFullscreenForNode(Node* node)
     WebCore::Frame* frame = node->document()->frame();
     WebKitWebFrame* webFrame = kit(frame);
     WebKitWebView* webView = getViewFromFrame(webFrame);
-    webkitWebViewEnterFullscreen(webView, node);
+    webViewEnterFullscreen(webView, node);
 }
 
 void ChromeClient::exitFullscreenForNode(Node* node)
@@ -676,7 +677,7 @@ void ChromeClient::exitFullscreenForNode(Node* node)
     WebCore::Frame* frame = node->document()->frame();
     WebKitWebFrame* webFrame = kit(frame);
     WebKitWebView* webView = getViewFromFrame(webFrame);
-    webkitWebViewExitFullscreen(webView);
+    webViewExitFullscreen(webView);
 }
 #endif
 

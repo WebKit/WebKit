@@ -46,6 +46,7 @@
 #include "WindowsKeyboardCodes.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
+#include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
 
 // Arbitrary depth limit for the undo stack, to keep it from using

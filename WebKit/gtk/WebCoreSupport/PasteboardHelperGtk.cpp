@@ -24,10 +24,10 @@
 #include "DataObjectGtk.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include <gtk/gtk.h>
 #include "webkitwebframe.h"
 #include "webkitwebview.h"
-#include "webkitprivate.h"
+#include "webkitwebviewprivate.h"
+#include <gtk/gtk.h>
 
 using namespace WebCore;
 

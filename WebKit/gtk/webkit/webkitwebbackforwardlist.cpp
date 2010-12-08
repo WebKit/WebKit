@@ -26,6 +26,7 @@
 #include "webkitprivate.h"
 #include "webkitwebhistoryitem.h"
 #include "webkitwebview.h"
+#include "webkitwebviewprivate.h"
 #include <glib.h>
 
 /**

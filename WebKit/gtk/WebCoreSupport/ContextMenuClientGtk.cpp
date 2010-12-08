@@ -18,20 +18,20 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
-#include "ContextMenuController.h"
 
+#include "ContextMenu.h"
+#include "ContextMenuController.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include <wtf/text/CString.h>
-
-#include <glib/gi18n-lib.h>
-#include <glib-object.h>
-#include <gtk/gtk.h>
 #include "webkitprivate.h"
+#include "webkitwebviewprivate.h"
+#include <glib-object.h>
+#include <glib/gi18n-lib.h>
+#include <gtk/gtk.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

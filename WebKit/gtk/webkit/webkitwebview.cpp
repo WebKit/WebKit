@@ -29,26 +29,15 @@
 #include "config.h"
 #include "webkitwebview.h"
 
-#include "webkitdownload.h"
-#include "webkitenumtypes.h"
-#include "webkitgeolocationpolicydecision.h"
-#include "webkitmarshal.h"
-#include "webkitnetworkrequest.h"
-#include "webkitnetworkresponse.h"
-#include "webkitprivate.h"
-#include "webkitwebinspector.h"
-#include "webkitwebbackforwardlist.h"
-#include "webkitwebhistoryitem.h"
-
 #include "AXObjectCache.h"
 #include "AbstractDatabase.h"
 #include "BackForwardListImpl.h"
-#include "MemoryCache.h"
+#include "Chrome.h"
 #include "ChromeClientGtk.h"
 #include "ClipboardUtilitiesGtk.h"
+#include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
 #include "ContextMenuController.h"
-#include "ContextMenu.h"
 #include "Cursor.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -56,29 +45,29 @@
 #include "DragClientGtk.h"
 #include "DragController.h"
 #include "DragData.h"
-#include "EditorClientGtk.h"
 #include "Editor.h"
+#include "EditorClientGtk.h"
 #include "EventHandler.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
-#include <glib/gi18n-lib.h>
-#include <GOwnPtr.h>
-#include <GOwnPtrGtk.h>
+#include "GOwnPtrGtk.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
+#include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include "InspectorClientGtk.h"
+#include "MemoryCache.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
 #include "PageCache.h"
 #include "Pasteboard.h"
-#include "PasteboardHelperGtk.h"
 #include "PasteboardHelper.h"
+#include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
@@ -87,9 +76,21 @@
 #include "ScriptValue.h"
 #include "Scrollbar.h"
 #include "webkit/WebKitDOMDocumentPrivate.h"
-#include <wtf/text/CString.h>
-
+#include "webkitdownload.h"
+#include "webkitenumtypes.h"
+#include "webkitgeolocationpolicydecision.h"
+#include "webkitmarshal.h"
+#include "webkitnetworkrequest.h"
+#include "webkitnetworkresponse.h"
+#include "webkitprivate.h"
+#include "webkitwebbackforwardlist.h"
+#include "webkitwebhistoryitem.h"
+#include "webkitwebinspector.h"
+#include "webkitwebviewprivate.h"
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n-lib.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitwebview
@@ -5056,4 +5057,55 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)
 #else
     return 0;
 #endif
+}
+
+namespace WebKit {
+
+WebCore::Page* core(WebKitWebView* webView)
+{
+    if (!webView)
+        return 0;
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv ? priv->corePage : 0;
+}
+
+WebKitWebView* kit(WebCore::Page* corePage)
+{
+    if (!corePage)
+        return 0;
+
+    ASSERT(corePage->chrome());
+    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
+    return client ? client->webView() : 0;
+}
+
+void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
+{
+    if (!node->hasTagName(HTMLNames::videoTag))
+        return;
+
+#if ENABLE(VIDEO)
+    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    // First exit Fullscreen for the old mediaElement.
+    if (priv->fullscreenVideoController)
+        priv->fullscreenVideoController->exitFullscreen();
+
+    priv->fullscreenVideoController = new FullscreenVideoController;
+    priv->fullscreenVideoController->setMediaElement(videoElement);
+    priv->fullscreenVideoController->enterFullscreen();
+#endif
+}
+
+void webViewExitFullscreen(WebKitWebView* webView)
+{
+#if ENABLE(VIDEO)
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->fullscreenVideoController)
+        priv->fullscreenVideoController->exitFullscreen();
+#endif
+}
+
 }

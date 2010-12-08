@@ -34,8 +34,8 @@
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameNetworkingContextGtk.h"
-#include "FrameView.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "GOwnPtr.h"
 #include "GRefPtr.h"
 #include "GtkPluginWidget.h"
@@ -45,6 +45,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "Language.h"
 #include "MIMETypeRegistry.h"
@@ -52,11 +53,10 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PluginDatabase.h"
+#include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
-#include "ProgressTracker.h"
-#include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "webkiterror.h"
 #include "webkitnetworkrequest.h"
@@ -66,14 +66,14 @@
 #include "webkitwebnavigationaction.h"
 #include "webkitwebpolicydecision.h"
 #include "webkitwebview.h"
-#include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
-
+#include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <stdio.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 

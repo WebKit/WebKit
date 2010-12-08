@@ -21,13 +21,14 @@
 #include "InspectorClientGtk.h"
 
 #include "Frame.h"
-#include "webkitwebview.h"
-#include "webkitwebinspector.h"
-#include "webkitprivate.h"
-#include "webkitversion.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "webkitprivate.h"
+#include "webkitversion.h"
+#include "webkitwebinspector.h"
+#include "webkitwebview.h"
+#include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

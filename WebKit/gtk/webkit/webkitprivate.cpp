@@ -90,25 +90,6 @@ WebKitWebFrame* kit(WebCore::Frame* coreFrame)
     return client ? client->webFrame() : 0;
 }
 
-WebCore::Page* core(WebKitWebView* webView)
-{
-    if (!webView)
-        return 0;
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    return priv ? priv->corePage : 0;
-}
-
-WebKitWebView* kit(WebCore::Page* corePage)
-{
-    if (!corePage)
-        return 0;
-
-    ASSERT(corePage->chrome());
-    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
-    return client ? client->webView() : 0;
-}
-
 WebKitWebNavigationReason kit(WebCore::NavigationType type)
 {
     return (WebKitWebNavigationReason)type;
@@ -316,32 +297,3 @@ void webkit_init()
 
     soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
 }
-
-void webkitWebViewEnterFullscreen(WebKitWebView* webView, Node* node)
-{
-    if (!node->hasTagName(HTMLNames::videoTag))
-        return;
-
-#if ENABLE(VIDEO)
-    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
-    WebKitWebViewPrivate* priv = webView->priv;
-
-    // First exit Fullscreen for the old mediaElement.
-    if (priv->fullscreenVideoController)
-        priv->fullscreenVideoController->exitFullscreen();
-
-    priv->fullscreenVideoController = new FullscreenVideoController;
-    priv->fullscreenVideoController->setMediaElement(videoElement);
-    priv->fullscreenVideoController->enterFullscreen();
-#endif
-}
-
-void webkitWebViewExitFullscreen(WebKitWebView* webView)
-{
-#if ENABLE(VIDEO)
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->fullscreenVideoController)
-        priv->fullscreenVideoController->exitFullscreen();
-#endif
-}
-

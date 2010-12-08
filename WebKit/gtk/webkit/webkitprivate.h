@@ -57,7 +57,6 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "FrameLoaderClient.h"
-#include "FullscreenVideoController.h"
 #include "Node.h"
 #include "Page.h"
 #include "PlatformString.h"
@@ -87,9 +86,6 @@ namespace WebKit {
     WebCore::Frame* core(WebKitWebFrame*);
     WebKitWebFrame* kit(WebCore::Frame*);
 
-    WebCore::Page* core(WebKitWebView*);
-    WebKitWebView* kit(WebCore::Page*);
-
     WebCore::HistoryItem* core(WebKitWebHistoryItem*);
     WebKitWebHistoryItem* kit(PassRefPtr<WebCore::HistoryItem>);
 
@@ -110,15 +106,6 @@ namespace WebKit {
     WebKitHitTestResult* kit(const WebCore::HitTestResult&);
 
     PasteboardHelperGtk* pasteboardHelperInstance();
-
-    typedef struct DroppingContext_ {
-        WebKitWebView* webView;
-        GdkDragContext* gdkContext;
-        RefPtr<WebCore::DataObjectGtk> dataObject;
-        WebCore::IntPoint lastMotionPosition;
-        int pendingDataRequests;
-        bool dropHappened;
-    } DroppingContext;
 }
 
 extern "C" {
@@ -130,67 +117,6 @@ extern "C" {
 
 #define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
-
-    #define WEBKIT_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate))
-    typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
-    struct _WebKitWebViewPrivate {
-        WebCore::Page* corePage;
-        PlatformRefPtr<WebKitWebSettings> webSettings;
-        PlatformRefPtr<WebKitWebInspector> webInspector;
-        PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
-
-        WebKitWebFrame* mainFrame;
-        PlatformRefPtr<WebKitWebBackForwardList> backForwardList;
-
-        PlatformRefPtr<GtkMenu> currentMenu;
-        gint lastPopupXPosition;
-        gint lastPopupYPosition;
-
-        HashSet<GtkWidget*> children;
-        bool editable;
-        PlatformRefPtr<GtkIMContext> imContext;
-
-        gboolean transparent;
-
-        PlatformRefPtr<GtkAdjustment> horizontalAdjustment;
-        PlatformRefPtr<GtkAdjustment> verticalAdjustment;
-
-#ifndef GTK_API_VERSION_2
-        // GtkScrollablePolicy needs to be checked when
-        // driving the scrollable adjustment values
-        GtkScrollablePolicy horizontalScrollingPolicy;
-        GtkScrollablePolicy verticalScrollingPolicy;
-#endif
-
-        gboolean zoomFullContent;
-        WebKitLoadStatus loadStatus;
-        CString encoding;
-        CString customEncoding;
-
-        CString iconURI;
-
-        gboolean disposing;
-        gboolean usePrimaryForPaste;
-
-#if ENABLE(VIDEO)
-        FullscreenVideoController* fullscreenVideoController;
-#endif
-
-        // These are hosted here because the DataSource object is
-        // created too late in the frame loading process.
-        PlatformRefPtr<WebKitWebResource> mainResource;
-        CString mainResourceIdentifier;
-        PlatformRefPtr<GHashTable> subResources;
-        CString tooltipText;
-        WebCore::IntRect tooltipArea;
-
-        int currentClickCount;
-        WebCore::IntPoint previousClickPoint;
-        guint previousClickButton;
-        guint32 previousClickTime;
-        HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
-        HashMap<GdkDragContext*, WebKit::DroppingContext*> droppingContexts;
-    };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
     typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
@@ -271,39 +197,6 @@ extern "C" {
     WebKitWebWindowFeatures*
     webkit_web_window_features_new_from_core_features (const WebCore::WindowFeatures& features);
 
-    void
-    webkit_web_view_notify_ready (WebKitWebView* web_view);
-
-    void
-    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request, const WebCore::ResourceResponse& response = WebCore::ResourceResponse(), WebCore::ResourceHandle* handle = 0);
-
-    void
-    webkit_web_view_add_resource(WebKitWebView*, const char*, WebKitWebResource*);
-
-    void
-    webkit_web_view_add_main_resource(WebKitWebView*, const char*, WebKitWebResource*);
-
-    void
-    webkit_web_view_remove_resource(WebKitWebView*, const char*);
-
-    WebKitWebResource*
-    webkit_web_view_get_resource(WebKitWebView*, char*);
-
-    WebKitWebResource*
-    webkit_web_view_get_main_resource(WebKitWebView*);
-
-    void
-    webkit_web_view_clear_resources(WebKitWebView*);
-
-    GList*
-    webkit_web_view_get_subresources(WebKitWebView*);
-
-    void
-    webkit_web_view_set_tooltip_text(WebKitWebView*, const char*);
-
-    GtkMenu*
-    webkit_web_view_get_context_menu(WebKitWebView*);
-
     WebKitDownload*
     webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response);
 
@@ -335,17 +228,11 @@ extern "C" {
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 
-    WEBKIT_API gchar*
-    webkit_web_view_get_selected_text (WebKitWebView* web_view);
-
     WEBKIT_API void
     webkit_web_settings_add_extra_plugin_directory (WebKitWebView *web_view, const gchar* directory);
 
     GSList*
     webkit_web_settings_get_enchant_dicts(WebKitWebView* web_view);
-
-    bool
-    webkit_web_view_use_primary_for_paste(WebKitWebView* web_view);
 
     GHashTable*
     webkit_history_items(void);
@@ -363,8 +250,8 @@ extern "C" {
     WEBKIT_API WebKitWebDatabase *
     webkit_security_origin_get_web_database(WebKitSecurityOrigin* securityOrigin, const char* databaseName);
 
-    void webkitWebViewEnterFullscreen(WebKitWebView* webView, WebCore::Node* node);
-    void webkitWebViewExitFullscreen(WebKitWebView* webView);
+    WEBKIT_API void
+    webkit_web_frame_layout(WebKitWebFrame* frame);
 }
 
 #endif

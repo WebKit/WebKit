@@ -33,6 +33,7 @@
 #include "PasteboardHelper.h"
 #include "RenderObject.h"
 #include "webkitprivate.h"
+#include "webkitwebviewprivate.h"
 #include "webkitwebview.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
