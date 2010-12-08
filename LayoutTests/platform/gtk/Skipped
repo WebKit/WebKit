@@ -5584,3 +5584,6 @@ media/controls-without-preload.html
 fast/history/history-back-initial-vs-final-url.html
 http/tests/navigation/post-frames-goback1.html
 http/tests/navigation/postredirect-frames-goback1.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50687
+fast/dom/HTMLProgressElement/progress-element.html
