@@ -49,7 +49,6 @@ module html {
         attribute [Reflect] boolean autofocus;
         attribute boolean multiple;
         attribute [ConvertNullToNullString] DOMString name;
-        attribute [Reflect] boolean required;
         attribute long size;
         
         [OldStyleObjC] void add(in HTMLElement element, in HTMLElement before) raises(DOMException);

@@ -1,3 +1,30 @@
+2010-12-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, rolling out r73494.
+        http://trac.webkit.org/changeset/73494
+        https://bugs.webkit.org/show_bug.cgi?id=50380
+
+        The tests added are crashing in the debug bots (macn and gtk)
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser):
+        (WebCore::HTMLSelectElement::listBoxSelectItem):
+        (WebCore::HTMLSelectElement::add):
+        (WebCore::HTMLSelectElement::remove):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::setLength):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::isOptionalFormControl):
+        * html/HTMLSelectElement.idl:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::valueMissing):
+
 2010-12-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

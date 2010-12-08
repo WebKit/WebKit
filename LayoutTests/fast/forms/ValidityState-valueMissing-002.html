@@ -1,69 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
 <title>required and basic valueMissing 2</title>
-<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
-<script src="../../fast/js/resources/js-test-pre.js"></script>
-</head>
-<body>
-<p id="description"></p>
-<div id="console"></div>
-<input id="input" name="victim" value="something" required/>
-<textarea id="textarea" name="victim" required>something</textarea>
-<select id="select-with-placeholder" name="victim" required>
-  <option value="" />
-  <option value="X" selected>X</option>
-</select>
-<select id="select-without-placeholder" name="victim" required>
-  <option value="X" selected>X</option>
-  <option value="" />
-</select>
-<select id="select-with-fake-placeholder-size2" name="victim" size="2" required>
-  <option value="" />
-  <option value="X" selected>X</option>
-</select>
-<select id="select-without-fake-placeholder-size2" name="victim" size="2" required>
-  <option value="X" selected>X</option>
-  <option value="" />
-</select>
-<select id="select-with-fake-placeholder-multiple" name="victim" multiple required>
-  <option value="" />
-  <option value="X" selected>X</option>
-</select>
-<select id="select-without-fake-placeholder-multiple" name="victim" multiple required>
-  <option value="X" selected>X</option>
-  <option value="" />
-</select>
-<select id="select-with-fake-placeholder-size2-multiple" name="victim" multiple size="2" required>
-  <option value="" />
-  <option value="X" selected>X</option>
-</select>
-<select id="select-without-fake-placeholder-size2-multiple" name="victim" multiple size="2" required>
-  <option value="X" selected>X</option>
-  <option value="" />
-</select>
 <script language="JavaScript" type="text/javascript">
-    function valueMissingFor(id) {
-        return document.getElementById(id).validity.valueMissing;
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
     }
 
-    description("This test checks validity.valueMissing with some values or options with some values selected.");
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
 
-    v = document.getElementsByName("victim");
+        v = document.getElementsByName("victim");
 
-    shouldBeFalse('valueMissingFor("input")');
-    shouldBeFalse('valueMissingFor("textarea")');
-    shouldBeFalse('valueMissingFor("select-with-placeholder")');
-    shouldBeFalse('valueMissingFor("select-without-placeholder")');
-    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-size2")');
-    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-size2")');
-    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-multiple")');
-    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-multiple")');
-    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-size2-multiple")');
-    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-size2-multiple")');
-
-    var successfullyParsed = true;
+        log((!v[0].validity.valueMissing && !v[1].validity.valueMissing) ? "SUCCESS" : "FAILURE");
+    }
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+</head>
+<body onload="test()">
+<p>There are two form control elements below, both required and with some value:
+validity.valueMissing should be false in both cases.</p>
+<input name="victim" value="something" required/>
+<textarea name="victim" required>something</textarea>
+<hr>
+<ol id="console"></ol>
 </body>
 </html>

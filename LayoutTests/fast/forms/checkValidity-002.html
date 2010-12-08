@@ -7,33 +7,19 @@
 <body>
 <p id="description"></p>
 <form method="get">
-<input id="input-empty" name="victim" type="text" required/>
-<input id="input-pattern-mismatch" name="victim" type="text" pattern="Lorem ipsum" value="Loremipsum"/>
-<textarea id="textarea" name="victim" required></textarea>
-<select id="select-placeholder" name="victim" required>
-  <option value="" selected />
-  <option value="X">X</option>
-</select>
-<select id="select-non-placeholder" name="victim" required>
-  <option value="X">X</option>
-  <option value="" selected />
-</select>
+<input name="victim" type="text" required/>
+<input name="victim" type="text" pattern="Lorem ipsum" value="Loremipsum"/>
+<textarea name="victim" required></textarea>
 </form>
 <div id="console"></div>
 <script>
-    function checkValidityFor(id) {
-        return document.getElementById(id).checkValidity();
-    }
+description("This test checks if checkValidity() returns correctly a false (meaning error) result on invalid elements.");
 
-    description("This test checks if checkValidity() returns correctly a false (meaning error) result on invalid elements, and returns a true result on a blank but valid elements. Blank but non-placeholder label options are valid.");
+v = document.getElementsByName("victim");
+for (i = 0; i < v.length; i++)
+    shouldBe("v[i].checkValidity()", "false");
 
-    shouldBeFalse('checkValidityFor("input-empty")');
-    shouldBeFalse('checkValidityFor("input-pattern-mismatch")');
-    shouldBeFalse('checkValidityFor("textarea")');
-    shouldBeFalse('checkValidityFor("select-placeholder")');
-    shouldBeTrue('checkValidityFor("select-non-placeholder")');
-
-    var successfullyParsed = true;
+var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

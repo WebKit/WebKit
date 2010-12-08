@@ -1,3 +1,31 @@
+2010-12-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, rolling out r73494.
+        http://trac.webkit.org/changeset/73494
+        https://bugs.webkit.org/show_bug.cgi?id=50380
+
+        The tests added are crashing in the debug bots (macn and gtk)
+
+        * fast/forms/ValidityState-valueMissing-001-expected.txt:
+        * fast/forms/ValidityState-valueMissing-001.html:
+        * fast/forms/ValidityState-valueMissing-002-expected.txt:
+        * fast/forms/ValidityState-valueMissing-002.html:
+        * fast/forms/ValidityState-valueMissing-003-expected.txt:
+        * fast/forms/ValidityState-valueMissing-003.html:
+        * fast/forms/checkValidity-002-expected.txt:
+        * fast/forms/checkValidity-002.html:
+        * fast/forms/required-attribute-001-expected.txt:
+        * fast/forms/required-attribute-001.html:
+        * fast/forms/required-attribute-002-expected.txt:
+        * fast/forms/required-attribute-002.html:
+        * fast/forms/resources/select-live-pseudo-selectors.js: Removed.
+        * fast/forms/script-tests/validationMessage.js:
+        * fast/forms/select-live-pseudo-selectors-expected.txt: Removed.
+        * fast/forms/select-live-pseudo-selectors.html: Removed.
+        * fast/forms/validationMessage-expected.txt:
+        * platform/mac/fast/objc/dom-html-select-live-pseudo-selectors-expected.txt: Removed.
+        * platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html: Removed.
+
 2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Just enable inspector's tests for chromium linux.
