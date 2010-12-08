@@ -1,3 +1,18 @@
+2010-12-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Fixes a build failure because WebChromeClient.cpp uses WebCore::Cursor.
+        This patch adds an include of QuartzCore/CATransform3D, which includes
+        a file that has a 'Cursor' object defined. So I had to qualify the
+        use of Cursor in WebChromeClient.cpp.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setCursor):
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

@@ -32,6 +32,9 @@
 #include <string.h> //for memcpy
 #include <wtf/FastAllocBase.h>
 
+#if PLATFORM(CA)
+#include <QuartzCore/CATransform3D.h>
+#endif
 #if PLATFORM(CG)
 #include <CoreGraphics/CGAffineTransform.h>
 #elif PLATFORM(CAIRO)
@@ -309,7 +312,12 @@ public:
         return result;
     }
 
+#if PLATFORM(CA)
+    TransformationMatrix(const CATransform3D&);
+    operator CATransform3D() const;
+#endif
 #if PLATFORM(CG)
+    TransformationMatrix(const CGAffineTransform&);
     operator CGAffineTransform() const;
 #elif PLATFORM(CAIRO)
     operator cairo_matrix_t() const;

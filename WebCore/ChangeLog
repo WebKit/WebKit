@@ -1,3 +1,47 @@
+2010-12-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Added copy constructors and casting operators to go between 
+        TransformationMatrix and CATransform3D. Also added a copy
+        constructor to go from CGAffineTransform to TransformationMatrix.
+        Used these new methods to clean up platform CA code. This will
+        make it easier to port to Windows.
+
+        I also fixed a couple of build issues found when trying out a 
+        Windows build.
+
+        This is a resubmission of changesets r73477 and r73483 with a 
+        fix for the SL build. The failure was because TransformationMatrix
+        included QuartzCore/CATransform3D.h which brought in some system
+        libraries, including Quickdraw, which has a definition for
+        'Cursor' which clashed with WebCore's 'Cursor' class. So I had
+        to qualify its use in WebChromeClient.cpp in WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsTransform):
+        (WebCore::GraphicsLayerCA::ensureCloneLayers):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+        * platform/graphics/ca/TransformationMatrixCA.cpp: Copied from WebCore/platform/graphics/ca/TransformationMatrixCA.cpp.
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::setFromValue):
+        (PlatformCAAnimation::setToValue):
+        (PlatformCAAnimation::setValues):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::transform):
+        (PlatformCALayer::setTransform):
+        (PlatformCALayer::sublayerTransform):
+        (PlatformCALayer::setSublayerTransform):
+        (PlatformCALayer::contentsTransform):
+        (PlatformCALayer::setContentsTransform):
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        (WebCore::TransformationMatrix::TransformationMatrix):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

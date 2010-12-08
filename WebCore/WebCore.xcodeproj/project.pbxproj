@@ -1009,6 +1009,7 @@
 		49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */; };
 		49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */; };
 		49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FC0102CF23C00187DD3 /* CanvasStyle.h */; };
+		494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */; };
 		494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7930F55C8EE00747828 /* WebKitPoint.h */; };
 		494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */; };
 		494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD79C0F55C94C00747828 /* JSWebKitPoint.h */; };
@@ -7146,6 +7147,7 @@
 		49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext2D.idl; path = canvas/CanvasRenderingContext2D.idl; sourceTree = "<group>"; };
 		49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasStyle.cpp; path = canvas/CanvasStyle.cpp; sourceTree = "<group>"; };
 		49484FC0102CF23C00187DD3 /* CanvasStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasStyle.h; path = canvas/CanvasStyle.h; sourceTree = "<group>"; };
+		494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformationMatrixCA.cpp; path = ca/TransformationMatrixCA.cpp; sourceTree = "<group>"; };
 		494BD7930F55C8EE00747828 /* WebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPoint.h; sourceTree = "<group>"; };
 		494BD7940F55C8EE00747828 /* WebKitPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPoint.idl; sourceTree = "<group>"; };
 		494BD79B0F55C94C00747828 /* JSWebKitPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPoint.cpp; sourceTree = "<group>"; };
@@ -12805,6 +12807,7 @@
 				499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */,
 				499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */,
 				499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */,
+				494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */,
 			);
 			name = ca;
 			sourceTree = "<group>";
@@ -24098,6 +24101,7 @@
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
 				4958782112A57DDF007238AC /* PlatformCAAnimationMac.mm in Sources */,
 				4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */,
+				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

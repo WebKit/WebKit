@@ -519,7 +519,7 @@ void WebChromeClient::chooseIconForFiles(const Vector<String>&, FileChooser*)
     notImplemented();
 }
 
-void WebChromeClient::setCursor(const Cursor& cursor)
+void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 {
 #if USE(LAZY_NATIVE_CURSOR)
     m_page->send(Messages::WebPageProxy::SetCursor(cursor));
