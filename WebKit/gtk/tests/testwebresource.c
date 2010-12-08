@@ -279,8 +279,13 @@ static void test_web_resource_sub_resource_loading()
     g_assert(sub_resources->next);
     g_assert(!sub_resources->next->next);
 
-    g_assert(WEBKIT_WEB_RESOURCE(sub_resources->data) == sub_resource);
-    
+    // Test that the object we got from the data source is the same
+    // that went through resource-request-starting. Note that the order is
+    // not important (and not guaranteed since the resources are stored in a
+    // hashtable).
+    g_assert(WEBKIT_WEB_RESOURCE(sub_resources->data) == sub_resource
+             || WEBKIT_WEB_RESOURCE(sub_resources->next->data) == sub_resource);
+
     g_object_unref(web_view);
     g_main_loop_unref(loop);
 }
@@ -298,7 +303,7 @@ int main(int argc, char** argv)
 
     soup_server_add_handler(server, NULL, server_callback, NULL, NULL);
 
-    soup_uri = soup_uri_new ("http://127.0.0.1/");                             
+    soup_uri = soup_uri_new("http://127.0.0.1/");
     soup_uri_set_port(soup_uri, soup_server_get_port(server));
 
     base_uri = soup_uri_to_string(soup_uri, FALSE);

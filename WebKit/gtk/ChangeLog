@@ -1,3 +1,13 @@
+2010-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        The storage for the subresources is a GHashTable which does not
+        guarantee order, so we need to make our checking more resilient.
+
+        * tests/testwebresource.c:
+        (test_web_resource_sub_resource_loading):
+
 2010-12-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
