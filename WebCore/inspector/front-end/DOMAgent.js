@@ -80,8 +80,6 @@ WebInspector.DOMNode = function(doc, payload) {
         this.name = payload.name;
         this.value = payload.value;
     }
-
-    InspectorBackend.registerDomainDispatcher("DOM", this);
 }
 
 WebInspector.DOMNode.prototype = {
@@ -302,6 +300,7 @@ WebInspector.DOMAgent = function() {
     this._window = new WebInspector.DOMWindow(this);
     this._idToDOMNode = null;
     this.document = null;
+    InspectorBackend.registerDomainDispatcher("DOM", this);
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -352,7 +351,7 @@ WebInspector.DOMAgent.prototype = {
             elem.updateTitle();
     },
 
-    _attributesUpdated: function(nodeId, attrsArray)
+    attributesUpdated: function(nodeId, attrsArray)
     {
         var node = this._idToDOMNode[nodeId];
         node._setAttributesPayload(attrsArray);
@@ -360,7 +359,7 @@ WebInspector.DOMAgent.prototype = {
         this.document._fireDomEvent("DOMAttrModified", event);
     },
 
-    _characterDataModified: function(nodeId, newValue)
+    characterDataModified: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
@@ -374,7 +373,7 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
-    _setDocument: function(payload)
+    setDocument: function(payload)
     {
         this._idToDOMNode = {};
         if (payload && "id" in payload) {
@@ -387,13 +386,13 @@ WebInspector.DOMAgent.prototype = {
         WebInspector.panels.elements.setDocument(this.document);
     },
 
-    _setDetachedRoot: function(payload)
+    setDetachedRoot: function(payload)
     {
         var root = new WebInspector.DOMNode(this.document, payload);
         this._idToDOMNode[payload.id] = root;
     },
 
-    _setChildNodes: function(parentId, payloads)
+    setChildNodes: function(parentId, payloads)
     {
         var parent = this._idToDOMNode[parentId];
         parent._setChildrenPayload(payloads);
@@ -410,7 +409,7 @@ WebInspector.DOMAgent.prototype = {
         }
     },
 
-    _childNodeCountUpdated: function(nodeId, newValue)
+    childNodeCountUpdated: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._childNodeCount = newValue;
@@ -420,7 +419,7 @@ WebInspector.DOMAgent.prototype = {
             treeElement.hasChildren = newValue;
     },
 
-    _childNodeInserted: function(parentId, prevId, payload)
+    childNodeInserted: function(parentId, prevId, payload)
     {
         var parent = this._idToDOMNode[parentId];
         var prev = this._idToDOMNode[prevId];
@@ -430,7 +429,7 @@ WebInspector.DOMAgent.prototype = {
         this.document._fireDomEvent("DOMNodeInserted", event);
     },
 
-    _childNodeRemoved: function(parentId, nodeId)
+    childNodeRemoved: function(parentId, nodeId)
     {
         var parent = this._idToDOMNode[parentId];
         var node = this._idToDOMNode[nodeId];
@@ -524,44 +523,4 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
     if (!node)
         return;
     InspectorBackend.getEventListenersForNode(node.id, callback);
-}
-
-WebInspector.attributesUpdated = function()
-{
-    this.domAgent._attributesUpdated.apply(this.domAgent, arguments);
-}
-
-WebInspector.characterDataModified = function()
-{
-    this.domAgent._characterDataModified.apply(this.domAgent, arguments);
-}
-
-WebInspector.setDocument = function()
-{
-    this.domAgent._setDocument.apply(this.domAgent, arguments);
-}
-
-WebInspector.setDetachedRoot = function()
-{
-    this.domAgent._setDetachedRoot.apply(this.domAgent, arguments);
-}
-
-WebInspector.setChildNodes = function()
-{
-    this.domAgent._setChildNodes.apply(this.domAgent, arguments);
-}
-
-WebInspector.childNodeCountUpdated = function()
-{
-    this.domAgent._childNodeCountUpdated.apply(this.domAgent, arguments);
-}
-
-WebInspector.childNodeInserted = function()
-{
-    this.domAgent._childNodeInserted.apply(this.domAgent, arguments);
-}
-
-WebInspector.childNodeRemoved = function()
-{
-    this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }

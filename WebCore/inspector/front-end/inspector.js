@@ -1366,7 +1366,7 @@ WebInspector.inspectedURLChanged = function(url)
 WebInspector.didCommitLoad = function()
 {
     // Cleanup elements panel early on inspected page refresh.
-    WebInspector.setDocument(null);
+    WebInspector.domAgent.setDocument(null);
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)

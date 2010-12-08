@@ -34,12 +34,12 @@ module core {
     interface [Conditional=INSPECTOR] Inspector {
         [notify] void addRecordToTimeline(out Object record);
         [notify] void addNodesToSearchResult(out Array nodeIds);
-        [notify] void attributesUpdated(out long id, out Array attributes);
+        [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
         [notify] void bringToFront();
-        [notify] void characterDataModified(out long id, out String newValue);
-        [notify] void childNodeCountUpdated(out long id, out int newValue);
-        [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
-        [notify] void childNodeRemoved(out long parentId, out long id);
+        [notify, domain=DOM] void characterDataModified(out long id, out String newValue);
+        [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
+        [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
         [notify] void didCommitLoad();
         [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
         [notify] void disconnectFromBackend();
@@ -48,9 +48,9 @@ module core {
         [notify] void loadEventFired(out double time);
         [notify] void reset();
         [notify] void resetProfilesPanel();
-        [notify] void setChildNodes(out long parentId, out Array nodes);
-        [notify] void setDetachedRoot(out Object root);
-        [notify] void setDocument(out Value root);
+        [notify, domain=DOM] void setChildNodes(out long parentId, out Array nodes);
+        [notify, domain=DOM] void setDetachedRoot(out Object root);
+        [notify, domain=DOM] void setDocument(out Value root);
         [notify] void showPanel(out String panel);
         [notify] void timelineProfilerWasStarted();
         [notify] void timelineProfilerWasStopped();
