@@ -1,3 +1,21 @@
+2010-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected results after r73488.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2010-12-08  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, updated baselines of
