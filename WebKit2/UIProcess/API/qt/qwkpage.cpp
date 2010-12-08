@@ -360,7 +360,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* setWindowFrame */
         0,  /* runBeforeUnloadConfirmPanel */
         0,  /* didDraw */
-        0   /* pageDidScroll */
+        0,  /* pageDidScroll */
+        0   /* exceededDatabaseQuota */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

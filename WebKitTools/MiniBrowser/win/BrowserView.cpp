@@ -118,7 +118,8 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         0,          /* setWindowFrame */
         0,          /* runBeforeUnloadConfirmPanel */
         0,          /* didDraw */
-        0           /* pageDidScroll */
+        0,          /* pageDidScroll */
+        0           /* exceededDatabaseQuota */
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);

@@ -1,3 +1,45 @@
+2010-12-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Implement WebChromeClient::exceededDatabaseQuota
+        https://bugs.webkit.org/show_bug.cgi?id=50656
+
+        The exceededDatabaseQuota call from the WebProcess to the UIProcess needs to be synchronous
+        because the new quota is checked directly after exceededDatabaseQuota returns in order to
+        determine if the new Database can be created.
+
+        Pass all of the details from the WebProcess to the UIProcess in order to inform the
+        decision in the UIProcess about the new quota. In WebKit1, these details were
+        fetched through an additional call to the API detailsForDatabase (which is infeasible in
+        WebKit2 since exceededDatabaseQuota is a synchronous call).
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add a version that takes 7 parameters.
+
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        Indicate that exceededDatabaseQuota is not implemented.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        Call the UIClient's exceededDatabaseQuota
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::exceededDatabaseQuota):
+        If the client does not implement exceededDatabaseQuota, return a the current quota.
+        * UIProcess/WebUIClient.h:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        Send a synchronous message to the UIProcess to ask for the new quota for the origin for the
+        given frame.
+
 2010-12-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

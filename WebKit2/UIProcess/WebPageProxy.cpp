@@ -58,6 +58,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
+#include "WebSecurityOrigin.h"
 #include "WebURLRequest.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -1559,6 +1560,14 @@ void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const Web
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, this);
     
     m_loaderClient.didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get(), authenticationChallenge->listener());
+}
+
+void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage, uint64_t& newQuota)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+
+    newQuota = m_uiClient.exceededDatabaseQuota(this, frame, origin.get(), databaseName, displayName, currentQuota, currentUsage, expectedUsage);
 }
 
 } // namespace WebKit

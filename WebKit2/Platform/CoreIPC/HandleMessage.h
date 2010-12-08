@@ -133,6 +133,12 @@ void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, Arguments1<R1>& 
     (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, replyArgs.argument1);
 }
 
+template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename R1>
+void callMemberFunction(const Arguments7<P1, P2, P3, P4, P5, P6, P7>& args, Arguments1<R1>& replyArgs, C* object, MF function)
+{
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, args.argument7, replyArgs.argument1);
+}
+
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1, typename R2>
 void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, Arguments2<R1, R2>& replyArgs, C* object, MF function)
 {

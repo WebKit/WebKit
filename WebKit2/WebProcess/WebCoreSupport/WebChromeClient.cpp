@@ -43,6 +43,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
 #include "WebSearchPopupMenu.h"
+#include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -420,9 +421,19 @@ void WebChromeClient::print(Frame*)
 }
 
 #if ENABLE(DATABASE)
-void WebChromeClient::exceededDatabaseQuota(Frame*, const String& databaseName)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    notImplemented();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    SecurityOrigin* origin = frame->document()->securityOrigin();
+
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
+    unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(origin);
+    unsigned long long newQuota = 0;
+    WebProcess::shared().connection()->sendSync(
+        Messages::WebPageProxy::ExceededDatabaseQuota(webFrame->frameID(), origin->databaseIdentifier(), databaseName, details.displayName(), currentQuota, details.currentUsage(), details.expectedUsage()),
+        Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID());
+
+    DatabaseTracker::tracker().setQuota(origin, newQuota);
 }
 #endif
 

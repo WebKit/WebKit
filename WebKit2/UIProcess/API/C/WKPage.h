@@ -153,6 +153,7 @@ typedef void (*WKPageSetWindowFrameCallback)(WKPageRef page, WKRect frame, const
 typedef bool (*WKPageRunBeforeUnloadConfirmPanelCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidDrawCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidScrollCallback)(WKPageRef page, const void *clientInfo);
+typedef unsigned long long (*WKPageExceededDatabaseQuotaCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage, const void *clientInfo);
 
 
 struct WKPageUIClient {
@@ -180,6 +181,7 @@ struct WKPageUIClient {
     WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
     WKPageDidDrawCallback                                               didDraw;
     WKPageDidScrollCallback                                             pageDidScroll;
+    WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

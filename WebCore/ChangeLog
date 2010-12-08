@@ -1,3 +1,13 @@
+2010-12-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Implement WebChromeClient::exceededDatabaseQuota
+        https://bugs.webkit.org/show_bug.cgi?id=50656
+
+        * WebCore.exp.in:
+        Export the symbol for SecurityOrigin::databaseIdentifier.
+
 2010-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r73521.

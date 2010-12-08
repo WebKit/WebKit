@@ -606,7 +606,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         setWindowFrame,
         runBeforeUnloadConfirmPanel,
         0,          /* didDraw */
-        0           /* pageDidScroll */
+        0,          /* pageDidScroll */
+        0           /* exceededDatabaseQuota */
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

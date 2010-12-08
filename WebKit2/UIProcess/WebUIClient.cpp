@@ -237,4 +237,12 @@ void WebUIClient::pageDidScroll(WebPageProxy* page)
     m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
 }
 
+unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage)
+{
+    if (!m_client.exceededDatabaseQuota)
+        return currentQuota;
+
+    return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentUsage, expectedUsage, m_client.clientInfo);
+}
+
 } // namespace WebKit

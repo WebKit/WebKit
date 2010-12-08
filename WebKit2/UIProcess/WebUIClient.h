@@ -44,6 +44,7 @@ class APIObject;
 class NativeWebKeyboardEvent;
 class WebFrameProxy;
 class WebPageProxy;
+class WebSecurityOrigin;
 
 class WebUIClient : public APIClient<WKPageUIClient> {
 public:
@@ -77,6 +78,8 @@ public:
 
     void didDraw(WebPageProxy*);
     void pageDidScroll(WebPageProxy*);
+
+    unsigned long long exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage);
 };
 
 } // namespace WebKit
