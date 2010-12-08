@@ -138,7 +138,8 @@ protected:
     virtual void adjustSliderThumbSize(RenderObject* object) const;
 
 #if ENABLE(VIDEO)
-    virtual void initMediaStyling(GtkStyle* style, bool force);
+    void initMediaColors();
+    void initMediaButtons();
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
@@ -170,6 +171,10 @@ private:
     GtkContainer* gtkContainer() const;
 
     bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect& rect, int flags = 0);
+#if ENABLE(VIDEO)
+    bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
+#endif
+    GtkStateType gtkIconState(RenderObject*);
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkContainer* m_gtkContainer;
@@ -186,13 +191,6 @@ private:
     const int m_mediaSliderThumbWidth;
     const int m_mediaSliderThumbHeight;
 
-    RefPtr<Image> m_fullscreenButton;
-    RefPtr<Image> m_muteButton;
-    RefPtr<Image> m_unmuteButton;
-    RefPtr<Image> m_playButton;
-    RefPtr<Image> m_pauseButton;
-    RefPtr<Image> m_seekBackButton;
-    RefPtr<Image> m_seekForwardButton;
     GtkThemeParts m_themeParts;
 #ifdef GTK_API_VERSION_2
     bool m_themePartsHaveRGBAColormap;

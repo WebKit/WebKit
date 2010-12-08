@@ -66,57 +66,59 @@ static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
     return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
-static gchar* getIconNameForTextDirection(const char* baseName)
+static void paintStockIcon(GraphicsContext* context, const IntPoint& iconPoint, GtkStyle* style, const char* iconName,
+                           GtkTextDirection direction, GtkStateType state, GtkIconSize iconSize)
 {
-    GString* nameWithDirection = g_string_new(baseName);
-    GtkTextDirection textDirection = gtk_widget_get_default_direction();
+    GtkIconSet* iconSet = gtk_style_lookup_icon_set(style, iconName);
+    PlatformRefPtr<GdkPixbuf> icon = adoptPlatformRef(gtk_icon_set_render_icon(iconSet, style, direction, state, iconSize, 0, 0));
 
-    if (textDirection == GTK_TEXT_DIR_RTL)
-        g_string_append(nameWithDirection, "-rtl");
-    else if (textDirection == GTK_TEXT_DIR_LTR)
-        g_string_append(nameWithDirection, "-ltr");
-
-    return g_string_free(nameWithDirection, FALSE);
+    cairo_t* cr = context->platformContext();
+    cairo_save(cr);
+    gdk_cairo_set_source_pixbuf(cr, icon.get(), iconPoint.x(), iconPoint.y());
+    cairo_paint(cr);
+    cairo_restore(cr);
 }
 
-void RenderThemeGtk::initMediaStyling(GtkStyle* style, bool force)
+static GtkIconSize getMediaButtonIconSize(int mediaIconSize)
 {
-    static bool stylingInitialized = false;
+    GtkIconSize iconSize = gtk_icon_size_from_name("webkit-media-button-size");
+    if (!iconSize)
+        iconSize = gtk_icon_size_register("webkit-media-button-size", mediaIconSize, mediaIconSize);
+    return iconSize;
+}
 
-    if (!stylingInitialized || force) {
-        m_panelColor = style->bg[GTK_STATE_NORMAL];
-        m_sliderColor = style->bg[GTK_STATE_ACTIVE];
-        m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
+void RenderThemeGtk::initMediaColors()
+{
+    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkContainer()));
+    m_panelColor = style->bg[GTK_STATE_NORMAL];
+    m_sliderColor = style->bg[GTK_STATE_ACTIVE];
+    m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
+}
 
-        // Names of these icons can vary because of text direction.
-        gchar* playButtonIconName = getIconNameForTextDirection("gtk-media-play");
-        gchar* seekBackButtonIconName = getIconNameForTextDirection("gtk-media-rewind");
-        gchar* seekForwardButtonIconName = getIconNameForTextDirection("gtk-media-forward");
+void RenderThemeGtk::initMediaButtons()
+{
+    static bool iconsInitialized = false;
 
-        m_fullscreenButton.clear();
-        m_muteButton.clear();
-        m_unmuteButton.clear();
-        m_playButton.clear();
-        m_pauseButton.clear();
-        m_seekBackButton.clear();
-        m_seekForwardButton.clear();
+    if (iconsInitialized)
+        return;
 
-        m_fullscreenButton = Image::loadPlatformThemeIcon("gtk-fullscreen", m_mediaIconSize);
-        // Note that the muteButton and unmuteButton take icons reflecting
-        // the *current* state. Hence, the unmuteButton represents the *muted*
-        // status, the muteButton represents the then current *unmuted* status.
-        m_muteButton = Image::loadPlatformThemeIcon("audio-volume-high", m_mediaIconSize);
-        m_unmuteButton = Image::loadPlatformThemeIcon("audio-volume-muted", m_mediaIconSize);
-        m_playButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(playButtonIconName), m_mediaIconSize);
-        m_pauseButton = Image::loadPlatformThemeIcon("gtk-media-pause", m_mediaIconSize);
-        m_seekBackButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(seekBackButtonIconName), m_mediaIconSize);
-        m_seekForwardButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(seekForwardButtonIconName), m_mediaIconSize);
+    PlatformRefPtr<GtkIconFactory> iconFactory = adoptPlatformRef(gtk_icon_factory_new());
+    GtkIconSource* iconSource = gtk_icon_source_new();
+    const char* icons[] = { "audio-volume-high", "audio-volume-muted" };
 
-        g_free(playButtonIconName);
-        g_free(seekBackButtonIconName);
-        g_free(seekForwardButtonIconName);
-        stylingInitialized = true;
+    gtk_icon_factory_add_default(iconFactory.get());
+
+    for (size_t i = 0; i < G_N_ELEMENTS(icons); ++i) {
+        gtk_icon_source_set_icon_name(iconSource, icons[i]);
+        GtkIconSet* iconSet = gtk_icon_set_new();
+        gtk_icon_set_add_source(iconSet, iconSource);
+        gtk_icon_factory_add(iconFactory.get(), icons[i], iconSet);
+        gtk_icon_set_unref(iconSet);
     }
+
+    gtk_icon_source_free(iconSource);
+
+    iconsInitialized = true;
 }
 #endif
 
@@ -146,13 +148,6 @@ RenderThemeGtk::RenderThemeGtk()
     , m_mediaSliderHeight(14)
     , m_mediaSliderThumbWidth(12)
     , m_mediaSliderThumbHeight(12)
-    , m_fullscreenButton(0)
-    , m_muteButton(0)
-    , m_unmuteButton(0)
-    , m_playButton(0)
-    , m_pauseButton(0)
-    , m_seekBackButton(0)
-    , m_seekForwardButton(0)
 #ifdef GTK_API_VERSION_2
     , m_themePartsHaveRGBAColormap(true)
 #endif
@@ -176,7 +171,8 @@ RenderThemeGtk::RenderThemeGtk()
     ++mozGtkRefCount;
 
 #if ENABLE(VIDEO)
-    initMediaStyling(gtk_rc_get_style(GTK_WIDGET(gtkContainer())), false);
+    initMediaColors();
+    initMediaButtons();
 #endif
 }
 
@@ -186,14 +182,6 @@ RenderThemeGtk::~RenderThemeGtk()
 
     if (!mozGtkRefCount)
         moz_gtk_shutdown();
-
-    m_fullscreenButton.clear();
-    m_muteButton.clear();
-    m_unmuteButton.clear();
-    m_playButton.clear();
-    m_pauseButton.clear();
-    m_seekBackButton.clear();
-    m_seekForwardButton.clear();
 
     gtk_widget_destroy(m_gtkWindow);
 }
@@ -264,6 +252,18 @@ static GtkTextDirection gtkTextDirection(TextDirection direction)
     default:
         return GTK_TEXT_DIR_NONE;
     }
+}
+
+GtkStateType RenderThemeGtk::gtkIconState(RenderObject* renderObject)
+{
+    if (!isEnabled(renderObject))
+        return GTK_STATE_INSENSITIVE;
+    if (isPressed(renderObject))
+        return GTK_STATE_ACTIVE;
+    if (isHovered(renderObject))
+        return GTK_STATE_PRELIGHT;
+
+    return GTK_STATE_NORMAL;
 }
 
 bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
@@ -467,32 +467,33 @@ void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
     style->resetBorder();
     style->resetPadding();
 
-    // FIXME: This should not be hard-coded.
-    IntSize size = IntSize(14, 14);
-    style->setWidth(Length(size.width(), Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    gint width = 0, height = 0;
+    gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &width, &height);
+    style->setWidth(Length(width, Fixed));
+    style->setHeight(Length(height, Fixed));
 }
 
-static IntRect centerRectVerticallyInParentInputElement(RenderObject* object, const IntRect& rect)
+static IntPoint centerRectVerticallyInParentInputElement(RenderObject* object, const IntRect& rect)
 {
-    IntRect centeredRect(rect);
     Node* input = object->node()->shadowAncestorNode(); // Get the renderer of <input> element.
-    if (!input->renderer()->isBox()) 
-        return centeredRect;
+    if (!input->renderer()->isBox())
+        return rect.topLeft();
 
     // If possible center the y-coordinate of the rect vertically in the parent input element.
     // We also add one pixel here to ensure that the y coordinate is rounded up for box heights
     // that are even, which looks in relation to the box text.
     IntRect inputContentBox = toRenderBox(input->renderer())->absoluteContentBox();
-    centeredRect.setY(inputContentBox.y() + (inputContentBox.height() - centeredRect.height() + 1) / 2);
-    return centeredRect;
+
+    return IntPoint(rect.x(), inputContentBox.y() + (inputContentBox.height() - rect.height() + 1) / 2);
 }
 
-bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* object, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    static Image* searchImage = Image::loadPlatformThemeIcon(GTK_STOCK_FIND, rect.width()).releaseRef();
-    IntRect centeredRect(centerRectVerticallyInParentInputElement(object, rect));
-    i.context->drawImage(searchImage, ColorSpaceDeviceRGB, centeredRect);
+    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkEntry()));
+    IntPoint iconPoint(centerRectVerticallyInParentInputElement(renderObject, rect));
+    paintStockIcon(paintInfo.context, iconPoint, style, GTK_STOCK_FIND,
+                   gtkTextDirection(renderObject->style()->direction()),
+                   gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
     return false;
 }
 
@@ -501,18 +502,19 @@ void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* select
     style->resetBorder();
     style->resetPadding();
 
-    // FIXME: This should not be hard-coded.
-    IntSize size = IntSize(14, 14);
-    style->setWidth(Length(size.width(), Fixed));
-    style->setHeight(Length(size.height(), Fixed));
+    gint width = 0, height = 0;
+    gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &width, &height);
+    style->setWidth(Length(width, Fixed));
+    style->setHeight(Length(height, Fixed));
 }
 
-bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* object, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    // TODO: Brightening up the image on hover is desirable here, I believe.
-    static Image* cancelImage = Image::loadPlatformThemeIcon(GTK_STOCK_CLEAR, rect.width()).releaseRef();
-    IntRect centeredRect(centerRectVerticallyInParentInputElement(object, rect));
-    i.context->drawImage(cancelImage, ColorSpaceDeviceRGB, centeredRect);
+    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkEntry()));
+    IntPoint iconPoint(centerRectVerticallyInParentInputElement(renderObject, rect));
+    paintStockIcon(paintInfo.context, iconPoint, style, GTK_STOCK_CLEAR,
+                   gtkTextDirection(renderObject->style()->direction()),
+                   gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
     return false;
 }
 
@@ -762,7 +764,7 @@ GtkWidget* RenderThemeGtk::gtkScrollbar()
 void RenderThemeGtk::platformColorsDidChange()
 {
 #if ENABLE(VIDEO)
-    initMediaStyling(gtk_rc_get_style(GTK_WIDGET(gtkContainer())), true);
+    initMediaColors();
 #endif
     RenderTheme::platformColorsDidChange();
 }
@@ -773,49 +775,50 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
     return String(mediaControlsGtkUserAgentStyleSheet, sizeof(mediaControlsGtkUserAgentStyleSheet));
 }
 
-static inline bool paintMediaButton(GraphicsContext* context, const IntRect& r, Image* image, Color panelColor, int mediaIconSize)
+bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)
 {
-    context->fillRect(FloatRect(r), panelColor, ColorSpaceDeviceRGB);
-    context->drawImage(image, ColorSpaceDeviceRGB,
-                       IntRect(r.x() + (r.width() - mediaIconSize) / 2,
-                               r.y() + (r.height() - mediaIconSize) / 2,
-                               mediaIconSize, mediaIconSize));
+    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkContainer()));
+    IntPoint iconPoint(rect.x() + (rect.width() - m_mediaIconSize) / 2,
+                       rect.y() + (rect.height() - m_mediaIconSize) / 2);
+    context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    paintStockIcon(context, iconPoint, style, iconName, gtkTextDirection(renderObject->style()->direction()),
+                   gtkIconState(renderObject), getMediaButtonIconSize(m_mediaIconSize));
 
     return false;
 }
 
-bool RenderThemeGtk::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeGtk::paintMediaFullscreenButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(paintInfo.context, r, m_fullscreenButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(renderObject, paintInfo.context, rect, GTK_STOCK_FULLSCREEN);
 }
 
-bool RenderThemeGtk::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeGtk::paintMediaMuteButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(renderObject);
     if (!mediaElement)
         return false;
 
-    return paintMediaButton(paintInfo.context, r, mediaElement->muted() ? m_unmuteButton.get() : m_muteButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(renderObject, paintInfo.context, rect, mediaElement->muted() ? "audio-volume-muted" : "audio-volume-high");
 }
 
-bool RenderThemeGtk::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeGtk::paintMediaPlayButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    Node* node = o->node();
+    Node* node = renderObject->node();
     if (!node)
         return false;
 
     MediaControlPlayButtonElement* button = static_cast<MediaControlPlayButtonElement*>(node);
-    return paintMediaButton(paintInfo.context, r, button->displayType() == MediaPlayButton ? m_playButton.get() : m_pauseButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(renderObject, paintInfo.context, rect, button->displayType() == MediaPlayButton ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 }
 
-bool RenderThemeGtk::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeGtk::paintMediaSeekBackButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(paintInfo.context, r, m_seekBackButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(renderObject, paintInfo.context, rect, GTK_STOCK_MEDIA_REWIND);
 }
 
-bool RenderThemeGtk::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeGtk::paintMediaSeekForwardButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(paintInfo.context, r, m_seekForwardButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(renderObject, paintInfo.context, rect, GTK_STOCK_MEDIA_FORWARD);
 }
 
 bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)

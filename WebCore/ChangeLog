@@ -1,3 +1,35 @@
+2010-12-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use gtk_icon_set_render_icon() to render icons in RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=50623
+
+        We don't need to cache the icons since the will be cached by GTK+,
+        and they will be rendered using the state and text direction.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintStockIcon):
+        (WebCore::getMediaButtonIconSize):
+        (WebCore::RenderThemeGtk::initMediaColors):
+        (WebCore::RenderThemeGtk::initMediaButtons):
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::~RenderThemeGtk):
+        (WebCore::RenderThemeGtk::gtkIconState):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::centerRectVerticallyInParentInputElement):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::platformColorsDidChange):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        (WebCore::RenderThemeGtk::paintMediaFullscreenButton):
+        (WebCore::RenderThemeGtk::paintMediaMuteButton):
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekBackButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekForwardButton):
+        * platform/gtk/RenderThemeGtk.h:
+
 2010-12-08  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.
