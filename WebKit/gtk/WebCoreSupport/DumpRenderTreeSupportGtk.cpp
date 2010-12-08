@@ -28,7 +28,9 @@
 #include "FrameLoaderClientGtk.h"
 #include "FrameView.h"
 #include "FrameTree.h"
+#include "GCController.h"
 #include "GraphicsContext.h"
+#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSElement.h"
 #include "JSLock.h"
@@ -377,3 +379,31 @@ void DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists()
     SecurityOrigin::resetOriginAccessWhitelists();
 }
 
+void DumpRenderTreeSupportGtk::gcCollectJavascriptObjects()
+{
+    gcController().garbageCollectNow();
+}
+
+void DumpRenderTreeSupportGtk::gcCollectJavascriptObjectsOnAlternateThread(bool waitUntilDone)
+{
+    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+}
+
+unsigned long DumpRenderTreeSupportGtk::gcCountJavascriptObjects()
+{
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
+}
+
+void DumpRenderTreeSupportGtk::layoutFrame(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return;
+
+    view->layout();
+}

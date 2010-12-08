@@ -33,6 +33,7 @@
 #include "EventSender.h"
 
 #include "DumpRenderTree.h"
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 
 #include <GtkVersioning.h>
 #include <JavaScriptCore/JSObjectRef.h>
@@ -49,7 +50,6 @@
 #include <string.h>
 
 extern "C" {
-    extern void webkit_web_frame_layout(WebKitWebFrame* frame);
     extern GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 }
 
@@ -443,7 +443,7 @@ static void sendOrQueueEvent(GdkEvent* event, bool shouldReplaySavedEvents)
 
 static void dispatchEvent(GdkEvent* event)
 {
-    webkit_web_frame_layout(mainFrame);
+    DumpRenderTreeSupportGtk::layoutFrame(mainFrame);
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     if (!view) {
         gdk_event_free(event);

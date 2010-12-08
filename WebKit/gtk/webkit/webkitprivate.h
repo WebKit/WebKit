@@ -351,15 +351,6 @@ extern "C" {
     webkit_history_items(void);
 
     WEBKIT_API void
-    webkit_gc_collect_javascript_objects();
-
-    WEBKIT_API void
-    webkit_gc_collect_javascript_objects_on_alternate_thread(gboolean waitUntilDone);
-
-    WEBKIT_API gsize
-    webkit_gc_count_javascript_objects();
-
-    WEBKIT_API void
     webkit_application_cache_set_maximum_size(unsigned long long size);
 
     WEBKIT_API unsigned int
@@ -371,9 +362,6 @@ extern "C" {
 
     WEBKIT_API WebKitWebDatabase *
     webkit_security_origin_get_web_database(WebKitSecurityOrigin* securityOrigin, const char* databaseName);
-
-    WEBKIT_API void
-    webkit_web_frame_layout(WebKitWebFrame* frame);
 
     void webkitWebViewEnterFullscreen(WebKitWebView* webView, WebCore::Node* node);
     void webkitWebViewExitFullscreen(WebKitWebView* webView);

@@ -47,9 +47,7 @@
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HTMLFrameOwnerElement.h"
-#include "JSDOMWindow.h"
 #include "JSElement.h"
-#include "JSLock.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderView.h"
@@ -876,23 +874,6 @@ WebKitLoadStatus webkit_web_frame_get_load_status(WebKitWebFrame* frame)
     return priv->loadStatus;
 }
 
-void webkit_gc_collect_javascript_objects()
-{
-    gcController().garbageCollectNow();
-}
-
-void webkit_gc_collect_javascript_objects_on_alternate_thread(gboolean waitUntilDone)
-{
-    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
-}
-
-gsize webkit_gc_count_javascript_objects()
-{
-    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
-
-}
-
 GtkPolicyType webkit_web_frame_get_horizontal_scrollbar_policy(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), GTK_POLICY_AUTOMATIC);
@@ -957,19 +938,6 @@ WebKitSecurityOrigin* webkit_web_frame_get_security_origin(WebKitWebFrame* frame
 
     priv->origin = kit(priv->coreFrame->document()->securityOrigin());
     return priv->origin;
-}
-
-void webkit_web_frame_layout(WebKitWebFrame* frame)
-{
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return;
-
-    FrameView* view = coreFrame->view();
-    if (!view)
-        return;
-
-    view->layout();
 }
 
 /**

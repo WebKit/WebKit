@@ -1,3 +1,25 @@
+2010-12-08  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Populate DumpRenderTreeSupportGtk (part III)
+        https://bugs.webkit.org/show_bug.cgi?id=48429
+
+        Moved the following methods from webkitprivate.h to DumpRenderTreeSupportGtk.cpp|h:
+        * webkit_gc_collect_javascript_objects;
+        * webkit_gc_collect_javascript_objects_on_alternate_thread;
+        * webkit_gc_count_javascript_objects;
+        * webkit_web_frame_layout.
+
+        These were all only used by GTK+ DRT.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (dispatchEvent):
+        * DumpRenderTree/gtk/GCControllerGtk.cpp:
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+
 2010-12-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

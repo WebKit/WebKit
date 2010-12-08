@@ -58,10 +58,16 @@ public:
     static void resumeAnimations(WebKitWebFrame* frame);
     static void clearMainFrameName(WebKitWebFrame* frame);
     static AtkObject* getFocusedAccessibleElement(WebKitWebFrame* frame);
+    static void layoutFrame(WebKitWebFrame*);
 
     // WebKitWebView
     static void executeCoreCommandByName(WebKitWebView* webView, const gchar* name, const gchar* value);
     static bool isCommandEnabled(WebKitWebView* webView, const gchar* name);
+
+    // GC
+    static void gcCollectJavascriptObjects();
+    static void gcCollectJavascriptObjectsOnAlternateThread(bool waitUntilDone);
+    static unsigned long gcCountJavascriptObjects();
 
     static void whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
