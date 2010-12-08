@@ -1,3 +1,11 @@
+2010-12-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Touch a file that's sporadically giving 207 Multi-Status error on svn update, hoping that
+        it will magically fix it.
+
+        * fast/xpath/4XPath/Core/test.js: Removed properties svn:mime-type and svn:eol-style, added
+        a newline.
+
 2010-12-08  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectations update.

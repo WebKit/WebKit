@@ -33,6 +33,7 @@ ROOT = DOM.documentElement;
 PI = DOM.firstChild;
 while (PI.nodeType != Node.PROCESSING_INSTRUCTION_NODE)
     PI = PI.nextSibling;
+
 PI2 = DOM.lastChild;
 COMMENT = ROOT.firstChild
 while (COMMENT.nodeType != Node.COMMENT_NODE)
