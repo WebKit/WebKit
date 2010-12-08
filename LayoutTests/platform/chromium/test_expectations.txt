@@ -3161,10 +3161,6 @@ BUG_YUTAK WIN DEBUG : http/tests/inspector/resource-har-conversion.html = TIMEOU
 // Not sure when this test started failing.
 BUG_YUTAK MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
-// Flaky since r73504.
-BUG_YUTAK WIN : inspector/console-tests.html = TEXT PASS
-BUG_YUTAK WIN : http/tests/inspector/console-resource-errors.html = TEXT PASS
-
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
