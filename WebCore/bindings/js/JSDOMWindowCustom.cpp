@@ -34,6 +34,11 @@
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSAudioConstructor.h"
+
+#if ENABLE(WEB_AUDIO)
+#include "JSAudioContext.h"
+#endif
+
 #include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
@@ -46,8 +51,27 @@
 #include "JSMessagePort.h"
 #include "JSMessagePortCustom.h"
 #include "JSOptionConstructor.h"
+
+#if ENABLE(SHARED_WORKERS)
+#include "JSSharedWorker.h"
+#endif
+
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#include "JSArrayBuffer.h"
+#include "JSDataView.h"
+#include "JSInt8Array.h"
+#include "JSUint8Array.h"
+#include "JSInt32Array.h"
+#include "JSUint32Array.h"
+#include "JSInt16Array.h"
+#include "JSUint16Array.h"
+#include "JSFloat32Array.h"
+#endif
 #include "JSWebKitCSSMatrix.h"
 #include "JSWebKitPoint.h"
+#if ENABLE(WEB_SOCKETS)
+#include "JSWebSocket.h"
+#endif
 #include "JSWorker.h"
 #include "JSXMLHttpRequest.h"
 #include "JSXSLTProcessor.h"
@@ -69,30 +93,6 @@
 #include <runtime/JSObject.h>
 #include <runtime/PrototypeFunction.h>
 #include <wtf/text/AtomicString.h>
-
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
-#include "JSArrayBuffer.h"
-#include "JSDataView.h"
-#include "JSFloat32Array.h"
-#include "JSInt16Array.h"
-#include "JSInt32Array.h"
-#include "JSInt8Array.h"
-#include "JSUint16Array.h"
-#include "JSUint32Array.h"
-#include "JSUint8Array.h"
-#endif
-
-#if ENABLE(SHARED_WORKERS)
-#include "JSSharedWorker.h"
-#endif
-
-#if ENABLE(WEB_AUDIO)
-#include "JSAudioContext.h"
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-#include "JSWebSocket.h"
-#endif
 
 using namespace JSC;
 
@@ -490,18 +490,15 @@ JSValue JSDOMWindow::location(ExecState* exec) const
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 {
-    Frame* activeFrame = toLexicalFrame(exec);
-    if (!activeFrame)
-        return;
-    Frame* firstFrame = toDynamicFrame(exec);
-    if (!firstFrame)
+    Frame* lexicalFrame = toLexicalFrame(exec);
+    if (!lexicalFrame)
         return;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Settings* settings = activeFrame->settings()) {
-        if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
+    if (Settings* settings = lexicalFrame->settings()) {
+        if (settings->usesDashboardBackwardCompatibilityMode() && !lexicalFrame->tree()->parent()) {
             if (allowsAccessFrom(exec))
                 putDirect(Identifier(exec, "location"), value);
             return;
@@ -509,11 +506,21 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     }
 #endif
 
-    UString locationString = value.toString(exec);
-    if (exec->hadException())
+    Frame* frame = impl()->frame();
+    ASSERT(frame);
+
+    KURL url = completeURL(exec, ustringToString(value.toString(exec)));
+    if (url.isNull())
         return;
 
-    impl()->setLocation(ustringToString(locationString), activeFrame, firstFrame);
+    if (!shouldAllowNavigation(exec, frame))
+        return;
+
+    if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
+        // We want a new history item if this JS was called via a user gesture.
+        frame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(),
+            url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
+    }
 }
 
 JSValue JSDOMWindow::crypto(ExecState*) const

@@ -697,7 +697,16 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 {
     if (!frame)
         return;
-    frame->domWindow()->printErrorMessage(message);
+    if (message.isEmpty())
+        return;
+
+    Settings* settings = frame->settings();
+    if (!settings)
+        return;
+    if (settings->privateBrowsingEnabled())
+        return;
+
+    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 }
 
 Frame* toLexicalFrame(ExecState* exec)

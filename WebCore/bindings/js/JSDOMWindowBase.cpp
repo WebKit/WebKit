@@ -77,7 +77,14 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
 
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
-    return impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl()->frame());
+    KURL originURL = asJSDOMWindow(other)->impl()->url();
+    KURL targetURL = d()->shell->window()->impl()->url();
+    if (originURL.isNull() || targetURL.isNull())
+        return String();
+
+    // FIXME: this error message should contain more specifics of why the same origin check has failed.
+    return makeString("Unsafe JavaScript attempt to access frame with URL ", targetURL.string(),
+                      " from frame with URL ", originURL.string(), ". Domains, protocols and ports must match.\n");
 }
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
