@@ -55,6 +55,7 @@ namespace WebKit {
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
+    macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
@@ -92,6 +93,7 @@ namespace WebKit {
 #define FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(DefaultTextEncodingName, defaultTextEncodingName, String, String, "ISO-8859-1") \
+    macro(FTPDirectoryTemplatePath, ftpDirectoryTemplatePath, String, String, "") \
     \
 
 

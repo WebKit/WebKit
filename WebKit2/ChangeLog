@@ -1,3 +1,21 @@
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        WebKit2: Can't open ftp directory
+        <rdar://problem/8489321>
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetForceFTPDirectoryListings):
+        (WKPreferencesGetForceFTPDirectoryListings):
+        (WKPreferencesSetFTPDirectoryTemplatePath):
+        (WKPreferencesGetFTPDirectoryTemplatePath):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pipe through the FTP directory listing preferences.
+
 2010-12-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

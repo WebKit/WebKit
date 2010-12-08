@@ -339,3 +339,23 @@ bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->needsSiteSpecificQuirks();
 }
+
+void WKPreferencesSetForceFTPDirectoryListings(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setForceFTPDirectoryListings(flag);
+}
+
+bool WKPreferencesGetForceFTPDirectoryListings(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->forceFTPDirectoryListings();
+}
+
+void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef preferencesRef, WKStringRef pathRef)
+{
+    toImpl(preferencesRef)->setFTPDirectoryTemplatePath(toWTFString(pathRef));
+}
+
+WKStringRef WKPreferencesGetFTPDirectoryTemplatePath(WKPreferencesRef preferencesRef)
+{
+    return toCopiedAPI(toImpl(preferencesRef)->ftpDirectoryTemplatePath());
+}

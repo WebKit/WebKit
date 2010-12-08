@@ -63,6 +63,14 @@ WK_EXPORT bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRe
 WK_EXPORT void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetForceFTPDirectoryListings(WKPreferencesRef preferences, bool force);
+WK_EXPORT bool WKPreferencesGetForceFTPDirectoryListings(WKPreferencesRef preferences);
+
+// Defaults to the empty string.
+WK_EXPORT void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef preferences, WKStringRef path);
+WK_EXPORT WKStringRef WKPreferencesGetFTPDirectoryTemplatePath(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif
