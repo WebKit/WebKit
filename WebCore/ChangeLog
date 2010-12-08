@@ -1,3 +1,123 @@
+2010-12-08  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        GraphicsContext: Merge m_common and m_data
+        https://bugs.webkit.org/show_bug.cgi?id=49914
+
+        Move data members from GraphicsContextPrivate into GraphicsContext. So GraphicsContextPlatform.h
+        and m_common became unnecessary. They are removed.
+        Add two methods to GraphicsContext: platformInit() and platformDestroy(), which
+        make the constructor of GraphicsContext clearer.
+        Besides add a getter to the private GraphicsContext::m_state member, because some inline
+        functions in cairo need it.
+
+        No new test is needed, because this is a refactoring.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::getShadow):
+        (WebCore::GraphicsContext::strokeThickness):
+        (WebCore::GraphicsContext::strokeStyle):
+        (WebCore::GraphicsContext::strokeColor):
+        (WebCore::GraphicsContext::strokeColorSpace):
+        (WebCore::GraphicsContext::fillRule):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::fillColor):
+        (WebCore::GraphicsContext::fillColorSpace):
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::shouldAntialias):
+        (WebCore::GraphicsContext::state):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::fillGradient):
+        (WebCore::GraphicsContext::strokeGradient):
+        (WebCore::GraphicsContext::fillPattern):
+        (WebCore::GraphicsContext::strokePattern):
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContext::updatingControlTints):
+        (WebCore::GraphicsContext::setUpdatingControlTints):
+        (WebCore::GraphicsContext::setPaintingDisabled):
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::textDrawingMode):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/GraphicsContextPrivate.h: Removed.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill):
+        (WebCore::setPlatformStroke):
+        (WebCore::drawPathShadow):
+        (WebCore::fillCurrentCairoPath):
+        (WebCore::strokeCurrentCairoPath):
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::getAlpha):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+
 2010-12-07  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Nate Chapin.
