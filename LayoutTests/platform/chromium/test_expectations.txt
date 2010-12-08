@@ -769,7 +769,8 @@ BUGWK40520 : fast/forms/interactive-validation-prevented.html = TEXT
 BUG26734 MAC SKIP : inspector = PASS
 BUG26734 MAC SKIP : http/tests/inspector = PASS
 BUG26734 MAC SKIP : http/tests/inspector-enabled = PASS
-BUG26734 SLOW : inspector/timeline-layout.html = TEXT PASS
+BUG26734 WIN LINUX SLOW : inspector/timeline-layout.html = TEXT PASS
+BUG65949 MAC : inspector/timeline-layout.html = TIMEOUT
 
 // These tests need to be changed to be platform independent.
 // These tests are skipped since they hang DRT and test_shell.
@@ -3172,8 +3173,10 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 
 // Inspector-related failures
-BUG_DRT : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-BUG_DRT : http/tests/inspector/change-iframe-src.html = CRASH
+BUG_DRT WIN LINUX : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
+BUG65949 MAC : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TIMEOUT
+BUG_DRT WIN LINUX : http/tests/inspector/change-iframe-src.html = CRASH
+BUG65949 MAC : http/tests/inspector/change-iframe-src.html = TIMEOUT
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT DEBUG SLOW : inspector = PASS

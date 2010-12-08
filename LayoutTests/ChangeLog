@@ -1,3 +1,11 @@
+2010-12-08  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        Mark some Mac tests as timing out after r73518 and r73522.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Adam Roben  <aroben@apple.com>
 
         Update Windows test results after r73538
