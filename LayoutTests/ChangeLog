@@ -1,5 +1,17 @@
 2010-12-07  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, adding chromium pixel results for
+        fast/forms/caret-rtl.html after http://trac.webkit.org/changeset/73459
+
+        * platform/chromium-linux/fast/forms/caret-rtl-expected.checksum:
+        * platform/chromium-linux/fast/forms/caret-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/caret-rtl-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/caret-rtl-expected.png: Added.
+        * platform/chromium-win/fast/forms/caret-rtl-expected.checksum:
+        * platform/chromium-win/fast/forms/caret-rtl-expected.png:
+
+2010-12-07  Tony Chang  <tony@chromium.org>
+
         Unreviewed, remove more passing tests (mac) from test_expecatations.txt
         after DRT switch.  Also remove a test that is passing because of
         crankshaft.
