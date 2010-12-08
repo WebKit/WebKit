@@ -1,5 +1,12 @@
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium test expectations update.
+        fast/text/decomposed-after-stacked-diacritics.html crashes on Chromium Linux.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium rebaseline for r73531.
 
         * platform/chromium-linux/fast/block/positioning/rtl-static-positioning-expected.checksum: Added.

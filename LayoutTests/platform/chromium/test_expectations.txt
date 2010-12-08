@@ -2773,7 +2773,7 @@ BUG54334 LINUX : media/video-timeupdate-during-playback.html = PASS TIMEOUT
 BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
 // New test in r66740
-BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
+BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT CRASH
 
 // Debugger tests are slow on win debug bots
 BUGWK45209 DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
