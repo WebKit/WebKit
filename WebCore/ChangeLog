@@ -1,3 +1,35 @@
+2010-12-08  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement "required" attribute for select tags
+        https://bugs.webkit.org/show_bug.cgi?id=50380
+
+        Test: fast/forms/select-live-pseudo-selectors.html
+              platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::deselectItems): Added calling setNeedsValidityCheck() to enable validity check after changing. No tests for this change since this function is not exposed to JavaScript or any web interface.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::valueMissing): Added valueMissing() to check if selecting an invalid or placeholder label option when a valid required attribute is specified.
+        (WebCore::HTMLSelectElement::listBoxSelectItem): Added calling setNeedsValidityCheck(). No tests for this change since it is not called yet. Look at the bug 36177 and the changeset 56180.
+        (WebCore::HTMLSelectElement::add): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::remove): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::restoreFormControlState): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::parseMappedAttribute): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::selectAll): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::reset): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Added calling setNeedsValidityCheck(). Skipped adding tests for this change as too complicated..
+        (WebCore::HTMLSelectElement::setLength): Added calling setNeedsValidityCheck().
+        (WebCore::HTMLSelectElement::isRequiredFormControl): Check if required or not.
+        (WebCore::HTMLSelectElement::hasPlaceholderLabelOption): Added.
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::isOptionalFormControl): Check if not required.
+        * html/HTMLSelectElement.idl: Added a required attribute to select elements..
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::valueMissing): Added valueMissing check for select elements into the global checker, ValidityState::valueMissing().
+
 2010-12-08  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.

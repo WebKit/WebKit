@@ -1,26 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
 <title>required attribute presence test</title>
-<script language="JavaScript" type="text/javascript">
-    function log(message) {
-        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
-    }
-
-    function test() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
-
-        v = document.getElementsByName("victim");
-
-        log((v[0].required && v[1].required) ? "SUCCESS" : "FAILURE");
-    }
-</script>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
-<body onload="test()">
-<p>There are two form control elements below, both required.</p>
-<input name="victim" required />
-<textarea name="victim" required></textarea>
-<hr>
-<ol id="console"></ol>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input id="input" name="victim" required />
+<textarea id="textarea" name="victim" required></textarea>
+<select id="select" name="victim" required>
+  <option value="" selected />
+  <option value="X">X</option>
+</select>
+<script language="JavaScript" type="text/javascript">
+    function requiredFor(id) {
+        return document.getElementById(id).required;
+    }
+
+    description("There are three form control elements below, all required.");
+
+    v = document.getElementsByName("victim");
+
+    shouldBeTrue('requiredFor("input")');
+    shouldBeTrue('requiredFor("textarea")');
+    shouldBeTrue('requiredFor("select")');
+
+    var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

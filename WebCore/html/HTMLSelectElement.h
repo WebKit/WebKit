@@ -43,6 +43,9 @@ public:
     virtual void setSelectedIndex(int index, bool deselect = true);
     virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false);
 
+    // For ValidityState
+    bool valueMissing() const;
+
     unsigned length() const;
 
     virtual int size() const { return m_data.size(); }
@@ -134,7 +137,10 @@ private:
 
     virtual void insertedIntoTree(bool);
 
-    virtual bool isOptionalFormControl() const { return true; }
+    virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const;
+
+    bool hasPlaceholderLabelOption() const;
 
     SelectElementData m_data;
     CollectionCache m_collectionInfo;

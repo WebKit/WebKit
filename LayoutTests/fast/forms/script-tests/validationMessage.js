@@ -24,6 +24,13 @@ requiredTextArea.required = true;
 form.appendChild(requiredTextArea);
 shouldBe("requiredTextArea.validationMessage", "'value missing'");
 
+// A required select with an empty value
+var requiredSelect = document.createElement("select");
+requiredSelect.name = "requiredSelect";
+requiredSelect.required = true;
+form.appendChild(requiredSelect);
+shouldBe("requiredSelect.validationMessage", "'value missing'");
+
 // A type=email input for the "type mismatch" flag
 var emailInput = document.createElement("input");
 emailInput.name = "emailInput";
