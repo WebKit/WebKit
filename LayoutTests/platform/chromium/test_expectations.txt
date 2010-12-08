@@ -3119,20 +3119,12 @@ BUGCR64952 LINUX : fast/ruby/nested-ruby.html = IMAGE
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
-// WebKit roll r73208:r73212.
-BUGCR65257 WIN DEBUG : storage/change-version-handle-reuse.html = CRASH
-
-// Flaky since Chromium r67828.
-BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = CRASH PASS
-
-// Flaky since r73421.
-BUG_YUTAK WIN LINUX : transitions/border-radius-transition.html = TEXT PASS
-BUG_YUTAK : transitions/color-transition-all.html = TEXT PASS
-
 // New test in r73423.
 // Win/Linux: Characters are rotated 90 degrees.
 // Mac: Some image differences, and the message "scrolled to 3999,0" is missing.
-BUG_YUTAK: fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUGCR65877 WIN LINUX : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUG_YUTAK MAC RELEASE : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUG_YUTAK MAC DEBUG SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 
 // Regressed at r73423. All areas are painted green.
 BUG_YUTAK : fast/repaint/positioned-document-element.html = IMAGE
@@ -3160,6 +3152,12 @@ BUG_YUTAK WIN DEBUG : http/tests/inspector/resource-har-conversion.html = TIMEOU
 
 // Not sure when this test started failing.
 BUG_YUTAK MAC DEBUG : fast/text/font-size-zero.html = TEXT
+
+// Started to produce text difference occasionally since r68528.
+BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
+
+// r73494. Crashes only on debug bots in the main waterfall.
+BUGCR65878 WIN MAC DEBUG : fast/forms/select-live-pseudo-selectors.html = CRASH
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.

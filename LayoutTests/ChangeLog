@@ -1,3 +1,12 @@
+2010-12-08  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
+        Update Chromium test expectations. Remove some tests that are now consistently
+        passing, assign bug numbers, and add one new expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskipping media/video-buffered.html on GTK because
