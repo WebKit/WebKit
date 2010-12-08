@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class HTMLMeterElement;
-class ShadowBlockElement;
+class MeterPartElement;
 
 class RenderMeter : public RenderIndicator {
 public:
@@ -40,22 +40,27 @@ public:
 private:
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
+    virtual void updateFromElement();
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 
     virtual void layoutParts();
-    virtual bool shouldHaveParts() const;
 
-    bool isHorizontal() const;
-    void updatePartsState();    
-    IntRect valuePartRect() const;
-    PseudoId valuePseudoId() const;
-    IntRect barPartRect() const;    
-    PseudoId barPseudoId() const;
+    bool shadowAttached() const { return m_horizontalBarPart; }
+    IntRect valuePartRect(EBoxOrient) const;
+    PseudoId valuePseudoId(EBoxOrient) const;
+    IntRect barPartRect() const;
+    PseudoId barPseudoId(EBoxOrient) const;
+    EBoxOrient orientation() const;
+
     double valueRatio() const;
+    bool shouldHaveParts() const;
+    PassRefPtr<MeterPartElement> createPart(PseudoId);
 
-    RefPtr<ShadowBlockElement> m_barPart;
-    RefPtr<ShadowBlockElement> m_valuePart;
+    RefPtr<MeterPartElement> m_horizontalBarPart;
+    RefPtr<MeterPartElement> m_horizontalValuePart;
+    RefPtr<MeterPartElement> m_verticalBarPart;
+    RefPtr<MeterPartElement> m_verticalValuePart;
 };
 
 inline RenderMeter* toRenderMeter(RenderObject* object)

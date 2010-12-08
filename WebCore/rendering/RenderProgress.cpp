@@ -54,6 +54,17 @@ RenderProgress::~RenderProgress()
 
 void RenderProgress::updateFromElement()
 {
+    if (!m_valuePart) {
+        m_valuePart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), PROGRESS_BAR_VALUE);
+        if (m_valuePart->renderer())
+            addChild(m_valuePart->renderer());
+    }
+
+    if (shouldHaveParts())
+        style()->setAppearance(NoControlPart);
+    else if (m_valuePart->renderer())
+        m_valuePart->renderer()->style()->setVisibility(HIDDEN);
+
     HTMLProgressElement* element = progressElement();
     if (m_position == element->position())
         return;
@@ -90,9 +101,7 @@ void RenderProgress::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderProgress::layoutParts()
 {
-    updatePartsState();
-    if (m_valuePart)
-        m_valuePart->layoutAsPart(valuePartRect());
+    m_valuePart->layoutAsPart(valuePartRect());
     updateAnimationState();
 }
 
@@ -103,18 +112,6 @@ bool RenderProgress::shouldHaveParts() const
     if (ShadowBlockElement::partShouldHaveStyle(this, PROGRESS_BAR_VALUE))
         return true;
     return false;
-}
-
-void RenderProgress::updatePartsState()
-{
-    if (shouldHaveParts() && !m_valuePart) {
-        style()->setAppearance(NoControlPart);
-        m_valuePart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), PROGRESS_BAR_VALUE);
-        addChild(m_valuePart->renderer());
-    } else if (!shouldHaveParts() && m_valuePart) {
-        m_valuePart->detach();
-        m_valuePart = 0;
-    }
 }
 
 void RenderProgress::updateAnimationState()

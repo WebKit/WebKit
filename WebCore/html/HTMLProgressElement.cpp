@@ -70,6 +70,13 @@ void HTMLProgressElement::parseMappedAttribute(Attribute* attribute)
         HTMLFormControlElement::parseMappedAttribute(attribute);
 }
 
+void HTMLProgressElement::attach()
+{
+    HTMLFormControlElement::attach();
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 double HTMLProgressElement::value() const
 {
     const AtomicString& valueString = getAttribute(valueAttr);

@@ -58,11 +58,11 @@ public:
     static PassRefPtr<ShadowBlockElement> createForPart(HTMLElement*, PseudoId);
     static bool partShouldHaveStyle(const RenderObject* parentRenderer, PseudoId pseudoId);
     void layoutAsPart(const IntRect& partRect);
-    void updateStyleForPart(PseudoId);
+    virtual void updateStyleForPart(PseudoId);
 
 protected:
     ShadowBlockElement(HTMLElement*);
-
+    void initAsPart(PseudoId pasuedId);
 private:
     static PassRefPtr<RenderStyle> createStyleForPart(RenderObject*, PseudoId);
 };

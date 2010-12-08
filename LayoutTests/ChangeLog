@@ -1,3 +1,23 @@
+2010-12-05  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added a test case
+        - Updated expectations to follow the change on the shadow structure.
+        
+        RenderIndicator subclasses should not change the render tree during layout.
+        https://bugs.webkit.org/show_bug.cgi?id=50026
+        
+        * fast/dom/HTMLMeterElement/meter-element-crash-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-element-crash.html: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2010-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Relax the matching tolerance to reduce flakiness.

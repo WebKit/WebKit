@@ -67,6 +67,13 @@ void HTMLMeterElement::parseMappedAttribute(Attribute* attribute)
         HTMLFormControlElement::parseMappedAttribute(attribute);
 }
 
+void HTMLMeterElement::attach()
+{
+    HTMLFormControlElement::attach();
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 double HTMLMeterElement::min() const
 {
     double min = 0;

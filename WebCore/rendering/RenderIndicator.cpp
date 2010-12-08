@@ -25,6 +25,7 @@
 #include "RenderIndicator.h"
 
 #include "RenderTheme.h"
+#include "ShadowElement.h"
 
 using namespace std;
 

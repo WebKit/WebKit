@@ -48,6 +48,8 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     virtual void parseMappedAttribute(Attribute*);
+
+    virtual void attach();
 };
 
 } // namespace

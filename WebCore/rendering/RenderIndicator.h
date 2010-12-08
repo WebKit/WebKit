@@ -38,7 +38,6 @@ protected:
     virtual bool canHaveChildren() const { return false; }
 
     virtual void layoutParts() = 0;
-    virtual bool shouldHaveParts() const = 0;
 };
 
 } // namespace WebCore

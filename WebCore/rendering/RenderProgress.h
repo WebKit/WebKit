@@ -50,13 +50,12 @@ private:
     virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual void layoutParts();
-    virtual bool shouldHaveParts() const;
 
     IntRect valuePartRect() const;
+    bool shouldHaveParts() const;
 
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();
-    void updatePartsState();
 
     double m_position;
     double m_animationStartTime;

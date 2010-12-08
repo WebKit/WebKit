@@ -68,14 +68,19 @@ void ShadowBlockElement::updateStyleForPart(PseudoId pseudoId)
 
 PassRefPtr<ShadowBlockElement> ShadowBlockElement::createForPart(HTMLElement* shadowParent, PseudoId pseudoId)
 {
-    RenderObject* parentRenderer = shadowParent->renderer();
-    RefPtr<RenderStyle> styleForPart = createStyleForPart(parentRenderer, pseudoId);
     RefPtr<ShadowBlockElement> part = create(shadowParent);
-    part->setRenderer(part->createRenderer(parentRenderer->renderArena(), styleForPart.get()));
-    part->renderer()->setStyle(styleForPart.release());
-    part->setAttached();
-    part->setInDocument();
+    part->initAsPart(pseudoId);
     return part.release();
+}
+
+void ShadowBlockElement::initAsPart(PseudoId pseudoId)
+{
+    RenderObject* parentRenderer = shadowParent()->renderer();
+    RefPtr<RenderStyle> styleForPart = createStyleForPart(parentRenderer, pseudoId);
+    setRenderer(createRenderer(parentRenderer->renderArena(), styleForPart.get()));
+    renderer()->setStyle(styleForPart.release());
+    setAttached();
+    setInDocument();
 }
 
 PassRefPtr<RenderStyle> ShadowBlockElement::createStyleForPart(RenderObject* parentRenderer, PseudoId pseudoId)
