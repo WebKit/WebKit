@@ -1,3 +1,16 @@
+2010-12-08  Adam Roben  <aroben@apple.com>
+
+        Update Windows test results after r73538
+
+        We don't need Windows-specific results for this test anymore.
+
+        * platform/win-xp/svg/custom/clip-path-referencing-use-expected.checksum: Removed.
+        * platform/win-xp/svg/custom/clip-path-referencing-use-expected.png: Removed.
+        * platform/win-xp/svg/custom/clip-path-referencing-use-expected.txt: Removed.
+        * platform/win/svg/custom/clip-path-referencing-use-expected.checksum: Removed.
+        * platform/win/svg/custom/clip-path-referencing-use-expected.png: Removed.
+        * platform/win/svg/custom/clip-path-referencing-use-expected.txt: Removed.
+
 2010-12-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
