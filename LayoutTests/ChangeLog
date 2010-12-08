@@ -1,3 +1,15 @@
+2010-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskipped some more media tests.
+
+        They are not crashing anymore, they also needed a rebaseline since
+        the font tiling changes that happened while they were skipped.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-layer-crash-expected.txt:
+        * platform/gtk/media/video-transformed-expected.txt:
+
 2010-12-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update test expectations after r73504.
