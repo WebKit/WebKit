@@ -1,3 +1,20 @@
+2010-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test that tables repaint correctly in all writing modes
+        Part of: Make tables work with vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=46417
+
+        * fast/repaint/table-writing-modes-h-expected.checksum: Added.
+        * fast/repaint/table-writing-modes-h-expected.png: Added.
+        * fast/repaint/table-writing-modes-h-expected.txt: Added.
+        * fast/repaint/table-writing-modes-h.html: Added.
+        * fast/repaint/table-writing-modes-v-expected.checksum: Added.
+        * fast/repaint/table-writing-modes-v-expected.png: Added.
+        * fast/repaint/table-writing-modes-v-expected.txt: Added.
+        * fast/repaint/table-writing-modes-v.html: Added.
+
 2010-12-07  Tony Chang  <tony@chromium.org>
 
         Unreviewed, mark a test as flaky on chromium drt linux.

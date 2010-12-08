@@ -1,3 +1,18 @@
+2010-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Made tables repaint correctly in all writing modes
+        Part of: Make tables work with vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=46417
+
+        Tests: fast/repaint/table-writing-modes-h.html
+               fast/repaint/table-writing-modes-v.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject): Compute the ranges of rows and
+        columns to repaint based on the logical extent of the repaint rect.
+
 2010-12-07  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.

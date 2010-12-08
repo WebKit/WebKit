@@ -952,53 +952,57 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
     unsigned totalCols = table()->columns().size();
 
     PaintPhase paintPhase = paintInfo.phase;
-    int x = paintInfo.rect.x();
-    int y = paintInfo.rect.y();
-    int w = paintInfo.rect.width();
-    int h = paintInfo.rect.height();
 
     int os = 2 * maximalOutlineSize(paintPhase);
     unsigned startrow = 0;
     unsigned endrow = totalRows;
-    
+
+    IntRect localRepaintRect = paintInfo.rect;
+    localRepaintRect.move(-tx, -ty);
+    if (style()->isFlippedBlocksWritingMode()) {
+        if (style()->isHorizontalWritingMode())
+            localRepaintRect.setY(height() - localRepaintRect.bottom());
+        else
+            localRepaintRect.setX(width() - localRepaintRect.right());
+    }
+
     // If some cell overflows, just paint all of them.
     if (!m_hasOverflowingCell) {
-        int relativeY = y - ty;
-        int top = relativeY - os;
+        int before = (style()->isHorizontalWritingMode() ? localRepaintRect.y() : localRepaintRect.x()) - os;
         // binary search to find a row
-        startrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), top) - m_rowPos.begin();
+        startrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), before) - m_rowPos.begin();
 
         // The binary search above gives us the first row with
         // a y position >= the top of the paint rect. Thus, the previous
         // may need to be repainted as well.
-        if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  top)))
+        if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  before)))
           --startrow;
 
-        int bottom = relativeY + h + os;
-        endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), bottom) - m_rowPos.begin();
+        int after = (style()->isHorizontalWritingMode() ? localRepaintRect.bottom() : localRepaintRect.right()) + os;
+        endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), after) - m_rowPos.begin();
         if (endrow == m_rowPos.size())
           --endrow;
 
-        if (!endrow && ty + m_rowPos[0] - table()->outerBorderTop() <= y + h + os)
+        if (!endrow && m_rowPos[0] - table()->outerBorderBefore() <= after)
             ++endrow;
     }
+
     unsigned startcol = 0;
     unsigned endcol = totalCols;
     // FIXME: Implement RTL.
     if (!m_hasOverflowingCell && style()->isLeftToRightDirection()) {
-        int relativeX = x - tx;
-        int left = relativeX - os;
+        int start = (style()->isHorizontalWritingMode() ? localRepaintRect.x() : localRepaintRect.y()) - os;
         Vector<int>& columnPos = table()->columnPositions();
-        startcol = std::lower_bound(columnPos.begin(), columnPos.end(), left) - columnPos.begin();
-        if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > left)))
+        startcol = std::lower_bound(columnPos.begin(), columnPos.end(), start) - columnPos.begin();
+        if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > start)))
             --startcol;
 
-        int right = relativeX + w + os;
-        endcol = std::lower_bound(columnPos.begin(), columnPos.end(), right) - columnPos.begin();
+        int end = (style()->isHorizontalWritingMode() ? localRepaintRect.right() : localRepaintRect.bottom()) + os;
+        endcol = std::lower_bound(columnPos.begin(), columnPos.end(), end) - columnPos.begin();
         if (endcol == columnPos.size())
             --endcol;
 
-        if (!endcol && tx + table()->columnPositions()[0] - table()->outerBorderLeft() <= y + w + os)
+        if (!endcol && columnPos[0] - table()->outerBorderStart() <= end)
             ++endcol;
     }
     if (startcol < endcol) {
