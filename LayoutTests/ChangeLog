@@ -1,5 +1,13 @@
 2010-12-08  Adam Roben  <aroben@apple.com>
 
+        Land Windows results for test added in 73423
+
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Added.
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.txt: Added.
+
+2010-12-08  Adam Roben  <aroben@apple.com>
+
         Update Windows results after r73488
 
         * platform/win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
