@@ -1,3 +1,27 @@
+2010-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Marking the active global object re-enters through markConservatively
+        https://bugs.webkit.org/show_bug.cgi?id=50711
+
+        draining of the MarkStack is not allowed to be re-entrant, we got away
+        with this simply due to the logic in MarkStack::drain implicitly handling
+        changes that could be triggered by the re-entry.
+
+        Just to be safe this patch removes the re-entry through markConservatively
+        so we don't accidentally introduce such an issue in future.  I've also
+        added an assertion to catch such errors.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::markCurrentThreadConservativelyInternal):
+        (JSC::Heap::markOtherThreadConservatively):
+        * runtime/JSArray.h:
+        (JSC::MarkStack::drain):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+
 2010-12-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -41,8 +41,9 @@ namespace JSC {
     public:
         MarkStack(void* jsArrayVPtr)
             : m_jsArrayVPtr(jsArrayVPtr)
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
             , m_isCheckingForDefaultMarkViolation(false)
+            , m_isDraining(false)
 #endif
         {
         }
@@ -178,9 +179,10 @@ namespace JSC {
         MarkStackArray<JSCell*> m_values;
         static size_t s_pageSize;
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     public:
         bool m_isCheckingForDefaultMarkViolation;
+        bool m_isDraining;
 #endif
     };
 }

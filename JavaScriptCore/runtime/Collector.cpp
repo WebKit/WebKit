@@ -685,7 +685,6 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
                 if (m_heap.collectorBlock(block) != blockAddr)
                     continue;
                 markStack.append(reinterpret_cast<JSCell*>(xAsBits));
-                markStack.drain();
             }
         }
     }
@@ -697,6 +696,7 @@ void NEVER_INLINE Heap::markCurrentThreadConservativelyInternal(MarkStack& markS
     void* stackPointer = &dummy;
     void* stackBase = currentThreadStackBase();
     markConservatively(markStack, stackPointer, stackBase);
+    markStack.drain();
 }
 
 #if COMPILER(GCC)
@@ -859,9 +859,11 @@ void Heap::markOtherThreadConservatively(MarkStack& markStack, Thread* thread)
 
     // mark the thread's registers
     markConservatively(markStack, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
+    markStack.drain();
 
     void* stackPointer = otherThreadStackPointer(regs);
     markConservatively(markStack, stackPointer, thread->stackBase);
+    markStack.drain();
 
     resumeThread(thread->platformThread);
 }

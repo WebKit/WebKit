@@ -222,6 +222,10 @@ namespace JSC {
 
     inline void MarkStack::drain()
     {
+#if !ASSERT_DISABLED
+        ASSERT(!m_isDraining);
+        m_isDraining = true;
+#endif
         while (!m_markSets.isEmpty() || !m_values.isEmpty()) {
             while (!m_markSets.isEmpty() && m_values.size() < 50) {
                 ASSERT(!m_markSets.isEmpty());
@@ -260,6 +264,9 @@ namespace JSC {
             while (!m_values.isEmpty())
                 markChildren(m_values.removeLast());
         }
+#if !ASSERT_DISABLED
+        m_isDraining = false;
+#endif
     }
 
     // Rule from ECMA 15.2 about what an array index is.
