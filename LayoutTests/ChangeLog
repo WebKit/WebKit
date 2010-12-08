@@ -1,3 +1,10 @@
+2010-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated baselines of
+        media/video-controls-rendering.html.
+
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+
 2010-12-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

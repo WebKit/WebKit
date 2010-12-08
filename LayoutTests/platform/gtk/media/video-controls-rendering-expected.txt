@@ -1,23 +1,23 @@
-layer at (0,0) size 781x764
+layer at (0,0) size 781x763
   RenderView at (0,0) size 781x600
 layer at (0,0) size 781x600
   RenderBlock {HTML} at (0,0) size 781x600
     RenderBody {BODY} at (8,8) size 765x584
-      RenderBlock {P} at (0,0) size 765x20
-        RenderText {#text} at (0,0) size 153x20
+      RenderBlock {P} at (0,0) size 765x19
+        RenderText {#text} at (0,0) size 153x19
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock {DIV} at (0,36) size 765x240
+      RenderBlock {DIV} at (0,35) size 765x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,276) size 765x240
+      RenderBlock {DIV} at (0,275) size 765x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,516) size 765x0
-layer at (8,44) size 320x240
+      RenderBlock {DIV} at (0,515) size 765x0
+layer at (8,43) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,284) size 320x240
+layer at (8,283) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,44) size 320x240
+layer at (8,43) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,264) size 320x20
+layer at (8,263) size 320x20
   RenderFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
@@ -27,9 +27,9 @@ layer at (8,264) size 320x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (8,284) size 320x240
+layer at (8,283) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,504) size 320x20
+layer at (8,503) size 320x20
   RenderFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
@@ -39,11 +39,11 @@ layer at (8,504) size 320x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (8,524) size 320x240
-  RenderVideo {VIDEO} at (8,524) size 320x240
-layer at (8,524) size 320x240
+layer at (8,523) size 320x240
+  RenderVideo {VIDEO} at (8,523) size 320x240
+layer at (8,523) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,744) size 320x20
+layer at (8,743) size 320x20
   RenderFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
