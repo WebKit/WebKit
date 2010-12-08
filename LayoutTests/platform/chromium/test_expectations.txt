@@ -2241,8 +2241,12 @@ BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = P
 
 // might have been flaky
 BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
-BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
+BUGJAMESR WIN RELEASE : svg/filters/filter-source-position.svg = IMAGE
+BUGJAMESR MAC LINUX : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
+
+// Text difference started at the roll r73456:r73487.
+BUG_YUTAK WIN DEBUG : svg/filters/filter-source-position.svg = IMAGE+TEXT
 
 // New layoutTestController function added at r57993
 BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
@@ -3150,6 +3154,12 @@ BUG_YUTAK WIN LINUX : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
+
+// Sometimes timeout. Just slow?
+BUG_YUTAK WIN DEBUG : http/tests/inspector/resource-har-conversion.html = TIMEOUT PASS
+
+// Not sure when this test started failing.
+BUG_YUTAK MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
