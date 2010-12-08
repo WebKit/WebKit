@@ -446,8 +446,10 @@ void Node::setDocument(Document* document)
         document->addNodeListCache();
     }
 
-    if (m_document)
+    if (m_document) {
+        m_document->moveNodeIteratorsToNewDocument(this, document);
         m_document->selfOnlyDeref();
+    }
 
     m_document = document;
 

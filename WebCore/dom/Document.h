@@ -684,6 +684,7 @@ public:
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
+    void moveNodeIteratorsToNewDocument(Node*, Document*);
 
     void attachRange(Range*);
     void detachRange(Range*);

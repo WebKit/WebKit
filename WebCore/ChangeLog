@@ -1,3 +1,21 @@
+2010-12-08  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Detach node iterator and move to new document when node gets moved.
+        https://bugs.webkit.org/show_bug.cgi?id=50697
+
+        Test: fast/dom/node-iterator-document-moved-crash.html
+
+        * dom/Document.cpp: Method that takes a node and new document as argument.
+        It detaches the node iterators belonging to the current document and attaches
+        them to the new document.
+        (WebCore::Document::moveNodeIteratorsToNewDocument):
+        * dom/Document.h: Function definition.
+        * dom/Node.cpp: When node is moved to another document, call the function to move
+        the iterators appropriately.
+        (WebCore::Node::setDocument):
+
 2010-12-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

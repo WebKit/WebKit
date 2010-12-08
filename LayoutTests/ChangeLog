@@ -1,3 +1,13 @@
+2010-12-08  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that we do not crash when node iterator gets moved across documents.
+        https://bugs.webkit.org/show_bug.cgi?id=50697
+
+        * fast/dom/node-iterator-document-moved-crash-expected.txt: Added.
+        * fast/dom/node-iterator-document-moved-crash.html: Added.
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaseline for r73548.
