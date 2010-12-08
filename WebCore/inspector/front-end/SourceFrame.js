@@ -217,7 +217,7 @@ WebInspector.SourceFrame.prototype = {
         var breakpoints = this._breakpoints();
         for (var i = 0; i < breakpoints.length; ++i)
             this._addBreakpoint(breakpoints[i]);
-        WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
+        WebInspector.debuggerModel.addEventListener("breakpoint-added", this._breakpointAdded, this);
 
         this._textViewer.endUpdates();
 
@@ -804,7 +804,7 @@ WebInspector.SourceFrame.prototype = {
     _setBreakpoint: function(lineNumber)
     {
         var sourceID = this._sourceIDForLine(lineNumber);
-        WebInspector.breakpointManager.setBreakpoint(sourceID, this._url, lineNumber, true, "");
+        WebInspector.debuggerModel.setBreakpoint(sourceID, this._url, lineNumber, true, "");
         if (!WebInspector.panels.scripts.breakpointsActivated)
             WebInspector.panels.scripts.toggleBreakpointsClicked();
     },
@@ -819,13 +819,13 @@ WebInspector.SourceFrame.prototype = {
         {
             return breakpoint.sourceID in sourceIDs;
         }
-        return WebInspector.breakpointManager.findBreakpoints(filter);
+        return WebInspector.debuggerModel.findBreakpoints(filter);
     },
 
     _findBreakpoint: function(lineNumber)
     {
         var sourceID = this._sourceIDForLine(lineNumber);
-        return WebInspector.breakpointManager.findBreakpoint(sourceID, lineNumber);
+        return WebInspector.debuggerModel.findBreakpoint(sourceID, lineNumber);
     },
 
     _shouldDisplayBreakpoint: function(breakpoint)

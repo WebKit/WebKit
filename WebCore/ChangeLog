@@ -1,3 +1,47 @@
+2010-12-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce DebuggerModel class representing InspectorDebuggerAgent state.
+        https://bugs.webkit.org/show_bug.cgi?id=50567
+
+        Moved debugging-related code from BreakpointManager to DebuggerModel. Moved Breakpoint class to a separate file.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Breakpoint.js: Added.
+        (WebInspector.Breakpoint): Moved from BreakpointManager.js.
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager): Remove debugger-related methods.
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype._nativeBreakpointHit):
+        (WebInspector.CallStackSidebarPane.prototype._scriptBreakpointHit):
+        * inspector/front-end/DebuggerModel.js: Added.
+        (WebInspector.DebuggerModel): Moved debugger-related methods from BreakpointManager.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.continueToLine):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource.mycallback):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._debuggerResumed):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrameDelegate.prototype.addBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.breakpoints):
+        (WebInspector.SourceFrameDelegate.prototype.findBreakpoint):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.createJSBreakpointsSidebarPane):
+        (WebInspector.restoredBreakpoint):
+        (WebInspector.pausedScript):
+        (WebInspector.resumedScript):
+        (WebInspector.reset):
+
 2010-12-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

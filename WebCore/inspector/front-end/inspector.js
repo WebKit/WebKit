@@ -192,7 +192,7 @@ var WebInspector = {
         {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
-        WebInspector.breakpointManager.addEventListener("breakpoint-added", breakpointAdded);
+        WebInspector.debuggerModel.addEventListener("breakpoint-added", breakpointAdded);
         return pane;
     },
 
@@ -533,8 +533,10 @@ WebInspector.doLoadedDone = function()
         other: new WebInspector.ResourceCategory("other", WebInspector.UIString("Other"), "rgb(186,186,186)")
     };
 
-    this.breakpointManager = new WebInspector.BreakpointManager();
     this.cssModel = new WebInspector.CSSStyleModel();
+    this.debuggerModel = new WebInspector.DebuggerModel();
+
+    this.breakpointManager = new WebInspector.BreakpointManager();
 
     this.panels = {};
     this._createPanels();
@@ -1301,7 +1303,7 @@ WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, starting
 
 WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
 {
-    this.breakpointManager.restoredBreakpoint(sourceID, sourceURL, line, enabled, condition);
+    this.debuggerModel.breakpointRestored(sourceID, sourceURL, line, enabled, condition);
 }
 
 WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)
@@ -1311,19 +1313,17 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 
 WebInspector.pausedScript = function(details)
 {
-    this.panels.scripts.debuggerPaused(details.callFrames);
-    this.breakpointManager.debuggerPaused(details);
-    InspectorFrontendHost.bringToFront();
+    this.debuggerModel.debuggerPaused(details);
 }
 
 WebInspector.resumedScript = function()
 {
-    this.breakpointManager.debuggerResumed();
-    this.panels.scripts.debuggerResumed();
+    this.debuggerModel.debuggerResumed();
 }
 
 WebInspector.reset = function()
 {
+    this.debuggerModel.reset();
     this.breakpointManager.reset();
 
     for (var panelName in this.panels) {

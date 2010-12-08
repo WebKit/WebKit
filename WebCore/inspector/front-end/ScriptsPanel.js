@@ -176,6 +176,9 @@ WebInspector.ScriptsPanel = function()
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
     this.reset();
+
+    WebInspector.debuggerModel.addEventListener("debugger-paused", this._debuggerPaused, this);
+    WebInspector.debuggerModel.addEventListener("debugger-resumed", this._debuggerResumed, this);
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -257,7 +260,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     continueToLine: function(sourceID, line)
     {
-        WebInspector.breakpointManager.setOneTimeBreakpoint(sourceID, line);
+        WebInspector.debuggerModel.setOneTimeBreakpoint(sourceID, line);
         if (this.paused)
             this._togglePause();
     },
@@ -290,7 +293,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         // Need to clear breakpoints and re-create them later when editing source.
-        var breakpoints = WebInspector.breakpointManager.findBreakpoints(function(b) { return b.sourceID === editData.sourceID });
+        var breakpoints = WebInspector.debuggerModel.findBreakpoints(function(b) { return b.sourceID === editData.sourceID });
         for (var i = 0; i < breakpoints.length; ++i)
             breakpoints[i].remove();
 
@@ -299,7 +302,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (success) {
                 commitEditingCallback(newBodyOrErrorMessage);
                 if (callFrames && callFrames.length)
-                    this.debuggerPaused(callFrames);
+                    this._debuggerPaused({ data: callFrames });
             } else {
                 if (cancelEditingCallback)
                     cancelEditingCallback();
@@ -310,7 +313,7 @@ WebInspector.ScriptsPanel.prototype = {
                 var newLine = breakpoint.line;
                 if (success && breakpoint.line >= editData.line)
                     newLine += editData.linesCountToShift;
-                WebInspector.breakpointManager.setBreakpoint(editData.sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
+                WebInspector.debuggerModel.setBreakpoint(editData.sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
             }
         };
         InspectorBackend.editScriptSource(editData.sourceID, editData.content, mycallback.bind(this));
@@ -353,9 +356,11 @@ WebInspector.ScriptsPanel.prototype = {
         InjectedScriptAccess.get(callFrame.worldId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
-    debuggerPaused: function(callFrames)
+    _debuggerPaused: function(event)
     {
-        WebInspector.breakpointManager.removeOneTimeBreakpoint();
+        var callFrames = event.data;
+
+        WebInspector.debuggerModel.removeOneTimeBreakpoint();
         this._paused = true;
         this._waitingToPause = false;
         this._stepping = false;
@@ -368,9 +373,10 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
         window.focus();
+        InspectorFrontendHost.bringToFront();
     },
 
-    debuggerResumed: function()
+    _debuggerResumed: function()
     {
         this._paused = false;
         this._waitingToPause = false;
@@ -413,7 +419,7 @@ WebInspector.ScriptsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        this.debuggerResumed();
+        this._debuggerResumed();
 
         this._backForwardList = [];
         this._currentBackForwardIndex = -1;

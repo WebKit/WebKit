@@ -65149,6 +65149,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Breakpoint.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\BreakpointManager.js"
 					>
 				</File>
@@ -65218,6 +65222,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\DataGrid.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DebuggerModel.js"
 					>
 				</File>
 				<File
