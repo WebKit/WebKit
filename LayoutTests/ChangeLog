@@ -1,3 +1,18 @@
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaseline for r73548.
+
+        * platform/chromium-linux/fast/text/international/khmer-selection-expected.checksum:
+        * platform/chromium-linux/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-linux/fast/text/international/khmer-selection-expected.txt:
+        * platform/chromium-win-xp/fast/text/international/khmer-selection-expected.checksum: Removed.
+        * platform/chromium-win-xp/fast/text/international/khmer-selection-expected.png: Removed.
+        * platform/chromium-win-xp/fast/text/international/khmer-selection-expected.txt: Removed.
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.checksum:
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

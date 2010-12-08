@@ -1843,10 +1843,6 @@ BUG11613 LINUX RELEASE : fast/overflow/scrollRevealButton.html = FAIL
 BUG11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
 // WebKit merge 42738:45840
-// New test, needs baseline.
-BUG16690 SKIP MAC : fast/text/international/khmer-selection.html = FAIL
-
-// WebKit merge 42738:45840
 // New tests, need baseline.
 BUG16240 WIN DEBUG : http/tests/cache/subresource-expiration.html = TIMEOUT
 BUG16240 MAC WIN RELEASE : http/tests/cache/subresource-expiration.html = TIMEOUT
@@ -2428,7 +2424,7 @@ BUG45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 // Chromium does not support cancel for notifications permissions.
 BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.html = FAIL
 
-BUG46276 WIN : fast/text/international/khmer-selection.html = IMAGE+TEXT
+REBASELINE BUG46276 MAC : fast/text/international/khmer-selection.html = IMAGE+TEXT
 
 // HTML5 Geolocation API does not use window.clientInformation.
 BUG11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
