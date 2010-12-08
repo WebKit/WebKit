@@ -1,3 +1,10 @@
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectations update.
+        fast/dom/HTMLMeterElement/meter-element.html has been rebaselined for Windows.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Adam Roben  <aroben@apple.com>
 
         Skip svg/custom/clip-path-referencing-use2.svg, not

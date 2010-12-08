@@ -3131,7 +3131,6 @@ BUG_YUTAK : fast/repaint/positioned-document-element.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = TEXT
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = TEXT
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-boundary-values.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-optimums.html = TEXT
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = TEXT
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = TEXT
