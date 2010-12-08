@@ -125,7 +125,10 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
 
 void GraphicsContext3D::reshape(int width, int height)
 {
-    if (width == m_currentWidth && height == m_currentHeight || !m_contextObj)
+    if (!m_contextObj)
+        return;
+
+    if (width == m_currentWidth && height == m_currentHeight)
         return;
     
     m_currentWidth = width;

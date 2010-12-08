@@ -53,8 +53,8 @@ DragOperation DragController::dragOperation(DragData* dragData)
     if ([NSApp modalWindow] || !dragData->containsURL())
         return DragOperationNone;
 
-    if (!m_documentUnderMouse || ![[m_page->mainFrame()->view()->getOuterView() window] attachedSheet] 
-        && [dragData->platformData() draggingSource] != m_page->mainFrame()->view()->getOuterView())
+    if (!m_documentUnderMouse || (![[m_page->mainFrame()->view()->getOuterView() window] attachedSheet] 
+        && [dragData->platformData() draggingSource] != m_page->mainFrame()->view()->getOuterView()))
         return DragOperationCopy;
 
     return DragOperationNone;

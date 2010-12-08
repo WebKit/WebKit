@@ -1,3 +1,22 @@
+2010-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix some clang++ warnings (one of which was an actual bug)
+        https://bugs.webkit.org/show_bug.cgi?id=50700
+
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+        Add parentheses to silent a clang warning.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        Fix || vs && precedence bug uncovered by clang.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+        Use an early return to avoid a warning.
+
 2010-12-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
