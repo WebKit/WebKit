@@ -1,5 +1,13 @@
 2010-12-07  Anders Carlsson  <andersca@apple.com>
 
+        Fix the last clang++ build error.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::animationForKey):
+        Cast the returned animation to the correct type.
+
+2010-12-07  Anders Carlsson  <andersca@apple.com>
+
         Fix some clang++ build errors.
 
         * platform/graphics/ca/GraphicsLayerCA.cpp:

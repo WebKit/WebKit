@@ -380,10 +380,10 @@ void PlatformCALayer::removeAnimationForKey(const String& key)
 
 PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& key)
 {
-    CAAnimation* anim = [m_layer.get() animationForKey:key];
-    if (!anim)
+    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>([m_layer.get() animationForKey:key]);
+    if (!propertyAnimation)
         return 0;
-    return PlatformCAAnimation::create(anim);
+    return PlatformCAAnimation::create(propertyAnimation);
 }
 
 PlatformCALayer* PlatformCALayer::mask() const
