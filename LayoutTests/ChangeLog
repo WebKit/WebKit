@@ -1,3 +1,15 @@
+2010-12-08  Adam Roben  <aroben@apple.com>
+
+        Update Windows results after r73488
+
+        * platform/win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2010-12-08  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping failing test.
