@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Update Chromium test expectations. Add two test flakinesses which was
+        introduced at r73504.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-08  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
         Update Chromium test expectations. Added a few failures which was found
         in Chromium main waterfall.
 
