@@ -1,3 +1,30 @@
+2010-12-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50576
+
+        REGRESSION in position of autocomplete popup on RTL page.
+
+        RTL static position computation did not subtract out the width of the enclosing box if the
+        immediate parent was a RenderInline.  This bug was exposed by properly changing the RenderView
+        to be RTL when the document was RTL.
+
+        Added three new tests in fast/block/positioning.
+
+        * fast/block/positioning/rtl-static-positioning-inline-block.html: Added.
+        * fast/block/positioning/rtl-static-positioning.html: Added.
+        * fast/block/positioning/table-cell-static-position.html: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-expected.png: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-expected.txt: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-inline-block-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-inline-block-expected.png: Added.
+        * platform/mac/fast/block/positioning/rtl-static-positioning-inline-block-expected.txt: Added.
+        * platform/mac/fast/block/positioning/table-cell-static-position-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/table-cell-static-position-expected.png: Added.
+        * platform/mac/fast/block/positioning/table-cell-static-position-expected.txt: Added.
+
 2010-12-08  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Hyatt.

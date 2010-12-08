@@ -2096,20 +2096,19 @@ void RenderBox::computePositionedLogicalWidth()
         if (containerDirection == LTR) {
             // 'staticX' should already have been set through layout of the parent.
             int staticPosition = layer()->staticX() - containerBlock->borderLeft();
-            for (RenderObject* po = parent(); po && po != containerBlock; po = po->parent()) {
-                if (po->isBox())
-                    staticPosition += toRenderBox(po)->x();
+            for (RenderObject* curr = parent(); curr && curr != containerBlock; curr = curr->parent()) {
+                if (curr->isBox())
+                    staticPosition += toRenderBox(curr)->x();
             }
             left.setValue(Fixed, staticPosition);
         } else {
-            RenderObject* po = parent();
+            RenderBox* enclosingBox = parent()->enclosingBox();
             // 'staticX' should already have been set through layout of the parent.
             int staticPosition = layer()->staticX() + containerWidth + containerBlock->borderRight();
-            if (po->isBox())
-                staticPosition -= toRenderBox(po)->width();
-            for (; po && po != containerBlock; po = po->parent()) {
-                if (po->isBox())
-                    staticPosition -= toRenderBox(po)->x();
+            staticPosition -= enclosingBox->width();
+            for (RenderObject* curr = enclosingBox; curr && curr != containerBlock; curr = curr->parent()) {
+                if (curr->isBox())
+                    staticPosition -= toRenderBox(curr)->x();
             }
             right.setValue(Fixed, staticPosition);
         }
