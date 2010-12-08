@@ -100,7 +100,7 @@ BUG27335 WIN DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
 // was slow, started to timeout
 BUG18702 WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS TIMEOUT
 
-BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PASS
+BUG34759 DEBUG SLOW : inspector/console-log-before-inspector-open.html = PASS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
@@ -2776,11 +2776,11 @@ BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS 
 BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 
 // Debugger tests are slow on win debug bots
-BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/styles-source-lines-inline.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/styles-disable-inherited.html = PASS
+BUGWK45209 DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
+BUGWK45209 DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
+BUGWK45209 DEBUG SLOW : inspector/dom-breakpoints.html = PASS
+BUGWK45209 DEBUG SLOW : inspector/styles-source-lines-inline.html = PASS
+BUGWK45209 DEBUG SLOW : inspector/styles-disable-inherited.html = PASS
 
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
@@ -3176,11 +3176,11 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 
 // Inspector-related failures
-BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
+BUG_DRT : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
+BUG_DRT : http/tests/inspector/change-iframe-src.html = CRASH
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?
-BUG_DRT WIN DEBUG SLOW : inspector = PASS
+BUG_DRT DEBUG SLOW : inspector = PASS
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE

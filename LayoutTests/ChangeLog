@@ -1,3 +1,10 @@
+2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Remove WIN prefix for inspector's tests expectations.
+        DumpRenderTree related patch.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Adam Roben  <aroben@apple.com>
 
         Skip svg/custom/clip-path-referencing-use.svg on Windows
