@@ -1,3 +1,32 @@
+2010-12-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix backward mouse wheeling not working when scroll position is below 0.
+        https://bugs.webkit.org/show_bug.cgi?id=50370
+
+        * fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * fast/dom/horizontal-scrollbar-in-rtl.html:
+        * fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+        * fast/dom/vertical-scrollbar-in-rtl.html:
+        * fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Added.
+        * fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html: Added.
+        * fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Added.
+        * fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html: Added.
+        * platform/chromium/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/chromium/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+        * platform/chromium/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Added.
+        * platform/chromium/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/qt/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+        * platform/win/Skipped:
+        * platform/win/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/win/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+
 2010-12-08  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed, cleaning up test expectations after r7349.

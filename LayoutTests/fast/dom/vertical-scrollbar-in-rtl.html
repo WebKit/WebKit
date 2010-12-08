@@ -29,11 +29,6 @@
             var expectedScrollX = 500;
             var expectedScrollY = -1000;
 
-            function mousewheelHandler(e) 
-            {
-                assertEqual("wheel scroll preserves vertical scroll position", window.scrollY, expectedScrollY);
-            }
-            
             onload = function()
             {
                 if (window.layoutTestController)
@@ -63,14 +58,6 @@
                 window.resizeTo(window.innerWidth, 2000);
                 assertEqual("resize preserves scroll position", window.scrollY, expectedScrollY);
                 
-                // Test wheel scroll preserves horizontal scroll position.
-                window.scrollTo(expectedScrollX / 2, expectedScrollY);
-                var div = document.getElementById("div");
-                div.addEventListener("mousewheel", mousewheelHandler, false);
-                var wheelEvent = document.createEvent("WheelEvent");
-                wheelEvent.initWebKitWheelEvent(expectedScrollX / 2, 0, window, 0, 0, 0, 0, false, false, false, false);
-                div.dispatchEvent(wheelEvent);
-            
                 // Test HOME/END operation.
                 if (window.eventSender) {
                     // Not using assert equal here since the behavior is different in each port. 

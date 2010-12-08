@@ -733,11 +733,12 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     // scroll any further.
     float deltaX = m_horizontalScrollbar ? e.deltaX() : 0;
     float deltaY = m_verticalScrollbar ? e.deltaY() : 0;
-    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
-    if ((deltaX < 0 && maxScrollDelta.width() > 0)
-        || (deltaX > 0 && scrollOffset().width() > 0)
-        || (deltaY < 0 && maxScrollDelta.height() > 0)
-        || (deltaY > 0 && scrollOffset().height() > 0)) {
+    IntSize maxForwardScrollDelta = maximumScrollPosition() - scrollPosition();
+    IntSize maxBackwardScrollDelta = scrollPosition() - minimumScrollPosition();
+    if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
+        || (deltaX > 0 && maxBackwardScrollDelta.width() >0)
+        || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
+        || (deltaY > 0 && maxBackwardScrollDelta.width() > 0)) {
         e.accept();
         if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(!e.deltaX());

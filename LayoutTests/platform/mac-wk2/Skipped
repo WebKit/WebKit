@@ -321,6 +321,8 @@ fast/events/tab-imagemap.html
 fast/events/tab-is-focusable-assert.html
 fast/events/tabindex-focus-chain.html
 fast/events/updateLayoutForHitTest.html
+fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
+fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/events/window-events-bubble.html
 fast/events/window-events-bubble2.html
 fast/events/window-events-capture.html

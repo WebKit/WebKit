@@ -4874,6 +4874,8 @@ fast/forms/multiple-form-submission-protection-mouse.html
 fast/events/remove-child-onscroll.html
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
+fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 
 # meter element is not supported
 # http://bugs.webkit.org/show_bug.cgi?id=48713
