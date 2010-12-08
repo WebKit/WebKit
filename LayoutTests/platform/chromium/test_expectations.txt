@@ -650,11 +650,6 @@ BUG3273 : editing/selection/5825350-1.html = TEXT
 BUG3273 : editing/selection/5825350-2.html = TEXT
 BUG3273 : editing/selection/mixed-editability-10.html = TEXT
 
-// Linux pixeltest failure: caret is in the wrong place
-// Upstream WebKit also skips this test and Safari with latest WebKit shows
-// same behavior as Chromium.
-BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
-
 // selection
 BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
 
