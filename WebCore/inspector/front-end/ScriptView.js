@@ -33,8 +33,10 @@ WebInspector.ScriptView = function(script)
 
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
-    var canEditScripts = WebInspector.panels.scripts.canEditScripts();
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null, this._continueToLine.bind(this));
+    var delegate = new WebInspector.ScriptFrameDelegateImpl(this.script);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, delegate);
+
+    this.script.addEventListener(WebInspector.Script.Events.SourceChanged, this._scriptSourceChanged, this);
 }
 
 WebInspector.ScriptView.prototype = {
@@ -85,29 +87,9 @@ WebInspector.ScriptView.prototype = {
             document.getElementById("script-resource-views").appendChild(this.element);
     },
 
-    _continueToLine: function(line)
+    _scriptSourceChanged: function(event)
     {
-        var scriptsPanel = WebInspector.panels.scripts;
-        if (scriptsPanel)
-            scriptsPanel.continueToLine(this.script.sourceID, line);
-    },
-
-    _addBreakpoint: function(line)
-    {
-        WebInspector.breakpointManager.setBreakpoint(this.script.sourceID, this.script.sourceURL, line, true, "");
-        if (!WebInspector.panels.scripts.breakpointsActivated)
-            WebInspector.panels.scripts.toggleBreakpointsClicked();
-    },
-
-    _editLineComplete: function(newBody)
-    {
-        this.script.source = newBody;
-        this.sourceFrame.updateContent(this._prependWhitespace(newBody));
-    },
-
-    _sourceIDForLine: function(line)
-    {
-        return this.script.sourceID;
+        this.sourceFrame.updateContent(this._prependWhitespace(this.script.source));
     },
 
     // The following methods are pulled from SourceView, since they are
@@ -127,9 +109,32 @@ WebInspector.ScriptView.prototype = {
     showingFirstSearchResult: WebInspector.SourceView.prototype.showingFirstSearchResult,
     showingLastSearchResult: WebInspector.SourceView.prototype.showingLastSearchResult,
     _jumpToSearchResult: WebInspector.SourceView.prototype._jumpToSearchResult,
-    _editLine: WebInspector.SourceView.prototype._editLine,
     resize: WebInspector.SourceView.prototype.resize
 }
 
 WebInspector.ScriptView.prototype.__proto__ = WebInspector.View.prototype;
 
+WebInspector.ScriptFrameDelegateImpl = function(script)
+{
+    WebInspector.SourceFrameDelegate.call(this);
+    this._script = script;
+}
+
+WebInspector.ScriptFrameDelegateImpl.prototype = {
+    canEditScripts: function()
+    {
+        return WebInspector.panels.scripts.canEditScripts();
+    },
+
+    editLineComplete: function(revertEditLineCallback, newContent)
+    {
+        this._script.source = newContent;
+    },
+
+    scripts: function()
+    {
+        return [this._script];
+    }
+}
+
+WebInspector.ScriptFrameDelegateImpl.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

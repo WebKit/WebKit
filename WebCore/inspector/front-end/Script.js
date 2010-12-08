@@ -27,7 +27,7 @@ WebInspector.Script = function(sourceID, sourceURL, source, startingLine, errorL
 {
     this.sourceID = sourceID;
     this.sourceURL = sourceURL;
-    this.source = source;
+    this._source = source;
     this.startingLine = startingLine;
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
@@ -57,6 +57,10 @@ WebInspector.Script.WorldType = {
     EXTENSIONS_WORLD: 1
 }
 
+WebInspector.Script.Events = {
+    SourceChanged: "source-changed"
+}
+
 WebInspector.Script.prototype = {
     get linesCount()
     {
@@ -71,5 +75,19 @@ WebInspector.Script.prototype = {
             this._linesCount++;
         }
         return this._linesCount;
+    },
+
+    get source()
+    {
+        return this._source;
+    },
+
+    set source(source)
+    {
+        this._source = source;
+        this.dispatchEventToListeners(WebInspector.Script.Events.SourceChanged);
     }
 }
+
+WebInspector.Script.prototype.__proto__ = WebInspector.Object.prototype;
+

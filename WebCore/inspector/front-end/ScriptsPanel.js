@@ -175,8 +175,6 @@ WebInspector.ScriptsPanel = function()
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
-    WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
-
     this.reset();
 }
 
@@ -281,26 +279,6 @@ WebInspector.ScriptsPanel.prototype = {
         delete resource._scriptsPendingResourceLoad;
     },
 
-    _breakpointAdded: function(event)
-    {
-        var breakpoint = event.data;
-
-        var sourceFrame;
-        if (breakpoint.url) {
-            var resource = WebInspector.resourceForURL(breakpoint.url);
-            if (resource && resource.finished)
-                sourceFrame = this._sourceFrameForScriptOrResource(resource);
-        }
-
-        if (breakpoint.sourceID && !sourceFrame) {
-            var object = this._sourceIDMap[breakpoint.sourceID]
-            sourceFrame = this._sourceFrameForScriptOrResource(object);
-        }
-
-        if (sourceFrame)
-            sourceFrame.addBreakpoint(breakpoint);
-    },
-
     canEditScripts: function()
     {
         return Preferences.canEditScriptSource;
@@ -312,7 +290,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         // Need to clear breakpoints and re-create them later when editing source.
-        var breakpoints = WebInspector.breakpointManager.breakpointsForSourceID(sourceID);
+        var breakpoints = WebInspector.breakpointManager.findBreakpoints(function(b) { return b.sourceID === editData.sourceID });
         for (var i = 0; i < breakpoints.length; ++i)
             breakpoints[i].remove();
 
@@ -1092,4 +1070,3 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-

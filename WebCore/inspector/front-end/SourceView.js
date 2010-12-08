@@ -32,8 +32,8 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
-    var canEditScripts = WebInspector.panels.scripts && WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null, this._continueToLine.bind(this));
+    var delegate = new WebInspector.ResourceFrameDelegateImpl(this.resource);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, delegate);
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }
@@ -100,9 +100,6 @@ WebInspector.SourceView.prototype = {
         var mimeType = this._canonicalMimeType(this.resource);
         this.sourceFrame.setContent(mimeType, content, this.resource.url);
         this._sourceFrameSetupFinished();
-        var breakpoints = WebInspector.breakpointManager.breakpointsForURL(this.resource.url);
-        for (var i = 0; i < breakpoints.length; ++i)
-            this.sourceFrame.addBreakpoint(breakpoints[i]);
     },
 
     _canonicalMimeType: function(resource)
@@ -117,73 +114,6 @@ WebInspector.SourceView.prototype = {
         if (this.visible)
             this.setupSourceFrameIfNeeded();
         this.resource.removeEventListener("finished", this._resourceLoadingFinished, this);
-    },
-
-    _continueToLine: function(line)
-    {
-        var scriptsPanel = WebInspector.panels.scripts;
-        if (scriptsPanel) {
-            var sourceID = this._sourceIDForLine(line);
-            scriptsPanel.continueToLine(sourceID, line);
-        }
-    },
-
-    _addBreakpoint: function(line)
-    {
-        var sourceID = this._sourceIDForLine(line);
-        WebInspector.breakpointManager.setBreakpoint(sourceID, this.resource.url, line, true, "");
-        if (!WebInspector.panels.scripts.breakpointsActivated)
-            WebInspector.panels.scripts.toggleBreakpointsClicked();
-    },
-
-    _editLine: function(line, newContent, cancelEditingCallback)
-    {
-        var lines = [];
-        var textModel = this.sourceFrame.textModel;
-        for (var i = 0; i < textModel.linesCount; ++i) {
-            if (i === line)
-                lines.push(newContent);
-            else
-                lines.push(textModel.line(i));
-        }
-
-        var editData = {};
-        editData.sourceID = this._sourceIDForLine(line);
-        editData.content = lines.join("\n");
-        editData.line = line;
-        editData.linesCountToShift = newContent.split("\n").length - 1;
-
-        WebInspector.panels.scripts.editScriptSource(editData, this._editLineComplete.bind(this, editData), cancelEditingCallback);
-    },
-
-    _editLineComplete: function(editData, newContent)
-    {
-        this.resource.setContent(newContent, this._revertEditLine.bind(this, editData));
-    },
-
-    _revertEditLine: function(editData, contentToRevertTo)
-    {
-        var newEditData = {};
-        newEditData.sourceID = editData.sourceID;
-        newEditData.content = editData.content;
-        newEditData.line = editData.line;
-        newEditData.linesCountToShift = -editData.linesCountToShift;
-        WebInspector.panels.scripts.editScriptSource(newEditData, this._editLineComplete.bind(this, newEditData));
-    },
-
-    _sourceIDForLine: function(line)
-    {
-        var sourceID = null;
-        var closestStartingLine = 0;
-        var scripts = this.resource.scripts;
-        for (var i = 0; i < scripts.length; ++i) {
-            var script = scripts[i];
-            if (script.startingLine <= line && script.startingLine >= closestStartingLine) {
-                closestStartingLine = script.startingLine;
-                sourceID = script.sourceID;
-            }
-        }
-        return sourceID;
     },
 
     // The rest of the methods in this prototype need to be generic enough to work with a ScriptView.
@@ -308,3 +238,28 @@ WebInspector.SourceView.prototype = {
 }
 
 WebInspector.SourceView.prototype.__proto__ = WebInspector.ResourceView.prototype;
+
+WebInspector.ResourceFrameDelegateImpl = function(resource)
+{
+    WebInspector.SourceFrameDelegate.call(this);
+    this._resource = resource;
+}
+
+WebInspector.ResourceFrameDelegateImpl.prototype = {
+    canEditScripts: function()
+    {
+        return WebInspector.panels.scripts.canEditScripts() && this._resource.type === WebInspector.Resource.Type.Script;
+    },
+
+    editLineComplete: function(revertEditLineCallback, newContent)
+    {
+        this._resource.setContent(newContent, revertEditLineCallback);
+    },
+
+    scripts: function()
+    {
+        return this._resource.scripts;
+    }
+}
+
+WebInspector.ResourceFrameDelegateImpl.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

@@ -1,3 +1,44 @@
+2010-12-08  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: SourceFrame refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=50223
+
+        SourceFrame should ask BreakpointManager about existing breakpoints instead of maintaining
+        it's own storages. Move common code from ScriptView and SourceView to SourceFrame.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.findBreakpoints):
+        (WebInspector.BreakpointManager.prototype.findBreakpoint):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.get linesCount):
+        (WebInspector.Script.prototype.get source):
+        (WebInspector.Script.prototype.set source):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        (WebInspector.ScriptView.prototype._scriptSourceChanged):
+        (WebInspector.ScriptFrameDelegateImpl):
+        (WebInspector.ScriptFrameDelegateImpl.prototype.canEditScripts):
+        (WebInspector.ScriptFrameDelegateImpl.prototype.editLineComplete):
+        (WebInspector.ScriptFrameDelegateImpl.prototype.scripts):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame): Add common methods of ScriptView and SourceView.
+        (WebInspector.SourceFrameDelegate):
+        (WebInspector.SourceFrameDelegate.prototype.canEditScripts):
+        (WebInspector.SourceFrameDelegate.prototype.editLineComplete):
+        (WebInspector.SourceFrameDelegate.prototype.scripts):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype._contentLoaded):
+        (WebInspector.ResourceFrameDelegateImpl):
+        (WebInspector.ResourceFrameDelegateImpl.prototype.canEditScripts):
+        (WebInspector.ResourceFrameDelegateImpl.prototype.editLineComplete):
+        (WebInspector.ResourceFrameDelegateImpl.prototype.scripts):
+
 2010-12-08  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r73492.

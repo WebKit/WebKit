@@ -63,24 +63,21 @@ WebInspector.BreakpointManager.prototype = {
         this._setBreakpoint(sourceID, url, line, enabled, condition);
     },
 
-    breakpointsForSourceID: function(sourceID)
+    findBreakpoints: function(filter)
     {
         var breakpoints = [];
         for (var id in this._breakpoints) {
-            if (this._breakpoints[id].sourceID === sourceID)
-                breakpoints.push(this._breakpoints[id]);
+           var breakpoint = this._breakpoints[id];
+           if (filter(breakpoint))
+               breakpoints.push(breakpoint);
         }
         return breakpoints;
     },
 
-    breakpointsForURL: function(url)
+    findBreakpoint: function(sourceID, lineNumber)
     {
-        var breakpoints = [];
-        for (var id in this._breakpoints) {
-            if (this._breakpoints[id].url === url)
-                breakpoints.push(this._breakpoints[id]);
-        }
-        return breakpoints;
+        var breakpointId = WebInspector.Breakpoint.jsBreakpointId(sourceID, lineNumber);
+        return this._breakpoints[breakpointId];
     },
 
     reset: function()
