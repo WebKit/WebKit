@@ -1,3 +1,9 @@
+2010-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fix name of the Korean translation file.
+
+        * kr.po -> ko.po: renamed to correct name.
+
 2010-12-07  Chyangwoo Ryu  <cwryu@debian.org>
 
         Reviewed by Gustavo Noronha.
