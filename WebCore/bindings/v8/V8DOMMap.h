@@ -48,6 +48,8 @@ namespace WebCore {
 
         class Visitor {
         public:
+            virtual void startMap() { }
+            virtual void endMap() { }
             virtual void visitDOMWrapper(KeyType* key, v8::Persistent<ValueType> object) = 0;
         protected:
             virtual ~Visitor() { }
@@ -122,9 +124,11 @@ namespace WebCore {
 
         virtual void visit(typename Parent::Visitor* visitor)
         {
+            visitor->startMap();
             typename HashMap<KeyType*, ValueType*>::iterator it = m_map.begin();
             for (; it != m_map.end(); ++it)
                 visitor->visitDOMWrapper(it->first, v8::Persistent<ValueType>(it->second));
+            visitor->endMap();
         }
 
     protected:

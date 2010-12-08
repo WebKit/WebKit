@@ -41,6 +41,12 @@
 #include "PlatformBridge.h"
 #include "SVGElement.h"
 #include "V8Binding.h"
+#include "V8CSSCharsetRule.h"
+#include "V8CSSFontFaceRule.h"
+#include "V8CSSImportRule.h"
+#include "V8CSSMediaRule.h"
+#include "V8CSSStyleRule.h"
+#include "V8CSSStyleSheet.h"
 #include "V8DOMMap.h"
 #include "V8MessagePort.h"
 #include "V8Proxy.h"
@@ -213,20 +219,17 @@ public:
 
 class GrouperItem {
 public:
-    GrouperItem(uintptr_t groupId, Node* node, v8::Persistent<v8::Object> wrapper) 
+    GrouperItem(uintptr_t groupId, v8::Persistent<v8::Object> wrapper) 
         : m_groupId(groupId)
-        , m_node(node)
         , m_wrapper(wrapper) 
         {
         }
 
     uintptr_t groupId() const { return m_groupId; }
-    Node* node() const { return m_node; }
     v8::Persistent<v8::Object> wrapper() const { return m_wrapper; }
 
 private:
     uintptr_t m_groupId;
-    Node* m_node;
     v8::Persistent<v8::Object> m_wrapper;
 };
 
@@ -237,16 +240,55 @@ bool operator<(const GrouperItem& a, const GrouperItem& b)
 
 typedef Vector<GrouperItem> GrouperList;
 
-class ObjectGrouperVisitor : public DOMWrapperMap<Node>::Visitor {
+void makeV8ObjectGroups(GrouperList& grouper)
+{
+    // Group by sorting by the group id.
+    std::sort(grouper.begin(), grouper.end());
+
+    // FIXME Should probably work in iterators here, but indexes were easier for my simple mind.
+    for (size_t i = 0; i < grouper.size(); ) {
+        // Seek to the next key (or the end of the list).
+        size_t nextKeyIndex = grouper.size();
+        for (size_t j = i; j < grouper.size(); ++j) {
+            if (grouper[i].groupId() != grouper[j].groupId()) {
+                nextKeyIndex = j;
+                break;
+            }
+        }
+
+        ASSERT(nextKeyIndex > i);
+
+        // We only care about a group if it has more than one object. If it only
+        // has one object, it has nothing else that needs to be kept alive.
+        if (nextKeyIndex - i <= 1) {
+            i = nextKeyIndex;
+            continue;
+        }
+
+        Vector<v8::Persistent<v8::Value> > group;
+        group.reserveCapacity(nextKeyIndex - i);
+        for (; i < nextKeyIndex; ++i) {
+            v8::Persistent<v8::Value> wrapper = grouper[i].wrapper();
+            if (!wrapper.IsEmpty())
+                group.append(wrapper);
+        }
+
+        if (group.size() > 1)
+            v8::V8::AddObjectGroup(&group[0], group.size());
+
+        ASSERT(i == nextKeyIndex);
+    }
+}
+
+class NodeGrouperVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
-    ObjectGrouperVisitor()
+    NodeGrouperVisitor()
     {
         // FIXME: grouper_.reserveCapacity(node_map.size());  ?
     }
 
     void visitDOMWrapper(Node* node, v8::Persistent<v8::Object> wrapper)
     {
-
         // If the node is in document, put it in the ownerDocument's object group.
         //
         // If an image element was created by JavaScript "new Image",
@@ -277,65 +319,80 @@ public:
             }
             groupId = reinterpret_cast<uintptr_t>(root);
         }
-        m_grouper.append(GrouperItem(groupId, node, wrapper));
+        m_grouper.append(GrouperItem(groupId, wrapper));
     }
 
     void applyGrouping()
     {
-        // Group by sorting by the group id.
-        std::sort(m_grouper.begin(), m_grouper.end());
+        /* FIXME: Re-enabled this code to avoid GCing these wrappers!
+                      Currently this depends on looking up the wrapper
+                      during a GC, but we don't know which isolated world
+                      we're in, so it's unclear which map to look in...
 
-        // FIXME Should probably work in iterators here, but indexes were easier for my simple mind.
-        for (size_t i = 0; i < m_grouper.size(); ) {
-            // Seek to the next key (or the end of the list).
-            size_t nextKeyIndex = m_grouper.size();
-            for (size_t j = i; j < m_grouper.size(); ++j) {
-                if (m_grouper[i].groupId() != m_grouper[j].groupId()) {
-                    nextKeyIndex = j;
-                    break;
-                }
-            }
-
-            ASSERT(nextKeyIndex > i);
-
-            // We only care about a group if it has more than one object. If it only
-            // has one object, it has nothing else that needs to be kept alive.
-            if (nextKeyIndex - i <= 1) {
-                i = nextKeyIndex;
-                continue;
-            }
-
-            Vector<v8::Persistent<v8::Value> > group;
-            group.reserveCapacity(nextKeyIndex - i);
-            for (; i < nextKeyIndex; ++i) {
-                v8::Persistent<v8::Value> wrapper = m_grouper[i].wrapper();
-                if (!wrapper.IsEmpty())
-                    group.append(wrapper);
-                /* FIXME: Re-enabled this code to avoid GCing these wrappers!
-                             Currently this depends on looking up the wrapper
-                             during a GC, but we don't know which isolated world
-                             we're in, so it's unclear which map to look in...
-
-                // If the node is styled and there is a wrapper for the inline
-                // style declaration, we need to keep that style declaration
-                // wrapper alive as well, so we add it to the object group.
-                if (node->isStyledElement()) {
-                  StyledElement* element = reinterpret_cast<StyledElement*>(node);
-                  CSSStyleDeclaration* style = element->inlineStyleDecl();
-                  if (style != NULL) {
-                    wrapper = getDOMObjectMap().get(style);
-                    if (!wrapper.IsEmpty())
-                      group.append(wrapper);
-                  }
-                }
-                */
-            }
-
-            if (group.size() > 1)
-                v8::V8::AddObjectGroup(&group[0], group.size());
-
-            ASSERT(i == nextKeyIndex);
+        // If the node is styled and there is a wrapper for the inline
+        // style declaration, we need to keep that style declaration
+        // wrapper alive as well, so we add it to the object group.
+        if (node->isStyledElement()) {
+          StyledElement* element = reinterpret_cast<StyledElement*>(node);
+          CSSStyleDeclaration* style = element->inlineStyleDecl();
+          if (style != NULL) {
+            wrapper = getDOMObjectMap().get(style);
+            if (!wrapper.IsEmpty())
+              group.append(wrapper);
+          }
         }
+        */
+        makeV8ObjectGroups(m_grouper);
+    }
+
+private:
+    GrouperList m_grouper;
+};
+
+class DOMObjectGrouperVisitor : public DOMWrapperMap<void>::Visitor {
+public:
+    DOMObjectGrouperVisitor()
+    {
+    }
+
+    void startMap()
+    {
+        m_grouper.shrink(0);
+    }
+
+    void endMap()
+    {
+        makeV8ObjectGroups(m_grouper);
+    }
+
+    void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
+    {
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
+        // FIXME: extend WrapperTypeInfo with isStyle to simplify the check below.
+        // FIXME: check if there are other StyleBase wrappers we should care of.
+        if (!V8CSSStyleSheet::info.equals(typeInfo)
+            && !V8CSSCharsetRule::info.equals(typeInfo)
+            && !V8CSSFontFaceRule::info.equals(typeInfo)
+            && !V8CSSStyleRule::info.equals(typeInfo)
+            && !V8CSSImportRule::info.equals(typeInfo)
+            && !V8CSSMediaRule::info.equals(typeInfo)) {
+            return;
+        }
+        StyleBase* styleBase = static_cast<StyleBase*>(object);
+
+        // We put the whole tree of style elements into a single object group.
+        // To achieve that we group elements by the roots of their trees.
+        StyleBase* root = styleBase;
+        ASSERT(root);
+        while (true) {
+          StyleBase* parent = root->parent();
+          if (!parent)
+              break;
+          root = parent;
+        }
+        // Group id is an address of the root.
+        uintptr_t groupId = reinterpret_cast<uintptr_t>(root);
+        m_grouper.append(GrouperItem(groupId, wrapper));
     }
 
 private:
@@ -358,9 +415,12 @@ void V8GCController::gcPrologue()
     visitActiveDOMObjectsInCurrentThread(&prologueVisitor);
 
     // Create object groups.
-    ObjectGrouperVisitor objectGrouperVisitor;
-    visitDOMNodesInCurrentThread(&objectGrouperVisitor);
-    objectGrouperVisitor.applyGrouping();
+    NodeGrouperVisitor nodeGrouperVisitor;
+    visitDOMNodesInCurrentThread(&nodeGrouperVisitor);
+    nodeGrouperVisitor.applyGrouping();
+
+    DOMObjectGrouperVisitor domObjectGrouperVisitor;
+    visitDOMObjectsInCurrentThread(&domObjectGrouperVisitor);
 
     // Clean single element cache for string conversions.
     lastStringImpl = 0;
