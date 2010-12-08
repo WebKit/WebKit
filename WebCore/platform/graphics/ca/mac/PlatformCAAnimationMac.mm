@@ -42,26 +42,6 @@ using namespace WebCore;
 // This value must be the same as in PlatformCALayerMac.mm
 static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
 
-static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
-{
-    toT3D.m11 = narrowPrecisionToFloat(t.m11());
-    toT3D.m12 = narrowPrecisionToFloat(t.m12());
-    toT3D.m13 = narrowPrecisionToFloat(t.m13());
-    toT3D.m14 = narrowPrecisionToFloat(t.m14());
-    toT3D.m21 = narrowPrecisionToFloat(t.m21());
-    toT3D.m22 = narrowPrecisionToFloat(t.m22());
-    toT3D.m23 = narrowPrecisionToFloat(t.m23());
-    toT3D.m24 = narrowPrecisionToFloat(t.m24());
-    toT3D.m31 = narrowPrecisionToFloat(t.m31());
-    toT3D.m32 = narrowPrecisionToFloat(t.m32());
-    toT3D.m33 = narrowPrecisionToFloat(t.m33());
-    toT3D.m34 = narrowPrecisionToFloat(t.m34());
-    toT3D.m41 = narrowPrecisionToFloat(t.m41());
-    toT3D.m42 = narrowPrecisionToFloat(t.m42());
-    toT3D.m43 = narrowPrecisionToFloat(t.m43());
-    toT3D.m44 = narrowPrecisionToFloat(t.m44());
-}
-
 static NSString* toCAFillModeType(PlatformCAAnimation::FillModeType type)
 {
     switch (type) {
@@ -389,10 +369,8 @@ void PlatformCAAnimation::setFromValue(const WebCore::TransformationMatrix& valu
 {
     if (animationType() != Basic)
         return;
-
-    CATransform3D caTransform;
-    copyTransform(caTransform, value);
-    [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:[NSValue valueWithCATransform3D:caTransform]];
+        
+    [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:[NSValue valueWithCATransform3D:value]];
 }
 
 void PlatformCAAnimation::setFromValue(const FloatPoint3D& value)
@@ -443,9 +421,7 @@ void PlatformCAAnimation::setToValue(const WebCore::TransformationMatrix& value)
     if (animationType() != Basic)
         return;
 
-    CATransform3D caTransform;
-    copyTransform(caTransform, value);
-    [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:[NSValue valueWithCATransform3D:caTransform]];
+    [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:[NSValue valueWithCATransform3D:value]];
 }
 
 void PlatformCAAnimation::setToValue(const FloatPoint3D& value)
@@ -503,12 +479,10 @@ void PlatformCAAnimation::setValues(const Vector<WebCore::TransformationMatrix>&
         return;
         
     NSMutableArray* array = [NSMutableArray array];
-    CATransform3D caTransform;
 
-    for (size_t i = 0; i < value.size(); ++i) {
-        copyTransform(caTransform, value[i]);
-        [array addObject:[NSValue valueWithCATransform3D:caTransform]];
-    }
+    for (size_t i = 0; i < value.size(); ++i)
+        [array addObject:[NSValue valueWithCATransform3D:value[i]]];
+        
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setValues:array];
 }
 

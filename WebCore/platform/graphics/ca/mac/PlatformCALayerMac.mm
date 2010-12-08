@@ -95,26 +95,6 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 
-static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
-{
-    toT3D.m11 = narrowPrecisionToFloat(t.m11());
-    toT3D.m12 = narrowPrecisionToFloat(t.m12());
-    toT3D.m13 = narrowPrecisionToFloat(t.m13());
-    toT3D.m14 = narrowPrecisionToFloat(t.m14());
-    toT3D.m21 = narrowPrecisionToFloat(t.m21());
-    toT3D.m22 = narrowPrecisionToFloat(t.m22());
-    toT3D.m23 = narrowPrecisionToFloat(t.m23());
-    toT3D.m24 = narrowPrecisionToFloat(t.m24());
-    toT3D.m31 = narrowPrecisionToFloat(t.m31());
-    toT3D.m32 = narrowPrecisionToFloat(t.m32());
-    toT3D.m33 = narrowPrecisionToFloat(t.m33());
-    toT3D.m34 = narrowPrecisionToFloat(t.m34());
-    toT3D.m41 = narrowPrecisionToFloat(t.m41());
-    toT3D.m42 = narrowPrecisionToFloat(t.m42());
-    toT3D.m43 = narrowPrecisionToFloat(t.m43());
-    toT3D.m44 = narrowPrecisionToFloat(t.m44());
-}
-
 bool PlatformCALayer::isValueFunctionSupported()
 {
     static bool sHaveValueFunction = [CAPropertyAnimation instancesRespondToSelector:@selector(setValueFunction:)];
@@ -458,31 +438,25 @@ void PlatformCALayer::setAnchorPoint(const FloatPoint3D& value)
 
 TransformationMatrix PlatformCALayer::transform() const
 {
-    CATransform3D t = [m_layer.get() transform];
-    return TransformationMatrix(t.m11, t.m12, t.m13, t.m14, t.m21, t.m22, t.m23, t.m24, t.m31, t.m32, t.m33, t.m34, t.m41, t.m42, t.m43, t.m44);
+    return [m_layer.get() transform];
 }
 
 void PlatformCALayer::setTransform(const TransformationMatrix& value)
 {
-    CATransform3D transform;
-    copyTransform(transform, value);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setTransform:transform];
+    [m_layer.get() setTransform:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 TransformationMatrix PlatformCALayer::sublayerTransform() const
 {
-    CATransform3D t = [m_layer.get() sublayerTransform];
-    return TransformationMatrix(t.m11, t.m12, t.m13, t.m14, t.m21, t.m22, t.m23, t.m24, t.m31, t.m32, t.m33, t.m34, t.m41, t.m42, t.m43, t.m44);
+    return [m_layer.get() sublayerTransform];
 }
 
 void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
 {
-    CATransform3D transform;
-    copyTransform(transform, value);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setSublayerTransform:transform];
+    [m_layer.get() setSublayerTransform:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -492,8 +466,7 @@ TransformationMatrix PlatformCALayer::contentsTransform() const
     if (m_layerType != LayerTypeWebLayer)
         return TransformationMatrix();
         
-    CGAffineTransform t = [static_cast<WebLayer*>(m_layer.get()) contentsTransform];
-    return TransformationMatrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
+    return [static_cast<WebLayer*>(m_layer.get()) contentsTransform];
 #else
     return TransformationMatrix();
 #endif
@@ -505,9 +478,8 @@ void PlatformCALayer::setContentsTransform(const TransformationMatrix& value)
     if (m_layerType != LayerTypeWebLayer)
         return;
 
-    CGAffineTransform transform = value;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setContentsTransform:transform];
+    [m_layer.get() setContentsTransform:value];
     END_BLOCK_OBJC_EXCEPTIONS
 #else
     UNUSED_PARAM(value);

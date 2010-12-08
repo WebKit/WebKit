@@ -40,9 +40,7 @@
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/QuartzCore.h>
 #include <limits.h>
-#include <objc/objc-auto.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace std;
@@ -1990,8 +1988,7 @@ void GraphicsLayerCA::updateContentsTransform()
     if (contentsOrientation() == CompositingCoordinatesBottomUp) {
         CGAffineTransform contentsTransform = CGAffineTransformMakeScale(1, -1);
         contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -m_layer->bounds().size().height());
-        TransformationMatrix transform3D(contentsTransform.a, contentsTransform.b, contentsTransform.c, contentsTransform.d, contentsTransform.tx, contentsTransform.ty);
-        m_layer->setContentsTransform(TransformationMatrix(transform3D));
+        m_layer->setContentsTransform(TransformationMatrix(contentsTransform));
     }
 #endif
 }
@@ -2045,8 +2042,8 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
 
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer, RefPtr<PlatformCALayer>& contentsLayer, CloneLevel cloneLevel)
 {
-    structuralLayer = nil;
-    contentsLayer = nil;
+    structuralLayer = 0;
+    contentsLayer = 0;
 
     if (!m_layerClones)
         m_layerClones = new LayerMap;
@@ -2108,7 +2105,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
         // We are a replica being asked for clones of our layers.
         RefPtr<PlatformCALayer> replicaRoot = replicatedLayerRoot(replicaState);
         if (!replicaRoot)
-            return nil;
+            return 0;
 
         if (structuralLayer) {
             structuralLayer->insertSublayer(replicaRoot.get(), 0);
