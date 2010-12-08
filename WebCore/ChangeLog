@@ -1,3 +1,17 @@
+2010-12-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKitSoupCache fails to load resources when cache contents are externally removed
+        https://bugs.webkit.org/show_bug.cgi?id=50577
+
+        Try to download cached resources again if they are no longer
+        accesible by the cache.
+
+        * platform/network/soup/cache/soup-request-http.c:
+        (send_async_cb):
+        (webkit_soup_request_http_send_async):
+
 2010-12-06  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

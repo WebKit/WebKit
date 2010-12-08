@@ -188,6 +188,7 @@ typedef struct {
 	WebKitSoupRequestHTTP *http;
 	GAsyncReadyCallback callback;
 	gpointer user_data;
+	WebKitSoupHTTPInputStream *httpstream;
 } SendAsyncHelper;
 
 static void webkit_soup_request_http_send_async (WebKitSoupRequest          *request,
@@ -199,45 +200,34 @@ static gboolean
 send_async_cb (gpointer data)
 {
 	GSimpleAsyncResult *simple;
-	WebKitSoupHTTPInputStream *httpstream;
-	SoupSession *session;
-	WebKitSoupCache *cache;
 	SendAsyncHelper *helper = (SendAsyncHelper *)data;
+	const gchar *content_type;
 
-	session = webkit_soup_request_get_session (WEBKIT_SOUP_REQUEST (helper->http));
-	cache = (WebKitSoupCache *)soup_session_get_feature (session, WEBKIT_TYPE_SOUP_CACHE);
+	simple = g_simple_async_result_new (G_OBJECT (helper->http),
+					    helper->callback, helper->user_data,
+					    webkit_soup_request_http_send_async);
+	g_simple_async_result_set_op_res_gpointer (simple, helper->httpstream, g_object_unref);
 
-	httpstream = (WebKitSoupHTTPInputStream *)webkit_soup_cache_send_response (cache, SOUP_MESSAGE (helper->http->priv->msg));
+	/* Update message status */
+	soup_message_set_status (helper->http->priv->msg, SOUP_STATUS_OK);
 
-	if (httpstream) {
-		const gchar *content_type;
+	/* Issue signals  */
+	soup_message_got_headers (helper->http->priv->msg);
 
-		simple = g_simple_async_result_new (G_OBJECT (helper->http),
-						    helper->callback, helper->user_data,
-						    webkit_soup_request_http_send_async);
-		g_simple_async_result_set_op_res_gpointer (simple, httpstream, g_object_unref);
+	/* FIXME: Uncomment this when this becomes part of libsoup
+	 * if (!soup_message_disables_feature(helper->http->priv->msg, SOUP_TYPE_CONTENT_SNIFFER)) {
+	 *	const gchar *content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
+	 *	soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
+	 * }
+	 */
+	content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
+	soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
 
-		/* Update message status */
-		soup_message_set_status (helper->http->priv->msg, SOUP_STATUS_OK);
+	g_simple_async_result_complete (simple);
 
-		/* Issue signals  */
-		soup_message_got_headers (helper->http->priv->msg);
+	soup_message_finished (helper->http->priv->msg);
 
-		/* FIXME: Uncomment this when this becomes part of libsoup
-		 * if (!soup_message_disables_feature(helper->http->priv->msg, SOUP_TYPE_CONTENT_SNIFFER)) {
-		 *	const gchar *content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
-		 *	soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
-		 * }
-		 */
-		content_type = soup_message_headers_get_content_type (helper->http->priv->msg->response_headers, NULL);
-		soup_message_content_sniffed (helper->http->priv->msg, content_type, NULL);
-
-		g_simple_async_result_complete (simple);
-
-		soup_message_finished (helper->http->priv->msg);
-
-		g_object_unref (simple);
-	}
+	g_object_unref (simple);
 
 	g_object_unref (helper->http);
 	g_slice_free (SendAsyncHelper, helper);
@@ -265,17 +255,28 @@ webkit_soup_request_http_send_async (WebKitSoupRequest          *request,
 
 		response = webkit_soup_cache_has_response (cache, http->priv->msg);
 		if (response == WEBKIT_SOUP_CACHE_RESPONSE_FRESH) {
-			/* Do return the stream asynchronously as in
-			   the other cases. It's not enough to use
-			   g_simple_async_result_complete_in_idle as
-			   the signals must be also emitted
-			   asynchronously */
-			SendAsyncHelper *helper = g_slice_new (SendAsyncHelper);
-			helper->http = g_object_ref (http);
-			helper->callback = callback;
-			helper->user_data = user_data;
-			g_timeout_add (0, send_async_cb, helper);
-			return;
+			WebKitSoupHTTPInputStream *httpstream;
+
+			httpstream = (WebKitSoupHTTPInputStream *)
+				webkit_soup_cache_send_response (cache, SOUP_MESSAGE (http->priv->msg));
+
+			/* Cached resource file could have been deleted outside
+			 */
+			if (httpstream) {
+				/* Do return the stream asynchronously as in
+				 * the other cases. It's not enough to use
+				 * g_simple_async_result_complete_in_idle as
+				 * the signals must be also emitted
+				 * asynchronously
+				 */
+				SendAsyncHelper *helper = g_slice_new (SendAsyncHelper);
+				helper->http = g_object_ref (http);
+				helper->callback = callback;
+				helper->user_data = user_data;
+				helper->httpstream = httpstream;
+				g_timeout_add (0, send_async_cb, helper);
+				return;
+			}
 		} else if (response == WEBKIT_SOUP_CACHE_RESPONSE_NEEDS_VALIDATION) {
 			SoupMessage *conditional_msg;
 			ConditionalHelper *helper;
