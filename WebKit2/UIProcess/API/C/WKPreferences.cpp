@@ -355,7 +355,7 @@ void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef preferencesRef, W
     toImpl(preferencesRef)->setFTPDirectoryTemplatePath(toWTFString(pathRef));
 }
 
-WKStringRef WKPreferencesGetFTPDirectoryTemplatePath(WKPreferencesRef preferencesRef)
+WKStringRef WKPreferencesCopyFTPDirectoryTemplatePath(WKPreferencesRef preferencesRef)
 {
     return toCopiedAPI(toImpl(preferencesRef)->ftpDirectoryTemplatePath());
 }

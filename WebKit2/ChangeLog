@@ -1,5 +1,16 @@
 2010-12-08  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Rename WKPreferencesGetFTPDirectoryTemplatePath to WKPreferencesCopyFTPDirectoryTemplatePath
+        since it copies the value.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCopyFTPDirectoryTemplatePath):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         WebKit2: Can't open ftp directory

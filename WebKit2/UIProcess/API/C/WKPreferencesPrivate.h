@@ -69,7 +69,7 @@ WK_EXPORT bool WKPreferencesGetForceFTPDirectoryListings(WKPreferencesRef prefer
 
 // Defaults to the empty string.
 WK_EXPORT void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef preferences, WKStringRef path);
-WK_EXPORT WKStringRef WKPreferencesGetFTPDirectoryTemplatePath(WKPreferencesRef preferences);
+WK_EXPORT WKStringRef WKPreferencesCopyFTPDirectoryTemplatePath(WKPreferencesRef preferences);
 
 #ifdef __cplusplus
 }
