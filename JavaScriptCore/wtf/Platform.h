@@ -530,9 +530,6 @@
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 #define WTF_PLATFORM_CI 1
 #endif
-#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && PLATFORM(CG))
-#define WTF_PLATFORM_CA 1
-#endif
 
 /* PLATFORM(SKIA) for Win/Linux, CG/CI for Mac */
 #if PLATFORM(CHROMIUM)

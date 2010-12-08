@@ -34,16 +34,6 @@
 
 namespace WebCore {
 
-TransformationMatrix::TransformationMatrix(const CGAffineTransform& t)
-{
-    setA(t.a);
-    setB(t.b);
-    setC(t.c);
-    setD(t.d);
-    setE(t.tx);
-    setF(t.ty);
-}
-
 TransformationMatrix::operator CGAffineTransform() const
 {
     return CGAffineTransformMake(narrowPrecisionToCGFloat(a()),

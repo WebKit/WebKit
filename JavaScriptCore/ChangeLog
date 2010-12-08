@@ -1,15 +1,3 @@
-2010-12-07  Chris Marrin  <cmarrin@apple.com>
-
-        Reviewed by Simon Fraser.
-
-        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
-        https://bugs.webkit.org/show_bug.cgi?id=49388
-
-        Added a WTF_PLATFORM_CA flag. Set when platform is MAC or IOS or (WINDOWS AND CG)
-        which was decided was the best way to identify a build with CoreAnimation
-
-        * wtf/Platform.h:
-
 2010-12-07  Anders Carlsson  <andersca@apple.com>
 
         Build fix follow up build fix.
