@@ -1,3 +1,18 @@
+2010-12-07  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] compositor lost context recovery fix
+        https://bugs.webkit.org/show_bug.cgi?id=50614
+
+        To test, load a page that triggers the compositor, kill the GPU
+        process and hover over a link to redraw and thus restart the GPU
+        process.  Without this patch it will assert in
+        ContentLayerChromium::updateTextureRect; with this patch it will not.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setNeedsDisplay):
+
 2010-12-07  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -383,6 +383,7 @@ void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 
 void LayerChromium::setNeedsDisplay()
 {
+    m_dirtyRect.setLocation(FloatPoint());
     m_dirtyRect.setSize(m_bounds);
     m_contentsDirty = true;
     setNeedsCommit();
