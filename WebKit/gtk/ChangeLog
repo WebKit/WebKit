@@ -1,3 +1,20 @@
+2010-12-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by John Sullivan.
+
+        [GTK] Layering violation in ContextMenuGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50676
+
+        ContextMenuGtk accesses the page's ContextMenuController, which is a layering
+        violation. This was fixed for Mac with change r73469. We make a similar fix here
+        by moving the "activated" signal connection to the WebKit layer.
+
+        * webkit/webkitwebview.cpp:
+        (popupMenuItemActivated): Have ContextMenuController handle this signal.
+        (webkit_web_view_forward_context_menu_event): For all items in the untouched
+        context menu, connect their "activated" signal to the new popupMenuItemActivated
+        handler.
+
 2010-12-08  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.

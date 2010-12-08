@@ -1,3 +1,18 @@
+2010-12-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by John Sullivan.
+
+        [GTK] Layering violation in ContextMenuGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50676
+
+        ContextMenuGtk accesses the page's ContextMenuController, which is a layering
+        violation. This was fixed for Mac with change r73469. We make a similar fix here
+        by moving the "activated" signal connection to the WebKit layer.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::appendItem): Remove access of ContextMenuController. This
+        is a layering violation.
+
 2010-12-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

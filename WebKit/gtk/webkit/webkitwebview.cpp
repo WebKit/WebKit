@@ -265,6 +265,12 @@ static Node* getFocusedNode(Frame* frame)
     return 0;
 }
 
+static void contextMenuItemActivated(GtkMenuItem* item, ContextMenuController* controller)
+{
+    ContextMenuItem contextItem(item);
+    controller->contextMenuItemSelected(&contextItem);
+}
+
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
 {
     Page* page = core(webView);
@@ -305,7 +311,8 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     // If coreMenu is NULL, this means WebCore decided to not create
     // the default context menu; this may happen when the page is
     // handling the right-click for reasons other than the context menu.
-    ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
+    ContextMenuController* controller = page->contextMenuController();
+    ContextMenu* coreMenu = controller->contextMenu();
     if (!coreMenu)
         return mousePressEventResult;
 
@@ -323,12 +330,23 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     if (!menu)
         return FALSE;
 
+    // We connect the "activate" signal here rather than in ContextMenuGtk to avoid
+    // a layering violation. ContextMenuGtk should not know about the ContextMenuController.
+    // FIXME: This should handle submenu items.
+    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GList* currentListItem = items.get();
+    while (currentListItem) {
+        GtkMenuItem* item = GTK_MENU_ITEM(currentListItem->data);
+        if (!GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_menu_item_get_submenu(item))
+            g_signal_connect(item, "activate", G_CALLBACK(contextMenuItemActivated), controller);
+        currentListItem = currentListItem->next;
+    }
+
     g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, menu);
 
-    GList* items = gtk_container_get_children(GTK_CONTAINER(menu));
-    bool empty = !g_list_nth(items, 0);
-    g_list_free(items);
-    if (empty)
+    // If the context menu is now empty, don't show it.
+    items.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    if (!items)
         return FALSE;
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
@@ -336,9 +354,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     priv->lastPopupXPosition = event.globalX();
     priv->lastPopupYPosition = event.globalY();
 
-    gtk_menu_popup(menu, NULL, NULL,
-                   &PopupMenuPositionFunc,
-                   webView, event.button() + 1, gtk_get_current_event_time());
+    gtk_menu_popup(menu, 0, 0, &PopupMenuPositionFunc, webView, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
 }
 
