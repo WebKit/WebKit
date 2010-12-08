@@ -1,3 +1,12 @@
+2010-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] media/fullscreen* failing on 64-bits Debug
+        https://bugs.webkit.org/show_bug.cgi?id=50394
+
+        * platform/gtk/Skipped: Unskip now passing tests.
+
 2010-12-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Remove WIN prefix for inspector's tests expectations.

@@ -1255,8 +1255,10 @@ void MediaPlayerPrivateGStreamer::durationChanged()
     float previousDuration = m_mediaDuration;
 
     cacheDuration();
-
-    if (m_mediaDuration != previousDuration)
+    // Avoid emiting durationchanged in the case where the previous
+    // duration was 0 because that case is already handled by the
+    // HTMLMediaElement.
+    if (previousDuration && m_mediaDuration != previousDuration)
         m_player->durationChanged();
 }
 
