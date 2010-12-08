@@ -1,3 +1,10 @@
+2010-12-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Replace some GTK+ test results after r73548.
+
+        * platform/gtk/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; Removed old expected results for caret-rtl.html and caret-rtl-2.html on Mac Leopard.
