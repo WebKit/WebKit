@@ -170,7 +170,7 @@ static WebMenuTarget* target;
 {
     WebCore::ContextMenuItem coreItem(item);
     ASSERT(_menuController->contextMenu());
-    _menuController->contextMenu()->checkOrEnableIfNeeded(coreItem);
+    _menuController->checkOrEnableIfNeeded(coreItem);
     return coreItem.enabled();
 }
 

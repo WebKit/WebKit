@@ -1151,7 +1151,6 @@ SOURCES += \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
     platform/ContentType.cpp \
-    platform/ContextMenu.cpp \
     platform/CrossThreadCopier.cpp \
     platform/DeprecatedPtrListImpl.cpp \
     platform/DragData.cpp \

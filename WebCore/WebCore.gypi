@@ -3421,7 +3421,6 @@
             'platform/AutodrainedPool.h',
             'platform/ContentType.cpp',
             'platform/ContentType.h',
-            'platform/ContextMenu.cpp',
             'platform/ContextMenu.h',
             'platform/ContextMenuItem.h',
             'platform/Cookie.h',

@@ -20,10 +20,12 @@
 #include "config.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
+#include "ContextMenuController.h"
 
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
@@ -129,8 +131,8 @@ PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(Context
 {
     GtkMenu* gtkmenu = menu->releasePlatformDescription();
 
-    HitTestResult result = menu->hitTestResult();
     WebKitWebView* webView = m_webView;
+    HitTestResult result = core(webView)->contextMenuController()->hitTestResult();
 
     if (result.isContentEditable()) {
 

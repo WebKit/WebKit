@@ -29,7 +29,6 @@
 #include <wtf/Noncopyable.h>
 
 #include "ContextMenuItem.h"
-#include "HitTestResult.h"
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
 #if PLATFORM(MAC)
@@ -48,13 +47,9 @@ namespace WebCore {
     class ContextMenu : public Noncopyable
     {
     public:
-        ContextMenu(const HitTestResult&);
-        ContextMenu(const HitTestResult&, const PlatformMenuDescription);
+        ContextMenu();
+        ContextMenu(const PlatformMenuDescription);
         ~ContextMenu();
-
-        void populate();
-        void addInspectElementItem();
-        void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
         void insertItem(unsigned position, ContextMenuItem&);
         void appendItem(ContextMenuItem&);
@@ -64,9 +59,6 @@ namespace WebCore {
 
         unsigned itemCount() const;
 
-        HitTestResult hitTestResult() const { return m_hitTestResult; }
-        ContextMenuController* controller() const;
-
         PlatformMenuDescription platformDescription() const;
         void setPlatformDescription(PlatformMenuDescription);
 
@@ -75,7 +67,6 @@ namespace WebCore {
         static ContextMenuItem* itemWithId(int);
 #endif
     private:
-        HitTestResult m_hitTestResult;
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;

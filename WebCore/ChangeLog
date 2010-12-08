@@ -1,3 +1,83 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Layering Violation in ContextMenu - member variable of type HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        ContextMenu had a layering violation by having a member variable of type HitTestResult, because
+        classes in WebCore/platform can't know about classes in WebCore.
+        
+        This patch moves the HitTestResult and all functions that use it out of ContextMenu into ContextMenuController.
+        All of the functions that dealt with populating the ContextMenu are now in ContextMenuController, and this
+        allowed us to delete the ContextMenu file, putting all of the cross-platform code that used to be it
+        in ContextMenuController, and the rest of the code is in the platform-specific files.
+
+        No change in behavior, no new tests.
+
+        * Android.mk: Removed ContextMenu.cpp.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController): Initialized m_hitTestResult to an empty HitTestResult.
+        (WebCore::ContextMenuController::handleContextMenuEvent): Call populate on the ContextMenuController instead
+            of the ContextMenu.
+        (WebCore::ContextMenuController::createContextMenu): Fix some indination, and store the HitTestResult in a member
+            variable.
+        (WebCore::ContextMenuController::showContextMenu): Call addInspectElementItem on the ContextMenuController.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Use m_hitTestResult whenever we need a HitTestResult.
+        (WebCore::ContextMenuController::appendItem): Validates the item for its state, and then appends it to the parent menu.
+            This allowed us to move checkOrEnableIfNeeded from ContextMenu.
+
+        These functions were all moved from ContextMenu, and changed slightly to fit in ContextMenuController.
+        All calls to ContextMenu::appendItem were changed to ContextMenuController::appendItem, which takes care
+        of validating the menu.
+        (WebCore::separatorItem): Moved from ContextMenu.
+        (WebCore::ContextMenuController::createAndAppendFontSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendSpellingAndGrammarSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendSpeechSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendWritingDirectionSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendTextDirectionSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendSubstitutionsSubMenu): Ditto.
+        (WebCore::ContextMenuController::createAndAppendTransformationsSubMenu): Ditto.
+        (WebCore::selectionContainsPossibleWord): Ditto.
+        (WebCore::ContextMenuController::populate): Ditto.
+        (WebCore::ContextMenuController::addInspectElementItem): Ditto.
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded): Ditto.
+        
+        * page/ContextMenuController.h:
+        (WebCore::ContextMenuController::hitTestResult): Returns the HitTestResult of the current ContextMenu.
+
+        * platform/ContextMenu.cpp: Removed.
+        * platform/ContextMenu.h:
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (WebCore::ContextMenu::appendItem): Removed the call to checkOrEnableIfNeeded.
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (WebCore::ContextMenu::appendItem): Ditto.
+        * platform/haiku/ContextMenuHaiku.cpp:
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (WebCore::ContextMenu::appendItem): Ditto.
+        (WebCore::ContextMenu::insertItem): Ditto.
+        * platform/mac/ContextMenuMac.mm:
+        (-[WebCoreMenuTarget validateMenuItem:]): Calls checkOrEnableIfNeeded on the controller instead of
+            the context menu.
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (WebCore::ContextMenu::appendItem): Removed the call to checkOrEnableIfNeeded.
+        (WebCore::ContextMenu::insertItem): Ditto.
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (WebCore::ContextMenu::insertItem): Removed the call to checkOrEnableIfNeeded.
+        * platform/wx/ContextMenuWx.cpp:
+        (WebCore::ContextMenu::ContextMenu): Removed m_hitTestResult from the constructor.
+        (ContextMenu::appendItem): Ditto.
+
 2010-12-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by John Sullivan.

@@ -32,6 +32,7 @@
 #include "WebView.h"
 
 #include <WebCore/ContextMenu.h>
+#include <WebCore/ContextMenuController.h>
 #include <WebCore/Event.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -64,7 +65,7 @@ HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 
     HMENU newMenu = 0;
     COMPtr<WebElementPropertyBag> propertyBag;
-    propertyBag.adoptRef(WebElementPropertyBag::createInstance(menu->hitTestResult()));
+    propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController()->hitTestResult()));
     // FIXME: We need to decide whether to do the default before calling this delegate method
     if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), (OLE_HANDLE)(ULONG64)menu->platformDescription(), (OLE_HANDLE*)&newMenu)))
         return menu->platformDescription();
@@ -82,7 +83,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     ASSERT(uiDelegate);
 
     COMPtr<WebElementPropertyBag> propertyBag;
-    propertyBag.adoptRef(WebElementPropertyBag::createInstance(parentMenu->hitTestResult()));
+    propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController()->hitTestResult()));
             
     uiDelegate->contextMenuItemSelected(m_webView, item->releasePlatformDescription(), propertyBag.get());
 }

@@ -29,30 +29,25 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
-    m_contextMenuClient = static_cast<ContextMenuClientEfl*>(controller()->client());
-    m_platformDescription = m_contextMenuClient->createPlatformDescription(this);
+    m_platformDescription = (PlatformMenuDescription) ewk_context_menu_new(m_view, menu->controller());
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(menu)
+ContextMenu::ContextMenu(const PlatformMenuDescription menu)
+    : m_platformDescription(menu)
 {
-    m_contextMenuClient = static_cast<ContextMenuClientEfl*>(controller()->client());
 }
 
 ContextMenu::~ContextMenu()
 {
     if (m_platformDescription)
-        m_contextMenuClient->freePlatformDescription(m_platformDescription);
+        ewk_context_menu_free(static_cast<Ewk_Context_Menu*>(m_platformDescription));
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    checkOrEnableIfNeeded(item);
-    m_contextMenuClient->appendItem(m_platformDescription, item);
+    ewk_context_menu_item_append(static_cast<Ewk_Context_Menu*>(m_platformDescription), item);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
@@ -60,7 +55,7 @@ void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
     ASSERT(!m_platformDescription);
 
     m_platformDescription = menu;
-    m_contextMenuClient->show(m_platformDescription);
+    ewk_context_menu_show(static_cast<Ewk_Context_Menu*>(m_platformDescription));
 }
 
 PlatformMenuDescription ContextMenu::platformDescription() const

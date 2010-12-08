@@ -34,6 +34,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "ContextMenu.h"
+#include "ContextMenuController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
@@ -45,6 +46,7 @@
 #include "HTMLNames.h"
 #include "KURL.h"
 #include "MediaError.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "RenderWidget.h"
 #include "TextBreakIterator.h"
@@ -110,7 +112,7 @@ static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* select
 
     // Selection is empty, so change the selection to the word under the cursor.
     HitTestResult hitTestResult = selectedFrame->eventHandler()->
-        hitTestResultAtPoint(defaultMenu->hitTestResult().point(), true);
+        hitTestResultAtPoint(selectedFrame->page()->contextMenuController()->hitTestResult().point(), true);
     Node* innerNode = hitTestResult.innerNode();
     VisiblePosition pos(innerNode->renderer()->positionForPoint(
         hitTestResult.localPoint()));
@@ -144,7 +146,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     if (!m_webView->contextMenuAllowed())
         return 0;
 
-    HitTestResult r = defaultMenu->hitTestResult();
+    HitTestResult r = m_webView->page()->contextMenuController()->hitTestResult();
     Frame* selectedFrame = r.innerNonSharedNode()->document()->frame();
 
     WebContextMenuData data;

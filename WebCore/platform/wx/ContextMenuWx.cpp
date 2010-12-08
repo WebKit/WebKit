@@ -42,7 +42,7 @@ ContextMenuItem* ContextMenu::itemWithId(int id)
     return new ContextMenuItem(ActionType, s_itemActions.get(id), "");
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
     m_platformDescription = new wxMenu(0);
 }
@@ -57,8 +57,6 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 {
     if (!m_platformDescription)
         return;
-    
-    checkOrEnableIfNeeded(item);
         
     PlatformMenuItemDescription itemDescription = item.releasePlatformDescription();    
     wxItemKind menuKindWx = ( itemDescription.type == CheckableActionType ) ? wxITEM_CHECK : wxITEM_NORMAL;

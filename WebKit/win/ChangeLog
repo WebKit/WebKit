@@ -1,3 +1,20 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Layering Violation in ContextMenu - member variable of type HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        Update users of ContextMenu and ContextMenuController to match where the new functions 
+        are located.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Get the HitTestResult and ContextMenu from the 
+            ContextMenuController (from the page).
+        (WebContextMenuClient::contextMenuItemSelected): Get the HitTestResult from the ContextMenuController.
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent): Ditto.
+
 2010-12-07  Jessie Berlin  <jberlin@apple.com>
 
         Build fix. Unreviewed.

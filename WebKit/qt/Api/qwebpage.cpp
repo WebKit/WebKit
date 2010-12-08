@@ -443,7 +443,7 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
                 QAction *a = q->action(action);
                 if (a) {
                     ContextMenuItem it(item);
-                    webcoreMenu->checkOrEnableIfNeeded(it);
+                    page->contextMenuController()->checkOrEnableIfNeeded(it);
                     PlatformMenuItemDescription desc = it.releasePlatformDescription();
                     a->setEnabled(desc.enabled);
                     a->setChecked(desc.checked);
@@ -3209,12 +3209,13 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
         d->hitTestResult = QWebHitTestResult();
     else
         d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
-    WebCore::ContextMenu menu(result);
-    menu.populate();
+
+    d->page->contextMenuController()->setHitTestResult(result);
+    d->page->contextMenuController()->populate();
     
 #if ENABLE(INSPECTOR)
     if (d->page->inspectorController()->enabled())
-        menu.addInspectElementItem();
+        d->page->contextMenuController()->addInspectElementItem();
 #endif
 
     QBitArray visitedWebActions(QWebPage::WebActionCount);
@@ -3223,7 +3224,7 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     delete d->currentContextMenu;
 
     // Then we let createContextMenu() enable the actions that are put into the menu
-    d->currentContextMenu = d->createContextMenu(&menu, menu.platformDescription(), &visitedWebActions);
+    d->currentContextMenu = d->createContextMenu(d->page->contextMenuController()->contextMenu(), d->page->contextMenuController()->contextMenu()->platformDescription(), &visitedWebActions);
 #endif // QT_NO_CONTEXTMENU
 
 #ifndef QT_NO_ACTION

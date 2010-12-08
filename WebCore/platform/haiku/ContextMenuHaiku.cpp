@@ -75,9 +75,8 @@ private:
     int m_result;
 };
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(new BMenu("context_menu"))
+ContextMenu::ContextMenu()
+    : m_platformDescription(new BMenu("context_menu"))
 {
 }
 
@@ -88,8 +87,6 @@ ContextMenu::~ContextMenu()
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    checkOrEnableIfNeeded(item);
-
     BMenuItem* menuItem = item.releasePlatformDescription();
     if (menuItem)
         m_platformDescription->AddItem(menuItem);
@@ -102,8 +99,6 @@ unsigned ContextMenu::itemCount() const
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    checkOrEnableIfNeeded(item);
-
     BMenuItem* menuItem = item.releasePlatformDescription();
     if (menuItem)
         m_platformDescription->AddItem(menuItem, position);

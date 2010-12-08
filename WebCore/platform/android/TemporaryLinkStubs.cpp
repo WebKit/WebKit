@@ -167,7 +167,7 @@ Pasteboard::~Pasteboard()
 }
 
 
-ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
     ASSERT_NOT_REACHED();
     notImplemented();

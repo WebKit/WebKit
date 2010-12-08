@@ -32,15 +32,13 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
     ASSERT_NOT_REACHED();
     notImplemented();
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu(const PlatformMenuDescription menu)
 {
     ASSERT_NOT_REACHED();
     notImplemented();

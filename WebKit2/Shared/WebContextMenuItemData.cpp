@@ -73,8 +73,6 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItem& item, W
         m_submenu = kitItems(coreSubmenu, menu);
     }
     
-    menu->checkOrEnableIfNeeded(item);
-    
     m_enabled = item.enabled();
     m_checked = item.checked();
 }

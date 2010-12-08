@@ -48,6 +48,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+HitTestResult::HitTestResult()
+    : m_isOverWidget(false)
+    , m_isRectBased(false)
+    , m_topPadding(0)
+    , m_rightPadding(0)
+    , m_bottomPadding(0)
+    , m_leftPadding(0)
+{
+}
+
 HitTestResult::HitTestResult(const IntPoint& point)
     : m_point(point)
     , m_isOverWidget(false)

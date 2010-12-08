@@ -1245,12 +1245,14 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!handledEvent)
         return false;
 
+    ContextMenuController* contextMenuController = m_page->contextMenuController();
+
     // Show the menu
-    ContextMenu* coreMenu = m_page->contextMenuController()->contextMenu();
+    ContextMenu* coreMenu = contextMenuController->contextMenu();
     if (!coreMenu)
         return false;
 
-    Node* node = coreMenu->hitTestResult().innerNonSharedNode();
+    Node* node = contextMenuController->hitTestResult().innerNonSharedNode();
     if (!node)
         return false;
 
@@ -1262,7 +1264,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!view)
         return false;
 
-    POINT point(view->contentsToWindow(coreMenu->hitTestResult().point()));
+    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().point()));
 
     // Translate the point to screen coordinates
     if (!::ClientToScreen(m_viewWindow, &point))

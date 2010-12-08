@@ -23,8 +23,7 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
     m_platformDescription = GTK_MENU(gtk_menu_new());
 
@@ -40,7 +39,6 @@ ContextMenu::~ContextMenu()
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
     ASSERT(m_platformDescription);
-    checkOrEnableIfNeeded(item);
 
     GtkMenuItem* platformItem = ContextMenuItem::createNativeMenuItem(item.releasePlatformDescription());
     ASSERT(platformItem);

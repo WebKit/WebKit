@@ -43,6 +43,7 @@ class Scrollbar;
 
 class HitTestResult {
 public:
+    HitTestResult();
     HitTestResult(const IntPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
     HitTestResult(const IntPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);

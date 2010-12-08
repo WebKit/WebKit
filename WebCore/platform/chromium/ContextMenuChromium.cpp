@@ -36,13 +36,11 @@ namespace WebCore {
 // This is a stub implementation of WebKit's ContextMenu class that does
 // nothing.
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu(const PlatformMenuDescription menu)
 {
 }
 

@@ -26,6 +26,7 @@
 #ifndef ContextMenuController_h
 #define ContextMenuController_h
 
+#include "HitTestResult.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -45,7 +46,7 @@ namespace WebCore {
         ContextMenuController(Page*, ContextMenuClient*);
         ~ContextMenuController();
 
-        ContextMenuClient* client() { return m_client; }
+        ContextMenuClient* client() const { return m_client; }
 
         ContextMenu* contextMenu() const { return m_contextMenu.get(); }
         void clearContextMenu();
@@ -53,16 +54,35 @@ namespace WebCore {
         void handleContextMenuEvent(Event*);
         void showContextMenu(Event*, PassRefPtr<ContextMenuProvider>);
 
+        void populate();
         void contextMenuItemSelected(ContextMenuItem*);
+        void addInspectElementItem();
+
+        void checkOrEnableIfNeeded(ContextMenuItem&) const;
+
+        void setHitTestResult(const HitTestResult& result) { m_hitTestResult = result; }
+        const HitTestResult& hitTestResult() { return m_hitTestResult; }
 
     private:
-        ContextMenu* createContextMenu(Event*);
+        PassOwnPtr<ContextMenu> createContextMenu(Event*);
         void showContextMenu(Event*);
+        
+        void appendItem(ContextMenuItem&, ContextMenu* parentMenu);
+
+        void createAndAppendFontSubMenu(ContextMenuItem&);
+        void createAndAppendSpellingAndGrammarSubMenu(ContextMenuItem&);
+        void createAndAppendSpellingSubMenu(ContextMenuItem&);
+        void createAndAppendSpeechSubMenu(ContextMenuItem& );
+        void createAndAppendWritingDirectionSubMenu(ContextMenuItem&);
+        void createAndAppendTextDirectionSubMenu(ContextMenuItem&);
+        void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
+        void createAndAppendTransformationsSubMenu(ContextMenuItem&);
 
         Page* m_page;
         ContextMenuClient* m_client;
         OwnPtr<ContextMenu> m_contextMenu;
         RefPtr<ContextMenuProvider> m_menuProvider;
+        HitTestResult m_hitTestResult;
     };
 
 }

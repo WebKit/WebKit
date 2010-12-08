@@ -1,3 +1,17 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Layering Violation in ContextMenu - member variable of type HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        Update users of ContextMenu and ContextMenuController to match where the new functions 
+        are located.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::selectMisspelledWord):
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2010-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

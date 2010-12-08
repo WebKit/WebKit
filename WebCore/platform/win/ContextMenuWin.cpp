@@ -43,9 +43,8 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+ContextMenu::ContextMenu()
+    : m_platformDescription(0)
 #if OS(WINCE)
     , m_itemCount(0)
 #endif
@@ -53,9 +52,8 @@ ContextMenu::ContextMenu(const HitTestResult& result)
     setPlatformDescription(::CreatePopupMenu());
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+ContextMenu::ContextMenu(const PlatformMenuDescription menu)
+    : m_platformDescription(0)
 #if OS(WINCE)
     , m_itemCount(0)
 #endif
@@ -117,8 +115,6 @@ void ContextMenu::insertItem(unsigned int position, ContextMenuItem& item)
 {
     if (!m_platformDescription)
         return;
-
-    checkOrEnableIfNeeded(item);
 
 #if OS(WINCE)
     if (insertMenuItem(m_platformDescription, position, item))

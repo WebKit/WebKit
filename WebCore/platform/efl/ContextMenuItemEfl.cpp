@@ -116,8 +116,7 @@ void ContextMenuItem::setSubMenu(ContextMenu* subMenu)
         return;
 
     m_platformDescription.type = SubmenuType;
-    m_platformDescription.subMenu = new ContextMenu(subMenu->hitTestResult(),
-            subMenu->releasePlatformDescription());
+    m_platformDescription.subMenu = new ContextMenu(subMenu->releasePlatformDescription());
 }
 
 bool ContextMenuItem::checked() const

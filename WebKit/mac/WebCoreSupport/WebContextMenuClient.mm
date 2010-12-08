@@ -42,8 +42,10 @@
 #import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
+#import <WebCore/ContextMenuController.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/Page.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/DOMPrivate.h>
 
@@ -278,7 +280,7 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
     if (![delegate respondsToSelector:selector])
         return defaultMenu->platformDescription();
 
-    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
+    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController()->hitTestResult()] autorelease];
 
     BOOL preVersion3Client = isPreVersion3Client();
     if (preVersion3Client) {
@@ -308,7 +310,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemSelected:forElement:);
     if ([delegate respondsToSelector:selector]) {
-        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:parentMenu->hitTestResult()];
+        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController()->hitTestResult()];
         NSMenuItem *platformItem = item->releasePlatformDescription();
 
         CallUIDelegate(m_webView, selector, platformItem, element);

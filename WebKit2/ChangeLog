@@ -1,3 +1,19 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Layering Violation in ContextMenu - member variable of type HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        Update users of ContextMenu and ContextMenuController to match where the new functions 
+        are located.
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData): Remove the call to checkOrEnableItem, that call will be made when
+            the ContextMenuItem is added to the ContextMenu through the ContextMenuController.
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+
 2010-12-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

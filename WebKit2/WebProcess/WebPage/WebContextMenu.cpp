@@ -47,10 +47,13 @@ WebContextMenu::~WebContextMenu()
 
 void WebContextMenu::show()
 {
-    ContextMenu* menu = m_page->corePage()->contextMenuController()->contextMenu();
+    ContextMenuController* controller = m_page->corePage()->contextMenuController();
+    if (!controller)
+        return;
+    ContextMenu* menu = controller->contextMenu();
     if (!menu)
         return;
-    Node* node = menu->hitTestResult().innerNonSharedNode();
+    Node* node = controller->hitTestResult().innerNonSharedNode();
     if (!node)
         return;
     Frame* frame = node->document()->frame();
@@ -65,12 +68,12 @@ void WebContextMenu::show()
     Vector<WebContextMenuItemData> proposedMenu = kitItems(coreItems, menu);
     Vector<WebContextMenuItemData> newMenu;
     RefPtr<APIObject> userData;
-    RefPtr<InjectedBundleHitTestResult> hitTestResult = InjectedBundleHitTestResult::create(menu->hitTestResult());
+    RefPtr<InjectedBundleHitTestResult> hitTestResult = InjectedBundleHitTestResult::create(controller->hitTestResult());
     if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, hitTestResult.get(), proposedMenu, newMenu, userData))
         proposedMenu = newMenu;
 
     // Notify the UIProcess.
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(menu->hitTestResult().point()), proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().point()), proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

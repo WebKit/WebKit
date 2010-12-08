@@ -30,17 +30,15 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+ContextMenu::ContextMenu()
 {
     NSMutableArray* array = [[NSMutableArray alloc] init];
     m_platformDescription = array;
     [array release];
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(menu)
+ContextMenu::ContextMenu(const PlatformMenuDescription menu)
+    : m_platformDescription(menu)
 {
 }
 
@@ -50,8 +48,6 @@ ContextMenu::~ContextMenu()
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    checkOrEnableIfNeeded(item);
-
     NSMenuItem* platformItem = item.releasePlatformDescription();
 
     [m_platformDescription.get() addObject:platformItem];
@@ -60,8 +56,6 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    checkOrEnableIfNeeded(item);
-
     NSMenuItem* platformItem = item.releasePlatformDescription();
 
     [m_platformDescription.get() insertObject:platformItem atIndex:position];

@@ -1,3 +1,17 @@
+2010-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Layering Violation in ContextMenu - member variable of type HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=50586
+        
+        Update users of ContextMenu and ContextMenuController to match where the new functions 
+        are located.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        (QWebPage::updatePositionDependentActions):
+
 2010-12-07  Darin Adler  <darin@apple.com>
 
         Try to fix build.
