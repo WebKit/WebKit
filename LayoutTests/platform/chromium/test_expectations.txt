@@ -274,8 +274,8 @@ BUG10395 WONTFIX SKIP : svg/webarchive = FAIL PASS
 BUG10395 WONTFIX SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL PASS
 BUG10395 WONTFIX SKIP : http/tests/webarchive = FAIL PASS
 
-// We don't support ACCELERATED_COMPOSITING. Skipping because some tests in this
-// directory don't have pixel results.
+// Compositing tests are run separately on machines with GPUs; see
+// LayoutTests/platform/chromium-gpu.
 BUG15733 WONTFIX SKIP : compositing = FAIL PASS TIMEOUT
 
 // Run the Mac-specific platform tests, but only to check for crashes.
@@ -3121,8 +3121,7 @@ BUGCR64938 : editing/selection/5354455-1.html = TEXT
 // Win/Linux: Characters are rotated 90 degrees.
 // Mac: Some image differences, and the message "scrolled to 3999,0" is missing.
 BUGCR65877 WIN LINUX : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
-BUG_YUTAK MAC RELEASE : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
-BUG_YUTAK MAC DEBUG SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUG_YUTAK MAC SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 
 // Regressed at r73423. All areas are painted green.
 BUG_YUTAK : fast/repaint/positioned-document-element.html = IMAGE

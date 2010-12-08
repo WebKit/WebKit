@@ -1,3 +1,14 @@
+2010-12-08  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        Mark some tests as passing or slow, and update the comment on the
+        compositing tests to indicate more accurately why we skip them in the
+        main test run.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectations update.

@@ -339,7 +339,6 @@ BUGWK47953 : compositing/webgl/webgl-reflection.html = FAIL
 // needs to be investigated.
 // Became flaky on all platforms after the switch to DRT.
 BUGWK48016 : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT PASS
-BUGWK48016 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
 BUGWK48016 LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
 
 // This test causes an assertion failure in DRT, but apparently not
