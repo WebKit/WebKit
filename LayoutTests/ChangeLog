@@ -1,3 +1,9 @@
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Relax the matching tolerance to reduce flakiness.
+
+        * transitions/border-radius-transition.html:
+
 2010-11-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
