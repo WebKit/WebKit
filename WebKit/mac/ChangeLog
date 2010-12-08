@@ -1,3 +1,10 @@
+2010-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused variable.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setScrollOrigin:updatePosition:]):
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

@@ -578,7 +578,6 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // so we don't have to check for equivalence here.
     _private->scrollOrigin = scrollOrigin;
     id docView = [self documentView];
-    NSPoint docOrigin = [docView bounds].origin;
 
     NSRect visibleRect = [self documentVisibleRect];
 
