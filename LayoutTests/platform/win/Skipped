@@ -387,6 +387,9 @@ animations/stop-animation-on-suspend.html
 # Crashing in AccessibilityUIElement::parentElement http://webkit.org/b/49379
 accessibility/iframe-bastardization.html
 
+# Fails under Aero http://webkit.org/b/49945
+svg/custom/clip-path-referencing-use.svg
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

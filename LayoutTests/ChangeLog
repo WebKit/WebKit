@@ -1,3 +1,12 @@
+2010-12-08  Adam Roben  <aroben@apple.com>
+
+        Skip svg/custom/clip-path-referencing-use.svg on Windows
+
+        The test fails when run under Aero. It seems that one of our Windows 7
+        bots has this turned on while the other doesn't.
+
+        * platform/win/Skipped:
+
 2010-12-08  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, rolling out r73494.
