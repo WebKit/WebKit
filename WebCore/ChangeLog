@@ -1,3 +1,24 @@
+2010-12-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Implement focus ring support for image maps
+        https://bugs.webkit.org/show_bug.cgi?id=50371
+
+        Implement GraphicsContext::drawFocusRing(const Path&, ...) so as to support
+        drawing a focus ring for image maps.
+
+        Tests: fast/images/imagemap-circle-focus-ring.html
+               fast/images/imagemap-polygon-focus-ring.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::adjustFocusRingColor): Added.
+        (WebCore::adjustFocusRingLineWidth): Added.
+        (WebCore::focusRingStrokeStyle): Added.
+        (WebCore::GraphicsContext::drawFocusRing): Moved code for determining focus ring- color,
+        line width and stroke style into functions adjustFocusRingColor(), adjustFocusRingLineWidth(),
+        and focusRingStrokeStyle(), respectively. Implemented GraphicsContext::drawFocusRing(const Path&, ...).
+
 2010-12-07  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

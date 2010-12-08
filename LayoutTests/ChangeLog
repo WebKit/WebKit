@@ -1,3 +1,37 @@
+2010-12-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Implement focus ring support for image maps
+        https://bugs.webkit.org/show_bug.cgi?id=50371
+
+        Tests to ensure that we support drawing a focus ring for an image map.
+        In particular, that the GTK port can draw a focus ring for an image map.
+
+        * fast/images/imagemap-circle-focus-ring.html: Added.
+        * fast/images/imagemap-polygon-focus-ring.html: Added.
+        * platform/gtk/fast/images/imagemap-circle-focus-ring-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-expected.checksum: Rebase result since we 
+        now support drawing a focus ring for imagemaps.
+        * platform/gtk/fast/images/imagemap-focus-ring-expected.png: Ditto.
+        * platform/gtk/fast/images/imagemap-focus-ring-outline-color-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-zoom-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-zoom-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-polygon-focus-ring-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/mac/fast/images/imagemap-circle-focus-ring-expected.checksum: Added.
+        * platform/mac/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/mac/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/mac/fast/images/imagemap-polygon-focus-ring-expected.checksum: Added.
+        * platform/mac/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/mac/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+
 2010-12-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -593,9 +594,46 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     cairo_clip(cr);
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
+static inline void adjustFocusRingColor(Color& color)
 {
-    // FIXME: implement
+#if !PLATFORM(GTK)
+    // Force the alpha to 50%.  This matches what the Mac does with outline rings.
+    color.setRGB(makeRGBA(color.red(), color.green(), color.blue(), 127));
+#endif
+}
+
+static inline void adjustFocusRingLineWidth(int& width)
+{
+#if PLATFORM(GTK)
+    width = 2;
+#endif
+}
+
+static inline StrokeStyle focusRingStrokeStyle()
+{
+#if PLATFORM(GTK)
+    return DottedStroke;
+#else
+    return SolidStroke;
+#endif
+}
+
+void GraphicsContext::drawFocusRing(const Path& path, int width, int /* offset */, const Color& color)
+{
+    // FIXME: We should draw paths that describe a rectangle with rounded corners
+    // so as to be consistent with how we draw rectangular focus rings.
+    Color ringColor = color;
+    adjustFocusRingColor(ringColor);
+    adjustFocusRingLineWidth(width);
+
+    cairo_t* cr = m_data->cr;
+    cairo_save(cr);
+    appendWebCorePathToCairoContext(cr, path);
+    setSourceRGBAFromColor(cr, ringColor);
+    cairo_set_line_width(cr, width);
+    setPlatformStrokeStyle(focusRingStrokeStyle());
+    cairo_stroke(cr);
+    cairo_restore(cr);
 }
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int /* offset */, const Color& color)
@@ -632,10 +670,6 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 #else
     cairo_region_destroy(reg);
 #endif
-
-    setSourceRGBAFromColor(cr, color);
-    cairo_set_line_width(cr, 2.0f);
-    setPlatformStrokeStyle(DottedStroke);
 #else
     int radius = (width - 1) / 2;
     Path path;
@@ -645,13 +679,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
         path.addRoundedRect(rects[i], FloatSize(radius, radius));
         appendWebCorePathToCairoContext(cr, path);
     }
-
-    // Force the alpha to 50%.  This matches what the Mac does with outline rings.
-    Color ringColor(color.red(), color.green(), color.blue(), 127);
+#endif
+    Color ringColor = color;
+    adjustFocusRingColor(ringColor);
+    adjustFocusRingLineWidth(width);
     setSourceRGBAFromColor(cr, ringColor);
     cairo_set_line_width(cr, width);
-    setPlatformStrokeStyle(SolidStroke);
-#endif
+    setPlatformStrokeStyle(focusRingStrokeStyle());
 
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_stroke_preserve(cr);
