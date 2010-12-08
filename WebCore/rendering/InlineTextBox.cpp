@@ -1097,11 +1097,21 @@ int InlineTextBox::offsetForPosition(int lineOffset, bool includePartialGlyphs) 
     if (isLineBreak())
         return 0;
 
+    int leftOffset = isLeftToRightDirection() ? 0 : m_len;
+    int rightOffset = isLeftToRightDirection() ? m_len : 0;
+    if (renderer()->containingBlock()->style()->isLeftToRightDirection() != isLeftToRightDirection())
+        swap(leftOffset, rightOffset);
+
+    if (lineOffset - logicalLeft() > logicalWidth())
+        return rightOffset;
+    if (lineOffset - logicalLeft() < 0)
+        return leftOffset;
+
     RenderText* text = toRenderText(renderer());
     RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
     return f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
-                                lineOffset - logicalLeft(), includePartialGlyphs);
+        lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 int InlineTextBox::positionForOffset(int offset) const

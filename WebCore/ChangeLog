@@ -1,3 +1,37 @@
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: LayoutTests/editing/selection/caret-rtl-2.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=33503
+
+        The bug was caused by Font::offsetForPosition's not taking into account the containing block's text direction.
+        When RTL text appears in a LTR block, the offset at the beginning of RTL text is on the left of RTL text,
+        adn the offset at the end of RTL text is on the right of RTL text. For example, if we had RTL text CBA,
+        then the correspondance between letters and offsets in logical order are: A -> 0, B -> 1, and C -> 2.
+
+        Case 1. CBA appears in a RTL block:
+          In this case, clicking on the visual left of CBA puts the caret naturally at Position("CBA", 2).
+          Clicking on the visual right of CBA puts the caret at Position("CBA", 0) as expected.
+        Case 2. CBA appears in a LTR block:
+          Because the containing block flows from left to right, by covention, Position("CBA", 2") coresponds
+          to the visual right of CBA, and Position("CBA", 0) corresponds to the visual left of CBA.
+          Therefore, clicking on the visual left of CBA should put the caret at Positoin("CBA", 0),
+          and clicking on the visual right should put it at Position("CBA", 2).
+
+        The bug was caused by WebKit's not considering case 2. The same bug also existe for LTR text in a RTL block.
+        Fixed the bug by taking care of the case 2 in InlineTextBox::offsetForPosition.
+
+        Tests: editing/selection/caret-ltr-2-left.html
+               editing/selection/caret-ltr-2.html
+               editing/selection/caret-ltr-right.html
+               editing/selection/caret-ltr.html
+               editing/selection/caret-rtl-2-left.html
+               editing/selection/caret-rtl-right.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::offsetForPosition):
+
 2010-12-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

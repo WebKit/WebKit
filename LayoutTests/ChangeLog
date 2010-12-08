@@ -1,3 +1,53 @@
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: LayoutTests/editing/selection/caret-rtl-2.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=33503
+
+        Added tests to ensure WebKit places the caret at a right place for LTR text in a LTR block,
+        LTR text in a RTL block, RTL text in a RTL block, and RTL text in a LTR block.
+
+        Because we need to verify both rendering of the caret and (node, offset) pair of the caret,
+        these tests cannot be combined or done without pixel results.
+
+        * editing/selection/caret-ltr-2-left.html: Added.
+        * editing/selection/caret-ltr-2.html: Added.
+        * editing/selection/caret-ltr-right.html: Added.
+        * editing/selection/caret-ltr.html: Added.
+        * editing/selection/caret-rtl-2-left.html: Added.
+        * editing/selection/caret-rtl-2.html:
+        * editing/selection/caret-rtl-right.html: Added.
+        * editing/selection/caret-rtl.html:
+        * editing/selection/resources/caret-edge-shared.js: Added.
+        (runTest):
+        (verify):
+        (log):
+        * platform/mac/editing/selection/caret-ltr-2-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-ltr-2-expected.png: Added.
+        * platform/mac/editing/selection/caret-ltr-2-expected.txt: Added.
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.png: Added.
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.txt: Added.
+        * platform/mac/editing/selection/caret-ltr-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-ltr-expected.png: Added.
+        * platform/mac/editing/selection/caret-ltr-expected.txt: Added.
+        * platform/mac/editing/selection/caret-ltr-right-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/mac/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/mac/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-2-expected.png:
+        * platform/mac/editing/selection/caret-rtl-2-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/mac/editing/selection/caret-rtl-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-expected.png:
+        * platform/mac/editing/selection/caret-rtl-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-right-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/mac/editing/selection/caret-rtl-right-expected.txt: Added.
+
 2010-12-08  Alexey Proskuryakov  <ap@apple.com>
 
         Touch a file that's sporadically giving 207 Multi-Status error on svn update, hoping that
