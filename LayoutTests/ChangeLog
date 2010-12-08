@@ -1,5 +1,12 @@
 2010-12-08  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, unskipping media/video-buffered.html on GTK because
+        the bots are now running with latest GStreamer.
+
+        * platform/gtk/Skipped:
+
+2010-12-08  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, unskipped some more media tests.
 
         They are not crashing anymore, they also needed a rebaseline since
