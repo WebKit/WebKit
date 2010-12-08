@@ -1,3 +1,12 @@
+2010-12-08  Adam Roben  <aroben@apple.com>
+
+        Skip svg/custom/clip-path-referencing-use2.svg, not
+        svg/custom/clip-path-referencing-use.svg
+
+        The former is the real problem. The latter was just the victim!
+
+        * platform/win/Skipped:
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectations update.
