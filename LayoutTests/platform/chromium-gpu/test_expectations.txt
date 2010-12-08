@@ -356,6 +356,9 @@ BUGWK48029 MAC : compositing/tiling/huge-layer-img.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-resize.html = TEXT
 BUGWK48029 MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT
 
+// New test, needs windows and mac specific baselines.
+BUGJAMESR WIN MAC : compositing/text-on-large-layer.html = PASS FAIL
+
 // Need to investigate WebGL support in DRT.
 BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = CRASH

@@ -362,7 +362,8 @@ void ContentLayerChromium::draw()
     if (requiresClippedUpdateRect()) {
         float m43 = drawTransform().m43();
         TransformationMatrix transform;
-        transform.translate3d(m_largeLayerDrawRect.center().x(), m_largeLayerDrawRect.center().y(), m43);
+        FloatPoint floatCenter = FloatRect(m_largeLayerDrawRect).center();
+        transform.translate3d(floatCenter.x(), floatCenter.y(), m43);
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
                          transform, m_largeLayerDrawRect.width(),
                          m_largeLayerDrawRect.height(), drawOpacity(),

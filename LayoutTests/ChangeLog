@@ -1,3 +1,22 @@
+2010-12-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Text is blurry on a large composited layer with an odd center x/y coordinate
+        https://bugs.webkit.org/show_bug.cgi?id=50702
+
+        Tests that text rendered on a large layer is crisp even when the layer's center point
+        has an odd x and/or y coordinate.
+
+        * compositing/text-on-large-layer.html: Added.
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.txt: Added.
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/mac/compositing/text-on-large-layer-expected.checksum: Added.
+        * platform/mac/compositing/text-on-large-layer-expected.png: Added.
+        * platform/mac/compositing/text-on-large-layer-expected.txt: Added.
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dan Bernstein.
