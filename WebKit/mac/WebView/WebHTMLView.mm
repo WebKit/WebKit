@@ -3272,6 +3272,11 @@ WEBCORE_COMMAND(yankAndSelect)
 
 static void setMenuItemTarget(NSMenuItem* menuItem)
 {
+    // Don't set the menu item's action to the context menu action forwarder if we already
+    // have an action.
+    if ([menuItem action])
+        return;
+
     [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
     [menuItem setAction:@selector(forwardContextMenuAction:)];
 }

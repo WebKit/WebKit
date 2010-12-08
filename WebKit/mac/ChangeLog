@@ -1,3 +1,16 @@
+2010-12-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        REGRESSION: r73429-r73490: Some Contextual menu items non-functional, such as Open Link in New Tab
+        https://bugs.webkit.org/show_bug.cgi?id=50683
+        
+        If our context menu item already has an action, don't overwrite the action with the context menu
+        forwarder.
+
+        * WebView/WebHTMLView.mm:
+        (setMenuItemTarget):
+
 2010-12-08  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused variable.
