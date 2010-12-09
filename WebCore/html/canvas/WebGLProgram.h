@@ -53,6 +53,13 @@ public:
     bool getLinkStatus() const { return m_linkStatus; }
     void setLinkStatus(bool status) { m_linkStatus = status; }
 
+    unsigned long getLinkCount() const { return m_linkCount; }
+
+    // This is to be called everytime after the program is successfully linked.
+    // We don't deal with integer overflow here, assuming in reality a program
+    // will never be linked so many times.
+    void increaseLinkCount() { ++m_linkCount; }
+
     WebGLShader* getAttachedShader(GraphicsContext3D::WebGLEnumType);
     bool attachShader(WebGLShader*);
     bool detachShader(WebGLShader*);
@@ -68,6 +75,10 @@ private:
     Vector<int> m_activeAttribLocations;
 
     bool m_linkStatus;
+
+    // This is used to track whether a WebGLUniformLocation belongs to this
+    // program or not.
+    unsigned long m_linkCount;
 
     RefPtr<WebGLShader> m_vertexShader;
     RefPtr<WebGLShader> m_fragmentShader;

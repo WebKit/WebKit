@@ -1,3 +1,25 @@
+2010-12-07  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGLUniformLocation objects must be invalidated during linkProgram
+        https://bugs.webkit.org/show_bug.cgi?id=37118
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::WebGLProgram): Initialize link count to 0.
+        (WebCore::WebGLProgram::cacheActiveAttribLocations): Don't check link status through gl call; use the cached status instead.
+        * html/canvas/WebGLProgram.h:
+        (WebCore::WebGLProgram::getLinkCount): Get link count.
+        (WebCore::WebGLProgram::increaseLinkCount): Increase link count by 1.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform): Fix a bug where wrong error is generated.
+        (WebCore::WebGLRenderingContext::linkProgram): call increaseLinkCount after linkProgram.
+        * html/canvas/WebGLUniformLocation.cpp:
+        (WebCore::WebGLUniformLocation::WebGLUniformLocation): Set program's link count upon creation.
+        (WebCore::WebGLUniformLocation::program): Return null if count doesn't match the program's.
+        (WebCore::WebGLUniformLocation::location): Return -1 if count doesn't match the program's.
+        * html/canvas/WebGLUniformLocation.h:
+
 2010-12-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

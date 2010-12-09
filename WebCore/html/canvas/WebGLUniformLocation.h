@@ -41,9 +41,9 @@ public:
 
     static PassRefPtr<WebGLUniformLocation> create(WebGLProgram* program, long location);
 
-    WebGLProgram* program() const { return m_program.get(); }
+    WebGLProgram* program() const;
 
-    long location() const { return m_location; }
+    long location() const;
 
 protected:
     WebGLUniformLocation(WebGLProgram* program, long location);
@@ -51,6 +51,7 @@ protected:
 private:
     RefPtr<WebGLProgram> m_program;
     long m_location;
+    unsigned long m_linkCount;
 };
 
 } // namespace WebCore

@@ -41,6 +41,25 @@ WebGLUniformLocation::WebGLUniformLocation(WebGLProgram* program, long location)
     : m_program(program)
     , m_location(location)
 {
+    ASSERT(m_program);
+    m_linkCount = m_program->getLinkCount();
+}
+
+WebGLProgram* WebGLUniformLocation::program() const
+{
+    // If the program has been linked again, then this UniformLocation is no
+    // longer valid.
+    if (m_program->getLinkCount() != m_linkCount)
+        return 0;
+    return m_program.get();
+}
+
+long WebGLUniformLocation::location() const
+{
+    // If the program has been linked again, then this UniformLocation is no
+    // longer valid.
+    ASSERT(m_program->getLinkCount() == m_linkCount);
+    return m_location;
 }
 
 }

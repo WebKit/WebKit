@@ -1885,11 +1885,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(program))
         return WebGLGetInfo();
-    if (!uniformLocation) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return WebGLGetInfo();
-    }
-    if (uniformLocation->program() != program) {
+    if (!uniformLocation || uniformLocation->program() != program) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return WebGLGetInfo();
     }
@@ -2208,11 +2204,13 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
     }
 
     m_context->linkProgram(objectOrZero(program));
-    program->cacheActiveAttribLocations();
+    program->increaseLinkCount();
     // cache link status
     int value = 0;
     m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::LINK_STATUS, &value);
     program->setLinkStatus(static_cast<bool>(value));
+    // Need to cache link status before caching active attribute locations.
+    program->cacheActiveAttribLocations();
     cleanupAfterGraphicsCall(false);
 }
 

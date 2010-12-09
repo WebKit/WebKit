@@ -41,6 +41,7 @@ PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContext* ctx)
 WebGLProgram::WebGLProgram(WebGLRenderingContext* ctx)
     : WebGLObject(ctx)
     , m_linkStatus(false)
+    , m_linkCount(0)
 {
     setObject(context()->graphicsContext3D()->createProgram());
 }
@@ -64,9 +65,9 @@ bool WebGLProgram::cacheActiveAttribLocations()
     if (!object())
         return false;
     GraphicsContext3D* context3d = context()->graphicsContext3D();
-    int linkStatus = 0;
-    context3d->getProgramiv(object(), GraphicsContext3D::LINK_STATUS, &linkStatus);
-    if (!linkStatus)
+
+    // Assume link status has already been cached.
+    if (!m_linkStatus)
         return false;
 
     int numAttribs = 0;

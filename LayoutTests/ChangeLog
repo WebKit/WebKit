@@ -1,3 +1,13 @@
+2010-12-07  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGLUniformLocation objects must be invalidated during linkProgram
+        https://bugs.webkit.org/show_bug.cgi?id=37118
+
+        * fast/canvas/webgl/uniform-location-expected.txt:
+        * fast/canvas/webgl/uniform-location.html: Check that after linkProgram, all previous uniform locations become invalid.
+
 2010-12-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
