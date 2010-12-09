@@ -208,6 +208,12 @@ webkit_dom_test_obj_get_reflected_integral_attr(WebKitDOMTestObj* self);
 WEBKIT_API void
 webkit_dom_test_obj_set_reflected_integral_attr(WebKitDOMTestObj* self, glong value);
 
+WEBKIT_API gulong
+webkit_dom_test_obj_get_reflected_unsigned_integral_attr(WebKitDOMTestObj* self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_reflected_unsigned_integral_attr(WebKitDOMTestObj* self, gulong value);
+
 WEBKIT_API gboolean
 webkit_dom_test_obj_get_reflected_boolean_attr(WebKitDOMTestObj* self);
 

@@ -256,6 +256,22 @@ static void reflectedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Loca
     return;
 }
 
+static v8::Handle<v8::Value> reflectedUnsignedIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedUnsignedIntegralAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::NewFromUnsigned(imp->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
+}
+
+static void reflectedUnsignedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.reflectedUnsignedIntegralAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    unsigned v = toUInt32(value);
+    imp->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, v);
+    return;
+}
+
 static v8::Handle<v8::Value> reflectedBooleanAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.reflectedBooleanAttr._get");
@@ -1163,6 +1179,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"reflectedStringAttr", TestObjInternal::reflectedStringAttrAttrGetter, TestObjInternal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedIntegralAttr", TestObjInternal::reflectedIntegralAttrAttrGetter, TestObjInternal::reflectedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'reflectedUnsignedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
+    {"reflectedUnsignedIntegralAttr", TestObjInternal::reflectedUnsignedIntegralAttrAttrGetter, TestObjInternal::reflectedUnsignedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedBooleanAttr", TestObjInternal::reflectedBooleanAttrAttrGetter, TestObjInternal::reflectedBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')

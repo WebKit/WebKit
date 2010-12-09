@@ -69,6 +69,16 @@ marquee = document.getElementById('marquee');
 marquee.hspace=20;
 shouldBe('marquee.hspace', '20');
 
+debug('"hspace" IDL attribute is 0 when content attribute is negative:');
+testParent.innerHTML = '<marquee id="marquee" hspace="-1">test</marquee>';
+marquee = document.getElementById('marquee');
+shouldBe('marquee.hspace', '0');
+
+debug('"hspace" IDL attribute is 0 when content attribute is too large:');
+testParent.innerHTML = '<marquee id="marquee" hspace="2147483648">test</marquee>';
+marquee = document.getElementById('marquee');
+shouldBe('marquee.hspace', '0');
+
 debug('"loop" IDL attribute reflects content attribute:');
 testParent.innerHTML = '<marquee id="marquee" loop="3">test</marquee>';
 marquee = document.getElementById('marquee');
@@ -123,6 +133,16 @@ testParent.innerHTML = '<marquee id="marquee" vspace="10">test</marquee>';
 marquee = document.getElementById('marquee');
 marquee.vspace=20;
 shouldBe('marquee.vspace', '20');
+
+debug('"vspace" IDL attribute is 0 when content attribute is negative:');
+testParent.innerHTML = '<marquee id="marquee" vspace="-1">test</marquee>';
+marquee = document.getElementById('marquee');
+shouldBe('marquee.vspace', '0');
+
+debug('"vspace" IDL attribute is 0 when content attribute is too large:');
+testParent.innerHTML = '<marquee id="marquee" vspace="2147483648">test</marquee>';
+marquee = document.getElementById('marquee');
+shouldBe('marquee.vspace', '0');
 
 debug('Default "scrollAmount" value is 6:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';

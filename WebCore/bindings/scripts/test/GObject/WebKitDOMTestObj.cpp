@@ -665,6 +665,25 @@ webkit_dom_test_obj_set_reflected_integral_attr(WebKitDOMTestObj* self, glong va
     item->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, value);
 }
 
+gulong
+webkit_dom_test_obj_get_reflected_unsigned_integral_attr(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    gulong res = item->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr);
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_reflected_unsigned_integral_attr(WebKitDOMTestObj* self, gulong value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, value);
+}
+
 gboolean
 webkit_dom_test_obj_get_reflected_boolean_attr(WebKitDOMTestObj* self)
 {
@@ -1094,6 +1113,7 @@ enum {
     PROP_CREATE,
     PROP_REFLECTED_STRING_ATTR,
     PROP_REFLECTED_INTEGRAL_ATTR,
+    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
     PROP_REFLECTED_BOOLEAN_ATTR,
     PROP_REFLECTED_URL_ATTR,
     PROP_REFLECTED_NON_EMPTY_URL_ATTR,
@@ -1178,6 +1198,11 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
     case PROP_REFLECTED_INTEGRAL_ATTR:
     {
         coreSelf->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, (g_value_get_long(value)));
+        break;
+    }
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+    {
+        coreSelf->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, (g_value_get_ulong(value)));
         break;
     }
     case PROP_REFLECTED_BOOLEAN_ATTR:
@@ -1354,6 +1379,11 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
     case PROP_REFLECTED_INTEGRAL_ATTR:
     {
         g_value_set_long(value, coreSelf->getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+        break;
+    }
+    case PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR:
+    {
+        g_value_set_ulong(value, coreSelf->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
         break;
     }
     case PROP_REFLECTED_BOOLEAN_ATTR:
@@ -1591,6 +1621,15 @@ G_MAXUINT64, /* min */
                                                            "read-write  glong TestObj.reflected-integral-attr", /* longer - could do with some extra doc stuff here */
                                                            G_MINLONG, /* min */
 G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
+                                    g_param_spec_ulong("reflected-unsigned-integral-attr", /* name */
+                                                           "test_obj_reflected-unsigned-integral-attr", /* short description */
+                                                           "read-write  gulong TestObj.reflected-unsigned-integral-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXULONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,

@@ -1,3 +1,14 @@
+2010-12-08  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Reflected unsigned attributes should be in the range [0, 2^31).
+        https://bugs.webkit.org/show_bug.cgi?id=50472
+
+        * fast/html/marquee-element.html: Give hspace and vspace negative values
+        and test what their corresponding IDL attributes reflect.
+        * fast/html/marquee-element-expected.txt:
+
 2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaseline for r73548.

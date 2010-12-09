@@ -23,6 +23,10 @@ PASS marquee.height is "200px"
 PASS marquee.hspace is 10
 "hspace" IDL attribute can be modified:
 PASS marquee.hspace is 20
+"hspace" IDL attribute is 0 when content attribute is negative:
+PASS marquee.hspace is 0
+"hspace" IDL attribute is 0 when content attribute is too large:
+PASS marquee.hspace is 0
 "loop" IDL attribute reflects content attribute:
 PASS marquee.loop is 3
 "loop" IDL attribute can be modified:
@@ -43,6 +47,10 @@ PASS marquee.trueSpeed is false
 PASS marquee.vspace is 10
 "vspace" IDL attribute can be modified:
 PASS marquee.vspace is 20
+"vspace" IDL attribute is 0 when content attribute is negative:
+PASS marquee.vspace is 0
+"vspace" IDL attribute is 0 when content attribute is too large:
+PASS marquee.vspace is 0
 Default "scrollAmount" value is 6:
 PASS marquee.scrollAmount is 6
 "scrollAmount" uses default value when content attribute is not a number:

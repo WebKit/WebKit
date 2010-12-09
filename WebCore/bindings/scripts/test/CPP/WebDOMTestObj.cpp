@@ -281,6 +281,22 @@ void WebDOMTestObj::setReflectedIntegralAttr(int newReflectedIntegralAttr)
     impl()->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, newReflectedIntegralAttr);
 }
 
+unsigned WebDOMTestObj::reflectedUnsignedIntegralAttr() const
+{
+    if (!impl())
+        return unsigned();
+
+    return impl()->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr);
+}
+
+void WebDOMTestObj::setReflectedUnsignedIntegralAttr(unsigned newReflectedUnsignedIntegralAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, newReflectedUnsignedIntegralAttr);
+}
+
 bool WebDOMTestObj::reflectedBooleanAttr() const
 {
     if (!impl())

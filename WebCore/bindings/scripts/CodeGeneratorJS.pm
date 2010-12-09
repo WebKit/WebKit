@@ -2497,6 +2497,12 @@ sub NativeToJSValue
     if ($type eq "Date") {
         return "jsDateOrNull(exec, $value)";
     }
+
+    if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
+        $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
+        return "jsNumber(std::max(0, " . $value . "))";
+    }
+
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
         $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
         return "jsNumber($value)";

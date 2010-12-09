@@ -230,6 +230,18 @@
     IMPL->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, newReflectedIntegralAttr);
 }
 
+- (unsigned)reflectedUnsignedIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr);
+}
+
+- (void)setReflectedUnsignedIntegralAttr:(unsigned)newReflectedUnsignedIntegralAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, newReflectedUnsignedIntegralAttr);
+}
+
 - (BOOL)reflectedBooleanAttr
 {
     WebCore::JSMainThreadNullState state;

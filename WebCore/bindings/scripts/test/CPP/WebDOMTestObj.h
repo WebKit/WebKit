@@ -83,6 +83,8 @@ public:
     void setReflectedStringAttr(const WebDOMString&);
     int reflectedIntegralAttr() const;
     void setReflectedIntegralAttr(int);
+    unsigned reflectedUnsignedIntegralAttr() const;
+    void setReflectedUnsignedIntegralAttr(unsigned);
     bool reflectedBooleanAttr() const;
     void setReflectedBooleanAttr(bool);
     WebDOMString reflectedURLAttr() const;

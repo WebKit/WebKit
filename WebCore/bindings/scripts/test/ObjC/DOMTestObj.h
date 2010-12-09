@@ -75,6 +75,8 @@ enum {
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr;
 - (int)reflectedIntegralAttr;
 - (void)setReflectedIntegralAttr:(int)newReflectedIntegralAttr;
+- (unsigned)reflectedUnsignedIntegralAttr;
+- (void)setReflectedUnsignedIntegralAttr:(unsigned)newReflectedUnsignedIntegralAttr;
 - (BOOL)reflectedBooleanAttr;
 - (void)setReflectedBooleanAttr:(BOOL)newReflectedBooleanAttr;
 - (NSString *)reflectedURLAttr;

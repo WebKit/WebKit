@@ -51,6 +51,7 @@ module test {
         // Reflected DOM attributes
         attribute [Reflect] DOMString reflectedStringAttr;
         attribute [Reflect] long reflectedIntegralAttr;
+        attribute [Reflect] unsigned long reflectedUnsignedIntegralAttr;
         attribute [Reflect] boolean reflectedBooleanAttr;
         attribute [Reflect, URL] DOMString reflectedURLAttr;
         attribute [Reflect, NonEmpty, URL] DOMString reflectedNonEmptyURLAttr;

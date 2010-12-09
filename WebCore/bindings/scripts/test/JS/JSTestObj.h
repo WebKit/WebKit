@@ -149,6 +149,8 @@ JSC::JSValue jsTestObjReflectedStringAttr(JSC::ExecState*, JSC::JSValue, const J
 void setJSTestObjReflectedStringAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjReflectedIntegralAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjReflectedIntegralAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjReflectedUnsignedIntegralAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjReflectedUnsignedIntegralAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjReflectedBooleanAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjReflectedBooleanAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjReflectedURLAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
