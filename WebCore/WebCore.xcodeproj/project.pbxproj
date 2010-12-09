@@ -4817,6 +4817,7 @@
 		BC491B780C023EFD009D6316 /* JSHTMLMarqueeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC491B760C023EFD009D6316 /* JSHTMLMarqueeElement.cpp */; };
 		BC491B790C023EFD009D6316 /* JSHTMLMarqueeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC491B770C023EFD009D6316 /* JSHTMLMarqueeElement.h */; };
 		BC4EDEF40C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */; };
+		BC51156E12B1749C00C96754 /* ScrollAnimatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */; };
 		BC5156E80C03B741008BB0EE /* DOMHTMLMarqueeElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC5156E50C03B741008BB0EE /* DOMHTMLMarqueeElement.h */; };
 		BC5156E90C03B741008BB0EE /* DOMHTMLMarqueeElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5156E60C03B741008BB0EE /* DOMHTMLMarqueeElement.mm */; };
 		BC5156EA0C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5156E70C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h */; };
@@ -5039,7 +5040,6 @@
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */; };
 		BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCAE1FA612939DB7004CB026 /* ScrollAnimatorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */; };
 		BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */; };
 		BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */; };
 		BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */; };
@@ -11045,6 +11045,7 @@
 		BC491B760C023EFD009D6316 /* JSHTMLMarqueeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMarqueeElement.cpp; sourceTree = "<group>"; };
 		BC491B770C023EFD009D6316 /* JSHTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMarqueeElement.h; sourceTree = "<group>"; };
 		BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAppletElementCustom.cpp; sourceTree = "<group>"; };
+		BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorMac.mm; sourceTree = "<group>"; };
 		BC5156E50C03B741008BB0EE /* DOMHTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLMarqueeElement.h; sourceTree = "<group>"; };
 		BC5156E60C03B741008BB0EE /* DOMHTMLMarqueeElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLMarqueeElement.mm; sourceTree = "<group>"; };
 		BC5156E70C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLMarqueeElementInternal.h; sourceTree = "<group>"; };
@@ -11284,7 +11285,6 @@
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Scrollbar.cpp; path = platform/Scrollbar.cpp; sourceTree = SOURCE_ROOT; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
-		BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimatorMac.cpp; sourceTree = "<group>"; };
 		BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMac.h; sourceTree = "<group>"; };
 		BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRGBColor.mm; sourceTree = "<group>"; };
 		BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCache.cpp; sourceTree = "<group>"; };
@@ -13645,7 +13645,7 @@
 				447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */,
 				447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
-				BCAE1FA412939DB7004CB026 /* ScrollAnimatorMac.cpp */,
+				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
@@ -24262,7 +24262,6 @@
 				4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
 				CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */,
-				BCAE1FA612939DB7004CB026 /* ScrollAnimatorMac.cpp in Sources */,
 				BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */,
 				BC9BC64D0E7C4889008B9849 /* ScrollbarClient.cpp in Sources */,
 				BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */,
@@ -24826,6 +24825,7 @@
 				FDA15ECD12B03F61003A583A /* JSJavaScriptAudioNode.cpp in Sources */,
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,
 				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
+				BC51156E12B1749C00C96754 /* ScrollAnimatorMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

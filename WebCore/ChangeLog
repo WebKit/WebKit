@@ -1,3 +1,30 @@
+2010-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2 needs smooth scrolling support on the mac
+        <rdar://problem/8219402>
+
+        * WebCore.xcodeproj/project.pbxproj: Change ScrollAnimatorMac.cpp to ScrollAnimatorMac.mm.
+        * platform/mac/ScrollAnimatorMac.cpp: Removed.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm: Copied from platform/mac/ScrollAnimatorMac.cpp.
+        (-[ScrollAnimationHelperDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollAnimationHelperDelegate bounds]):
+        (-[ScrollAnimationHelperDelegate _immediateScrollToPoint:]):
+        (-[ScrollAnimationHelperDelegate convertSizeToBase:]):
+        (-[ScrollAnimationHelperDelegate convertSizeFromBase:]):
+        (-[ScrollAnimationHelperDelegate superview]):
+        (-[ScrollAnimationHelperDelegate documentView]):
+        (-[ScrollAnimationHelperDelegate window]):
+        (-[ScrollAnimationHelperDelegate _recursiveRecomputeToolTips]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::setScrollPositionAndStopAnimation):
+        (WebCore::ScrollAnimatorMac::currentPosition):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+        Add implementation of ScrollAnimator for the Mac.
+
 2010-12-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

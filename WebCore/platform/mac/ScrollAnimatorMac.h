@@ -28,8 +28,15 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#include "FloatPoint.h"
 #include "ScrollAnimator.h"
-#include "Timer.h"
+#include <wtf/RetainPtr.h>
+
+#ifdef __OBJC__
+@class ScrollAnimationHelperDelegate;
+#else
+class ScrollAnimationHelperDelegate;
+#endif
 
 namespace WebCore {
 
@@ -40,6 +47,14 @@ public:
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void setScrollPositionAndStopAnimation(ScrollbarOrientation, float position);
+
+    // Called by the ScrollAnimationHelperDelegate.
+    FloatPoint currentPosition() const;
+    void immediateScrollToPoint(const FloatPoint& newPosition);
+
+private:
+    RetainPtr<id> m_scrollAnimationHelper;
+    RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 };
 
 } // namespace WebCore
