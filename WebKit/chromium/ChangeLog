@@ -1,3 +1,18 @@
+2010-12-09  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Numeric keys are floats.
+        https://bugs.webkit.org/show_bug.cgi?id=50674
+
+        Represent numeric keys as floating point values.
+
+        * public/WebIDBKey.h:
+        (WebKit::WebIDBKey::WebIDBKey):
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::assign):
+        (WebKit::WebIDBKey::number):
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

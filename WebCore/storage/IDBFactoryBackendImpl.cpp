@@ -35,6 +35,8 @@
 #include "IDBDatabaseException.h"
 #include "IDBSQLiteDatabase.h"
 #include "IDBTransactionCoordinator.h"
+#include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
@@ -93,25 +95,30 @@ static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* security
 
 static bool createTables(SQLiteDatabase& sqliteDatabase)
 {
+    if (sqliteDatabase.tableExists("Databases"))
+        return true;
+
     static const char* commands[] = {
-        "CREATE TABLE IF NOT EXISTS Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
-        "CREATE UNIQUE INDEX IF NOT EXISTS Databases_name ON Databases(name)",
+        "CREATE TABLE Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX Databases_name ON Databases(name)",
 
-        "CREATE TABLE IF NOT EXISTS ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL, databaseId INTEGER NOT NULL REFERENCES Databases(id))",
-        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStores_composit ON ObjectStores(databaseId, name)",
+        "CREATE TABLE ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL, databaseId INTEGER NOT NULL REFERENCES Databases(id))",
+        "CREATE UNIQUE INDEX ObjectStores_composit ON ObjectStores(databaseId, name)",
 
-        "CREATE TABLE IF NOT EXISTS Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
-        "CREATE UNIQUE INDEX IF NOT EXISTS Indexes_composit ON Indexes(objectStoreId, name)",
+        "CREATE TABLE Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
+        "CREATE UNIQUE INDEX Indexes_composit ON Indexes(objectStoreId, name)",
 
-        "CREATE TABLE IF NOT EXISTS ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
-        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+        "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
 
-        "CREATE TABLE IF NOT EXISTS IndexData (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
-        "CREATE INDEX IF NOT EXISTS IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
-        "CREATE INDEX IF NOT EXISTS IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
-        "CREATE INDEX IF NOT EXISTS IndexData_indexId ON IndexData(indexId)"
+        "CREATE TABLE IndexData (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
+        "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
+        "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
+        "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
         };
 
+    SQLiteTransaction transaction(sqliteDatabase, false);
+    transaction.begin();
     for (size_t i = 0; i < arraysize(commands); ++i) {
         if (!sqliteDatabase.executeCommand(commands[i])) {
             // FIXME: We should try to recover from this situation. Maybe nuke the database and start over?
@@ -119,6 +126,80 @@ static bool createTables(SQLiteDatabase& sqliteDatabase)
             return false;
         }
     }
+    transaction.commit();
+    return true;
+}
+
+static bool createMetaDataTable(SQLiteDatabase& sqliteDatabase)
+{
+    static const char* commands[] = {
+        "CREATE TABLE MetaData (name TEXT PRIMARY KEY, value NONE)",
+        "INSERT INTO MetaData VALUES ('version', 1)",
+    };
+
+    SQLiteTransaction transaction(sqliteDatabase, false);
+    transaction.begin();
+    for (size_t i = 0; i < arraysize(commands); ++i) {
+        if (!sqliteDatabase.executeCommand(commands[i]))
+            return false;
+    }
+    transaction.commit();
+    return true;
+}
+
+static bool getDatabaseVersion(SQLiteDatabase& sqliteDatabase, int* databaseVersion)
+{
+    SQLiteStatement query(sqliteDatabase, "SELECT value FROM MetaData WHERE name = 'version'");
+    if (query.prepare() != SQLResultOk || query.step() != SQLResultRow)
+        return false;
+
+    *databaseVersion = query.getColumnInt(0);
+    return query.finalize() == SQLResultOk;
+}
+
+static bool migrateDatabase(SQLiteDatabase& sqliteDatabase)
+{
+    if (!sqliteDatabase.tableExists("MetaData")) {
+        if (!createMetaDataTable(sqliteDatabase))
+            return false;
+    }
+
+    int databaseVersion;
+    if (!getDatabaseVersion(sqliteDatabase, &databaseVersion))
+        return false;
+
+    if (databaseVersion == 1) {
+        static const char* commands[] = {
+            "DROP TABLE IF EXISTS ObjectStoreData2",
+            "CREATE TABLE ObjectStoreData2 (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value TEXT NOT NULL)",
+            "INSERT INTO ObjectStoreData2 SELECT * FROM ObjectStoreData",
+            "DROP TABLE ObjectStoreData", // This depends on SQLite not enforcing referential consistency.
+            "ALTER TABLE ObjectStoreData2 RENAME TO ObjectStoreData",
+            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+            "DROP TABLE IF EXISTS IndexData2", // This depends on SQLite not enforcing referential consistency.
+            "CREATE TABLE IndexData2 (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate REAL, keyNumber REAL, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
+            "INSERT INTO IndexData2 SELECT * FROM IndexData",
+            "DROP TABLE IndexData",
+            "ALTER TABLE IndexData2 RENAME TO IndexData",
+            "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
+            "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
+            "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
+            "UPDATE MetaData SET value = 2 WHERE name = 'version'",
+        };
+
+        SQLiteTransaction transaction(sqliteDatabase, false);
+        transaction.begin();
+        for (size_t i = 0; i < arraysize(commands); ++i) {
+            if (!sqliteDatabase.executeCommand(commands[i])) {
+                LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
+                return false;
+            }
+        }
+        transaction.commit();
+
+        databaseVersion = 2;
+    }
+
     return true;
 }
 
@@ -141,8 +222,9 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     else {
         sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 
-        if (!sqliteDatabase || !createTables(sqliteDatabase->db())) {
+        if (!sqliteDatabase || !createTables(sqliteDatabase->db()) || !migrateDatabase(sqliteDatabase->db())) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+            m_sqliteDatabaseMap.set(fileIdentifier, 0);
             return;
         }
         m_sqliteDatabaseMap.set(fileIdentifier, sqliteDatabase.get());
@@ -156,4 +238,3 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-

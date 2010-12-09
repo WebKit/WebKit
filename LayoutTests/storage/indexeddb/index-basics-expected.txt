@@ -45,6 +45,7 @@ Deleted all object stores.
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
 store.createIndex('indexName2', 'y', false)
+store.createIndex('zIndex', 'z', true)
 PASS 'name' in indexObject is true
 PASS indexObject.name is "indexName"
 PASS 'storeName' in indexObject is true
@@ -57,7 +58,7 @@ PASS 'openKeyCursor' in indexObject is true
 PASS 'openCursor' in indexObject is true
 PASS 'getKey' in indexObject is true
 PASS 'get' in indexObject is true
-store.add({x: 'value', y: 'zzz'}, 'key')
+store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -74,7 +75,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-event.source.add({x: 'value2', y: 'zzz2'}, 'key2')
+event.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -127,6 +128,24 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is "key"
+indexObject3.get(2.71)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result.x is "value2"
 indexObject.get('value')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

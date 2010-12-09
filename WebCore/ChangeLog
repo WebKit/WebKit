@@ -1,3 +1,31 @@
+2010-12-09  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Numeric keys are floats.
+        https://bugs.webkit.org/show_bug.cgi?id=50674
+
+        Use floating point to represent numeric keys,
+        add version meta data to the SQLite db,
+        and migrate object stores that use integers.
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        (WebCore::migrateDatabase):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::fromQuery):
+        (WebCore::IDBKey::bind):
+        (WebCore::IDBKey::bindWithNulls):
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::create):
+        (WebCore::IDBKey::number):
+
 2010-12-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.
