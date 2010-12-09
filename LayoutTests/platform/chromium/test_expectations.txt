@@ -3295,4 +3295,6 @@ BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
 BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
 // Needs V8 investigation
-BUG66099 SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
+BUG66099 MAC LINUX SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
+BUG66099 WIN RELEASE SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
+BUG66099 WIN DEBUG : fast/js/array-sort-modifying-tostring.html = TIMEOUT

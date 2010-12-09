@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectations update.
 
+        Mark a test as timing out on Win Debug.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-09  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
         Rebaseline a Linux test.
 
         * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.checksum:
