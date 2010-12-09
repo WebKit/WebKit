@@ -60,20 +60,20 @@ using namespace WebCore;
 
 @end
 
-@interface WebMenuTarget : NSObject {
+@interface WKMenuTarget : NSObject {
     WebKit::WebContextMenuProxyMac* _menuProxy;
 }
-+ (WebMenuTarget*)sharedMenuTarget;
++ (WKMenuTarget*)sharedMenuTarget;
 - (WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-@implementation WebMenuTarget
+@implementation WKMenuTarget
 
-+ (WebMenuTarget*)sharedMenuTarget
++ (WKMenuTarget*)sharedMenuTarget
 {
-    static WebMenuTarget* target = [[WebMenuTarget alloc] init];
+    static WKMenuTarget* target = [[WKMenuTarget alloc] init];
     return target;
 }
 
@@ -175,7 +175,7 @@ static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMe
         }
     }
 
-    WebMenuTarget* target = [WebMenuTarget sharedMenuTarget];
+    WKMenuTarget* target = [WKMenuTarget sharedMenuTarget];
     for (unsigned i = 0; i < size; ++i)
         [result[i].get() setTarget:target];
     
@@ -199,7 +199,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
 void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItemData>& items)
 {
     populate(items);
-    [[WebMenuTarget sharedMenuTarget] setMenuProxy:this];
+    [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
     
     NSRect menuRect = NSMakeRect(menuLocation.x(), menuLocation.y(), 0, 0);
     

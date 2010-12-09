@@ -1,3 +1,19 @@
+2010-12-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        WebMenuTarget implemented in both WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50665
+        <rdar://problem/8742640>
+        
+        Rename WebMenuTarget to WKMenuTarget to prevent this warning and stay consistent with
+        other WebKit2 namings.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (+[WKMenuTarget sharedMenuTarget]):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2010-12-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
