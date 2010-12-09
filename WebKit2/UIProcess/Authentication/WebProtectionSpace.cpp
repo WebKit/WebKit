@@ -25,12 +25,48 @@
 
 #include "WebProtectionSpace.h"
 
+#include <WebCore/SharedBuffer.h>
+
 namespace WebKit {
 
 WebProtectionSpace::WebProtectionSpace(const WebCore::ProtectionSpace& coreProtectionSpace)
     : m_coreProtectionSpace(coreProtectionSpace)
 {
+}
 
+const String& WebProtectionSpace::host() const
+{
+    return m_coreProtectionSpace.host();
+}
+
+int WebProtectionSpace::port() const
+{
+    return m_coreProtectionSpace.port();
+}
+
+const String& WebProtectionSpace::realm() const
+{
+    return m_coreProtectionSpace.realm();
+}
+
+bool WebProtectionSpace::isProxy() const
+{
+    return m_coreProtectionSpace.isProxy();
+}
+
+WebCore::ProtectionSpaceServerType WebProtectionSpace::serverType() const
+{
+    return m_coreProtectionSpace.serverType();
+}
+
+bool WebProtectionSpace::receivesCredentialSecurely() const
+{
+    return m_coreProtectionSpace.receivesCredentialSecurely();
+}
+
+WebCore::ProtectionSpaceAuthenticationScheme WebProtectionSpace::authenticationScheme() const
+{
+    return m_coreProtectionSpace.authenticationScheme();
 }
 
 } // namespace WebKit

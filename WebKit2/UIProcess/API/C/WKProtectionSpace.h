@@ -27,12 +27,21 @@
 #define WKProtectionSpace_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKProtectionSpaceTypes.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKTypeID WKProtectionSpaceGetTypeID();
+
+WK_EXPORT WKStringRef WKProtectionSpaceCopyHost(WKProtectionSpaceRef);
+WK_EXPORT int WKProtectionSpaceGetPort(WKProtectionSpaceRef);
+WK_EXPORT WKStringRef WKProtectionSpaceCopyRealm(WKProtectionSpaceRef);
+WK_EXPORT bool WKProtectionSpaceGetIsProxy(WKProtectionSpaceRef);
+WK_EXPORT WKProtectionSpaceServerType WKProtectionSpaceGetServerType(WKProtectionSpaceRef);
+WK_EXPORT bool WKProtectionSpaceGetReceivesCredentialSecurely(WKProtectionSpaceRef);
+WK_EXPORT WKProtectionSpaceAuthenticationScheme WKProtectionSpaceGetAuthenticationScheme(WKProtectionSpaceRef);
 
 #ifdef __cplusplus
 }

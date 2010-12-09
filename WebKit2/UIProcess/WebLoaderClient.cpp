@@ -152,12 +152,12 @@ bool WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*
     return m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(page), toAPI(frame), toAPI(protectionSpace), m_client.clientInfo);
 }
 
-void WebLoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy* page, WebFrameProxy* frame, AuthenticationChallengeProxy* authenticationChallenge, AuthenticationDecisionListener* listener)
+void WebLoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy* page, WebFrameProxy* frame, AuthenticationChallengeProxy* authenticationChallenge)
 {
     if (!m_client.didReceiveAuthenticationChallengeInFrame)
         return;
 
-    m_client.didReceiveAuthenticationChallengeInFrame(toAPI(page), toAPI(frame), toAPI(authenticationChallenge), toAPI(listener), m_client.clientInfo);
+    m_client.didReceiveAuthenticationChallengeInFrame(toAPI(page), toAPI(frame), toAPI(authenticationChallenge), m_client.clientInfo);
 }
 
 void WebLoaderClient::didStartProgress(WebPageProxy* page)

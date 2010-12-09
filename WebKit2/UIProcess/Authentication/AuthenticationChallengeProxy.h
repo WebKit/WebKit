@@ -41,6 +41,7 @@ namespace WebKit {
 class AuthenticationDecisionListener;
 class WebCredential;
 class WebPageProxy;
+class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public APIObject {
 public:
@@ -57,6 +58,9 @@ public:
     void cancel();
 
     AuthenticationDecisionListener* listener() const { return m_listener.get(); }
+    WebCredential* proposedCredential() const;
+    WebProtectionSpace* protectionSpace() const;
+    int previousFailureCount() const { return m_coreAuthenticationChallenge.previousFailureCount(); }
 
 private:
     AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, WebPageProxy* page);
@@ -67,6 +71,8 @@ private:
     uint64_t m_challengeID;
     RefPtr<WebPageProxy> m_page;
     RefPtr<AuthenticationDecisionListener> m_listener;
+    mutable RefPtr<WebCredential> m_webCredential;
+    mutable RefPtr<WebProtectionSpace> m_webProtectionSpace;
 };
 
 } // namespace WebKit

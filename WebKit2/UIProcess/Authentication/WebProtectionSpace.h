@@ -40,6 +40,15 @@ public:
     {
         return adoptRef(new WebProtectionSpace(protectionSpace));
     }
+    
+    const String& protocol() const;
+    const String& host() const;
+    int port() const;
+    const String& realm() const;
+    bool isProxy() const;
+    WebCore::ProtectionSpaceServerType serverType() const;
+    bool receivesCredentialSecurely() const;
+    WebCore::ProtectionSpaceAuthenticationScheme authenticationScheme() const;
 
 private:
     WebProtectionSpace(const WebCore::ProtectionSpace&);

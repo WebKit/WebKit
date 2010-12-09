@@ -29,9 +29,14 @@
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
 #include "WKContext.h"
+#include "WKCredentialTypes.h"
 #include "WKPage.h"
 #include "WKPreferencesPrivate.h"
+#include "WKProtectionSpaceTypes.h"
 #include "WKSharedAPICast.h"
+#include <WebCore/Credential.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/ProtectionSpace.h>
 
 namespace WebKit {
 
@@ -145,6 +150,67 @@ inline WKFontSmoothingLevel toAPI(FontSmoothingLevel level)
 
     ASSERT_NOT_REACHED();
     return kWKFontSmoothingLevelMedium;
+}
+
+inline WKProtectionSpaceServerType toAPI(WebCore::ProtectionSpaceServerType type)
+{
+    switch (type) {
+    case WebCore::ProtectionSpaceServerHTTP:
+        return kWKProtectionSpaceServerTypeHTTP;
+    case WebCore::ProtectionSpaceServerHTTPS:
+        return kWKProtectionSpaceServerTypeHTTPS;
+    case WebCore::ProtectionSpaceServerFTP:
+        return kWKProtectionSpaceServerTypeFTP;
+    case WebCore::ProtectionSpaceServerFTPS:
+        return kWKProtectionSpaceServerTypeFTPS;
+    case WebCore::ProtectionSpaceProxyHTTP:
+        return kWKProtectionSpaceProxyTypeHTTP;
+    case WebCore::ProtectionSpaceProxyHTTPS:
+        return kWKProtectionSpaceProxyTypeHTTPS;
+    case WebCore::ProtectionSpaceProxyFTP:
+        return kWKProtectionSpaceProxyTypeFTP;
+    case WebCore::ProtectionSpaceProxySOCKS:
+        return kWKProtectionSpaceProxyTypeSOCKS;
+    }
+    return kWKProtectionSpaceServerTypeHTTP;
+}
+
+inline WKProtectionSpaceAuthenticationScheme toAPI(WebCore::ProtectionSpaceAuthenticationScheme type)
+{
+    switch (type) {
+    case WebCore::ProtectionSpaceAuthenticationSchemeDefault:
+        return kWKProtectionSpaceAuthenticationSchemeDefault;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPBasic:
+        return kWKProtectionSpaceAuthenticationSchemeHTTPBasic;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPDigest:
+        return kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTMLForm:
+        return kWKProtectionSpaceAuthenticationSchemeHTMLForm;
+    case WebCore::ProtectionSpaceAuthenticationSchemeNTLM:
+        return kWKProtectionSpaceAuthenticationSchemeNTLM;
+    case WebCore::ProtectionSpaceAuthenticationSchemeNegotiate:
+        return kWKProtectionSpaceAuthenticationSchemeNegotiate;
+    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+        return kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+    case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        return kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    default:
+        return kWKProtectionSpaceAuthenticationSchemeUnknown;
+    }
+}
+
+inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersistence type)
+{
+    switch (type) {
+    case kWKCredentialPersistenceNone:
+        return WebCore::CredentialPersistenceNone;
+    case kWKCredentialPersistenceForSession:
+        return WebCore::CredentialPersistenceForSession;
+    case kWKCredentialPersistencePermanent:
+        return WebCore::CredentialPersistencePermanent;
+    default:
+        return WebCore::CredentialPersistenceNone;
+    }
 }
 
 } // namespace WebKit

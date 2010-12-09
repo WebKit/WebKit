@@ -60,16 +60,26 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
 
 void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
 {
+    bool responseIsPresent = resourceResponse.nsURLResponse();
+    encoder->encode(responseIsPresent);
+    
+    // FIXME: <rdar://problem/8741799> - We can't use NSKeyedArchiver here.
     encodeWithNSKeyedArchiver(encoder, resourceResponse.nsURLResponse());
 }
 
 bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
 {
+    bool responseIsPresent;
+    decoder->decode(responseIsPresent);
+    
+    // FIXME: <rdar://problem/8741799> - We can't use NSKeyedArchiver here.
     NSURLResponse *nsURLResponse = decodeWithNSKeyedArchiver(decoder);
-    if (!nsURLResponse)
+    if (responseIsPresent && !nsURLResponse)
         return false;
 
-    resourceResponse = WebCore::ResourceResponse(nsURLResponse);
+    if (responseIsPresent)
+        resourceResponse = WebCore::ResourceResponse(nsURLResponse);
+
     return true;
 }
 

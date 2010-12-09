@@ -1,3 +1,86 @@
+2010-12-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7660733> and https://bugs.webkit.org/show_bug.cgi?id=50191
+        WebKit2 Authentication Support
+
+        Implement authentication-related coders:
+        * Shared/WebCoreArgumentCoders.h:
+
+        Allow the ResourceResponse coders to handle null responses:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+
+        Add new API and Impl casts for ProtectionSpace and Credential enums:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toCredentialPersistence):
+
+        Move the DecisionListener to be accessed off the challenge itself, and fill in other
+        necessary API:
+        * UIProcess/API/C/WKAuthenticationChallenge.cpp:
+        (WKAuthenticationChallengeGetDecisionListener):
+        (WKAuthenticationChallengeGetProtectionSpace):
+        (WKAuthenticationChallengeGetProposedCredential):
+        (WKAuthenticationChallengeGetPreviousFailureCount):
+        * UIProcess/API/C/WKAuthenticationChallenge.h:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::~AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::proposedCredential):
+        (WebKit::AuthenticationChallengeProxy::protectionSpace):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::previousFailureCount):
+
+        Fill in some credential API:
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreate):
+        (WKCredentialCopyUser):
+        * UIProcess/API/C/WKCredential.h:
+        * UIProcess/API/C/WKCredentialTypes.h: Added.
+        * UIProcess/Authentication/WebCredential.cpp:
+        (WebKit::WebCredential::WebCredential):
+        (WebKit::WebCredential::user):
+        * UIProcess/Authentication/WebCredential.h:
+        (WebKit::WebCredential::create):
+
+        Fill in some protection space API:
+        * UIProcess/API/C/WKProtectionSpace.cpp:
+        (WKProtectionSpaceCopyHost):
+        (WKProtectionSpaceGetPort):
+        (WKProtectionSpaceCopyRealm):
+        (WKProtectionSpaceGetIsProxy):
+        (WKProtectionSpaceGetServerType):
+        (WKProtectionSpaceGetReceivesCredentialSecurely):
+        (WKProtectionSpaceGetAuthenticationScheme):
+        * UIProcess/API/C/WKProtectionSpace.h:
+        * UIProcess/API/C/WKProtectionSpaceTypes.h: Added.
+        * UIProcess/Authentication/WebProtectionSpace.cpp:
+        (WebKit::WebProtectionSpace::WebProtectionSpace):
+        (WebKit::WebProtectionSpace::host):
+        (WebKit::WebProtectionSpace::port):
+        (WebKit::WebProtectionSpace::realm):
+        (WebKit::WebProtectionSpace::isProxy):
+        (WebKit::WebProtectionSpace::serverType):
+        (WebKit::WebProtectionSpace::receivesCredentialSecurely):
+        (WebKit::WebProtectionSpace::authenticationScheme):
+        * UIProcess/Authentication/WebProtectionSpace.h:
+
+        Change the authentication challenge callback to reflect the new ownership of
+        the DecisionListener:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey "Error" Garen.

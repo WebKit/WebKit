@@ -27,12 +27,16 @@
 #define WKCredential_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKCredentialTypes.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKTypeID WKCredentialGetTypeID();
+
+WK_EXPORT WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence);
+WK_EXPORT WKStringRef WKCredentialCopyUser(WKCredentialRef);
 
 #ifdef __cplusplus
 }

@@ -23,36 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKAuthenticationChallenge.h"
+#ifndef WKCredentialTypes_h
+#define WKCredentialTypes_h
 
-#include "AuthenticationChallengeProxy.h"
-#include "WebCredential.h"
-#include "WebProtectionSpace.h"
-#include "WKAPICast.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-using namespace WebKit;
+enum {
+    kWKCredentialPersistenceNone,
+    kWKCredentialPersistenceForSession,
+    kWKCredentialPersistencePermanent
+};
+typedef uint32_t WKCredentialPersistence;
 
-WKTypeID WKAuthenticationChallengeGetTypeID()
-{
-    return toAPI(AuthenticationChallengeProxy::APIType);
+#ifdef __cplusplus
 }
+#endif
 
-WKAuthenticationDecisionListenerRef WKAuthenticationChallengeGetDecisionListener(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->listener());
-}
-
-WKProtectionSpaceRef WKAuthenticationChallengeGetProtectionSpace(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->protectionSpace());
-}
-
-WKCredentialRef WKAuthenticationChallengeGetProposedCredential(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->proposedCredential());
-}
-
-int WKAuthenticationChallengeGetPreviousFailureCount(WKAuthenticationChallengeRef challenge)
-{
-    return toImpl(challenge)->previousFailureCount();
-}
+#endif /* WKCredentialTypes_h */

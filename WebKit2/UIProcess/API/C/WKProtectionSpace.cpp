@@ -34,3 +34,38 @@ WKTypeID WKProtectionSpaceGetTypeID()
 {
     return toAPI(WebProtectionSpace::APIType);
 }
+
+WKStringRef WKProtectionSpaceCopyHost(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toCopiedAPI(toImpl(protectionSpaceRef)->host());
+}
+
+int WKProtectionSpaceGetPort(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toImpl(protectionSpaceRef)->port();
+}
+
+WKStringRef WKProtectionSpaceCopyRealm(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toCopiedAPI(toImpl(protectionSpaceRef)->realm());
+}
+
+bool WKProtectionSpaceGetIsProxy(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toImpl(protectionSpaceRef)->isProxy();
+}
+
+WKProtectionSpaceServerType WKProtectionSpaceGetServerType(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toAPI(toImpl(protectionSpaceRef)->serverType());
+}
+
+bool WKProtectionSpaceGetReceivesCredentialSecurely(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toImpl(protectionSpaceRef)->receivesCredentialSecurely();
+}
+
+WKProtectionSpaceAuthenticationScheme WKProtectionSpaceGetAuthenticationScheme(WKProtectionSpaceRef protectionSpaceRef)
+{
+    return toAPI(toImpl(protectionSpaceRef)->authenticationScheme());
+}

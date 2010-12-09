@@ -275,6 +275,7 @@ HEADERS += \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
+    UIProcess/API/C/WKCredentialTypes.h \
     UIProcess/API/C/WKDownload.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
@@ -287,6 +288,7 @@ HEADERS += \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
     UIProcess/API/C/WKProtectionSpace.h \
+    UIProcess/API/C/WKProtectionSpaceTypes.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
     UIProcess/API/cpp/WKRetainPtr.h \

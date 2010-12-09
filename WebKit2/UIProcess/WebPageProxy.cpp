@@ -1559,7 +1559,7 @@ void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const Web
     WebFrameProxy* frame = process()->webFrame(frameID);
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, this);
     
-    m_loaderClient.didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get(), authenticationChallenge->listener());
+    m_loaderClient.didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get());
 }
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage, uint64_t& newQuota)

@@ -34,6 +34,11 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKAuthenticationChallengeGetTypeID();
 
+WK_EXPORT WKAuthenticationDecisionListenerRef WKAuthenticationChallengeGetDecisionListener(WKAuthenticationChallengeRef);
+WK_EXPORT WKProtectionSpaceRef WKAuthenticationChallengeGetProtectionSpace(WKAuthenticationChallengeRef);
+WK_EXPORT WKCredentialRef WKAuthenticationChallengeGetProposedCredential(WKAuthenticationChallengeRef);
+WK_EXPORT int WKAuthenticationChallengeGetPreviousFailureCount(WKAuthenticationChallengeRef);
+
 #ifdef __cplusplus
 }
 #endif

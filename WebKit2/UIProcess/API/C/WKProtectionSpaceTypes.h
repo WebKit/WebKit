@@ -23,36 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKAuthenticationChallenge.h"
+#ifndef WKProtectionSpaceTypes_h
+#define WKProtectionSpaceTypes_h
 
-#include "AuthenticationChallengeProxy.h"
-#include "WebCredential.h"
-#include "WebProtectionSpace.h"
-#include "WKAPICast.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKAuthenticationChallengeGetTypeID()
-{
-    return toAPI(AuthenticationChallengeProxy::APIType);
+enum {
+    kWKProtectionSpaceServerTypeHTTP = 1,
+    kWKProtectionSpaceServerTypeHTTPS,
+    kWKProtectionSpaceServerTypeFTP,
+    kWKProtectionSpaceServerTypeFTPS,
+    kWKProtectionSpaceProxyTypeHTTP,
+    kWKProtectionSpaceProxyTypeHTTPS,
+    kWKProtectionSpaceProxyTypeFTP,
+    kWKProtectionSpaceProxyTypeSOCKS,
+};
+typedef uint32_t WKProtectionSpaceServerType;
+
+enum  {
+    kWKProtectionSpaceAuthenticationSchemeDefault = 1,
+    kWKProtectionSpaceAuthenticationSchemeHTTPBasic,
+    kWKProtectionSpaceAuthenticationSchemeHTTPDigest,
+    kWKProtectionSpaceAuthenticationSchemeHTMLForm,
+    kWKProtectionSpaceAuthenticationSchemeNTLM,
+    kWKProtectionSpaceAuthenticationSchemeNegotiate,
+    kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested,
+    kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested,
+    kWKProtectionSpaceAuthenticationSchemeUnknown = 100,
+};
+typedef uint32_t WKProtectionSpaceAuthenticationScheme;
+
+#ifdef __cplusplus
 }
+#endif
 
-WKAuthenticationDecisionListenerRef WKAuthenticationChallengeGetDecisionListener(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->listener());
-}
-
-WKProtectionSpaceRef WKAuthenticationChallengeGetProtectionSpace(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->protectionSpace());
-}
-
-WKCredentialRef WKAuthenticationChallengeGetProposedCredential(WKAuthenticationChallengeRef challenge)
-{
-    return toAPI(toImpl(challenge)->proposedCredential());
-}
-
-int WKAuthenticationChallengeGetPreviousFailureCount(WKAuthenticationChallengeRef challenge)
-{
-    return toImpl(challenge)->previousFailureCount();
-}
+#endif // WKProtectionSpaceTypes_h

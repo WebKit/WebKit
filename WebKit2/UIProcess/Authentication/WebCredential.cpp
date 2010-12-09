@@ -27,9 +27,19 @@
 
 namespace WebKit {
 
+WebCredential::WebCredential(const WebCore::Credential& credential)
+    : m_coreCredential(credential)
+{
+}
+
 const WebCore::Credential& WebCredential::core()
 {
     return m_coreCredential;
+}
+
+const String& WebCredential::user() const
+{
+    return m_coreCredential.user();
 }
 
 } // namespace WebKit

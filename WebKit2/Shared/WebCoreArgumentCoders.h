@@ -115,25 +115,45 @@ template<> struct ArgumentCoder<WebCore::HTTPHeaderMap> {
 template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
     static void encode(ArgumentEncoder* encoder, const WebCore::AuthenticationChallenge& challenge)
     {
-        // FIXME: Implement
+        encoder->encode(CoreIPC::In(challenge.protectionSpace(), challenge.proposedCredential(), challenge.previousFailureCount(), challenge.failureResponse(), challenge.error()));
     }
 
-    static bool decode(ArgumentDecoder* decoder, WebCore::AuthenticationChallenge& credential)
-    {
-        // FIXME: Implement
+    static bool decode(ArgumentDecoder* decoder, WebCore::AuthenticationChallenge& challenge)
+    {    
+        WebCore::ProtectionSpace protectionSpace;
+        WebCore::Credential proposedCredential;
+        unsigned previousFailureCount;
+        WebCore::ResourceResponse failureResponse;
+        WebCore::ResourceError error;
+
+        if (!decoder->decode(CoreIPC::Out(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error)))
+            return false;
+        
+        challenge = WebCore::AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
+
         return true;
     }
 };
 
 template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::ProtectionSpace& challenge)
+    static void encode(ArgumentEncoder* encoder, const WebCore::ProtectionSpace& space)
     {
-        // FIXME: Implement
+        encoder->encode(CoreIPC::In(space.host(), space.port(), static_cast<uint32_t>(space.serverType()), space.realm(), static_cast<uint32_t>(space.authenticationScheme())));
     }
 
-    static bool decode(ArgumentDecoder* decoder, WebCore::ProtectionSpace& credential)
+    static bool decode(ArgumentDecoder* decoder, WebCore::ProtectionSpace& space)
     {
-        // FIXME: Implement
+        String host;
+        int port;
+        uint32_t serverType;
+        String realm;
+        uint32_t authenticationScheme;
+
+        if (!decoder->decode(CoreIPC::Out(host, port, serverType, realm, authenticationScheme)))
+            return false;
+    
+        space = WebCore::ProtectionSpace(host, port, static_cast<WebCore::ProtectionSpaceServerType>(serverType), realm, static_cast<WebCore::ProtectionSpaceAuthenticationScheme>(authenticationScheme));
+
         return true;
     }
 };
@@ -141,12 +161,18 @@ template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
 template<> struct ArgumentCoder<WebCore::Credential> {
     static void encode(ArgumentEncoder* encoder, const WebCore::Credential& credential)
     {
-        // FIXME: Implement
+        encoder->encode(CoreIPC::In(credential.user(), credential.password(), static_cast<uint32_t>(credential.persistence())));
     }
 
     static bool decode(ArgumentDecoder* decoder, WebCore::Credential& credential)
     {
-        // FIXME: Implement
+        String user;
+        String password;
+        int persistence;
+        if (!decoder->decode(CoreIPC::Out(user, password, persistence)))
+            return false;
+        
+        credential = WebCore::Credential(user, password, static_cast<WebCore::CredentialPersistence>(persistence));
         return true;
     }
 };

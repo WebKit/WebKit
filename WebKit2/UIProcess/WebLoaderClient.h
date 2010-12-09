@@ -62,7 +62,7 @@ public:
     void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     
     bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);
-    void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*, AuthenticationDecisionListener*);
+    void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*);
 
     void didStartProgress(WebPageProxy*);
     void didChangeProgress(WebPageProxy*);

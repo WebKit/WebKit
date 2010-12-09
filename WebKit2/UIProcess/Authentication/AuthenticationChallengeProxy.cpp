@@ -31,6 +31,7 @@
 #include "WebCredential.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include "WebProtectionSpace.h"
 
 namespace WebKit {
 
@@ -47,7 +48,7 @@ AuthenticationChallengeProxy::~AuthenticationChallengeProxy()
 {
     // If an outstanding AuthenticationChallengeProxy is being destroyed even though it hasn't been responded to yet,
     // we cancel it here so the WebProcess isn't waiting for an answer forever.
-    if (m_challengeID)
+    if (m_challengeID && m_page->process())
         m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
 
     if (m_listener)
@@ -75,6 +76,22 @@ void AuthenticationChallengeProxy::cancel()
     m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
 
     m_challengeID = 0;
+}
+
+WebCredential* AuthenticationChallengeProxy::proposedCredential() const
+{
+    if (!m_webCredential)
+        m_webCredential = WebCredential::create(m_coreAuthenticationChallenge.proposedCredential());
+        
+    return m_webCredential.get();
+}
+
+WebProtectionSpace* AuthenticationChallengeProxy::protectionSpace() const
+{
+    if (!m_webProtectionSpace)
+        m_webProtectionSpace = WebProtectionSpace::create(m_coreAuthenticationChallenge.protectionSpace());
+        
+    return m_webProtectionSpace.get();
 }
 
 } // namespace WebKit

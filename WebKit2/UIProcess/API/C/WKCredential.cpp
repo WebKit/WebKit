@@ -26,6 +26,7 @@
 #include "WKCredential.h"
 
 #include "WebCredential.h"
+#include "WebString.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
@@ -34,3 +35,15 @@ WKTypeID WKCredentialGetTypeID()
 {
     return toAPI(WebCredential::APIType);
 }
+
+WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence persistence)
+{
+    RefPtr<WebCredential> credential = WebCredential::create(toImpl(username), toImpl(password), toCredentialPersistence(persistence));
+    return toAPI(credential.release().releaseRef());
+}
+
+WKStringRef WKCredentialCopyUser(WKCredentialRef credentialRef)
+{
+    return toCopiedAPI(toImpl(credentialRef)->user());
+}
+
