@@ -90,6 +90,15 @@ blockquote {
     margin: 1__qem 40px 1em 40px
 }
 
+figcaption {
+    display: block
+}
+
+figure {
+    display: block;
+    margin: 1em 40px 1em 40px
+}
+
 q {
     display: inline
 }

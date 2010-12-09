@@ -1,3 +1,16 @@
+2010-12-09  Peter Beverloo  <peter@lvp-media.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Default CSS definitions for the figure and figcaption elements.
+
+        Tests: fast/html/figcaption-element.html
+               fast/html/figure-element.html
+
+        * css/html.css:
+        (figure): The default figure-style equals a blockquote
+        (figcaption): A non-sectioning block-level element
+
 2010-12-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

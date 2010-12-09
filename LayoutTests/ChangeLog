@@ -1,3 +1,16 @@
+2010-12-09  Peter Beverloo  <peter@lvp-media.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Default CSS definitions for the figure and figcaption elements.
+
+        * fast/html/figcaption-element-expected.txt: Added.
+        * fast/html/figcaption-element.html: Added.
+        * fast/html/figure-element-expected.txt: Added.
+        * fast/html/figure-element.html: Added.
+        * fast/html/script-tests/figcaption-element.js: Added.
+        * fast/html/script-tests/figure-element.js: Added.
+
 2010-12-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.
