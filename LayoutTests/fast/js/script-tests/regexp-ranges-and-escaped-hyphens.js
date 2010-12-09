@@ -10,9 +10,11 @@ shouldBe('regexp01.toString()', '"1235"');
 var regexp01a = /[\s1-35]+/.exec("-123 54");
 shouldBe('regexp01a.toString()', '"123 5"');
 
-// These are invalid ranges.
-shouldThrow('/[1\\s-35]+/.exec("21-3 54");');
-shouldThrow('/[1-\\s35]+/.exec("21-3 54");');
+// These are invalid ranges, according to ECMA-262, but we allow them.
+var regexp01b = /[1\s-35]+/.exec("21-3 54");
+shouldBe('regexp01b.toString()', '"1-3 5"');
+var regexp01c = /[1-\s35]+/.exec("21-3 54");
+shouldBe('regexp01c.toString()', '"1-3 5"');
 
 var regexp01d = /[1-3\s5]+/.exec("-123 54");
 shouldBe('regexp01d.toString()', '"123 5"');

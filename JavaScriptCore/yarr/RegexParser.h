@@ -58,7 +58,6 @@ private:
         ParenthesesUnmatched,
         ParenthesesTypeInvalid,
         CharacterClassUnmatched,
-        CharacterClassInvalidRange,
         CharacterClassOutOfOrder,
         EscapeUnterminated,
         NumberOfErrorCodes
@@ -142,9 +141,16 @@ private:
                 m_state = Empty;
                 return;
 
+                // See coment in atomBuiltInCharacterClass below.
+                // This too is technically an error, per ECMA-262, and again we
+                // we chose to allow this.  Note a subtlely here that while we
+                // diverge from the spec's definition of CharacterRange we do
+                // remain in compliance with the grammar.  For example, consider
+                // the expression /[\d-a-z]/.  We comply with the grammar in
+                // this case by not allowing a-z to be matched as a range.
             case AfterCharacterClassHyphen:
-                // Error! We have something like /[\d-x]/.
-                m_err = CharacterClassInvalidRange;
+                m_delegate.atomCharacterClassAtom(ch);
+                m_state = Empty;
                 return;
             }
         }
@@ -167,12 +173,21 @@ private:
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
                 return;
 
+                // If we hit either of these cases, we have an invalid range that
+                // looks something like /[x-\d]/ or /[\d-\d]/.
+                // According to ECMA-262 this should be a syntax error, but
+                // empirical testing shows this to break teh webz.  Instead we
+                // comply with to the ECMA-262 grammar, and assume the grammar to
+                // have matched the range correctly, but tweak our interpretation
+                // of CharacterRange.  Effectively we implicitly handle the hyphen
+                // as if it were escaped, e.g. /[\w-_]/ is treated as /[\w\-_]/.
             case CachedCharacterHyphen:
+                m_delegate.atomCharacterClassAtom(m_character);
+                m_delegate.atomCharacterClassAtom('-');
+                // fall through
             case AfterCharacterClassHyphen:
-                // Error! If we hit either of these cases, we have an
-                // invalid range that looks something like /[x-\d]/
-                // or /[\d-\d]/.
-                m_err = CharacterClassInvalidRange;
+                m_delegate.atomCharacterClassBuiltIn(classID, invert);
+                m_state = Empty;
                 return;
             }
         }
@@ -681,7 +696,6 @@ private:
             "unmatched parentheses",
             "unrecognized character after (?",
             "missing terminating ] for character class",
-            "invalid range in character class",
             "range out of order in character class",
             "\\ at end of pattern"
         };

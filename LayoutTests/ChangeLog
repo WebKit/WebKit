@@ -1,3 +1,28 @@
+2010-12-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Permit Character Class Escape in CharacterRange in Character Class.
+        https://bugs.webkit.org/show_bug.cgi?id=50483
+        https://bugs.webkit.org/show_bug.cgi?id=50538
+        https://bugs.webkit.org/show_bug.cgi?id=50654
+        https://bugs.webkit.org/show_bug.cgi?id=50646
+
+        We recently tightened up our spec conformance in generating syntax
+        error in these cases, however testing in the wild has shown this
+        to be problematic. This reverts the previous change in allowing
+        class escapes (e.g. \d) in ranges in character classes ([]), but
+        does retain some closer conformance to the spec in only allowing
+        ranges that would be permitted per the grammar rules in the spec
+        (e.g. in /[\d-a-z]/ "a-z" cannot be considered as a range).
+
+        * fast/js/regexp-ranges-and-escaped-hyphens-expected.txt:
+        * fast/js/script-tests/regexp-ranges-and-escaped-hyphens.js:
+        * fast/regex/invalid-range-in-class-expected.txt:
+        * fast/regex/pcre-test-1-expected.txt:
+        * fast/regex/script-tests/invalid-range-in-class.js:
+        * fast/regex/script-tests/pcre-test-1.js:
+
 2010-12-08  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed.

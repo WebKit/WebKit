@@ -2,11 +2,6 @@ description(
 "A chunk of our port of PCRE's test suite, adapted to be more applicable to JavaScript."
 );
 
-function shouldNotCompile(patternName)
-{
-    shouldThrow("eval(" + patternName + ");");
-}
-
 var regex0 = /the quick brown fox/;
 var input0 = "the quick brown fox";
 var results = ["the quick brown fox"];
@@ -1330,8 +1325,14 @@ var input1 = "aaa";
 var results = null;
 shouldBe('regex93.exec(input1);', 'results');
 
-var regex94 = "/[\\d-z]+/";
-shouldNotCompile("regex94");
+var regex94 = /[\d-z]+/;
+var input0 = "12-34z";
+var results = ["12-34z"];
+shouldBe('regex94.exec(input0);', 'results');
+// Failers
+var input1 = "aaa";
+var results = null;
+shouldBe('regex94.exec(input1);', 'results');
 
 var regex95 = /\x5c/;
 var input0 = "\\";
@@ -4923,11 +4924,35 @@ var input0 = "ZABCDEFG";
 var results = ["ZA", "A", undefined, undefined];
 shouldBe('regex605.exec(input0);', 'results');
 
-var regex608 = "/^[a-\\d]/";
-shouldNotCompile("regex608");
+var regex608 = /^[a-\d]/;
+var input0 = "abcde";
+var results = ["a"];
+shouldBe('regex608.exec(input0);', 'results');
+var input1 = "-things";
+var results = ["-"];
+shouldBe('regex608.exec(input1);', 'results');
+var input2 = "0digit";
+var results = ["0"];
+shouldBe('regex608.exec(input2);', 'results');
+// Failers
+var input3 = "bcdef";
+var results = null;
+shouldBe('regex608.exec(input3);', 'results');
 
-var regex609 = "/^[\\d-a]/";
-shouldNotCompile("regex609");
+var regex609 = /^[\d-a]/;
+var input0 = "abcde";
+var results = ["a"];
+shouldBe('regex609.exec(input0);', 'results');
+var input1 = "-things";
+var results = ["-"];
+shouldBe('regex609.exec(input1);', 'results');
+var input2 = "0digit";
+var results = ["0"];
+shouldBe('regex609.exec(input2);', 'results');
+// Failers
+var input3 = "bcdef";
+var results = null;
+shouldBe('regex609.exec(input3);', 'results');
 
 var regex610 = /[\s]+/;
 var input0 = "> \x09\x0a\x0c\x0d\x0b<";

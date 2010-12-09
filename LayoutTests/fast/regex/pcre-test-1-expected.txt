@@ -367,7 +367,8 @@ PASS regex91.exec(input1); is results
 PASS regex92.exec(input0); is results
 PASS regex93.exec(input0); is results
 PASS regex93.exec(input1); is results
-PASS eval(regex94); threw exception SyntaxError: Invalid regular expression: invalid range in character class.
+PASS regex94.exec(input0); is results
+PASS regex94.exec(input1); is results
 PASS regex95.exec(input0); is results
 PASS regex96.exec(input0); is results
 PASS regex96.exec(input1); is results
@@ -1224,8 +1225,14 @@ PASS regex601.exec(input2); is results
 PASS regex603.exec(input0); is results
 PASS regex604.exec(input0); is results
 PASS regex605.exec(input0); is results
-PASS eval(regex608); threw exception SyntaxError: Invalid regular expression: invalid range in character class.
-PASS eval(regex609); threw exception SyntaxError: Invalid regular expression: invalid range in character class.
+PASS regex608.exec(input0); is results
+PASS regex608.exec(input1); is results
+PASS regex608.exec(input2); is results
+PASS regex608.exec(input3); is results
+PASS regex609.exec(input0); is results
+PASS regex609.exec(input1); is results
+PASS regex609.exec(input2); is results
+PASS regex609.exec(input3); is results
 PASS regex610.exec(input0); is results
 PASS regex611.exec(input0); is results
 PASS regex612.exec(input0); is results
