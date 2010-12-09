@@ -3294,8 +3294,5 @@ BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
 BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
-// Just needs rebaseline
-BUGPKASTING LINUX : svg/custom/use-referencing-nonexisting-symbol.svg = IMAGE
-
 // Needs V8 investigation
 BUG66099 SLOW : fast/js/array-sort-modifying-tostring.html = TEXT

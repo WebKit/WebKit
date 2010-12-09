@@ -1,3 +1,13 @@
+2010-12-09  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        Rebaseline a Linux test.
+
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.checksum:
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73635.
