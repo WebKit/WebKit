@@ -655,7 +655,7 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 #endif
 
 #if ENABLE(WEB_AUDIO)
-JSValue JSDOMWindow::audioContext(ExecState* exec) const
+JSValue JSDOMWindow::webkitAudioContext(ExecState* exec) const
 {
     return getDOMConstructor<JSAudioContextConstructor>(exec, this);
 }
