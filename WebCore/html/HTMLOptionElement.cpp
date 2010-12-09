@@ -205,7 +205,7 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 
 bool HTMLOptionElement::defaultSelected() const
 {
-    return !getAttribute(selectedAttr).isNull();
+    return fastHasAttribute(selectedAttr);
 }
 
 void HTMLOptionElement::setDefaultSelected(bool b)

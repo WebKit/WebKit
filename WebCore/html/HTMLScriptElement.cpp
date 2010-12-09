@@ -152,12 +152,12 @@ String HTMLScriptElement::eventAttributeValue() const
 
 bool HTMLScriptElement::asyncAttributeValue() const
 {
-    return !getAttribute(asyncAttr).isNull();
+    return fastHasAttribute(asyncAttr);
 }
 
 bool HTMLScriptElement::deferAttributeValue() const
 {
-    return !getAttribute(deferAttr).isNull();
+    return fastHasAttribute(deferAttr);
 }
 
 void HTMLScriptElement::dispatchLoadEvent()

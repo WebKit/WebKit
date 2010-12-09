@@ -101,7 +101,7 @@ void HTMLAppletElement::removedFromDocument()
 
 bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
 {
-    if (getAttribute(codeAttr).isNull())
+    if (!fastHasAttribute(codeAttr))
         return false;
 
     return HTMLPlugInElement::rendererIsNeeded(style);

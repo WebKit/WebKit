@@ -530,7 +530,7 @@ String HTMLFormElement::name() const
 
 bool HTMLFormElement::noValidate() const
 {
-    return !getAttribute(novalidateAttr).isNull();
+    return fastHasAttribute(novalidateAttr);
 }
 
 // FIXME: This function should be removed because it does not do the same thing as the

@@ -86,7 +86,7 @@ void HTMLFormControlElement::detach()
 
 bool HTMLFormControlElement::formNoValidate() const
 {
-    return !getAttribute(formnovalidateAttr).isNull();
+    return fastHasAttribute(formnovalidateAttr);
 }
 
 void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)

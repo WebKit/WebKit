@@ -493,7 +493,7 @@ void SelectElement::reset(SelectElementData& data, Element* element)
         if (!optionElement)
             continue;
 
-        if (!items[i]->getAttribute(HTMLNames::selectedAttr).isNull()) {
+        if (items[i]->fastHasAttribute(HTMLNames::selectedAttr)) {
             if (selectedOption && !data.multiple())
                 selectedOption->setSelectedState(false);
             optionElement->setSelectedState(true);

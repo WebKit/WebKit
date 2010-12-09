@@ -1439,7 +1439,7 @@ void HTMLInputElement::setDefaultValue(const String &value)
 
 bool HTMLInputElement::defaultChecked() const
 {
-    return !getAttribute(checkedAttr).isNull();
+    return fastHasAttribute(checkedAttr);
 }
 
 void HTMLInputElement::setDefaultName(const AtomicString& name)
@@ -1472,13 +1472,13 @@ void HTMLInputElement::setMaxLength(int maxLength, ExceptionCode& ec)
 
 bool HTMLInputElement::multiple() const
 {
-    return !getAttribute(multipleAttr).isNull();
+    return fastHasAttribute(multipleAttr);
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
 bool HTMLInputElement::webkitdirectory() const
 {
-    return !getAttribute(webkitdirectoryAttr).isNull();
+    return fastHasAttribute(webkitdirectoryAttr);
 }
 #endif
 

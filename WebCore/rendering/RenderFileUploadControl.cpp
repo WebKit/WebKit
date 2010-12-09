@@ -100,14 +100,14 @@ bool RenderFileUploadControl::allowsMultipleFiles()
 #endif
 
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    return !input->getAttribute(multipleAttr).isNull();
+    return input->fastHasAttribute(multipleAttr);
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
 bool RenderFileUploadControl::allowsDirectoryUpload()
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    return !input->getAttribute(webkitdirectoryAttr).isNull();
+    return input->fastHasAttribute(webkitdirectoryAttr);
 }
 #endif
 

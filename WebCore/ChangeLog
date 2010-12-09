@@ -1,3 +1,35 @@
+2010-12-08  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Replace getAttribute().isNull() with fastHasAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=50719
+
+        Covered by existing tests.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::reset):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::rendererIsNeeded):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formNoValidate):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::noValidate):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultChecked):
+        (WebCore::HTMLInputElement::multiple):
+        (WebCore::HTMLInputElement::webkitdirectory):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::defaultSelected):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::asyncAttributeValue):
+        (WebCore::HTMLScriptElement::deferAttributeValue):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::allowsMultipleFiles):
+        (WebCore::RenderFileUploadControl::allowsDirectoryUpload):
+
 2010-12-08  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
 
         Reviewed by Martin Robinson.

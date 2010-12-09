@@ -181,11 +181,11 @@ Element* HTMLCollection::itemAfter(Element* previous) const
                     return e;
                 break;
             case DocLinks: // all <a> and <area> elements with a value for href
-                if ((e->hasLocalName(aTag) || e->hasLocalName(areaTag)) && (!e->getAttribute(hrefAttr).isNull()))
+                if ((e->hasLocalName(aTag) || e->hasLocalName(areaTag)) && e->fastHasAttribute(hrefAttr))
                     return e;
                 break;
             case DocAnchors: // all <a> elements with a value for name
-                if (e->hasLocalName(aTag) && !e->getAttribute(nameAttr).isNull())
+                if (e->hasLocalName(aTag) && e->fastHasAttribute(nameAttr))
                     return e;
                 break;
             case DocAll:
