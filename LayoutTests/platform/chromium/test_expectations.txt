@@ -2002,7 +2002,7 @@ BUG_OJAN LINUX : http/tests/xmlhttprequest/cache-override.html = TEXT
 // These tests time out *and* are slow. The test should be fixed to not timeout,
 // then should be marked as SLOW/PASS.
 BUG2844 WIN : http/tests/appcache/cyrillic-uri.html = TIMEOUT PASS CRASH
-BUG2844 WIN : http/tests/appcache/fail-on-update.html = TIMEOUT PASS TEXT CRASH
+BUG2844 WIN : http/tests/appcache/fail-on-update.html = TIMEOUT PASS TEXT
 BUG2844 WIN : http/tests/appcache/offline-access.html = TIMEOUT PASS
 BUG2844 WIN LINUX DEBUG : http/tests/appcache/update-cache.html = TIMEOUT PASS
 BUG2844 WIN RELEASE : http/tests/appcache/update-cache.html = TIMEOUT PASS
@@ -3243,7 +3243,7 @@ BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG_DRT WIN LINUX : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT PASS
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
-BUG_DRT MAC : svg/custom/selectSubString.html = TIMEOUT
+BUG_DRT : svg/custom/selectSubString.html = TIMEOUT
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
 // PASS with DRT though FAIL on test_shell
@@ -3275,3 +3275,29 @@ BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 // WebKit roll 73514:73595
 BUG66018 : fast/html/marquee-element.html = TEXT
 BUG66019 : fast/regex/pcre-test-1.html = TEXT
+
+// Mostly-flaky timeouts
+BUG66085 WIN LINUX : dom/html/level1/core/documentgetdoctypenodtd.html = PASS TIMEOUT
+BUG66085 LINUX : editing/selection/3690703-2.html = PASS TIMEOUT
+BUG66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
+BUG66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
+BUG66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
+BUG66085 LINUX : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
+BUG66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
+BUG66085 LINUX : media/constructors.html = PASS TIMEOUT
+BUG66085 : media/remove-from-document.html = PASS TIMEOUT
+BUG66085 WIN : media/video-currentTime.html = TIMEOUT
+BUG66085 LINUX : media/video-currentTime.html = PASS TIMEOUT
+BUG66085 : media/video-play-pause-exception.html = PASS TIMEOUT
+BUG66085 : media/video-source.html = PASS TIMEOUT
+BUG66085 : media/video-source-moved.html = PASS TIMEOUT
+BUG66085 LINUX : media/video-src-source.html = PASS TIMEOUT
+
+// Flaky failures
+BUG66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
+BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
+BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
+BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
+
+// Just needs rebaseline
+BUGPKASTING LINUX : svg/custom/use-referencing-nonexisting-symbol.svg = IMAGE

@@ -361,7 +361,7 @@ BUGJAMESR WIN MAC : compositing/text-on-large-layer.html = PASS FAIL
 
 // Need to investigate WebGL support in DRT.
 BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
-BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = CRASH
+BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 
 BUG57431 WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
 BUG57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html = TEXT

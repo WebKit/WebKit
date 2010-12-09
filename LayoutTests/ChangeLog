@@ -1,3 +1,10 @@
+2010-12-09  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
