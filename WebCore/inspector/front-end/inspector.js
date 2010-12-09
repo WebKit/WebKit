@@ -1386,7 +1386,8 @@ WebInspector.addConsoleMessage = function(payload)
         payload.repeatCount,
         payload.message,
         payload.parameters,
-        payload.stackTrace);
+        payload.stackTrace,
+        payload.requestId);
     this.console.addMessage(consoleMessage);
 }
 

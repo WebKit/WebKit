@@ -50,6 +50,7 @@ class ConsoleMessage : public Noncopyable {
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long identifier);
 
     void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
     void updateRepeatCountInConsole(InspectorFrontend* frontend);
@@ -69,6 +70,7 @@ private:
     unsigned m_line;
     String m_url;
     unsigned m_repeatCount;
+    unsigned int m_requestId;
 };
 
 } // namespace WebCore

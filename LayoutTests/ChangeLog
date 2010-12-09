@@ -1,3 +1,18 @@
+2010-12-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Console records for failed XHRs should contain call stack and request method
+        https://bugs.webkit.org/show_bug.cgi?id=50390
+
+        The expectations needed update ue to log format changes.
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt:
+        * http/tests/inspector/console-resource-errors-expected.txt:
+        * http/tests/inspector/console-xhr-logging-expected.txt:
+        * platform/chromium/http/tests/inspector/console-resource-errors-expected.txt: Added.
+        * platform/chromium/http/tests/inspector/console-xhr-logging-expected.txt: Copied from LayoutTests/http/tests/inspector/console-xhr-logging-expected.txt.
+
 2010-12-09  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

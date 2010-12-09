@@ -4,7 +4,7 @@ Tests that Web Inspector won't crash if there are messages written to console fr
 
 Received console messages:
 Message[0]:
-URL: http://127.0.0.1:8000/inspector-enabled/resources/console-log-frame-before-navigation.html
-Message: Console message (C) %d with element
+URL: 
+Message: resources/console-log-frame-before-navigation.html:5Console message (C) %d with element
 TEST COMPLETE.
 

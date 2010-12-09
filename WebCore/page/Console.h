@@ -68,7 +68,8 @@ enum MessageType {
     StartGroupCollapsedMessageType,
     EndGroupMessageType,
     AssertMessageType,
-    UncaughtExceptionMessageType
+    UncaughtExceptionMessageType,
+    NetworkErrorMessageType
 };
 
 enum MessageLevel {

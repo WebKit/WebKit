@@ -1,3 +1,43 @@
+2010-12-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Console records for failed XHRs should contain call stack and request method
+        https://bugs.webkit.org/show_bug.cgi?id=50390
+
+        When inspector front-end is open we capture call stack at the place where request is sent and
+        pass the stack along with other request data. There is a new type of console messages which
+        is NetworkErrorMessageType, all messages of that type will have requestId field initialized
+        with the corresponding network request identifier so that later on when we need to display
+        that message in the front-end we could pull request data from the Network panel using
+        this identifier. If there are no data for given requestId message formatting falls back to
+        the old implementation which lacks such things as call stack, request method and exact
+        source location.
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::identifierForInitialRequest):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.updateMessageRepeatCount):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        * inspector/front-end/ResourceManager.js:
+        (WebInspector.ResourceManager.prototype.identifierForInitialRequest):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addConsoleMessage):
+        * page/Console.h:
+
 2010-12-09  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

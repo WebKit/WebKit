@@ -861,7 +861,7 @@ void InspectorController::didReceiveResponse(unsigned long identifier, DocumentL
 
     if (response.httpStatusCode() >= 400) {
         String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
-        addMessageToConsole(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, response.url().string());
+        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier));
     }
 }
 
@@ -897,7 +897,7 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
     String message = "Failed to load resource";
         if (!error.localizedDescription().isEmpty())
             message += ": " + error.localizedDescription();
-        addMessageToConsole(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, error.failingURL());
+        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
 
     if (m_resourceAgent)
         m_resourceAgent->didFailLoading(identifier, error);

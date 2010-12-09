@@ -60,9 +60,9 @@ WebInspector.ResourceManager.prototype = {
             WebInspector[arguments[i]] = this[arguments[i]].bind(this);
     },
 
-    identifierForInitialRequest: function(identifier, url, loader)
+    identifierForInitialRequest: function(identifier, url, loader, callStack)
     {
-        var resource = this._createResource(identifier, url, loader);
+        var resource = this._createResource(identifier, url, loader, callStack);
 
         // It is important to bind resource url early (before scripts compile).
         this._bindResourceURL(resource);
@@ -71,12 +71,13 @@ WebInspector.ResourceManager.prototype = {
         WebInspector.panels.audits.resourceStarted(resource);
     },
 
-    _createResource: function(identifier, url, loader)
+    _createResource: function(identifier, url, loader, stackTrace)
     {
         var resource = new WebInspector.Resource(identifier, url);
         resource.loader = loader;
         if (loader)
             resource.documentURL = loader.url;
+        resource.stackTrace = stackTrace;
 
         this._resourcesById[identifier] = resource;
         return resource;
@@ -119,7 +120,7 @@ WebInspector.ResourceManager.prototype = {
         var originalResource = this._resourcesById[identifier];
         originalResource.identifier = null;
 
-        var newResource = this._createResource(identifier, redirectURL, originalResource.loader);
+        var newResource = this._createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
         newResource.redirects = originalResource.redirects || [];
         delete originalResource.redirects;
         newResource.redirects.push(originalResource);

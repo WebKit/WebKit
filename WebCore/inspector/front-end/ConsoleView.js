@@ -257,7 +257,7 @@ WebInspector.ConsoleView.prototype = {
             msg._updateRepeatCount();
             this._incrementErrorWarningCount(msg);
         } else {
-            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace);
+            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._requestId);
             msgCopy.totalRepeatCount = count;
             msgCopy._formatMessage();
             this.addMessage(msgCopy);
@@ -627,7 +627,7 @@ WebInspector.ConsoleView.prototype = {
 
 WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace)
+WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, requestId)
 {
     this.source = source;
     this.type = type;
@@ -640,6 +640,7 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
     this._messageText = message;
     this._parameters = parameters;
     this._stackTrace = stackTrace;
+    this._requestId = requestId;
     this._formatMessage();
 }
 
@@ -652,44 +653,91 @@ WebInspector.ConsoleMessage.createTextMessage = function(text, level)
 WebInspector.ConsoleMessage.prototype = {
     _formatMessage: function()
     {
+        var stackTrace = this._stackTrace;
+        var messageText;
         switch (this.type) {
-            case WebInspector.ConsoleMessage.MessageType.Assert:
             case WebInspector.ConsoleMessage.MessageType.Trace:
+                messageText = document.createTextNode("console.trace()");
+                break;
             case WebInspector.ConsoleMessage.MessageType.UncaughtException:
-                var ol = document.createElement("ol");
-                ol.className = "outline-disclosure";
-                var treeOutline = new TreeOutline(ol);
-                var messageText;
-                if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
-                    messageText = this._format(this._parameters);
-                else if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
-                    messageText = document.createTextNode("console.trace()");
-                else
-                    messageText = document.createTextNode(this._messageText);
+                messageText = document.createTextNode(this._messageText);
+                break;
+            case WebInspector.ConsoleMessage.MessageType.NetworkError:
+                var resource = this._requestId && WebInspector.panels.network.resources[this._requestId];
+                if (resource) {
+                    stackTrace = resource.stackTrace;
 
-                var content = document.createElement("div");
-                this._addMessageHeader(content, messageText);
-                var root = new TreeElement(content, null, true);
-                content.treeElementForTest = root;
-                treeOutline.appendChild(root);
-                if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
-                    root.expand();
-
-                this._populateStackTraceTreeElement(root);
-                this.formattedMessage = ol;
+                    messageText = document.createElement("span");
+                    messageText.appendChild(document.createTextNode(resource.requestMethod + " "));
+                    messageText.appendChild(WebInspector.linkifyURLAsNode(resource.url));
+                    if (resource.failed)
+                        messageText.appendChild(document.createTextNode(" " + resource.localizedFailDescription));
+                    else
+                        messageText.appendChild(document.createTextNode(" " + resource.statusCode + " (" + resource.statusText + ")"));
+                } else
+                    messageText = this._format([this._messageText]);
+                break;
+            case WebInspector.ConsoleMessage.MessageType.Assert:
+                var args = [WebInspector.UIString("Assertion failed:")];
+                if (this._parameters)
+                    args = args.concat(this._parameters);
+                messageText = this._format(args);
                 break;
             case WebInspector.ConsoleMessage.MessageType.Object:
                 var obj = this._parameters ? this._parameters[0] : undefined;
-                this.formattedMessage = this._format(["%O", obj]);
+                var args = ["%O", obj];
+                messageText = this._format(args);
                 break;
             default:
                 var args = this._parameters || [this._messageText];
-                this.formattedMessage = this._format(args);
+                messageText = this._format(args);
                 break;
         }
 
+        this._formattedMessage = document.createElement("span");
+        this._formattedMessage.className = "console-message-text source-code";
+
+        if (stackTrace && stackTrace.length) {
+            var topCallFrame = stackTrace[0];
+            var sourceName = topCallFrame.scriptName;
+            var sourceLine = topCallFrame.lineNumber;
+        } else {
+            var sourceName = this.url;
+            var sourceLine = this.line;
+        }
+
+        if (sourceName && sourceName !== "undefined") {
+            var urlElement = WebInspector.linkifyResourceAsNode(sourceName, "scripts", sourceLine, "console-message-url");
+            this._formattedMessage.appendChild(urlElement);
+        }
+
+        this._formattedMessage.appendChild(messageText);
+
+        if (this._stackTrace) {
+            switch (this.type) {
+                case WebInspector.ConsoleMessage.MessageType.Trace:
+                case WebInspector.ConsoleMessage.MessageType.UncaughtException:
+                case WebInspector.ConsoleMessage.MessageType.NetworkError:
+                case WebInspector.ConsoleMessage.MessageType.Assert: {
+                    var ol = document.createElement("ol");
+                    ol.className = "outline-disclosure";
+                    var treeOutline = new TreeOutline(ol);
+
+                    var content = this._formattedMessage;
+                    var root = new TreeElement(content, null, true);
+                    content.treeElementForTest = root;
+                    treeOutline.appendChild(root);
+                    if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
+                        root.expand();
+
+                    this._populateStackTraceTreeElement(root);
+                    this._formattedMessage = ol;
+                }
+            }
+        }
+
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
-        this.message = this.formattedMessage.textContent;
+        this.message = this._formattedMessage.textContent;
     },
 
     isErrorOrWarning: function()
@@ -809,12 +857,7 @@ WebInspector.ConsoleMessage.prototype = {
             return element;
         }
 
-        if (this.type === WebInspector.ConsoleMessage.MessageType.Trace ||
-            this.type === WebInspector.ConsoleMessage.MessageType.Assert ||
-            this.type === WebInspector.ConsoleMessage.MessageType.UncaughtException)
-            element.appendChild(this.formattedMessage);
-        else
-            this._addMessageHeader(element, this.formattedMessage);
+        element.appendChild(this._formattedMessage);
 
         if (this.repeatCount > 1)
             this._updateRepeatCount();
@@ -840,21 +883,6 @@ WebInspector.ConsoleMessage.prototype = {
             var treeElement = new TreeElement(content);
             parentTreeElement.appendChild(treeElement);
         }
-    },
-
-    _addMessageHeader: function(parentElement, formattedMessage)
-    {
-        if (this.url && this.url !== "undefined") {
-            var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url");
-            parentElement.appendChild(urlElement);
-        }
-
-        var messageTextElement = document.createElement("span");
-        messageTextElement.className = "console-message-text source-code";
-        if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
-            messageTextElement.appendChild(document.createTextNode(WebInspector.UIString("Assertion failed: ")));
-        messageTextElement.appendChild(formattedMessage);
-        parentElement.appendChild(messageTextElement);
     },
 
     _updateRepeatCount: function() {
@@ -896,6 +924,7 @@ WebInspector.ConsoleMessage.prototype = {
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Log:
             case WebInspector.ConsoleMessage.MessageType.UncaughtException:
+            case WebInspector.ConsoleMessage.MessageType.NetworkError:
                 typeString = "Log";
                 break;
             case WebInspector.ConsoleMessage.MessageType.Object:
@@ -938,20 +967,35 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
 
-        return sourceString + " " + typeString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
+        return sourceString + " " + typeString + " " + levelString + ": " + this._formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
 
-    isEqual: function(msg, disreguardGroup)
+    isEqual: function(msg)
     {
         if (!msg)
             return false;
+
+        if (this._stackTrace) {
+            if (!msg._stackTrace)
+                return false;
+            var l = this._stackTrace;
+            var r = msg._stackTrace;
+            for (var i = 0; i < l.length; i++) {
+                if (l[i].scriptName !== r[i].scriptName ||
+                    l[i].functionName !== r[i].functionName ||
+                    l[i].lineNumber !== r[i].lineNumber ||
+                    l[i].column !== r[i].column)
+                    return false;
+            }
+        }
 
         return (this.source === msg.source)
             && (this.type === msg.type)
             && (this.level === msg.level)
             && (this.line === msg.line)
             && (this.url === msg.url)
-            && (this.message === msg.message);
+            && (this.message === msg.message)
+            && (this._requestId === msg._requestId);
     }
 }
 
@@ -974,7 +1018,8 @@ WebInspector.ConsoleMessage.MessageType = {
     EndGroup: 5,
     Assert: 6,
     UncaughtException: 7,
-    Result: 8
+    NetworkError:8,
+    Result: 9
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
