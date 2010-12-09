@@ -1,3 +1,21 @@
+2010-12-08  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Full page size flash plugins do not show in all situations
+        https://bugs.webkit.org/show_bug.cgi?id=47742
+
+        This patch moves the plugin widget size allocation after the
+        NPP_SetWindow is called with the effect that the resize of Flash
+        content no longer result in grey flash. This seems logical since the
+        widget tree cannot be fully constructed before the plugin receives
+        the new container window.
+
+        Test: manual-tests/plugins/gtk-windowed-grey-glitch.html
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2010-12-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
