@@ -420,7 +420,7 @@ void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& start
         return;
 
     // Ignore iframes that don't have a src attribute
-    if (candidate.visibleNode->isFrameOwnerElement() && !static_cast<HTMLFrameOwnerElement*>(candidate.visibleNode)->contentFrame())
+    if (candidate.visibleNode->isFrameOwnerElement() && (!static_cast<HTMLFrameOwnerElement*>(candidate.visibleNode)->contentFrame() || candidate.rect.isEmpty()))
         return;
 
     // Ignore off screen child nodes of containers that do not scroll (overflow:hidden)
