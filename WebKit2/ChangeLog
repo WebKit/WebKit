@@ -1,3 +1,14 @@
+2010-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement "Use Selection for Find" in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50737
+        <rdar://problem/8564881>
+        
+        * UIProcess/API/mac/WKView.mm: Add support for the takeFindStringFromSelection:
+        selector as a command.
+
 2010-12-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.

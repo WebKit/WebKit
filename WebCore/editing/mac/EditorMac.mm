@@ -37,6 +37,7 @@
 #import "Pasteboard.h"
 #import "RenderBlock.h"
 #import "RuntimeApplicationChecks.h"
+#import "Sound.h"
 
 namespace WebCore {
 
@@ -185,6 +186,26 @@ NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
     }
 
     return result;
+}
+
+bool Editor::canCopyExcludingStandaloneImages()
+{
+    SelectionController* selection = m_frame->selection();
+    return selection->isRange() && !selection->isInPasswordField();
+}
+
+void Editor::takeFindStringFromSelection()
+{
+    if (!canCopyExcludingStandaloneImages()) {
+        systemBeep();
+        return;
+    }
+
+    NSString *nsSelectedText = m_frame->displayStringModifiedByEncoding(selectedText());
+
+    NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
+    [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    [findPasteboard setString:nsSelectedText forType:NSStringPboardType];
 }
 
 } // namespace WebCore

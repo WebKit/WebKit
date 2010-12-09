@@ -273,6 +273,7 @@ WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(delete)
 WEBCORE_COMMAND(pasteAsPlainText)
 WEBCORE_COMMAND(selectAll)
+WEBCORE_COMMAND(takeFindStringFromSelection)
 
 #undef WEBCORE_COMMAND
 

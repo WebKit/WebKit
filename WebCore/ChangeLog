@@ -1,3 +1,29 @@
+2010-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement "Use Selection for Find" in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50737
+        <rdar://problem/8564881>
+
+        Implement a TakeFindStringFromSelection editor command. This is
+        used solely to implement the "Use Selection for Find" menu command
+        on Mac, and is not made available to script. On WebKit2, it is
+        very convenient to reuse the editing machinery since this command
+        is very similar to Copy.
+
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeTakeFindStringFromSelection): Call to a mac-only Editor function.
+        (WebCore::enabledTakeFindStringFromSelection): Check using Editor::canCopyExcludingStandaloneImage
+        (WebCore::createCommandMap): Add "TakeFindStringFromSelection" command.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::canCopyExcludingStandaloneImages): Helper function; we can't use Editor::canCopy
+        since it would make no sense to enable "Use Selection for Find" when viewing a standalone image
+        document.
+        (WebCore::Editor::takeFindStringFromSelection): Implement by copying the selected text
+        to the special Find pasteboard.
+
 2010-12-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

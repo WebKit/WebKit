@@ -1011,6 +1011,14 @@ static bool executeSwapWithMark(Frame* frame, Event*, EditorCommandSource, const
     return true;
 }
 
+#if PLATFORM(MAC)
+static bool executeTakeFindStringFromSelection(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->editor()->takeFindStringFromSelection();
+    return true;
+}
+#endif
+
 static bool executeToggleBold(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontWeight, "normal", "bold");
@@ -1228,6 +1236,13 @@ static bool enabledRedo(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canRedo();
 }
+
+#if PLATFORM(MAC)
+static bool enabledTakeFindStringFromSelection(Frame* frame, Event*, EditorCommandSource)
+{
+    return frame->editor()->canCopyExcludingStandaloneImages();
+}
+#endif
 
 static bool enabledUndo(Frame* frame, Event*, EditorCommandSource)
 {
@@ -1491,6 +1506,9 @@ static const CommandMap& createCommandMap()
         { "Subscript", { executeSubscript, supported, enabledInRichlyEditableText, stateSubscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Superscript", { executeSuperscript, supported, enabledInRichlyEditableText, stateSuperscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SwapWithMark", { executeSwapWithMark, supportedFromMenuOrKeyBinding, enabledVisibleSelectionAndMark, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#if PLATFORM(MAC)
+        { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#endif
         { "ToggleBold", { executeToggleBold, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ToggleItalic", { executeToggleItalic, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ToggleUnderline", { executeUnderline, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateUnderline, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

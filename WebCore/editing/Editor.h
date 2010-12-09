@@ -364,6 +364,8 @@ public:
 #if PLATFORM(MAC)
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
+    bool canCopyExcludingStandaloneImages();
+    void takeFindStringFromSelection();
 #endif
 
     bool selectionStartHasSpellingMarkerFor(int from, int length) const;
