@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ChromeClientGtk.h"
 
+#include "Chrome.h"
 #include "Console.h"
 #include "DumpRenderTreeSupportGtk.h"
 #include "Element.h"
@@ -615,6 +616,12 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 void ChromeClient::chooseIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileChooser* chooser)
 {
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
+}
+
+void ChromeClient::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
+{
+    // Recompute the viewport attributes making it valid.
+    webkitViewportAttributesRecompute(webkit_web_view_get_viewport_attributes(m_webView));
 }
 
 void ChromeClient::setCursor(const Cursor&)

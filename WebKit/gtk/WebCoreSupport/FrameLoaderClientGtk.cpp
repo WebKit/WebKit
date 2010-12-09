@@ -1292,6 +1292,12 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
     view->setGtkAdjustments(priv->horizontalAdjustment.get(), priv->verticalAdjustment.get(), resetValues);
 
+    // Invalidate the viewport attributes - they will only be valid
+    // again if the page we're beginning to load now has an
+    // appropriate viewport meta tag.
+    containingWindow->priv->viewportAttributes->priv->isValid = FALSE;
+    g_object_notify(G_OBJECT(containingWindow->priv->viewportAttributes.get()), "valid");
+
     if (priv->currentMenu) {
         PlatformRefPtr<GtkMenu> menu(priv->currentMenu);
         priv->currentMenu.clear();

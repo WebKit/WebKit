@@ -110,6 +110,8 @@ namespace WebKit {
 
         virtual void setToolTip(const WTF::String&, WebCore::TextDirection);
 
+        virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments& arguments) const;
+
         virtual void print(WebCore::Frame*);
 #if ENABLE(DATABASE)
         virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String&);

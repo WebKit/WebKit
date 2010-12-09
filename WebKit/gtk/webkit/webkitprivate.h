@@ -33,6 +33,7 @@
 #include <webkit/webkitdownload.h>
 #include <webkit/webkithittestresult.h>
 #include <webkit/webkitnetworkrequest.h>
+#include <webkit/webkitviewportattributes.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebdatasource.h>
 #include <webkit/webkitwebframe.h>
@@ -139,6 +140,25 @@ extern "C" {
         GHashTable* webDatabases;
 
         gboolean disposed;
+    };
+
+    struct _WebKitViewportAttributesPrivate {
+        WebKitWebView* webView;
+        int deviceWidth;
+        int deviceHeight;
+        int availableWidth;
+        int availableHeight;
+        int desktopWidth;
+        int deviceDPI;
+
+        int width;
+        int height;
+        float initialScaleFactor;
+        float minimumScaleFactor;
+        float maximumScaleFactor;
+        float devicePixelRatio;
+        gboolean userScalable;
+        gboolean isValid;
     };
 
     WTF::String
@@ -249,6 +269,9 @@ extern "C" {
 
     WEBKIT_API WebKitWebDatabase *
     webkit_security_origin_get_web_database(WebKitSecurityOrigin* securityOrigin, const char* databaseName);
+
+    // WebKitViewportAttributes private
+    void webkitViewportAttributesRecompute(WebKitViewportAttributes*);
 }
 
 #endif

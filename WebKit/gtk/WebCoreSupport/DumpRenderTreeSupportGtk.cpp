@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -407,4 +408,16 @@ void DumpRenderTreeSupportGtk::layoutFrame(WebKitWebFrame* frame)
         return;
 
     view->layout();
+}
+
+// For testing fast/viewport.
+void DumpRenderTreeSupportGtk::dumpConfigurationForViewport(WebKitWebView* webView, gint availableWidth, gint availableHeight)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    ViewportArguments arguments = webView->priv->corePage->mainFrame()->document()->viewportArguments();
+    // desktopWidth = 980, deviceWidth = 320, deviceHeight = 480, deviceDPI = 160
+    ViewportAttributes attrs = computeViewportAttributes(arguments, 980, 320, 480, 160, IntSize(availableWidth, availableHeight));
+
+    fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f]\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale);
 }

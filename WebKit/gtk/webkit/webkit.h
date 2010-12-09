@@ -30,6 +30,7 @@
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitnetworkresponse.h>
 #include <webkit/webkitsoupauthdialog.h>
+#include <webkit/webkitviewportattributes.h>
 #include <webkit/webkitwebdatasource.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebsettings.h>

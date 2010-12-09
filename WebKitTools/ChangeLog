@@ -1,3 +1,27 @@
+2010-12-09  Joone Hur  <joone@kldp.org>
+
+         Reviewed by Martin Robinson.
+
+         [GTK] Support for viewport meta tag
+         https://bugs.webkit.org/show_bug.cgi?id=45443
+
+         Add support for testing the viewport properties for WebKitGtk.
+
+         * DumpRenderTree/LayoutTestController.cpp:
+         (dumpConfigurationForViewportCallback): Added this JS callback to set the size of the visible viewport.
+         (LayoutTestController::staticFunctions):
+         * DumpRenderTree/LayoutTestController.h:
+         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+         (LayoutTestController::dumpConfigurationForViewport): Added this function to test the viewport properties.
+         * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+         (LayoutTestController::dumpConfigurationForViewport): Ditto.
+         * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+         (LayoutTestController::dumpConfigurationForViewport): Ditto.
+         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+         (LayoutTestController::dumpConfigurationForViewport): Ditto.
+         * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+         (LayoutTestController::dumpConfigurationForViewport): Ditto.
+
 2010-12-08  William Siegrist <wsiegrist@apple.com>
 
         Reviewed by Eric Seidel.

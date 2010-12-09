@@ -427,6 +427,9 @@ webkit_get_cache_model                          (void);
 WEBKIT_API WebKitDOMDocument *
 webkit_web_view_get_dom_document                (WebKitWebView        *webView);
 
+WEBKIT_API WebKitViewportAttributes*
+webkit_web_view_get_viewport_attributes         (WebKitWebView        *webView);
+
 G_END_DECLS
 
 #endif

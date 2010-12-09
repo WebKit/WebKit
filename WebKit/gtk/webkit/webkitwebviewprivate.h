@@ -54,6 +54,7 @@ struct _WebKitWebViewPrivate {
     WebCore::Page* corePage;
     PlatformRefPtr<WebKitWebSettings> webSettings;
     PlatformRefPtr<WebKitWebInspector> webInspector;
+    PlatformRefPtr<WebKitViewportAttributes> viewportAttributes;
     PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
 
     WebKitWebFrame* mainFrame;

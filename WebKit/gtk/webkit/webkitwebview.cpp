@@ -10,6 +10,7 @@
  *  Copyright (C) 2009, 2010 Igalia S.L.
  *  Copyright (C) 2009 Movial Creative Technologies Inc.
  *  Copyright (C) 2009 Bobby Powers
+ *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -174,7 +175,6 @@ enum {
     GEOLOCATION_POLICY_DECISION_CANCELLED,
     ONLOAD_EVENT,
     FRAME_CREATED,
-
     SHOULD_BEGIN_EDITING,
     SHOULD_END_EDITING,
     SHOULD_INSERT_NODE,
@@ -186,6 +186,8 @@ enum {
     EDITING_BEGAN,
     USER_CHANGED_CONTENTS,
     EDITING_ENDED,
+    VIEWPORT_ATTRIBUTES_RECOMPUTE_REQUESTED,
+    VIEWPORT_ATTRIBUTES_CHANGED,
 
     LAST_SIGNAL
 };
@@ -200,6 +202,7 @@ enum {
     PROP_EDITABLE,
     PROP_SETTINGS,
     PROP_WEB_INSPECTOR,
+    PROP_VIEWPORT_ATTRIBUTES,
     PROP_WINDOW_FEATURES,
     PROP_TRANSPARENT,
     PROP_ZOOM_LEVEL,
@@ -524,6 +527,9 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
         break;
     case PROP_WEB_INSPECTOR:
         g_value_set_object(value, webkit_web_view_get_inspector(webView));
+        break;
+    case PROP_VIEWPORT_ATTRIBUTES:
+        g_value_set_object(value, webkit_web_view_get_viewport_attributes(webView));
         break;
     case PROP_WINDOW_FEATURES:
         g_value_set_object(value, webkit_web_view_get_window_features(webView));
@@ -1372,6 +1378,7 @@ static void webkit_web_view_dispose(GObject* object)
     }
 
     priv->webInspector.clear();
+    priv->viewportAttributes.clear();
     priv->webWindowFeatures.clear();
     priv->mainResource.clear();
     priv->subResources.clear();
@@ -2735,6 +2742,55 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 
     /*
+     * WebKitWebView::viewport-attributes-recompute-requested
+     * @web_view: the object which received the signal
+     * @viewport_attributes: the #WebKitViewportAttributes which has the viewport attributes.
+     *
+     * The #WebKitWebView::viewport-attributes-recompute-requested 
+     * signal will be emitted when a page with a viewport meta tag
+     * loads and when webkit_viewport_attributes_recompute is called.
+     *
+     * The #WebKitViewportAttributes will have device size, available size,
+     * desktop width, and device DPI pre-filled by values that make sense 
+     * for the current screen and widget, but you can override those values 
+     * if you have special requirements (for instance, if you made your
+     * widget bigger than the available visible area, you should override 
+     * the available-width and available-height properties to the actual 
+     * visible area).
+     *
+     * Since: 1.3.8
+     */
+    webkit_web_view_signals[VIEWPORT_ATTRIBUTES_RECOMPUTE_REQUESTED] = g_signal_new("viewport-attributes-recompute-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_VIEWPORT_ATTRIBUTES);
+
+    /*
+     * WebKitWebView::viewport-attributes-changed
+     * @web_view: the object which received the signal
+     * @viewport_attributes: the #WebKitViewportAttributes which has the viewport attributes.
+     *
+     * The #WebKitWebView::viewport-attributes-changed signal will be emitted 
+     * after the emission of #WebKitWebView::viewport-attributes-recompute-requested 
+     * and the subsequent viewport attribute recomputation. At this point, 
+     * if the #WebKitViewportAttributes are valid, the viewport attributes are available.
+     * 
+     * Since: 1.3.8
+     */
+    webkit_web_view_signals[VIEWPORT_ATTRIBUTES_CHANGED] = g_signal_new("viewport-attributes-changed",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_VIEWPORT_ATTRIBUTES);
+
+    /*
      * implementations of virtual methods
      */
     webViewClass->create_web_view = webkit_web_view_real_create_web_view;
@@ -2975,6 +3031,20 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         _("Web Inspector"),
                                                         _("The associated WebKitWebInspector instance"),
                                                         WEBKIT_TYPE_WEB_INSPECTOR,
+                                                        WEBKIT_PARAM_READABLE));
+
+    /**
+    * WebKitWebView:viewport-attributes:
+    *
+    * The associated #WebKitViewportAttributes instance.
+    *
+    * Since: 1.3.8
+    */
+    g_object_class_install_property(objectClass, PROP_VIEWPORT_ATTRIBUTES,
+                                    g_param_spec_object("viewport-attributes",
+                                                        _("Viewport Attributes"),
+                                                        _("The associated WebKitViewportAttributes instance"),
+                                                        WEBKIT_TYPE_VIEWPORT_ATTRIBUTES,
                                                         WEBKIT_PARAM_READABLE));
 
     /**
@@ -3404,6 +3474,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->webInspector = adoptPlatformRef(WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL)));
     webkit_web_inspector_set_inspector_client(priv->webInspector.get(), priv->corePage);
 
+    // And our ViewportAttributes friend.
+    priv->viewportAttributes = adoptPlatformRef(WEBKIT_VIEWPORT_ATTRIBUTES(g_object_new(WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, NULL)));
+    priv->viewportAttributes->priv->webView = webView;
+
     // The smart pointer will call g_object_ref_sink on these adjustments.
     priv->horizontalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     priv->verticalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
@@ -3541,6 +3615,29 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     return webView->priv->webInspector.get();
+}
+
+/**
+ * webkit_web_view_get_viewport_attributes:
+ * @webView: a #WebKitWebView
+ *
+ * Obtains the #WebKitViewportAttributes associated with the
+ * #WebKitWebView. Every #WebKitWebView object has a
+ * #WebKitWebViewporAttributes object attached to it as soon as it is
+ * created, so this function will only return NULL if the argument is
+ * not a valid #WebKitWebView. Do note however that the viewport
+ * attributes object only contains valid information when the current
+ * page has a viewport meta tag. You can check whether the data should
+ * be used by checking the #WebKitViewport:valid property.
+ *
+ * Return value: (transfer none): the #WebKitViewportAttributes instance.
+ *
+ * Since: 1.3.8
+ */
+WebKitViewportAttributes* webkit_web_view_get_viewport_attributes(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    return webView->priv->viewportAttributes.get();
 }
 
 // internal

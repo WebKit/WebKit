@@ -511,6 +511,11 @@ bool LayoutTestController::hasSpellingMarker(int, int)
     return false;
 }
 
+void LayoutTestController::dumpConfigurationForViewport(int /*availableWidth*/, int /*availableHeight*/)
+{
+    // FIXME: Implement
+}
+
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
     // FIXME: Implement

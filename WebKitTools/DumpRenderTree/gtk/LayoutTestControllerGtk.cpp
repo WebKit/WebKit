@@ -4,6 +4,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com>
  * Copyright (C) 2009 Collabora Ltd.
+ * Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -818,4 +819,11 @@ bool LayoutTestController::hasSpellingMarker(int, int)
 {
     // FIXME: Implement this.
     return false;
+}
+
+void LayoutTestController::dumpConfigurationForViewport(int availableWidth, int availableHeight)
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(webView);
+    DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, availableWidth, availableHeight);
 }

@@ -989,3 +989,7 @@ bool LayoutTestController::hasSpellingMarker(int from, int length)
 {
     return [mainFrame hasSpellingMarker:from length:length];
 }
+void LayoutTestController::dumpConfigurationForViewport(int /*availableWidth*/, int /*availableHeight*/)
+{
+
+}

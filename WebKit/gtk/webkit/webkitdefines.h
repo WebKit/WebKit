@@ -92,6 +92,9 @@ typedef struct _WebKitHitTestResultClass WebKitHitTestResultClass;
 typedef struct _WebKitGeolocationPolicyDecision WebKitGeolocationPolicyDecision;
 typedef struct _WebKitGeolocationPolicyDecisionClass WebKitGeolocationPolicyDecisionClass;
 
+typedef struct _WebKitViewportAttributes WebKitViewportAttributes;
+typedef struct _WebKitViewportAttributesClass WebKitViewportAttributesClass;
+
 G_END_DECLS
 
 #endif

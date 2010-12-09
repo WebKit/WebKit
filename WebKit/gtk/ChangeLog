@@ -1,3 +1,47 @@
+2010-12-09  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Support for viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=45443
+
+        This patch adds a new gobject to offer the viewport properties to user agents.
+        It is WebKitViewportAttributes that contains the viewport size, initial scale with limits, 
+        and information about whether a user is able to scale the contents in the viewport.
+        
+        This feature was introduced by Safari on the iPhone. For more information on 
+        the viewport properties, refer to the Safari reference library at 
+        http://developer.apple.com/safari/library/documentation/appleapplications/reference/safarihtmlref/articles/metatags.html
+
+        * GNUmakefile.am: Added webkitviewportattributes.h webkitviewportattributes.cpp. 
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::dispatchViewportDataDidChange): Added this callback to know whether the viewport arguments is available.
+        * WebCoreSupport/ChromeClientGtk.h:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::dumpConfigurationForViewport): Added this function to compute the viewport attributes with the given availableWidth and availableHeight.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: 
+        (WebKit::postCommitFrameViewSetup): Invalidate the viewport attributes.
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitprivate.h: Added webkitViewportAttributesRecompute as a private function.
+        * webkit/webkitviewportattributes.cpp: Added.
+        (webkit_viewport_attributes_class_init):
+        (webkit_viewport_attributes_init):
+        (webkit_viewport_attributes_get_property):
+        (webkit_viewport_attributes_set_property):
+        (webkitViewportAttributesRecompute): Recompute the optimal viewport attributes and emit the viewport-attributes-changed signal.
+        (webkit_viewport_attributes_recompute): a public API for calling webkitViewportAttributesRecompute.
+        * webkit/webkitviewportattributes.h: Added.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_property): Added PROP_VIEWPORT_ATTRIBUTES.
+        (webkit_web_view_dispose): Deallocate the WebKitViewportAttributes instance.
+        (webkit_web_view_class_init): Added the viewport-attributes-recompute-requested and viewport-attributes-changed signals.
+        (webkit_web_view_init): Set the WebKitViewportAttributes instance.
+        (webkit_web_view_get_viewport_attributes): Added a getter to obtain the WebKitViewportAttributes instance held by the given WebKitWebView.
+        * webkit/webkitwebview.h:
+        * webkit/webkitwebviewprivate.h: Added WebKitViewportAttributes as a private variable.
+
 2010-12-09  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
