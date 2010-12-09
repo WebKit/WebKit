@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Don't leak the PDFDocument
+        https://bugs.webkit.org/show_bug.cgi?id=50771
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::setPDFDocumentData):
+
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a basic implementation of PDF support on Mac
         https://bugs.webkit.org/show_bug.cgi?id=50768
 

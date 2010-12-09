@@ -143,8 +143,8 @@ void PDFViewController::setPDFDocumentData(const String& mimeType, const CoreIPC
         data.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
     }
 
-    PDFDocument* pdfDocument = [[pdfDocumentClass() alloc] initWithData:(NSData *)data.get()];
-    [m_pdfView setDocument:pdfDocument];
+    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)data.get()]);
+    [m_pdfView setDocument:pdfDocument.get()];
 }
 
 Class PDFViewController::pdfDocumentClass()
