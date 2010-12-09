@@ -190,6 +190,18 @@ def strip_comments(line):
         return line
 
 
+class ParseError(Exception):
+    def __init__(self, fatal, errors):
+        self.fatal = fatal
+        self.errors = errors
+
+    def __str__(self):
+        return '\n'.join(map(str, self.errors))
+
+    def __repr__(self):
+        return 'ParseError(fatal=%s, errors=%s)' % (fatal, errors)
+
+
 class ModifiersAndExpectations:
     """A holder for modifiers and expectations on a test that serializes to
     JSON."""
@@ -293,7 +305,7 @@ class TestExpectationsFile:
                     'flaky': FLAKY}
 
     def __init__(self, port, expectations, full_test_list, test_platform_name,
-        is_debug_mode, is_lint_mode, suppress_errors=False, overrides=None):
+        is_debug_mode, is_lint_mode, overrides=None):
         """
         expectations: Contents of the expectations file
         full_test_list: The list of all tests to be run pending processing of
@@ -303,7 +315,6 @@ class TestExpectationsFile:
             port.test_platform_name() when is_lint_mode is True.
         is_debug_mode: Whether we testing a test_shell built debug mode.
         is_lint_mode: Whether this is just linting test_expecatations.txt.
-        suppress_errors: Whether to suppress lint errors.
         overrides: test expectations that are allowed to override any
             entries in |expectations|. This is used by callers
             that need to manage two sets of expectations (e.g., upstream
@@ -317,7 +328,6 @@ class TestExpectationsFile:
         self._is_debug_mode = is_debug_mode
         self._is_lint_mode = is_lint_mode
         self._overrides = overrides
-        self._suppress_errors = suppress_errors
         self._errors = []
         self._non_fatal_errors = []
 
@@ -362,8 +372,7 @@ class TestExpectationsFile:
         self._process_tests_without_expectations()
 
     def _handle_any_read_errors(self):
-        if not self._suppress_errors and (
-            len(self._errors) or len(self._non_fatal_errors)):
+        if len(self._errors) or len(self._non_fatal_errors):
             if self._is_debug_mode:
                 build_type = 'DEBUG'
             else:
@@ -372,12 +381,15 @@ class TestExpectationsFile:
             _log.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
                        (self._test_platform_name.upper(), build_type))
 
+            for error in self._errors:
+                _log.error(error)
             for error in self._non_fatal_errors:
                 _log.error(error)
-            _log.error('')
 
             if len(self._errors):
-                raise SyntaxError('\n'.join(map(str, self._errors)))
+                raise ParseError(fatal=True, errors=self._errors)
+            if len(self._non_fatal_errors) and self._is_lint_mode:
+                raise ParseError(fatal=False, errors=self._non_fatal_errors)
 
     def _process_tests_without_expectations(self):
         expectations = set([PASS])
@@ -835,7 +847,7 @@ class TestExpectationsFile:
         """Reports an error that will prevent running the tests. Does not
         immediately raise an exception because we'd like to aggregate all the
         errors so they can all be printed out."""
-        self._errors.append('\nLine:%s %s %s' % (lineno, msg, path))
+        self._errors.append('Line:%s %s %s' % (lineno, msg, path))
 
     def _log_non_fatal_error(self, lineno, msg, path):
         """Reports an error that will not prevent running the tests. These are

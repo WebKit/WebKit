@@ -284,15 +284,27 @@ class TestRunner:
         return path
 
     def lint(self):
+        lint_failed = False
+
         # Creating the expecations for each platform/configuration pair does
         # all the test list parsing and ensures it's correct syntax (e.g. no
         # dupes).
         for platform_name in self._port.test_platform_names():
-            self.parse_expectations(platform_name, is_debug_mode=True)
-            self.parse_expectations(platform_name, is_debug_mode=False)
+            try:
+                self.parse_expectations(platform_name, is_debug_mode=True)
+            except test_expectations.ParseError:
+                lint_failed = True
+            try:
+                self.parse_expectations(platform_name, is_debug_mode=False)
+            except test_expectations.ParseError:
+                lint_failed = True
+
         self._printer.write("")
-        _log.info("If there are no fail messages, errors or exceptions, "
-                  "then the lint succeeded.")
+        if lint_failed:
+            _log.error("Lint failed.")
+            return -1
+
+        _log.info("Lint succeeded.")
         return 0
 
     def parse_expectations(self, test_platform_name, is_debug_mode):
@@ -304,19 +316,14 @@ class TestRunner:
         else:
             test_files = self._test_files
 
-        try:
-            expectations_str = self._port.test_expectations()
-            overrides_str = self._port.test_expectations_overrides()
-            self._expectations = test_expectations.TestExpectations(
-                self._port, test_files, expectations_str, test_platform_name,
-                is_debug_mode, self._options.lint_test_files,
-                overrides=overrides_str)
-            return self._expectations
-        except SyntaxError, err:
-            if self._options.lint_test_files:
-                print str(err)
-            else:
-                raise err
+        expectations_str = self._port.test_expectations()
+        overrides_str = self._port.test_expectations_overrides()
+        self._expectations = test_expectations.TestExpectations(
+            self._port, test_files, expectations_str, test_platform_name,
+            is_debug_mode, self._options.lint_test_files,
+            overrides=overrides_str)
+        return self._expectations
+
 
     def prepare_lists_and_print_output(self):
         """Create appropriate subsets of test lists and returns a

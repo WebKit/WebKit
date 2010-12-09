@@ -196,19 +196,42 @@ BUGX WONTFIX : failures/expected = IMAGE
                                                       include_skips=False)
         self.assertEqual(s, set([]))
 
+    def test_parse_error_fatal(self):
+        try:
+            self.parse_exp("""FOO : failures/expected/text.html = TEXT
+SKIP : failures/expected/image.html""")
+            self.assertFalse(True, "ParseError wasn't raised")
+        except ParseError, e:
+            self.assertTrue(e.fatal)
+            exp_errors = [u'Line:1 Invalid modifier for test: foo failures/expected/text.html',
+                          u"Line:2 Missing expectations. [' failures/expected/image.html']"]
+            self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
+            self.assertEqual(e.errors, exp_errors)
+
+    def test_parse_error_nonfatal(self):
+        try:
+            self.parse_exp('SKIP : failures/expected/text.html = TEXT',
+                           is_lint_mode=True)
+            self.assertFalse(True, "ParseError wasn't raised")
+        except ParseError, e:
+            self.assertFalse(e.fatal)
+            exp_errors = [u'Line:1 Test lacks BUG modifier. failures/expected/text.html']
+            self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
+            self.assertEqual(e.errors, exp_errors)
+
     def test_syntax_missing_expectation(self):
         # This is missing the expectation.
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
                           'BUG_TEST: failures/expected/text.html',
                           is_debug_mode=True)
 
     def test_syntax_invalid_option(self):
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
                           'BUG_TEST FOO: failures/expected/text.html = PASS')
 
     def test_syntax_invalid_expectation(self):
         # This is missing the expectation.
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
                           'BUG_TEST: failures/expected/text.html = FOO')
 
     def test_syntax_missing_bugid(self):
@@ -219,21 +242,21 @@ BUGX WONTFIX : failures/expected = IMAGE
 
     def test_semantic_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
             'BUG_TEST SLOW : failures/expected/timeout.html = TIMEOUT')
 
     def test_semantic_rebaseline(self):
         # Can't lint a file w/ 'REBASELINE' in it.
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
             'BUG_TEST REBASELINE : failures/expected/text.html = TEXT',
             is_lint_mode=True)
 
     def test_semantic_duplicates(self):
-        self.assertRaises(SyntaxError, self.parse_exp, """
+        self.assertRaises(ParseError, self.parse_exp, """
 BUG_TEST : failures/expected/text.html = TEXT
 BUG_TEST : failures/expected/text.html = IMAGE""")
 
-        self.assertRaises(SyntaxError, self.parse_exp,
+        self.assertRaises(ParseError, self.parse_exp,
             self.get_basic_expectations(), """
 BUG_TEST : failures/expected/text.html = TEXT
 BUG_TEST : failures/expected/text.html = IMAGE""")

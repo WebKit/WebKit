@@ -64,10 +64,13 @@ class MockUser():
         self.url = url
 
 
-def passing_run(extra_args=None, port_obj=None, record_results=False,
-                tests_included=False):
+def parse_args(extra_args=None, record_results=False, tests_included=False,
+               print_nothing=True):
     extra_args = extra_args or []
-    args = ['--print', 'nothing']
+    if print_nothing:
+        args = ['--print', 'nothing']
+    else:
+        args = []
     if not '--platform' in extra_args:
         args.extend(['--platform', 'test'])
     if not record_results:
@@ -81,7 +84,13 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
                      'http/tests',
                      'websocket/tests',
                      'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(args)
+    return run_webkit_tests.parse_args(args)
+
+
+def passing_run(extra_args=None, port_obj=None, record_results=False,
+                tests_included=False):
+    options, parsed_args = parse_args(extra_args, record_results,
+                                      tests_included)
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
                             user=MockUser())
@@ -90,27 +99,24 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
 
 
 def logging_run(extra_args=None, port_obj=None, tests_included=False):
-    extra_args = extra_args or []
-    args = ['--no-record-results']
-    if not '--platform' in extra_args:
-        args.extend(['--platform', 'test'])
-    if not '--child-processes' in extra_args:
-        args.extend(['--worker-model', 'inline'])
-    args.extend(extra_args)
-    if not tests_included:
-        args.extend(['passes',
-                     'http/tests',
-                     'websocket/tests',
-                     'failures/expected/*'])
+    options, parsed_args = parse_args(extra_args=extra_args,
+                                      record_results=False,
+                                      tests_included=tests_included,
+                                      print_nothing=False)
+    user = MockUser()
+    if not port_obj:
+        port_obj = port.get(port_name=options.platform, options=options,
+                            user=user)
 
+    res, buildbot_output, regular_output = run_and_capture(port_obj, options,
+                                                           parsed_args)
+    return (res, buildbot_output, regular_output, user)
+
+
+def run_and_capture(port_obj, options, parsed_args):
     oc = outputcapture.OutputCapture()
     try:
         oc.capture_output()
-        options, parsed_args = run_webkit_tests.parse_args(args)
-        user = MockUser()
-        if not port_obj:
-            port_obj = port.get(port_name=options.platform, options=options,
-                                user=user)
         buildbot_output = array_stream.ArrayStream()
         regular_output = array_stream.ArrayStream()
         res = run_webkit_tests.run(port_obj, options, parsed_args,
@@ -118,22 +124,17 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False):
                                    regular_output=regular_output)
     finally:
         oc.restore_output()
-    return (res, buildbot_output, regular_output, user)
+    return (res, buildbot_output, regular_output)
 
 
 def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
     extra_args = extra_args or []
-    args = [
-        '--print', 'nothing',
-        '--platform', 'test',
-        '--no-record-results',
-        '--worker-model', 'inline']
-    args.extend(extra_args)
     if not tests_included:
         # Not including http tests since they get run out of order (that
         # behavior has its own test, see test_get_test_file_queue)
-        args.extend(['passes', 'failures'])
-    options, parsed_args = run_webkit_tests.parse_args(args)
+        extra_args = ['passes', 'failures'] + extra_args
+    options, parsed_args = parse_args(extra_args, tests_included=True)
+
     user = MockUser()
 
     test_batches = []
@@ -163,12 +164,13 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
             return RecordingTestDriver(self, worker_number)
 
     recording_port = RecordingTestPort(options=options, user=user)
-    logging_run(extra_args=args, port_obj=recording_port, tests_included=True)
+    run_and_capture(recording_port, options, parsed_args)
 
     if flatten_batches:
         return list(itertools.chain(*test_batches))
 
     return test_batches
+
 
 class MainTest(unittest.TestCase):
     def test_accelerated_compositing(self):
@@ -244,12 +246,21 @@ class MainTest(unittest.TestCase):
         self.assertEqual(buildbot_output.get(), [])
 
     def test_lint_test_files(self):
-        # FIXME:  add errors?
-        res, out, err, user = logging_run(['--lint-test-files'],
-                                          tests_included=True)
+        res, out, err, user = logging_run(['--lint-test-files'])
         self.assertEqual(res, 0)
         self.assertTrue(out.empty())
-        self.assertTrue(any(['lint succeeded' in msg for msg in err.get()]))
+        self.assertTrue(any(['Lint succeeded' in msg for msg in err.get()]))
+
+    def test_lint_test_files__errors(self):
+        options, parsed_args = parse_args(['--lint-test-files'])
+        user = MockUser()
+        port_obj = port.get(options.platform, options=options, user=user)
+        port_obj.test_expectations = lambda: "# syntax error"
+        res, out, err = run_and_capture(port_obj, options, parsed_args)
+
+        self.assertEqual(res, -1)
+        self.assertTrue(out.empty())
+        self.assertTrue(any(['Lint failed' in msg for msg in err.get()]))
 
     def test_no_tests_found(self):
         res, out, err, user = logging_run(['resources'], tests_included=True)

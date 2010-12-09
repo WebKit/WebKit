@@ -87,28 +87,26 @@ class TestExpectationsChecker(object):
         pass
 
     def check_test_expectations(self, expectations_str, tests=None, overrides=None):
-        errors = []
+        err = None
         expectations = None
         try:
             expectations = test_expectations.TestExpectationsFile(
                 port=self._port_obj, expectations=expectations_str, full_test_list=tests,
                 test_platform_name=self._port_to_check, is_debug_mode=False,
-                is_lint_mode=True, suppress_errors=False, overrides=overrides)
-        except SyntaxError, error:
-            errors = str(error).splitlines()
+                is_lint_mode=True, overrides=overrides)
+        except test_expectations.ParseError, error:
+            err = error
 
-        for error in errors:
-            matched = self._output_regex.match(error)
-            if matched:
-                lineno, message = matched.group('line', 'message')
-                self._handle_style_error(int(lineno), 'test/expectations', 5, message)
-
-        if expectations:
-            for error in expectations.get_non_fatal_errors():
+        if err:
+            level = 2
+            if err.fatal:
+                level = 5
+            for error in err.errors:
                 matched = self._output_regex.match(error)
                 if matched:
                     lineno, message = matched.group('line', 'message')
-                    self._handle_style_error(int(lineno), 'test/expectations', 2, message)
+                    self._handle_style_error(int(lineno), 'test/expectations', level, message)
+
 
     def check_tabs(self, lines):
         self._tab_checker.check(lines)
