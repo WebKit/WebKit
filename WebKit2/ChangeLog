@@ -1,3 +1,9 @@
+2010-12-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        
+        * WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp:
+
 2010-12-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
