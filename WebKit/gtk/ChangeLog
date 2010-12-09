@@ -1,3 +1,23 @@
+2010-12-09  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Populate DumpRenderTreeSupportGtk (part IV)
+        https://bugs.webkit.org/show_bug.cgi?id=48429
+
+        Moved also webkit_worker_thread_count() to DumpRenderTreeSupportGtk,
+        since it was only used by DRT for now.
+
+        Since this method was the only one in webkitworker.cpp, the file was
+        also removed.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::workerThreadCount):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitworkers.cpp: Removed.
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -1,3 +1,15 @@
+2010-12-09  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Populate DumpRenderTreeSupportGtk (part IV)
+        https://bugs.webkit.org/show_bug.cgi?id=48429
+
+        Adjust call sites of webkit_thread_count to use the DumpRenderTreeSupportGtk version now.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::workerThreadCount):
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -197,8 +197,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
-	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
-	WebKit/gtk/webkit/webkitworkers.cpp
+	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc

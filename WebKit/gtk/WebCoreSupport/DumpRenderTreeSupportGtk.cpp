@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
+ *  Copyright (C) 2009 Google Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -47,6 +48,7 @@
 #if ENABLE(SVG)
 #include "SVGSMILElement.h"
 #endif
+#include "WorkerThread.h"
 #include "webkitprivate.h"
 #include "webkitwebviewprivate.h"
 #include "webkitwebview.h"
@@ -420,4 +422,13 @@ void DumpRenderTreeSupportGtk::dumpConfigurationForViewport(WebKitWebView* webVi
     ViewportAttributes attrs = computeViewportAttributes(arguments, 980, 320, 480, 160, IntSize(availableWidth, availableHeight));
 
     fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f]\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale);
+}
+
+unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
+{
+#if ENABLE(WORKERS)
+    return WebCore::WorkerThread::workerThreadCount();
+#else
+    return 0;
+#endif
 }

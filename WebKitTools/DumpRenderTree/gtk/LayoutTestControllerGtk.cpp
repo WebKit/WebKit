@@ -51,7 +51,6 @@
 
 extern "C" {
 void webkit_application_cache_set_maximum_size(unsigned long long size);
-unsigned int webkit_worker_thread_count(void);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
 }
 
@@ -185,7 +184,7 @@ size_t LayoutTestController::webHistoryItemCount()
 
 unsigned LayoutTestController::workerThreadCount() const
 {
-    return webkit_worker_thread_count();
+    return DumpRenderTreeSupportGtk::workerThreadCount();
 }
 
 void LayoutTestController::notifyDone()
