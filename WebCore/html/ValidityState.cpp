@@ -26,6 +26,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTreeBuilder.h"
 #include "LocalizedStrings.h"
@@ -105,6 +106,9 @@ void ValidityState::setCustomErrorMessage(const String& message)
 bool ValidityState::valueMissing() const
 {
     HTMLElement* element = toHTMLElement(m_control);
+    if (!element->willValidate())
+        return false;
+
     if (element->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         return input->valueMissing(input->value());
@@ -112,6 +116,10 @@ bool ValidityState::valueMissing() const
     if (element->hasTagName(textareaTag)) {
         HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(element);
         return textArea->valueMissing(textArea->value());
+    }
+    if (element->hasTagName(selectTag)) {
+        HTMLSelectElement* select = static_cast<HTMLSelectElement*>(element);
+        return select->valueMissing();
     }
     return false;
 }

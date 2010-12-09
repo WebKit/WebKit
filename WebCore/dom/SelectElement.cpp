@@ -453,6 +453,7 @@ void SelectElement::parseMultipleAttribute(SelectElementData& data, Element* ele
 {
     bool oldUsesMenuList = data.usesMenuList();
     data.setMultiple(!attribute->isNull());
+    toSelectElement(element)->updateValidity();
     if (oldUsesMenuList != data.usesMenuList() && element->attached()) {
         element->detach();
         element->attach();

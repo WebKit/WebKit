@@ -103,6 +103,8 @@ private:
     String optionIndicesToValueString() const;
     String optionIndicesToString() const;
 
+    virtual void updateValidity() {}
+
     String name() const;
     String value() const;
     String iname() const;

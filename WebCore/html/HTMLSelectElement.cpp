@@ -78,11 +78,13 @@ int HTMLSelectElement::selectedIndex() const
 void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
 {
     SelectElement::deselectItems(m_data, this, excludeElement);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect)
 {
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, false, false);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow, bool allowMultipleSelection)
@@ -91,6 +93,7 @@ void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, b
     // mousedown events. This allows that same behavior programmatically.
     if (!m_data.usesMenuList()) {
         updateSelectedState(m_data, this, optionIndex, allowMultipleSelection, false);
+        setNeedsValidityCheck();
         if (fireOnChangeNow)
             listBoxOnChange();
         return;
@@ -104,6 +107,42 @@ void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, b
         return;
     
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, fireOnChangeNow, true);
+    setNeedsValidityCheck();
+}
+
+bool HTMLSelectElement::hasPlaceholderLabelOption() const
+{
+    // The select element has no placeholder label option if it has an attribute "multiple" specified or a display size of non-1.
+    // 
+    // The condition "size() > 1" is actually not compliant with the HTML5 spec as of Dec 3, 2010. "size() != 1" is correct.
+    // Using "size() > 1" here because size() may be 0 in WebKit.
+    // See the discussion at https://bugs.webkit.org/show_bug.cgi?id=43887
+    //
+    // "0 size()" happens when an attribute "size" is absent or an invalid size attribute is specified.
+    // In this case, the display size should be assumed as the default.
+    // The default display size is 1 for non-multiple select elements, and 4 for multiple select elements.
+    //
+    // Finally, if size() == 0 and non-multiple, the display size can be assumed as 1.
+    if (multiple() || size() > 1)
+        return false;
+
+    int listIndex = optionToListIndex(0);
+    ASSERT(listIndex >= 0);
+    if (listIndex < 0)
+        return false;
+    HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems()[listIndex]);
+    return !option->disabled() && !listIndex && option->value().isEmpty();
+}
+
+bool HTMLSelectElement::valueMissing() const
+{
+    if (!isRequiredFormControl())
+        return false;
+
+    int firstSelectionIndex = selectedIndex();
+
+    // If a non-placeholer label option is selected (firstSelectionIndex > 0), it's not value-missing.
+    return firstSelectionIndex < 0 || (!firstSelectionIndex && hasPlaceholderLabelOption());
 }
 
 void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
@@ -112,6 +151,7 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
         setSelectedIndexByUser(listToOptionIndex(listIndex), true, fireOnChangeNow);
     else {
         updateSelectedState(m_data, this, listIndex, allowMultiplySelections, shift);
+        setNeedsValidityCheck();
         if (fireOnChangeNow)
             listBoxOnChange();
     }
@@ -144,6 +184,7 @@ void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, Exception
         return;
 
     insertBefore(element, before, ec);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::remove(int index)
@@ -156,6 +197,7 @@ void HTMLSelectElement::remove(int index)
     ASSERT(item->parentNode());
     ExceptionCode ec;
     item->parentNode()->removeChild(item, ec);
+    setNeedsValidityCheck();
 }
 
 String HTMLSelectElement::value()
@@ -195,6 +237,7 @@ bool HTMLSelectElement::saveFormControlState(String& value) const
 void HTMLSelectElement::restoreFormControlState(const String& state)
 {
     SelectElement::restoreFormControlState(m_data, this, state);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::parseMappedAttribute(Attribute* attr) 
@@ -215,6 +258,7 @@ void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
             recalcListItemsIfNeeded();
 
         m_data.setSize(size);
+        setNeedsValidityCheck();
         if ((oldUsesMenuList != m_data.usesMenuList() || (!oldUsesMenuList && m_data.size() != oldSize)) && attached()) {
             detach();
             attach();
@@ -255,6 +299,7 @@ bool HTMLSelectElement::canSelectAll() const
 void HTMLSelectElement::selectAll()
 {
     SelectElement::selectAll(m_data, this);
+    setNeedsValidityCheck();
 }
 
 RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -315,6 +360,7 @@ void HTMLSelectElement::setRecalcListItems()
 void HTMLSelectElement::reset()
 {
     SelectElement::reset(m_data, this);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::dispatchFocusEvent()
@@ -350,6 +396,7 @@ void HTMLSelectElement::setActiveSelectionEndIndex(int index)
 void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 {
     SelectElement::updateListBoxSelection(m_data, this, deselectOtherOptions);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::menuListOnChange()
@@ -458,6 +505,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
             }
         }
     }
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::scrollToSelection()
@@ -469,6 +517,11 @@ void HTMLSelectElement::insertedIntoTree(bool deep)
 {
     SelectElement::insertedIntoTree(m_data, this);
     HTMLFormControlElementWithState::insertedIntoTree(deep);
+}
+
+bool HTMLSelectElement::isRequiredFormControl() const
+{
+    return required();
 }
 
 } // namespace

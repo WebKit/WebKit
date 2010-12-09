@@ -1,3 +1,35 @@
+2010-12-09  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement "required" attribute for select tags
+        https://bugs.webkit.org/show_bug.cgi?id=50380
+
+        Added tests for require attributes, valueMissing and vadility check for select elements.
+
+        * fast/forms/ValidityState-valueMissing-001-expected.txt:
+        * fast/forms/ValidityState-valueMissing-001.html:
+        * fast/forms/ValidityState-valueMissing-002-expected.txt:
+        * fast/forms/ValidityState-valueMissing-002.html:
+        * fast/forms/ValidityState-valueMissing-003-expected.txt:
+        * fast/forms/ValidityState-valueMissing-003.html:
+        * fast/forms/checkValidity-002-expected.txt:
+        * fast/forms/checkValidity-002.html:
+        * fast/forms/required-attribute-001-expected.txt:
+        * fast/forms/required-attribute-001.html:
+        * fast/forms/required-attribute-002-expected.txt:
+        * fast/forms/required-attribute-002.html:
+        * fast/forms/resources/select-live-pseudo-selectors.js: Added.
+        (makeInvalid):
+        (appendOption):
+        (backgroundOf):
+        * fast/forms/script-tests/validationMessage.js:
+        * fast/forms/select-live-pseudo-selectors-expected.txt: Added.
+        * fast/forms/select-live-pseudo-selectors.html: Added.
+        * fast/forms/validationMessage-expected.txt:
+        * platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html: Added.
+        * platform/mac/fast/objc/dom-html-select-live-pseudo-selectors-expected.txt: Added.
+
 2010-12-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

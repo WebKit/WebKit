@@ -63,6 +63,8 @@ public:
 
     virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) = 0;
 
+    virtual void updateValidity() = 0;
+
 protected:
     virtual ~SelectElement() { }
 
