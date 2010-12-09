@@ -160,7 +160,7 @@ my @features = (
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
-      define => "ENABLE_FULLSCREEN_API", default => isAppleMacWebKit(), value => \$fullscreenAPISupport },
+      define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },

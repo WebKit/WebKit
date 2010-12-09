@@ -1,3 +1,26 @@
+2010-12-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Support the Mozilla-style Fullscreen Javascript API
+        https://bugs.webkit.org/show_bug.cgi?id=50572
+
+        Fullscreen API support. It is controlled at runtime using a new
+        setting called enable-fullscreen, set to FALSE by default.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullScreenForElement):
+        (WebKit::ChromeClient::enterFullScreenForElement):
+        (WebKit::ChromeClient::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+
 2010-12-09  Joone Hur  <joone@kldp.org>
 
         Reviewed by Martin Robinson.

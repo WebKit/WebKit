@@ -5484,9 +5484,6 @@ media/video-volume.html
 # https://bugs.webkit.org/show_bug.cgi?id=44784
 fast/history/history-subframe-with-name.html
 
-# Full Screen support is not yet enabled.
-fullscreen/
-
 # https://bugs.webkit.org/show_bug.cgi?id=44932
 canvas/philip/tests/2d.path.isPointInPath.edge.html
 

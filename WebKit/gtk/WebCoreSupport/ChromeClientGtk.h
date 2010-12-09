@@ -145,6 +145,12 @@ namespace WebKit {
         virtual void exitFullscreenForNode(WebCore::Node*);
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+        virtual bool supportsFullScreenForElement(const WebCore::Element*);
+        virtual void enterFullScreenForElement(WebCore::Element*);
+        virtual void exitFullScreenForElement(WebCore::Element*);
+#endif
+
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;

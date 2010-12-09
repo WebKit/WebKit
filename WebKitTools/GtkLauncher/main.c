@@ -188,6 +188,7 @@ static GtkWidget* createToolbar(GtkWidget* uriEntry, WebKitWebView* webView)
 static GtkWidget* createWindow(WebKitWebView** outWebView)
 {
     WebKitWebView *webView;
+    WebKitWebSettings *webSettings;
     GtkWidget *vbox;
     GtkWidget *window;
     GtkWidget *uriEntry;
@@ -209,6 +210,10 @@ static GtkWidget* createWindow(WebKitWebView** outWebView)
     gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, FALSE, 0);
 
     gtk_container_add(GTK_CONTAINER(window), vbox);
+
+    webSettings = webkit_web_view_get_settings(webView);
+    g_object_set(G_OBJECT(webSettings), "enable-fullscreen", TRUE, NULL);
+    webkit_web_view_set_settings(webView, webSettings);
 
     g_signal_connect(window, "destroy", G_CALLBACK(destroyCb), NULL);
 

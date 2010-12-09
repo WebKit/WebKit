@@ -411,7 +411,9 @@ static void resetDefaultsToConsistentValues()
                  "enable-plugins", TRUE,
                  "enable-hyperlink-auditing", FALSE,
                  "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC,
+                 "enable-fullscreen", TRUE,
                  NULL);
+    webkit_web_view_set_settings(webView, settings);
 
     DumpRenderTreeSupportGtk::clearMainFrameName(mainFrame);
 

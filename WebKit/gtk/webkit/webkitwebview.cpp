@@ -3246,7 +3246,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         javaScriptCanAccessClipboard, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements,
-        enableSiteSpecificQuirks, usePageCache, enableJavaApplet, enableHyperlinkAuditing;
+        enableSiteSpecificQuirks, usePageCache, enableJavaApplet, enableHyperlinkAuditing, enableFullscreen;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -3285,6 +3285,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-page-cache", &usePageCache,
                  "enable-java-applet", &enableJavaApplet,
                  "enable-hyperlink-auditing", &enableHyperlinkAuditing,
+                 "enable-fullscreen", &enableFullscreen,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -3322,7 +3323,9 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setUsesPageCache(usePageCache);
     settings->setJavaEnabled(enableJavaApplet);
     settings->setHyperlinkAuditingEnabled(enableHyperlinkAuditing);
-
+#if ENABLE(FULLSCREEN_API)
+    settings->setFullScreenEnabled(enableFullscreen);
+#endif
     Page* page = core(webView);
     if (page)
         page->setTabKeyCyclesThroughElements(tabKeyCyclesThroughElements);

@@ -688,4 +688,24 @@ void ChromeClient::exitFullscreenForNode(Node* node)
 }
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+bool ChromeClient::supportsFullScreenForElement(const WebCore::Element* element)
+{
+    return true;
+}
+
+void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
+{
+    element->document()->webkitWillEnterFullScreenForElement(element);
+    element->document()->webkitDidEnterFullScreenForElement(element);
+}
+
+void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
+{
+    element->document()->webkitWillExitFullScreenForElement(element);
+    element->document()->webkitDidExitFullScreenForElement(element);
+}
+#endif
+
+
 }
