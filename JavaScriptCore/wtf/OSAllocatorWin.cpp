@@ -76,7 +76,10 @@ void OSAllocator::release(void* address, size_t bytes)
     // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
     // dwSize must be 0 if dwFreeType is MEM_RELEASE.
     bool result = VirtualFree(address, 0, MEM_RELEASE);
-    if (!result)
+
+    // FIXME: Restore this error checking once aligned allocation is fixed not
+    // to pair malloc with VirtualFree.
+    if (!result && 0)
         CRASH();
 }
 

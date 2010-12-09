@@ -1,5 +1,15 @@
 2010-12-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Try to fix crash-on-launch seen on Windows builder.
+
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::release): Disabled an ASSERT, because it checks for
+        a bug that hasn't been fixed yet.
+
+2010-12-08  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Updated .def file.
