@@ -74,7 +74,7 @@ void WebFrameProxy::setCertificateInfo(PassRefPtr<WebCertificateInfo> certificat
 
 bool WebFrameProxy::canProvideSource() const
 {
-    return isDiplayingMarkupDocument();
+    return isDisplayingMarkupDocument();
 }
 
 bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
@@ -94,12 +94,12 @@ bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
     return false;
 }
 
-bool WebFrameProxy::isDiplayingStandaloneImageDocument() const
+bool WebFrameProxy::isDisplayingStandaloneImageDocument() const
 {
     return Image::supportsType(m_MIMEType);
 }
 
-bool WebFrameProxy::isDiplayingMarkupDocument() const
+bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This check should be moved to somewhere in WebCore. 
     return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType);

@@ -96,14 +96,14 @@ bool WKFrameCanShowMIMEType(WKFrameRef frameRef, WKStringRef mimeTypeRef)
     return toImpl(frameRef)->canShowMIMEType(toWTFString(mimeTypeRef));
 }
 
-bool WKFrameIsDiplayingStandaloneImageDocument(WKFrameRef frameRef)
+bool WKFrameIsDisplayingStandaloneImageDocument(WKFrameRef frameRef)
 {
-    return toImpl(frameRef)->isDiplayingStandaloneImageDocument();
+    return toImpl(frameRef)->isDisplayingStandaloneImageDocument();
 }
 
-bool WKFrameIsDiplayingMarkupDocument(WKFrameRef frameRef)
+bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frameRef)
 {
-    return toImpl(frameRef)->isDiplayingMarkupDocument();
+    return toImpl(frameRef)->isDisplayingMarkupDocument();
 }
 
 bool WKFrameIsFrameSet(WKFrameRef frameRef)

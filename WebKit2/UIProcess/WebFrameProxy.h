@@ -90,8 +90,8 @@ public:
     bool canProvideSource() const;
     bool canShowMIMEType(const String& mimeType) const;
 
-    bool isDiplayingStandaloneImageDocument() const;
-    bool isDiplayingMarkupDocument() const;
+    bool isDisplayingStandaloneImageDocument() const;
+    bool isDisplayingMarkupDocument() const;
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

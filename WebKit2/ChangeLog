@@ -1,5 +1,21 @@
 2010-12-08  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey "Error" Garen.
+
+        Fix typo: Diplaying -> Displaying
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameIsDisplayingStandaloneImageDocument):
+        (WKFrameIsDisplayingMarkupDocument):
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canProvideSource):
+        (WebKit::WebFrameProxy::isDisplayingStandaloneImageDocument):
+        (WebKit::WebFrameProxy::isDisplayingMarkupDocument):
+        * UIProcess/WebFrameProxy.h:
+
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Gavin Barraclough.
 
         Add WebKit2 Preference for TabsToLinks behavior.

@@ -61,8 +61,8 @@ WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
 WK_EXPORT bool WKFrameCanProvideSource(WKFrameRef frame);
 WK_EXPORT bool WKFrameCanShowMIMEType(WKFrameRef frame, WKStringRef mimeType);
 
-WK_EXPORT bool WKFrameIsDiplayingStandaloneImageDocument(WKFrameRef frame);
-WK_EXPORT bool WKFrameIsDiplayingMarkupDocument(WKFrameRef frame);
+WK_EXPORT bool WKFrameIsDisplayingStandaloneImageDocument(WKFrameRef frame);
+WK_EXPORT bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 
