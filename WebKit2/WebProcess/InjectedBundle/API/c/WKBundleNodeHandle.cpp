@@ -29,6 +29,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
 
 using namespace WebKit;
 
@@ -65,6 +66,24 @@ void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlI
 
 WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandleRef)
 {
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(htmlTableCellElementHandleRef)->copyHTMLTableCellElementCellAbove();
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(htmlTableCellElementHandleRef)->htmlTableCellElementCellAbove();
     return toAPI(nodeHandle.release().releaseRef());
+}
+
+WKBundleFrameRef WKBundleNodeHandleCopyDocumentFrame(WKBundleNodeHandleRef documentHandleRef)
+{
+    RefPtr<WebFrame> frame = toImpl(documentHandleRef)->documentFrame();
+    return toAPI(frame.release().releaseRef());
+}
+
+WKBundleFrameRef WKBundleNodeHandleCopyHTMLFrameElementContentFrame(WKBundleNodeHandleRef htmlFrameElementHandleRef)
+{
+    RefPtr<WebFrame> frame = toImpl(htmlFrameElementHandleRef)->htmlFrameElementContentFrame();
+    return toAPI(frame.release().releaseRef());
+}
+
+WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(WKBundleNodeHandleRef htmlIFrameElementHandleRef)
+{
+    RefPtr<WebFrame> frame = toImpl(htmlIFrameElementHandleRef)->htmlIFrameElementContentFrame();
+    return toAPI(frame.release().releaseRef());
 }

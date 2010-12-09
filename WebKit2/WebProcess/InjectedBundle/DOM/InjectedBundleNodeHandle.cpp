@@ -25,7 +25,13 @@
 
 #include "InjectedBundleNodeHandle.h"
 
+#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/APICast.h>
+#include <WebCore/Document.h>
+#include <WebCore/HTMLFrameElement.h>
+#include <WebCore/HTMLIFrameElement.h>
+#include <WebCore/Frame.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTableCellElement.h>
@@ -124,12 +130,48 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
     static_cast<HTMLInputElement*>(m_node.get())->setAutofilled(filled);
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::copyHTMLTableCellElementCellAbove()
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
 {
     if (!m_node->hasTagName(tdTag))
         return 0;
 
     return getOrCreate(static_cast<HTMLTableCellElement*>(m_node.get())->cellAbove());
+}
+
+PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
+{
+    if (!m_node->isDocumentNode())
+        return 0;
+
+    Frame* frame = static_cast<Document*>(m_node.get())->frame();
+    if (!frame)
+        return 0;
+
+    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+}
+
+PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
+{
+    if (!m_node->hasTagName(frameTag))
+        return 0;
+
+    Frame* frame = static_cast<HTMLFrameElement*>(m_node.get())->contentFrame();
+    if (!frame)
+        return 0;
+
+    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+}
+
+PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
+{
+    if (!m_node->hasTagName(iframeTag))
+        return 0;
+
+    Frame* frame = static_cast<HTMLIFrameElement*>(m_node.get())->contentFrame();
+    if (!frame)
+        return 0;
+
+    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 }
 
 } // namespace WebKit

@@ -49,6 +49,15 @@ WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandl
 /* HTMLTableCellElement Specific Operations */
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandle);
 
+/* Document Specific Operations */
+WK_EXPORT WKBundleFrameRef WKBundleNodeHandleCopyDocumentFrame(WKBundleNodeHandleRef documentHandle);
+
+/* HTMLFrameElement Specific Operations */
+WK_EXPORT WKBundleFrameRef WKBundleNodeHandleCopyHTMLFrameElementContentFrame(WKBundleNodeHandleRef htmlFrameElementHandle);
+
+/* HTMLIFrameElement Specific Operations */
+WK_EXPORT WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(WKBundleNodeHandleRef htmlIFrameElementHandle);
+
 #ifdef __cplusplus
 }
 #endif

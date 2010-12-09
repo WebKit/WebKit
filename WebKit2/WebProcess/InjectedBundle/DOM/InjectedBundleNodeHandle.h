@@ -37,6 +37,7 @@ namespace WebCore {
 namespace WebKit {
 
 class InjectedBundleScriptWorld;
+class WebFrame;
 
 class InjectedBundleNodeHandle : public APIObject {
 public:
@@ -55,7 +56,11 @@ public:
     void setHTMLInputElementValueForUser(const String&);
     bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);
-    PassRefPtr<InjectedBundleNodeHandle> copyHTMLTableCellElementCellAbove();
+    PassRefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
+
+    PassRefPtr<WebFrame> documentFrame();
+    PassRefPtr<WebFrame> htmlFrameElementContentFrame();
+    PassRefPtr<WebFrame> htmlIFrameElementContentFrame();
 
 private:
     static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);
