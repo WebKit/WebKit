@@ -2,6 +2,12 @@
 
         Try to fix Windows build.
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Updated .def file.
+
+2010-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix Windows build.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Updated .def
         file to remove a symbol -- the next build failure will say which symbol
         to add back.

@@ -267,6 +267,7 @@ EXPORTS
     ?reifyString@StringBuilder@WTF@@AAEXXZ
     ?release@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
+    ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N1@Z
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
