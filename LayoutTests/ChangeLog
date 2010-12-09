@@ -1,3 +1,14 @@
+2010-12-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Land failing expected results for editing tests that have been failing since they were
+        added in r73548.
+        
+        Fixing the failures is being tracked by: https://bugs.webkit.org/show_bug.cgi?id=50731.
+
+        * platform/win/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/win/editing/selection/caret-rtl-right-expected.txt: Added.
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
