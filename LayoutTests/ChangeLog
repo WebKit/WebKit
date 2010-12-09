@@ -1,3 +1,13 @@
+2010-12-09  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, update test baselines as asked by MORITA Hajime.
+
+        [GTK] r73488 broke fast/dom/HTMLProgressElement/progress-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=50687
+
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/gtk/Skipped:
+
 2010-12-09  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed.
