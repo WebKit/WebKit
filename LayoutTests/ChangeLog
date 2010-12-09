@@ -1,3 +1,19 @@
+2010-12-09  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
+        Chromium rebaselines for r73488.
+
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Updated Chromium expectations.

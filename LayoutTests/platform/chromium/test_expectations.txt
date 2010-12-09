@@ -462,7 +462,7 @@ WONTFIX SKIP : fast/spatial-navigation = FAIL
 WONTFIX BUG37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
 // <progress> on Mac is always animated.
-WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE TEXT
+WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
 
 // We do not use Safari's private browsing
 WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
@@ -3115,17 +3115,6 @@ BUG_YUTAK MAC SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+T
 
 // Regressed at r73423. All areas are painted green.
 BUGWK50734 : fast/repaint/positioned-document-element.html = IMAGE
-
-// r73488. Needs new baseline.
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-boundary-values.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-optimums.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = TEXT
-BUG_YUTAK WIN LINUX : fast/dom/HTMLProgressElement/progress-element.html = TEXT
-// See WONTFIX section. This test has chromium-mac baseline, but is this necessary?
-// MAC : fast/dom/HTMLProgressElement/progress-element.html = TEXT
 
 // r73490. Win/Linux: Focus ring is not rendered. Mac: Just rebaseline?
 BUG_YUTAK WIN LINUX : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
