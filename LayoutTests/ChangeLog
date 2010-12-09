@@ -1,3 +1,29 @@
+2010-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add Qt specific expected results for tests introduced in r73548.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/editing/selection/caret-ltr-2-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-ltr-2-expected.png: Added.
+        * platform/qt/editing/selection/caret-ltr-2-expected.txt: Added.
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.png: Added.
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.txt: Added.
+        * platform/qt/editing/selection/caret-ltr-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-ltr-expected.png: Added.
+        * platform/qt/editing/selection/caret-ltr-expected.txt: Added.
+        * platform/qt/editing/selection/caret-ltr-right-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/qt/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/qt/editing/selection/caret-rtl-right-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/qt/editing/selection/caret-rtl-right-expected.txt: Added.
+
 2010-12-09  Joone Hur  <joone@kldp.org>
 
         Reviewed by Martin Robinson.
