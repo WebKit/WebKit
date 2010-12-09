@@ -2423,7 +2423,6 @@ BUG45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 // Chromium does not support cancel for notifications permissions.
 BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.html = FAIL
 
-REBASELINE BUG46276 MAC : fast/text/international/khmer-selection.html = IMAGE+TEXT
 
 // HTML5 Geolocation API does not use window.clientInformation.
 BUG11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT

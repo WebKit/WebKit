@@ -1,3 +1,13 @@
+2010-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; Yet another Chromium rebaselines for r73548.
+
+        * platform/chromium-mac-leopard/editing/selection/caret-rtl-2-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-rtl-2-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/khmer-selection-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/khmer-selection-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
