@@ -55,17 +55,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ENABLE(VIDEO)
-static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
-{
-    Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
-        return 0;
-
-    return static_cast<HTMLMediaElement*>(mediaNode);
-}
-
 static void paintStockIcon(GraphicsContext* context, const IntPoint& iconPoint, GtkStyle* style, const char* iconName,
                            GtkTextDirection direction, GtkStateType state, GtkIconSize iconSize)
 {
@@ -77,6 +66,17 @@ static void paintStockIcon(GraphicsContext* context, const IntPoint& iconPoint, 
     gdk_cairo_set_source_pixbuf(cr, icon.get(), iconPoint.x(), iconPoint.y());
     cairo_paint(cr);
     cairo_restore(cr);
+}
+
+#if ENABLE(VIDEO)
+static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
+{
+    Node* node = o->node();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return 0;
+
+    return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
 static GtkIconSize getMediaButtonIconSize(int mediaIconSize)

@@ -1,3 +1,16 @@
+2010-12-09  Antonio Gomes  <agomes@rim.com>
+
+        Rubber stamped by by Gustavo Noronha Silva.
+
+        Buildfix for GTK+ with building with -no-video.
+
+        paintStockIcon static function was implemented under the ENABLE(VIDEO) guard
+        but used from outside the guard. See RenderThemeGtk::paintSearchFieldResultsDecoration()
+        and RenderThemeGtk::paintSearchFieldCancelButton() methods.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::getMediaElementFromRenderObject):
+
 2010-12-07  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Daniel Bates.
