@@ -79,6 +79,7 @@ public:
     virtual void setPreserves3D(bool);
     virtual void setMasksToBounds(bool);
     virtual void setDrawsContent(bool);
+    virtual void setAcceleratesDrawing(bool);
 
     virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();
@@ -261,6 +262,7 @@ private:
 
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
+    void updateAcceleratesDrawing();
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -302,7 +304,8 @@ private:
         ContentsRectChanged = 1 << 20,
         MaskLayerChanged = 1 << 21,
         ReplicatedLayerChanged = 1 << 22,
-        ContentsNeedsDisplay = 1 << 23
+        ContentsNeedsDisplay = 1 << 23,
+        AcceleratesDrawingChanged = 1 << 24
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

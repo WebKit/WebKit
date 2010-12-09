@@ -1,3 +1,15 @@
+2010-12-08  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add getter and setters for acceleratesRendering flag on layers
+        https://bugs.webkit.org/show_bug.cgi?id=50717
+
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        Plumbed through acceleratedRendering flag.
+
 2010-12-07  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

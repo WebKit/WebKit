@@ -146,6 +146,9 @@ public:
 
     bool masksToBounds() const;
     void setMasksToBounds(bool);
+    
+    bool acceleratesDrawing() const;
+    void setAcceleratesDrawing(bool);
 
     void* contents() const;
     void setContents(void*);

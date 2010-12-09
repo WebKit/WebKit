@@ -91,6 +91,10 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @interface CALayer(Private)
 - (void)setContentsChanged;
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+- (void)setAcceleratesDrawing:(BOOL)flag;
+- (BOOL)acceleratesDrawing;
+#endif
 @end
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -540,6 +544,26 @@ void PlatformCALayer::setMasksToBounds(bool value)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setMasksToBounds:value];
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+bool PlatformCALayer::acceleratesDrawing() const
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    return [m_layer.get() acceleratesDrawing];
+#else
+    return false;
+#endif
+}
+
+void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer.get() setAcceleratesDrawing:acceleratesDrawing];
+    END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(acceleratesDrawing);
+#endif
 }
 
 void* PlatformCALayer::contents() const

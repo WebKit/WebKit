@@ -482,6 +482,15 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
     noteLayerPropertyChanged(DrawsContentChanged);
 }
 
+void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
+{
+    if (acceleratesDrawing == m_acceleratesDrawing)
+        return;
+
+    GraphicsLayer::setAcceleratesDrawing(acceleratesDrawing);
+    noteLayerPropertyChanged(DrawsContentChanged);
+}
+
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
 {
     if (m_backgroundColorSet && m_backgroundColor == color)
@@ -837,6 +846,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
 
     if (m_uncommittedChanges & ContentsNeedsDisplay)
         updateContentsNeedsDisplay();
+    
+    if (m_uncommittedChanges & AcceleratesDrawingChanged)
+        updateAcceleratesDrawing();
 }
 
 void GraphicsLayerCA::commitLayerChangesAfterSublayers()
@@ -1178,6 +1190,11 @@ void GraphicsLayerCA::updateLayerDrawsContent()
     updateDebugIndicators();
 }
 
+void GraphicsLayerCA::updateAcceleratesDrawing()
+{
+    m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
+}
+    
 void GraphicsLayerCA::updateLayerBackgroundColor()
 {
     if (!m_contentsLayer)

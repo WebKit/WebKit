@@ -258,6 +258,9 @@ public:
     bool drawsContent() const { return m_drawsContent; }
     virtual void setDrawsContent(bool b) { m_drawsContent = b; }
 
+    bool acceleratesDrawing() const { return m_acceleratesDrawing; }
+    virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
+
     // The color used to paint the layer backgrounds
     const Color& backgroundColor() const { return m_backgroundColor; }
     virtual void setBackgroundColor(const Color&);
@@ -394,6 +397,7 @@ protected:
     bool m_usingTiledLayer : 1;
     bool m_masksToBounds : 1;
     bool m_drawsContent : 1;
+    bool m_acceleratesDrawing : 1;
 
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents
