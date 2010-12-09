@@ -1,3 +1,13 @@
+2010-12-09  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix 'make install' woes with some versions of automake.
+
+        * GNUmakefile.am: use $(top_builddir) instead of $(builddir),
+        since we actually want a valid path for the file regardless of the
+        place from where the script is called.
+
 2010-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix. Take webView{Enter,Exit}Fullscreen back out of the

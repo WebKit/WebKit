@@ -203,8 +203,8 @@ pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
 
-JSCore-@WEBKITGTK_API_VERSION@.gir: $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
-	$(AM_V_GEN)cp $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(builddir)/
+JSCore-@WEBKITGTK_API_VERSION@.gir: $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
+	$(AM_V_GEN)cp $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(top_builddir)/
 
 JSCORE_GIRSOURCES += JSCore-@WEBKITGTK_API_VERSION@.gir
 WEBKIT_GIRSOURCES += WebKit-@WEBKITGTK_API_VERSION@.gir
@@ -226,12 +226,12 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --pkg=libsoup-2.4 \
 	     --output=$@ \
 	     --add-include-path=$(WebKit) \
-	     --add-include-path=$(builddir) \
+	     --add-include-path=$(top_builddir) \
 	     -I$(top_srcdir)/WebCore/platform/network/soup/cache \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
-	     -I$(builddir)/WebKit/gtk \
+	     -I$(top_builddir)/WebKit/gtk \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(GENSOURCES_WEBKIT)/webkitenumtypes.h \
@@ -246,13 +246,13 @@ typelibsdir += $(libdir)/girepository-1.0
 typelibs_DATA += $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(G_IR_COMPILER)
-	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit) --includedir $(builddir) $< -o $@
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit) --includedir $(top_builddir) $< -o $@
 
 CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
 
 endif
 
-EXTRA_DIST += $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
+EXTRA_DIST += $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
 
 WEBKIT_MARSHAL_LIST = $(WebKit)/webkitmarshal.list
 $(GENSOURCES_WEBKIT)/webkitmarshal.cpp: stamp-webkitmarshal.cpp
