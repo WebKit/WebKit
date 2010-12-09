@@ -738,7 +738,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
         || (deltaX > 0 && maxBackwardScrollDelta.width() >0)
         || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
-        || (deltaY > 0 && maxBackwardScrollDelta.width() > 0)) {
+        || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         e.accept();
         if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(!e.deltaX());

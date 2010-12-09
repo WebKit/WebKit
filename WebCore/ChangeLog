@@ -1,3 +1,13 @@
+2010-12-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix regression from xji's wheel scroll patch.  The vertical case is looking at the horizontal
+        maximum position and not the vertical position.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+
 2010-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
