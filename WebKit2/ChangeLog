@@ -1,3 +1,14 @@
+2010-12-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8749750> and https://bugs.webkit.org/show_bug.cgi?id=50786
+        WK2 authentication never consults WebCore session credential storage.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage): Since we don't need to expose this as
+          API at this time, always return true.
+
 2010-12-09  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Alexey Proskuryakov.

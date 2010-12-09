@@ -146,7 +146,6 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     notImplemented();
 }
 
-
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse)
 {
     notImplemented();
@@ -154,8 +153,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
 
 bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned long identifier)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
