@@ -1,3 +1,31 @@
+2010-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Yensign hack should work with Shift_JIS and ISO-2022-JP encodings.
+        https://bugs.webkit.org/show_bug.cgi?id=49714
+
+        IE chooses a font which shows a yensign for 0x5c code point for a page
+        encoded in x-mac-japanese, ISO-2022-JP, EUC-JP, Shift_JIS, Shift_JIS_X0213-2000,
+        x-sjis, and Windows-31J.
+        We have emulated this behavior by replacing 0x5c with 0xa5 for EUC-JP and
+        Shift_JIS_X0213-2000. This change adds other encodings above.
+
+        Also, we move the HashSet initialization for isJapanese() and
+        backslashAsCurrencySymbol() to TextEncodingRegistry.cpp because of
+        ease of making them multi-thread safe.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::isJapanese): Just calls isJapaneseEncoding().
+        (WebCore::TextEncoding::backslashAsCurrencySymbol): Uses shouldShowBackslashAsCurrencySymbolIn().
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::addEncodingName): Moved from TextEncoding.cpp, and stop using atomicCanonicalTextEncodingName().
+        (WebCore::buildQuirksSets): Added. Initializes HashSets for isJapaneseEncoding() and shouldShowBackslashAsCurrencySymbolIn().
+        (WebCore::isJapaneseEncoding):
+        (WebCore::shouldShowBackslashAsCurrencySymbolIn):
+        (WebCore::extendTextCodecMaps): Add a call to buildQuirksSets().
+        * platform/text/TextEncodingRegistry.h:
+
 2010-12-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

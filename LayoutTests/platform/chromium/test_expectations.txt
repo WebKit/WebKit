@@ -676,7 +676,6 @@ BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
 // Flaky
 BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
-BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
 // Tests added in r69269.

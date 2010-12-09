@@ -40,18 +40,10 @@
 #include "GOwnPtr.h"
 #endif
 #include <wtf/text/CString.h>
-#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
-
-static void addEncodingName(HashSet<const char*>& set, const char* name)
-{
-    const char* atomicName = atomicCanonicalTextEncodingName(name);
-    if (atomicName)
-        set.add(atomicName);
-}
 
 static const TextEncoding& UTF7Encoding()
 {
@@ -173,39 +165,12 @@ bool TextEncoding::usesVisualOrdering() const
 
 bool TextEncoding::isJapanese() const
 {
-    if (noExtendedTextEncodingNameUsed())
-        return false;
-
-    DEFINE_STATIC_LOCAL(HashSet<const char*>, set, ());
-    if (set.isEmpty()) {
-        addEncodingName(set, "x-mac-japanese");
-        addEncodingName(set, "cp932");
-        addEncodingName(set, "JIS_X0201");
-        addEncodingName(set, "JIS_X0208-1983");
-        addEncodingName(set, "JIS_X0208-1990");
-        addEncodingName(set, "JIS_X0212-1990");
-        addEncodingName(set, "JIS_C6226-1978");
-        addEncodingName(set, "Shift_JIS_X0213-2000");
-        addEncodingName(set, "ISO-2022-JP");
-        addEncodingName(set, "ISO-2022-JP-2");
-        addEncodingName(set, "ISO-2022-JP-1");
-        addEncodingName(set, "ISO-2022-JP-3");
-        addEncodingName(set, "EUC-JP");
-        addEncodingName(set, "Shift_JIS");
-    }
-    return m_name && set.contains(m_name);
+    return isJapaneseEncoding(m_name);
 }
 
 UChar TextEncoding::backslashAsCurrencySymbol() const
 {
-    if (noExtendedTextEncodingNameUsed())
-        return '\\';
-
-    // The text encodings below treat backslash as a currency symbol.
-    // See http://blogs.msdn.com/michkap/archive/2005/09/17/469941.aspx for more information.
-    static const char* const a = atomicCanonicalTextEncodingName("Shift_JIS_X0213-2000");
-    static const char* const b = atomicCanonicalTextEncodingName("EUC-JP");
-    return (m_name == a || m_name == b) ? 0x00A5 : '\\';
+    return shouldShowBackslashAsCurrencySymbolIn(m_name) ? 0x00A5 : '\\';
 }
 
 bool TextEncoding::isNonByteBasedEncoding() const

@@ -1,3 +1,18 @@
+2010-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Yensign hack should work with Shift_JIS and ISO-2022-JP encodings.
+        https://bugs.webkit.org/show_bug.cgi?id=49714
+
+        Use Shift_JIS instead of Shift_JIS_X0213-2000 because Shift_JIS_X0213-2000
+        encoding is available only on Mac.
+        Add a test for ISO-2022-JP.
+
+        * editing/selection/find-yensign-and-backslash-expected.txt:
+        * editing/selection/find-yensign-and-backslash.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

@@ -39,12 +39,12 @@ namespace WebCore {
     // Use TextEncoding::encode to encode, since it takes care of normalization.
     PassOwnPtr<TextCodec> newTextCodec(const TextEncoding&);
 
-    // Only TextEncoding should use this function directly.
+    // Only TextEncoding should use the following functions directly.
     const char* atomicCanonicalTextEncodingName(const char* alias);
     const char* atomicCanonicalTextEncodingName(const UChar* aliasCharacters, size_t aliasLength);
-
-    // Only TextEncoding should use this function directly.
     bool noExtendedTextEncodingNameUsed();
+    bool isJapaneseEncoding(const char* canonicalEncodingName);
+    bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
 
 #ifndef NDEBUG
     void dumpTextEncodingNameMap();
