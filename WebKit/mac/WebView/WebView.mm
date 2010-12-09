@@ -1390,8 +1390,12 @@ static bool fastDocumentTeardownEnabled()
     // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
     static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
         && (applicationIsAOLInstantMessenger() || applicationIsMicrosoftMyDay());
+    
+    // Mail.app must continue to display HTML email that contains quirky markup.
+    static bool isAppleMail = applicationIsAppleMail();
 
     return isApplicationNeedingParserQuirks
+        || isAppleMail
 #if ENABLE(DASHBOARD_SUPPORT)
         // Pre-HTML5 parser quirks are required to remain compatible with many
         // Dashboard widgets. See <rdar://problem/8175982>.
