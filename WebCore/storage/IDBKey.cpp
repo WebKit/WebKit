@@ -38,7 +38,7 @@ IDBKey::IDBKey()
 {
 }
 
-IDBKey::IDBKey(double number)
+IDBKey::IDBKey(int32_t number)
     : m_type(NumberType)
     , m_number(number)
 {
@@ -65,7 +65,7 @@ PassRefPtr<IDBKey> IDBKey::fromQuery(SQLiteStatement& query, int baseColumn)
     }
 
     if (!query.isColumnNull(baseColumn + 2))
-        return IDBKey::create(query.getColumnDouble(baseColumn + 2));
+        return IDBKey::create(query.getColumnInt(baseColumn + 2));
 
     return IDBKey::create(); // Null.
 }
@@ -147,7 +147,7 @@ int IDBKey::bind(SQLiteStatement& query, int column) const
         query.bindText(column, m_string);
         return 1;
     case IDBKey::NumberType:
-        query.bindDouble(column, m_number);
+        query.bindInt(column, m_number);
         return 1;
     case IDBKey::NullType:
         return 0;
@@ -168,7 +168,7 @@ void IDBKey::bindWithNulls(SQLiteStatement& query, int baseColumn) const
     case IDBKey::NumberType:
         query.bindNull(baseColumn + 0);
         query.bindNull(baseColumn + 1);
-        query.bindDouble(baseColumn + 2, m_number);
+        query.bindInt(baseColumn + 2, m_number);
         break;
     case IDBKey::NullType:
         query.bindNull(baseColumn + 0);

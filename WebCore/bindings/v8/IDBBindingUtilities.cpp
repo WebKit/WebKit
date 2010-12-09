@@ -41,8 +41,8 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
 {
     if (value->IsNull())
         return IDBKey::create();
-    if (value->IsNumber())
-        return IDBKey::create(value->NumberValue());
+    if (value->IsInt32())
+        return IDBKey::create(value->Int32Value());
     if (value->IsString())
         return IDBKey::create(v8ValueToWebCoreString(value));
     if (value->IsDate())

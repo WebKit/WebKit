@@ -1,3 +1,27 @@
+2010-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73616.
+        http://trac.webkit.org/changeset/73616
+        https://bugs.webkit.org/show_bug.cgi?id=50772
+
+        Breaks chromium win build (Requested by hwennborg on #webkit).
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::fromQuery):
+        (WebCore::IDBKey::bind):
+        (WebCore::IDBKey::bindWithNulls):
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::create):
+        (WebCore::IDBKey::number):
+
 2010-12-09  Antonio Gomes  <agomes@rim.com>
 
         Rubber stamped by by Gustavo Noronha Silva.

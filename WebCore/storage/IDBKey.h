@@ -43,7 +43,7 @@ public:
     {
         return adoptRef(new IDBKey());
     }
-    static PassRefPtr<IDBKey> create(double number)
+    static PassRefPtr<IDBKey> create(int32_t number)
     {
         return adoptRef(new IDBKey(number));
     }
@@ -68,7 +68,7 @@ public:
         return m_string;
     }
 
-    double number() const
+    int32_t number() const
     {
         ASSERT(m_type == NumberType);
         return m_number;
@@ -88,12 +88,12 @@ public:
 
 private:
     IDBKey();
-    explicit IDBKey(double);
+    explicit IDBKey(int32_t);
     explicit IDBKey(const String&);
 
     Type m_type;
     String m_string;
-    double m_number;
+    int32_t m_number;
 };
 
 }

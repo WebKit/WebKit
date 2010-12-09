@@ -27,11 +27,6 @@ PASS keyRange.lower is 1
 PASS keyRange.upper is 1
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.only(3.14)
-PASS keyRange.lower is 3.14
-PASS keyRange.upper is 3.14
-PASS keyRange.lowerOpen is false
-PASS keyRange.upperOpen is false
 webkitIDBKeyRange.only('a')
 PASS keyRange.lower is 'a'
 PASS keyRange.upper is 'a'
@@ -49,21 +44,6 @@ PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
 webkitIDBKeyRange.lowerBound(12,undefined)
 PASS keyRange.lower is 12
-PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(10.1,true)
-PASS keyRange.lower is 10.1
-PASS keyRange.lowerOpen is true
-PASS keyRange.upper is null
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(11.2,false)
-PASS keyRange.lower is 11.2
-PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(12.3,undefined)
-PASS keyRange.lower is 12.3
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
@@ -94,21 +74,6 @@ PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
 webkitIDBKeyRange.upperBound(22,undefined)
 PASS keyRange.upper is 22
-PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
-PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(20.2,true)
-PASS keyRange.upper is 20.2
-PASS keyRange.upperOpen is true
-PASS keyRange.lower is null
-PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(21.3,false)
-PASS keyRange.upper is 21.3
-PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
-PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(22.4,undefined)
-PASS keyRange.upper is 22.4
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
@@ -149,31 +114,6 @@ PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
 webkitIDBKeyRange.bound(34,44, {lowerOpen: true, upperOpen:true})
 PASS keyRange.lower is 34
-PASS keyRange.upper is 44
-PASS keyRange.lowerOpen is true
-PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound(30.1,40.2, {lowerOpen: undefined, upperOpen:undefined})
-PASS keyRange.lower is 30.1
-PASS keyRange.upper is 40.2
-PASS keyRange.lowerOpen is false
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(31.3,41.4, {lowerOpen: false, upperOpen:false})
-PASS keyRange.lower is 31.3
-PASS keyRange.upper is 41.4
-PASS keyRange.lowerOpen is false
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(32.5,42.6, {lowerOpen: false, upperOpen:true})
-PASS keyRange.lower is 32.5
-PASS keyRange.upper is 42.6
-PASS keyRange.lowerOpen is false
-PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound(33.7,43.8, {lowerOpen: true, upperOpen:false})
-PASS keyRange.lower is 33.7
-PASS keyRange.upper is 43.8
-PASS keyRange.lowerOpen is true
-PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(34.9,44, {lowerOpen: true, upperOpen:true})
-PASS keyRange.lower is 34.9
 PASS keyRange.upper is 44
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true

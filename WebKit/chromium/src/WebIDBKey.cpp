@@ -77,7 +77,7 @@ void WebIDBKey::assign(const WebString& string)
     m_private = IDBKey::create(string);
 }
 
-void WebIDBKey::assign(double number)
+void WebIDBKey::assign(int32_t number)
 {
     m_private = IDBKey::create(number);
 }
@@ -104,7 +104,7 @@ WebString WebIDBKey::string() const
     return m_private->string();
 }
 
-double WebIDBKey::number() const
+int32_t WebIDBKey::number() const
 {
     return m_private->number();
 }
