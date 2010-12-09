@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 
 #include "EventException.h"
+#include "IDBDatabaseException.h"
 #include "RangeException.h"
 #include "XMLHttpRequestException.h"
 
@@ -209,6 +210,36 @@ static const char* const fileExceptionDescriptions[] = {
 };
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+static const char* const idbDatabaseExceptionNames[] = {
+    "UNKNOWN_ERR",
+    "NON_TRANSIENT_ERR",
+    "NOT_FOUND_ERR",
+    "CONSTRAINT_ERR",
+    "DATA_ERR",
+    "NOT_ALLOWED_ERR",
+    "SERIAL_ERR",
+    "RECOVERABLE_ERR",
+    "TRANSIENT_ERR",
+    "TIMEOUT_ERR",
+    "DEADLOCK_ERR"
+};
+
+static const char* const idbDatabaseExceptionDescriptions[] = {
+    "An unknown error occurred within Indexed Database.",
+    "NON_TRANSIENT_ERR", // FIXME: Write a better message if it's ever possible this is thrown.
+    "The name supplied does not match any existing item.",
+    "The request cannot be completed due to a failed constraint.",
+    "The data provided does not meet the requirements of the function.",
+    "This function is not allowed to be called in such a context.",
+    "The data supplied cannot be serialized according to the structured cloning algorithm.",
+    "RECOVERABLE_ERR", // FIXME: This isn't even used.
+    "TRANSIENT_ERR", // FIXME: This isn't even used.
+    "TIMEOUT_ERR", // This can't be thrown.
+    "DEADLOCK_ERR" // This can't be thrown.
+};
+#endif
+
 void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& description)
 {
     ASSERT(ec);
@@ -286,6 +317,16 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         descriptionTable = fileExceptionDescriptions;
         nameTableSize = WTF_ARRAY_LENGTH(fileExceptionNames);
         nameTableOffset = FileException::NOT_FOUND_ERR;
+#endif
+#if ENABLE(INDEXED_DATABASE)
+    } else if (code >= IDBDatabaseException::IDBDatabaseExceptionOffset && code <= IDBDatabaseException::IDBDatabaseExceptionMax) {
+        type = IDBDatabaseExceptionType;
+        typeName = "DOM IDBDatabase";
+        code -= IDBDatabaseException::IDBDatabaseExceptionOffset;
+        nameTable = idbDatabaseExceptionNames;
+        descriptionTable = idbDatabaseExceptionDescriptions;
+        nameTableSize = WTF_ARRAY_LENGTH(idbDatabaseExceptionNames);
+        nameTableOffset = IDBDatabaseException::UNKNOWN_ERR;
 #endif
     } else {
         type = DOMExceptionType;

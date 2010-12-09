@@ -26,46 +26,48 @@
 #ifndef IDBDatabaseException_h
 #define IDBDatabaseException_h
 
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
 #if ENABLE(INDEXED_DATABASE)
+
+#include "ExceptionBase.h"
 
 namespace WebCore {
 
-class IDBDatabaseException : public RefCounted<IDBDatabaseException> {
+class IDBDatabaseException : public ExceptionBase {
 public:
-    static PassRefPtr<IDBDatabaseException> create()
+    static PassRefPtr<IDBDatabaseException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new IDBDatabaseException());
+        return adoptRef(new IDBDatabaseException(description));
     }
-    ~IDBDatabaseException() { }
 
-    enum ErrorCode {
-        UNKNOWN_ERR = 1,
-        NON_TRANSIENT_ERR = 1,
-        NOT_FOUND_ERR = 2,
-        CONSTRAINT_ERR = 3,
-        DATA_ERR = 4,
-        NOT_ALLOWED_ERR = 5,
-        SERIAL_ERR = 11,
-        RECOVERABLE_ERR = 21,
-        TRANSIENT_ERR = 31,
-        TIMEOUT_ERR = 32,
-        DEADLOCK_ERR = 33
+    static const int IDBDatabaseExceptionOffset = 1200;
+    static const int IDBDatabaseExceptionMax = 1299;
+
+    enum IDBDatabaseExceptionCode {
+        UNKNOWN_ERR = IDBDatabaseExceptionOffset + 1,
+        NON_TRANSIENT_ERR = IDBDatabaseExceptionOffset + 2,
+        NOT_FOUND_ERR = IDBDatabaseExceptionOffset + 3,
+        CONSTRAINT_ERR = IDBDatabaseExceptionOffset + 4,
+        DATA_ERR = IDBDatabaseExceptionOffset + 5,
+        NOT_ALLOWED_ERR = IDBDatabaseExceptionOffset + 6,
+        SERIAL_ERR = IDBDatabaseExceptionOffset + 7,
+        RECOVERABLE_ERR = IDBDatabaseExceptionOffset + 8,
+        TRANSIENT_ERR = IDBDatabaseExceptionOffset + 9,
+        TIMEOUT_ERR = IDBDatabaseExceptionOffset + 10,
+        DEADLOCK_ERR = IDBDatabaseExceptionOffset + 11
     };
-   
-    unsigned short code() const { return m_code; }
-    void setCode(unsigned short value) { m_code = value; }
-    String message() const { return m_message; }
-    void setMessage(const String& value) { m_message = value; }
+
+    static int ErrorCodeToExceptionCode(int errorCode)
+    {
+        if (!errorCode)
+            return 0;
+        return errorCode + IDBDatabaseExceptionOffset;
+    }
 
 private:
-    IDBDatabaseException() { }
-
-    unsigned short m_code;
-    String m_message;
+    IDBDatabaseException(const ExceptionCodeDescription& description)
+        : ExceptionBase(description)
+    {
+    }
 };
 
 } // namespace WebCore

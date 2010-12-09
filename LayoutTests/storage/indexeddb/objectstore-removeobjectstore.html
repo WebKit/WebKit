@@ -112,7 +112,7 @@ function getValueAgain()
 function verifyError()
 {
     verifyErrorEvent(event);
-    shouldBe("event.code", "2");
+    shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     shouldBeFalse("event.source.indexNames.contains('indexName')");
 
     done();

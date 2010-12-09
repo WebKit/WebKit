@@ -86,6 +86,11 @@
 #include "JSFileException.h"
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBDatabaseException.h"
+#include "JSIDBDatabaseException.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -648,6 +653,11 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         case FileExceptionType:
             errorObject = toJS(exec, globalObject, FileException::create(description));
+            break;
+#endif
+#if ENABLE(INDEXED_DATABASE)
+        case IDBDatabaseExceptionType:
+            errorObject = toJS(exec, globalObject, IDBDatabaseException::create(description));
             break;
 #endif
     }

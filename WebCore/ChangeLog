@@ -1,3 +1,30 @@
+2010-12-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB returns the wrong exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=50632
+
+        IndexedDB exceptions need to have an offset so they can
+        be distinguished from DOM exceptions.  We also need to
+        add strings for the various exceptions.  Lastly, make
+        IDBDatabaseException use the common exception base class.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        * storage/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::code):
+        * storage/IDBDatabaseException.h:
+        (WebCore::IDBDatabaseException::create):
+        (WebCore::IDBDatabaseException::ErrorCodeToExceptionCode):
+        (WebCore::IDBDatabaseException::IDBDatabaseException):
+        * storage/IDBDatabaseException.idl:
+
 2010-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix for GTK+3. Use functions added for GTK+ 2.24 to get the

@@ -37,6 +37,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "InspectorInstrumentation.h"
@@ -63,6 +64,10 @@
 #include "V8XPathException.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+
+#if ENABLE(INDEXED_DATABASE)
+#include "V8IDBDatabaseException.h"
+#endif
 
 #if ENABLE(SVG)
 #include "V8SVGException.h"
@@ -671,6 +676,11 @@ void V8Proxy::setDOMException(int exceptionCode)
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     case FileExceptionType:
         exception = toV8(FileException::create(description));
+        break;
+#endif
+#if ENABLE(INDEXED_DATABASE)
+    case IDBDatabaseExceptionType:
+        exception = toV8(IDBDatabaseException::create(description));
         break;
 #endif
     default:

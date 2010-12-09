@@ -84,6 +84,9 @@ namespace WebCore {
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         , FileExceptionType
 #endif
+#if ENABLE(INDEXED_DATABASE)
+        , IDBDatabaseExceptionType
+#endif
     };
 
 

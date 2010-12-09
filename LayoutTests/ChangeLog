@@ -1,3 +1,15 @@
+2010-12-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB returns the wrong exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=50632
+
+        * storage/indexeddb/constants-expected.txt:
+        * storage/indexeddb/constants.html:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore.html:
+
 2010-12-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rebaselined Chromium expectations.

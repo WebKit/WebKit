@@ -26,23 +26,30 @@
 module storage {
 
     interface [
-        Conditional=INDEXED_DATABASE
+        Conditional=INDEXED_DATABASE,
+        DontCheckEnums
     ] IDBDatabaseException {
-        // FIXME: These error codes conflict with others.
-        const unsigned short UNKNOWN_ERR = 1;
-        const unsigned short NON_TRANSIENT_ERR = 1;
-        const unsigned short NOT_FOUND_ERR = 2;
-        const unsigned short CONSTRAINT_ERR = 3;
-        const unsigned short DATA_ERR = 4;
-        const unsigned short NOT_ALLOWED_ERR = 5;
-        const unsigned short SERIAL_ERR = 11;
-        const unsigned short RECOVERABLE_ERR = 21;
-        const unsigned short TRANSIENT_ERR = 31;
-        const unsigned short TIMEOUT_ERR = 32;
-        const unsigned short DEADLOCK_ERR = 33;
 
-        attribute unsigned short code;
-        attribute DOMString message;
+        readonly attribute unsigned short   code;
+        readonly attribute DOMString        name;
+        readonly attribute DOMString        message;
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        // Override in a Mozilla compatible format
+        [DontEnum] DOMString toString();
+#endif
+
+        const unsigned short UNKNOWN_ERR = 1;
+        const unsigned short NON_TRANSIENT_ERR = 2;
+        const unsigned short NOT_FOUND_ERR = 3;
+        const unsigned short CONSTRAINT_ERR = 4;
+        const unsigned short DATA_ERR = 5;
+        const unsigned short NOT_ALLOWED_ERR = 6;
+        const unsigned short SERIAL_ERR = 7;
+        const unsigned short RECOVERABLE_ERR = 8;
+        const unsigned short TRANSIENT_ERR = 9;
+        const unsigned short TIMEOUT_ERR = 10;
+        const unsigned short DEADLOCK_ERR = 11;
     };
 
 }

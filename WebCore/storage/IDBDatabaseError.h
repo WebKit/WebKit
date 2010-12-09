@@ -26,6 +26,7 @@
 #ifndef IDBDatabaseError_h
 #define IDBDatabaseError_h
 
+#include "IDBDatabaseException.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,7 +43,7 @@ public:
     }
     ~IDBDatabaseError() { }
 
-    unsigned short code() const { return m_code; }
+    unsigned short code() const { return m_code - IDBDatabaseException::IDBDatabaseExceptionOffset; }
     void setCode(unsigned short value) { m_code = value; }
     const String& message() const { return m_message; }
     void setMessage(const String& value) { m_message = value; }
