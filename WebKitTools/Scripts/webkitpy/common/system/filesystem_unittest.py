@@ -152,6 +152,21 @@ class FileSystemTest(unittest.TestCase):
         fs = FileSystem()
         self.assertRaises(IOError, fs.read_text_file, self._missing_file)
 
+    def test_remove_file_with_retry(self):
+        FileSystemTest._remove_failures = 2
+
+        def remove_with_exception(filename):
+            FileSystemTest._remove_failures -= 1
+            if FileSystemTest._remove_failures >= 0:
+                try:
+                    raise WindowsError
+                except NameError:
+                    raise FileSystem._WindowsError
+
+        fs = FileSystem()
+        self.assertTrue(fs.remove('filename', remove_with_exception))
+        self.assertEquals(-1, FileSystemTest._remove_failures)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -34,6 +34,8 @@ import os
 import time
 import urllib
 
+from webkitpy.common.system import filesystem
+
 _log = logging.getLogger("webkitpy.layout_tests.port.http_server_base")
 
 
@@ -78,4 +80,4 @@ class HttpServerBase(object):
         for file in files:
             if file.startswith(starts_with):
                 full_path = os.path.join(folder, file)
-                os.remove(full_path)
+                filesystem.FileSystem().remove(full_path)

@@ -1,3 +1,15 @@
+2010-12-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        make starting the websocket server more reliable on windows
+        https://bugs.webkit.org/show_bug.cgi?id=50712
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (remove): Substitute method for os.remove to retry on error on Windows
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py: Use FileSystem.remove
+
 2010-12-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

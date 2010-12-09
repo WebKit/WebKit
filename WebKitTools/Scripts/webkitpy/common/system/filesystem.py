@@ -32,10 +32,11 @@ from __future__ import with_statement
 
 import codecs
 import errno
+import exceptions
 import os
 import shutil
 import tempfile
-
+import time
 
 class FileSystem(object):
     """FileSystem interface for webkitpy.
@@ -96,6 +97,34 @@ class FileSystem(object):
         except OSError, e:
             if e.errno != errno.EEXIST:
                 raise
+
+    class _WindowsError(exceptions.OSError):
+        """Fake exception for Linux and Mac."""
+        pass
+
+    def remove(self, path, osremove=os.remove):
+        """On Windows, os.remove can sometimes fail.  We see this behavior in
+        Chromium tests as well and are unsure why.  Others on the internet are
+        equally confused:
+        http://social.msdn.microsoft.com/Forums/en/windowssearch/thread/55582d9d-77ea-47d9-91ce-cff7ca7ef528
+        http://codesearch.google.com/codesearch/p?hl=en#OAMlx_jo-ck/src/base/test/test_file_util_win.cc&q=diefiledie&exact_package=chromium&l=22
+        """
+        try:
+            WindowsError
+        except NameError:
+            WindowsError = FileSystem._WindowsError
+
+        retry_timeout_sec = 3.0
+        sleep_interval = 0.1
+        while True:
+            try:
+                osremove(path)
+                return True
+            except WindowsError, e:
+                time.sleep(sleep_interval)
+                retry_timeout_sec -= sleep_interval
+                if retry_timeout_sec < 0:
+                    raise e
 
     def read_binary_file(self, path):
         """Return the contents of the file at the given path as a byte string."""
