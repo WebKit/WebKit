@@ -1,3 +1,23 @@
+2010-12-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Update GTK+ baselines after r73561.
+
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/placeholder-set-value-expected.txt:
+        * platform/gtk/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/gtk/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/search-transformed-expected.txt:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/gtk/fast/forms/search-zoomed-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+
 2010-12-09  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, update test baselines as asked by MORITA Hajime.
