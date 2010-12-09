@@ -1,3 +1,17 @@
+2010-12-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rebaselined Chromium expectations.
+        Reverts r73518 and r73522.
+
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png: Added.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png: Added.
+        * platform/chromium-win/fast/forms/placeholder-position-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png: Added.
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Add Qt specific expected results for tests introduced in r73529.
