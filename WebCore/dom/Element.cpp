@@ -982,12 +982,9 @@ void Element::recalcStyle(StyleChange change)
 {
     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
     RefPtr<RenderStyle> currentStyle(renderStyle());
-    bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
+    bool hasParentStyle = parentOrHostNode() ? parentOrHostNode()->renderStyle() : false;
     bool hasPositionalRules = needsStyleRecalc() && currentStyle && currentStyle->childrenAffectedByPositionalRules();
     bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
-
-    if (!hasParentStyle && isShadowNode())
-        hasParentStyle = true;
 
     if ((change > NoChange || needsStyleRecalc())) {
         if (hasRareData())

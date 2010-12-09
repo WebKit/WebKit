@@ -496,7 +496,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
         if (parent->isShadowNode())
             return;
 
-        parent = parent->parentNode();
+        parent = parent->parentNodeGuaranteedHostFree();
     }
  
     SVGElement* target = 0;

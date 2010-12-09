@@ -100,7 +100,7 @@ Node* DOMSelection::anchorNode() const
     if (!m_frame)
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
-        return shadowAncestor->parentNode();
+        return shadowAncestor->parentNodeGuaranteedHostFree();
     return anchorPosition(visibleSelection()).node();
 }
 
@@ -118,7 +118,7 @@ Node* DOMSelection::focusNode() const
     if (!m_frame)
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
-        return shadowAncestor->parentNode();
+        return shadowAncestor->parentNodeGuaranteedHostFree();
     return focusPosition(visibleSelection()).node();
 }
 
@@ -136,7 +136,7 @@ Node* DOMSelection::baseNode() const
     if (!m_frame)
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
-        return shadowAncestor->parentNode();
+        return shadowAncestor->parentNodeGuaranteedHostFree();
     return basePosition(visibleSelection()).node();
 }
 
@@ -154,7 +154,7 @@ Node* DOMSelection::extentNode() const
     if (!m_frame)
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
-        return shadowAncestor->parentNode();
+        return shadowAncestor->parentNodeGuaranteedHostFree();
     return extentPosition(visibleSelection()).node();
 }
 
@@ -370,7 +370,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
     ASSERT(rangeCount() == 1);
 
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame)) {
-        ContainerNode* container = shadowAncestor->parentNode();
+        ContainerNode* container = shadowAncestor->parentNodeGuaranteedHostFree();
         int offset = shadowAncestor->nodeIndex();
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }

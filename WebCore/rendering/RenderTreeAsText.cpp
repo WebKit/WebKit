@@ -685,9 +685,7 @@ static String nodePosition(Node* node)
     Element* body = node->document()->body();
     Node* parent;
     for (Node* n = node; n; n = parent) {
-        parent = n->parentNode();
-        if (!parent)
-            parent = n->shadowParentNode();
+        parent = n->parentOrHostNode();
         if (n != node)
             result += " of ";
         if (parent) {

@@ -75,7 +75,7 @@ PassRefPtr<ShadowBlockElement> ShadowBlockElement::createForPart(HTMLElement* sh
 
 void ShadowBlockElement::initAsPart(PseudoId pseudoId)
 {
-    RenderObject* parentRenderer = shadowParent()->renderer();
+    RenderObject* parentRenderer = shadowHost()->renderer();
     RefPtr<RenderStyle> styleForPart = createStyleForPart(parentRenderer, pseudoId);
     setRenderer(createRenderer(parentRenderer->renderArena(), styleForPart.get()));
     renderer()->setStyle(styleForPart.release());

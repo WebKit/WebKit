@@ -55,15 +55,10 @@ public:
     static PassRefPtr<SVGShadowTreeRootElement> create(Document*, SVGUseElement* shadowParent);
 
     void attachElement(PassRefPtr<RenderStyle>, RenderArena*);
-
-    virtual ContainerNode* shadowParentNode() { return m_shadowParent; }
+    void clearShadowHost();
 
 private:
     SVGShadowTreeRootElement(Document*, SVGUseElement* shadowParent);
-
-    virtual bool isShadowNode() const { return m_shadowParent; }
-
-    ContainerNode* m_shadowParent;
 };
 
 }

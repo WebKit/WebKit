@@ -65,8 +65,8 @@ static const float cSeekTime = 0.2f;
 
 inline MediaControlShadowRootElement::MediaControlShadowRootElement(HTMLMediaElement* mediaElement)
     : HTMLDivElement(divTag, mediaElement->document())
-    , m_mediaElement(mediaElement) 
 {
+    setShadowHost(mediaElement);
 }
 
 PassRefPtr<MediaControlShadowRootElement> MediaControlShadowRootElement::create(HTMLMediaElement* mediaElement)
@@ -91,9 +91,16 @@ PassRefPtr<MediaControlShadowRootElement> MediaControlShadowRootElement::create(
 void MediaControlShadowRootElement::updateStyle()
 {
     if (renderer()) {
-        RenderStyle* timelineContainerStyle = m_mediaElement->renderer()->getCachedPseudoStyle(MEDIA_CONTROLS_TIMELINE_CONTAINER);
+        RenderStyle* timelineContainerStyle = shadowHost()->renderer()->getCachedPseudoStyle(MEDIA_CONTROLS_TIMELINE_CONTAINER);
         renderer()->setStyle(timelineContainerStyle);
     }
+}
+
+void MediaControlShadowRootElement::detach()
+{
+    HTMLDivElement::detach();
+    // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
+    setShadowHost(0);
 }
 
 // ----------------------------

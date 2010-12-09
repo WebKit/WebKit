@@ -74,7 +74,7 @@ class TagNodeList;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 24;
+const int nodeStyleChangeShift = 25;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -138,7 +138,7 @@ public:
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
     virtual NodeType nodeType() const = 0;
-    ContainerNode* parentNode() const { return parent(); }
+    ContainerNode* parentNode() const;
     Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
     Node* nextSibling() const { return m_next; }
@@ -205,13 +205,16 @@ public:
     bool isCommentNode() const { return getFlag(IsCommentFlag); }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
-    virtual bool isShadowNode() const { return false; }
-    virtual ContainerNode* shadowParentNode() { return 0; }
+    bool isShadowNode() const { return getFlag(IsShadowRootFlag); }
+    // FIXME: Eliminate all uses, fold into shadowHost.
+    ContainerNode* shadowParentNode() const;
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
     // Node's parent or shadow tree host.
-    ContainerNode* parentOrHostNode();
+    ContainerNode* parentOrHostNode() const;
+    // Use when it's guaranteed to that shadowParentNode is 0.
+    ContainerNode* parentNodeGuaranteedHostFree() const;
 
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
@@ -581,17 +584,19 @@ private:
         InActiveChainFlag = 1 << 15,
         InDetachFlag = 1 << 16,
         HasRareDataFlag = 1 << 17,
+        IsShadowRootFlag = 1 << 18,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsParsingChildrenFinishedFlag = 1 << 18, // Element
-        IsStyleAttributeValidFlag = 1 << 19, // StyledElement
-        IsSynchronizingStyleAttributeFlag = 1 << 20, // StyledElement
+        IsParsingChildrenFinishedFlag = 1 << 19, // Element
+        IsStyleAttributeValidFlag = 1 << 20, // StyledElement
+        IsSynchronizingStyleAttributeFlag = 1 << 21, // StyledElement
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 21, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 22, // SVGElement
-        HasSVGRareDataFlag = 1 << 23, // SVGElement
+        AreSVGAttributesValidFlag = 1 << 22, // Element
+        IsSynchronizingSVGAttributesFlag = 1 << 23, // SVGElement
+        HasSVGRareDataFlag = 1 << 24, // SVGElement
 #endif
+
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
 #if ENABLE(SVG)
@@ -601,7 +606,7 @@ private:
 #endif
     };
 
-    // 5 bits remaining
+    // 4 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -631,6 +636,9 @@ protected:
 
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
+
+    Element* shadowHost() const;
+    void setShadowHost(Element*);
 
 private:
 #if USE(JSC)
@@ -703,11 +711,25 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
         urls.add(url);
 }
 
-inline ContainerNode* Node::parentOrHostNode()
+inline ContainerNode* Node::parentNode() const
 {
-    if (ContainerNode* parent = parentNode())
-        return parent;
-    return shadowParentNode();
+    return getFlag(IsShadowRootFlag) ? 0 : parent();
+}
+
+inline ContainerNode* Node::parentOrHostNode() const
+{
+    return parent();
+}
+
+inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
+{
+    ASSERT(!getFlag(IsShadowRootFlag));
+    return parentOrHostNode();
+}
+
+inline ContainerNode* Node::shadowParentNode() const
+{
+    return getFlag(IsShadowRootFlag) ? parent() : 0;
 }
 
 } //namespace

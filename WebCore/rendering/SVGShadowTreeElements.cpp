@@ -51,8 +51,8 @@ FloatSize SVGShadowTreeContainerElement::containerTranslation() const
 
 inline SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, SVGUseElement* shadowParent)
     : SVGShadowTreeContainerElement(document)
-    , m_shadowParent(shadowParent)
 {
+    setShadowHost(shadowParent);
     setInDocument();
 }
 
@@ -63,7 +63,7 @@ PassRefPtr<SVGShadowTreeRootElement> SVGShadowTreeRootElement::create(Document* 
 
 void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, RenderArena* arena)
 {
-    ASSERT(m_shadowParent);
+    ASSERT(shadowHost());
 
     // Create the renderer with the specified style
     RenderObject* renderer = createRenderer(arena, style.get());
@@ -77,7 +77,12 @@ void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, Rend
 
     // Add the renderer to the render tree
     if (renderer)
-        m_shadowParent->renderer()->addChild(renderer);
+        shadowHost()->renderer()->addChild(renderer);
+}
+
+void SVGShadowTreeRootElement::clearShadowHost()
+{
+    setShadowHost(0);
 }
 
 }

@@ -36,8 +36,10 @@ RenderSVGShadowTreeRootContainer::RenderSVGShadowTreeRootContainer(SVGUseElement
 
 RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer()
 {
-    if (m_shadowRoot && m_shadowRoot->attached())
+    if (m_shadowRoot && m_shadowRoot->attached()) {
         m_shadowRoot->detach();
+        m_shadowRoot->clearShadowHost();
+    }
 }
 
 void RenderSVGShadowTreeRootContainer::updateStyle(Node::StyleChange change)

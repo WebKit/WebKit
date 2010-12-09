@@ -97,7 +97,7 @@ AffineTransform SVGLocatable::computeCTM(const SVGElement* element, CTMScope mod
         if (currentElement == stopAtElement)
             break;
 
-        current = current->isShadowNode() ? current->shadowParentNode() : current->parentNode();
+        current = current->parentOrHostNode();
     }
 
     return ctm;

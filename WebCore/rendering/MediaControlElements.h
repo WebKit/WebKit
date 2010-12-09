@@ -76,14 +76,10 @@ public:
     static PassRefPtr<MediaControlShadowRootElement> create(HTMLMediaElement*);
 
     void updateStyle();
+    virtual void detach();
     
 private:
     MediaControlShadowRootElement(HTMLMediaElement*);
-    
-    virtual bool isShadowNode() const { return true; }
-    virtual ContainerNode* shadowParentNode() { return m_mediaElement; }
-
-    HTMLMediaElement* m_mediaElement;    
 };
 
 // ----------------------------

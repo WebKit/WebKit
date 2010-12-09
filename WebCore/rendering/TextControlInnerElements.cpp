@@ -79,6 +79,7 @@ TextControlInnerElement::TextControlInnerElement(Document* document, HTMLElement
     : HTMLDivElement(divTag, document)
     , m_shadowParent(shadowParent)
 {
+    setShadowHost(shadowParent);
 }
 
 PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(HTMLElement* shadowParent)
@@ -102,8 +103,8 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     setAttached();
     setInDocument();
 
-    // For elements without a shadow parent, add the node to the DOM normally.
-    if (!m_shadowParent) {
+    // For elements not yet in shadow DOM, add the node to the DOM normally.
+    if (!isShadowNode()) {
         // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
         //        We shouldn't be calling parser API methods outside of the parser!
         parent->deprecatedParserAddChild(this);
@@ -112,6 +113,13 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     // Add the renderer to the render tree
     if (renderer)
         parent->renderer()->addChild(renderer);
+}
+
+void TextControlInnerElement::detach()
+{
+    HTMLDivElement::detach();
+    // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
+    setShadowHost(0);
 }
 
 // ----------------------------

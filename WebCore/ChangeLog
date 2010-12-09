@@ -1,3 +1,98 @@
+2010-12-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a generic way to store shadowParent on a Node.
+        https://bugs.webkit.org/show_bug.cgi?id=50184
+
+        This patch makes TreeShared::m_parent act as either parentNode() or
+        shadowHost() for Node. The distinction is controlled by IsShadowRootFlag.
+
+        Refactoring, so no new tests. See performance result testing in bug.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Changed to use parentOrHostNode().
+        * dom/Node.cpp:
+        (WebCore::Node::shadowHost): Added.
+        (WebCore::Node::setShadowHost): Added.
+        (WebCore::Node::isContentEditable): Changed to use parentOrHostNode().
+        (WebCore::Node::isContentRichlyEditable): Ditto.
+        (WebCore::Node::nextRenderer): Ditto.
+        (WebCore::Node::virtualComputedStyle): Ditto.
+        (WebCore::Node::canStartSelection): Ditto.
+        (WebCore::Node::shadowTreeRootNode): Changed to use parentNodeGuaranteedHostFree().
+        (WebCore::Node::getEventAncestors): Ditto.
+        (WebCore::Node::defaultEventHandler): Changed to use parentOrHostNode(). 
+        * dom/Node.h: Added an extra flag and adjusted bit counts.
+        (WebCore::Node::isShadowNode): Made non-virtual, switched to use flag.
+        (WebCore::Node::parentNode): Made to recognize flag.
+        (WebCore::Node::parentOrHostNode): Changed to use straight parent() and made const.
+        (WebCore::Node::parentNodeGuaranteedHostFree): Added.
+        (WebCore::Node::shadowParentNode): Made non-virtual and const.
+        * editing/TextIterator.cpp:
+        (WebCore::depthCrossingShadowBoundaries): Changed to use parentOrHostNode();
+        (WebCore::nextInPreOrderCrossingShadowBoundaries): Ditto.
+        (WebCore::previousInPostOrderCrossingShadowBoundaries):  Ditto.
+        (WebCore::setUpFullyClippedStack): Ditto.
+        (WebCore::TextIterator::advance): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Ditto.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::anchorNode): Changed to use parentNodeGuaranteedHostFree().
+        (WebCore::DOMSelection::focusNode): Ditto.
+        (WebCore::DOMSelection::baseNode): Ditto.
+        (WebCore::DOMSelection::extentNode): Ditto.
+        (WebCore::DOMSelection::getRangeAt): Ditto.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+            Changed to setShadowHost().
+        (WebCore::MediaControlShadowRootElement::updateStyle): Changed to use shadowHost().
+        (WebCore::MediaControlShadowRootElement::detach): Added an override to
+            explicitly set shadowHost to 0. Otherwise, the element will leak.
+        * rendering/MediaControlElements.h: Added detach def, removed members that are
+            no longer needed.
+        * rendering/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer):
+            Added explicit clearing of shadowHost to avoid leaking and crashes,
+            because SVG shadow DOM can be dynamically attached/detached, producing
+            stale nodes in over/out event handling.
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler): Changed to use shadowHost().
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+            Added explicit clearing of shadowHost and explicit destruction to
+            avoid out-of-order removal of children.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition): Simplified code.
+        * rendering/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement): Added
+            setting of shadowHost.
+        (WebCore::SVGShadowTreeRootElement::attachElement): Changed to use shadowHost().
+        (WebCore::SVGShadowTreeRootElement::clearShadowHost): Added.
+        * rendering/SVGShadowTreeElements.h: Added def, removed members that are
+             no longer needed.
+        * rendering/ShadowElement.cpp:
+        (WebCore::ShadowBlockElement::initAsPart): Changed to use shadowHost().
+        * rendering/ShadowElement.h: Removed members that are no longer needed.
+        (WebCore::ShadowElement::ShadowElement): Added setting of shadowHost.
+        (WebCore::ShadowElement::detach): Added.
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement): Added setting
+            of shadowHost.
+        (WebCore::TextControlInnerElement::attachInnerElement): Changed to use
+            isShadowNode().
+        (WebCore::TextControlInnerElement::detach): Added.
+        * rendering/TextControlInnerElements.h: Removed members that are no
+            longer needed.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::ownerSVGElement): Simplified code.
+        (WebCore::SVGElement::viewportElement): Ditto.
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::computeCTM): Ditto.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::ShadowTreeUpdateBlocker::while): Ditto.
+
 2010-12-09  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

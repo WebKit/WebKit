@@ -41,16 +41,23 @@ protected:
         : BaseElement(name, shadowParent->document())
         , m_shadowParent(shadowParent)
     {
+        BaseElement::setShadowHost(shadowParent);
     }
 
-    HTMLElement* shadowParent() const { return m_shadowParent.get(); }
+public:
+    virtual void detach();
 
 private:
-    virtual bool isShadowNode() const { return true; }
-    virtual ContainerNode* shadowParentNode() { return m_shadowParent.get(); }
-
     RefPtr<HTMLElement> m_shadowParent;
 };
+
+template<class BaseElement>
+void ShadowElement<BaseElement>::detach()
+{
+    BaseElement::detach();
+    // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
+    BaseElement::setShadowHost(0);
+}
 
 class ShadowBlockElement : public ShadowElement<HTMLDivElement> {
 public:

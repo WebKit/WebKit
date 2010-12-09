@@ -67,8 +67,10 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
         m_searchPopup = 0;
     }
  
-    if (m_innerBlock)
+    if (m_innerBlock) {
         m_innerBlock->detach();
+        m_innerBlock = 0;
+    }
 
     if (m_innerSpinButton)
         m_innerSpinButton->detach();

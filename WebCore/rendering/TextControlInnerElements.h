@@ -39,6 +39,7 @@ class SpeechInput;
 class TextControlInnerElement : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerElement> create(HTMLElement* shadowParent);
+    virtual void detach();
 
     void attachInnerElement(Node*, PassRefPtr<RenderStyle>, RenderArena*);
 
@@ -46,10 +47,7 @@ protected:
     TextControlInnerElement(Document*, HTMLElement* shadowParent = 0);
 
 private:
-    virtual bool isMouseFocusable() const { return false; } 
-    virtual bool isShadowNode() const { return m_shadowParent.get(); }
-    virtual ContainerNode* shadowParentNode() { return m_shadowParent.get(); }
-    void setShadowParentNode(HTMLElement* shadowParent) { m_shadowParent = shadowParent; }
+    virtual bool isMouseFocusable() const { return false; }
 
     RefPtr<HTMLElement> m_shadowParent;
 };

@@ -165,19 +165,12 @@ unsigned BitStack::size() const
 
 // --------
 
-static inline ContainerNode* parentCrossingShadowBoundaries(Node* node)
-{
-    if (ContainerNode* parent = node->parentNode())
-        return parent;
-    return node->shadowParentNode();
-}
-
 #if !ASSERT_DISABLED
 
 static unsigned depthCrossingShadowBoundaries(Node* node)
 {
     unsigned depth = 0;
-    for (Node* parent = parentCrossingShadowBoundaries(node); parent; parent = parentCrossingShadowBoundaries(parent))
+    for (Node* parent = node->parentOrHostNode(); parent; parent = parent->parentOrHostNode())
         ++depth;
     return depth;
 }
@@ -193,7 +186,7 @@ static Node* nextInPreOrderCrossingShadowBoundaries(Node* rangeEndContainer, int
         if (Node* next = rangeEndContainer->childNode(rangeEndOffset))
             return next;
     }
-    for (Node* node = rangeEndContainer; node; node = parentCrossingShadowBoundaries(node)) {
+    for (Node* node = rangeEndContainer; node; node = node->parentOrHostNode()) {
         if (Node* next = node->nextSibling())
             return next;
     }
@@ -208,7 +201,7 @@ static Node* previousInPostOrderCrossingShadowBoundaries(Node* rangeStartContain
         if (Node* previous = rangeStartContainer->childNode(rangeStartOffset - 1))
             return previous;
     }
-    for (Node* node = rangeStartContainer; node; node = parentCrossingShadowBoundaries(node)) {
+    for (Node* node = rangeStartContainer; node; node = node->parentOrHostNode()) {
         if (Node* previous = node->previousSibling())
             return previous;
     }
@@ -247,7 +240,7 @@ static void setUpFullyClippedStack(BitStack& stack, Node* node)
 {
     // Put the nodes in a vector so we can iterate in reverse order.
     Vector<Node*, 100> ancestry;
-    for (Node* parent = parentCrossingShadowBoundaries(node); parent; parent = parentCrossingShadowBoundaries(parent))
+    for (Node* parent = node->parentOrHostNode(); parent; parent = parent->parentOrHostNode())
         ancestry.append(parent);
 
     // Call pushFullyClippedState on each node starting with the earliest ancestor.
@@ -427,14 +420,14 @@ void TextIterator::advance()
             next = m_node->nextSibling();
             if (!next) {
                 bool pastEnd = m_node->traverseNextNode() == m_pastEndNode;
-                Node* parentNode = parentCrossingShadowBoundaries(m_node);
+                Node* parentNode = m_node->parentOrHostNode();
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     m_node = parentNode;
                     m_fullyClippedStack.pop();
-                    parentNode = parentCrossingShadowBoundaries(m_node);
+                    parentNode = m_node->parentOrHostNode();
                     if (haveRenderer)
                         exitNode();
                     if (m_positionNode) {
@@ -1148,7 +1141,7 @@ void SimplifiedBackwardsTextIterator::advance()
             }
             // Exit all other containers.
             while (!m_node->previousSibling()) {
-                if (!setCurrentNode(parentCrossingShadowBoundaries(m_node)))
+                if (!setCurrentNode(m_node->parentOrHostNode()))
                     break;
                 m_fullyClippedStack.pop();
                 exitNode();

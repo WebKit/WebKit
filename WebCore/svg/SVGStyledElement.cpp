@@ -81,7 +81,7 @@ String SVGStyledElement::title() const
     Node* parent = const_cast<SVGStyledElement*>(this);
     while (parent) {
         if (!parent->isShadowNode()) {
-            parent = parent->parentNode();
+            parent = parent->parentNodeGuaranteedHostFree();
             continue;
         }
         

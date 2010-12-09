@@ -480,7 +480,22 @@ NodeRareData* Node::createRareData()
 {
     return new NodeRareData;
 }
-    
+
+Element* Node::shadowHost() const
+{
+    return toElement(shadowParentNode());
+}
+
+void Node::setShadowHost(Element* host)
+{
+    if (host)
+        setFlag(IsShadowRootFlag);
+    else
+        clearFlag(IsShadowRootFlag);
+
+    setParent(host);
+}
+
 short Node::tabIndex() const
 {
     return hasRareData() ? rareData()->tabIndex() : 0;
@@ -666,12 +681,12 @@ void Node::deprecatedParserAddChild(PassRefPtr<Node>)
 
 bool Node::isContentEditable() const
 {
-    return parent() && parent()->isContentEditable();
+    return parentOrHostNode() && parentOrHostNode()->isContentEditable();
 }
 
 bool Node::isContentRichlyEditable() const
 {
-    return parent() && parent()->isContentRichlyEditable();
+    return parentOrHostNode() && parentOrHostNode()->isContentRichlyEditable();
 }
 
 bool Node::shouldUseInputMethod() const
@@ -1267,7 +1282,7 @@ RenderObject * Node::nextRenderer()
 {
     // Avoid an O(n^2) problem with this function by not checking for nextRenderer() when the parent element hasn't even 
     // been attached yet.
-    if (parent() && !parent()->attached())
+    if (parentOrHostNode() && !parentOrHostNode()->attached())
         return 0;
 
     for (Node *n = nextSibling(); n; n = n->nextSibling()) {
@@ -1394,7 +1409,7 @@ void Node::setRenderStyle(PassRefPtr<RenderStyle> s)
 
 RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)
 {
-    return parent() ? parent()->computedStyle(pseudoElementSpecifier) : 0;
+    return parentOrHostNode() ? parentOrHostNode()->computedStyle(pseudoElementSpecifier) : 0;
 }
 
 int Node::maxCharacterOffset() const
@@ -1417,7 +1432,7 @@ bool Node::canStartSelection() const
         if (style->userDrag() == DRAG_ELEMENT && style->userSelect() == SELECT_NONE)
             return false;
     }
-    return parent() ? parent()->canStartSelection() : true;
+    return parentOrHostNode() ? parentOrHostNode()->canStartSelection() : true;
 }
 
 Node* Node::shadowAncestorNode()
@@ -1443,7 +1458,7 @@ Node* Node::shadowTreeRootNode()
     while (root) {
         if (root->isShadowNode())
             return root;
-        root = root->parentNode();
+        root = root->parentNodeGuaranteedHostFree();
     }
     return 0;
 }
@@ -2536,7 +2551,7 @@ void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* origi
             if (!shouldSkipNextAncestor)
                 target = ancestor;
         } else
-            ancestor = ancestor->parentNode();
+            ancestor = ancestor->parentNodeGuaranteedHostFree();
 
         if (!ancestor)
             return;
@@ -2948,7 +2963,7 @@ void Node::defaultEventHandler(Event* event)
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;
         while (startNode && !startNode->renderer())
-            startNode = startNode->parent();
+            startNode = startNode->parentOrHostNode();
         
         if (startNode && startNode->renderer())
             if (Frame* frame = document()->frame())

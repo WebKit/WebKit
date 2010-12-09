@@ -106,7 +106,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
                 }
 
                 m_inDragMode = true;
-                document()->frame()->eventHandler()->setCapturingMouseEventsNode(shadowParent());
+                document()->frame()->eventHandler()->setCapturingMouseEventsNode(shadowHost());
                 event->setDefaultHandled();
                 return;
             }
