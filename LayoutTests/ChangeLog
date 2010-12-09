@@ -1,3 +1,15 @@
+2010-12-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=50725
+        <rdar://problem/8694972> REGRESSION (r72052): "Search" placeholder in MobileMe mail is positioned too high
+
+        * fast/forms/placeholder-position.html: Added.
+        * platform/mac/fast/forms/placeholder-position-expected.checksum: Added.
+        * platform/mac/fast/forms/placeholder-position-expected.png: Added.
+        * platform/mac/fast/forms/placeholder-position-expected.txt: Added.
+
 2010-12-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

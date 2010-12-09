@@ -112,6 +112,7 @@ private:
     
     virtual int textBlockInsetLeft() const = 0;
     virtual int textBlockInsetRight() const = 0;
+    virtual int textBlockInsetTop() const = 0;
 
     void paintPlaceholder(PaintInfo&, int tx, int ty);
 

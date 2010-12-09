@@ -52,6 +52,7 @@ private:
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     virtual int textBlockInsetLeft() const;
     virtual int textBlockInsetRight() const;
+    virtual int textBlockInsetTop() const;
 };
 
 inline RenderTextControlMultiLine* toRenderTextControlMultiLine(RenderObject* object)

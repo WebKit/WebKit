@@ -1120,4 +1120,18 @@ int RenderTextControlSingleLine::textBlockInsetRight() const
     return inset;
 }
 
+int RenderTextControlSingleLine::textBlockInsetTop() const
+{
+    RenderBox* innerRenderer = 0;
+    if (m_innerBlock)
+        innerRenderer = m_innerBlock->renderBox();
+    else if (HTMLElement* innerText = innerTextElement())
+        innerRenderer = innerText->renderBox();
+    
+    if (innerRenderer)
+        return innerRenderer->y();
+    
+    return borderTop() + paddingTop();
+}    
+
 }

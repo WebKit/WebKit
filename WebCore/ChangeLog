@@ -1,3 +1,22 @@
+2010-12-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=50725
+        <rdar://problem/8694972> REGRESSION (r72052): "Search" placeholder in MobileMe mail is positioned too high
+
+        Test: fast/forms/placeholder-position.html
+
+        Since we center the inner text element for single line text controls, 
+        we should ask the subclass to give us the y offset instead of trying to calculate it in the RenderTextControl class.
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::paintPlaceholder):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp: (WebCore::RenderTextControlMultiLine::textBlockInsetTop):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp: (WebCore::RenderTextControlSingleLine::textBlockInsetTop):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-12-08  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

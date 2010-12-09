@@ -149,6 +149,7 @@ private:
 
     virtual int textBlockInsetLeft() const;
     virtual int textBlockInsetRight() const;
+    virtual int textBlockInsetTop() const;
 
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
