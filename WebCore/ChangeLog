@@ -1,3 +1,9 @@
+2010-12-09  Sam Weinig  <sam@webkit.org>
+
+        Try and fix the mac build.
+
+        * WebCore.exp.in:
+
 2010-12-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
