@@ -1,3 +1,10 @@
+2010-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Add Qt specific expected results for tests introduced in r73529.
+
+        * platform/qt/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Added.
+        * platform/qt/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Added.
+
 2010-12-09  Martin Robinson  <mrobinson@igalia.com>
 
         Update GTK+ baselines after r73561.
