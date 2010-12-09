@@ -110,9 +110,9 @@ class FileSystem(object):
         http://codesearch.google.com/codesearch/p?hl=en#OAMlx_jo-ck/src/base/test/test_file_util_win.cc&q=diefiledie&exact_package=chromium&l=22
         """
         try:
-            WindowsError
-        except NameError:
-            WindowsError = FileSystem._WindowsError
+            exceptions.WindowsError
+        except AttributeError:
+            exceptions.WindowsError = FileSystem._WindowsError
 
         retry_timeout_sec = 3.0
         sleep_interval = 0.1
@@ -120,7 +120,7 @@ class FileSystem(object):
             try:
                 osremove(path)
                 return True
-            except WindowsError, e:
+            except exceptions.WindowsError, e:
                 time.sleep(sleep_interval)
                 retry_timeout_sec -= sleep_interval
                 if retry_timeout_sec < 0:

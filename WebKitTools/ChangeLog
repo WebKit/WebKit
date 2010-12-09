@@ -1,3 +1,10 @@
+2010-12-09  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fix for windows code.  We were catching the wrong
+        exception in Windows.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+
 2010-12-09  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.
