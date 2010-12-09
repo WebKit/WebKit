@@ -177,8 +177,6 @@ private:
 
     QStyle* fallbackStyle() const;
 
-    IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
-
     Page* m_page;
 
 #ifdef Q_WS_MAC

@@ -85,9 +85,7 @@ public:
         DefaultFrameIconGraphic,
         TextAreaSizeGripCornerGraphic,
         DeleteButtonGraphic,
-        InputSpeechButtonGraphic,
-        SearchCancelButtonGraphic,
-        SearchCancelButtonPressedGraphic
+        InputSpeechButtonGraphic
     };
     enum FontSize {
         MinimumFontSize,
