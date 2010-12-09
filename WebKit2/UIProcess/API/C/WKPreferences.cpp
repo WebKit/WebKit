@@ -359,3 +359,13 @@ WKStringRef WKPreferencesCopyFTPDirectoryTemplatePath(WKPreferencesRef preferenc
 {
     return toCopiedAPI(toImpl(preferencesRef)->ftpDirectoryTemplatePath());
 }
+
+void WKPreferencesSetTabsToLinks(WKPreferencesRef preferencesRef, bool tabsToLinks)
+{
+    toImpl(preferencesRef)->setTabsToLinks(tabsToLinks);
+}
+
+bool WKPreferencesGetTabsToLinks(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->tabsToLinks();
+}

@@ -128,6 +128,7 @@ public:
     void show();
     String userAgent() const;
     WebCore::IntRect windowResizerRect() const;
+    bool tabsToLinks() const { return m_tabToLinks; }
 
     WebEditCommand* webEditCommand(uint64_t);
     void addWebEditCommand(uint64_t, WebEditCommand*);
@@ -323,6 +324,8 @@ private:
 
     bool m_isInRedo;
     bool m_isClosed;
+
+    bool m_tabToLinks;
 
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.

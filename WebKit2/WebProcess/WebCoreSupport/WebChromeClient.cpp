@@ -310,8 +310,7 @@ bool WebChromeClient::shouldInterruptJavaScript()
 
 bool WebChromeClient::tabsToLinks() const
 {
-    notImplemented();
-    return false;
+    return m_page->tabsToLinks();
 }
 
 IntRect WebChromeClient::windowResizerRect() const

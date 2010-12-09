@@ -113,6 +113,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
     , m_isInRedo(false)
     , m_isClosed(false)
+    , m_tabToLinks(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
 #elif PLATFORM(WIN)
@@ -876,7 +877,9 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     Settings* settings = m_page->settings();
-    
+
+    m_tabToLinks = store.getBoolValueForKey(WebPreferencesKey::tabsToLinksKey());
+
     // FIXME: This should be generated from macro expansion for all preferences,
     // but we currently don't match the naming of WebCore exactly so we are
     // handrolling the boolean and integer preferences until that is fixed.

@@ -1,3 +1,23 @@
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Add WebKit2 Preference for TabsToLinks behavior.
+        <rdar://problem/8664263>
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTabsToLinks):
+        (WKPreferencesGetTabsToLinks):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::tabsToLinks):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::tabsToLinks):
+
 2010-12-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

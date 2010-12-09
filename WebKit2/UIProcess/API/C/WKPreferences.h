@@ -130,6 +130,10 @@ WK_EXPORT bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferenc
 WK_EXPORT void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable);
 WK_EXPORT bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetTabsToLinks(WKPreferencesRef preferences, bool tabsToLinks);
+WK_EXPORT bool WKPreferencesGetTabsToLinks(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif
