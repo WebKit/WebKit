@@ -133,8 +133,7 @@ class FixedVMPoolAllocator
 
     void reuse(void* position, size_t size)
     {
-        bool okay = m_allocation.commit(position, size);
-        ASSERT_UNUSED(okay, okay);
+        m_allocation.commit(position, size);
         addToCommittedByteCount(static_cast<long>(size));
     }
 
@@ -279,7 +278,7 @@ public:
         : m_commonSize(commonSize)
         , m_countFreedSinceLastCoalesce(0)
     {
-        m_allocation = PageReservation::reserve(totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        m_allocation = PageReservation::reserve(totalHeapSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 
         if (!!m_allocation)
             m_freeList.insert(new FreeListEntry(m_allocation.base(), m_allocation.size()));

@@ -30,17 +30,17 @@
 
 namespace WTF {
 
-void* OSAllocator::reserve(size_t bytes)
+void* OSAllocator::reserve(size_t, Usage, bool, bool)
 {
     return fastMalloc(bytes);
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool, bool)
 {
     return reserve(bytes);
 }
 
-void OSAllocator::commit(void*, size_t)
+void OSAllocator::commit(void*, size_t, Usage, bool, bool)
 {
 }
 

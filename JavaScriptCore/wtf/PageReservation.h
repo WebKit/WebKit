@@ -52,9 +52,6 @@ namespace WTF {
     Memory protection should not be changed on decommitted memory, and if protection
     is changed on memory while it is committed it should be returned to the orignal
     protection before decommit is called.
-
-    Note: Inherits from PageAllocation privately to prevent clients accidentally
-    calling PageAllocation::deallocate on a PageReservation.
 */
 class PageReservation : private PageAllocation {
 public:
@@ -66,19 +63,18 @@ public:
     using PageAllocation::base;
     using PageAllocation::size;
 
-    bool commit(void* start, size_t size)
+    void commit(void* start, size_t size)
     {
         ASSERT(m_base);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
 
-        bool commited = systemCommit(start, size);
 #ifndef NDEBUG
-        if (commited)
-            m_committed += size;
+        m_committed += size;
 #endif
-        return commited;
+        OSAllocator::commit(start, size, m_writable, m_executable);
     }
+
     void decommit(void* start, size_t size)
     {
         ASSERT(m_base);
@@ -88,148 +84,43 @@ public:
 #ifndef NDEBUG
         m_committed -= size;
 #endif
-        systemDecommit(start, size);
+        OSAllocator::decommit(start, size);
     }
 
-    static PageReservation reserve(size_t size, Usage usage = UnknownUsage, bool writable = true, bool executable = false)
+    static PageReservation reserve(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
     {
         ASSERT(isPageAligned(size));
-        return systemReserve(size, usage, writable, executable);
+        return PageReservation(OSAllocator::reserve(size, usage, writable, executable), size, writable, executable);
     }
 
     void deallocate()
     {
-        ASSERT(m_base);
         ASSERT(!m_committed);
-        systemDeallocate(false);
+        PageAllocation::deallocate();
     }
-
-#ifndef NDEBUG
-    using PageAllocation::lastError;
-#endif
 
 private:
 #if OS(SYMBIAN)
     PageReservation(void* base, size_t size, RChunk* chunk)
         : PageAllocation(base, size, chunk)
 #else
-    PageReservation(void* base, size_t size)
+    PageReservation(void* base, size_t size, bool writable, bool executable)
         : PageAllocation(base, size)
 #endif
 #ifndef NDEBUG
         , m_committed(0)
 #endif
+        , m_writable(writable)
+        , m_executable(executable)
     {
     }
 
-    bool systemCommit(void*, size_t);
-    void systemDecommit(void*, size_t);
-    static PageReservation systemReserve(size_t, Usage, bool, bool);
-
-#if HAVE(VIRTUALALLOC)
-    DWORD m_protection;
-#endif
 #ifndef NDEBUG
     size_t m_committed;
 #endif
+    bool m_writable;
+    bool m_executable;
 };
-
-
-#if HAVE(MMAP)
-
-
-inline bool PageReservation::systemCommit(void* start, size_t size)
-{
-#if HAVE(MADV_FREE_REUSE)
-    while (madvise(start, size, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }
-#else
-    UNUSED_PARAM(start);
-    UNUSED_PARAM(size);
-#endif
-    return true;
-}
-
-inline void PageReservation::systemDecommit(void* start, size_t size)
-{
-#if HAVE(MADV_FREE_REUSE)
-    while (madvise(start, size, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
-#elif HAVE(MADV_FREE)
-    while (madvise(start, size, MADV_FREE) == -1 && errno == EAGAIN) { }
-#elif HAVE(MADV_DONTNEED)
-    while (madvise(start, size, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
-#else
-    UNUSED_PARAM(start);
-    UNUSED_PARAM(size);
-#endif
-}
-
-inline PageReservation PageReservation::systemReserve(size_t size, Usage usage, bool writable, bool executable)
-{
-    void* base = systemAllocate(size, usage, writable, executable).base();
-#if HAVE(MADV_FREE_REUSE)
-    // When using MADV_FREE_REUSE we keep all decommitted memory marked as REUSABLE.
-    // We call REUSE on commit, and REUSABLE on decommit.
-    if (base)
-        while (madvise(base, size, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
-#endif
-    return PageReservation(base, size);
-}
-
-
-#elif HAVE(VIRTUALALLOC)
-
-
-inline bool PageReservation::systemCommit(void* start, size_t size)
-{
-    return VirtualAlloc(start, size, MEM_COMMIT, m_protection) == start;
-}
-
-inline void PageReservation::systemDecommit(void* start, size_t size)
-{
-    VirtualFree(start, size, MEM_DECOMMIT);
-}
-
-inline PageReservation PageReservation::systemReserve(size_t size, Usage usage, bool writable, bool executable)
-{
-    // Record the protection for use during commit.
-    DWORD protection = executable ?
-        (writable ? PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ) :
-        (writable ? PAGE_READWRITE : PAGE_READONLY);
-    PageReservation reservation(VirtualAlloc(0, size, MEM_RESERVE, protection), size);
-    reservation.m_protection = protection;
-    return reservation;
-}
-
-
-#elif OS(SYMBIAN)
-
-
-inline bool PageReservation::systemCommit(void* start, size_t size)
-{
-    intptr_t offset = reinterpret_cast<intptr_t>(start) - reinterpret_cast<intptr_t>(m_base);
-    m_chunk->Commit(offset, size);
-    return true;
-}
-
-inline void PageReservation::systemDecommit(void* start, size_t size)
-{
-    intptr_t offset = reinterpret_cast<intptr_t>(start) - reinterpret_cast<intptr_t>(m_base);
-    m_chunk->Decommit(offset, size);
-}
-
-inline PageReservation PageReservation::systemReserve(size_t size, Usage usage, bool writable, bool executable)
-{
-    RChunk* rchunk = new RChunk();
-    if (executable)
-        rchunk->CreateLocalCode(0, size);
-    else
-        rchunk->CreateDisconnectedLocal(0, 0, size);
-    return PageReservation(rchunk->Base(), size, rchunk);
-}
-
-
-#endif
-
 
 }
 

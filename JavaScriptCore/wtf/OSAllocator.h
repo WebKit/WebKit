@@ -26,14 +26,24 @@
 #ifndef OSAllocator_h
 #define OSAllocator_h
 
+#include <wtf/VMTags.h>
+
 namespace WTF {
 
 class OSAllocator {
 public:
-    static void* reserve(size_t);
-    static void* reserveAndCommit(size_t);
+    enum Usage {
+        UnknownUsage = -1,
+        FastMallocPages = VM_TAG_FOR_TCMALLOC_MEMORY,
+        JSGCHeapPages = VM_TAG_FOR_COLLECTOR_MEMORY,
+        JSVMStackPages = VM_TAG_FOR_REGISTERFILE_MEMORY,
+        JSJITCodePages = VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY,
+    };
 
-    static void commit(void*, size_t);
+    static void* reserve(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+
+    static void commit(void*, size_t, bool writable, bool executable);
     static void decommit(void*, size_t);
 
     static void release(void*, size_t);

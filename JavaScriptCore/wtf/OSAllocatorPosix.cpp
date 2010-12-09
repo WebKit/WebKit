@@ -33,11 +33,9 @@
 
 namespace WTF {
 
-void* OSAllocator::reserve(size_t bytes)
+void* OSAllocator::reserve(size_t bytes, Usage usage, bool writable, bool executable)
 {
-    void* result = mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (result == MAP_FAILED)
-        CRASH();
+    void* result = reserveAndCommit(bytes, usage, writable, executable);
 #if HAVE(MADV_FREE_REUSE)
     // To support the "reserve then commit" model, we have to initially decommit.
     while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
@@ -45,16 +43,50 @@ void* OSAllocator::reserve(size_t bytes)
     return result;
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable)
 {
     // All POSIX reservations start out logically committed.
-    void* result = mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    int protection = PROT_READ;
+    if (writable)
+        protection |= PROT_WRITE;
+    if (executable)
+        protection |= PROT_EXEC;
+
+    int flags = MAP_PRIVATE | MAP_ANON;
+
+#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+    int fd = usage;
+#else
+    int fd = -1;
+#endif
+
+    void* result = 0;
+#if (OS(DARWIN) && CPU(X86_64))
+    if (executable) {
+        // Cook up an address to allocate at, using the following recipe:
+        //   17 bits of zero, stay in userspace kids.
+        //   26 bits of randomness for ASLR.
+        //   21 bits of zero, at least stay aligned within one level of the pagetables.
+        //
+        // But! - as a temporary workaround for some plugin problems (rdar://problem/6812854),
+        // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
+        // 2^24, which should put up somewhere in the middle of userspace (in the address range
+        // 0x200000000000 .. 0x5fffffffffff).
+        intptr_t randomLocation = 0;
+        randomLocation = arc4random() & ((1 << 25) - 1);
+        randomLocation += (1 << 24);
+        randomLocation <<= 21;
+        result = reinterpret_cast<void*>(randomLocation);
+    }
+#endif
+
+    result = mmap(result, bytes, protection, flags, fd, 0);
     if (result == MAP_FAILED)
         CRASH();
     return result;
 }
 
-void OSAllocator::commit(void* address, size_t bytes)
+void OSAllocator::commit(void* address, size_t bytes, bool, bool)
 {
 #if HAVE(MADV_FREE_REUSE)
     while (madvise(address, bytes, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }

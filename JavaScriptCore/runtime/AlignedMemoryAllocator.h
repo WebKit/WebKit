@@ -76,7 +76,7 @@ inline void AlignedMemoryAllocator<blockSize>::destroy()
 template<size_t blockSize>
 inline AlignedMemory<blockSize> AlignedMemoryAllocator<blockSize>::allocate()
 {
-    return AlignedMemory<blockSize>(PageAllocation::allocateAligned(blockSize, PageAllocation::JSGCHeapPages));
+    return AlignedMemory<blockSize>(PageAllocation::allocateAligned(blockSize, OSAllocator::JSGCHeapPages));
 }
 
 template<size_t blockSize>

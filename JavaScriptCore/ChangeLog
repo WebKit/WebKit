@@ -1,3 +1,65 @@
+2010-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Migrated OS-specific allocation code from PageReservation and PageAllocation to OSAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=50653
+
+        * JavaScriptCore.exp: Updated for new function signature.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::grow):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::reuse):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator): Removed checkAllocatedOkay.
+        OSAllocator is now the central location for verifying that allocation succeeds.
+        This allowed me to remove some complicating cross-platform cruft.
+
+        * runtime/AlignedMemoryAllocator.h:
+        (JSC::::allocate): Updated for code motion.
+
+        * wtf/OSAllocator.h: Added Usage, writable, and executable parameters, to
+        support VM features required by clients of PageAllocation and PageReservation.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit): Moved PageAllocation support for randomizing
+        executable memory here.
+
+        * wtf/OSAllocatorSymbian.cpp:
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit): Updated for new function signatures.
+
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::protection):
+        (WTF::OSAllocator::reserve):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::release): Updated for new function signatures. Moved
+        some protection-related and WINCE-related code from PageAllocation here.
+
+        * wtf/PageAllocation.cpp: Nixed cross-platform lastError abstraction, since
+        it was only used by checkAllocatedOkay, which is now gone.
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::allocate):
+        (WTF::PageAllocation::allocateAligned):
+        (WTF::PageAllocation::deallocate):
+        (WTF::PageAllocation::isPowerOfTwo):
+        (WTF::PageAllocation::systemAllocateAligned): Removed system* functions,
+        and replaced calls to them with calls to OSAllocator.
+
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::reserve):
+        (WTF::PageReservation::deallocate):
+        (WTF::PageReservation::PageReservation): Ditto. Added m_writable and
+        m_executable because these flags are now required when committing memory.
+
 2010-12-08  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

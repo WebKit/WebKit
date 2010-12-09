@@ -138,7 +138,6 @@ namespace JSC {
         static void initializeThreading();
 
     private:
-        void checkAllocatedOkay(bool okay);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
         size_t m_numGlobals;
@@ -164,11 +163,10 @@ namespace JSC {
         ASSERT(capacity && PageAllocation::isPageAligned(capacity));
 
         size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
-        m_reservation = PageReservation::reserve(roundUpAllocationSize(bufferLength, commitSize), PageAllocation::JSVMStackPages);
+        m_reservation = PageReservation::reserve(roundUpAllocationSize(bufferLength, commitSize), OSAllocator::JSVMStackPages);
         void* base = m_reservation.base();
-        checkAllocatedOkay(base);
         size_t committedSize = roundUpAllocationSize(maxGlobals * sizeof(Register), commitSize);
-        checkAllocatedOkay(m_reservation.commit(base, committedSize));
+        m_reservation.commit(base, committedSize);
         addToCommittedByteCount(static_cast<long>(committedSize));
         m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(base) + committedSize);
         m_start = static_cast<Register*>(base) + maxGlobals;
@@ -196,7 +194,7 @@ namespace JSC {
 
         if (newEnd > m_commitEnd) {
             size_t size = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
-            checkAllocatedOkay(m_reservation.commit(m_commitEnd, size));
+            m_reservation.commit(m_commitEnd, size);
             addToCommittedByteCount(static_cast<long>(size));
             m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(m_commitEnd) + size);
         }
@@ -206,16 +204,6 @@ namespace JSC {
 
         m_end = newEnd;
         return true;
-    }
-
-    inline void RegisterFile::checkAllocatedOkay(bool okay)
-    {
-        if (!okay) {
-#ifndef NDEBUG
-            fprintf(stderr, "Could not allocate register file: %d\n", PageReservation::lastError());
-#endif
-            CRASH();
-        }
     }
 
 } // namespace JSC
