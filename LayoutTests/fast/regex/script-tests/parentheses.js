@@ -77,6 +77,9 @@ var regexp25 = /^\s*(\*|[\w\-]+)(\b|$)?/;
 shouldBe("regexp25.exec('this is a test')", "['this','this',undefined]");
 shouldBeNull("regexp25.exec('!this is a test')");
 
+var regexp26 = /a(b)(a*)|aaa/;
+shouldBe("regexp26.exec('aaa')", "['aaa',undefined,undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

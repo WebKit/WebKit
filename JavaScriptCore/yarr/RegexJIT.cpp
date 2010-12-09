@@ -561,7 +561,8 @@ class RegexGenerator : private MacroAssembler {
         
         void setBacktrackToLabel(Label* backtrackToLabel)
         {
-            m_backtrackToLabel = backtrackToLabel;
+            if (!m_backtrackToLabel)
+                m_backtrackToLabel = backtrackToLabel;
         }
         
         void setBacktrackJumpList(JumpList* jumpList)

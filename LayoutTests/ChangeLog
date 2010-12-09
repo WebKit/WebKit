@@ -1,3 +1,13 @@
+2010-12-09  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added test to verify proper operation of backtrack labels.
+        https://bugs.webkit.org/show_bug.cgi?id=50579
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2010-12-09  Peter Beverloo  <peter@lvp-media.com>
 
         Reviewed by Maciej Stachowiak.

@@ -30,6 +30,7 @@ PASS regexp23.exec('<html xmlns="http://www.w3.org/1999/xhtml"') is ['"http://ww
 PASS regexp24.exec('123') is null
 PASS regexp25.exec('this is a test') is ['this','this',undefined]
 PASS regexp25.exec('!this is a test') is null
+PASS regexp26.exec('aaa') is ['aaa',undefined,undefined]
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 
