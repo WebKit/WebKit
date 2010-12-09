@@ -34,6 +34,7 @@
 #import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
 #import "NativeWebKeyboardEvent.h"
+#import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "WebContext.h"
@@ -95,6 +96,8 @@ struct EditCommandState {
     bool _isPerformingUpdate;
     
     HashMap<String, EditCommandState> _menuMap;
+
+    OwnPtr<PDFViewController> _pdfViewController;
 
     OwnPtr<FindIndicatorWindow> _findIndicatorWindow;
     // We keep here the event when resending it to
@@ -994,5 +997,20 @@ static bool isViewVisible(NSView *view)
     [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::ChunkedUpdate];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
+
+- (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
+{
+    _data->_pdfViewController = nullptr;
+
+    if (pageHasCustomRepresentation)
+        _data->_pdfViewController = PDFViewController::create(self);
+}
+
+- (void)_didFinishLoadingDataForCustomRepresentation:(const CoreIPC::DataReference&)dataReference
+{
+    ASSERT(_data->_pdfViewController);
+
+    _data->_pdfViewController->setPDFDocumentData(_data->_page->mainFrame()->mimeType(), dataReference);
+}
 
 @end

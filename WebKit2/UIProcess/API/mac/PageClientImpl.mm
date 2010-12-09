@@ -275,10 +275,12 @@ void PageClientImpl::pageDidLeaveAcceleratedCompositing()
 
 void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
+    [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
+void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
 {
+    [m_wkView _didFinishLoadingDataForCustomRepresentation:dataReference];
 }
 
 } // namespace WebKit

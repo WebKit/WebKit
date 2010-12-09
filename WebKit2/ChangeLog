@@ -2,6 +2,57 @@
 
         Reviewed by Sam Weinig.
 
+        Add a basic implementation of PDF support on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=50768
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm: Added.
+        (-[WKPDFView initWithFrame:PDFViewController:WebKit::]):
+        Setup the view hierarchy.
+
+        (-[WKPDFView invalidate]):
+        Set the controller to null.
+
+        (-[WKPDFView pdfView]):
+        Return the PDF view.
+
+        (WebKit::PDFViewController::create):
+        (WebKit::PDFViewController::PDFViewController):
+        Create a WKPDFView and insert it as a subview of the WKView.
+
+        (WebKit::PDFViewController::~PDFViewController):
+        Remove the WKPDFView from the view hierarchy and invalidate it.
+
+        (WebKit::convertPostScriptDataSourceToPDF):
+        Convert the data in the data reference to PDF and return it as a CFDataRef.
+
+        (WebKit::PDFViewController::setPDFDocumentData):
+        Create a PDFDocument and set it on the PDF view.
+
+        (WebKit::PDFViewController::pdfDocumentClass):
+        (WebKit::PDFViewController::pdfPreviewViewClass):
+        (WebKit::PDFViewController::pdfKitBundle):
+        Add soft-linking helper functions.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        Call the WKView methods.
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPageHasCustomRepresentation:]):
+        Create a PDF view controller if necessary.
+
+        (-[WKView _didFinishLoadingDataForCustomRepresentation:CoreIPC::]):
+        Pass the data along to the PDF view controller.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add support for custom representation
         https://bugs.webkit.org/show_bug.cgi?id=50767
 

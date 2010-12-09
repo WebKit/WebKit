@@ -23,36 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKView.h"
-#import <WebCore/KeyboardEvent.h>
+#ifndef PDFViewController_h
+#define PDFViewController_h
 
-namespace WebKit {
-    class FindIndicator;
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
+
+@class PDFView;
+@class WKView;
+@class WKPDFView;
+
+namespace CoreIPC {
+    class DataReference;
 }
 
-@interface WKView (Internal)
-- (void)_processDidCrash;
-- (void)_didRelaunchProcess;
-- (void)_takeFocus:(BOOL)direction;
-- (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
-- (void)_setCursor:(NSCursor *)cursor;
-- (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
-- (Vector<WebCore::KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent;
-- (void)_setEventBeingResent:(NSEvent *)event;
-- (NSRect)_convertToDeviceSpace:(NSRect)rect;
-- (NSRect)_convertToUserSpace:(NSRect)rect;
-- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition;
+namespace WebKit {
 
-- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut;
+class PDFViewController {
+    WTF_MAKE_NONCOPYABLE(PDFViewController);
 
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_startAcceleratedCompositing:(CALayer *)rootLayer;
-- (void)_stopAcceleratedCompositing;
-- (void)_pageDidEnterAcceleratedCompositing;
-- (void)_pageDidLeaveAcceleratedCompositing;
-#endif
+public:
+    static PassOwnPtr<PDFViewController> create(WKView *);
+    ~PDFViewController();
 
-- (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;
-- (void)_didFinishLoadingDataForCustomRepresentation:(const CoreIPC::DataReference&)dataReference;
+    WKView* wkView() const { return m_wkView; }
+    void setPDFDocumentData(const String& mimeType, const CoreIPC::DataReference&);
 
-@end
+    static Class pdfDocumentClass();
+    static Class pdfPreviewViewClass();
+    
+private:
+    explicit PDFViewController(WKView *wkView);
+
+    static NSBundle* pdfKitBundle();
+
+    WKView* m_wkView;
+    RetainPtr<WKPDFView> m_wkPDFView;
+    PDFView* m_pdfView;
+};
+
+} // namespace WebKit
+
+#endif // PDFViewController_h

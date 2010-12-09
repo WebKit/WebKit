@@ -159,6 +159,8 @@
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
 		1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
+		1AAF061412B01131008E49E2 /* PDFViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF061212B01131008E49E2 /* PDFViewController.h */; };
+		1AAF061512B01131008E49E2 /* PDFViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF061312B01131008E49E2 /* PDFViewController.mm */; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
 		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
@@ -786,6 +788,8 @@
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
 		1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionMac.mm; sourceTree = "<group>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		1AAF061212B01131008E49E2 /* PDFViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewController.h; sourceTree = "<group>"; };
+		1AAF061312B01131008E49E2 /* PDFViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFViewController.mm; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
@@ -1978,10 +1982,12 @@
 		BC111B47112F616900337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BC111B4B112F619200337BAB /* PageClientImpl.h */,
-				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
 				1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */,
 				1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */,
+				1AAF061212B01131008E49E2 /* PDFViewController.h */,
+				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
+				BC111B4B112F619200337BAB /* PageClientImpl.h */,
+				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
@@ -2645,6 +2651,7 @@
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
+				1AAF061412B01131008E49E2 /* PDFViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3054,6 +3061,7 @@
 				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,
 				F6A25FD912ADC6BD00DC40CC /* WebDatabaseManagerMac.mm in Sources */,
 				F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */,
+				1AAF061512B01131008E49E2 /* PDFViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
