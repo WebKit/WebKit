@@ -570,6 +570,8 @@ sub builtDylibPathForName
         $libraryName = "QtWebKit";
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
             return "$configurationProductDir/lib/$libraryName.framework/$libraryName";
+        } elsif (isDarwin() and -d "$configurationProductDir/lib") {
+            return "$configurationProductDir/lib/lib$libraryName.dylib";
         } elsif (isWindows()) {
             if (configuration() eq "Debug") {
                 # On Windows, there is a "d" suffix to the library name. See <http://trac.webkit.org/changeset/53924/>.

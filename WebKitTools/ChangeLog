@@ -1,3 +1,14 @@
+2010-12-09  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Tor Arne Vestbø
+
+        [Qt] run-launcher doesn't start the browser on Mac OS X 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=50742
+
+        check not only QtWebKit.framework/QtWebKit but also libQtWebKit.dylib
+
+        * Scripts/webkitdirs.pm:
+
 2010-12-09  Joone Hur  <joone@kldp.org>
 
          Reviewed by Martin Robinson.
