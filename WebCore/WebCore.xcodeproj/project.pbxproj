@@ -3489,7 +3489,7 @@
 		A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE1B0A152AC800B12A68 /* HTMLHtmlElement.h */; };
 		A871DE280A152AC800B12A68 /* HTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE1C0A152AC800B12A68 /* HTMLFrameSetElement.h */; };
 		A871DE290A152AC800B12A68 /* HTMLBodyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DE1D0A152AC800B12A68 /* HTMLBodyElement.cpp */; };
-		A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE1E0A152AC800B12A68 /* HTMLIFrameElement.h */; };
+		A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE1E0A152AC800B12A68 /* HTMLIFrameElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DE2B0A152AC800B12A68 /* HTMLFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE1F0A152AC800B12A68 /* HTMLFrameElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DE2C0A152AC800B12A68 /* HTMLBodyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE200A152AC800B12A68 /* HTMLBodyElement.h */; };
 		A871DE2D0A152AC800B12A68 /* HTMLHeadElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DE210A152AC800B12A68 /* HTMLHeadElement.h */; settings = {ATTRIBUTES = (Private, ); }; };

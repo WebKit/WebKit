@@ -1,3 +1,12 @@
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Need a way to get a WKBundleFrameRef from JS HTMLIFrameElement
+        https://bugs.webkit.org/show_bug.cgi?id=50726
+
+        * WebCore.xcodeproj/project.pbxproj: Expose HTMLIFrameElement.h.
+
 2010-12-08  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
