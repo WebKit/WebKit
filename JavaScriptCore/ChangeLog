@@ -1,3 +1,12 @@
+2010-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix GTK Linux build.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * runtime/AlignedMemoryAllocator.h:
+        (JSC::::AlignedMemoryAllocator): Updated for Usage enum moving to OSAllocator.
+
 2010-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

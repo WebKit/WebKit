@@ -51,7 +51,7 @@ void ExecutableAllocator::intializePageSize()
 
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
 {
-    PageAllocation allocation = PageAllocation::allocate(size, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+    PageAllocation allocation = PageAllocation::allocate(size, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
     if (!allocation)
         CRASH();
     return allocation;

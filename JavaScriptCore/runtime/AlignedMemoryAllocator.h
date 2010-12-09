@@ -136,7 +136,7 @@ private:
 
 template<size_t blockSize>
 AlignedMemoryAllocator<blockSize>::AlignedMemoryAllocator()
-    : m_reservation(PageReservation::reserve(reservationSize + blockSize, PageAllocation::JSGCHeapPages))
+    : m_reservation(PageReservation::reserve(reservationSize + blockSize, OSAllocator::JSGCHeapPages))
     , m_nextFree(0)
 {
     // check that blockSize and reservationSize are powers of two
