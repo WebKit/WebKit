@@ -1,3 +1,13 @@
+2010-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Update expectations for r73566.
+
+        * platform/gtk/editing/selection/find-yensign-and-backslash-expected.txt:
+        * platform/qt/editing/selection/find-yensign-and-backslash-expected.txt: Removed.
+        * platform/win/editing/selection/find-yensign-and-backslash-expected.txt: Removed.
+
 2010-12-07  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
