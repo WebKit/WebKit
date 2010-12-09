@@ -3114,7 +3114,7 @@ BUGCR65877 WIN LINUX : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
 BUG_YUTAK MAC SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 
 // Regressed at r73423. All areas are painted green.
-BUG_YUTAK : fast/repaint/positioned-document-element.html = IMAGE
+BUGWK50734 : fast/repaint/positioned-document-element.html = IMAGE
 
 // r73488. Needs new baseline.
 BUG_YUTAK WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = TEXT
