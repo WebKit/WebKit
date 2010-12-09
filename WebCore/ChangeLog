@@ -1,3 +1,18 @@
+2010-12-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        As part of r73559, I added the referenceNode check to validate whether the root
+        node of the iterator matches the node which is getting moved to other document.
+        referenceNode is initialized to root, however can get moved using previousNode
+        and nextNode methods, so it is required to use root directly.
+        https://bugs.webkit.org/show_bug.cgi?id=50764
+
+        Test: fast/dom/node-iterator-reference-node-moved-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::moveNodeIteratorsToNewDocument): change referenceNode to root.
+
 2010-12-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

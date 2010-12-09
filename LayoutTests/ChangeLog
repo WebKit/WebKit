@@ -1,3 +1,14 @@
+2010-12-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that we do not crash when we move the referenceNode using node iterator
+        methods previousNode and nextNode.
+        https://bugs.webkit.org/show_bug.cgi?id=50764
+
+        * fast/dom/node-iterator-reference-node-moved-crash-expected.txt: Added.
+        * fast/dom/node-iterator-reference-node-moved-crash.html: Added.
+
 2010-12-09  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
