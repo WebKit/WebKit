@@ -29,7 +29,7 @@
 #define QTWEBKIT_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 #if defined(QT_MAKEDLL)        /* create a Qt DLL library */
-#  if defined(BUILD_WEBKIT)
+#  if defined(BUILDING_WEBKIT)
 #      define QWEBKIT_EXPORT Q_DECL_EXPORT
 #  else
 #      define QWEBKIT_EXPORT Q_DECL_IMPORT

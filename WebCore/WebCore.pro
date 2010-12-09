@@ -125,7 +125,7 @@ CONFIG(release):!CONFIG(standalone_package) {
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 }
 
-DEFINES += BUILD_WEBKIT
+DEFINES += BUILDING_WEBKIT
 
 # Remove whole program optimizations due to miscompilations
 win32-msvc2005|win32-msvc2008|wince*:{

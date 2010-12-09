@@ -1,3 +1,12 @@
+2010-12-09  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Use BUILDING_WEBKIT like other ports
+        https://bugs.webkit.org/show_bug.cgi?id=50713
+
+        * Api/qwebkitglobal.h: change BUILD_WEBKIT to BUILDING_WEBKIT
+
 2010-12-08  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
