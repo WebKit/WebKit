@@ -1,3 +1,16 @@
+2010-12-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] disable fullscreen on MacOS Tiger and Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=50748
+
+        Don't support fullscreen video on Tiger and Leopard, just like the
+        QTKit player.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsFullscreen):
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

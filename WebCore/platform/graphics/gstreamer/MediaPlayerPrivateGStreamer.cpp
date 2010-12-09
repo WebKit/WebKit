@@ -1482,7 +1482,12 @@ bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
 
 bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 {
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    // See <rdar://problem/7389945>
+    return false;
+#else
     return true;
+#endif
 }
 
 PlatformMedia MediaPlayerPrivateGStreamer::platformMedia() const
