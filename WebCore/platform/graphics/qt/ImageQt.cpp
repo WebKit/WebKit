@@ -68,6 +68,10 @@ static QPixmap loadResourcePixmap(const char *name)
         pixmap = QWebSettings::webGraphic(QWebSettings::DeleteButtonGraphic);
     else if (!qstrcmp(name, "inputSpeech"))
         pixmap = QWebSettings::webGraphic(QWebSettings::InputSpeechButtonGraphic);
+    else if (!qstrcmp(name, "searchCancelButton"))
+        pixmap = QWebSettings::webGraphic(QWebSettings::SearchCancelButtonGraphic);
+    else if (!qstrcmp(name, "searchCancelButtonPressed"))
+        pixmap = QWebSettings::webGraphic(QWebSettings::SearchCancelButtonPressedGraphic);
 
     return pixmap;
 }

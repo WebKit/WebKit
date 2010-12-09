@@ -1,3 +1,30 @@
+2010-12-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Search input field doesn't have cancel button
+        Add a cancel button to the search field and make it customizable
+        by the client. For now, use the close dialog button associated
+        with the application's style as the default.
+
+        Unskip a bunch of search field related tests that pass now:
+
+        fast/forms/search-cancel-button-mouseup.html
+        fast/forms/search-rtl.html
+        fast/forms/search-abs-pos-cancel-button.html
+        fast/forms/search-styled.html
+        fast/forms/search-transformed.html
+        fast/forms/search-zoomed.html
+        fast/forms/search-cancel-button-style-sharing.html
+        fast/forms/search-display-none-cancel-button.html
+        fast/forms/search-placeholder-value-changed.html
+        fast/repaint/search-field-cancel.html
+        fast/forms/search-cancel-button-events.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=42887
+
+        * platform/qt/Skipped:
+
 2010-12-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.
