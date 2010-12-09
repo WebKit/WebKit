@@ -1,3 +1,12 @@
+2010-12-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Removed an unused variable.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights): Removed parentLineHeight.
+
 2010-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

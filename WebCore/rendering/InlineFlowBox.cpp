@@ -499,7 +499,6 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 
         if (usedFonts && curr->renderer()->style(m_firstLine)->lineHeight().isNegative()) {
             usedFonts->append(curr->renderer()->style(m_firstLine)->font().primaryFont());
-            Length parentLineHeight = curr->renderer()->parent()->style()->lineHeight();
             bool baselineSet = false;
             baseline = 0;
             int baselineToBottom = 0;
