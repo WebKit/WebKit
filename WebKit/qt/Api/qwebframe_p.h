@@ -28,6 +28,9 @@
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#include "qorientationsensor.h"
+#endif
 #include "qwebelement.h"
 #include "wtf/RefPtr.h"
 #include "Frame.h"
@@ -36,6 +39,7 @@
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 #include "texmap/TextureMapper.h"
 #endif
+
 
 namespace WebCore {
     class FrameLoaderClientQt;
@@ -113,6 +117,10 @@ public:
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     WebCore::TextureMapperContentLayer* rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> textureMapper;
+#endif
+
+#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+    QtMobility::QOrientationSensor m_orientation;
 #endif
 };
 

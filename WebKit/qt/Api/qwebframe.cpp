@@ -409,6 +409,34 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
     }
 }
 
+void QWebFrame::orientationChanged()
+{
+#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+    int orientation;
+    WebCore::Frame* frame = QWebFramePrivate::core(this);
+
+    switch (d->m_orientation.reading()->orientation()) {
+    case QtMobility::QOrientationReading::TopUp:
+        orientation = 0;
+        break;
+    case QtMobility::QOrientationReading::TopDown:
+        orientation = 180;
+        break;
+    case QtMobility::QOrientationReading::LeftUp:
+        orientation = -90;
+        break;
+    case QtMobility::QOrientationReading::RightUp:
+        orientation = 90;
+        break;
+    case QtMobility::QOrientationReading::FaceUp:
+    case QtMobility::QOrientationReading::FaceDown:
+        // WebCore unable to handle it
+    default:
+        return;
+    }
+    frame->sendOrientationChangeEvent(orientation);
+#endif
+}
 /*!
     \class QWebFrame
     \since 4.4
@@ -483,6 +511,10 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
         WebCore::ResourceRequest request(frameData->url, frameData->referrer);
         d->frame->loader()->load(request, frameData->name, false);
     }
+#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(orientationChanged()));
+    d->m_orientation.start();
+#endif
 }
 
 QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
@@ -491,6 +523,10 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 {
     d->page = parent->d->page;
     d->init(this, frameData);
+#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(orientationChanged()));
+    d->m_orientation.start();
+#endif
 }
 
 QWebFrame::~QWebFrame()

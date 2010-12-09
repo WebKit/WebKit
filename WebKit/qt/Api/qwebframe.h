@@ -205,6 +205,9 @@ public Q_SLOTS:
     void print(QPrinter *printer) const;
 #endif
 
+private Q_SLOTS:
+    void orientationChanged();
+
 Q_SIGNALS:
     void javaScriptWindowObjectCleared();
 

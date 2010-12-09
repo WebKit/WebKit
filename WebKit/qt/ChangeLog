@@ -1,3 +1,18 @@
+2010-12-08  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Support OrientationChange event
+        https://bugs.webkit.org/show_bug.cgi?id=50685
+
+        Get OrientationChange event from qtmobility then send to webkit.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::orientationChanged):
+        (QWebFrame::QWebFrame):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.
