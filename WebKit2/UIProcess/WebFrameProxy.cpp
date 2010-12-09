@@ -26,6 +26,7 @@
 #include "WebFrameProxy.h"
 
 #include "WebCertificateInfo.h"
+#include "WebContext.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
@@ -85,6 +86,12 @@ bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
 
     if (m_page->canShowMIMEType(mimeType))
         return true;
+
+#if PLATFORM(MAC)
+    // On Mac, we can show PDFs in the main frame.
+    if (isMainFrame())
+        return WebContext::pdfAndPostScriptMIMETypes().contains(mimeType);
+#endif
 
     return false;
 }

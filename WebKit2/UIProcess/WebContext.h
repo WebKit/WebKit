@@ -122,6 +122,8 @@ public:
     WebDownloadClient& downloadClient() { return m_downloadClient; }
     void downloadFinished(DownloadProxy*);
 
+    static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 

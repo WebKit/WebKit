@@ -411,6 +411,18 @@ void WebContext::downloadFinished(DownloadProxy* downloadProxy)
     m_downloads.remove(downloadProxy->downloadID());
 }
 
+// FIXME: This is not the ideal place for this function.
+HashSet<String, CaseFoldingHash> WebContext::pdfAndPostScriptMIMETypes()
+{
+    HashSet<String, CaseFoldingHash> mimeTypes;
+
+    mimeTypes.add("application/pdf");
+    mimeTypes.add("application/postscript");
+    mimeTypes.add("text/pdf");
+    
+    return mimeTypes;
+}
+
 void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {

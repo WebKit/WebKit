@@ -1,3 +1,16 @@
+2010-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebFrameProxy::canShowMIMEType should return true for PDF MIME types in the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=50724
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::pdfAndPostScriptMIMETypes):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canShowMIMEType):
+
 2010-12-08  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.
