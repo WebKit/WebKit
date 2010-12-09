@@ -104,6 +104,7 @@ EAPI Eina_Bool    ewk_tiled_backing_store_scroll_inner_offset_add(Evas_Object *o
 EAPI Eina_Bool    ewk_tiled_backing_store_zoom_set(Evas_Object *o, float *zoom, Evas_Coord cx, Evas_Coord cy, Evas_Coord *offx, Evas_Coord *offy);
 EAPI Eina_Bool    ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
 EAPI void ewk_tiled_backing_store_fix_offsets(Evas_Object *o, Evas_Coord w, Evas_Coord h);
+EAPI void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale);
 EAPI Eina_Bool    ewk_tiled_backing_store_update(Evas_Object *o, const Eina_Rectangle *update);
 EAPI void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object *o, void *(*cb)(void *data, Evas_Object *o), const void *data);
 EAPI void ewk_tiled_backing_store_updates_process_post_set(Evas_Object *o, void *(*cb)(void *data, void *pre_data, Evas_Object *o), const void *data);

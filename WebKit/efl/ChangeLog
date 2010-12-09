@@ -2,6 +2,18 @@
 
         Reviewed by Antonio Gomes.
 
+        [EFL] Add missing function in WebKit-EFL API
+
+        Add ewk_tiled_backing_store_zoom_weak_smooth_scale_set function in
+        WebKit-EFL API. This function was already implemented but missing in
+        header file.
+
+        * ewk/ewk_tiled_backing_store.h:
+
+2010-12-09  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
         [EFL] Fix scroll operation in WebKit-EFL
         https://bugs.webkit.org/show_bug.cgi?id=50752
 
