@@ -1,3 +1,15 @@
+2010-12-09  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION (r73065?): A regex no longer works 
+        https://bugs.webkit.org/show_bug.cgi?id=50570
+
+        Added tests that came from submitter to validate change.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2010-12-09  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectations update.

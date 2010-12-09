@@ -1,5 +1,32 @@
 2010-12-09  Michael Saboff  <msaboff@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION (r73065?): A regex no longer works 
+        https://bugs.webkit.org/show_bug.cgi?id=50570
+
+        Changed the handling of adjacent parentheses backtracks in two ways.
+        First, only outer most paren backtracks default to back tracking
+        to the "next character" looping code.  Second, added a jump around 
+        backtracks that fall through to the next backtrack where the
+        second backtrack has some greedy processing before the backtracking
+        from outside the parentheses code.
+        Also cleaned up extraneous white spce, removing white space at the
+        end of or that makes up a whole line.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::GenerationState::GenerationState):
+        (JSC::Yarr::RegexGenerator::GenerationState::incrementParenNestingLevel):
+        (JSC::Yarr::RegexGenerator::GenerationState::decrementParenNestingLevel):
+        (JSC::Yarr::RegexGenerator::GenerationState::addParenthesesTail):
+        (JSC::Yarr::RegexGenerator::GenerationState::emitParenthesesTail):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::ParenthesesTail):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::setNextIteration):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+
+2010-12-09  Michael Saboff  <msaboff@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Addressed the "FIXME" issues in array sort for toString() methods that

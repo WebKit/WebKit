@@ -80,6 +80,51 @@ shouldBeNull("regexp25.exec('!this is a test')");
 var regexp26 = /a(b)(a*)|aaa/;
 shouldBe("regexp26.exec('aaa')", "['aaa',undefined,undefined]");
 
+var regexp27 = new RegExp(
+    "^" +
+    "(?:" +
+        "([^:/?#]+):" + /* scheme */
+    ")?" +
+    "(?:" +
+        "(//)" + /* authorityRoot */
+        "(" + /* authority */
+            "(?:" +
+                "(" + /* userInfo */
+                    "([^:@]*)" + /* user */
+                    ":?" +
+                    "([^:@]*)" + /* password */
+                ")?" +
+                "@" +
+            ")?" +
+            "([^:/?#]*)" + /* domain */
+            "(?::(\\d*))?" + /* port */
+        ")" +
+    ")?" +
+    "([^?#]*)" + /*path*/
+    "(?:\\?([^#]*))?" + /* queryString */
+    "(?:#(.*))?" /*fragment */
+);
+shouldBe("regexp27.exec('file:///Users/Someone/Desktop/HelloWorld/index.html')", "['file:///Users/Someone/Desktop/HelloWorld/index.html','file','//','',undefined,undefined,undefined,'',undefined,'/Users/Someone/Desktop/HelloWorld/index.html',undefined,undefined]");
+
+var regexp28 = new RegExp(
+    "^" +
+    "(?:" +
+        "([^:/?#]+):" + /* scheme */
+    ")?" +
+    "(?:" +
+        "(//)" + /* authorityRoot */
+        "(" + /* authority */
+            "(" + /* userInfo */
+                "([^:@]*)" + /* user */
+                ":?" +
+                "([^:@]*)" + /* password */
+            ")?" +
+            "@" +
+        ")" +
+    ")?"
+);
+shouldBe("regexp28.exec('file:///Users/Someone/Desktop/HelloWorld/index.html')", "['file:','file',undefined,undefined,undefined,undefined,undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

@@ -110,16 +110,16 @@ class RegexGenerator : private MacroAssembler {
             int which = count >> 1;
             char lo = ranges[which].begin;
             char hi = ranges[which].end;
-            
+
             // check if there are any ranges or matches below lo.  If not, just jl to failure -
             // if there is anything else to check, check that first, if it falls through jmp to failure.
             if ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
                 Jump loOrAbove = branch32(GreaterThanOrEqual, character, Imm32((unsigned short)lo));
-                
+
                 // generate code for all ranges before this one
                 if (which)
                     matchCharacterClassRange(character, failures, matchDest, ranges, which, matchIndex, matches, matchCount);
-                
+
                 while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
                     matchDest.append(branch32(Equal, character, Imm32((unsigned short)matches[*matchIndex])));
                     ++*matchIndex;
@@ -154,25 +154,25 @@ class RegexGenerator : private MacroAssembler {
     {
         if (charClass->m_table) {
             ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(charClass->m_table->m_table));
-            matchDest.append(branchTest8(charClass->m_table->m_inverted ? Zero : NonZero, tableEntry));   
+            matchDest.append(branchTest8(charClass->m_table->m_inverted ? Zero : NonZero, tableEntry));
             return;
         }
         Jump unicodeFail;
         if (charClass->m_matchesUnicode.size() || charClass->m_rangesUnicode.size()) {
             Jump isAscii = branch32(LessThanOrEqual, character, Imm32(0x7f));
-        
+
             if (charClass->m_matchesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_matchesUnicode.size(); ++i) {
                     UChar ch = charClass->m_matchesUnicode[i];
                     matchDest.append(branch32(Equal, character, Imm32(ch)));
                 }
             }
-            
+
             if (charClass->m_rangesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_rangesUnicode.size(); ++i) {
                     UChar lo = charClass->m_rangesUnicode[i].begin;
                     UChar hi = charClass->m_rangesUnicode[i].end;
-                    
+
                     Jump below = branch32(LessThan, character, Imm32(lo));
                     matchDest.append(branch32(LessThanOrEqual, character, Imm32(hi)));
                     below.link(this);
@@ -185,7 +185,7 @@ class RegexGenerator : private MacroAssembler {
 
         if (charClass->m_ranges.size()) {
             unsigned matchIndex = 0;
-            JumpList failures; 
+            JumpList failures;
             matchCharacterClassRange(character, failures, matchDest, charClass->m_ranges.begin(), charClass->m_ranges.size(), &matchIndex, charClass->m_matches.begin(), charClass->m_matches.size());
             while (matchIndex < charClass->m_matches.size())
                 matchDest.append(branch32(Equal, character, Imm32((unsigned short)charClass->m_matches[matchIndex++])));
@@ -298,16 +298,16 @@ class RegexGenerator : private MacroAssembler {
         {
             addJump(jump);
         }
-        
+
         void addJump(Jump jump)
         {
             m_relJumps.append(jump);
         }
-        
+
         int32_t m_stackOffset;
         JumpList m_relJumps;
     };
-        
+
     struct AlternativeBacktrackRecord {
         DataLabelPtr dataLabel;
         Label backtrackLocation;
@@ -321,38 +321,39 @@ class RegexGenerator : private MacroAssembler {
 
     struct ParenthesesTail;
     struct TermGenerationState;
-    
+
     struct GenerationState {
         typedef HashMap<int, IndirectJumpEntry*, WTF::IntHash<uint32_t>, UnsignedWithZeroKeyHashTraits<uint32_t> > IndirectJumpHashMap;
-        
+
         GenerationState()
+            : m_parenNestingLevel(0)
         {
         }
-        
+
         void addIndirectJumpEntry(int32_t stackOffset, Jump jump)
         {
             IndirectJumpHashMap::iterator result = m_indirectJumpMap.find(stackOffset);
-            
+
             ASSERT(stackOffset >= 0);
-            
+
             uint32_t offset = static_cast<uint32_t>(stackOffset);
-            
+
             if (result == m_indirectJumpMap.end())
                 m_indirectJumpMap.add(offset, new IndirectJumpEntry(stackOffset, jump));
             else
                 result->second->addJump(jump);
         }
-        
+
         void addIndirectJumpEntry(int32_t stackOffset, JumpList jumps)
         {
             JumpList::JumpVector jumpVector = jumps.jumps();
             size_t size = jumpVector.size();
             for (size_t i = 0; i < size; ++i)
                 addIndirectJumpEntry(stackOffset, jumpVector[i]);
-            
+
             jumps.empty();
         }
-        
+
         void emitIndirectJumpTable(MacroAssembler* masm)
         {
             for (IndirectJumpHashMap::iterator iter = m_indirectJumpMap.begin(); iter != m_indirectJumpMap.end(); ++iter) {
@@ -362,67 +363,79 @@ class RegexGenerator : private MacroAssembler {
                 delete indJumpEntry;
             }
         }
-        
+
+        void incrementParenNestingLevel()
+        {
+            ++m_parenNestingLevel;
+        }
+
+        void decrementParenNestingLevel()
+        {
+            --m_parenNestingLevel;
+        }
+
         ParenthesesTail* addParenthesesTail(PatternTerm& term)
         {
-            ParenthesesTail* parenthesesTail = new ParenthesesTail(term);
+            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel);
             m_parenTails.append(parenthesesTail);
             m_parenTailsForIteration.append(parenthesesTail);
-            
+
             return parenthesesTail;
         }
-        
+
         void emitParenthesesTail(RegexGenerator* generator)
         {
             unsigned vectorSize = m_parenTails.size();
-            
+            bool priorBacktrackFallThrough = false;
+
             // Emit in reverse order so parentTail N can fall through to N-1
             for (unsigned index = vectorSize; index > 0; --index) {
                 JumpList jumpsToNext;
-                m_parenTails[index-1].get()->generateCode(generator, jumpsToNext, index > 1);
+                priorBacktrackFallThrough = m_parenTails[index-1].get()->generateCode(generator, jumpsToNext, priorBacktrackFallThrough, index > 1);
                 if (index > 1)
                     jumpsToNext.linkTo(generator->label(), generator);
                 else
                     addJumpsToNextInteration(jumpsToNext);
             }
             m_parenTails.clear();
-        }        
-        
+        }
+
         void addJumpToNextInteration(Jump jump)
         {
             m_jumpsToNextInteration.append(jump);
         }
-        
+
         void addJumpsToNextInteration(JumpList jumps)
         {
             m_jumpsToNextInteration.append(jumps);
         }
-        
+
         void addDataLabelToNextIteration(DataLabelPtr dataLabel)
         {
             m_dataPtrsToNextIteration.append(dataLabel);
         }
-        
+
         void linkToNextIteration(Label label)
         {
             m_nextIteration = label;
-            
+
             for (unsigned i = 0; i < m_dataPtrsToNextIteration.size(); ++i)
                 m_backtrackRecords.append(AlternativeBacktrackRecord(m_dataPtrsToNextIteration[i], m_nextIteration));
-            
+
             m_dataPtrsToNextIteration.clear();
 
             for (unsigned i = 0; i < m_parenTailsForIteration.size(); ++i)
                 m_parenTailsForIteration[i]->setNextIteration(m_nextIteration);
-            
-            m_parenTailsForIteration.clear();            
+
+            m_parenTailsForIteration.clear();
         }
 
         void linkToNextIteration(RegexGenerator* generator)
         {
             m_jumpsToNextInteration.linkTo(m_nextIteration, generator);
-        }        
-        
+        }
+
+        int m_parenNestingLevel;
         Vector<AlternativeBacktrackRecord> m_backtrackRecords;
         IndirectJumpHashMap m_indirectJumpMap;
         Label m_nextIteration;
@@ -440,7 +453,7 @@ class RegexGenerator : private MacroAssembler {
             BacktrackJumpList,
             BacktrackLinked
         } BacktrackType;
-        
+
         BacktrackDestination()
             : m_backtrackType(NoBacktrack)
             , m_backtrackToLabel(0)
@@ -450,8 +463,8 @@ class RegexGenerator : private MacroAssembler {
             , m_backtrackSourceJumps(0)
         {
         }
-        
-        BacktrackDestination(int32_t stackOffset) 
+
+        BacktrackDestination(int32_t stackOffset)
             : m_backtrackType(BacktrackStackOffset)
             , m_backtrackStackOffset(stackOffset)
             , m_backtrackToLabel(0)
@@ -461,8 +474,8 @@ class RegexGenerator : private MacroAssembler {
             , m_backtrackSourceJumps(0)
         {
         }
-        
-        BacktrackDestination(Label label) 
+
+        BacktrackDestination(Label label)
             : m_backtrackType(BacktrackLabel)
             , m_backtrackLabel(label)
             , m_backtrackToLabel(0)
@@ -472,44 +485,44 @@ class RegexGenerator : private MacroAssembler {
             , m_backtrackSourceJumps(0)
         {
         }
-        
+
         void clear()
         {
             m_backtrackType = NoBacktrack;
             clearDataLabel();
             m_nextBacktrack = 0;
         }
-        
+
         void clearDataLabel()
         {
             m_dataLabelPtr = DataLabelPtr();
         }
-        
+
         bool hasDestination()
         {
             return (m_backtrackType != NoBacktrack);
         }
-        
+
         bool isStackOffset()
         {
             return (m_backtrackType == BacktrackStackOffset);
         }
-        
+
         bool isLabel()
         {
             return (m_backtrackType == BacktrackLabel);
         }
-        
+
         bool isJumpList()
         {
             return (m_backtrackType == BacktrackJumpList);
         }
-        
+
         bool hasDataLabel()
         {
             return m_dataLabelPtr.isSet();
         }
-        
+
         void copyTarget(BacktrackDestination& rhs, bool copyDataLabel = true)
         {
             m_backtrackType = rhs.m_backtrackType;
@@ -522,7 +535,7 @@ class RegexGenerator : private MacroAssembler {
             m_backtrackSourceJumps = rhs.m_backtrackSourceJumps;
             m_backtrackSourceLabel = rhs.m_backtrackSourceLabel;
         }
-        
+
         void copyTo(BacktrackDestination& lhs)
         {
             lhs.m_backtrackType = m_backtrackType;
@@ -535,7 +548,7 @@ class RegexGenerator : private MacroAssembler {
             lhs.m_dataLabelPtr = m_dataLabelPtr;
             lhs.m_backTrackJumps = m_backTrackJumps;
         }
-        
+
         void addBacktrackJump(Jump jump)
         {
             m_backTrackJumps.append(jump);
@@ -546,36 +559,36 @@ class RegexGenerator : private MacroAssembler {
             m_backtrackType = BacktrackStackOffset;
             m_backtrackStackOffset = stackOffset;
         }
-        
+
         void setLabel(Label label)
         {
             m_backtrackType = BacktrackLabel;
             m_backtrackLabel = label;
         }
-        
+
         void setNextBacktrackLabel(Label label)
         {
             if (m_nextBacktrack)
                 m_nextBacktrack->setLabel(label);
         }
-        
+
         void setBacktrackToLabel(Label* backtrackToLabel)
         {
             if (!m_backtrackToLabel)
                 m_backtrackToLabel = backtrackToLabel;
         }
-        
+
         void setBacktrackJumpList(JumpList* jumpList)
         {
             m_backtrackType = BacktrackJumpList;
             m_backtrackSourceJumps = jumpList;
         }
-        
+
         void setBacktrackSourceLabel(Label* backtrackSourceLabel)
         {
             m_backtrackSourceLabel = backtrackSourceLabel;
         }
-        
+
         void setDataLabel(DataLabelPtr dp)
         {
             if (m_subDataLabelPtr) {
@@ -584,7 +597,7 @@ class RegexGenerator : private MacroAssembler {
             } else
                 m_dataLabelPtr = dp;
         }
-        
+
         void setSubDataLabelPtr(DataLabelPtr* subDataLabelPtr)
         {
             m_subDataLabelPtr = subDataLabelPtr;
@@ -594,29 +607,29 @@ class RegexGenerator : private MacroAssembler {
         {
             m_nextBacktrack = nextBacktrack;
         }
-                                 
+
         int32_t getStackOffset()
         {
             ASSERT(m_backtrackType == BacktrackStackOffset);
             return m_backtrackStackOffset;
         }
-        
+
         Label getLabel()
         {
             ASSERT(m_backtrackType == BacktrackLabel);
             return m_backtrackLabel;
         }
-        
+
         JumpList& getBacktrackJumps()
         {
             return m_backTrackJumps;
         }
-        
+
         DataLabelPtr& getDataLabel()
         {
             return m_dataLabelPtr;
         }
-        
+
         void jumpToBacktrack(MacroAssembler* masm)
         {
             if (isJumpList()) {
@@ -631,7 +644,7 @@ class RegexGenerator : private MacroAssembler {
             else
                 m_backTrackJumps.append(masm->jump());
         }
-        
+
         void jumpToBacktrack(RegexGenerator* generator, Jump jump)
         {
             if (isJumpList()) {
@@ -646,7 +659,7 @@ class RegexGenerator : private MacroAssembler {
             else
                 m_backTrackJumps.append(jump);
         }
-        
+
         void jumpToBacktrack(RegexGenerator* generator, JumpList& jumps)
         {
             if (isJumpList()) {
@@ -669,10 +682,10 @@ class RegexGenerator : private MacroAssembler {
                 clearDataLabel();
                 return true;
             }
-            
+
             return false;
-        }        
-                
+        }
+
         bool plantJumpToBacktrackIfExists(RegexGenerator* generator)
         {
             if (isJumpList()) {
@@ -688,54 +701,54 @@ class RegexGenerator : private MacroAssembler {
                 generator->jump(Address(stackPointerRegister, getStackOffset()));
                 return true;
             }
-            
+
             if (isLabel()) {
                 generator->jump(getLabel());
                 if (hasDataLabel()) {
                     generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(getDataLabel(), getLabel()));
                     clearDataLabel();
-                }                
+                }
                 return true;
             }
-            
+
             return false;
         }
 
         void linkAlternativeBacktracks(RegexGenerator* generator, bool nextIteration = false)
         {
             Label hereLabel = generator->label();
-            
+
             if (m_backtrackToLabel) {
                 *m_backtrackToLabel = hereLabel;
                 m_backtrackToLabel = 0;
             }
-            
+
             m_backTrackJumps.link(generator);
-            
+
             if (nextIteration)
                 generator->m_expressionState.linkToNextIteration(hereLabel);
-            
+
             if (hasDataLabel()) {
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(getDataLabel(), hereLabel));
                 // data label cleared as a result of the clear() below
             }
-            
+
             clear();
         }
-        
+
         void linkAlternativeBacktracksTo(RegexGenerator* generator, Label label, bool nextIteration = false)
         {
             m_backTrackJumps.linkTo(label, generator);
-            
+
             if (nextIteration)
                 generator->m_expressionState.linkToNextIteration(label);
-            
+
             if (hasDataLabel()) {
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(getDataLabel(), label));
                 clearDataLabel();
             }
         }
-        
+
     private:
         BacktrackType m_backtrackType;
         int32_t m_backtrackStackOffset;
@@ -748,7 +761,7 @@ class RegexGenerator : private MacroAssembler {
         JumpList* m_backtrackSourceJumps;
         JumpList m_backTrackJumps;
     };
-        
+
     struct TermGenerationState {
         TermGenerationState(PatternDisjunction* disjunction, unsigned checkedTotal)
             : disjunction(disjunction)
@@ -778,7 +791,7 @@ class RegexGenerator : private MacroAssembler {
         {
             return (alt + 1) == disjunction->m_alternatives.size();
         }
-        
+
         void resetTerm()
         {
             ASSERT(alternativeValid());
@@ -834,12 +847,12 @@ class RegexGenerator : private MacroAssembler {
             m_backtrack.clear();
             m_linkedBacktrack = 0;
         }
-        
+
         void jumpToBacktrack(MacroAssembler* masm)
         {
             m_backtrack.jumpToBacktrack(masm);
         }
-        
+
         void jumpToBacktrack(RegexGenerator* generator, Jump jump)
         {
             m_backtrack.jumpToBacktrack(generator, jump);
@@ -849,12 +862,12 @@ class RegexGenerator : private MacroAssembler {
         {
             m_backtrack.jumpToBacktrack(generator, jumps);
         }
-        
+
         bool plantJumpToBacktrackIfExists(RegexGenerator* generator)
         {
             return m_backtrack.plantJumpToBacktrackIfExists(generator);
         }
-        
+
         bool linkDataLabelToBacktrackIfExists(RegexGenerator* generator)
         {
             if ((m_backtrack.isLabel()) && (m_backtrack.hasDataLabel())) {
@@ -862,9 +875,9 @@ class RegexGenerator : private MacroAssembler {
                 m_backtrack.clearDataLabel();
                 return true;
             }
-            
+
             return false;
-        }        
+        }
 
         void addBacktrackJump(Jump jump)
         {
@@ -880,7 +893,7 @@ class RegexGenerator : private MacroAssembler {
         {
             m_backtrack.setStackOffset(stackOffset);
         }
-        
+
         void setBacktrackLabel(Label label)
         {
             m_backtrack.setLabel(label);
@@ -901,19 +914,19 @@ class RegexGenerator : private MacroAssembler {
         {
             m_linkedBacktrack = linkedBacktrack;
         }
-        
+
         void chainBacktracks(BacktrackDestination* followonBacktrack)
         {
             if (m_linkedBacktrack)
                 m_linkedBacktrack->linkToNextBacktrack(followonBacktrack);
         }
-        
+
         void chainBacktrackJumps(JumpList* jumpList)
         {
             if (m_linkedBacktrack && !(m_linkedBacktrack->hasDestination()))
                 m_linkedBacktrack->setBacktrackJumpList(jumpList);
         }
-        
+
         BacktrackDestination& getBacktrackDestination()
         {
             return m_backtrack;
@@ -926,7 +939,7 @@ class RegexGenerator : private MacroAssembler {
             if (backtrack.hasDestination()) {
                 if (m_backtrack.hasDataLabel())
                     generator->m_expressionState.addDataLabelToNextIteration(m_backtrack.getDataLabel());
-                
+
                 m_backtrack.copyTarget(backtrack, doJump);
             }
         }
@@ -938,15 +951,16 @@ class RegexGenerator : private MacroAssembler {
         unsigned t;
         BacktrackDestination m_backtrack;
         BacktrackDestination* m_linkedBacktrack;
-        
+
     };
 
     struct ParenthesesTail {
-        ParenthesesTail(PatternTerm& term)
+        ParenthesesTail(PatternTerm& term, int nestingLevel)
             : m_term(term)
+            , m_nestingLevel(nestingLevel)
         {
         }
-        
+
         void processBacktracks(RegexGenerator* generator, TermGenerationState& state, TermGenerationState& parenthesesState, Label nonGreedyTryParentheses, Label fallThrough)
         {
             m_nonGreedyTryParentheses = nonGreedyTryParentheses;
@@ -959,9 +973,9 @@ class RegexGenerator : private MacroAssembler {
             stateBacktrack.setBacktrackToLabel(&m_backtrackToLabel);
             state.setBacktrackLink(&m_backtrack);
             stateBacktrack.setSubDataLabelPtr(&m_dataAfterLabelPtr);
-            
+
             m_doDirectBacktrack = m_parenBacktrack.hasDestination();
-            
+
             if ((m_term.quantityType == QuantifierGreedy) || (m_term.quantityType == QuantifierNonGreedy))
                 m_doDirectBacktrack = false;
 
@@ -971,13 +985,13 @@ class RegexGenerator : private MacroAssembler {
                 stateBacktrack.setBacktrackJumpList(&m_pattBacktrackJumps);
                 stateBacktrack.setBacktrackSourceLabel(&m_backtrackFromAfterParens);
             }
-            
+
             parenthesesState.chainBacktrackJumps(&m_pattBacktrackJumps);
         }
 
         void setNextIteration(Label nextIteration)
         {
-            if (!m_backtrackToLabel.isSet())
+            if (!m_nestingLevel && !m_backtrackToLabel.isSet())
                 m_backtrackToLabel = nextIteration;
         }
 
@@ -985,12 +999,26 @@ class RegexGenerator : private MacroAssembler {
         {
             m_pattBacktrackJumps.append(jump);
         }
-        
-        void generateCode(RegexGenerator* generator, JumpList& jumpsToNext, bool nextBacktrackFallThrough)
+
+        bool generateCode(RegexGenerator* generator, JumpList& jumpsToNext, bool priorBackTrackFallThrough, bool nextBacktrackFallThrough)
         {
             const RegisterID indexTemporary = regT0;
             unsigned parenthesesFrameLocation = m_term.frameLocation;
-            
+            Jump fromPriorBacktrack;
+            bool needJumpForPriorParenTail = false;
+
+            if (priorBackTrackFallThrough
+                && ((m_term.quantityType == QuantifierGreedy)
+                 || (m_term.quantityType == QuantifierNonGreedy)
+                 || (!m_doDirectBacktrack && m_parenBacktrack.hasDestination()))) {
+                // If the prior paren tail code assumed that it could fall through,
+                // but we need to generate after paren backtrack code, then provide
+                // a jump around that code for the prior paren tail code.
+                // A regular expressing like ((xxx)...)? needs this.
+                fromPriorBacktrack = generator->jump();
+                needJumpForPriorParenTail = true;
+            }
+
             if (!m_backtrack.hasDestination()) {
                 if (m_backtrackToLabel.isSet()) {
                     m_backtrack.setLabel(m_backtrackToLabel);
@@ -999,15 +1027,15 @@ class RegexGenerator : private MacroAssembler {
                     m_backtrack.setBacktrackJumpList(&jumpsToNext);
             } else
                 nextBacktrackFallThrough = false;
-            
+
             // A failure AFTER the parens jumps here - Backtrack to this paren
             m_backtrackFromAfterParens = generator->label();
-            
+
             if (m_dataAfterLabelPtr.isSet())
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(m_dataAfterLabelPtr, m_backtrackFromAfterParens));
 
             m_pattBacktrackJumps.link(generator);
-            
+
             if (m_term.quantityType == QuantifierGreedy) {
                 // If this is -1 we have now tested with both with and without the parens.
                 generator->loadFromFrame(parenthesesFrameLocation, indexTemporary);
@@ -1017,27 +1045,33 @@ class RegexGenerator : private MacroAssembler {
                 generator->loadFromFrame(parenthesesFrameLocation, indexTemporary);
                 generator->branch32(Equal, indexTemporary, Imm32(-1)).linkTo(m_nonGreedyTryParentheses, generator);
             }
-            
+
             if (!m_doDirectBacktrack)
                 m_parenBacktrack.plantJumpToBacktrackIfExists(generator);
-            
+
             // A failure WITHIN the parens jumps here
+            if (needJumpForPriorParenTail)
+                fromPriorBacktrack.link(generator);
             m_parenBacktrack.linkAlternativeBacktracks(generator);
-            
+
             if (m_term.capture())
                 generator->store32(Imm32(-1), Address(output, (m_term.parentheses.subpatternId << 1) * sizeof(int)));
-            
+
             if (m_term.quantityType == QuantifierGreedy) {
                 generator->storeToFrame(Imm32(-1), parenthesesFrameLocation);
                 generator->jump().linkTo(m_fallThrough, generator);
+                nextBacktrackFallThrough = false;
             } else if (!nextBacktrackFallThrough)
                 m_backtrack.jumpToBacktrack(generator);
 
             if (!m_doDirectBacktrack)
                 m_backtrack.setNextBacktrackLabel(m_backtrackFromAfterParens);
+
+            return nextBacktrackFallThrough;
         }
-        
+
         PatternTerm& m_term;
+        int m_nestingLevel;
         Label m_nonGreedyTryParentheses;
         Label m_fallThrough;
         Label m_backtrackToLabel;
@@ -1048,8 +1082,7 @@ class RegexGenerator : private MacroAssembler {
         BacktrackDestination m_backtrack;
         bool m_doDirectBacktrack;
     };
-    
-    
+
     void generateAssertionBOL(TermGenerationState& state)
     {
         PatternTerm& term = state.term();
@@ -1152,7 +1185,7 @@ class RegexGenerator : private MacroAssembler {
         }
 
         state.jumpToBacktrack(this, wordCharThenWordChar);
-        
+
         nonWordCharThenWordChar.link(this);
         wordCharThenNonWordChar.link(this);
     }
@@ -1180,7 +1213,7 @@ class RegexGenerator : private MacroAssembler {
 
         int mask = 0;
         int chPair = ch1 | (ch2 << 16);
-        
+
         if (m_pattern.m_ignoreCase) {
             if (isASCIIAlpha(ch1))
                 mask |= 32;
@@ -1225,7 +1258,7 @@ class RegexGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
-    
+
         move(Imm32(0), countRegister);
 
         JumpList failures;
@@ -1267,7 +1300,7 @@ class RegexGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
-    
+
         move(Imm32(0), countRegister);
 
         Jump firstTimeDoNothing = jump();
@@ -1347,7 +1380,7 @@ class RegexGenerator : private MacroAssembler {
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
-    
+
         move(Imm32(0), countRegister);
 
         JumpList failures;
@@ -1391,7 +1424,7 @@ class RegexGenerator : private MacroAssembler {
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
-    
+
         move(Imm32(0), countRegister);
 
         Jump firstTimeDoNothing = jump();
@@ -1430,7 +1463,7 @@ class RegexGenerator : private MacroAssembler {
     {
         ASSERT((parenthesesTerm.type == PatternTerm::TypeParenthesesSubpattern) || (parenthesesTerm.type == PatternTerm::TypeParentheticalAssertion));
         ASSERT(parenthesesTerm.quantityCount == 1);
-    
+
         PatternDisjunction* disjunction = parenthesesTerm.parentheses.disjunction;
         unsigned preCheckedCount = ((parenthesesTerm.quantityType == QuantifierFixedCount) && (parenthesesTerm.type != PatternTerm::TypeParentheticalAssertion)) ? disjunction->m_minimumSize : 0;
 
@@ -1452,7 +1485,7 @@ class RegexGenerator : private MacroAssembler {
                 Label backtrackBegin(this);
                 sub32(Imm32(countToCheck), index);
                 state.addBacktrackJump(jump());
-                
+
                 skip.link(this);
 
                 state.setBacktrackLabel(backtrackBegin);
@@ -1486,15 +1519,15 @@ class RegexGenerator : private MacroAssembler {
 
                 // Matched an alternative.
                 DataLabelPtr dataLabel = storeToFrameWithPatch(alternativeFrameLocation);
-                
+
                 if (!state.isLastAlternative() || countToCheck)
                     successes.append(jump());
 
                 // Alternative did not match.
 
                 state.setBacktrackDataLabel(dataLabel);
-                
-                // Do we have a backtrack destination? 
+
+                // Do we have a backtrack destination?
                 //    if so, link the data label to it.
                 state.linkDataLabelToBacktrackIfExists(this);
 
@@ -1566,7 +1599,9 @@ class RegexGenerator : private MacroAssembler {
             }
 
             ParenthesesTail* parenthesesTail = m_expressionState.addParenthesesTail(term);
-            
+
+            m_expressionState.incrementParenNestingLevel();
+
             // generate the body of the parentheses
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
@@ -1574,7 +1609,7 @@ class RegexGenerator : private MacroAssembler {
             // For non-fixed counts, backtrack if we didn't match anything.
             if (term.quantityType != QuantifierFixedCount)
                 parenthesesTail->addAfterParenJump(branch32(Equal, index, Address(stackPointerRegister, (parenthesesFrameLocation * sizeof(void*)))));
-            
+
             // store the match end index
             if (term.capture()) {
                 int inputOffset = state.inputOffset();
@@ -1585,11 +1620,13 @@ class RegexGenerator : private MacroAssembler {
                 } else
                     store32(index, Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
             }
-            
+
+            m_expressionState.decrementParenNestingLevel();
+
             parenthesesTail->processBacktracks(this, state, parenthesesState, nonGreedyTryParentheses, label());
 
             parenthesesState.getBacktrackDestination().clear();
-            
+
             if (term.quantityType == QuantifierNonGreedy)
                 nonGreedySkipParentheses.link(this);
         }
@@ -1708,15 +1745,15 @@ class RegexGenerator : private MacroAssembler {
         case PatternTerm::TypeAssertionBOL:
             generateAssertionBOL(state);
             break;
-        
+
         case PatternTerm::TypeAssertionEOL:
             generateAssertionEOL(state);
             break;
-        
+
         case PatternTerm::TypeAssertionWordBoundary:
             generateAssertionWordBoundary(state);
             break;
-        
+
         case PatternTerm::TypePatternCharacter:
             switch (term.quantityType) {
             case QuantifierFixedCount:
@@ -1795,7 +1832,7 @@ class RegexGenerator : private MacroAssembler {
         // sufficient input available to run the first repeating alternative.
         // The label 'firstAlternativeInputChecked' will jump directly to matching 
         // the first repeating alternative having skipped this check.
-        
+
         if (state.alternativeValid()) {
             PatternAlternative* alternative = state.alternative();
             if (!alternative->onceThrough()) {
@@ -1819,7 +1856,7 @@ class RegexGenerator : private MacroAssembler {
             // Track whether any alternatives are shorter than the first one.
             if (!alternative->onceThrough())
                 hasShorterAlternatives = hasShorterAlternatives || (countCheckedForCurrentAlternative < countToCheckForFirstAlternative);
-            
+
             for (state.resetTerm(); state.termValid(); state.nextTerm())
                 generateTerm(state);
 
@@ -1852,42 +1889,42 @@ class RegexGenerator : private MacroAssembler {
                     // We have handled non-repeating alternatives, jump to next iteration 
                     // and loop over repeating alternatives.
                     state.jumpToBacktrack(this);
-                    
+
                     countToCheckForFirstAlternative = nextAlternative->m_minimumSize;
-                    
+
                     // If we get here, there the last input checked failed.
                     notEnoughInputForPreviousAlternative.link(this);
-                    
+
                     state.linkAlternativeBacktracks(this);
 
                     // Back up to start the looping alternatives.
                     if (countCheckedForCurrentAlternative)
                         sub32(Imm32(countCheckedForCurrentAlternative), index);
-                    
+
                     firstAlternative = Label(this);
-                    
+
                     state.checkedTotal = countToCheckForFirstAlternative;
                     if (countToCheckForFirstAlternative)
                         notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForFirstAlternative));
-                    
+
                     countCheckedForCurrentAlternative = countToCheckForFirstAlternative;
-                    
+
                     firstAlternativeInputChecked = Label(this);
 
                     setRepeatAlternativeLabels = true;
                 } else {
                     int countToCheckForNextAlternative = nextAlternative->m_minimumSize;
-                    
+
                     if (countCheckedForCurrentAlternative > countToCheckForNextAlternative) { // CASE 1: current alternative was longer than the next one.
                         // If we get here, then the last input checked failed.
                         notEnoughInputForPreviousAlternative.link(this);
-                        
+
                         // Check if sufficent input available to run the next alternative 
                         notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
                         // We are now in the correct state to enter the next alternative; this add is only required
                         // to mirror and revert operation of the sub32, just below.
                         add32(Imm32(countCheckedForCurrentAlternative - countToCheckForNextAlternative), index);
-                        
+
                         // If we get here, then the last input checked passed.
                         state.linkAlternativeBacktracks(this);
 
@@ -1902,14 +1939,14 @@ class RegexGenerator : private MacroAssembler {
                         notEnoughInputForPreviousAlternative.link(this);
                         add32(Imm32(countToCheckForNextAlternative - countCheckedForCurrentAlternative), index);
                         notEnoughInputForPreviousAlternative.append(jump());
-                        
+
                         // The next alternative is longer than the current one; check the difference.
                         state.linkAlternativeBacktracks(this);
 
                         notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
                     } else { // CASE 3: Both alternatives are the same length.
                         ASSERT(countCheckedForCurrentAlternative == countToCheckForNextAlternative);
-                        
+
                         // If the next alterative is the same length as this one, then no need to check the input -
                         // if there was sufficent input to run the current alternative then there is sufficient
                         // input to run the next one; if not, there isn't.
@@ -1921,7 +1958,7 @@ class RegexGenerator : private MacroAssembler {
                 }
             }
         }
-        
+
         // If we get here, all Alternatives failed...
 
         state.checkedTotal -= countCheckedForCurrentAlternative;
@@ -1979,7 +2016,7 @@ class RegexGenerator : private MacroAssembler {
                 } else
                     store32(index, Address(output));
             }
-        
+
             // Check if there is sufficent input to run the first alternative again.
             jumpIfAvailableInput(incrementForNextIter).linkTo(firstAlternativeInputChecked, this);
             // No - insufficent input to run the first alteranative, are there any other alternatives we
