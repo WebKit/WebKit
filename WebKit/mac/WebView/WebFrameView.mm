@@ -529,6 +529,35 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return frame->eventHandler()->scrollOverflow(direction, granularity);
 }
 
+
+- (BOOL)_isVerticalDocument
+{
+    Frame* coreFrame = [self _web_frame];
+    if (!coreFrame)
+        return YES;
+    Document* document = coreFrame->document();
+    if (!document)
+        return YES;
+    RenderObject* renderView = document->renderer();
+    if (!renderView)
+        return YES;
+    return renderView->style()->isHorizontalWritingMode();
+}
+
+- (BOOL)_isFlippedDocument
+{
+    Frame* coreFrame = [self _web_frame];
+    if (!coreFrame)
+        return NO;
+    Document* document = coreFrame->document();
+    if (!document)
+        return NO;
+    RenderObject* renderView = document->renderer();
+    if (!renderView)
+        return NO;
+    return renderView->style()->isFlippedBlocksWritingMode();
+}
+
 - (BOOL)_scrollToBeginningOfDocument
 {
     if ([self _scrollOverflowInDirection:ScrollUp granularity:ScrollByDocument])
@@ -548,9 +577,28 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (![self _isScrollable])
         return NO;
     NSRect frame = [[[self _scrollView] documentView] frame];
-    NSPoint point = NSMakePoint(frame.origin.x, NSMaxY(frame));
-    point.x += [[self _scrollView] scrollOrigin].x;
-    point.y += [[self _scrollView] scrollOrigin].y;
+    
+    bool isVertical = [self _isVerticalDocument];
+    bool isFlipped = [self _isFlippedDocument];
+
+    NSPoint point;
+    if (isVertical) {
+        if (!isFlipped)
+            point = NSMakePoint(frame.origin.x, NSMaxY(frame));
+        else
+            point = NSMakePoint(frame.origin.x, NSMinY(frame));
+    } else {
+        if (!isFlipped)
+            point = NSMakePoint(NSMaxX(frame), frame.origin.y);
+        else
+            point = NSMakePoint(NSMinX(frame), frame.origin.y);
+    }
+    
+    // Reset the position opposite to the block progression direction.
+    if (isVertical)
+        point.x += [[self _scrollView] scrollOrigin].x;
+    else
+        point.y += [[self _scrollView] scrollOrigin].y;
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
@@ -643,6 +691,16 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [self _scrollHorizontallyBy:left ? -delta : delta];
 }
 
+- (BOOL)_pageInBlockProgressionDirection:(BOOL)forward
+{
+    // Determine whether we're calling _pageVertically or _pageHorizontally.
+    BOOL isVerticalDocument = [self _isVerticalDocument];
+    BOOL isFlippedBlock = [self _isFlippedDocument];
+    if (isVerticalDocument)
+        return [self _pageVertically:isFlippedBlock ? !forward : forward];
+    return [self _pageHorizontally:isFlippedBlock ? !forward : forward];
+}
+
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
     if ([self _scrollOverflowInDirection:up ? ScrollUp : ScrollDown granularity:ScrollByLine])
@@ -669,7 +727,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)scrollPageUp:(id)sender
 {
-    if (![self _pageVertically:YES]) {
+    if (![self _pageInBlockProgressionDirection:YES]) {
         // If we were already at the top, tell the next responder to scroll if it can.
         [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
     }
@@ -677,7 +735,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)scrollPageDown:(id)sender
 {
-    if (![self _pageVertically:NO]) {
+    if (![self _pageInBlockProgressionDirection:NO]) {
         // If we were already at the bottom, tell the next responder to scroll if it can.
         [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
     }

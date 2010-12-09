@@ -1,3 +1,18 @@
+2010-12-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48545, Home/End, PgUp, PgDown should respect
+        writing-mode.  This first part of the patch just patches Mac WebKit 1 views.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _isVerticalDocument]):
+        (-[WebFrameView _isFlippedDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+        (-[WebFrameView _pageInBlockProgressionDirection:]):
+        (-[WebFrameView scrollPageUp:]):
+        (-[WebFrameView scrollPageDown:]):
+
 2010-12-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
