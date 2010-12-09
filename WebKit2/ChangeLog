@@ -1,3 +1,15 @@
+2010-12-09  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2: Add support for access keys
+        https://bugs.webkit.org/show_bug.cgi?id=49832
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleKeyEvent): Match windows WebKit and call
+        the event handler's for handleAccessKey function for
+        system keys. This will never be hit on the Mac.
+
 2010-12-09  Darin Adler  <darin@apple.com>
 
         Qt build fix.

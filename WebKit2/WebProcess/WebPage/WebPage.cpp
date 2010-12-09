@@ -697,6 +697,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
     if (!page->mainFrame()->view())
         return false;
 
+    if (keyboardEvent.type() == WebEvent::Char && keyboardEvent.isSystemKey())
+        return page->focusController()->focusedOrMainFrame()->eventHandler()->handleAccessKey(platform(keyboardEvent));
     return page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platform(keyboardEvent));
 }
 
