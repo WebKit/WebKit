@@ -3285,6 +3285,7 @@ BUG66085 LINUX : media/video-currentTime.html = PASS TIMEOUT
 BUG66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUG66085 : media/video-source.html = PASS TIMEOUT
 BUG66085 : media/video-source-moved.html = PASS TIMEOUT
+BUG66085 : media/video-source-type.html = PASS TIMEOUT
 BUG66085 LINUX : media/video-src-source.html = PASS TIMEOUT
 
 // Flaky failures
@@ -3295,3 +3296,6 @@ BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
 // Just needs rebaseline
 BUGPKASTING LINUX : svg/custom/use-referencing-nonexisting-symbol.svg = IMAGE
+
+// Needs V8 investigation
+BUG66099 SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
