@@ -88,6 +88,7 @@ public:
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
     bool canProvideSource() const;
+    bool canShowMIMEType(const String& mimeType) const;
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

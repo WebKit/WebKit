@@ -78,6 +78,17 @@ bool WebFrameProxy::canProvideSource() const
     return false;
 }
 
+bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
+{
+    if (!m_page)
+        return false;
+
+    if (m_page->canShowMIMEType(mimeType))
+        return true;
+
+    return false;
+}
+
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     // FIXME: Add assertions.

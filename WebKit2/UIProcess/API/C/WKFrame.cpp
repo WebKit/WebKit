@@ -95,3 +95,8 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 {
     return toImpl(frameRef)->isFrameSet();
 }
+
+bool WKFrameCanShowMIMEType(WKFrameRef frameRef, WKStringRef mimeTypeRef)
+{
+    return toImpl(frameRef)->canShowMIMEType(toWTFString(mimeTypeRef));
+}

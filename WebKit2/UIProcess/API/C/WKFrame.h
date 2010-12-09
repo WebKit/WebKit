@@ -59,6 +59,7 @@ WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
 WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameCanProvideSource(WKFrameRef frame);
+WK_EXPORT bool WKFrameCanShowMIMEType(WKFrameRef frame, WKStringRef mimeType);
 
 WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 
