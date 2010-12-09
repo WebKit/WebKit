@@ -1,3 +1,11 @@
+2010-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Build fix for GTK+3. Use functions added for GTK+ 2.24 to get the
+        GDK window size.
+
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_realize):
+
 2010-12-09  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
