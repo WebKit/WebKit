@@ -36,6 +36,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
+#include "HTMLNames.h"
 #include "IntRect.h"
 #include "Node.h"
 #include "Page.h"
@@ -55,20 +56,6 @@ static void entryAndExitPointsForDirection(FocusDirection direction, const IntRe
 
 
 FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
-    : visibleNode(n)
-    , focusableNode(n)
-    , enclosingScrollableBox(0)
-    , distance(maxDistance())
-    , parentDistance(maxDistance())
-    , alignment(None)
-    , parentAlignment(None)
-    , rect(nodeRectInAbsoluteCoordinates(n, true /* ignore border */))
-    , isOffscreen(hasOffscreenRect(n))
-    , isOffscreenAfterScrolling(hasOffscreenRect(n, direction))
-{
-}
-
-FocusCandidate::FocusCandidate(HTMLAreaElement* area, FocusDirection direction)
     : visibleNode(0)
     , focusableNode(0)
     , enclosingScrollableBox(0)
@@ -79,15 +66,25 @@ FocusCandidate::FocusCandidate(HTMLAreaElement* area, FocusDirection direction)
     , isOffscreen(true)
     , isOffscreenAfterScrolling(true)
 {
-    HTMLImageElement* image = area->imageElement();
-    if (!image)
-        return;
+    if (n->hasTagName(HTMLNames::areaTag)) {
+        HTMLAreaElement* area = static_cast<HTMLAreaElement*>(n);
+        HTMLImageElement* image = area->imageElement();
+        if (!image || !image->renderer())
+            return;
 
-    focusableNode = area;
-    visibleNode = image;
-    rect = virtualRectForAreaElementAndDirection(direction, area);
-    isOffscreen = hasOffscreenRect(image);
-    isOffscreenAfterScrolling = hasOffscreenRect(image, direction);
+        visibleNode = image;
+        rect = virtualRectForAreaElementAndDirection(direction, area);
+    } else {
+        if (!n->renderer())
+            return;
+
+        visibleNode = n;
+        rect = nodeRectInAbsoluteCoordinates(n, true /* ignore border */);
+    }
+
+    focusableNode = n;
+    isOffscreen = hasOffscreenRect(visibleNode);
+    isOffscreenAfterScrolling = hasOffscreenRect(visibleNode, direction);
 }
 
 bool isSpatialNavigationEnabled(const Frame* frame)

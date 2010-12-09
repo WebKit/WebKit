@@ -478,21 +478,10 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
         if (!node->isKeyboardFocusable(event) && !node->isFrameOwnerElement() && !canScrollInDirection(direction, node))
             continue;
 
-        if (node->hasTagName(areaTag)) {
-            HTMLAreaElement* area = static_cast<HTMLAreaElement*>(node);
-            FocusCandidate candidate(area, direction);
-            if (candidate.isNull())
-                continue;
-
-            candidate.enclosingScrollableBox = container;
-            updateFocusCandidateIfNeeded(direction, startingRect, candidate, closest);
-            continue;
-        }
-
-        if (!node->renderer())
+        FocusCandidate candidate = FocusCandidate(node, direction);
+        if (candidate.isNull())
             continue;
 
-        FocusCandidate candidate(node, direction);
         candidate.enclosingScrollableBox = container;
         updateFocusCandidateIfNeeded(direction, startingRect, candidate, closest);
     }
