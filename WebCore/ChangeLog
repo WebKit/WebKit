@@ -1,3 +1,14 @@
+2010-12-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8613779> and https://bugs.webkit.org/show_bug.cgi?id=50777
+        WebKit2 ContextMenuClient support
+
+        Export some symbols and headers needed by WebKit2 Mac:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73635.

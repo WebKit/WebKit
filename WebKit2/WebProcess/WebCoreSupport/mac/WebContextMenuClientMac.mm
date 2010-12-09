@@ -25,57 +25,61 @@
 
 #include "WebContextMenuClient.h"
 
-#include "WebContextMenuItemData.h"
 #include "WebPage.h"
-#include <WebCore/ContextMenu.h>
+
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
-#include <WebCore/UserGestureIndicator.h>
+#include <wtf/text/WTFString.h>
 
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
+
+@interface NSApplication (AppKitSecretsIKnowAbout)
+- (void)speakString:(NSString *)string;
+@end
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebContextMenuClient::contextMenuDestroyed()
+void WebContextMenuClient::lookUpInDictionary(Frame*)
 {
-    delete this;
-}
-
-PlatformMenuDescription WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
-{
-    // WebKit2 ignores this client callback and does context menu customization when it is told to show the menu.
-    return menu->platformDescription();
-}
-
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
-{
+    // FIXME: <rdar://problem/8750610> - Implement
     notImplemented();
 }
 
-void WebContextMenuClient::downloadURL(const KURL& url)
+bool WebContextMenuClient::isSpeaking()
 {
-    // FIXME <rdar://problem/8750248> - Need the ability to start a Download from an arbitrary URL
-    notImplemented();
+    return [NSApp isSpeaking];
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::speak(const String& string)
 {
-    String searchString = frame->editor()->selectedText();
-    searchString.stripWhiteSpace();
-    String encoded = encodeWithURLEscapeSequences(searchString);
-    encoded.replace("%20", "+");
+    [NSApp speakString:[[(NSString*)string copy] autorelease]];
+}
+
+void WebContextMenuClient::stopSpeaking()
+{
+    [NSApp stopSpeaking:nil];
+}
+
+void WebContextMenuClient::searchWithSpotlight()
+{
+    Frame* mainFrame = m_page->corePage()->mainFrame();
     
-    String url("http://www.google.com/search?q=");
-    url.append(encoded);
-    url.append("&ie=UTF-8&oe=UTF-8");
-
-    if (Page* page = frame->page()) {
-        UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-        page->mainFrame()->loader()->urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, SendReferrer);
+    Frame* selectionFrame = mainFrame;
+    for (; selectionFrame; selectionFrame = selectionFrame->tree()->traverseNext(mainFrame)) {
+        if (selectionFrame->selection()->isRange())
+            break;
     }
+    if (!selectionFrame)
+        selectionFrame = mainFrame;
+
+    String selectedString = selectionFrame->displayStringModifiedByEncoding(selectionFrame->editor()->selectedText());
+    
+    if (selectedString.isEmpty())
+        return;
+
+    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:(NSString *)selectedString];
 }
 
 } // namespace WebKit

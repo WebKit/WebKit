@@ -692,7 +692,7 @@
 		24F54EAC101FE914000AE741 /* ApplicationCacheHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */; };
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
-		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; };
+		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29A812260FBB9C1D00510293 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */; };
 		29A812270FBB9C1D00510293 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */; };
 		29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */; };

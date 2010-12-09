@@ -1,3 +1,40 @@
+2010-12-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8613779> and https://bugs.webkit.org/show_bug.cgi?id=50777
+        WebKit2 ContextMenuClient support
+
+        Implement google search in a cross platform manner, and add a FIXME for download support:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::downloadURL):
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+
+        Mac implementations for speaking and searching:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary): Add a FIXME for now.
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+        (WebKit::WebContextMenuClient::searchWithSpotlight):
+
+        Stubs for Win and Qt:
+        * WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+        * WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+
+        Project file stuffs:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

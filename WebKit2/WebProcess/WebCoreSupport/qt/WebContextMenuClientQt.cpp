@@ -25,57 +25,29 @@
 
 #include "WebContextMenuClient.h"
 
-#include "WebContextMenuItemData.h"
-#include "WebPage.h"
-#include <WebCore/ContextMenu.h>
-#include <WebCore/Frame.h>
-#include <WebCore/Page.h>
-#include <WebCore/UserGestureIndicator.h>
-
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
-
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebContextMenuClient::contextMenuDestroyed()
-{
-    delete this;
-}
-
-PlatformMenuDescription WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
-{
-    // WebKit2 ignores this client callback and does context menu customization when it is told to show the menu.
-    return menu->platformDescription();
-}
-
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
+void WebContextMenuClient::lookUpInDictionary(Frame*)
 {
     notImplemented();
 }
 
-void WebContextMenuClient::downloadURL(const KURL& url)
+bool WebContextMenuClient::isSpeaking()
 {
-    // FIXME <rdar://problem/8750248> - Need the ability to start a Download from an arbitrary URL
+    notImplemented();
+    return false;
+}
+
+void WebContextMenuClient::speak(const String&)
+{
     notImplemented();
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::stopSpeaking()
 {
-    String searchString = frame->editor()->selectedText();
-    searchString.stripWhiteSpace();
-    String encoded = encodeWithURLEscapeSequences(searchString);
-    encoded.replace("%20", "+");
-    
-    String url("http://www.google.com/search?q=");
-    url.append(encoded);
-    url.append("&ie=UTF-8&oe=UTF-8");
-
-    if (Page* page = frame->page()) {
-        UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-        page->mainFrame()->loader()->urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, SendReferrer);
-    }
+    notImplemented();
 }
 
 } // namespace WebKit

@@ -1221,6 +1221,10 @@
 					Name="win"
 					>
 					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebContextMenuClientWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebDatabaseManagerWin.cpp"
 						>
 					</File>
