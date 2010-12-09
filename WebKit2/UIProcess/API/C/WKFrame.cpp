@@ -91,12 +91,22 @@ bool WKFrameCanProvideSource(WKFrameRef frameRef)
     return toImpl(frameRef)->canProvideSource();
 }
 
-bool WKFrameIsFrameSet(WKFrameRef frameRef)
-{
-    return toImpl(frameRef)->isFrameSet();
-}
-
 bool WKFrameCanShowMIMEType(WKFrameRef frameRef, WKStringRef mimeTypeRef)
 {
     return toImpl(frameRef)->canShowMIMEType(toWTFString(mimeTypeRef));
+}
+
+bool WKFrameIsDiplayingStandaloneImageDocument(WKFrameRef frameRef)
+{
+    return toImpl(frameRef)->isDiplayingStandaloneImageDocument();
+}
+
+bool WKFrameIsDiplayingMarkupDocument(WKFrameRef frameRef)
+{
+    return toImpl(frameRef)->isDiplayingMarkupDocument();
+}
+
+bool WKFrameIsFrameSet(WKFrameRef frameRef)
+{
+    return toImpl(frameRef)->isFrameSet();
 }

@@ -1,3 +1,24 @@
+2010-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Need a WebKit2 way to test whether a frame is displaying a standalone image
+        <rdar://problem/8443059>
+        WebKit2: Need a way to test whether a page or frame is showing HTML content
+        <rdar://problem/8642563>
+
+        Add WKFrameIsDiplayingStandaloneImageDocument and WKFrameIsDiplayingMarkupDocument.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameIsDiplayingStandaloneImageDocument):
+        (WKFrameIsDiplayingMarkupDocument):
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canProvideSource): This now just calls isDiplayingMarkupDocument.
+        (WebKit::WebFrameProxy::isDiplayingStandaloneImageDocument):
+        (WebKit::WebFrameProxy::isDiplayingMarkupDocument):
+        * UIProcess/WebFrameProxy.h:
+
 2010-12-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

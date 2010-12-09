@@ -90,6 +90,9 @@ public:
     bool canProvideSource() const;
     bool canShowMIMEType(const String& mimeType) const;
 
+    bool isDiplayingStandaloneImageDocument() const;
+    bool isDiplayingMarkupDocument() const;
+
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();

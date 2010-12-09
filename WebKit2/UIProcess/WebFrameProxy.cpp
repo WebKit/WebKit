@@ -31,6 +31,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/DOMImplementation.h>
+#include <WebCore/Image.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -73,10 +74,7 @@ void WebFrameProxy::setCertificateInfo(PassRefPtr<WebCertificateInfo> certificat
 
 bool WebFrameProxy::canProvideSource() const
 {
-    // FIXME: This check should be moved to somewhere in WebCore. 
-    if (m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType))
-        return true;
-    return false;
+    return isDiplayingMarkupDocument();
 }
 
 bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
@@ -94,6 +92,17 @@ bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
 #endif
 
     return false;
+}
+
+bool WebFrameProxy::isDiplayingStandaloneImageDocument() const
+{
+    return Image::supportsType(m_MIMEType);
+}
+
+bool WebFrameProxy::isDiplayingMarkupDocument() const
+{
+    // FIXME: This check should be moved to somewhere in WebCore. 
+    return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
