@@ -1,3 +1,9 @@
+2010-12-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Updated Chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

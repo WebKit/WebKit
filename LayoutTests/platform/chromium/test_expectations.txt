@@ -3086,7 +3086,7 @@ BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
 // FIXME: Need to add tooling support for V8 bugs.
-BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
+// BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
 BUG50347 : plugins/get-user-agent-with-null-npp-from-npp-new.html = TEXT
 
@@ -3288,3 +3288,8 @@ BUG65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = CRASH PASS
 
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
+
+BUG_PFELDMAN : fast/html/marquee-element.html = TEXT
+BUG_PFELDMAN : fast/regex/pcre-test-1.html = TEXT
+BUG_PFELDMAN MAC : fast/forms/placeholder-position.html = IMAGE
+BUG_PFELDMAN WIN LINUX : fast/forms/placeholder-position.html = IMAGE+TEXT
