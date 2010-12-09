@@ -1,3 +1,15 @@
+2010-12-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        WebTouchEvent::isTouchEventType() does not take into account the type TouchCancel
+        https://bugs.webkit.org/show_bug.cgi?id=50680
+
+        Add the missing type check to WebTouchEvent::isTouchEventType().
+
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::isTouchEventType):
+
 2010-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

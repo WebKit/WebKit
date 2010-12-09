@@ -60,7 +60,7 @@ bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& t)
 
 bool WebTouchEvent::isTouchEventType(Type type)
 {
-    return type == TouchStart || type == TouchMove || type == TouchEnd;
+    return type == TouchStart || type == TouchMove || type == TouchEnd || type == TouchCancel;
 }
     
 } // namespace WebKit
