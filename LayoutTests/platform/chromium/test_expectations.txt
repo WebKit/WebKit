@@ -2686,12 +2686,6 @@ BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 // This test has not landed yet, though the fix has.
 //BUGWK41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
 
-// Removed the last <textPath> line. Need to rebaseline on Windows / Mac.
-// The output should be identical on XP and Vista, and should go into platform/chromium-win,
-// although there were separate (but identical) expectations in chromium-win-xp and chromium-win-vista previously.
-BUGWK50310 WIN : svg/custom/text-linking.svg = IMAGE+TEXT
-BUGWK50310 MAC : svg/custom/text-linking.svg = IMAGE
-
 // Need to support DeviceMotion.
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 

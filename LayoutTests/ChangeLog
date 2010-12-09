@@ -1,3 +1,17 @@
+2010-12-09  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rebaseline svg/custom/text-linking.svg
+        https://bugs.webkit.org/show_bug.cgi?id=50310
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium-win/svg/custom/text-linking-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/text-linking-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-linking-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/text-linking-expected.checksum: Updated.
+        * platform/mac-leopard/svg/custom/text-linking-expected.png: Updated.
+
 2010-12-09  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectations update.
