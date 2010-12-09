@@ -297,15 +297,17 @@ class BuildBotTest(unittest.TestCase):
         self.assertEqual(builder.url_encoded_name(), "Test%20Builder")
         self.assertEqual(builder.results_url(), "http://build.webkit.org/results/Test%20Builder")
 
-        # Override _fetch_xmlrpc_build_dictionary function to not touch the network.
-        def mock_fetch_xmlrpc_build_dictionary(self, build_number):
+        # Override _fetch_build_dictionary function to not touch the network.
+        def mock_fetch_build_dictionary(self, build_number):
             build_dictionary = {
-                "revision" : 2 * build_number,
+                "sourceStamp": {
+                    "revision" : 2 * build_number,
+                    },
                 "number" : int(build_number),
                 "results" : build_number % 2, # 0 means pass
             }
             return build_dictionary
-        buildbot._fetch_xmlrpc_build_dictionary = mock_fetch_xmlrpc_build_dictionary
+        buildbot._fetch_build_dictionary = mock_fetch_build_dictionary
 
         build = builder.build(10)
         self.assertEqual(build.builder(), builder)

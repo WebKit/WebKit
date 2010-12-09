@@ -28,11 +28,16 @@
 #
 # WebKit's Python module for interacting with WebKit's buildbot
 
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
+
 import operator
 import re
 import urllib
 import urllib2
-import xmlrpclib
 
 from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
@@ -67,13 +72,13 @@ class Builder(object):
 
     # This provides a single place to mock
     def _fetch_build(self, build_number):
-        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self, build_number)
+        build_dictionary = self._buildbot._fetch_build_dictionary(self, build_number)
         if not build_dictionary:
             return None
         return Build(self,
             build_number=int(build_dictionary['number']),
-            revision=int(build_dictionary['revision']),
-            is_green=(build_dictionary['results'] == 0) # Undocumented, buildbot XMLRPC, 0 seems to mean "pass"
+            revision=int(build_dictionary['sourceStamp']['revision']),
+            is_green=(build_dictionary['results'] == 0) # Undocumented, 0 seems to mean "pass"
         )
 
     def build(self, build_number):
@@ -140,7 +145,7 @@ class Builder(object):
             return None
         build = self.build(build_number)
         if not build and allow_failed_lookups:
-            # Builds for old revisions with fail to lookup via buildbot's xmlrpc api.
+            # Builds for old revisions with fail to lookup via buildbot's json api.
             build = Build(self,
                 build_number=build_number,
                 revision=revision,
@@ -345,15 +350,21 @@ class BuildBot(object):
         return not self.red_core_builders()
 
     # FIXME: These _fetch methods should move to a networking class.
-    def _fetch_xmlrpc_build_dictionary(self, builder, build_number):
-        # The buildbot XMLRPC API is super-limited.
-        # For one, you cannot fetch info on builds which are incomplete.
-        proxy = xmlrpclib.ServerProxy("http://%s/xmlrpc" % self.buildbot_host, allow_none=True)
+    def _fetch_build_dictionary(self, builder, build_number):
         try:
-            return proxy.getBuild(builder.name(), int(build_number))
-        except xmlrpclib.Fault, err:
+            base = "http://%s" % self.buildbot_host
+            path = urllib.quote("json/builders/%s/builds/%s" % (builder.name(),
+                                                                build_number))
+            url = "%s/%s" % (base, path)
+            jsondata = urllib2.urlopen(url)
+            return json.load(jsondata)
+        except urllib2.URLError, err:
             build_url = Build.build_url(builder, build_number)
             _log.error("Error fetching data for %s build %s (%s): %s" % (builder.name(), build_number, build_url, err))
+            return None
+        except ValueError, err:
+            build_url = Build.build_url(builder, build_number)
+            _log.error("Error decoding json data from %s: %s" % (build_url, err))
             return None
 
     def _fetch_one_box_per_builder(self):
