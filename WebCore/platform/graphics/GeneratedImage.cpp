@@ -57,7 +57,8 @@ void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcR
 
     // Create a BitmapImage and call drawPattern on it.
     OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(adjustedSize);
-    ASSERT(imageBuffer.get());
+    if (!imageBuffer)
+        return;
 
     // Fill with the gradient.
     GraphicsContext* graphicsContext = imageBuffer->context();
