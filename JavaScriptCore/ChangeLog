@@ -1,5 +1,26 @@
 2010-12-09  Michael Saboff  <msaboff@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        Addressed the "FIXME" issues in array sort for toString() methods that
+        mutate the array in either size or contents.  The change is to mark
+        the temporary array contents so that they are not garbage collected
+        and to make sure the array is large enough to hold the contents
+        of the sorted temporary vector.
+        https://bugs.webkit.org/show_bug.cgi?id=50718
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::addTempSortVector):
+        (JSC::Heap::removeTempSortVector):
+        (JSC::Heap::markTempSortVectors):
+        (JSC::Heap::markRoots):
+        * runtime/Collector.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort):
+        * runtime/JSValue.h:
+
+2010-12-09  Michael Saboff  <msaboff@apple.com>
+
         Reviewed by Darin Adler.
 
         Changed setting of backtrack labels to not overwrite a prior

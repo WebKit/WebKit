@@ -1,3 +1,19 @@
+2010-12-09  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        New test to verify that arrays sort per the standard even it
+        there is an override for toString() that modifies the array.
+        https://bugs.webkit.org/show_bug.cgi?id=50718
+
+        * fast/js/array-sort-modifying-tostring-expected.txt: Added.
+        * fast/js/array-sort-modifying-tostring.html: Added.
+        * fast/js/script-tests/array-sort-modifying-tostring.js: Added.
+        (do_gc):
+        (Item):
+        (toString_Mutate):
+        (test):
+
 2010-12-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

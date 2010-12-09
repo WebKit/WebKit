@@ -24,6 +24,7 @@
 
 #include "AlignedMemoryAllocator.h"
 #include "GCHandle.h"
+#include "JSValue.h"
 #include <stddef.h>
 #include <string.h>
 #include <wtf/Bitmap.h>
@@ -139,6 +140,9 @@ namespace JSC {
 
         void markConservatively(MarkStack&, void* start, void* end);
 
+        void pushTempSortVector(WTF::Vector<ValueStringPair>*);
+        void popTempSortVector(WTF::Vector<ValueStringPair>*);        
+
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
 
         JSGlobalData* globalData() const { return m_globalData; }
@@ -173,6 +177,7 @@ namespace JSC {
 
         void markRoots();
         void markProtectedObjects(MarkStack&);
+        void markTempSortVectors(MarkStack&);
         void markCurrentThreadConservatively(MarkStack&);
         void markCurrentThreadConservativelyInternal(MarkStack&);
         void markOtherThreadConservatively(MarkStack&, Thread*);
@@ -187,6 +192,7 @@ namespace JSC {
 
         ProtectCountSet m_protectedValues;
         WTF::Vector<AlignedMemory<WeakGCHandlePool::poolSize> > m_weakGCHandlePools;
+        WTF::Vector<WTF::Vector<ValueStringPair>* > m_tempSortingVectors;
 
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
 

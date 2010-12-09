@@ -763,7 +763,8 @@ namespace JSC {
         return asValue() == jsNull();
     }
 #endif // USE(JSVALUE32_64)
-
+    
+    typedef std::pair<JSValue, UString> ValueStringPair;
 } // namespace JSC
 
 #endif // JSValue_h
