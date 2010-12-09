@@ -1,3 +1,17 @@
+2010-12-09  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix scroll operation in WebKit-EFL
+        https://bugs.webkit.org/show_bug.cgi?id=50752
+
+        Add the _ewk_view_scroll_add call in WebKit-EFL scroll function. This
+        call was wrongly removed in previous commit and performs the scroll
+        operation on the page.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_scroll):
+
 2010-12-03  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
 
         Reviewed by Andreas Kling.

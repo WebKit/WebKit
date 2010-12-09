@@ -4075,6 +4075,8 @@ void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     EINA_SAFETY_ON_TRUE_RETURN(!dx && !dy);
 
+    _ewk_view_scroll_add(priv, dx, dy, sx, sy, sw, sh, main_frame);
+
     _ewk_view_smart_changed(sd);
 }
 
