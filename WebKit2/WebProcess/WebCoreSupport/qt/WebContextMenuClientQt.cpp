@@ -25,6 +25,8 @@
 
 #include "WebContextMenuClient.h"
 
+#include "NotImplemented.h"
+
 using namespace WebCore;
 
 namespace WebKit {

@@ -1,3 +1,9 @@
+2010-12-09  Darin Adler  <darin@apple.com>
+
+        Qt build fix.
+
+        * WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp: Include "NotImplemented.h".
+
 2010-12-09  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
