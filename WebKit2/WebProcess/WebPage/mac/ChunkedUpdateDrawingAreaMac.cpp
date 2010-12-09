@@ -26,7 +26,10 @@
 #include "ChunkedUpdateDrawingArea.h"
 
 #include "UpdateChunk.h"
+#include "WebFrame.h"
 #include "WebPage.h"
+#include "WebFrameLoaderClient.h"
+#include <WebCore/Frame.h>
 #include <WebCore/GraphicsContext.h>
 #include <wtf/RetainPtr.h>
 
@@ -36,6 +39,10 @@ namespace WebKit {
 
 void ChunkedUpdateDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk)
 {
+    // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
+    if (static_cast<WebFrameLoaderClient*>(m_webPage->mainFrame()->coreFrame()->loader()->client())->frameHasCustomRepresentation())
+        return;
+
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk->data(), updateChunk->rect().width(), updateChunk->rect().height(), 8, updateChunk->rect().width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
 

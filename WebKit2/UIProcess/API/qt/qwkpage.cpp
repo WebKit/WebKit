@@ -159,6 +159,14 @@ void QWKPagePrivate::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
 {
 }
 
+void QWKPagePrivate::didCommitLoadForMainFrame(bool useCustomRepresentation)
+{
+}
+
+void QWKPagePrivate::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
+{
+}
+
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
 {
     painter->save();

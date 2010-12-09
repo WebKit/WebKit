@@ -164,6 +164,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
         setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
 
+    for (size_t i = 0; i < parameters.mimeTypesWithCustomRepresentation.size(); ++i)
+        m_mimeTypesWithCustomRepresentations.add(parameters.mimeTypesWithCustomRepresentation[i]);
+
     if (parameters.clearResourceCaches)
         clearResourceCaches();
     if (parameters.clearApplicationCache)

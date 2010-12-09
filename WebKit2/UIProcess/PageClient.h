@@ -90,6 +90,10 @@ public:
 #if PLATFORM(WIN)
     virtual HWND nativeWindow() = 0;
 #endif
+
+    // Custom representations.
+    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
+    virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&) = 0;
 };
 
 } // namespace WebKit

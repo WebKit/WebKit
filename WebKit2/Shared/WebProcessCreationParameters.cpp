@@ -46,6 +46,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
+    encoder->encode(mimeTypesWithCustomRepresentation);
     encoder->encode(static_cast<uint32_t>(cacheModel));
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(languageCode);
@@ -71,6 +72,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.urlSchemesRegisteredAsSecure))
         return false;
     if (!decoder->decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
+        return false;
+    if (!decoder->decode(parameters.mimeTypesWithCustomRepresentation))
         return false;
 
     uint32_t cacheModel;

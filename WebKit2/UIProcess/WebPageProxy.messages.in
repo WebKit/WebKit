@@ -73,7 +73,7 @@ messages -> WebPageProxy {
     DidCreateSubFrame(uint64_t frameID)
 
     # Frame load messages.
-    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
@@ -89,6 +89,9 @@ messages -> WebPageProxy {
     DidSameDocumentNavigationForFrame(uint64_t frameID, uint32_t type, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData)
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
+
+    # Custom representations
+    DidFinishLoadingDataForCustomRepresentation(CoreIPC::DataReference data)
 
     # Forms messages.
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)

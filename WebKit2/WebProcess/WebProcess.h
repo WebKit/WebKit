@@ -35,6 +35,7 @@
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -89,6 +90,8 @@ public:
 
     // Will shut down the web process if there are no live pages or downloads.
     void shutdownIfPossible();
+
+    bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
 
 private:
     WebProcess();
@@ -146,6 +149,8 @@ private:
 #endif
 
     HashMap<uint64_t, WebFrame*> m_frameMap;
+
+    HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
 };
 
 } // namespace WebKit

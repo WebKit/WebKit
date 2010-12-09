@@ -116,6 +116,9 @@ private:
     void switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type);
 #endif
 
+    void didCommitLoadForMainFrame(bool useCustomRepresentation);
+    void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+
     virtual HWND nativeWindow();
 
     // WebCore::WindowMessageListener

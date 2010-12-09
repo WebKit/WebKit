@@ -68,6 +68,9 @@ public:
 
     virtual void setFindIndicator(PassRefPtr<WebKit::FindIndicator>, bool fadeOut);
 
+    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
+    virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+
     void paint(QPainter* painter, QRect);
 
     void keyPressEvent(QKeyEvent*);

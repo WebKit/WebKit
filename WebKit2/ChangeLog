@@ -1,3 +1,91 @@
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add support for custom representation
+        https://bugs.webkit.org/show_bug.cgi?id=50767
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Add mimeTypesWithCustomRepresentation and encode and decode accordingly.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        Add empty stubs for now.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::didCommitLoadForMainFrame):
+        (QWKPagePrivate::didFinishLoadingDataForCustomRepresentation):
+        * UIProcess/API/qt/qwkpage_p.h:
+        Add empty stubs.
+
+        * UIProcess/PageClient.h:
+        Add new functions for custom representations.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canShowMIMEType):
+        Check that the mime type is not null.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        This now takes an additional frameHasCustomRepresentation parameter. 
+        Call the page client function.
+
+        (WebKit::WebPageProxy::didFinishLoadingDataForCustomRepresentation):
+        Call the page client function.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Change DidCommitLoadForFrame message, add DidFinishLoadingDataForCustomRepresentation message.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        We want to use custom representations for PDF and PostScript MIME types.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didCommitLoadForMainFrame):
+        (WebKit::WebView::didFinishLoadingDataForCustomRepresentation):
+        * UIProcess/win/WebView.h:
+        Add stubs.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        Initialize m_frameHasCustomRepresentation.
+
+        (WebKit::WebFrameLoaderClient::hasHTMLView):
+        The frame has a HTML view unless it has a custom representation.
+
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Pass along whether the frame has a custom representation.
+
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        Don't send data back to WebCore if the frame has a custom representation.
+
+        (WebKit::WebFrameLoaderClient::finishedLoading):
+        Send all the data to the UI process.
+
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Update the m_frameHasCustomRepresentation state based on the MIME type.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::WebFrameLoaderClient::frameHasCustomRepresentation):
+        Add getter.
+
+        * WebProcess/WebPage/mac/ChunkedUpdateDrawingAreaMac.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+        Don't do any painting if the main frame has a custom representation.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Add all the MIME types with custom representations.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::shouldUseCustomRepresentationForMIMEType):
+        Add getter.
+
 2010-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

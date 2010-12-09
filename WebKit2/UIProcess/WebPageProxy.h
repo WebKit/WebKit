@@ -279,7 +279,7 @@ private:
     void didStartProvisionalLoadForFrame(uint64_t frameID, const String&, bool loadingSubstituteDataForUnreachableURL, CoreIPC::ArgumentDecoder*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);
     void didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::ResourceError&, CoreIPC::ArgumentDecoder*);
-    void didCommitLoadForFrame(uint64_t frameID, const String& mimeType, const PlatformCertificateInfo&, CoreIPC::ArgumentDecoder*);
+    void didCommitLoadForFrame(uint64_t frameID, const String& mimeType, bool frameHasCustomRepresentation, const PlatformCertificateInfo&, CoreIPC::ArgumentDecoder*);
     void didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);
     void didFinishLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder*);
     void didFailLoadForFrame(uint64_t frameID, const WebCore::ResourceError&, CoreIPC::ArgumentDecoder*);
@@ -383,6 +383,8 @@ private:
 
     void canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace&, bool& canAuthenticate);
     void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
+
+    void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& data);
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;

@@ -27,6 +27,7 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "DataReference.h"
 #include "DrawingAreaProxy.h"
 #include "FindIndicator.h"
 #include "MessageID.h"
@@ -809,7 +810,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Resour
     m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
-void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, const PlatformCertificateInfo& certificateInfo, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, bool frameHasCustomRepresentation, const PlatformCertificateInfo& certificateInfo, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
@@ -822,6 +823,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     frame->setIsFrameSet(false);
     frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
     frame->didCommitLoad();
+
+    if (frame->isMainFrame())
+        m_pageClient->didCommitLoadForMainFrame(frameHasCustomRepresentation);
+
     m_loaderClient.didCommitLoadForFrame(this, frame, userData.get());
 }
 
@@ -1568,6 +1573,11 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
 
     newQuota = m_uiClient.exceededDatabaseQuota(this, frame, origin.get(), databaseName, displayName, currentQuota, currentUsage, expectedUsage);
+}
+
+void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
+{
+    m_pageClient->didFinishLoadingDataForCustomRepresentation(dataReference);
 }
 
 } // namespace WebKit

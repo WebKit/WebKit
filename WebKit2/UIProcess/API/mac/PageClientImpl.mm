@@ -273,4 +273,12 @@ void PageClientImpl::pageDidLeaveAcceleratedCompositing()
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
+{
+}
+
+void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
+{
+}
+
 } // namespace WebKit

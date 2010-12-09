@@ -29,6 +29,7 @@
 #include "NotImplemented.h"
 
 #include "AuthenticationManager.h"
+#include "DataReference.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
@@ -73,6 +74,7 @@ namespace WebKit {
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* frame)
     : m_frame(frame)
     , m_hasSentResponseToPluginView(false)
+    , m_frameHasCustomRepresentation(false)
 {
 }
 
@@ -90,7 +92,7 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 
 bool WebFrameLoaderClient::hasHTMLView() const
 {
-    return true;
+    return !m_frameHasCustomRepresentation;
 }
 
 bool WebFrameLoaderClient::hasWebView() const
@@ -396,7 +398,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     webPage->sandboxExtensionTracker().didCommitProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frameHasCustomRepresentation, PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
@@ -747,6 +749,10 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
+    // If we're loading a custom representation, we don't want to hand off the data to WebCore.
+    if (m_frameHasCustomRepresentation)
+        return;
+
     if (!m_pluginView)
         loader->commitData(data, length);
 
@@ -775,6 +781,18 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 {
     if (!m_pluginView) {
         committedLoad(loader, 0, 0);
+
+        if (m_frameHasCustomRepresentation) {
+            WebPage* webPage = m_frame->page();
+            if (!webPage)
+                return;
+
+            RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
+            CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
+            
+            webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomRepresentation(dataReference));
+        }
+
         return;
     }
 
@@ -1013,12 +1031,12 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
-#if ENABLE(TILED_BACKING_STORE)
     WebPage* webPage = m_frame->page();
     bool isMainFrame = webPage->mainFrame() == m_frame;
 
-    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->actualVisibleContentRect().size() : IntSize();
+#if ENABLE(TILED_BACKING_STORE)
 
+    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->actualVisibleContentRect().size() : IntSize();
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
 
     if (isMainFrame && webPage->resizesToContentsEnabled()) {
@@ -1029,6 +1047,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // The HistoryController will update the scroll position later if needed.
     m_frame->coreFrame()->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 #else
+    const String& mimeType = m_frame->coreFrame()->loader()->documentLoader()->response().mimeType();
+    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForMIMEType(mimeType);
+
     m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, IntSize(), false);
 #endif
 }

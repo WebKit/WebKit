@@ -40,6 +40,8 @@ public:
 
     WebFrame* webFrame() const { return m_frame; }
 
+    bool frameHasCustomRepresentation() const { return m_frameHasCustomRepresentation; }
+
 private:
     virtual void frameLoaderDestroyed();
 
@@ -212,6 +214,7 @@ private:
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
+    bool m_frameHasCustomRepresentation;
 };
 
 uint32_t modifiersForNavigationAction(const WebCore::NavigationAction&);

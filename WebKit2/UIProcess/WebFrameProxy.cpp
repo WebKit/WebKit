@@ -87,7 +87,7 @@ bool WebFrameProxy::canShowMIMEType(const String& mimeType) const
 
 #if PLATFORM(MAC)
     // On Mac, we can show PDFs in the main frame.
-    if (isMainFrame())
+    if (isMainFrame() && !mimeType.isEmpty())
         return WebContext::pdfAndPostScriptMIMETypes().contains(mimeType);
 #endif
 

@@ -76,6 +76,9 @@ private:
     virtual void pageDidLeaveAcceleratedCompositing();
 #endif
 
+    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
+    virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
 };

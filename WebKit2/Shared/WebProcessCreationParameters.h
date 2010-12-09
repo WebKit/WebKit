@@ -56,6 +56,9 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
 
+    // MIME types for which the UI process will handle showing the data.
+    Vector<String> mimeTypesWithCustomRepresentation;
+
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;
     
