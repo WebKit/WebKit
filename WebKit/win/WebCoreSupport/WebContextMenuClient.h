@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuClient.h>
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 
 class WebView;
 
@@ -34,7 +36,7 @@ public:
 
     virtual void contextMenuDestroyed();
 
-    virtual HMENU getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
+    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
     virtual void downloadURL(const WebCore::KURL&);

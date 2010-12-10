@@ -45,7 +45,7 @@ class APIObject;
 class WebContextMenuItemData {
 public:
     WebContextMenuItemData();
-    WebContextMenuItemData(WebCore::ContextMenuItem&, WebCore::ContextMenu* menu);
+    WebContextMenuItemData(const WebCore::ContextMenuItem&, WebCore::ContextMenu* menu);
     WebContextMenuItemData(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled, bool checked);
     WebContextMenuItemData(WebCore::ContextMenuAction, const String& title, bool enabled, const Vector<WebContextMenuItemData>& submenu);
 
@@ -74,7 +74,7 @@ private:
     RefPtr<APIObject> m_userData;
 };
 
-Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>&, WebCore::ContextMenu*);
+Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>&, WebCore::ContextMenu*);
 Vector<WebCore::ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>&);
 
 } // namespace WebKit

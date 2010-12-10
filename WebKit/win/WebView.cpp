@@ -1275,12 +1275,12 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         m_uiDelegate->hasCustomMenuImplementation(&hasCustomMenus);
 
     if (hasCustomMenus)
-        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, (OLE_HANDLE)(ULONG64)coreMenu->platformDescription(), &point);
+        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, (OLE_HANDLE)(ULONG64)coreMenu->nativeMenu(), &point);
     else {
         // Surprisingly, TPM_RIGHTBUTTON means that items are selectable with either the right OR left mouse button
         UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL
             | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
-        ::TrackPopupMenuEx(coreMenu->platformDescription(), flags, point.x, point.y, m_viewWindow, 0);
+        ::TrackPopupMenuEx(coreMenu->nativeMenu(), flags, point.x, point.y, m_viewWindow, 0);
     }
 
     return true;
@@ -1355,11 +1355,10 @@ void WebView::performContextMenuAction(WPARAM wParam, LPARAM lParam, bool byPosi
     ContextMenu* menu = m_page->contextMenuController()->contextMenu();
     ASSERT(menu);
 
-    ContextMenuItem* item = byPosition ? menu->itemAtIndex((unsigned)wParam, (HMENU)lParam) : menu->itemWithAction((ContextMenuAction)wParam);
+    ContextMenuItem* item = byPosition ? menu->itemAtIndex((unsigned)wParam) : menu->itemWithAction((ContextMenuAction)wParam);
     if (!item)
         return;
     m_page->contextMenuController()->contextMenuItemSelected(item);
-    delete item;
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)

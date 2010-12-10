@@ -1,3 +1,75 @@
+2010-12-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Prep for WebKit2: Context menu support on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50514
+        
+        Before this patch ContextMenu on Windows were backed by HMENUs, and ContextMenuItems
+        were backed by MENUITEMINFOs. This meant they couldn't be copied, and they needed to
+        be to work in WebKit2.
+        
+        This patch adds a new USE flag - CROSS_PLATFORM_CONTEXT_MENUS that are for a cross-platform
+        representation of context menus. This patch also has Windows adopt them.
+        
+        Cross-platform context menus change the API of context menus and the ContextMenuClient. There
+        is no more idea of a PlatformMenuDescription or a PlatformMenuItemDescription. Menus are backed
+        by a Vector of ContextMenuItems, and menu items are backed by the variables they need (enabled, checked
+        title, action, type, and submenu).
+        
+        This patch also refactors the ContextMenuClient interface to use a variation on the getCustomMenuFromDefaultItems
+        function to allow for customization of the context menu.
+        
+        For other ports to use CROSS_PLATFORM_CONTEXT_MENUS, all they need to do is write conversion functions from
+        a ContextMenu <-> native menu type, and ContextMenuItem <-> native menu item type. For Windows, this is done
+        in ContextMenuWin.cpp and ContextMenuItemWin.cpp.
+
+        No new tests, no change in behavior.
+
+        * WebCore.vcproj/WebCore.vcproj: Add new files (only needed on Windows for now).
+        * loader/EmptyClients.h:
+        (WebCore::EmptyContextMenuClient::customizeMenu): Define this function if CROSS_PLATFORM_CONTEXT_MENUS
+            is on.
+        * page/ContextMenuClient.h: Ditto. 
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showContextMenu): Call customizeMenu instead of 
+            getCustomMenuFromDefaultItems if CROSS_PLATFORM_CONTEXT_MENUS is on.
+        * platform/ContextMenu.cpp: Added.
+        (WebCore::ContextMenu::ContextMenu): Empty constructor.
+        (WebCore::ContextMenu::setItems): Sets the items in the menu.
+        (WebCore::ContextMenu::items): Returns the items in the menu.
+        (WebCore::ContextMenu::itemAtIndex):
+        (WebCore::itemWithActionInMenu): Returns the item with the correct action, recursively descending
+            into submenus.
+        (WebCore::ContextMenu::itemWithAction): Calls through to itemWithActionInMenu.
+        * platform/ContextMenu.h: Added a new set of functions and member variables that are defined for
+            CROSS_PLATFORM_CONTEXT_MENUS.
+        (WebCore::ContextMenu::appendItem): Appends an item to the menu.
+        * platform/ContextMenuItem.cpp: Added.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::setSubMenu):
+        * platform/ContextMenuItem.h:
+        (WebCore::ContextMenuItem::type): Returns the type.
+        (WebCore::ContextMenuItem::setType): Sets the type.
+        (WebCore::ContextMenuItem::action): Returns the action.
+        (WebCore::ContextMenuItem::setAction): Sets the action.
+        (WebCore::ContextMenuItem::title): Returns the title.
+        (WebCore::ContextMenuItem::setTitle): Sets the title.
+        (WebCore::ContextMenuItem::checked): Returns whether or not the menu item is checked.
+        (WebCore::ContextMenuItem::setChecked): Sets whether ot not the menu item is checked.
+        (WebCore::ContextMenuItem::enabled): Returns whether or not the menu item is enabled.
+        (WebCore::ContextMenuItem::setEnabled): Sets whether or not the menu item is enabled.
+        (WebCore::ContextMenuItem::submenu): Returns the submenu.
+        * platform/PlatformMenuDescription.h: Remove the idea if a PlatformMenuDescription if 
+            CROSS_PLATFORM_CONTEXT_MENUS is on.
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem): Creates a ContextMenuItem from a MENUITEMINFO.
+        (WebCore::ContextMenuItem::nativeMenuItem): Creates and returns a MENUITEMINFO.
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::ContextMenu): Creates a ContextMenu from an HMENU.
+        (WebCore::ContextMenu::nativeMenu): Creates and returns an HMENU.
+
 2010-12-10  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Adam Barth.

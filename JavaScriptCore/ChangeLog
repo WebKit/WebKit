@@ -1,3 +1,11 @@
+2010-12-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Turn on USE(CROSS_PLATFORM_CONTEXT_MENUS) for Windows.
+
+        * wtf/Platform.h:
+
 2010-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73703.

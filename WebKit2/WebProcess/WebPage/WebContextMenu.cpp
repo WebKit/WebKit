@@ -64,7 +64,11 @@ void WebContextMenu::show()
         return;
 
     // Give the bundle client a chance to process the menu.
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+    const Vector<ContextMenuItem>& coreItems = menu->items();
+#else
     Vector<ContextMenuItem> coreItems = contextMenuItemVector(menu->platformDescription());
+#endif
     Vector<WebContextMenuItemData> proposedMenu = kitItems(coreItems, menu);
     Vector<WebContextMenuItemData> newMenu;
     RefPtr<APIObject> userData;

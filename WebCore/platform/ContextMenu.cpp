@@ -23,46 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuClient_h
-#define WebContextMenuClient_h
+#include "config.h"
+#include "ContextMenu.h"
 
-#include <WebCore/ContextMenuClient.h>
-
-namespace WebKit {
-
-class WebPage;
-
-class WebContextMenuClient : public WebCore::ContextMenuClient {
-public:
-    WebContextMenuClient(WebPage* page)
-        : m_page(page)
-    {
-    }
-    
-private:
-    virtual void contextMenuDestroyed();
-    
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
-#else
-    virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
-#endif
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
-    
-    virtual void downloadURL(const WebCore::KURL& url);
-    virtual void searchWithGoogle(const WebCore::Frame*);
-    virtual void lookUpInDictionary(WebCore::Frame*);
-    virtual bool isSpeaking();
-    virtual void speak(const String&);
-    virtual void stopSpeaking();
-    
-#if PLATFORM(MAC)
-    virtual void searchWithSpotlight();
-#endif
-    
-    WebPage* m_page;
-};
 
-} // namespace WebKit
+namespace WebCore {
 
-#endif // WebContextMenuClient_h
+ContextMenu::ContextMenu()
+{
+}
+
+static const ContextMenuItem* findItemWithAction(unsigned action, const Vector<ContextMenuItem>& items)
+{
+    for (size_t i = 0; i < items.size(); ++i) {
+        const ContextMenuItem& item = items[i];
+        if (item.action() == action)
+            return &item;
+        if (item.type() != SubmenuType)
+            continue;
+        if (const ContextMenuItem* subMenuItem = findItemWithAction(action, item.subMenuItems()))
+            return subMenuItem;
+    }
+
+    return 0;
+}
+
+ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
+{
+    // FIXME: When more platforms switch over, this fucntion should return a const ContextMenuItem*'s, and the const_cast
+    // won't be needed anymore.
+    return const_cast<ContextMenuItem*>(findItemWithAction(action, m_items));
+}
+
+} // namespace WebCore
+
+#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)

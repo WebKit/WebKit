@@ -32,8 +32,6 @@
 #else
 class NSMutableArray;
 #endif
-#elif PLATFORM(WIN)
-typedef struct HMENU__* HMENU;
 #elif PLATFORM(QT)
 #include <qlist.h>
 #elif PLATFORM(GTK)
@@ -46,10 +44,9 @@ class BMenu;
 
 namespace WebCore {
 
+#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 #if PLATFORM(MAC)
     typedef NSMutableArray* PlatformMenuDescription;
-#elif PLATFORM(WIN)
-    typedef HMENU PlatformMenuDescription;
 #elif PLATFORM(QT)
     class ContextMenuItem;
     typedef const QList<ContextMenuItem>* PlatformMenuDescription;
@@ -62,6 +59,7 @@ namespace WebCore {
 #else
     typedef void* PlatformMenuDescription;
 #endif
+#endif // !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
 } // namespace
 

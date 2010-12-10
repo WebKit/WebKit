@@ -48,13 +48,34 @@ namespace WebCore {
     {
     public:
         ContextMenu();
+
+        ContextMenuItem* itemWithAction(unsigned);
+
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+#if PLATFORM(WIN)
+        typedef HMENU NativeMenu;
+#endif
+        explicit ContextMenu(NativeMenu);
+
+        NativeMenu nativeMenu() const;
+
+        static NativeMenu createNativeMenuFromItems(const Vector<ContextMenuItem>&);
+        static void getContextMenuItems(NativeMenu, Vector<ContextMenuItem>&);
+
+        // FIXME: When more platforms switch over, this should return const ContextMenuItem*'s.
+        ContextMenuItem* itemAtIndex(unsigned index) { return &m_items[index]; }
+
+        void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
+        const Vector<ContextMenuItem>& items() const { return m_items; }
+
+        void appendItem(const ContextMenuItem& item) { m_items.append(item); } 
+#else
         ContextMenu(const PlatformMenuDescription);
         ~ContextMenu();
 
         void insertItem(unsigned position, ContextMenuItem&);
         void appendItem(ContextMenuItem&);
-        
-        ContextMenuItem* itemWithAction(unsigned);
+
         ContextMenuItem* itemAtIndex(unsigned, const PlatformMenuDescription);
 
         unsigned itemCount() const;
@@ -63,10 +84,17 @@ namespace WebCore {
         void setPlatformDescription(PlatformMenuDescription);
 
         PlatformMenuDescription releasePlatformDescription();
+
 #if PLATFORM(WX)
         static ContextMenuItem* itemWithId(int);
 #endif
+
+#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
+
     private:
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+        Vector<ContextMenuItem> m_items;
+#else
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;
@@ -83,10 +111,14 @@ namespace WebCore {
         unsigned m_itemCount;
 #endif
 #endif
+
+#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
     };
 
+#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription);
 PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>&);
+#endif
 
 }
 

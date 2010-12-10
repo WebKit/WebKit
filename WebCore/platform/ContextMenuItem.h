@@ -40,7 +40,7 @@
 class NSMenuItem;
 #endif
 #elif PLATFORM(WIN)
-typedef struct tagMENUITEMINFOW* LPMENUITEMINFO;
+typedef struct tagMENUITEMINFOW MENUITEMINFO;
 #elif PLATFORM(GTK)
 typedef struct _GtkMenuItem GtkMenuItem;
 #elif PLATFORM(QT)
@@ -166,8 +166,6 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
     typedef NSMenuItem* PlatformMenuItemDescription;
-#elif PLATFORM(WIN)
-    typedef LPMENUITEMINFO PlatformMenuItemDescription;
 #elif PLATFORM(QT)
     struct PlatformMenuItemDescription {
         PlatformMenuItemDescription()
@@ -254,31 +252,16 @@ namespace WebCore {
 
     class ContextMenuItem : public FastAllocBase {
     public:
-        ContextMenuItem(PlatformMenuItemDescription);
-        ContextMenuItem(ContextMenu* subMenu = 0);
-        ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu = 0);
-
+        ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);
-        ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
-#if PLATFORM(GTK)
-        ContextMenuItem(GtkMenuItem*);
-#endif
+
         ~ContextMenuItem();
 
-        PlatformMenuItemDescription releasePlatformDescription();
-
-        ContextMenuItemType type() const;
         void setType(ContextMenuItemType);
+        ContextMenuItemType type() const;
 
-        ContextMenuAction action() const;
         void setAction(ContextMenuAction);
-
-        String title() const;
-        void setTitle(const String&);
-
-        PlatformMenuDescription platformSubMenu() const;
-        void setSubMenu(ContextMenu*);
-        void setSubMenu(Vector<ContextMenuItem>&);
+        ContextMenuAction action() const;
 
         void setChecked(bool = true);
         bool checked() const;
@@ -286,17 +269,62 @@ namespace WebCore {
         void setEnabled(bool = true);
         bool enabled() const;
 
+        void setSubMenu(ContextMenu*);
+
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+#if PLATFORM(WIN)
+        typedef MENUITEMINFO NativeItem;
+#endif
+        ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
+        explicit ContextMenuItem(const NativeItem&);
+
+        // On Windows, the title (dwTypeData of the MENUITEMINFO) is not set in this function. Callers can set the title themselves,
+        // and handle the lifetime of the title, if they need it.
+        NativeItem nativeMenuItem() const;
+
+        void setTitle(const String& title) { m_title = title; }
+        const String& title() const { return m_title; }
+
+        const Vector<ContextMenuItem>& subMenuItems() const { return m_subMenuItems; }
+#else
+    public:
+        ContextMenuItem(PlatformMenuItemDescription);
+        ContextMenuItem(ContextMenu* subMenu = 0);
+        ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
+
+#if PLATFORM(GTK)
+        ContextMenuItem(GtkMenuItem*);
+#endif
+
+        PlatformMenuItemDescription releasePlatformDescription();
+
+        String title() const;
+        void setTitle(const String&);
+
+        PlatformMenuDescription platformSubMenu() const;
+        void setSubMenu(Vector<ContextMenuItem>&);
+
         // FIXME: Do we need a keyboard accelerator here?
 #if PLATFORM(GTK)
         static GtkMenuItem* createNativeMenuItem(const PlatformMenuItemDescription&);
 #endif
+#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
     private:
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+        String m_title;
+        bool m_enabled;
+        bool m_checked;
+        ContextMenuAction m_action;
+        ContextMenuItemType m_type;
+        Vector<ContextMenuItem> m_subMenuItems;
+#else
 #if PLATFORM(MAC)
         RetainPtr<NSMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif
+#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
     };
 
 }

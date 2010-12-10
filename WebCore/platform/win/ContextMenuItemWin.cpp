@@ -28,198 +28,66 @@
 
 #include "ContextMenu.h"
 
-#include <wtf/text/CString.h>
-#include <windows.h>
-
-#if OS(WINCE)
-#ifndef MFS_DISABLED
-#define MFS_DISABLED MF_GRAYED
-#endif
-#ifndef MIIM_FTYPE
-#define MIIM_FTYPE MIIM_TYPE
-#endif
-#ifndef MIIM_STRING
-#define MIIM_STRING 0
-#endif
-#endif
-
 namespace WebCore {
 
-ContextMenuItem::ContextMenuItem(LPMENUITEMINFO item)
-    : m_platformDescription(item)
+ContextMenuItem::ContextMenuItem(const MENUITEMINFO& info)
 {
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
-{
-    m_platformDescription = (LPMENUITEMINFO)malloc(sizeof(MENUITEMINFO));
-    if (!m_platformDescription)
-        return;
-
-    memset(m_platformDescription, 0, sizeof(MENUITEMINFO));
-    m_platformDescription->cbSize = sizeof(MENUITEMINFO);
-
-    m_platformDescription->wID = ContextMenuItemTagNoAction;
-    if (subMenu) {
-        m_platformDescription->fMask |= MIIM_SUBMENU;
-        m_platformDescription->hSubMenu = subMenu->platformDescription();
-    }
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
-{
-    m_platformDescription = (LPMENUITEMINFO)malloc(sizeof(MENUITEMINFO));
-    if (!m_platformDescription)
-        return;
-
-    memset(m_platformDescription, 0, sizeof(MENUITEMINFO));
-    m_platformDescription->cbSize = sizeof(MENUITEMINFO);
-    m_platformDescription->fMask = MIIM_FTYPE;
-
-    if (type == SeparatorType) {
-        m_platformDescription->fType = MFT_SEPARATOR;
-        return;
-    }
-    
-    if (subMenu) {
-        m_platformDescription->fMask |= MIIM_STRING | MIIM_SUBMENU;
-        m_platformDescription->hSubMenu = subMenu->platformDescription();
-    } else
-        m_platformDescription->fMask |= MIIM_STRING | MIIM_ID;
-
-    m_platformDescription->fType = MFT_STRING;
-    m_platformDescription->wID = action;
-    
-    String t = title;
-    m_platformDescription->cch = t.length();
-    m_platformDescription->dwTypeData = wcsdup(t.charactersWithNullTermination());
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool, bool)
-{
-    // FIXME: Implement
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool, bool, Vector<ContextMenuItem>&)
-{
-    // FIXME: Implement
-}
-
-ContextMenuItem::~ContextMenuItem()
-{
-    if (m_platformDescription) {
-        if (m_platformDescription->fType == MFT_STRING)
-            free(m_platformDescription->dwTypeData);
-        free(m_platformDescription);
-    }
-}
-
-LPMENUITEMINFO ContextMenuItem::releasePlatformDescription()
-{
-    LPMENUITEMINFO info = m_platformDescription;
-    m_platformDescription = 0;
-    return info;
-}
-
-ContextMenuItemType ContextMenuItem::type() const
-{
-    ContextMenuItemType type = ActionType;
-    if (((m_platformDescription->fType & ~MFT_OWNERDRAW) == MFT_STRING) && m_platformDescription->hSubMenu)
-        type = SubmenuType;
-    else if (m_platformDescription->fType & MFT_SEPARATOR)
-        type = SeparatorType;
-
-    return type;
-}
-
-ContextMenuAction ContextMenuItem::action() const
-{ 
-    return static_cast<ContextMenuAction>(m_platformDescription->wID);
-}
-
-String ContextMenuItem::title() const 
-{
-    return String(m_platformDescription->dwTypeData, wcslen(m_platformDescription->dwTypeData));
-}
-
-PlatformMenuDescription ContextMenuItem::platformSubMenu() const
-{
-    return m_platformDescription->hSubMenu;
-}
-
-void ContextMenuItem::setType(ContextMenuItemType type)
-{
-    if (type == SeparatorType)
-        m_platformDescription->fType = MFT_SEPARATOR;
+    if (info.fMask & MIIM_FTYPE)
+        m_type = info.fType == MFT_SEPARATOR ? SeparatorType : ActionType;
     else
-        m_platformDescription->fType = MFT_STRING;
-}
+        m_type = SeparatorType;
 
-void ContextMenuItem::setAction(ContextMenuAction action)
-{
-    m_platformDescription->wID = action; 
-}
+    if (m_type == ActionType && info.fMask & MIIM_STRING)
+        m_title = String(info.dwTypeData, info.cch);
 
-void ContextMenuItem::setTitle(const String& title)
-{
-    if (m_platformDescription->dwTypeData)
-        free(m_platformDescription->dwTypeData);
-    
-    m_platformDescription->cch = title.length();
-    String titleCopy = title;
-    m_platformDescription->dwTypeData = wcsdup(titleCopy.charactersWithNullTermination());
-}
+    if ((info.fMask & MIIM_SUBMENU) && info.hSubMenu) {
+        m_type = SubmenuType;
+        ContextMenu::getContextMenuItems(info.hSubMenu, m_subMenuItems);
+    }
 
-void ContextMenuItem::setSubMenu(ContextMenu* subMenu)
-{
-    if (subMenu->platformDescription() == m_platformDescription->hSubMenu)
-        return;
+    if (info.fMask & MIIM_ID)
+        m_action = static_cast<ContextMenuAction>(info.wID);
+    else
+        m_action = ContextMenuItemTagNoAction;
 
-    if (m_platformDescription->hSubMenu)
-        ::DestroyMenu(m_platformDescription->hSubMenu);
-
-    m_platformDescription->fMask |= MIIM_SUBMENU;
-    m_platformDescription->hSubMenu = subMenu->releasePlatformDescription();
-}
-
-void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>&)
-{
-    // FIXME: Implement
-}
-
-void ContextMenuItem::setChecked(bool checked)
-{
-    m_platformDescription->fMask |= MIIM_STATE;
-    if (checked) {
-        m_platformDescription->fState &= ~MFS_UNCHECKED;
-        m_platformDescription->fState |= MFS_CHECKED;
+    if (info.fMask & MIIM_STATE) {
+        m_checked = info.fState & MFS_CHECKED;
+        m_enabled = !(info.fState & MFS_DISABLED);
     } else {
-        m_platformDescription->fState &= ~MFS_CHECKED;
-        m_platformDescription->fState |= MFS_UNCHECKED;
+        m_checked = false;
+        m_enabled = false;
     }
 }
 
-bool ContextMenuItem::checked() const
+// ContextMenuItem::nativeMenuItem doesn't set the info.dwTypeData. This is
+// done to make the lifetime handling of the returned MENUITEMINFO easier on
+// callers. Callers can set dwTypeData themselves (and make their own decisions
+// about its lifetime) if they need it.
+MENUITEMINFO ContextMenuItem::nativeMenuItem() const
 {
-    // FIXME - Implement
-    return false;
-}
+    MENUITEMINFO info = {0};
+    info.cbSize = sizeof(MENUITEMINFO);
 
-void ContextMenuItem::setEnabled(bool enabled)
-{
-    m_platformDescription->fMask |= MIIM_STATE;
-    if (enabled) {
-        m_platformDescription->fState &= ~MFS_DISABLED;
-        m_platformDescription->fState |= MFS_ENABLED;
-    } else {
-        m_platformDescription->fState &= ~MFS_ENABLED;
-        m_platformDescription->fState |= MFS_DISABLED;
+    if (m_type == SeparatorType) {
+        info.fMask = MIIM_FTYPE;
+        info.fType = MFT_SEPARATOR;
+        return info;
     }
-}
 
-bool ContextMenuItem::enabled() const
-{
-    return !(m_platformDescription->fState & MFS_DISABLED);
+    info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STATE;
+    info.fType = MFT_STRING;
+
+    info.wID = m_action;
+
+    if (m_type == SubmenuType) {
+        info.fMask |= MIIM_SUBMENU;
+        info.hSubMenu = ContextMenu::createNativeMenuFromItems(m_subMenuItems);
+    }
+
+    info.fState |= m_enabled ? MFS_ENABLED : MFS_DISABLED;
+    info.fState |= m_checked ? MFS_CHECKED : MFS_UNCHECKED;
+
+    return info;
 }
 
 }

@@ -1,3 +1,25 @@
+2010-12-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Prep for WebKit2: Context menu support on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50514
+        
+        Update WebKit2 to call the correct code when CROSS_PLATFORM_CONTEXT_MENUS is set.
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData): Add a branch based on whether or not 
+            CROSS_PLATFORM_CONTEXT_MENUS is set.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::customizeMenu): Define different functions based on
+            whether or not CROSS_PLATFORM_CONTEXT_MENUS. Both of these are stubs, so functionality
+            doesn't need to be shared.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h: Define different functions based on
+            whether or not CROSS_PLATFORM_CONTEXT_MENUS. 
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show): Add a branch based on whether or not 
+            CROSS_PLATFORM_CONTEXT_MENUS is set.
+
 2010-12-09  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

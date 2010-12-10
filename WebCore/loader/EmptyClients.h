@@ -501,7 +501,11 @@ public:
     virtual ~EmptyContextMenuClient() {  }
     virtual void contextMenuDestroyed() { }
 
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+    virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>) { return 0; }
+#else
     virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) { return 0; }
+#endif
     virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) { }
 
     virtual void downloadURL(const KURL&) { }

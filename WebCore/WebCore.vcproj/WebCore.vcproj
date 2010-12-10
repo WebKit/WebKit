@@ -25305,8 +25305,16 @@
 				RelativePath="..\platform\ContentType.h"
 				>
 			</File>
+            <File
+				RelativePath="..\platform\ContextMenu.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\ContextMenu.h"
+				>
+			</File>
+            <File
+				RelativePath="..\platform\ContextMenuItem.cpp"
 				>
 			</File>
 			<File

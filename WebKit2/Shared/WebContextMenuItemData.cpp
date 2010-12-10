@@ -63,13 +63,17 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuAction action
 {
 }
 
-WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItem& item, WebCore::ContextMenu* menu)
+WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, WebCore::ContextMenu* menu)
     : m_type(item.type())
     , m_action(item.action())
     , m_title(item.title())
 {
     if (m_type == WebCore::SubmenuType) {
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+        const Vector<WebCore::ContextMenuItem>& coreSubmenu = item.subMenuItems();
+#else
         Vector<WebCore::ContextMenuItem> coreSubmenu = WebCore::contextMenuItemVector(item.platformSubMenu());
+#endif
         m_submenu = kitItems(coreSubmenu, menu);
     }
     
@@ -130,7 +134,7 @@ bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContex
     return true;
 }
 
-Vector<WebContextMenuItemData> kitItems(Vector<WebCore::ContextMenuItem>& coreItemVector, WebCore::ContextMenu* menu)
+Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>& coreItemVector, WebCore::ContextMenu* menu)
 {
     Vector<WebContextMenuItemData> result;
     result.reserveCapacity(coreItemVector.size());

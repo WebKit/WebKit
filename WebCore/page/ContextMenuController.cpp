@@ -144,8 +144,13 @@ void ContextMenuController::showContextMenu(Event* event)
     if (m_page->inspectorController()->enabled())
         addInspectElementItem();
 #endif
+
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+    m_contextMenu = m_client->customizeMenu(m_contextMenu.release());
+#else
     PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
     m_contextMenu->setPlatformDescription(customMenu);
+#endif
     event->setDefaultHandled();
 }
 

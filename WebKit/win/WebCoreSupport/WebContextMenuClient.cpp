@@ -55,21 +55,29 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
+PassOwnPtr<ContextMenu> WebContextMenuClient::customizeMenu(PassOwnPtr<ContextMenu> popMenu)
 {
+    OwnPtr<ContextMenu> menu = popMenu;
+
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return menu->platformDescription();
+        return menu.release();
 
     ASSERT(uiDelegate);
 
-    HMENU newMenu = 0;
+    HMENU nativeMenu = menu->nativeMenu();
     COMPtr<WebElementPropertyBag> propertyBag;
     propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController()->hitTestResult()));
     // FIXME: We need to decide whether to do the default before calling this delegate method
-    if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), (OLE_HANDLE)(ULONG64)menu->platformDescription(), (OLE_HANDLE*)&newMenu)))
-        return menu->platformDescription();
-    return newMenu;
+    if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), (OLE_HANDLE)(ULONG64)nativeMenu, (OLE_HANDLE*)&nativeMenu))) {
+        ::DestroyMenu(nativeMenu);
+        return menu.release();
+    }
+    
+    OwnPtr<ContextMenu> customizedMenu = adoptPtr(new ContextMenu(nativeMenu));
+    ::DestroyMenu(nativeMenu);
+
+    return customizedMenu.release();
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
@@ -84,8 +92,17 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
 
     COMPtr<WebElementPropertyBag> propertyBag;
     propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController()->hitTestResult()));
-            
-    uiDelegate->contextMenuItemSelected(m_webView, item->releasePlatformDescription(), propertyBag.get());
+
+    // This call would leak the MENUITEMINFO's subMenu if it had one, but on Windows, subMenus can't be selected, so there is
+    // no way we would get to this point. Also, it can't be a separator, because separators cannot be selected.
+    ASSERT(item->type() != SubmenuType);
+    ASSERT(item->type() != SeparatorType);
+
+    // ContextMenuItem::nativeMenuItem doesn't set the dwTypeData of the MENUITEMINFO, but no WebKit clients
+    // use the title in IWebUIDelegate::contextMenuItemSelected, so we don't need to populate it here.
+    MENUITEMINFO selectedItem = item->nativeMenuItem();
+
+    uiDelegate->contextMenuItemSelected(m_webView, &selectedItem, propertyBag.get());
 }
 
 void WebContextMenuClient::downloadURL(const KURL& url)

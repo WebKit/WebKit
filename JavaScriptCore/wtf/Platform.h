@@ -1106,6 +1106,10 @@
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 
+#if PLATFORM(WIN)
+#define WTF_USE_CROSS_PLATFORM_CONTEXT_MENUS 1
+#endif
+
 /* Geolocation request policy. pre-emptive policy is to acquire user permission before acquiring location.
    Client based implementations will have option to choose between pre-emptive and nonpre-emptive permission policy.
    pre-emptive permission policy is enabled by default for all client-based implementations. */

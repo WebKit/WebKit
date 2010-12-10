@@ -1,3 +1,23 @@
+2010-12-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Prep for WebKit2: Context menu support on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50514
+        
+        Update WebKit for the new CROSS_PLATFORM_CONTEXT_MENUS flag, and define customizeMenu
+        instead of getCustomMenuFromDefaultItems.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::customizeMenu): getCustomMenuFromDefaultItems was turned into
+            this function, with refactoring using nativeMenu instead of platformDescription.
+        (WebContextMenuClient::contextMenuItemSelected):  Use nativeMenu instead of platformDescription.
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent): Call nativeMenu instead of platformDescription.
+        (WebView::performContextMenuAction): Only call itemAtIndex with one argument, no need
+            for the second.
+
 2010-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

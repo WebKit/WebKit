@@ -32,6 +32,7 @@
 #include "Node.h"
 #include <tchar.h>
 #include <windows.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
 #ifndef MIIM_FTYPE
@@ -43,180 +44,67 @@
 
 namespace WebCore {
 
-ContextMenu::ContextMenu()
-    : m_platformDescription(0)
-#if OS(WINCE)
-    , m_itemCount(0)
-#endif
+ContextMenu::ContextMenu(HMENU menu)
 {
-    setPlatformDescription(::CreatePopupMenu());
+    getContextMenuItems(menu, m_items);
 }
 
-ContextMenu::ContextMenu(const PlatformMenuDescription menu)
-    : m_platformDescription(0)
-#if OS(WINCE)
-    , m_itemCount(0)
-#endif
+void ContextMenu::getContextMenuItems(HMENU menu, Vector<ContextMenuItem>& items)
 {
-    setPlatformDescription(menu);
-}
-
-ContextMenu::~ContextMenu()
-{
-    if (m_platformDescription)
-        ::DestroyMenu(m_platformDescription);
-}
-
-unsigned ContextMenu::itemCount() const
-{
-#if OS(WINCE)
-    return m_itemCount;
-#else
-    if (!m_platformDescription)
-        return 0;
-
-    return ::GetMenuItemCount(m_platformDescription);
-#endif
-}
-
-#if OS(WINCE)
-static bool insertMenuItem(PlatformMenuDescription menu, unsigned int position, ContextMenuItem& item)
-{
-    UINT flags = MF_BYPOSITION;
-    UINT newItem = 0;
-    LPCWSTR title = 0;
-
-    if (item.type() == SeparatorType)
-        flags |= MF_SEPARATOR;
-    else {
-        flags |= MF_STRING;
-        flags |= item.checked() ? MF_CHECKED : MF_UNCHECKED;
-        flags |= item.enabled() ? MF_ENABLED : MF_GRAYED;
-
-        PlatformMenuItemDescription description = item.releasePlatformDescription();
-        title = description->dwTypeData;
-        description->dwTypeData = 0;
-
-        if (description->hSubMenu) {
-            flags |= MF_POPUP;
-            newItem = reinterpret_cast<UINT>(description->hSubMenu);
-            description->hSubMenu = 0;
-        } else
-            newItem = description->wID;
-
-        free(description);
-    }
-
-    return ::InsertMenuW(menu, position, flags, newItem, title);
-}
-#endif
-
-void ContextMenu::insertItem(unsigned int position, ContextMenuItem& item)
-{
-    if (!m_platformDescription)
+    int count = ::GetMenuItemCount(menu);
+    if (count <= 0)
         return;
 
-#if OS(WINCE)
-    if (insertMenuItem(m_platformDescription, position, item))
-        ++m_itemCount;
-#else
-    ::InsertMenuItem(m_platformDescription, position, TRUE, item.releasePlatformDescription());
-#endif
-}
+    for (int i = 0; i < count; ++i) {
+        MENUITEMINFO info = {0};
+        info.cbSize = sizeof(MENUITEMINFO);
+        info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE | MIIM_SUBMENU;
 
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-    insertItem(itemCount(), item);
-}
+        if (!::GetMenuItemInfo(menu, i, TRUE, &info))
+            continue;
 
-static ContextMenuItem* contextMenuItemByIdOrPosition(HMENU menu, unsigned id, BOOL byPosition)
-{
-    if (!menu)
-        return 0;
-    LPMENUITEMINFO info = static_cast<LPMENUITEMINFO>(malloc(sizeof(MENUITEMINFO)));
-    if (!info)
-        return 0;
-
-    memset(info, 0, sizeof(MENUITEMINFO));
-
-    info->cbSize = sizeof(MENUITEMINFO);
-
-    // Setting MIIM_DATA which is useful for WebKit clients who store data in this member for their custom menu items.
-    info->fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_DATA;
-
-    if (!::GetMenuItemInfo(menu, id, byPosition, info)) {
-        free(info);
-        return 0;
-    }
-
-    if (info->fType & MFT_STRING) {
-        LPTSTR buffer = static_cast<LPTSTR>(malloc(++info->cch * sizeof(TCHAR)));
-        if (!buffer) {
-            free(info);
-            return 0;
+        if (info.fType == MFT_SEPARATOR) {
+            items.append(ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
+            continue;
         }
-        info->dwTypeData = buffer;
-        ::GetMenuItemInfo(menu, id, byPosition, info);
+
+        int menuStringLength = info.cch + 1;
+        OwnArrayPtr<WCHAR> menuString(new WCHAR[menuStringLength]);
+        info.dwTypeData = menuString.get();
+        info.cch = menuStringLength;
+
+        if (::GetMenuItemInfo(menu, i, TRUE, &info))
+           items.append(ContextMenuItem(info));
+    }
+}
+
+HMENU ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& items)
+{
+    HMENU menu = ::CreatePopupMenu();
+
+    for (size_t i = 0; i < items.size(); ++i) {
+        const ContextMenuItem& item = items[i];
+
+        MENUITEMINFO menuItem = item.nativeMenuItem();
+
+        // ContextMenuItem::nativeMenuItem doesn't set the title of the MENUITEMINFO to make the
+        // lifetime handling easier for callers.
+        String itemTitle = item.title();
+        if (item.type() != SeparatorType) {
+            menuItem.fMask |= MIIM_STRING;
+            menuItem.cch = itemTitle.length();
+            menuItem.dwTypeData = const_cast<LPWSTR>(itemTitle.charactersWithNullTermination());
+        }
+
+        ::InsertMenuItem(menu, i, TRUE, &menuItem);
     }
 
-    return new ContextMenuItem(info);
+    return menu;
 }
 
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
+HMENU ContextMenu::nativeMenu() const
 {
-    return contextMenuItemByIdOrPosition(m_platformDescription, action, FALSE);
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return contextMenuItemByIdOrPosition(platformDescription, index, TRUE);
-}
-
-void ContextMenu::setPlatformDescription(HMENU menu)
-{
-    if (menu == m_platformDescription)
-        return;
-    
-    if (m_platformDescription)
-        ::DestroyMenu(m_platformDescription);
-
-    m_platformDescription = menu;
-    if (!m_platformDescription)
-        return;
-
-#if !OS(WINCE)
-    MENUINFO menuInfo = {0};
-    menuInfo.cbSize = sizeof(MENUINFO);
-    menuInfo.fMask = MIM_STYLE;
-    ::GetMenuInfo(m_platformDescription, &menuInfo);
-    menuInfo.fMask = MIM_STYLE;
-    menuInfo.dwStyle |= MNS_NOTIFYBYPOS;
-    ::SetMenuInfo(m_platformDescription, &menuInfo);
-#endif
-}
-
-HMENU ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-HMENU ContextMenu::releasePlatformDescription()
-{
-    HMENU description = m_platformDescription;
-    m_platformDescription = 0;
-    return description;
-}
-
-Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription)
-{
-    // FIXME - Implement
-    return Vector<ContextMenuItem>();
-}
-
-PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)
-{
-    // FIXME - Implement
-    return 0;
+    return createNativeMenuFromItems(m_items);
 }
 
 } // namespace WebCore
