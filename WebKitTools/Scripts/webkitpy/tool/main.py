@@ -41,7 +41,7 @@ from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.platform import Platform
+from webkitpy.common.system.platforminfo import PlatformInfo
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests import port
 from webkitpy.tool.multicommandtool import MultiCommandTool
@@ -77,7 +77,7 @@ class WebKitPatch(MultiCommandTool):
         self._checkout = None
         self.status_server = StatusServer()
         self.port_factory = port.factory
-        self.platform = Platform()
+        self.platform = PlatformInfo()
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).

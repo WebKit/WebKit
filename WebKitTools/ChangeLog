@@ -1,5 +1,19 @@
 2010-12-10  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        commit-queue should report port/platform information when commenting on flaky test bugs
+        https://bugs.webkit.org/show_bug.cgi?id=50839
+
+        Renamed platform.py to platforminfo.py.  This broke import platform in executive.py
+        which was only used by new run webkit tests (and clearly not unit tested).
+
+        * Scripts/webkitpy/common/system/platforminfo.py: Renamed from WebKitTools/Scripts/webkitpy/common/system/platform.py.
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tony Chang.
 
         commit-queue should report port/platform information when commenting on flaky test bugs

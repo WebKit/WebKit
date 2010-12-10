@@ -30,10 +30,7 @@ import platform
 
 
 # We use this instead of calls to platform directly so allow mocking.
-# It's unclear if we should allow instantiation of multiple of these
-# objects (like we do Ports for rebaseline commands, etc.),
-# or if it should just be a mocking layer for python's platform.py
-class Platform(object):
+class PlatformInfo(object):
 
     def display_name(self):
         return platform.platform(aliased=1, terse=1)

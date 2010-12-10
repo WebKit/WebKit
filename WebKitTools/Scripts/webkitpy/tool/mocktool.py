@@ -635,7 +635,7 @@ class MockPortFactory(object):
         return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
 
 
-class MockPlatform(object):
+class MockPlatformInfo(object):
     def display_name(self):
         return "MockPlatform 1.0"
 
@@ -654,7 +654,7 @@ class MockTool(object):
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
         self.port_factory = MockPortFactory()
-        self.platform = MockPlatform()
+        self.platform = MockPlatformInfo()
 
     def scm(self):
         return self._scm
