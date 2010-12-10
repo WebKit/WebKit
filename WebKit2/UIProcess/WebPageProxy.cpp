@@ -78,16 +78,6 @@ namespace WebKit {
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
-template<typename T>
-void invalidateCallbackMap(HashMap<uint64_t, T>& map)
-{
-    Vector<T> callbacksVector;
-    copyValuesToVector(map, callbacksVector);
-    for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
-        callbacksVector[i]->invalidate();
-    map.clear();
-}
-
 PassRefPtr<WebPageProxy> WebPageProxy::create(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup, uint64_t pageID)
 {
     return adoptRef(new WebPageProxy(pageNamespace, pageGroup, pageID));

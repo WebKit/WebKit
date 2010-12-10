@@ -205,7 +205,10 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() || messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
+    if (messageID.is<CoreIPC::MessageClassWebContext>()
+        || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
+        || messageID.is<CoreIPC::MessageClassDownloadProxy>()
+        || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
         return;
     }

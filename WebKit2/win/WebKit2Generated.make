@@ -41,6 +41,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKContextPrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKCredential.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKCredentialTypes.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKDatabaseManager.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKDownload.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKFormSubmissionListener.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKFrame.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

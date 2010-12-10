@@ -499,6 +499,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
+    if (messageID.is<CoreIPC::MessageClassWebDatabaseManager>()) {
+        WebDatabaseManager::shared().didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
     if (messageID.is<CoreIPC::MessageClassInjectedBundle>()) {
         if (!m_injectedBundle)
             return;

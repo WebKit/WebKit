@@ -62,6 +62,7 @@ public:
         TypeBackForwardList,
         TypeBackForwardListItem,
         TypeContext,
+        TypeDatabaseManager,
         TypeDownload,
         TypeFormSubmissionListener,
         TypeFrame,

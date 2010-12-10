@@ -33,6 +33,7 @@
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDatabaseManagerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageNamespace.h"
 #include "WebProcessCreationParameters.h"
@@ -84,6 +85,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_cacheModel(CacheModelDocumentViewer)
     , m_clearResourceCachesForNewWebProcess(false)
     , m_clearApplicationCacheForNewWebProcess(false)
+    , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -205,6 +207,8 @@ void WebContext::processDidClose(WebProcessProxy* process)
     }
 
     m_downloads.clear();
+
+    m_databaseManagerProxy->invalidate();
 
     m_process = 0;
 }
@@ -434,6 +438,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
             downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, arguments);
         
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()) {
+        m_databaseManagerProxy->didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
         return;
     }
 

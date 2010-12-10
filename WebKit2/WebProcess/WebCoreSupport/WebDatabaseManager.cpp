@@ -25,7 +25,13 @@
 
 #include "WebDatabaseManager.h"
 
+#include "Connection.h"
+#include "MessageID.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebDatabaseManagerProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/DatabaseTracker.h>
+#include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -40,6 +46,38 @@ WebDatabaseManager& WebDatabaseManager::shared()
 WebDatabaseManager::WebDatabaseManager()
 {
     DatabaseTracker::initializeTracker(databaseDirectory());
+}
+
+void WebDatabaseManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    didReceiveWebDatabaseManagerMessage(connection, messageID, arguments);
+}
+
+void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
+{
+    Vector<RefPtr<SecurityOrigin> > origins;
+    DatabaseTracker::tracker().origins(origins);
+
+    size_t numOrigins = origins.size();
+
+    Vector<String> identifiers(numOrigins);
+    for (size_t i = 0; i < numOrigins; ++i)
+        identifiers[i] = origins[i]->databaseIdentifier();
+    WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidGetDatabaseOrigins(identifiers, callbackID), 0);
+}
+
+void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier) const
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    if (!origin)
+        return;
+
+    DatabaseTracker::tracker().deleteOrigin(origin.get());
+}
+
+void WebDatabaseManager::deleteAllDatabases() const
+{
+    DatabaseTracker::tracker().deleteAllDatabases();
 }
 
 } // namespace WebKit

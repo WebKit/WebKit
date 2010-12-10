@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDatabaseManager_h
-#define WebDatabaseManager_h
+#ifndef WebDatabaseManagerProxy_h
+#define WebDatabaseManagerProxy_h
 
+#include "APIObject.h"
 #include "Arguments.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
+#include "GenericCallback.h"
+#include "WKBase.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -38,24 +41,38 @@ class MessageID;
 
 namespace WebKit {
 
-class WebDatabaseManager : public Noncopyable {
+class WebContext;
+class WebSecurityOrigin;
+
+typedef GenericCallback<WKArrayRef> DatabaseOriginsCallback;
+
+class WebDatabaseManagerProxy : public APIObject {
 public:
-    static WebDatabaseManager& shared();
+    static const Type APIType = TypeDatabaseManager;
 
-    void getDatabaseOrigins(uint64_t callbackID) const;
-    void deleteDatabasesForOrigin(const String& originIdentifier) const;
-    void deleteAllDatabases() const;
+    static PassRefPtr<WebDatabaseManagerProxy> create(WebContext*);
+    virtual ~WebDatabaseManagerProxy();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void invalidate();
+
+    void getDatabaseOrigins(PassRefPtr<DatabaseOriginsCallback>);
+    void deleteDatabasesForOrigin(WebSecurityOrigin*);
+    void deleteAllDatabases();
+
+    void didReceiveWebDatabaseManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
-    WebDatabaseManager();
+    explicit WebDatabaseManagerProxy(WebContext*);
 
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual Type type() const { return APIType; }
 
-    String databaseDirectory() const;
+    // Message handlers.
+    void didGetDatabaseOrigins(const Vector<String>& originIdentifiers, uint64_t callbackID);
+
+    WebContext* m_webContext;
+    HashMap<uint64_t, RefPtr<DatabaseOriginsCallback> > m_databaseOriginsCallbacks;
 };
 
 } // namespace WebKit
 
-#endif // WebDatabaseManager_h
+#endif // DatabaseManagerProxy_h

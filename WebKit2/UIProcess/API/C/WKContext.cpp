@@ -141,3 +141,8 @@ void WKContextClearApplicationCache(WKContextRef contextRef)
 {
     toImpl(contextRef)->clearApplicationCache();
 }
+
+WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->databaseManagerProxy());
+}

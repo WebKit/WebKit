@@ -29,6 +29,7 @@
 #include "WKAPICast.h"
 
 #include "WebError.h"
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -88,6 +89,16 @@ private:
     CallbackFunction m_callback;
     uint64_t m_callbackID;
 };
+
+template<typename T>
+void invalidateCallbackMap(HashMap<uint64_t, T>& map)
+{
+    Vector<T> callbacksVector;
+    copyValuesToVector(map, callbacksVector);
+    for (size_t i = 0, size = callbacksVector.size(); i < size; ++i)
+        callbacksVector[i]->invalidate();
+    map.clear();
+}
 
 } // namespace WebKit
 

@@ -23,39 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDatabaseManager_h
-#define WebDatabaseManager_h
+#ifndef WKDatabaseManager_h
+#define WKDatabaseManager_h
 
-#include "Arguments.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
+#include <WebKit2/WKBase.h>
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
+
+typedef void (*WKDatabaseManagerGetDatabaseOriginsFunction)(WKArrayRef, WKErrorRef, void*);
+WK_EXPORT void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef contextRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction function);
+#ifdef __BLOCKS__
+typedef void (^WKDatabaseManagerGetDatabaseOriginsBlock)(WKArrayRef, WKErrorRef);
+WK_EXPORT void WKDatabaseManagerGetDatabaseOrigins_b(WKDatabaseManagerRef databaseManager, WKDatabaseManagerGetDatabaseOriginsBlock block);
+#endif
+WK_EXPORT void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin);
+WK_EXPORT void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManager);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class WebDatabaseManager : public Noncopyable {
-public:
-    static WebDatabaseManager& shared();
-
-    void getDatabaseOrigins(uint64_t callbackID) const;
-    void deleteDatabasesForOrigin(const String& originIdentifier) const;
-    void deleteAllDatabases() const;
-
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-private:
-    WebDatabaseManager();
-
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-    String databaseDirectory() const;
-};
-
-} // namespace WebKit
-
-#endif // WebDatabaseManager_h
+#endif // WKDatabaseManager_h

@@ -118,6 +118,8 @@ WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 WK_EXPORT void WKContextClearResourceCaches(WKContextRef context);
 WK_EXPORT void WKContextClearApplicationCache(WKContextRef context);
 
+WK_EXPORT WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef context);
+
 #ifdef __cplusplus
 }
 #endif

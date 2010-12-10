@@ -47,6 +47,7 @@ struct WKContextStatistics;
 namespace WebKit {
 
 class DownloadProxy;
+class WebDatabaseManagerProxy;
 class WebPageGroup;
 class WebPageNamespace;
 class WebPageProxy;
@@ -124,6 +125,8 @@ public:
 
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
+    WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
@@ -181,7 +184,9 @@ private:
 
     bool m_clearResourceCachesForNewWebProcess;
     bool m_clearApplicationCacheForNewWebProcess;
-    
+
+    RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
+
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
 #endif

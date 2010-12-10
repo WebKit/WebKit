@@ -1150,6 +1150,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebDatabaseManager.messages.in"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebDragClient.cpp"
 					>
 				</File>
@@ -1879,6 +1883,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebDatabaseManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebDatabaseManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebDatabaseManagerProxy.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebDownloadClient.cpp"
 				>
 			</File>
@@ -2057,6 +2073,10 @@
 			<Filter
 				Name="API"
 				>
+				<File
+					RelativePath="..\UIProcess\API\C\WKDatabaseManager.cpp"
+					>
+				</File>
 				<Filter
 					Name="C"
 					>
@@ -2130,6 +2150,10 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKCredentialTypes.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKDatabaseManager.h"
 						>
 					</File>
 					<File
@@ -2724,6 +2748,22 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerProxyMessages.h"
 				>
 			</File>
 			<File

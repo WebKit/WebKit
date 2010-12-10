@@ -1,3 +1,102 @@
+2010-12-10  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        WebKit2: Need a WebKit2 equivalent of the WebKit1 WebDatabaseManager
+        https://bugs.webkit.org/show_bug.cgi?id=50606
+
+        Add a WebDatabaseManagerProxy owned by the WebContext.
+
+        Expose API (similar to the WebKit1 API) to get a list of origins for which there are
+        Databases, delete all the databases for a given origin, and delete all the databases.
+
+        Add WebDatabaseManager and WebDatabaseManagerProxy as messages receivers.
+        * DerivedSources.make:
+        * Platform/CoreIPC/MessageID.h:
+
+        Add the WebDatabaseManagerProxy as a UIProcess type (DatabaseManager).
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetDatabaseManager):
+        Expose API to get the DatabaseManager.
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/API/C/WKDatabaseManager.cpp: Added.
+        (WKDatabaseManagerGetTypeID):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        (callGetDatabaseOriginsBlockBlockAndDispose):
+        (WKDatabaseManagerGetDatabaseOrigins_b):
+        (WKDatabaseManagerDeleteDatabasesForOrigin):
+        (WKDatabaseManagerDeleteAllDatabases):
+        * UIProcess/API/C/WKDatabaseManager.h: Added.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        Create the WebDatabaseManagerProxy.
+        (WebKit::WebContext::processDidClose):
+        Invalidate the WebDatabaseManagerProxy.
+        (WebKit::WebContext::didReceiveMessage):
+        Forward messages to the WebDatabaseManagerProxy.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::databaseManagerProxy):
+
+        * UIProcess/WebDatabaseManagerProxy.cpp: Added.
+        (WebKit::WebDatabaseManagerProxy::create):
+        (WebKit::WebDatabaseManagerProxy::WebDatabaseManagerProxy):
+        (WebKit::WebDatabaseManagerProxy::~WebDatabaseManagerProxy):
+        (WebKit::WebDatabaseManagerProxy::invalidate):
+        Invalidate the map of callbacks for getDatabaseOrigins.
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins):
+        Store the callback and send the request for the origins which have databases to the
+        WebProcess.
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        Call the callback function with the SecurityOrigins created from the identifiers received.
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        If the origin exists, send the message on to the WebProcess to delete the databases
+        associated with that origin.
+        (WebKit::WebDatabaseManagerProxy::deleteAllDatabases):
+        Send the message to the WebProcess to delete all the databases.
+        * UIProcess/WebDatabaseManagerProxy.h: Added.
+        (WebKit::WebDatabaseManagerProxy::type):
+        * UIProcess/WebDatabaseManagerProxy.messages.in: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        Move invalidateCallbackMap from here ...
+        * UIProcess/GenericCallback.h:
+        (WebKit::invalidateCallbackMap):
+        .. to here so that it can be used elsewhere (e.g. by WebDatabaseManagerProxy).
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        Forward on all messages destined for the WebDatabaseManagerProxy to the WebContext.
+
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::didReceiveMessage):
+        (WebKit::WebDatabaseManager::getDatabaseOrigins):
+        Send an array of the identifiers for the SecurityOrigins for which there are databases to
+        the UIProcess.
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin):
+        If the SecurityOrigin with that identifier exists, tell the DatabaseTracker to delete the
+        databases for that origin.
+        (WebKit::WebDatabaseManager::deleteAllDatabases):
+        Tell the DatabaseTracker to delete the databases for that origin.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
+        * WebKit2.pro:
+        Add WKDatabaseManager.cpp/.h and WebDatabaseManagerProxy.cpp/.h
+        * WebKit2.xcodeproj/project.pbxproj:
+        Ditto, also add WebDatabaseManagerProxy.messages.in and WebDatabaseManager.messages.in.
+        * win/WebKit2.vcproj:
+        Ditto.
+        * win/WebKit2Generated.make:
+        Make sure WKDatabaseManager.h is copied into WebKitBuild on Windows.
+
 2010-12-10  Ada Chan  <adachan@apple.com>
 
         Reviewed by Anders Carlsson.

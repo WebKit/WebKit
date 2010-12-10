@@ -277,6 +277,7 @@ HEADERS += \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
     UIProcess/API/C/WKCredentialTypes.h \
+    UIProcess/API/C/WKDatabaseManager.h \
     UIProcess/API/C/WKDownload.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
@@ -325,6 +326,7 @@ HEADERS += \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
     UIProcess/WebContextUserMessageCoders.h \
+    UIProcess/WebDatabaseManagerProxy.h \
     UIProcess/WebDownloadClient.h \
     UIProcess/WebEditCommandProxy.h \
     UIProcess/WebFindClient.h \
@@ -475,6 +477,7 @@ SOURCES += \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKCredential.cpp \
+    UIProcess/API/C/WKDatabaseManager.cpp \
     UIProcess/API/C/WKDownload.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
@@ -515,6 +518,7 @@ SOURCES += \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
+    UIProcess/WebDatabaseManagerProxy.cpp \
     UIProcess/WebDownloadClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFindClient.cpp \
