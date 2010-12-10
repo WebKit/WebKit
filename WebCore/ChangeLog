@@ -1,3 +1,58 @@
+2010-12-10 Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Merge Loader and Request. Currently, Loader is a singleton attached
+        to MemoryCache. Our goal is to remove knowledge of the loading process
+        from MemoryCache, so we should attach Loader to CachedResourceLoader instead.
+        Once Loader is moved off of MemoryCache, there's no reason it needs to be a singleton,
+        which removes the main reason for Request existing as a separate class (to store per-request
+        state that Loader couldn't).
+
+        Loader will be given a more descriptive name in a later patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49837
+
+        Refactor only, no new tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * loader/FrameLoader.cpp:
+        * loader/Request.cpp:
+        * loader/Request.h:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::setAutoLoadImages):
+        (WebCore::CachedResourceLoader::load):
+        (WebCore::CachedResourceLoader::loadDone): Was setLoadInProgress(false),
+            plus other CachedResourceLoader cleanup that had been handled in Loader.
+        (WebCore::CachedResourceLoader::cancelRequests): Moved from Loader.
+        (WebCore::CachedResourceLoader::requestCount):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::CachedResourceLoader::loadFinishing): Was setLoadInProgress(true)
+        * loader/cache/MemoryCache.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::~Loader):
+        (WebCore::Loader::load):
+        (WebCore::Loader::willSendRequest):
+        (WebCore::Loader::didFinishLoading):
+        (WebCore::Loader::didFail):
+        (WebCore::Loader::didReceiveResponse):
+        (WebCore::Loader::didReceiveData):
+        (WebCore::Loader::didReceiveCachedMetadata):
+        * loader/loader.h:
+        (WebCore::Loader::cachedResourceLoader):
+
 2010-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73703.

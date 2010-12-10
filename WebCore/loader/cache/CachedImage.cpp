@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
-#include "Request.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/CurrentTime.h>

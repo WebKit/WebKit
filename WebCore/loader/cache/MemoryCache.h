@@ -28,7 +28,6 @@
 #include "CachePolicy.h"
 #include "CachedResource.h"
 #include "PlatformString.h"
-#include "loader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -103,9 +102,6 @@ public:
 #endif
         TypeStatistic fonts;
     };
-
-    // The loader that fetches resources.
-    Loader* loader() { return &m_loader; }
 
     // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
     // found in the cache.
@@ -191,7 +187,6 @@ private:
 
     // Member variables.
     HashSet<CachedResourceLoader*> m_cachedResourceLoaders;
-    Loader m_loader;
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;

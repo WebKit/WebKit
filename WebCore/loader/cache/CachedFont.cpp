@@ -33,6 +33,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "CachedResourceLoader.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
 #include "SharedBuffer.h"
@@ -98,7 +99,7 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 {
     if (!m_loadInitiated) {
         m_loadInitiated = true;
-        cache()->loader()->load(dl, this, false);
+        dl->load(this, false);
     }
 }
 

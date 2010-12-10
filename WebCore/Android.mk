@@ -372,7 +372,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/PolicyChecker.cpp \
 	loader/ProgressTracker.cpp \
 	loader/NavigationScheduler.cpp \
-	loader/Request.cpp \
 	loader/ResourceLoadNotifier.cpp \
 	loader/ResourceLoader.cpp \
 	loader/SubframeLoader.cpp \

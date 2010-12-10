@@ -35,24 +35,29 @@ namespace WebCore {
     class CachedResourceLoader;
     class Request;
 
-    class Loader : public Noncopyable, private SubresourceLoaderClient {
+    class Loader : public RefCounted<Loader>, private SubresourceLoaderClient {
     public:
+        static PassRefPtr<Loader> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);\
         ~Loader();
+        void didFail(bool cancelled = false);
 
-        void load(CachedResourceLoader*, CachedResource*, bool incremental = true, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
-        void cancelRequests(CachedResourceLoader*);
+        CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }
 
     private:
+        Loader(CachedResourceLoader*, CachedResource*, bool incremental);
         virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
         virtual void didReceiveData(SubresourceLoader*, const char*, int);
         virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int);
         virtual void didFinishLoading(SubresourceLoader*);
         virtual void didFail(SubresourceLoader*, const ResourceError&);
-        void didFail(SubresourceLoader*, bool cancelled = false);
-        
-        typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;
-        RequestMap m_requestsLoading;
+
+        RefPtr<SubresourceLoader> m_loader;
+        CachedResourceLoader* m_cachedResourceLoader;
+        CachedResource* m_resource;
+        bool m_incremental;
+        bool m_multipart;
+        bool m_finishing;
     };
 
 }

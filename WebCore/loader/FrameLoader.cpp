@@ -429,7 +429,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
         doc->setReadyState(Document::Complete);
 
         if (CachedResourceLoader* cachedResourceLoader = doc->cachedResourceLoader())
-            cache()->loader()->cancelRequests(cachedResourceLoader);
+            cachedResourceLoader->cancelRequests();
 
 #if ENABLE(DATABASE)
         if (databasePolicy == DatabasePolicyStop)

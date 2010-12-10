@@ -2148,8 +2148,6 @@
             'loader/ProgressTracker.h',
             'loader/NavigationScheduler.cpp',
             'loader/NavigationScheduler.h',
-            'loader/Request.cpp',
-            'loader/Request.h',
             'loader/ResourceLoader.cpp',
             'loader/ResourceLoader.h',
             'loader/ResourceLoadNotifier.cpp',

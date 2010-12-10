@@ -55,7 +55,7 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
     , m_document(document)
     , m_requestCount(0)
     , m_autoLoadImages(true)
-    , m_loadInProgress(false)
+    , m_loadFinishing(false)
     , m_allowStaleResources(false)
 {
     m_cache->addCachedResourceLoader(this);
@@ -63,9 +63,7 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
 
 CachedResourceLoader::~CachedResourceLoader()
 {
-    if (m_requestCount)
-        m_cache->loader()->cancelRequests(this);
-
+    cancelRequests();
     clearPreloads();
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
@@ -137,7 +135,7 @@ CachedImage* CachedResourceLoader::requestImage(const String& url)
     CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url, String()));
     if (autoLoadImages() && resource && resource->stillNeedsLoad()) {
         resource->setLoading(true);
-        cache()->loader()->load(this, resource, true);
+        load(resource, true);
     }
     return resource;
 }
@@ -314,7 +312,7 @@ void CachedResourceLoader::setAutoLoadImages(bool enable)
             CachedImage* image = const_cast<CachedImage*>(static_cast<const CachedImage*>(resource));
 
             if (image->stillNeedsLoad())
-                cache()->loader()->load(this, image, true);
+                load(image, true);
         }
     }
 }
@@ -334,11 +332,36 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
-void CachedResourceLoader::setLoadInProgress(bool load)
+void CachedResourceLoader::load(CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
-    m_loadInProgress = load;
-    if (!load && frame())
+    incrementRequestCount(resource);
+
+    RefPtr<Loader> request = Loader::load(this, resource, incremental, securityCheck, sendResourceLoadCallbacks);
+    if (request)
+        m_requests.add(request);
+}
+
+void CachedResourceLoader::loadDone(Loader* request)
+{
+    m_loadFinishing = false;
+    RefPtr<Loader> protect(request);
+    if (request)
+        m_requests.remove(request);
+    if (frame())
         frame()->loader()->loadDone();
+    checkForPendingPreloads();
+}
+
+void CachedResourceLoader::cancelRequests()
+{
+    clearPendingPreloads();
+    Vector<Loader*, 256> requestsToCancel;
+    RequestSet::iterator end = m_requests.end();
+    for (RequestSet::iterator i = m_requests.begin(); i != end; ++i)
+        requestsToCancel.append((*i).get());
+
+    for (unsigned i = 0; i < requestsToCancel.size(); ++i)
+        requestsToCancel[i]->didFail(true);
 }
 
 void CachedResourceLoader::checkCacheObjectStatus(CachedResource* resource)
@@ -370,7 +393,7 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 
 int CachedResourceLoader::requestCount()
 {
-    if (loadInProgress())
+    if (m_loadFinishing)
          return m_requestCount + 1;
     return m_requestCount;
 }

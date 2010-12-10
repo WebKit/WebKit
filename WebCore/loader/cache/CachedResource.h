@@ -43,8 +43,8 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class Frame;
 class InspectorResource;
+class Loader;
 class PurgeableBuffer;
-class Request;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
@@ -150,7 +150,7 @@ public:
     void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
     bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
     
-    void setRequest(Request*);
+    void setRequest(Loader*);
 
     SharedBuffer* data() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
@@ -216,7 +216,7 @@ protected:
 
     String m_url;
     String m_accept;
-    Request* m_request;
+    Loader* m_request;
 
     ResourceResponse m_response;
     double m_responseTimestamp;

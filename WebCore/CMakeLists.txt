@@ -1189,7 +1189,6 @@ SET(WebCore_SOURCES
     loader/PolicyChecker.cpp
     loader/ProgressTracker.cpp
     loader/NavigationScheduler.cpp
-    loader/Request.cpp
     loader/ResourceLoadNotifier.cpp
     loader/ResourceLoadScheduler.cpp
     loader/ResourceLoader.cpp

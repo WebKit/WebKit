@@ -5062,8 +5062,6 @@
 		BCB16C2A0979C3BD00467741 /* CachedResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* CachedResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
-		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
 		BCB773610C17853D00132BA4 /* JSNodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */; };
 		BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */; };
 		BCB773630C17853D00132BA4 /* JSNodeFilterCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */; };
@@ -11309,8 +11307,6 @@
 		BCB16C110979C3BD00467741 /* CachedResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceLoader.h; sourceTree = "<group>"; };
 		BCB16C130979C3BD00467741 /* loader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = loader.cpp; sourceTree = "<group>"; };
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
-		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
-		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
 		BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCondition.cpp; sourceTree = "<group>"; };
 		BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilterCondition.h; sourceTree = "<group>"; };
 		BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
@@ -17838,8 +17834,6 @@
 				97059976107D975200A50A7C /* PolicyChecker.h */,
 				1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */,
 				1A2A68220B5BEDE70002A480 /* ProgressTracker.h */,
-				BCB16C150979C3BD00467741 /* Request.cpp */,
-				BCB16C160979C3BD00467741 /* Request.h */,
 				93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */,
 				656D37270ADBA5DE00A4554D /* ResourceLoader.h */,
 				973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */,
@@ -21445,7 +21439,6 @@
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 				A89CCC530F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h in Headers */,
 				93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */,
-				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
 				F55B3DD01251F12D003EF269 /* ResetInputType.h in Headers */,
 				934F71420D5A6F4400018D69 /* ResourceError.h in Headers */,
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
@@ -24217,7 +24210,6 @@
 				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
 				93309E09099E64920056E581 /* ReplaceSelectionCommand.cpp in Sources */,
-				BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */,
 				F55B3DCF1251F12D003EF269 /* ResetInputType.cpp in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,

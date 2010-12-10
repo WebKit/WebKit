@@ -31,7 +31,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
-#include "Request.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 #include "ResourceRequest.h"
@@ -42,11 +41,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-Loader::~Loader()
-{    
-    ASSERT_NOT_REACHED();
-}
     
 static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
@@ -93,22 +87,33 @@ static ResourceLoadScheduler::Priority determinePriority(const CachedResource* r
     return ResourceLoadScheduler::Low;
 }
 
-void Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+Loader::Loader(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental)
+    : m_cachedResourceLoader(cachedResourceLoader)
+    , m_resource(resource)
+    , m_incremental(incremental)
+    , m_multipart(false)
+    , m_finishing(false)
 {
+    m_resource->setRequest(this);
+}
 
-    ASSERT(cachedResourceLoader);
-    Request* request = new Request(cachedResourceLoader, resource, incremental, securityCheck, sendResourceLoadCallbacks);
+Loader::~Loader()
+{
+    m_resource->setRequest(0);
+}
 
-    cachedResourceLoader->incrementRequestCount(request->cachedResource());
+PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+{
+    RefPtr<Loader> request = adoptRef(new Loader(cachedResourceLoader, resource, incremental));
 
-    ResourceRequest resourceRequest(request->cachedResource()->url());
-    resourceRequest.setTargetType(cachedResourceTypeToTargetType(request->cachedResource()->type()));
+    ResourceRequest resourceRequest(resource->url());
+    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
 
-    if (!request->cachedResource()->accept().isEmpty())
-        resourceRequest.setHTTPAccept(request->cachedResource()->accept());
+    if (!resource->accept().isEmpty())
+        resourceRequest.setHTTPAccept(resource->accept());
 
-    if (request->cachedResource()->isCacheValidator()) {
-        CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();
+    if (resource->isCacheValidator()) {
+        CachedResource* resourceToRevalidate = resource->resourceToRevalidate();
         ASSERT(resourceToRevalidate->canUseCacheValidator());
         ASSERT(resourceToRevalidate->isLoaded());
         const String& lastModified = resourceToRevalidate->response().httpHeaderField("Last-Modified");
@@ -125,230 +130,171 @@ void Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* re
     }
     
 #if ENABLE(LINK_PREFETCH)
-    if (request->cachedResource()->type() == CachedResource::LinkPrefetch)
+    if (resource->type() == CachedResource::LinkPrefetch)
         resourceRequest.setHTTPHeaderField("X-Purpose", "prefetch");
 #endif
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
-        this, resourceRequest, determinePriority(resource), request->shouldDoSecurityCheck(), request->sendResourceLoadCallbacks());
-    if (loader && !loader->reachedTerminalState())
-        m_requestsLoading.add(loader.release(), request);
-    else {
+        request.get(), resourceRequest, determinePriority(resource), securityCheck, sendResourceLoadCallbacks);
+    if (!loader || loader->reachedTerminalState()) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
-        LOG(ResourceLoading, "Cannot start loading '%s'", request->cachedResource()->url().latin1().data());             
-        cachedResourceLoader->decrementRequestCount(request->cachedResource());
-        cachedResourceLoader->setLoadInProgress(true);
+        LOG(ResourceLoading, "Cannot start loading '%s'", resource->url().latin1().data());
+        cachedResourceLoader->decrementRequestCount(resource);
+        cachedResourceLoader->loadFinishing();
         if (resource->resourceToRevalidate()) 
             cache()->revalidationFailed(resource); 
         resource->error(CachedResource::LoadError);
-        cachedResourceLoader->setLoadInProgress(false);
-        delete request;
+        cachedResourceLoader->loadDone(0);
+        return 0;
     }
+    request->m_loader = loader;
+    return request.release();
 }
 
-void Loader::cancelRequests(CachedResourceLoader* cachedResourceLoader)
+void Loader::willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&)
 {
-    cachedResourceLoader->clearPendingPreloads();
-
-    Vector<SubresourceLoader*, 256> loadersToCancel;
-    RequestMap::iterator end = m_requestsLoading.end();
-    for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
-        Request* r = i->second;
-        if (r->cachedResourceLoader() == cachedResourceLoader)
-            loadersToCancel.append(i->first.get());
-    }
-
-    for (unsigned i = 0; i < loadersToCancel.size(); ++i) {
-        SubresourceLoader* loader = loadersToCancel[i];
-        didFail(loader, true);
-    }
-}
-
-void Loader::willSendRequest(SubresourceLoader* loader, ResourceRequest&, const ResourceResponse&)
-{
-    RequestMap::iterator i = m_requestsLoading.find(loader);
-    if (i == m_requestsLoading.end())
-        return;
-    
-    Request* request = i->second;
-    request->cachedResource()->setRequestedFromNetworkingLayer();
+    m_resource->setRequestedFromNetworkingLayer();
 }
 
 void Loader::didFinishLoading(SubresourceLoader* loader)
 {
-    RequestMap::iterator i = m_requestsLoading.find(loader);
-    if (i == m_requestsLoading.end())
+    if (m_finishing)
         return;
-    
-    Request* request = i->second;
-    m_requestsLoading.remove(i);
-    CachedResourceLoader* cachedResourceLoader = request->cachedResourceLoader();
+
+    ASSERT(loader == m_loader.get());
+    ASSERT(!m_resource->resourceToRevalidate());
+    LOG(ResourceLoading, "Received '%s'.", m_resource->url().latin1().data());
+
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
-    RefPtr<Document> protector(cachedResourceLoader->document());
-    if (!request->isMultipart())
-        cachedResourceLoader->decrementRequestCount(request->cachedResource());
-
-    CachedResource* resource = request->cachedResource();
-    ASSERT(!resource->resourceToRevalidate());
-
-    LOG(ResourceLoading, "Received '%s'.", resource->url().latin1().data());
+    RefPtr<Document> protector(m_cachedResourceLoader->document());
+    if (!m_multipart)
+        m_cachedResourceLoader->decrementRequestCount(m_resource);
+    m_finishing = true;
 
     // If we got a 4xx response, we're pretending to have received a network
     // error, so we can't send the successful data() and finish() callbacks.
-    if (!resource->errorOccurred()) {
-        cachedResourceLoader->setLoadInProgress(true);
-        resource->data(loader->resourceData(), true);
-        if (!resource->errorOccurred())
-            resource->finish();
+    if (!m_resource->errorOccurred()) {
+        m_cachedResourceLoader->loadFinishing();
+        m_resource->data(loader->resourceData(), true);
+        if (!m_resource->errorOccurred())
+            m_resource->finish();
     }
-
-    delete request;
-    cachedResourceLoader->setLoadInProgress(false);    
-    cachedResourceLoader->checkForPendingPreloads();
+    m_cachedResourceLoader->loadDone(this);
 }
 
-void Loader::didFail(SubresourceLoader* loader, const ResourceError&)
+void Loader::didFail(SubresourceLoader*, const ResourceError&)
 {
-    didFail(loader);
-}
-
-void Loader::didFail(SubresourceLoader* loader, bool cancelled)
-{
-    loader->clearClient();
-
-    RequestMap::iterator i = m_requestsLoading.find(loader);
-    if (i == m_requestsLoading.end())
+    if (!m_loader)
         return;
-    
-    Request* request = i->second;
-    m_requestsLoading.remove(i);
-    CachedResourceLoader* cachedResourceLoader = request->cachedResourceLoader();
+    didFail();
+}
+
+void Loader::didFail(bool cancelled)
+{
+    if (m_finishing)
+        return;
+
+    LOG(ResourceLoading, "Failed to load '%s' (cancelled=%d).\n", m_resource->url().latin1().data(), cancelled);
+
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
-    RefPtr<Document> protector(cachedResourceLoader->document());
-    if (!request->isMultipart())
-        cachedResourceLoader->decrementRequestCount(request->cachedResource());
+    RefPtr<Document> protector(m_cachedResourceLoader->document());
+    if (!m_multipart)
+        m_cachedResourceLoader->decrementRequestCount(m_resource);
+    m_finishing = true;
+    m_loader->clearClient();
 
-    CachedResource* resource = request->cachedResource();
-
-    LOG(ResourceLoading, "Failed to load '%s' (cancelled=%d).\n", resource->url().latin1().data(), cancelled);
-
-    if (resource->resourceToRevalidate())
-        cache()->revalidationFailed(resource);
+    if (m_resource->resourceToRevalidate())
+        cache()->revalidationFailed(m_resource);
 
     if (!cancelled) {
-        cachedResourceLoader->setLoadInProgress(true);
-        resource->error(CachedResource::LoadError);
+        m_cachedResourceLoader->loadFinishing();
+        m_resource->error(CachedResource::LoadError);
     }
+
+    if (cancelled || !m_resource->isPreloaded())
+        cache()->remove(m_resource);
     
-    cachedResourceLoader->setLoadInProgress(false);
-    if (cancelled || !resource->isPreloaded())
-        cache()->remove(resource);
-    
-    delete request;
-    
-    cachedResourceLoader->checkForPendingPreloads();
+    m_cachedResourceLoader->loadDone(this);
 }
 
 void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
-    Request* request = m_requestsLoading.get(loader);
-    
-    // FIXME: This is a workaround for <rdar://problem/5236843>
-    // If a load starts while the frame is still in the provisional state 
-    // (this can be the case when loading the user style sheet), committing the load then causes all
-    // requests to be removed from the m_requestsLoading map. This means that request might be null here.
-    // In that case we just return early. 
-    // ASSERT(request);
-    if (!request)
-        return;
-    
-    CachedResource* resource = request->cachedResource();
-    
-    if (resource->isCacheValidator()) {
+    ASSERT(loader == m_loader.get());
+    if (m_resource->isCacheValidator()) {
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
-            m_requestsLoading.remove(loader);
             loader->clearClient();
-            request->cachedResourceLoader()->decrementRequestCount(request->cachedResource());
+            RefPtr<Document> protector(m_cachedResourceLoader->document());
+            m_cachedResourceLoader->decrementRequestCount(m_resource);
+            m_finishing = true;
 
             // Existing resource is ok, just use it updating the expiration time.
-            cache()->revalidationSucceeded(resource, response);
+            cache()->revalidationSucceeded(m_resource, response);
             
-            if (request->cachedResourceLoader()->frame())
-                request->cachedResourceLoader()->frame()->loader()->checkCompleted();
+            if (m_cachedResourceLoader->frame())
+                m_cachedResourceLoader->frame()->loader()->checkCompleted();
 
-            delete request;
-
+            m_cachedResourceLoader->loadDone(this);
             return;
         } 
         // Did not get 304 response, continue as a regular resource load.
-        cache()->revalidationFailed(resource);
+        cache()->revalidationFailed(m_resource);
     }
 
-    resource->setResponse(response);
+    m_resource->setResponse(response);
 
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
-        resource->setEncoding(encoding);
+        m_resource->setEncoding(encoding);
     
-    if (request->isMultipart()) {
-        ASSERT(resource->isImage());
-        static_cast<CachedImage*>(resource)->clear();
-        if (request->cachedResourceLoader()->frame())
-            request->cachedResourceLoader()->frame()->loader()->checkCompleted();
+    if (m_multipart) {
+        ASSERT(m_resource->isImage());
+        static_cast<CachedImage*>(m_resource)->clear();
+        if (m_cachedResourceLoader->frame())
+            m_cachedResourceLoader->frame()->loader()->checkCompleted();
     } else if (response.isMultipart()) {
-        request->setIsMultipart(true);
+        m_multipart = true;
         
         // We don't count multiParts in a CachedResourceLoader's request count
-        request->cachedResourceLoader()->decrementRequestCount(request->cachedResource());
+        m_cachedResourceLoader->decrementRequestCount(m_resource);
 
         // If we get a multipart response, we must have a handle
         ASSERT(loader->handle());
-        if (!resource->isImage())
+        if (!m_resource->isImage())
             loader->handle()->cancel();
     }
 }
 
 void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int size)
 {
-    Request* request = m_requestsLoading.get(loader);
-    if (!request)
-        return;
-
-    CachedResource* resource = request->cachedResource();    
-    ASSERT(!resource->isCacheValidator());
+    ASSERT(loader == m_loader.get());
+    ASSERT(!m_resource->isCacheValidator());
     
-    if (resource->errorOccurred())
+    if (m_resource->errorOccurred())
         return;
 
-    if (resource->response().httpStatusCode() >= 400) {
-        if (!resource->shouldIgnoreHTTPStatusCodeErrors())
-            resource->error(CachedResource::LoadError);
+    if (m_resource->response().httpStatusCode() >= 400) {
+        if (!m_resource->shouldIgnoreHTTPStatusCodeErrors())
+            m_resource->error(CachedResource::LoadError);
         return;
     }
 
     // Set the data.
-    if (request->isMultipart()) {
+    if (m_multipart) {
         // The loader delivers the data in a multipart section all at once, send eof.
         // The resource data will change as the next part is loaded, so we need to make a copy.
         RefPtr<SharedBuffer> copiedData = SharedBuffer::create(data, size);
-        resource->data(copiedData.release(), true);
-    } else if (request->isIncremental())
-        resource->data(loader->resourceData(), false);
+        m_resource->data(copiedData.release(), true);
+    } else if (m_incremental)
+        m_resource->data(loader->resourceData(), false);
 }
 
-void Loader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int size)
+void Loader::didReceiveCachedMetadata(SubresourceLoader*, const char* data, int size)
 {
-    Request* request = m_requestsLoading.get(loader);
-    if (!request)
-        return;
-
-    CachedResource* resource = request->cachedResource();    
-    ASSERT(!resource->isCacheValidator());
-
-    resource->setSerializedCachedMetadata(data, size);
+    ASSERT(!m_resource->isCacheValidator());
+    m_resource->setSerializedCachedMetadata(data, size);
 }
 
 } //namespace WebCore

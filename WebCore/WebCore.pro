@@ -1082,7 +1082,6 @@ SOURCES += \
     loader/PolicyChecker.cpp \
     loader/ProgressTracker.cpp \
     loader/NavigationScheduler.cpp \
-    loader/Request.cpp \
     loader/ResourceLoader.cpp \
     loader/ResourceLoadNotifier.cpp \
     loader/ResourceLoadScheduler.cpp \

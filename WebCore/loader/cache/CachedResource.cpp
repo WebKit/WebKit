@@ -35,9 +35,9 @@
 #include "KURL.h"
 #include "Logging.h"
 #include "PurgeableBuffer.h"
-#include "Request.h"
 #include "ResourceHandle.h"
 #include "SharedBuffer.h"
+#include "loader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -106,7 +106,7 @@ CachedResource::~CachedResource()
 void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
-    cache()->loader()->load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
+    cachedResourceLoader->load(this, incremental, securityCheck, sendResourceLoadCallbacks);
     m_loading = true;
 }
 
@@ -202,7 +202,7 @@ CachedMetadata* CachedResource::cachedMetadata(unsigned dataTypeID) const
     return m_cachedMetadata.get();
 }
 
-void CachedResource::setRequest(Request* request)
+void CachedResource::setRequest(Loader* request)
 {
     if (request && !m_request)
         m_status = Pending;

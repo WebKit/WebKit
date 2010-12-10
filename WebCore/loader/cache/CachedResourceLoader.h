@@ -29,6 +29,7 @@
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
+#include "loader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -86,8 +87,10 @@ public:
 
     void removeCachedResource(CachedResource*) const;
 
-    void setLoadInProgress(bool);
-    bool loadInProgress() const { return m_loadInProgress; }
+    void load(CachedResource*, bool incremental = false, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
+    void loadFinishing() { m_loadFinishing = true; }
+    void loadDone(Loader*);
+    void cancelRequests();
     
     void setAllowStaleResources(bool allowStaleResources) { m_allowStaleResources = allowStaleResources; }
 
@@ -113,6 +116,9 @@ private:
     HashSet<String> m_reloadedURLs;
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
+
+    typedef HashSet<RefPtr<Loader> > RequestSet;
+    RequestSet m_requests;
     
     int m_requestCount;
     
@@ -126,7 +132,7 @@ private:
     
     //29 bits left
     bool m_autoLoadImages : 1;
-    bool m_loadInProgress : 1;
+    bool m_loadFinishing : 1;
     bool m_allowStaleResources : 1;
 };
 
