@@ -1,3 +1,23 @@
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add CoreIPC coders for CF types
+        https://bugs.webkit.org/show_bug.cgi?id=50791
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::decodeEnum):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (CoreIPC::ArgumentEncoder::encodeEnum):
+        * Shared/cf/ArgumentCodersCF.cpp: Added.
+        (CoreIPC::tokenNullTypeRef):
+        (CoreIPC::typeFromCFTypeRef):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        (CoreIPC::sizeForNumberType):
+        * Shared/cf/ArgumentCodersCF.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-12-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

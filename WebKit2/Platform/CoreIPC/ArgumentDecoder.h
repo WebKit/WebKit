@@ -61,6 +61,18 @@ public:
     bool decodeFloat(float&);
     bool decodeDouble(double&);
 
+    template<typename T> bool decodeEnum(T& result)
+    {
+        COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
+
+        uint64_t value;
+        if (!decodeUInt64(value))
+            return false;
+        
+        result = static_cast<T>(value);
+        return true;
+    }
+
     template<typename T>
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {

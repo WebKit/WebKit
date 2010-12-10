@@ -51,6 +51,13 @@ public:
     void encodeFloat(float);
     void encodeDouble(double);
 
+    template<typename T> void encodeEnum(T t)
+    {
+        COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
+
+        encodeUInt64(static_cast<uint64_t>(t));
+    }
+    
     // Generic type encode function.
     template<typename T> void encode(const T& t)
     {
