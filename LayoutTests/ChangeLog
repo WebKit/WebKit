@@ -1,3 +1,18 @@
+2010-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Make DOM Mutation Events Asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=46936
+
+        Added a test to ensure no DOM mutation events are fired while execCommand is in progress.
+
+        * fast/events/crash-on-mutate-during-drop.html: DOMNodeInserted is fired after BR is detached
+        from the document, and can't be observed. Modify the DOM when text node is inserted.
+        * fast/events/scoped: Added.
+        * fast/events/scoped/editing-commands-expected.txt: Added.
+        * fast/events/scoped/editing-commands.html: Added.
+
 2010-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73684.

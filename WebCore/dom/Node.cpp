@@ -70,6 +70,7 @@
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "RenderBox.h"
+#include "ScopedEventQueue.h"
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
 #include "StaticNodeList.h"
@@ -2579,6 +2580,14 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
+void Node::dispatchScopedEvent(PassRefPtr<Event> event)
+{
+    // We need to set the target here because it can go away by the time we actually fire the event.
+    event->setTarget(eventTargetRespectingSVGTargetRules(this));
+
+    ScopedEventQueue::instance()->enqueueEvent(event);
+}
+
 static const EventContext* topEventContext(const Vector<EventContext>& ancestors)
 {
     return ancestors.isEmpty() ? 0 : &ancestors.last();
@@ -2693,7 +2702,7 @@ void Node::dispatchSubtreeModifiedEvent()
     if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return;
 
-    dispatchEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
+    dispatchScopedEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
 }
 
 void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
@@ -2703,10 +2712,10 @@ void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
            eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
     
     bool cancelable = eventType == eventNames().DOMActivateEvent;
-    
+
     RefPtr<UIEvent> event = UIEvent::create(eventType, true, cancelable, document()->defaultView(), detail);
     event->setUnderlyingEvent(underlyingEvent);
-    dispatchEvent(event.release());
+    dispatchScopedEvent(event.release());
 }
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& key)
