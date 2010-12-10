@@ -52,6 +52,12 @@ public:
     virtual bool isEnumeratable() const { return true; }
     virtual bool appendFormData(FormDataList&, bool);
 
+    // Implementations of constraint validation API.
+    // Note that the object elements are always barred from constraint validation.
+    String validationMessage() { return String(); }
+    bool checkValidity() { return true; }
+    void setCustomValidity(const String&) { }
+
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     using TreeShared<ContainerNode>::ref;

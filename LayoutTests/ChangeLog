@@ -1,3 +1,26 @@
+2010-12-09  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Improve validation API support of <object> and <keygen>
+        https://bugs.webkit.org/show_bug.cgi?id=50663
+
+        Adds tests for validation API for <object>.
+        Tests for <output> and <keygen> are also added.
+
+        * fast/dom/plugin-attributes-enumeration-expected.txt: Updated.
+        * fast/forms/ValidityState-001-expected.txt: Updated.
+        * fast/forms/ValidityState-001.html: Updated.
+        * fast/forms/checkValidity-001-expected.txt: Updated.
+        * fast/forms/checkValidity-001.html: Updated.
+        * fast/forms/script-tests/setCustomValidity-existence.js: Added.
+        * fast/forms/script-tests/validationMessage.js: Updated.
+        * fast/forms/script-tests/willvalidate.js: Updated.
+        * fast/forms/setCustomValidity-existence-expected.txt: Added.
+        * fast/forms/setCustomValidity-existence.html: Added.
+        * fast/forms/validationMessage-expected.txt: Updated.
+        * fast/forms/willvalidate-expected.txt: Updated.
+
 2010-12-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Reviewed by Kent Tamura.

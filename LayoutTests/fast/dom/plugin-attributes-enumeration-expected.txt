@@ -18,6 +18,8 @@ hspace
 standby
 type
 useMap
+validationMessage
+validity
 vspace
 willValidate
 ----------

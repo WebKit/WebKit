@@ -1,3 +1,23 @@
+2010-12-09  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Improve validation API support of <object> and <keygen>
+        https://bugs.webkit.org/show_bug.cgi?id=50663
+
+        Adds validation API to HTMLObjectElement class.
+        Makes HTMLKeygenElement::willValidate() return false.
+
+        Test: fast/forms/setCustomValidity-existence.html
+
+        * html/HTMLKeygenElement.h:
+        (WebCore::HTMLKeygenElement::willValidate): Added.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::validationMessage): Added.
+        (WebCore::HTMLObjectElement::checkValidity): Added.
+        (WebCore::HTMLObjectElement::setCustomValidity): Added.
+        * html/HTMLObjectElement.idl: Added validation API properties.
+
 2010-12-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Reviewed by Kent Tamura.

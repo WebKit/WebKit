@@ -10,6 +10,9 @@ parent.innerHTML = '<form>'
     + '<fieldset name="victim">Test</fieldset>'
     + '<button name="victim">'
     + '<select name="victim"></select>'
+    + '<output name="victim"></output>'
+    + '<object name="victim"></object>'
+    + '<keygen name="victim">'
     + '</form>';
 var controls = document.getElementsByName('victim');
     for (var i = 0; i < controls.length; i++)
@@ -64,5 +67,20 @@ debug('');
 debug('Textarea element');
 parent.innerHTML = '<form><textarea name="text"></textarea></form>';
 shouldBeTrue('document.getElementsByTagName("textarea")[0].willValidate');
+
+debug('');
+debug('Output element');
+parent.innerHTML = '<form><output></output></form>';
+shouldBeFalse('document.getElementsByTagName("output")[0].willValidate');
+
+debug('');
+debug('Object element');
+parent.innerHTML = '<form><object></object></form>';
+shouldBeFalse('document.getElementsByTagName("object")[0].willValidate');
+
+debug('');
+debug('Keygen element');
+parent.innerHTML = '<form><keygen></form>';
+shouldBeFalse('document.getElementsByTagName("keygen")[0].willValidate');
 
 var successfullyParsed = true;

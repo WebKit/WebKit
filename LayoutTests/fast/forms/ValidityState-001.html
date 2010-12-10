@@ -22,7 +22,7 @@
         v = document.getElementsByName("victim");
 
         for (i = 0; i < v.length; i++)
-            log((v[i].validity && countAttr(v[i].validity) == 9) ? "SUCCESS" : "FAILURE");
+            log('Test for ' + v[i].tagName + ': ' + ((v[i].validity && countAttr(v[i].validity) == 9) ? "SUCCESS" : "FAILURE"));
     }
 </script>
 </head>
@@ -34,6 +34,9 @@ a live instance of ValidityState.</p>
 <input name="victim"/>
 <textarea name="victim"></textarea>
 <button name="victim"></button>
+<output name="victim"></output>
+<object name="victim"></object>
+<keygen name="victim"></keygen>
 </fieldset>
 <hr>
 <ol id="console"></ol>

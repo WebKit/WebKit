@@ -9,6 +9,9 @@ PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
+PASS typeof controls[i].willValidate is "boolean"
+PASS typeof controls[i].willValidate is "boolean"
+PASS typeof controls[i].willValidate is "boolean"
 
 Form association
 PASS input.willValidate is true
@@ -36,6 +39,15 @@ PASS document.getElementsByTagName("fieldset")[0].willValidate is false
 
 Textarea element
 PASS document.getElementsByTagName("textarea")[0].willValidate is true
+
+Output element
+PASS document.getElementsByTagName("output")[0].willValidate is false
+
+Object element
+PASS document.getElementsByTagName("object")[0].willValidate is false
+
+Keygen element
+PASS document.getElementsByTagName("keygen")[0].willValidate is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

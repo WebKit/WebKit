@@ -43,6 +43,10 @@ module html {
         attribute [Reflect] long vspace;
         attribute [Reflect] DOMString width;
         readonly attribute boolean willValidate;
+        readonly attribute ValidityState validity;
+        readonly attribute DOMString validationMessage;
+        boolean checkValidity();
+        void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
 
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document contentDocument;
