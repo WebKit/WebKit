@@ -87,7 +87,7 @@ bool Extensions3DOpenGL::supports(const String& name)
 
 void Extensions3DOpenGL::ensureEnabled(const String& name)
 {
-#ifndef NDEBUG
+#ifdef NDEBUG
     UNUSED_PARAM(name);
 #endif
     ASSERT(supports(name));

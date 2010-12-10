@@ -1,5 +1,12 @@
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, build fix. Change #ifndef NDEBUG to #ifdef NDEBUG.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+
+2010-12-10  Kenneth Russell  <kbr@google.com>
+
         Reviewed by James Robinson.
 
         Implement extension entry points and remove EXTENSIONS enum
