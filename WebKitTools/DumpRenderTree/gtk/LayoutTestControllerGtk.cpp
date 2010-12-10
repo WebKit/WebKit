@@ -563,9 +563,12 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     return result;
 }
 
-void LayoutTestController::setCacheModel(int)
+void LayoutTestController::setCacheModel(int cacheModel)
 {
-    // FIXME: implement
+    if (!cacheModel) // WebCacheModelDocumentViewer
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER); 
+    else 
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER); 
 }
 
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
