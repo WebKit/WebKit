@@ -1,3 +1,14 @@
+2010-12-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
+        Remove test_expectations.txt entries for 4 Philip suite canvas tests
+        that pass consistently on all bots. 2d.drawImage.incomplete.html was
+        fixed by r71292, the rest have been passing for as long as we have
+        history in the Chromium test dashboard.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectations update.

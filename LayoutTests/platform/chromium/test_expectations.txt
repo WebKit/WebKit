@@ -2361,10 +2361,6 @@ BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop
 BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html = TEXT PASS
 BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html = TEXT PASS
 BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.drawImage.incomplete.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.basic.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.changed.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.removed.html = TEXT PASS
 BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT PASS
 BUGWK45991 : canvas/philip/tests/2d.path.rect.winding.html = TEXT PASS
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT PASS
