@@ -1,3 +1,30 @@
+2010-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rework my recent setLocation refactoring to use DOMWindow instead of Frame.
+        It's difficult to make correct security decisions based on Frame since a
+        Frame can navigate to a new document.
+
+        Fixes some test failures that I somehow missed before the last check-in.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::crossDomainAccessErrorMessage): Call to the
+        shell DOMWindow; not sure this one matters, but it's closer to the old
+        code before my last patch. Also pass the DOMWindow rather than the
+        frame to crossDomainAccessErrorMessage.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Pass DOMWindow rather than Frame
+        to the DOMWindow::setLocation function.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation): Take DOMWindow rather than Frame.
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage): Ditto.
+
+        * page/DOMWindow.h: Update new functions to take DOMWindow rather
+        than Frame.
+
 2010-12-09  Sam Weinig  <sam@webkit.org>
 
         Try and fix the mac build.

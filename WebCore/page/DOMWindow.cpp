@@ -1618,26 +1618,27 @@ void DOMWindow::revokeObjectURL(const String& blobURLString)
 }
 #endif
 
-void DOMWindow::setLocation(const String& location, Frame* activeFrame, Frame* firstFrame)
+void DOMWindow::setLocation(const String& location, DOMWindow* activeWindow, DOMWindow* firstWindow)
 {
+    Frame* activeFrame = activeWindow->frame();
     if (!activeFrame)
         return;
-    if (!firstFrame)
+    if (!activeFrame->loader()->shouldAllowNavigation(m_frame))
         return;
 
+    Frame* firstFrame = firstWindow->frame();
+    if (!firstFrame)
+        return;
     KURL locationURL = firstFrame->loader()->completeURL(location);
     if (locationURL.isNull())
         return;
 
-    if (!activeFrame->loader()->shouldAllowNavigation(m_frame))
-        return;
-
     if (protocolIsJavaScript(locationURL)) {
-        // FIXME: Is there some way to eliminate the need for a separate "activeFrame != m_frame" check?
+        // FIXME: Is there some way to eliminate the need for a separate "activeWindow != this" check?
         // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
         // Can we name the SecurityOrigin function better to make this more clear?
-        if (activeFrame != m_frame && !activeFrame->domWindow()->securityOrigin()->canAccess(securityOrigin())) {
-            printErrorMessage(crossDomainAccessErrorMessage(activeFrame));
+        if (activeWindow != this && !activeWindow->securityOrigin()->canAccess(securityOrigin())) {
+            printErrorMessage(crossDomainAccessErrorMessage(activeWindow));
             return;
         }
     }
@@ -1663,17 +1664,17 @@ void DOMWindow::printErrorMessage(const String& message)
     console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
 }
 
-String DOMWindow::crossDomainAccessErrorMessage(Frame* activeFrame)
+String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
 {
-    const KURL& activeFrameURL = activeFrame->domWindow()->url();
-    if (activeFrameURL.isNull())
+    const KURL& activeWindowURL = activeWindow->url();
+    if (activeWindowURL.isNull())
         return String();
 
     // FIXME: This error message should contain more specifics of why the same origin check has failed.
     // Perhaps we should involve the security origin object in composing it.
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
     return makeString("Unsafe JavaScript attempt to access frame with URL ", m_url.string(),
-        " from frame with URL ", activeFrameURL.string(), ". Domains, protocols and ports must match.\n");
+        " from frame with URL ", activeWindowURL.string(), ". Domains, protocols and ports must match.\n");
 }
 
 } // namespace WebCore

@@ -490,21 +490,19 @@ JSValue JSDOMWindow::location(ExecState* exec) const
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 {
-    Frame* activeFrame = toLexicalFrame(exec);
-    if (!activeFrame)
-        return;
-    Frame* firstFrame = toDynamicFrame(exec);
-    if (!firstFrame)
-        return;
+    DOMWindow* activeWindow = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    DOMWindow* firstWindow = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Settings* settings = activeFrame->settings()) {
-        if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
-            if (allowsAccessFrom(exec))
-                putDirect(Identifier(exec, "location"), value);
-            return;
+    if (Frame* activeFrame = activeWindow->frame()) {
+        if (Settings* settings = activeFrame->settings()) {
+            if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
+                if (allowsAccessFrom(exec))
+                    putDirect(Identifier(exec, "location"), value);
+                return;
+            }
         }
     }
 #endif
@@ -513,7 +511,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     if (exec->hadException())
         return;
 
-    impl()->setLocation(ustringToString(locationString), activeFrame, firstFrame);
+    impl()->setLocation(ustringToString(locationString), activeWindow, firstWindow);
 }
 
 JSValue JSDOMWindow::crypto(ExecState*) const

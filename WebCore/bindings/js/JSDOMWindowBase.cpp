@@ -77,7 +77,7 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
 
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
-    return impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl()->frame());
+    return d()->shell->window()->impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl());
 }
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const

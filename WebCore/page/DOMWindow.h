@@ -141,7 +141,7 @@ namespace WebCore {
 #endif
         Location* location() const;
 
-        void setLocation(const String& location, Frame* activeFrame, Frame* firstFrame);
+        void setLocation(const String& location, DOMWindow* activeWindow, DOMWindow* firstWindow);
 
         DOMSelection* getSelection();
 
@@ -229,7 +229,7 @@ namespace WebCore {
         Console* console() const;
 
         void printErrorMessage(const String&);
-        String crossDomainAccessErrorMessage(Frame* activeFrame);
+        String crossDomainAccessErrorMessage(DOMWindow* activeWindow);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* applicationCache() const;
