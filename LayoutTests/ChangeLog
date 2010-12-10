@@ -1,3 +1,10 @@
+2010-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Remove platform specific expected files after r73720.
+
+        * platform/gtk/fast/forms/ValidityState-patternMismatch-expected.txt: Removed.
+        * platform/qt/fast/forms/ValidityState-patternMismatch-expected.txt: Removed.
+
 2010-12-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, unskip passing accessibility tests on GTK.
