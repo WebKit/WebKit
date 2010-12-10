@@ -371,12 +371,19 @@ JSStringRef AccessibilityUIElement::valueDescription()
     return JSStringCreateWithCharacters(0, 0);
 }
 
-bool AccessibilityUIElement::isEnabled()
+static bool checkElementState(PlatformUIElement element, AtkStateType stateType)
 {
-    // FIXME: implement
-    return false;
+    if (!ATK_IS_OBJECT(element))
+         return false;
+
+    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(element)));
+    return atk_state_set_contains_state(stateSet.get(), stateType);
 }
 
+bool AccessibilityUIElement::isEnabled()
+{
+    return checkElementState(m_element, ATK_STATE_ENABLED);
+}
 
 int AccessibilityUIElement::insertionPointLineNumber()
 {
@@ -398,13 +405,7 @@ bool AccessibilityUIElement::isRequired() const
 
 bool AccessibilityUIElement::isSelected() const
 {
-    if (!ATK_IS_OBJECT(m_element))
-        return false;
-
-    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
-    gboolean isSelected = atk_state_set_contains_state(stateSet.get(), ATK_STATE_SELECTED);
-
-    return isSelected;
+    return checkElementState(m_element, ATK_STATE_SELECTED);
 }
 
 int AccessibilityUIElement::hierarchicalLevel() const

@@ -1,3 +1,19 @@
+2010-12-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] AX: implement isEnabled in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50814
+
+        Implement AccessibilityUIElement::isEnabled() for GTK.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (checkElementState): New function to refactor common code.
+        (AccessibilityUIElement::isEnabled): Implement this by checking
+        the current state of the AtkObject.
+        (AccessibilityUIElement::isSelected): Use the new
+        checkElementState function.
+
 2010-12-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

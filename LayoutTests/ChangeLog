@@ -1,3 +1,14 @@
+2010-12-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] AX: implement isEnabled in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50814
+
+        Unskip passing accessibility/aria-disabled.html test.
+
+        * platform/gtk/Skipped: Unskip test.
+
 2010-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Remove platform specific expected files after r73720.
