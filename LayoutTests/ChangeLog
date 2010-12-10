@@ -1,3 +1,9 @@
+2010-12-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed GTK test expectation update.
+
+        * http/tests/misc/dns-prefetch-control-expected.txt:
+
 2010-12-10  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectation update.
