@@ -1,3 +1,28 @@
+2010-12-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Context menu support on Windows
+        <https://bugs.webkit.org/show_bug.cgi?id=50514>
+        
+        Implment showing of the context menu on Windows for WebKit2, and calling through to
+        WebPageProxy::contextMenuItemSelected.
+
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::WebContextMenuProxyWin::WebContextMenuProxyWin): Initialize the member variables.
+        (WebKit::WebContextMenuProxyWin::populateMenu): Iterate over the vector of WebContextMenuItemData
+            that was passed in, adding the menu items and recursively calling back into this function to populate
+            any submenus that are needed. This function also sets up the map from action identifierss to WebContextMenuItemData,
+            to use to find the WebContextMenuItemData from a selected menu item.
+        (WebKit::WebContextMenuProxyWin::showContextMenu): Destroy any menu we have already created, populate the menu
+            to show, and show the context menu. Once TrackPopupMenuEx returns, it returns identifier of the selected menu item.
+            Look up that identifier in the map we created, and tell the WebPageProxy that a context menu item was selected.
+        (WebKit::WebContextMenuProxyWin::hideContextMenu): Destroy the HMENU if it is non-null, and clear the identifier map. 
+        * UIProcess/win/WebContextMenuProxyWin.h:
+        (WebKit::WebContextMenuProxyWin::create): Call through to the constructor, and change the arguments that it takes.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::createContextMenuProxy): Call with the correct arguments.
+
 2010-12-10  Jessie Berlin  <jberlin@apple.com>
 
         Qt Build Fix. Unreviewed.

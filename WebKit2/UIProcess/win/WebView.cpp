@@ -632,9 +632,9 @@ PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
     return WebPopupMenuProxyWin::create(this);
 }
 
-PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* page)
 {
-    return WebContextMenuProxyWin::create();
+    return WebContextMenuProxyWin::create(m_window, page);
 }
 
 void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)

@@ -26,19 +26,34 @@
 #ifndef WebContextMenuProxyWin_h
 #define WebContextMenuProxyWin_h
 
+#include "WebContextMenuItemData.h"
 #include "WebContextMenuProxy.h"
+#include "WebPageProxy.h"
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
 class WebContextMenuProxyWin : public WebContextMenuProxy {
 public:
-    static PassRefPtr<WebContextMenuProxyWin> create();
+    static PassRefPtr<WebContextMenuProxyWin> create(HWND parentWindow, WebPageProxy* page)
+    {
+        return adoptRef(new WebContextMenuProxyWin(parentWindow, page));
+    }
 
 private:
-    WebContextMenuProxyWin();
+    WebContextMenuProxyWin(HWND parentWindow, WebPageProxy* page);
 
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     virtual void hideContextMenu();
+
+    void populateMenu(HMENU, const Vector<WebContextMenuItemData>&);
+
+    HMENU m_menu;
+    HWND m_window;
+    WebPageProxy* m_page;
+
+    // Creates a map from the context menu item's action to the context menu item itself.
+    HashMap<int, WebContextMenuItemData> m_actionMap;
 };
 
 } // namespace WebKit
