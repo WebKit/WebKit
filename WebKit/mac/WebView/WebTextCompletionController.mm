@@ -285,7 +285,7 @@ using namespace std;
         [self endRevertingChange:YES moveLeft:NO];
         return YES;
     }
-    if (c == ' ' || c >= 0x21 && c <= 0x2F || c >= 0x3A && c <= 0x40 || c >= 0x5B && c <= 0x60 || c >= 0x7B && c <= 0x7D) {
+    if (c == ' ' || (c >= 0x21 && c <= 0x2F) || (c >= 0x3A && c <= 0x40) || (c >= 0x5B && c <= 0x60) || (c >= 0x7B && c <= 0x7D)) {
         // FIXME: Is the above list of keys really definitive?
         // Originally this code called ispunct; aren't there other punctuation keys on international keyboards?
         [self endRevertingChange:NO moveLeft:NO];

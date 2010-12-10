@@ -653,7 +653,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // This bizarre set of rules matches behavior from WebKit for Safari 2.0.
     // If you don't like it, use -[WebScriptObject evaluateWebScript:] or 
     // JSEvaluateScript instead, since they have less surprising semantics.
-    if (!result || !result.isBoolean() && !result.isString() && !result.isNumber())
+    if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
     JSLock lock(SilenceAssertionsOnly);
@@ -1297,7 +1297,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // This bizarre set of rules matches behavior from WebKit for Safari 2.0.
     // If you don't like it, use -[WebScriptObject evaluateWebScript:] or 
     // JSEvaluateScript instead, since they have less surprising semantics.
-    if (!result || !result.isBoolean() && !result.isString() && !result.isNumber())
+    if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
     JSLock lock(SilenceAssertionsOnly);

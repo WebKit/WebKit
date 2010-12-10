@@ -1,3 +1,15 @@
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Clang++ build fixes.
+
+        Silence a couple of warnings.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController filterKeyDown:]):
+
 2010-12-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
