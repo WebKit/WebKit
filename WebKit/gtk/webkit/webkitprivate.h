@@ -54,7 +54,6 @@
 #include "GOwnPtr.h"
 #include "Geolocation.h"
 #include "HistoryItem.h"
-#include "InspectorClientGtk.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "FrameLoaderClient.h"
@@ -104,10 +103,6 @@ namespace WebKit {
 
 extern "C" {
     void webkit_init();
-
-#ifdef HAVE_GSETTINGS
-    GSettings* inspectorGSettings();
-#endif
 
 #define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
@@ -177,18 +172,6 @@ extern "C" {
     webkit_web_resource_init_with_core_resource(WebKitWebResource*, PassRefPtr<WebCore::ArchiveResource>);
 
     // end WebKitWebResource private
-
-    void
-    webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebCore::Page*);
-
-    void
-    webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKitWebView *web_view);
-
-    void
-    webkit_web_inspector_set_inspected_uri(WebKitWebInspector* web_inspector, const gchar* inspected_uri);
-
-    WEBKIT_API void
-    webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
 
 
     WebKitWebWindowFeatures*

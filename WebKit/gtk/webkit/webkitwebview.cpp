@@ -88,6 +88,7 @@
 #include "webkitwebframeprivate.h"
 #include "webkitwebhistoryitem.h"
 #include "webkitwebinspector.h"
+#include "webkitwebinspectorprivate.h"
 #include "webkitwebviewprivate.h"
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>

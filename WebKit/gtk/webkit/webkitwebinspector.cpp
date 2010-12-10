@@ -24,7 +24,6 @@
 
 #include "FocusController.h"
 #include "Frame.h"
-#include <glib/gi18n-lib.h>
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorClientGtk.h"
@@ -35,6 +34,8 @@
 #include "webkit/WebKitDOMNodePrivate.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
+#include "webkitwebinspectorprivate.h"
+#include <glib/gi18n-lib.h>
 
 /**
  * SECTION:webkitwebinspector
@@ -578,3 +579,42 @@ void webkit_web_inspector_execute_script(WebKitWebInspector* webInspector, long 
     WebKitWebInspectorPrivate* priv = webInspector->priv;
     priv->page->inspectorController()->evaluateForTestInFrontend(callId, script);
 }
+
+#ifdef HAVE_GSETTINGS
+static bool isSchemaAvailable(const char* schemaID)
+{
+    const char* const* availableSchemas = g_settings_list_schemas();
+    char* const* iter = const_cast<char* const*>(availableSchemas);
+
+    while (*iter) {
+        if (g_str_equal(schemaID, *iter))
+            return true;
+        iter++;
+    }
+
+    return false;
+}
+
+GSettings* inspectorGSettings()
+{
+    static GSettings* settings = 0;
+
+    if (settings)
+        return settings;
+
+    const gchar* schemaID = "org.webkitgtk-"WEBKITGTK_API_VERSION_STRING".inspector";
+
+    // Unfortunately GSettings will abort the process execution if the
+    // schema is not installed, which is the case for when running
+    // tests, or even the introspection dump at build time, so check
+    // if we have the schema before trying to initialize it.
+    if (!isSchemaAvailable(schemaID)) {
+        g_warning("GSettings schema not found - settings will not be used or saved.");
+        return 0;
+    }
+
+    settings = g_settings_new(schemaID);
+
+    return settings;
+}
+#endif

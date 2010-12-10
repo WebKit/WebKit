@@ -27,6 +27,7 @@
 #include "webkitprivate.h"
 #include "webkitversion.h"
 #include "webkitwebinspector.h"
+#include "webkitwebinspectorprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
