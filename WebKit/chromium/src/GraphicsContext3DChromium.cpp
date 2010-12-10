@@ -681,17 +681,54 @@ Extensions3D* GraphicsContext3DInternal::getExtensions()
     return m_extensions.get();
 }
 
-bool GraphicsContext3DInternal::supportsExtension(const String& name)
+namespace {
+
+void splitStringHelper(const String& str, HashSet<String>& set)
+{
+    Vector<String> substrings;
+    str.split(" ", substrings);
+    for (size_t i = 0; i < substrings.size(); ++i)
+        set.add(substrings[i]);
+}
+
+} // anonymous namespace
+
+void GraphicsContext3DInternal::initializeExtensions()
 {
     if (!m_initializedAvailableExtensions) {
         String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
-        Vector<String> availableExtensions;
-        extensionsString.split(" ", availableExtensions);
-        for (size_t i = 0; i < availableExtensions.size(); ++i)
-            m_availableExtensions.add(availableExtensions[i]);
+        splitStringHelper(extensionsString, m_enabledExtensions);
+
+        String requestableExtensionsString = m_impl->getRequestableExtensionsCHROMIUM();
+        splitStringHelper(requestableExtensionsString, m_requestableExtensions);
+
         m_initializedAvailableExtensions = true;
     }
-    return m_availableExtensions.contains(name);
+}
+
+
+bool GraphicsContext3DInternal::supportsExtension(const String& name)
+{
+    initializeExtensions();
+    return m_enabledExtensions.contains(name) || m_requestableExtensions.contains(name);
+}
+
+bool GraphicsContext3DInternal::ensureExtensionEnabled(const String& name)
+{
+    initializeExtensions();
+
+    if (m_enabledExtensions.contains(name))
+        return true;
+
+    if (m_requestableExtensions.contains(name)) {
+        m_impl->requestExtensionCHROMIUM(name.ascii().data());
+        m_enabledExtensions.clear();
+        m_requestableExtensions.clear();
+        m_initializedAvailableExtensions = false;
+    }
+
+    initializeExtensions();
+    return m_enabledExtensions.contains(name);
 }
 
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)

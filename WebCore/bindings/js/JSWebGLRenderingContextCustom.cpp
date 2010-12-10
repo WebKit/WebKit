@@ -35,6 +35,7 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
+#include "JSOESTextureFloat.h"
 #include "JSWebGLBuffer.h"
 #include "JSFloat32Array.h"
 #include "JSWebGLFramebuffer.h"
@@ -47,8 +48,10 @@
 #include "JSUint8Array.h"
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
+#include "OESTextureFloat.h"
 #include "WebGLBuffer.h"
 #include "Float32Array.h"
+#include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
 #include "Int32Array.h"
@@ -161,6 +164,27 @@ enum WhichProgramCall {
     kProgramParameter, kUniform
 };
 
+static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExtension* extension)
+{
+    if (!extension)
+        return jsNull();
+    switch (extension->getName()) {
+    case WebGLExtension::OESTextureFloatName:
+        return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
+    }
+    ASSERT_NOT_REACHED();
+    return jsNull();
+}
+
+void JSWebGLRenderingContext::markChildren(MarkStack& markStack)
+{
+    Base::markChildren(markStack);
+
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
+    for (int i = 0; i < context->getNumberOfExtensions(); ++i)
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), context->getExtensionNumber(i));
+}
+
 JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
@@ -184,6 +208,19 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     for (size_t ii = 0; ii < shaders.size(); ++ii)
         list.append(toJS(exec, globalObject(), shaders[ii]));
     return constructArray(exec, list);
+}
+
+JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwSyntaxError(exec);
+
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
+    const String& name = ustringToString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+    WebGLExtension* extension = context->getExtension(name);
+    return toJS(exec, globalObject(), extension);
 }
 
 JSValue JSWebGLRenderingContext::getBufferParameter(ExecState* exec)
@@ -278,6 +315,16 @@ JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
         return jsUndefined();
     }
     return toJS(exec, globalObject(), info);
+}
+
+JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
+{
+    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
+    Vector<String> value = context->getSupportedExtensions();
+    MarkedArgumentBuffer list;
+    for (size_t ii = 0; ii < value.size(); ++ii)
+        list.append(jsString(exec, value[ii]));
+    return constructArray(exec, list);
 }
 
 JSValue JSWebGLRenderingContext::getTexParameter(ExecState* exec)

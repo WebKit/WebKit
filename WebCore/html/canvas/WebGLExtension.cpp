@@ -23,37 +23,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGL_h
-#define Extensions3DOpenGL_h
+#include "config.h"
 
-#include "Extensions3D.h"
+#if ENABLE(3D_CANVAS)
 
-#include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#include "WebGLExtension.h"
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3D {
-public:
-    virtual ~Extensions3DOpenGL();
+WebGLExtension::WebGLExtension()
+{
+}
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);    
-
-private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL();
-
-    bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
-};
+WebGLExtension::~WebGLExtension()
+{
+}
 
 } // namespace WebCore
 
-#endif // Extensions3DOpenGL_h
+#endif // ENABLE(3D_CANVAS)

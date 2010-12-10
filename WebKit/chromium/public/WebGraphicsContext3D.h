@@ -140,6 +140,10 @@ public:
     // GL_CHROMIUM_copy_texture_to_parent_texture
     virtual void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture) = 0;
 
+    // GL_CHROMIUM_request_extension
+    virtual WebString getRequestableExtensionsCHROMIUM() = 0;
+    virtual void requestExtensionCHROMIUM(const char*) = 0;
+
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
     // and: http://www.khronos.org/opengles/sdk/docs/man/

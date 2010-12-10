@@ -43,6 +43,7 @@ namespace WebCore {
 class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLContextAttributes;
+class WebGLExtension;
 class WebGLFramebuffer;
 class WebGLObject;
 class WebGLProgram;
@@ -55,6 +56,7 @@ class HTMLVideoElement;
 class ImageBuffer;
 class ImageData;
 class IntSize;
+class OESTextureFloat;
 
 class WebGLRenderingContext : public CanvasRenderingContext {
 public:
@@ -145,6 +147,8 @@ public:
 
     unsigned long getError();
 
+    WebGLExtension* getExtension(const String& name);
+
     WebGLGetInfo getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname, ExceptionCode&);
 
     WebGLGetInfo getParameter(unsigned long pname, ExceptionCode&);
@@ -163,6 +167,8 @@ public:
     // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
     String getShaderSource(WebGLShader*, ExceptionCode&);
+
+    Vector<String> getSupportedExtensions();
 
     WebGLGetInfo getTexParameter(unsigned long target, unsigned long pname, ExceptionCode&);
 
@@ -291,6 +297,10 @@ public:
     virtual void paintRenderingResultsToCanvas();
 
     void removeObject(WebGLObject*);
+
+    // Helpers for JSC bindings.
+    int getNumberOfExtensions();
+    WebGLExtension* getExtensionNumber(int i);
 
   private:
     friend class WebGLObject;
@@ -455,6 +465,9 @@ public:
     bool m_isErrorGeneratedOnOutOfBoundsAccesses;
     bool m_isResourceSafe;
     bool m_isDepthStencilSupported;
+
+    // Enabled extension objects.
+    RefPtr<OESTextureFloat> m_oesTextureFloat;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(unsigned long pname);

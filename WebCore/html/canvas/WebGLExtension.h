@@ -23,37 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGL_h
-#define Extensions3DOpenGL_h
+#ifndef WebGLExtension_h
+#define WebGLExtension_h
 
-#include "Extensions3D.h"
-
-#include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3D {
+class WebGLExtension : public RefCounted<WebGLExtension> {
 public:
-    virtual ~Extensions3DOpenGL();
+    // Extension names are needed to properly wrap instances in JavaScript objects.
+    enum ExtensionName {
+        OESTextureFloatName
+    };
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);    
+    virtual ~WebGLExtension();
+    virtual ExtensionName getName() const = 0;
 
-private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL();
-
-    bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
+protected:
+    WebGLExtension();
 };
 
 } // namespace WebCore
 
-#endif // Extensions3DOpenGL_h
+#endif // WebGLExtension_h

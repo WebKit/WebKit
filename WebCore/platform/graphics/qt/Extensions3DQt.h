@@ -36,6 +36,7 @@ public:
 
     // Extensions3D methods.
     virtual bool supports(const String&);
+    virtual void ensureEnabled(const String&);
     virtual int getGraphicsResetStatusARB();
 
 private:

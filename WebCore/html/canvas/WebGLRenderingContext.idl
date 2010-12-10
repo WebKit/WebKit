@@ -29,6 +29,7 @@ module html {
         Conditional=3D_CANVAS,
         InterfaceUUID=98fb48ae-7216-489c-862b-8e1217fc4443,
         ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54,
+        CustomMarkFunction,
         DontCheckEnums
     ] WebGLRenderingContext : CanvasRenderingContext {
 
@@ -287,7 +288,6 @@ module html {
         const unsigned int VENDOR                         = 0x1F00;
         const unsigned int RENDERER                       = 0x1F01;
         const unsigned int VERSION                        = 0x1F02;
-        const unsigned int EXTENSIONS                     = 0x1F03;
 
         /* TextureMagFilter */
         const unsigned int NEAREST                        = 0x2600;
@@ -535,6 +535,9 @@ module html {
 
         [StrictTypeChecking] unsigned long getError();
 
+        // object getExtension(in DOMString name);
+        [StrictTypeChecking, Custom] void getExtension(in DOMString name);
+
         // any getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getFramebufferAttachmentParameter();
         // any getParameter(in unsigned long pname) raises(DOMException);
@@ -553,6 +556,9 @@ module html {
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
         [StrictTypeChecking, ConvertNullStringTo=Null] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
+
+        // DOMString[] getSupportedExtensions()
+        [StrictTypeChecking, Custom] void getSupportedExtensions();
 
         // any getTexParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getTexParameter();

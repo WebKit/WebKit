@@ -41,6 +41,7 @@
 #include <wtf/FastMalloc.h>
 
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8ArrayBufferView.h"
 #include "V8WebGLBuffer.h"
 #include "V8Int8Array.h"
@@ -60,6 +61,7 @@
 #include "V8HTMLImageElement.h"
 #include "V8HTMLVideoElement.h"
 #include "V8ImageData.h"
+#include "V8OESTextureFloat.h"
 #include "V8Proxy.h"
 #include "WebGLRenderingContext.h"
 
@@ -149,6 +151,21 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
         notImplemented();
         return v8::Undefined();
     }
+}
+
+static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8::Object> contextObject)
+{
+    if (!extension)
+        return v8::Null();
+    v8::Handle<v8::Value> extensionObject;
+    switch (extension->getName()) {
+    case WebGLExtension::OESTextureFloatName:
+        extensionObject = toV8(static_cast<OESTextureFloat*>(extension));
+        break;
+    }
+    ASSERT(!extensionObject.IsEmpty());
+    V8DOMWrapper::setHiddenReference(contextObject, extensionObject);
+    return extensionObject;
 }
 
 enum ObjectType {
@@ -241,6 +258,19 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getBufferParameterCallback(const 
 {
     INC_STATS("DOM.WebGLRenderingContext.getBufferParameter()");
     return getObjectParameter(args, kBuffer);
+}
+
+v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getExtensionCallback()");
+    WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
+    if (args.Length() < 1) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, name, args[0]);
+    WebGLExtension* extension = imp->getExtension(name);
+    return toV8Object(extension, args.Holder());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback(const v8::Arguments& args)
@@ -339,6 +369,17 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
         return v8::Undefined();
     }
     return toV8Object(info);
+}
+
+v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getSupportedExtensionsCallback()");
+    WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
+    Vector<String> value = imp->getSupportedExtensions();
+    v8::Local<v8::Array> array = v8::Array::New(value.size());
+    for (size_t ii = 0; ii < value.size(); ++ii)
+        array->Set(v8::Integer::New(ii), v8::String::New(fromWebCoreString(value[ii]), value[ii].length()));
+    return array;
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getTexParameterCallback(const v8::Arguments& args)

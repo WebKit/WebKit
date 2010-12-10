@@ -85,6 +85,9 @@ public:
     virtual void unmapTexSubImage2DCHROMIUM(const void*);
     virtual void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
+    virtual WebString getRequestableExtensionsCHROMIUM();
+    virtual void requestExtensionCHROMIUM(const char*);
+
     virtual void activeTexture(unsigned long texture);
     virtual void attachShader(WebGLId program, WebGLId shader);
     virtual void bindAttribLocation(WebGLId program, unsigned long index, const char* name);

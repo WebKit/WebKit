@@ -1329,7 +1329,15 @@ int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned inte
 {
     makeContextCurrent();
 
-    ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    unsigned openGLInternalFormat = internalformat;
+    if (type == GL_FLOAT) {
+        if (format == GL_RGBA)
+            openGLInternalFormat = GL_RGBA32F_ARB;
+        else if (format == GL_RGB)
+            openGLInternalFormat = GL_RGB32F_ARB;
+    }
+
+    ::glTexImage2D(target, level, openGLInternalFormat, width, height, border, format, type, pixels);
     return 0;
 }
 

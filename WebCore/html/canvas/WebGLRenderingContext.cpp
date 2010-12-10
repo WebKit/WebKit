@@ -43,6 +43,7 @@
 #include "ImageData.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "OESTextureFloat.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "Uint16Array.h"
@@ -1462,6 +1463,20 @@ unsigned long WebGLRenderingContext::getError()
     return m_context->getError();
 }
 
+WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
+{
+    if (equalIgnoringCase(name, "OES_texture_float")
+        && m_context->getExtensions()->supports("GL_OES_texture_float")) {
+        if (!m_oesTextureFloat) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_texture_float");
+            m_oesTextureFloat = OESTextureFloat::create();
+        }
+        return m_oesTextureFloat.get();
+    }
+
+    return 0;
+}
+
 WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
@@ -1855,6 +1870,14 @@ String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode
         return "";
     WebGLStateRestorer(this, false);
     return m_context->getShaderSource(objectOrZero(shader));
+}
+
+Vector<String> WebGLRenderingContext::getSupportedExtensions()
+{
+    Vector<String> result;
+    if (m_context->getExtensions()->supports("GL_OES_texture_float"))
+        result.append("OES_texture_float");
+    return result;
 }
 
 WebGLGetInfo WebGLRenderingContext::getTexParameter(unsigned long target, unsigned long pname, ExceptionCode& ec)
@@ -3596,6 +3619,11 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(unsigned long format, u
     case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
     case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
         break;
+    case GraphicsContext3D::FLOAT:
+        if (m_oesTextureFloat)
+            break;
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return false;
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return false;
@@ -3606,14 +3634,16 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(unsigned long format, u
     case GraphicsContext3D::ALPHA:
     case GraphicsContext3D::LUMINANCE:
     case GraphicsContext3D::LUMINANCE_ALPHA:
-        if (type != GraphicsContext3D::UNSIGNED_BYTE) {
+        if (type != GraphicsContext3D::UNSIGNED_BYTE
+            && type != GraphicsContext3D::FLOAT) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return false;
         }
         break;
     case GraphicsContext3D::RGB:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
-            && type != GraphicsContext3D::UNSIGNED_SHORT_5_6_5) {
+            && type != GraphicsContext3D::UNSIGNED_SHORT_5_6_5
+            && type != GraphicsContext3D::FLOAT) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return false;
         }
@@ -3621,7 +3651,8 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(unsigned long format, u
     case GraphicsContext3D::RGBA:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
             && type != GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4
-            && type != GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1) {
+            && type != GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1
+            && type != GraphicsContext3D::FLOAT) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return false;
         }
@@ -3706,6 +3737,12 @@ bool WebGLRenderingContext::validateTexFuncData(long width, long height,
     case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
     case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
         if (!pixels->isUnsignedShortArray()) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return false;
+        }
+        break;
+    case GraphicsContext3D::FLOAT: // OES_texture_float
+        if (!pixels->isFloatArray()) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return false;
         }
@@ -4077,6 +4114,22 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
         m_context->vertexAttribPointer(0, state.size, state.type, state.normalized, state.originalStride, state.offset);
     }
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
+}
+
+int WebGLRenderingContext::getNumberOfExtensions()
+{
+    return (m_oesTextureFloat ? 1 : 0);
+}
+
+WebGLExtension* WebGLRenderingContext::getExtensionNumber(int i)
+{
+    if (m_oesTextureFloat) {
+        if (!i)
+            return m_oesTextureFloat.get();
+        --i;
+    }
+    // Similar tests for other extensions would go here.
+    return 0;
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)

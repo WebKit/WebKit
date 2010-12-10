@@ -191,6 +191,7 @@ IDL_BINDINGS += \
     html/canvas/CanvasPattern.idl \
     html/canvas/CanvasRenderingContext.idl \
     html/canvas/CanvasRenderingContext2D.idl \
+    html/canvas/OESTextureFloat.idl \
     html/canvas/WebGLActiveInfo.idl \
     html/canvas/WebGLBuffer.idl \
     html/canvas/WebGLContextAttributes.idl \

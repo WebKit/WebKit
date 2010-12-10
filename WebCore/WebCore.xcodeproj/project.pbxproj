@@ -1523,6 +1523,12 @@
 		6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A81280E8BD008758F7 /* Extensions3D.h */; };
 		6E96BB1C11986EE2007D94CD /* IntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */; };
 		6E96BB1D11986EE2007D94CD /* TypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */; };
+		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
+		6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */; };
+		6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E5212A8929800DB1709 /* WebGLExtension.cpp */; };
+		6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E5312A8929800DB1709 /* WebGLExtension.h */; };
+		6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */; };
+		6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
@@ -7886,6 +7892,13 @@
 		6E67D2A81280E8BD008758F7 /* Extensions3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3D.h; sourceTree = "<group>"; };
 		6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntegralTypedArrayBase.h; path = canvas/IntegralTypedArrayBase.h; sourceTree = "<group>"; };
 		6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TypedArrayBase.h; path = canvas/TypedArrayBase.h; sourceTree = "<group>"; };
+		6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureFloat.cpp; path = canvas/OESTextureFloat.cpp; sourceTree = "<group>"; };
+		6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESTextureFloat.h; path = canvas/OESTextureFloat.h; sourceTree = "<group>"; };
+		6EBF0E4712A8926100DB1709 /* OESTextureFloat.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESTextureFloat.idl; path = canvas/OESTextureFloat.idl; sourceTree = "<group>"; };
+		6EBF0E5212A8929800DB1709 /* WebGLExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLExtension.cpp; path = canvas/WebGLExtension.cpp; sourceTree = "<group>"; };
+		6EBF0E5312A8929800DB1709 /* WebGLExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLExtension.h; path = canvas/WebGLExtension.h; sourceTree = "<group>"; };
+		6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureFloat.cpp; sourceTree = "<group>"; };
+		6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloat.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
@@ -13059,6 +13072,9 @@
 				49C7B9AC1042D32E0009D447 /* Int8Array.h */,
 				49C7B9AD1042D32E0009D447 /* Int8Array.idl */,
 				6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */,
+				6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */,
+				6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */,
+				6EBF0E4712A8926100DB1709 /* OESTextureFloat.idl */,
 				6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */,
 				49EECDDC10503C2300099FAB /* Uint16Array.cpp */,
 				49EECDDD10503C2400099FAB /* Uint16Array.h */,
@@ -13080,6 +13096,8 @@
 				93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */,
 				93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */,
 				93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */,
+				6EBF0E5212A8929800DB1709 /* WebGLExtension.cpp */,
+				6EBF0E5312A8929800DB1709 /* WebGLExtension.h */,
 				49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */,
 				49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */,
 				49C7B9B01042D32E0009D447 /* WebGLFramebuffer.idl */,
@@ -15938,6 +15956,8 @@
 				49C7B9831042D2D30009D447 /* JSInt8Array.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
+				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
+				6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */,
 				BCEF45F30E687B5C001C1287 /* JSTextMetrics.cpp */,
 				BCEF45F40E687B5C001C1287 /* JSTextMetrics.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
@@ -22167,6 +22187,9 @@
 				FDA15ECA12B03F50003A583A /* JSRealtimeAnalyserNode.h in Headers */,
 				FDA15ECE12B03F61003A583A /* JSJavaScriptAudioNode.h in Headers */,
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
+				6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */,
+				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
+				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24834,6 +24857,9 @@
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,
 				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
 				BC51156E12B1749C00C96754 /* ScrollAnimatorMac.mm in Sources */,
+				6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */,
+				6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */,
+				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

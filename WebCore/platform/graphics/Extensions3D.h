@@ -50,10 +50,16 @@ public:
     //   GL_ARB_texture_non_power_of_two / GL_OES_texture_npot
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
+    //   GL_OES_texture_float
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
     virtual bool supports(const String&) = 0;
+
+    // Certain OpenGL and WebGL implementations may support enabling
+    // extensions lazily. This method may only be called with
+    // extension names for which supports returns true.
+    virtual void ensureEnabled(const String&) = 0;
 
     enum ExtensionsEnumType {
         // GL_EXT_texture_format_BGRA8888 enums

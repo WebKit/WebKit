@@ -76,8 +76,21 @@ bool Extensions3DOpenGL::supports(const String& name)
         return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
     if (name == "GL_ANGLE_framebuffer_multisample")
         return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
-        
+
+    // If GL_ARB_texture_float is available then we report GL_OES_texture_float and
+    // GL_OES_texture_half_float as available.
+    if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float")
+        return m_availableExtensions.contains("GL_ARB_texture_float");
+
     return m_availableExtensions.contains(name);
+}
+
+void Extensions3DOpenGL::ensureEnabled(const String& name)
+{
+#ifndef NDEBUG
+    UNUSED_PARAM(name);
+#endif
+    ASSERT(supports(name));
 }
 
 int Extensions3DOpenGL::getGraphicsResetStatusARB()

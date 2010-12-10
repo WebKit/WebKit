@@ -265,6 +265,7 @@ public:
     // Extensions3D support.
     Extensions3D* getExtensions();
     bool supportsExtension(const String& name);
+    bool ensureExtensionEnabled(const String& name);
 
     // EXT_texture_format_BGRA8888
     bool supportsBGRA();
@@ -285,7 +286,8 @@ private:
     OwnPtr<Extensions3DChromium> m_extensions;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
+    HashSet<String> m_enabledExtensions;
+    HashSet<String> m_requestableExtensions;
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebGLLayerChromium> m_compositingLayer;
 #endif
@@ -301,6 +303,8 @@ private:
 #if PLATFORM(CG)
     unsigned char* m_renderOutput;
 #endif
+
+    void initializeExtensions();
 };
 
 } // namespace WebCore

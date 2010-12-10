@@ -624,6 +624,15 @@ void WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM(unsigne
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
+WebString WebGraphicsContext3DDefaultImpl::getRequestableExtensionsCHROMIUM()
+{
+    return WebString();
+}
+
+void WebGraphicsContext3DDefaultImpl::requestExtensionCHROMIUM(const char*)
+{
+}
+
 // Helper macros to reduce the amount of code.
 
 #define DELEGATE_TO_GL(name, glname)                                           \

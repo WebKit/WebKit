@@ -310,6 +310,7 @@ DOM_CLASSES = \
     Notation \
     Notification \
     NotificationCenter \
+    OESTextureFloat \
     OverflowEvent \
     PageTransitionEvent \
     Performance \

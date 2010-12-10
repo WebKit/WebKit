@@ -1,3 +1,84 @@
+2010-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Implement extension entry points and remove EXTENSIONS enum
+        https://bugs.webkit.org/show_bug.cgi?id=40316
+
+        Implemented WebGLRenderingContext's getSupportedExtensions and
+        getExtensions entry points, and, to verify them, added support for
+        the first specified WebGL extension, OES_texture_float. This
+        extension is now advertised in the Chromium and WebKit ports when
+        the underlying hardware supports it.
+
+        The new OES_texture_float test in the WebGL conformance suite
+        verifies the allocation and population of floating point textures,
+        and their use as render targets. However, because this extension
+        is optional, it is not easily testable with a layout test; there
+        is only one set of expectations for a given test, and two would be
+        needed, one when the extension is available and one when it is not.
+
+        Tested with the oes-texture-float.html WebGL conformance test in
+        Chromium and WebKit on Mac OS X on hardware that supports the
+        extension. Also verified with a configuration that does not
+        advertise the extension that this same test passes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSWebGLRenderingContext::markChildren):
+        (WebCore::JSWebGLRenderingContext::getExtension):
+        (WebCore::JSWebGLRenderingContext::getSupportedExtensions):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8WebGLRenderingContext::getExtensionCallback):
+        (WebCore::V8WebGLRenderingContext::getSupportedExtensionsCallback):
+        * html/canvas/OESTextureFloat.cpp: Added.
+        (WebCore::OESTextureFloat::OESTextureFloat):
+        (WebCore::OESTextureFloat::~OESTextureFloat):
+        (WebCore::OESTextureFloat::getName):
+        (WebCore::OESTextureFloat::create):
+        * html/canvas/OESTextureFloat.h: Added.
+        * html/canvas/OESTextureFloat.idl: Added.
+        * html/canvas/WebGLExtension.cpp: Added.
+        (WebCore::WebGLExtension::WebGLExtension):
+        (WebCore::WebGLExtension::~WebGLExtension):
+        * html/canvas/WebGLExtension.h: Added.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+        (WebCore::WebGLRenderingContext::validateTexFuncData):
+        (WebCore::WebGLRenderingContext::getNumberOfExtensions):
+        (WebCore::WebGLRenderingContext::getExtensionNumber):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+        (WebCore::GraphicsContext3D::extractTextureData):
+        (WebCore::doUnpackingAndPacking):
+        (WebCore::doPacking):
+        (WebCore::doFloatingPointPacking):
+        (WebCore::GraphicsContext3D::packPixels):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supports):
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+        * platform/graphics/qt/Extensions3DQt.cpp:
+        (WebCore::Extensions3DQt::ensureEnabled):
+        * platform/graphics/qt/Extensions3DQt.h:
+
 2010-12-10  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.

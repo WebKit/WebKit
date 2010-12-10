@@ -46,6 +46,11 @@ bool Extensions3DQt::supports(const String&)
     return false;
 }
 
+void Extensions3DQt::ensureEnabled(const String& name)
+{
+    ASSERT(supports(name));
+}
+
 int Extensions3DQt::getGraphicsResetStatusARB()
 {
     return GraphicsContext3D::NO_ERROR;

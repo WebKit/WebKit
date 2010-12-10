@@ -1,3 +1,26 @@
+2010-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Implement extension entry points and remove EXTENSIONS enum
+        https://bugs.webkit.org/show_bug.cgi?id=40316
+
+        Added support for ensuring that a particular OpenGL extension is
+        enabled.
+
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::ensureEnabled):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initializeExtensions):
+        (WebCore::GraphicsContext3DInternal::supportsExtension):
+        (WebCore::GraphicsContext3DInternal::ensureExtensionEnabled):
+        * src/GraphicsContext3DInternal.h:
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::getRequestableExtensionsCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::requestExtensionCHROMIUM):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-12-10  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.

@@ -3728,6 +3728,7 @@ HEADERS += \
         html/canvas/Int8Array.h \
         html/canvas/WebGLContextAttributes.h \
         html/canvas/Float32Array.h \
+        html/canvas/WebGLExtension.h \
         html/canvas/WebGLFramebuffer.h \
         html/canvas/WebGLGetInfo.h \
         html/canvas/Int32Array.h \
@@ -3736,6 +3737,7 @@ HEADERS += \
         html/canvas/WebGLRenderingContext.h \
         html/canvas/WebGLShader.h \
         html/canvas/Int16Array.h \
+        html/canvas/OESTextureFloat.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
         html/canvas/Uint8Array.h \
@@ -3768,6 +3770,7 @@ SOURCES += \
         html/canvas/Int8Array.cpp \
         html/canvas/WebGLContextAttributes.cpp \
         html/canvas/Float32Array.cpp \
+        html/canvas/WebGLExtension.cpp \
         html/canvas/WebGLFramebuffer.cpp \
         html/canvas/WebGLGetInfo.cpp \
         html/canvas/Int32Array.cpp \
@@ -3776,6 +3779,7 @@ SOURCES += \
         html/canvas/WebGLRenderingContext.cpp \
         html/canvas/WebGLShader.cpp \
         html/canvas/Int16Array.cpp \
+        html/canvas/OESTextureFloat.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
         html/canvas/Uint8Array.cpp \
