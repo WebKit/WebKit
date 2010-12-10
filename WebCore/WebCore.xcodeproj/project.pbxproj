@@ -726,6 +726,8 @@
 		29A812490FBB9CA900510293 /* AccessibilityObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */; };
 		29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */; };
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
+		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
+		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
@@ -7001,6 +7003,8 @@
 		29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectWrapper.h; sourceTree = "<group>"; };
 		29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
 		29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; };
+		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
+		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -15642,6 +15646,8 @@
 				977B3855122883E900B81FF8 /* HTMLFormattingElementList.cpp */,
 				977B3856122883E900B81FF8 /* HTMLFormattingElementList.h */,
 				97BC849A12370A4B000C6161 /* HTMLInputStream.h */,
+				2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */,
+				2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */,
 				93E2A304123E9DC0009FE12A /* HTMLParserIdioms.cpp */,
 				93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */,
 				977B3857122883E900B81FF8 /* HTMLParserScheduler.cpp */,
@@ -20489,6 +20495,7 @@
 				A8EA7CAB0A192B9C00A8EF5F /* HTMLMarqueeElement.h in Headers */,
 				E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */,
 				A8EA79F40A1916DF00A8EF5F /* HTMLMenuElement.h in Headers */,
+				2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */,
 				A871DC240A15205700B12A68 /* HTMLMetaElement.h in Headers */,
 				A454424B119B3661009BE912 /* HTMLMeterElement.h in Headers */,
 				A8CFF7A70A156978000A4234 /* HTMLModElement.h in Headers */,
@@ -23217,6 +23224,7 @@
 				A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */,
 				E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
+				2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */,
 				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,
 				A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */,
 				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,

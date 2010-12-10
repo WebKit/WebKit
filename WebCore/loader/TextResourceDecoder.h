@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+class HTMLMetaCharsetParser;
+
 class TextResourceDecoder : public RefCounted<TextResourceDecoder> {
 public:
     enum EncodingSource {
@@ -74,6 +76,7 @@ private:
     size_t checkForBOM(const char*, size_t);
     bool checkForCSSCharset(const char*, size_t, bool& movedDataToBuffer);
     bool checkForHeadCharset(const char*, size_t, bool& movedDataToBuffer);
+    bool checkForMetaCharset(const char*, size_t);
     void detectJapaneseEncoding(const char*, size_t);
     bool shouldAutoDetect() const;
 
@@ -89,6 +92,8 @@ private:
     bool m_useLenientXMLDecoding; // Don't stop on XML decoding errors.
     bool m_sawError;
     bool m_usesEncodingDetector;
+
+    OwnPtr<HTMLMetaCharsetParser> m_charsetParser;
 };
 
 }

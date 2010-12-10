@@ -24,6 +24,7 @@
 #include "TextResourceDecoder.h"
 
 #include "DOMImplementation.h"
+#include "HTMLMetaCharsetParser.h"
 #include "HTMLNames.h"
 #include "TextCodec.h"
 #include "TextEncoding.h"
@@ -51,29 +52,6 @@ static int find(const char* subject, size_t subjectLength, const char* target)
         bool match = true;
         for (size_t j = 0; j < targetLength; ++j) {
             if (subject[i + j] != target[j]) {
-                match = false;
-                break;
-            }
-        }
-        if (match)
-            return i;
-    }
-    return -1;
-}
-
-static int findIgnoringCase(const char* subject, size_t subjectLength, const char* target)
-{
-    size_t targetLength = strlen(target);
-    if (targetLength > subjectLength)
-        return -1;
-#ifndef NDEBUG
-    for (size_t i = 0; i < targetLength; ++i)
-        ASSERT(isASCIILower(target[i]));
-#endif
-    for (size_t i = 0; i <= subjectLength - targetLength; ++i) {
-        bool match = true;
-        for (size_t j = 0; j < targetLength; ++j) {
-            if (toASCIILower(subject[i + j]) != target[j]) {
                 match = false;
                 break;
             }
@@ -534,8 +512,6 @@ static inline void skipComment(const char*& ptr, const char* pEnd)
     ptr = p;
 }
 
-const int bytesToCheckUnconditionally = 1024; // That many input bytes will be checked for meta charset even if <head> section is over.
-
 bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
     if (m_source != DefaultEncoding && m_source != EncodingFromParentFrame) {
@@ -551,6 +527,10 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     memcpy(m_buffer.data() + oldSize, data, len);
 
     movedDataToBuffer = true;
+
+    // Continue with checking for an HTML meta tag if we were already doing so.
+    if (m_charsetParser)
+        return checkForMetaCharset(data, len);
 
     const char* ptr = m_buffer.data();
     const char* pEnd = ptr + m_buffer.size();
@@ -587,163 +567,23 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
         return true;
     }
 
-    // we still don't have an encoding, and are in the head
-    // the following tags are allowed in <head>:
-    // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
-    
-    // We stop scanning when a tag that is not permitted in <head>
-    // is seen, rather when </head> is seen, because that more closely
-    // matches behavior in other browsers; more details in
-    // <http://bugs.webkit.org/show_bug.cgi?id=3590>.
-    
-    // Additionally, we ignore things that looks like tags in <title>, <script> and <noscript>; see
-    // <http://bugs.webkit.org/show_bug.cgi?id=4560>, <http://bugs.webkit.org/show_bug.cgi?id=12165>
-    // and <http://bugs.webkit.org/show_bug.cgi?id=12389>.
-
-    // Since many sites have charset declarations after <body> or other tags that are disallowed in <head>,
-    // we don't bail out until we've checked at least bytesToCheckUnconditionally bytes of input.
-
-    AtomicStringImpl* enclosingTagName = 0;
-    bool inHeadSection = true; // Becomes false when </head> or any tag not allowed in head is encountered.
-
-    // the HTTP-EQUIV meta has no effect on XHTML
+    // The HTTP-EQUIV meta has no effect on XHTML.
     if (m_contentType == XML)
         return true;
 
-    while (ptr + 3 < pEnd) { // +3 guarantees that "<!--" fits in the buffer - and certainly we aren't going to lose any "charset" that way.
-        if (*ptr == '<') {
-            bool end = false;
-            ptr++;
+    m_charsetParser = HTMLMetaCharsetParser::create();
+    return checkForMetaCharset(data, len);
+}
 
-            // Handle comments.
-            if (ptr[0] == '!' && ptr[1] == '-' && ptr[2] == '-') {
-                ptr += 3;
-                skipComment(ptr, pEnd);
-                if (ptr - m_buffer.data() >= bytesToCheckUnconditionally && !inHeadSection) {
-                    // Some pages that test bandwidth from within the browser do it by having
-                    // huge comments and measuring the time they take to load. Repeatedly scanning
-                    // these comments can take a lot of CPU time.
-                    m_checkedForHeadCharset = true;
-                    return true;
-                }
-                continue;
-            }
+bool TextResourceDecoder::checkForMetaCharset(const char* data, size_t length)
+{
+    if (!m_charsetParser->checkForMetaCharset(data, length))
+        return false;
 
-            if (*ptr == '/') {
-                ++ptr;
-                end = true;
-            }
-
-            // Grab the tag name, but mostly ignore namespaces.
-            bool sawNamespace = false;
-            char tagBuffer[20];
-            int len = 0;
-            while (len < 19) {
-                if (ptr == pEnd)
-                    return false;
-                char c = *ptr;
-                if (c == ':') {
-                    len = 0;
-                    sawNamespace = true;
-                    ptr++;
-                    continue;
-                }
-                if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
-                    ;
-                else if (c >= 'A' && c <= 'Z')
-                    c += 'a' - 'A';
-                else
-                    break;
-                tagBuffer[len++] = c;
-                ptr++;
-            }
-            tagBuffer[len] = 0;
-            AtomicString tag(tagBuffer);
-            
-            if (enclosingTagName) {
-                if (end && tag.impl() == enclosingTagName)
-                    enclosingTagName = 0;
-            } else {
-                if (tag == titleTag)
-                    enclosingTagName = titleTag.localName().impl();
-                else if (tag == scriptTag)
-                    enclosingTagName = scriptTag.localName().impl();
-                else if (tag == noscriptTag)
-                    enclosingTagName = noscriptTag.localName().impl();
-            }
-            
-            // Find where the opening tag ends.
-            const char* tagContentStart = ptr;
-            if (!end) {
-                while (ptr != pEnd && *ptr != '>') {
-                    if (*ptr == '\'' || *ptr == '"') {
-                        char quoteMark = *ptr;
-                        ++ptr;
-                        while (ptr != pEnd && *ptr != quoteMark)
-                            ++ptr;
-                        if (ptr == pEnd)
-                            return false;
-                    }
-                    ++ptr;
-                }
-                if (ptr == pEnd)
-                    return false;
-                ++ptr;
-            }
-            
-            if (!end && tag == metaTag && !sawNamespace) {
-                const char* str = tagContentStart;
-                int length = ptr - tagContentStart;
-                int pos = 0;
-                while (pos < length) {
-                    int charsetPos = findIgnoringCase(str + pos, length - pos, "charset");
-                    if (charsetPos == -1)
-                        break;
-                    pos += charsetPos + 7;
-                    // skip whitespace
-                    while (pos < length && str[pos] <= ' ')
-                        pos++;
-                    if (pos == length)
-                        break;
-                    if (str[pos++] != '=')
-                        continue;
-                    while ((pos < length) &&
-                            (str[pos] <= ' ' || str[pos] == '=' || str[pos] == '"' || str[pos] == '\''))
-                        pos++;
-
-                    // end ?
-                    if (pos == length)
-                        break;
-                    int end = pos;
-                    while (end < length &&
-                           str[end] != ' ' && str[end] != '"' && str[end] != '\'' &&
-                           str[end] != ';' && str[end] != '>')
-                        end++;
-                    setEncoding(findTextEncoding(str + pos, end - pos), EncodingFromMetaTag);
-                    if (m_source == EncodingFromMetaTag)
-                        return true;
-
-                    if (end >= length || str[end] == '/' || str[end] == '>')
-                        break;
-
-                    pos = end + 1;
-                }
-            } else {
-                if (!enclosingTagName && tag != scriptTag && tag != noscriptTag && tag != styleTag
-                    && tag != linkTag && tag != metaTag && tag != objectTag && tag != titleTag && tag != baseTag
-                    && (end || tag != htmlTag) && (end || tag != headTag) && isASCIIAlpha(tagBuffer[0])) {
-                    inHeadSection = false;
-                }
-
-                if (ptr - m_buffer.data() >= bytesToCheckUnconditionally && !inHeadSection) {
-                    m_checkedForHeadCharset = true;
-                    return true;
-                }
-            }
-        } else
-            ++ptr;
-    }
-    return false;
+    setEncoding(m_charsetParser->encoding(), EncodingFromMetaTag);
+    m_charsetParser.clear();
+    m_checkedForHeadCharset = true;
+    return true;
 }
 
 void TextResourceDecoder::detectJapaneseEncoding(const char* data, size_t len)

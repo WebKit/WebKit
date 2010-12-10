@@ -55162,6 +55162,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLMetaCharsetParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLMetaCharsetParser.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLParserIdioms.cpp"
 					>
 				</File>

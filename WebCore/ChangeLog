@@ -1,3 +1,49 @@
+2010-12-09  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        TextResourceDecoder::checkForHeadCharset can look way past the limit.
+        https://bugs.webkit.org/show_bug.cgi?id=47397
+
+        Replaced charset detection algorithm with real parser.
+        Added tests for parser bugs mentioned in the thread for this bug report.
+        Converted hixie's encoding parsing tests to a layout test.
+
+        Tests: fast/encoding/bracket-in-script.html
+               fast/encoding/bracket-in-tag.html
+               fast/encoding/escaped-bracket.html
+               fast/encoding/meta-in-body.html
+               fast/encoding/meta-in-script.html
+               fast/encoding/meta-in-title.html
+               fast/encoding/mismatched-end-tag.html
+               fast/encoding/namespace-meta.html
+               fast/encoding/not-http-equiv-content.html
+               fast/encoding/parser-tests.html
+               fast/encoding/quotes-in-title.html
+               fast/encoding/tag-name-digit.html
+               http/tests/misc/charset-sniffer-end-sniffing.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLMetaCharsetParser.cpp: Added.
+        (WebCore::HTMLMetaCharsetParser::HTMLMetaCharsetParser):
+        (WebCore::HTMLMetaCharsetParser::~HTMLMetaCharsetParser):
+        (WebCore::HTMLMetaCharsetParser::extractCharset):
+        (WebCore::HTMLMetaCharsetParser::processMeta):
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset):
+        * html/parser/HTMLMetaCharsetParser.h: Added.
+        (WebCore::HTMLMetaCharsetParser::create):
+        (WebCore::HTMLMetaCharsetParser::encoding):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        (WebCore::TextResourceDecoder::checkForMetaCharset):
+        * loader/TextResourceDecoder.h:
+
 2010-12-10 Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Antti Koivisto.

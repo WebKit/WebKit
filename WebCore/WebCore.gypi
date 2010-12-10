@@ -1959,6 +1959,8 @@
             'html/parser/HTMLFormattingElementList.cpp',
             'html/parser/HTMLFormattingElementList.h',
             'html/parser/HTMLInputStream.h',
+            'html/parser/HTMLMetaCharsetParser.cpp',
+            'html/parser/HTMLMetaCharsetParser.h',
             'html/parser/HTMLParserIdioms.cpp',
             'html/parser/HTMLParserIdioms.h',
             'html/parser/HTMLParserScheduler.cpp',
