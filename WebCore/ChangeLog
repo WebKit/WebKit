@@ -1,3 +1,15 @@
+2010-12-09  Jasmin Lapalme  <jlapalme@druide.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix a faulty conversion from UTF-8 to UTF-16 in WebCore during an XSLT transformation.
+        https://bugs.webkit.org/show_bug.cgi?id=50708
+
+        Test: fast/xsl/utf8-chunks.xml
+
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::writeToVector): now converts and returns the correct byte count when the end of the chunk is in the middle of a multibyte UTF-8 character.
+
 2010-12-09  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by James Robinson.

@@ -45,8 +45,9 @@
 #include <libxslt/variables.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
-#include <wtf/text/CString.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuffer.h>
+#include <wtf/unicode/UTF8.h>
 
 #if PLATFORM(MAC)
 #include "SoftLinking.h"
@@ -161,9 +162,24 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
 static int writeToVector(void* context, const char* buffer, int len)
 {
     Vector<UChar>& resultOutput = *static_cast<Vector<UChar>*>(context);
-    String decodedChunk = String::fromUTF8(buffer, len);
-    resultOutput.append(decodedChunk.characters(), decodedChunk.length());
-    return len;
+
+    if (!len)
+        return 0;
+
+    StringBuffer stringBuffer(len);
+    UChar* bufferUChar = stringBuffer.characters();
+    UChar* bufferUCharEnd = bufferUChar + len;
+
+    const char* stringCurrent = buffer;
+    WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF8ToUTF16(&stringCurrent, buffer + len, &bufferUChar, bufferUCharEnd);
+    if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::sourceExhausted) {
+        ASSERT_NOT_REACHED();
+        return -1;
+    }
+
+    int utf16Length = bufferUChar - stringBuffer.characters();
+    resultOutput.append(stringBuffer.characters(), utf16Length);
+    return stringCurrent - buffer;
 }
 
 static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, String& resultString)
