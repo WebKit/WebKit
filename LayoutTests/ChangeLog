@@ -1,3 +1,24 @@
+2010-12-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Compositor needs to manage its VRAM use
+        https://bugs.webkit.org/show_bug.cgi?id=49629
+
+        Adds a few tests involving lots of visible image layers.  The tests are designed
+        to require slightly more than 64MB of VRAM.
+
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-with-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-with-opacity-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/lots-of-img-layers-with-opacity-expected.txt: Added.
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/compositing/lots-of-img-layers-with-opacity.html: Added.
+        * platform/chromium/compositing/lots-of-img-layers.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium test expectations update.

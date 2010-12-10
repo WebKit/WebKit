@@ -31,13 +31,15 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "TextureManager.h"
 #include "TransformationMatrix.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class LayerRendererChromium;
 class LayerChromium;
+class LayerRendererChromium;
+class LayerTexture;
 
 class RenderSurfaceChromium : public Noncopyable {
     friend class LayerRendererChromium;
@@ -45,20 +47,45 @@ public:
     explicit RenderSurfaceChromium(LayerChromium*);
     ~RenderSurfaceChromium();
 
-    void prepareContentsTexture();
+    bool prepareContentsTexture();
     void cleanupResources();
+    void draw();
 
     FloatPoint contentRectCenter() const { return FloatRect(m_contentRect).center(); }
     IntRect contentRect() const { return m_contentRect; }
+
+    // Stores values that are shared between instances of this class that are
+    // associated with the same LayerRendererChromium (and hence the same GL
+    // context).
+    class SharedValues {
+    public:
+        explicit SharedValues(GraphicsContext3D*);
+        ~SharedValues();
+
+        unsigned shaderProgram() const { return m_shaderProgram; }
+        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
+        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
+        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
+        bool initialized() const { return m_initialized; }
+
+    private:
+        GraphicsContext3D* m_context;
+
+        unsigned m_shaderProgram;
+        int m_shaderSamplerLocation;
+        int m_shaderMatrixLocation;
+        int m_shaderAlphaLocation;
+        bool m_initialized;
+    };
 
 private:
     LayerRendererChromium* layerRenderer();
 
     LayerChromium* m_owningLayer;
     IntRect m_contentRect;
-    unsigned m_contentsTextureId;
+    bool m_skipsDraw;
+    OwnPtr<LayerTexture> m_contentsTexture;
     float m_drawOpacity;
-    IntSize m_allocatedTextureSize;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_originTransform;
     IntRect m_scissorRect;

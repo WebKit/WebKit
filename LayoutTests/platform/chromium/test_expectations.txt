@@ -277,6 +277,7 @@ BUG10395 WONTFIX SKIP : http/tests/webarchive = FAIL PASS
 // Compositing tests are run separately on machines with GPUs; see
 // LayoutTests/platform/chromium-gpu.
 BUG15733 WONTFIX SKIP : compositing = FAIL PASS TIMEOUT
+BUG15733 WONTFIX SKIP : platform/chromium/compositing = FAIL PASS TIMEOUT
 
 // Run the Mac-specific platform tests, but only to check for crashes.
 WONTFIX : platform/gtk = FAIL PASS

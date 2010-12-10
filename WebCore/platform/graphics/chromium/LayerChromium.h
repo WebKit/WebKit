@@ -151,15 +151,13 @@ public:
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 
-    bool contentsDirty() { return m_contentsDirty; }
-
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() { return false; }
-    virtual void updateContents() { };
-    virtual void draw() { };
+    virtual void updateContentsIfDirty() { }
+    virtual void draw() { }
 
     void drawDebugBorder();
 
@@ -197,6 +195,12 @@ public:
 
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 
+    static unsigned createShaderProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
+
+    static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
+                                 float width, float height, float opacity,
+                                 int matrixLocation, int alphaLocation);
+
 protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);
@@ -211,13 +215,7 @@ protected:
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantsDrawContent();
 
-    static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
-                                 float width, float height, float opacity,
-                                 int matrixLocation, int alphaLocation);
-
     static void toGLMatrix(float*, const TransformationMatrix&);
-
-    static unsigned createShaderProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
 
     IntSize m_bounds;
     FloatRect m_dirtyRect;

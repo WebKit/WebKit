@@ -38,7 +38,7 @@ class PluginLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<PluginLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual bool drawsContent() { return true; }
-    virtual void updateContents();
+    virtual void updateContentsIfDirty();
     virtual void draw();
     
     void setTextureId(unsigned textureId);

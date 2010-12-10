@@ -108,12 +108,17 @@ public:
     const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
     const VideoLayerChromium::SharedValues* videoLayerSharedValues() const { return m_videoLayerSharedValues.get(); }
     const PluginLayerChromium::SharedValues* pluginLayerSharedValues() const { return m_pluginLayerSharedValues.get(); }
+    const RenderSurfaceChromium::SharedValues* renderSurfaceSharedValues() const { return m_renderSurfaceSharedValues.get(); }
 
     void resizeOnscreenContent(const IntSize&);
 
     IntSize rootLayerTextureSize() const { return IntSize(m_rootLayerTextureWidth, m_rootLayerTextureHeight); }
     IntRect rootLayerContentRect() const { return m_rootContentRect; }
     void getFramebufferPixels(void *pixels, const IntRect& rect);
+
+    TextureManager* textureManager() const { return m_textureManager.get(); }
+
+    void setScissorToRect(const IntRect&);
 
 private:
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
@@ -122,8 +127,6 @@ private:
     void drawLayer(LayerChromium*, RenderSurfaceChromium*);
 
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
-
-    void setScissorToRect(const IntRect&);
 
     void setDrawViewportRect(const IntRect&, bool flipY);
 
@@ -139,13 +142,6 @@ private:
     unsigned m_rootLayerTextureId;
     int m_rootLayerTextureWidth;
     int m_rootLayerTextureHeight;
-
-    // Shader uniform locations used by layers whose contents are the results of a
-    // previous rendering operation.
-    unsigned m_textureLayerShaderProgram;
-    int m_textureLayerShaderSamplerLocation;
-    int m_textureLayerShaderMatrixLocation;
-    int m_textureLayerShaderAlphaLocation;
 
     TransformationMatrix m_projectionMatrix;
 
@@ -186,6 +182,9 @@ private:
     OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
     OwnPtr<VideoLayerChromium::SharedValues> m_videoLayerSharedValues;
     OwnPtr<PluginLayerChromium::SharedValues> m_pluginLayerSharedValues;
+    OwnPtr<RenderSurfaceChromium::SharedValues> m_renderSurfaceSharedValues;
+
+    OwnPtr<TextureManager> m_textureManager;
 
     RefPtr<GraphicsContext3D> m_context;
 
