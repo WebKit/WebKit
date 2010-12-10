@@ -2304,8 +2304,17 @@ BUGWK45991 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK45991 : canvas/philip/tests/type.prototype.html = TEXT
+BUGWK50797 :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
+
+// Update canvas/philip in WK r71481
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
+BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.object.update.html = TEXT
@@ -2342,67 +2351,64 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.transform.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-// affected by http://trac.webkit.org/changeset/68737/
-// Please resit turning on these without an actual fix. 
-// These results look determiend by which machine it is run by.
-BUGWK45991 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.operation.highlight.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.copy.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.source-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.source-out.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.copy.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.destination-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.source-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.source-out.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.copy.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.path.rect.winding.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT PASS
+BUGWK45991 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.operation.highlight.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.copy.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.source-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.fill.source-out.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.copy.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.destination-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.source-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.image.source-out.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.copy.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
+BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT PASS
-BUGWK45991 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
-
+BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.path.rect.winding.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
-
-// This seems to be failing on windows only.
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
+BUGWK40147 : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
+
+// Failures after WebKit roll 70949:71000
+BUGWK45991 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
 
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
@@ -2820,7 +2826,6 @@ BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
-BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
 BUG62741 WIN LINUX DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
@@ -2990,7 +2995,6 @@ BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
 BUGWK61260 : media/media-can-play-wav-audio.html = TEXT
 
 // Failures after WebKit roll 70949:71000
-BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
 BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
 BUG61406 WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
@@ -2999,9 +3003,6 @@ BUG32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-pr
 
 // Flaky: fails about 5% of the time.
 BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
-
-// Fails because of http://trac.webkit.org/changeset/71268
-BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // See also https://webkit.org/b/49045
 BUG61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
@@ -3015,15 +3016,6 @@ WONTFIX SKIP : platform/win/plugins/draws-gradient.html = IMAGE+TEXT
 
 // Added in WK r71424
 BUG62138 : animations/stop-animation-on-suspend.html = TEXT PASS
-
-// Update canvas/philip in WK r71481
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUG62515 : printing/page-format-data-display-none.html = TEXT
