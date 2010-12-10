@@ -102,7 +102,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
     
     info.context->drawLine(IntPoint(tx, ty + topStart), IntPoint(tx + offsetWidth(), ty + topStart));
     
-    int baseline = baselinePosition(true);
+    int baseline = baselinePosition(AlphabeticBaseline, true, HorizontalLine);
     
     info.context->setStrokeColor(Color(255, 0, 0), ColorSpaceSRGB);
     
