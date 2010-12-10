@@ -45,7 +45,7 @@ v8::Handle<v8::Value> toV8(IDBKey* key)
     case IDBKey::NullType:
         return v8::Null();
     case IDBKey::NumberType:
-        return v8::Integer::New(key->number());
+        return v8::Number::New(key->number());
     case IDBKey::StringType:
         return v8String(key->string());
     // FIXME: Implement dates.

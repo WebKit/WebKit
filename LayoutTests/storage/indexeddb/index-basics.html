@@ -49,6 +49,7 @@ function createIndex()
     window.store = evalAndLog("db.createObjectStore('storeName', null)");
     window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
     window.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', false)");
+    window.indexObject3 = evalAndLog("store.createIndex('zIndex', 'z', true)");
     addData();
 }
 
@@ -67,7 +68,7 @@ function addData()
     shouldBeTrue("'getKey' in indexObject");
     shouldBeTrue("'get' in indexObject");
 
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')");
     verifyResult(result);
     result.onsuccess = addMore;
     result.onerror = unexpectedErrorCallback;
@@ -77,7 +78,7 @@ function addMore()
 {
     verifySuccessEvent(event);
 
-    result = evalAndLog("event.source.add({x: 'value2', y: 'zzz2'}, 'key2')");
+    result = evalAndLog("event.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')");
     verifyResult(result);
     result.onsuccess = getData;
     result.onerror = unexpectedErrorCallback;
@@ -108,6 +109,17 @@ function getObjectData2()
 {
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "key");
+
+    result = evalAndLog("indexObject3.get(2.71)");
+    verifyResult(result);
+    result.onsuccess = getObjectData3;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getObjectData3()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result.x", "value2");
 
     result = evalAndLog("indexObject.get('value')");
     verifyResult(result);

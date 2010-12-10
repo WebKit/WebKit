@@ -48,7 +48,7 @@ public:
     WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
     WebIDBKey(const WebString& string) { assign(string); }
-    WebIDBKey(int32_t number) { assign(number); }
+    WebIDBKey(double number) { assign(number); }
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)
     {
@@ -59,7 +59,7 @@ public:
     WEBKIT_API void assign(const WebIDBKey&);
     WEBKIT_API void assignNull();
     WEBKIT_API void assign(const WebString&);
-    WEBKIT_API void assign(int32_t);
+    WEBKIT_API void assign(double);
     WEBKIT_API void assignInvalid();
     WEBKIT_API void reset();
 
@@ -73,7 +73,7 @@ public:
 
     WEBKIT_API Type type() const;
     WEBKIT_API WebString string() const; // Only valid for StringType.
-    WEBKIT_API int32_t number() const; // Only valid for numberType.
+    WEBKIT_API double number() const; // Only valid for numberType.
 
 #if WEBKIT_IMPLEMENTATION
     WebIDBKey(const WTF::PassRefPtr<WebCore::IDBKey>&);

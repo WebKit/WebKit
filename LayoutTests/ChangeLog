@@ -1,3 +1,19 @@
+2010-12-10  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Numeric keys are floats.
+        https://bugs.webkit.org/show_bug.cgi?id=50674
+
+        Update layout tests to use floating-point values for keys.
+
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/keyrange.html:
+        Make sure creating the keys works.
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-cursor.html:
+        Make sure retrieving the keys from the DB objectstore works.
+
 2010-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
