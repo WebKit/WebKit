@@ -64,13 +64,13 @@ class WebKitPortTest(unittest.TestCase):
     def test_chromium_port(self):
         self.assertEquals(ChromiumPort.name(), "Chromium")
         self.assertEquals(ChromiumPort.flag(), "--port=chromium")
-        self.assertEquals(ChromiumPort.run_webkit_tests_command(), [WebKitPort.script_path("new-run-webkit-tests"), "--chromium", "--use-drt", "--no-pixel-tests"])
+        self.assertEquals(ChromiumPort.run_webkit_tests_command(), [WebKitPort.script_path("new-run-webkit-tests"), "--chromium", "--no-pixel-tests"])
         self.assertEquals(ChromiumPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--chromium", "--update-chromium"])
         self.assertEquals(ChromiumPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--chromium", "--update-chromium"])
         self.assertEquals(ChromiumPort.update_webkit_command(), [WebKitPort.script_path("update-webkit"), "--chromium"])
 
     def test_chromium_xvfb_port(self):
-        self.assertEquals(ChromiumXVFBPort.run_webkit_tests_command(), ["xvfb-run", "WebKitTools/Scripts/new-run-webkit-tests", "--chromium", "--use-drt", "--no-pixel-tests"])
+        self.assertEquals(ChromiumXVFBPort.run_webkit_tests_command(), ["xvfb-run", "WebKitTools/Scripts/new-run-webkit-tests", "--chromium", "--no-pixel-tests"])
 
 if __name__ == '__main__':
     unittest.main()

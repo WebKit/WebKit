@@ -376,12 +376,8 @@ out what ports are skipping the test(s). Categories are taken in account too."""
     argument_names = "TEST_NAME"
 
     def execute(self, options, args, tool):
-        class Options:
-            # Required for chromium port.
-            use_drt = True
-
         results = dict([(test_name, []) for test_name in args])
-        for port_name, port_object in tool.port_factory.get_all(options=Options).iteritems():
+        for port_name, port_object in tool.port_factory.get_all().iteritems():
             for test_name in args:
                 if port_object.skips_layout_test(test_name):
                     results[test_name].append(port_name)

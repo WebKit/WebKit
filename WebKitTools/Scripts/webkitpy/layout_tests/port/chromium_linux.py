@@ -81,7 +81,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         base = self.path_from_chromium_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
             return os.path.join(base, 'sconsbuild', *comps)
-        if os.path.exists(os.path.join(base, 'out', *comps)) or not self.get_option('use_drt'):
+        if os.path.exists(os.path.join(base, 'out', *comps)) or self.get_option('use_test_shell'):
             return os.path.join(base, 'out', *comps)
         base = self.path_from_webkit_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
@@ -148,9 +148,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self.get_option('configuration')
-        binary_name = 'test_shell'
-        if self.get_option('use_drt'):
-            binary_name = 'DumpRenderTree'
+        binary_name = 'DumpRenderTree'
+        if self.get_option('use_test_shell'):
+            binary_name = 'test_shell'
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):

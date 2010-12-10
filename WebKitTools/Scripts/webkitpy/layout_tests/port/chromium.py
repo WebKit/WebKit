@@ -175,9 +175,9 @@ class ChromiumPort(base.Port):
         return result
 
     def driver_name(self):
-        if self._options.use_drt:
-            return "DumpRenderTree"
-        return "test_shell"
+        if self._options.use_test_shell:
+            return "test_shell"
+        return "DumpRenderTree"
 
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the
@@ -216,7 +216,7 @@ class ChromiumPort(base.Port):
 
     def create_driver(self, worker_number):
         """Starts a new Driver and returns a handle to it."""
-        if self.get_option('use_drt') and sys.platform == 'darwin':
+        if not self.get_option('use_test_shell') and sys.platform == 'darwin':
             return webkit.WebKitDriver(self, worker_number)
         return ChromiumDriver(self, worker_number)
 
@@ -253,16 +253,6 @@ class ChromiumPort(base.Port):
             return file.read()
 
     def test_expectations_overrides(self):
-        # FIXME: This drt_overrides handling should be removed when we switch
-        # from tes_shell to DRT.
-        drt_overrides = ''
-        if self.get_option('use_drt'):
-            drt_overrides_path = self.path_from_webkit_base('LayoutTests',
-                'platform', 'chromium', 'drt_expectations.txt')
-            if os.path.exists(drt_overrides_path):
-                with codecs.open(drt_overrides_path, "r", "utf-8") as file:
-                    drt_overrides = file.read()
-
         try:
             overrides_path = self.path_from_chromium_base('webkit', 'tools',
                 'layout_tests', 'test_expectations.txt')
@@ -271,7 +261,7 @@ class ChromiumPort(base.Port):
         if not os.path.exists(overrides_path):
             return None
         with codecs.open(overrides_path, "r", "utf-8") as file:
-            return file.read() + drt_overrides
+            return file.read()
 
     def skipped_layout_tests(self, extra_test_files=None):
         expectations_str = self.test_expectations()
@@ -350,9 +340,9 @@ class ChromiumPort(base.Port):
         return path
 
     def _path_to_image_diff(self):
-        binary_name = 'image_diff'
-        if self.get_option('use_drt'):
-            binary_name = 'ImageDiff'
+        binary_name = 'ImageDiff'
+        if self.get_option('use_test_shell'):
+            binary_name = 'image_diff'
         return self._build_path(self.get_option('configuration'), binary_name)
 
 
@@ -376,10 +366,10 @@ class ChromiumDriver(base.Driver):
             cmd.append("--pixel-tests=" +
                        self._port._convert_path(self._image_path))
 
-        if self._port.get_option('use_drt'):
-            cmd.append('--test-shell')
-        else:
+        if self._port.get_option('use_test_shell'):
             cmd.append('--layout-tests')
+        else:
+            cmd.append('--test-shell')
 
         if self._port.get_option('startup_dialog'):
             cmd.append('--testshell-startup-dialog')
@@ -393,11 +383,12 @@ class ChromiumDriver(base.Driver):
         if self._port.get_option('multiple_loads') > 0:
             cmd.append('--multiple-loads=' + str(self._port.get_option('multiple_loads')))
 
-        if self._port.get_option('accelerated_compositing'):
-            cmd.append('--enable-accelerated-compositing')
-
-        if self._port.get_option('accelerated_2d_canvas'):
-            cmd.append('--enable-accelerated-2d-canvas')
+        # test_shell does not support accelerated compositing.
+        if not self._port.get_option("use_test_shell"):
+            if self._port.get_option('accelerated_compositing'):
+                cmd.append('--enable-accelerated-compositing')
+            if self._port.get_option('accelerated_2d_canvas'):
+                cmd.append('--enable-accelerated-2d-canvas')
         return cmd
 
     def start(self):

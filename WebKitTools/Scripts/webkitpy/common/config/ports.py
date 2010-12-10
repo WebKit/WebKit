@@ -229,7 +229,6 @@ class ChromiumPort(WebKitPort):
         return [
             cls.script_path("new-run-webkit-tests"),
             "--chromium",
-            "--use-drt",
             "--no-pixel-tests",
         ]
 

@@ -46,12 +46,10 @@ class ChromiumGpuTest(unittest.TestCase):
         mock_options = mocktool.MockOptions(accelerated_compositing=None,
                                             accelerated_2d_canvas=None,
                                             builder_name='foo',
-                                            use_drt=None,
                                             child_processes=None)
         port = chromium_gpu.get(port_name=port_name, options=mock_options)
         self.assertTrue(port._options.accelerated_compositing)
         self.assertTrue(port._options.accelerated_2d_canvas)
-        self.assertTrue(port._options.use_drt)
         self.assertEqual(port.default_child_processes(), 1)
         self.assertEqual(port._options.builder_name, 'foo - GPU')
 

@@ -1,2 +1,0 @@
-// We are switching from test_shell to DRT soon and this file will go away.
-// Please add DRT expectations to test_expectations.txt instead.

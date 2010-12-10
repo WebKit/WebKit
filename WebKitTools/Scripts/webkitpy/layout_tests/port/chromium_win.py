@@ -105,13 +105,12 @@ class ChromiumWinPort(chromium.ChromiumPort):
     #
     # PROTECTED ROUTINES
     #
-
     def _build_path(self, *comps):
         p = self.path_from_chromium_base('webkit', *comps)
         if os.path.exists(p):
             return p
         p = self.path_from_chromium_base('chrome', *comps)
-        if os.path.exists(p) or not self.get_option('use_drt'):
+        if os.path.exists(p) or self.get_option('use_test_shell'):
             return p
         return os.path.join(self.path_from_webkit_base(), 'WebKit', 'chromium',
                             *comps)
@@ -140,21 +139,21 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self.get_option('configuration')
-        binary_name = 'test_shell.exe'
-        if self.get_option('use_drt'):
-            binary_name = 'DumpRenderTree.exe'
+        binary_name = 'DumpRenderTree.exe'
+        if self.get_option('use_test_shell'):
+            binary_name = 'test_shell.exe'
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
-        binary_name = 'layout_test_helper.exe'
-        if self.get_option('use_drt'):
-            binary_name = 'LayoutTestHelper.exe'
+        binary_name = 'LayoutTestHelper.exe'
+        if self.get_option('use_test_shell'):
+            binary_name = 'layout_test_helper.exe'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_image_diff(self):
-        binary_name = 'image_diff.exe'
-        if self.get_option('use_drt'):
-            binary_name = 'ImageDiff.exe'
+        binary_name = 'ImageDiff.exe'
+        if self.get_option('use_test_shell'):
+            binary_name = 'image_diff.exe'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):

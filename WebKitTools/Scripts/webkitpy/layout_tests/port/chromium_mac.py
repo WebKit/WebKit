@@ -79,9 +79,9 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def driver_name(self):
         """name for this port's equivalent of DumpRenderTree."""
-        if self.get_option('use_drt'):
-            return "DumpRenderTree"
-        return "TestShell"
+        if self.get_option('use_test_shell'):
+            return "TestShell"
+        return "DumpRenderTree"
 
     def test_platform_name(self):
         # We use 'mac' instead of 'chromium-mac'
@@ -106,7 +106,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _build_path(self, *comps):
         path = self.path_from_chromium_base('xcodebuild', *comps)
-        if os.path.exists(path) or not self.get_option('use_drt'):
+        if os.path.exists(path) or self.get_option('use_test_shell'):
             return path
         return self.path_from_webkit_base('WebKit', 'chromium', 'xcodebuild',
                                           *comps)
@@ -149,9 +149,9 @@ class ChromiumMacPort(chromium.ChromiumPort):
             'Contents', 'MacOS', self.driver_name())
 
     def _path_to_helper(self):
-        binary_name = 'layout_test_helper'
-        if self.get_option('use_drt'):
-            binary_name = 'LayoutTestHelper'
+        binary_name = 'LayoutTestHelper'
+        if self.get_option('use_test_shell'):
+            binary_name = 'layout_test_helper'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):

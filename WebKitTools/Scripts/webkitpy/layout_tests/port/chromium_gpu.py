@@ -69,8 +69,6 @@ def _set_gpu_options(options):
             options.accelerated_compositing = True
         if options.accelerated_2d_canvas is None:
             options.accelerated_2d_canvas = True
-        if options.use_drt is None:
-            options.use_drt = True
 
         # FIXME: Remove this after http://codereview.chromium.org/5133001/ is enabled
         # on the bots.

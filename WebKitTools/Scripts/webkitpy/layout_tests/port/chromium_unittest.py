@@ -105,18 +105,25 @@ class ChromiumPortTest(unittest.TestCase):
             return 'default'
 
     def test_path_to_image_diff(self):
-        mock_options = mocktool.MockOptions(use_drt=True)
+        mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
         self.assertTrue(port._path_to_image_diff().endswith(
             '/out/default/ImageDiff'), msg=port._path_to_image_diff())
         port = ChromiumPortTest.TestMacPort(options=mock_options)
         self.assertTrue(port._path_to_image_diff().endswith(
             '/xcodebuild/default/ImageDiff'))
+        mock_options = mocktool.MockOptions(use_test_shell=True)
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/out/default/image_diff'), msg=port._path_to_image_diff())
+        port = ChromiumPortTest.TestMacPort(options=mock_options)
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/xcodebuild/default/image_diff'))
         # FIXME: Figure out how this is going to work on Windows.
         #port = chromium_win.ChromiumWinPort('test-port', options=MockOptions())
 
     def test_skipped_layout_tests(self):
-        mock_options = mocktool.MockOptions(use_drt=True)
+        mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
         fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
@@ -162,7 +169,7 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
                     return self._result
                 return ''
 
-        mock_options = mocktool.MockOptions(use_drt=False)
+        mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(mock_options)
 
         # Images are different.

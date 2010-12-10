@@ -48,7 +48,6 @@ class ChromiumOptions(object):
     """
     def __init__(self):
         self.chromium = True
-        self.use_drt = True
 
 
 class TestExpectationsChecker(object):
