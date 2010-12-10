@@ -2,6 +2,35 @@
 
         Reviewed by Steve Block.
 
+        [Chromium] Implement mocks for client-based geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=46895
+
+        * WebKit.gyp:
+        * public/WebGeolocationClientMock.h: Added.
+        (WebKit::WebGeolocationClientMock::~WebGeolocationClientMock):
+        (WebKit::WebGeolocationClientMock::WebGeolocationClientMock):
+        * src/WebGeolocationClientMock.cpp: Added.
+        (WebKit::WebGeolocationClientMock::create):
+        (WebKit::WebGeolocationClientMock::initialize):
+        (WebKit::WebGeolocationClientMock::reset):
+        (WebKit::WebGeolocationClientMock::setMockGeolocationPosition):
+        (WebKit::WebGeolocationClientMock::setMockGeolocationError):
+        (WebKit::WebGeolocationClientMock::setMockGeolocationPermission):
+        (WebKit::WebGeolocationClientMock::resetMock):
+        (WebKit::WebGeolocationClientMock::startUpdating):
+        (WebKit::WebGeolocationClientMock::stopUpdating):
+        (WebKit::WebGeolocationClientMock::setEnableHighAccuracy):
+        (WebKit::WebGeolocationClientMock::geolocationDestroyed):
+        (WebKit::WebGeolocationClientMock::setController):
+        (WebKit::WebGeolocationClientMock::lastPosition):
+        (WebKit::WebGeolocationClientMock::requestPermission):
+        (WebKit::WebGeolocationClientMock::cancelPermissionRequest):
+        * src/WebGeolocationServiceMock.cpp:
+
+2010-12-10  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
         [chromium] Implement client based geolocation bindings
         https://bugs.webkit.org/show_bug.cgi?id=45752
 

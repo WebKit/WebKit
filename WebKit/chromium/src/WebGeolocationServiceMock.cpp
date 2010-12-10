@@ -41,39 +41,6 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(GEOLOCATION)
-
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-// FIXME: Implement mock bindings for client-based geolocation. Ultimately
-// move to another class and remove WebGeolocationService*.
-
-namespace WebKit {
-
-class WebGeolocationServiceMockClientBasedImpl : public WebGeolocationServiceMock {
-};
-
-WebGeolocationServiceMock* WebGeolocationServiceMock::createWebGeolocationServiceMock()
-{
-    return new WebGeolocationServiceMockClientBasedImpl;
-}
-
-void WebGeolocationServiceMock::setMockGeolocationPermission(bool allowed)
-{
-    // FIXME: Implement mock binding
-}
-
-void WebGeolocationServiceMock::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
-{
-    // FIXME: Implement mock binding
-}
-
-void WebGeolocationServiceMock::setMockGeolocationError(int errorCode, const WebString& message)
-{
-    // FIXME: Implement mock binding
-}
-
-} // namespace WebKit
-
-#else
 using WebCore::Coordinates;
 using WebCore::Frame;
 using WebCore::Geolocation;
@@ -272,6 +239,4 @@ void WebGeolocationServiceMockImpl::notifyPendingPermissions()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 #endif // ENABLE(GEOLOCATION)

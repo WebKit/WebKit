@@ -49,6 +49,7 @@
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
+class WebGeolocationClientMock;
 class WebSpeechInputController;
 class WebSpeechInputControllerMock;
 class WebSpeechInputListener;

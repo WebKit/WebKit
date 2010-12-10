@@ -174,6 +174,7 @@
                 'public/WebFormControlElement.h',
                 'public/WebFormElement.h',
                 'public/WebGeolocationClient.h',
+                'public/WebGeolocationClientMock.h',
                 'public/WebGeolocationController.h',
                 'public/WebGeolocationError.h',
                 'public/WebGeolocationPermissionRequest.h',
@@ -451,6 +452,7 @@
                 'src/WebFrameImpl.cpp',
                 'src/WebFrameImpl.h',
                 'src/WebGeolocationController.cpp',
+                'src/WebGeolocationClientMock.cpp',
                 'src/WebGeolocationError.cpp',
                 'src/WebGeolocationPermissionRequest.cpp',
                 'src/WebGeolocationPermissionRequestManager.cpp',
@@ -676,7 +678,6 @@
                 ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
                     'sources/': [
                         ['exclude', 'WebGeolocationService.*$'],
-                        ['include', 'WebGeolocationServiceMock.*'],
                     ],
                 }, {
                    'sources/': [
@@ -866,6 +867,11 @@
                         },
                     },
                 }],
+                ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
+                    'sources/': [
+                        ['exclude', 'WebGeolocationService.*$'],
+                    ],
+                }]
             ],
         },
         {
