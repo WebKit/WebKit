@@ -225,6 +225,8 @@ class MockBugzillaQueries(Mock):
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
+    def fetch_bugs_matching_search(self, search_string, author_email=None):
+        return [self.bugzilla.fetch_bug(76), self.bugzilla.fetch_bug(77)]
 
 _mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
 

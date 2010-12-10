@@ -1,5 +1,4 @@
-# Copyright (c) 2009 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,17 +25,38 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# A tool for automating dealing with bugzilla, posting patches, committing
-# patches, etc.
 
-from webkitpy.common.config import urls
+import unittest
 
-
-def bug_comment_from_svn_revision(svn_revision):
-    return "Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision))
+from webkitpy.common.config.committers import Committer
+from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
+from webkitpy.tool.mocktool import MockTool
 
 
-def bug_comment_from_commit_text(scm, commit_text):
-    svn_revision = scm.svn_revision_from_commit_text(commit_text)
-    return bug_comment_from_svn_revision(svn_revision)
+# Creating fake CommitInfos is a pain, so we use a mock one here.
+class MockCommitInfo(object):
+    def __init__(self, author_email):
+        self._author_email = author_email
+
+    def author(self):
+        # It's definitely possible to have commits with authors who
+        # are not in our committers.py list.
+        if not self._author_email:
+            return None
+        return Committer("Mock Committer", self._author_email)
+
+
+class FlakyTestReporterTest(unittest.TestCase):
+    def _assert_emails_for_test(self, emails):
+        tool = MockTool()
+        reporter = FlakyTestReporter(tool, 'dummy-queue')
+        commit_infos = [MockCommitInfo(email) for email in emails]
+        tool.checkout().recent_commit_infos_for_files = lambda paths: set(commit_infos)
+        self.assertEqual(reporter._author_emails_for_test([]), set(emails))
+
+    def test_author_emails_for_test(self):
+        self._assert_emails_for_test([])
+        self._assert_emails_for_test(["test1@test.com", "test1@test.com"])
+        self._assert_emails_for_test(["test1@test.com", "test2@test.com"])
+
+    # report_flaky_tests is tested by queues_unittest

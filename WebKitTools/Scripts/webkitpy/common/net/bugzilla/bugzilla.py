@@ -146,6 +146,14 @@ class BugzillaQueries(object):
         quicksearch_url = "buglist.cgi?quicksearch=%s" % urllib.quote(search_string)
         return self._fetch_bugs_from_advanced_query(quicksearch_url)
 
+    def fetch_bugs_matching_search(self, search_string, author_email=None):
+        query = "buglist.cgi?query_format=advanced"
+        if search_string:
+            query += "&short_desc_type=allwordssubstr&short_desc=%s" % urllib.quote(search_string)
+        if author_email:
+            query += "&emailreporter1=1&emailtype1=substring&email1=%s" % urllib.quote(search_string)
+        return self._fetch_bugs_from_advanced_query(query)
+
     def fetch_patches_from_pending_commit_list(self):
         return sum([self._fetch_bug(bug_id).reviewed_patches()
             for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])

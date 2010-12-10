@@ -36,14 +36,8 @@ import textwrap
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.config import urls
 from webkitpy.common.net.bugzilla import parse_bug_id
-
-
-def view_source_url(revision_number):
-    # FIMXE: This doesn't really belong in this file, but we don't have a
-    # better home for it yet.
-    # Maybe eventually a webkit_config.py?
-    return "http://trac.webkit.org/changeset/%s" % revision_number
 
 
 class ChangeLogEntry(object):
@@ -153,7 +147,7 @@ class ChangeLog(object):
     # This probably does not belong in changelogs.py
     def _message_for_revert(self, revision, reason, bug_url):
         message = "Unreviewed, rolling out r%s.\n" % revision
-        message += "%s\n" % view_source_url(revision)
+        message += "%s\n" % urls.view_revision_url(revision)
         if bug_url:
             message += "%s\n" % bug_url
         # Add an extra new line after the rollout links, before any reason.

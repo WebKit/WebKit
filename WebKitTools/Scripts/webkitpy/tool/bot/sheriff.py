@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.checkout.changelog import view_source_url
+from webkitpy.common.config import urls
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
@@ -46,7 +46,7 @@ class Sheriff(object):
         irc_message = "%s%s%s might have broken %s" % (
             ", ".join(irc_nicknames),
             irc_prefix,
-            view_source_url(commit_info.revision()),
+            urls.view_revision_url(commit_info.revision()),
             join_with_separators([builder.name() for builder in builders]))
 
         self._tool.irc().post(irc_message)
@@ -81,7 +81,7 @@ class Sheriff(object):
         if not commit_info.bug_id():
             return
         comment = "%s might have broken %s" % (
-            view_source_url(commit_info.revision()),
+            urls.view_revision_url(commit_info.revision()),
             join_with_separators([builder.name() for builder in builders]))
         if tests:
             comment += "\nThe following tests are not passing:\n"

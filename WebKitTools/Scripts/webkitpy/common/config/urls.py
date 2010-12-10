@@ -1,5 +1,4 @@
-# Copyright (c) 2009 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2010, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,17 +25,14 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# A tool for automating dealing with bugzilla, posting patches, committing
-# patches, etc.
-
-from webkitpy.common.config import urls
 
 
-def bug_comment_from_svn_revision(svn_revision):
-    return "Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision))
+def view_source_url(local_path):
+    return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
 
-def bug_comment_from_commit_text(scm, commit_text):
-    svn_revision = scm.svn_revision_from_commit_text(commit_text)
-    return bug_comment_from_svn_revision(svn_revision)
+def view_revision_url(revision_number):
+    return "http://trac.webkit.org/changeset/%s" % revision_number
+
+
+contribution_guidelines = "http://webkit.org/coding/contributing.html"

@@ -1,0 +1,114 @@
+# Copyright (c) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import logging
+
+from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
+from webkitpy.common.config import urls
+from webkitpy.tool.grammar import pluralize, join_with_separators
+
+_log = logging.getLogger(__name__)
+
+
+class FlakyTestReporter(object):
+    def __init__(self, tool, bot_name):
+        self._tool = tool
+        self._bot_name = bot_name
+
+    def _author_emails_for_test(self, flaky_test):
+        test_path = path_for_layout_test(flaky_test)
+        commit_infos = self._tool.checkout().recent_commit_infos_for_files([test_path])
+        # This ignores authors which are not committers because we don't have their bugzilla_email.
+        return set([commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()])
+
+    def _bugzilla_email(self):
+        # This is kinda a funny way to get the bugzilla email,
+        # we could also just create a Credentials object directly
+        # but some of the Credentials logic is in bugzilla.py too...
+        self._tool.bugs.authenticate()
+        return self._tool.bugs.username
+
+    def _lookup_bug_for_flaky_test(self, flaky_test):
+        bot_email = self._bugzilla_email()
+        bugs = self._tool.bugs.queries.fetch_bugs_matching_search(search_string=flaky_test, author_email=bot_email)
+        if not bugs:
+            return None
+        if len(bugs) > 1:
+            _log.warn("Found %s %s matching '%s' from the %s (%s), using the first." % (pluralize('bug', len(bugs)), bugs, flaky_test, self._bot_name, bot_email))
+        return bugs[0]
+
+    def _create_bug_for_flaky_test(self, flaky_test, author_emails, latest_flake_message):
+        format_values = {
+            'test': flaky_test,
+            'authors': join_with_separators(author_emails),
+            'flake_message': latest_flake_message,
+            'test_url': urls.view_source_url(flaky_test),
+            'bot_name': self._bot_name,
+        }
+        title = "Flaky Test: %(test)s" % format_values
+        description = """This is an automatically generated bug from the %(bot_name)s.
+%(test)s has been flaky on the %(bot_name)s.
+%(test)s was authored by %(authors)s.
+%(test_url)s
+
+%(flake_message)s
+
+The bots will update this with information from each new failure.
+
+If you would like to track this test fix with another bug, please close this bug as a duplicate.
+""" % format_values
+
+        self._tool_bugs.create_bug(title, description,
+            component="Tools / Tests",
+            cc=",".join(author_bugzilla_emails))
+
+    # This is over-engineered, but it makes for pretty bug messages.
+    def _optional_author_string(self, author_emails):
+        if not author_emails:
+            return ""
+        heading_string = plural('author') if len(author_emails) > 1 else 'author'
+        authors_string = join_with_separators(sorted(author_emails))
+        return " (%s: %s)" % (heading_string, authors_string)
+
+    def report_flaky_tests(self, flaky_tests, patch):
+        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
+        for flaky_test in flaky_tests:
+            bug = self._lookup_bug_for_flaky_test(flaky_test)
+            latest_flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
+            author_emails = self._author_emails_for_test(flaky_test)
+            if not bug:
+                self._create_bug_for_flaky_test(flaky_test, latest_flake_message)
+            else:
+                # FIXME: If the bug is closed we should follow the duplicate chain to the last bug,
+                # and then re-open the last bug if that too is closed.
+                self._tool.bugs.post_comment_to_bug(patch.bug_id(), latest_flake_message)
+
+            message += "%s bug %s%s\n" % (flaky_test, patch.bug_id(), self._optional_author_string(author_emails))
+
+        message += "The %s is continuing to process your patch." % self._bot_name
+        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)

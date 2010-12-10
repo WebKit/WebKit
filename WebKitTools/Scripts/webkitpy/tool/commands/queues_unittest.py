@@ -29,7 +29,6 @@
 import os
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
-from webkitpy.common.config.committers import Committer
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
@@ -124,7 +123,7 @@ class FeederQueueTest(QueuesTest):
             "next_work_item": "",
             "process_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting patch 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.
+MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting attachment 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
@@ -198,19 +197,6 @@ class SecondThoughtsCommitQueue(CommitQueue):
         return Attachment(attachment_dictionary, None)
 
 
-# Creating fake CommitInfos is a pain, so we use a mock one here.
-class MockCommitInfo(object):
-    def __init__(self, author_email):
-        self._author_email = author_email
-
-    def author(self):
-        # It's definitely possible to have commits with authors who
-        # are not in our committers.py list.
-        if not self._author_email:
-            return None
-        return Committer("Mock Committer", self._author_email)
-
-
 class CommitQueueTest(QueuesTest):
     def test_commit_queue(self):
         expected_stderr = {
@@ -225,7 +211,7 @@ MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 197
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
@@ -237,11 +223,11 @@ MOCK: release_work_item: commit-queue 197
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Patch does not apply
-MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'MOCK script error'
+MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'MOCK script error'
 MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 197
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         queue = CommitQueue()
@@ -276,7 +262,7 @@ MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 197
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
@@ -301,7 +287,7 @@ MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 106
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '106' with comment 'Rejecting patch 106 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '106' with comment 'Rejecting attachment 106 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
@@ -335,30 +321,26 @@ MOCK: release_work_item: commit-queue 197
 """
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_stderr=expected_stderr)
 
-    def _assert_emails_for_tests(self, emails):
-        queue = CommitQueue()
-        tool = MockTool()
-        queue.bind_to_tool(tool)
-        commit_infos = [MockCommitInfo(email) for email in emails]
-        tool.checkout().recent_commit_infos_for_files = lambda paths: set(commit_infos)
-        self.assertEqual(queue._author_emails_for_tests([]), set(emails))
-
-    def test_author_emails_for_tests(self):
-        self._assert_emails_for_tests([])
-        self._assert_emails_for_tests(["test1@test.com", "test1@test.com"])
-        self._assert_emails_for_tests(["test1@test.com", "test2@test.com"])
-
     def test_report_flaky_tests(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
         expected_stderr = """MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
+The commit-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
+--- End comment ---
+
+MOCK bug comment: bug_id=42, cc=None
+--- Begin comment ---
+The commit-queue just saw bar/baz.html flake while processing attachment 197 on bug 42.
+--- End comment ---
+
+MOCK bug comment: bug_id=42, cc=None
+--- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
 
-foo/bar.html
-bar/baz.html
-
-Please file bugs against the tests.  These tests were authored by abarth@webkit.org.  The commit-queue is continuing to process your patch.
+foo/bar.html bug 42 (author: abarth@webkit.org)
+bar/baz.html bug 42 (author: abarth@webkit.org)
+The commit-queue is continuing to process your patch.
 --- End comment ---
 
 """

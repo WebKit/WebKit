@@ -29,6 +29,7 @@
 import os
 import StringIO
 
+from webkitpy.common.config import urls
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
@@ -104,8 +105,7 @@ class Checkout(object):
         changelog_paths = self.modified_changelogs(git_commit, changed_files)
         if not len(changelog_paths):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
-                              "All changes require a ChangeLog.  See:\n"
-                              "http://webkit.org/coding/contributing.html")
+                              "All changes require a ChangeLog.  See:\n %s" % urls.contribution_guidelines)
 
         changelog_messages = []
         for changelog_path in changelog_paths:

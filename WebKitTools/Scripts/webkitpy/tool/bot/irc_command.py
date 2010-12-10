@@ -29,7 +29,7 @@
 import random
 import webkitpy.common.config.irc as config_irc
 
-from webkitpy.common.checkout.changelog import view_source_url
+from webkitpy.common.config import urls
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import ScriptError
@@ -43,7 +43,7 @@ class IRCCommand(object):
 class LastGreenRevision(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         return "%s: %s" % (nick,
-            view_source_url(tool.buildbot.last_green_revision()))
+            urls.view_revision_url(tool.buildbot.last_green_revision()))
 
 
 class Restart(IRCCommand):

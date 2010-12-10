@@ -2,6 +2,43 @@
 
         Reviewed by Adam Barth.
 
+        The commit-queue should file bugs about flaky tests it encounters
+        https://bugs.webkit.org/show_bug.cgi?id=50803
+
+        This change got a bit big.  I also added a new config.urls file
+        because I needed to share the view_source_url code with committervalidator.py.
+
+        This adds a new class FlakyTestReporter which holds all the logic about
+        reporting flaky tests to bugzilla.
+
+        Right now this code knows how to look up bugs for flaky tests.
+        If it can't find a bug filed from the commit-queue, it will open a new
+        one, ccing the relevant people and adding information about the failure.
+
+        It is not yet smart enough to chase down duplicate chains, or to include
+        the actual failure diff.  But those can be added in later iterations.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        * Scripts/webkitpy/common/config/committervalidator.py:
+        * Scripts/webkitpy/common/config/urls.py: Copied from WebKitTools/Scripts/webkitpy/tool/comments.py.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py: Added.
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py: Copied from WebKitTools/Scripts/webkitpy/tool/comments.py.
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/comments.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+
+2010-12-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Teach webkit-patch how to search bugzilla
         https://bugs.webkit.org/show_bug.cgi?id=50500
 

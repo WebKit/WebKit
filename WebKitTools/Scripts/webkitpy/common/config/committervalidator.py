@@ -31,17 +31,13 @@
 import os
 
 from webkitpy.common.system.ospath import relpath
-from webkitpy.common.config import committers
+from webkitpy.common.config import committers, urls
 
 
 class CommitterValidator(object):
 
     def __init__(self, bugzilla):
         self._bugzilla = bugzilla
-
-    # _view_source_url belongs in some sort of webkit_config.py module.
-    def _view_source_url(self, local_path):
-        return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
     def _checkout_root(self):
         # FIXME: This is a hack, we would have this from scm.checkout_root
@@ -59,8 +55,6 @@ class CommitterValidator(object):
         return ".".join([path, "py"])
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):
-        # Should come from some webkit_config.py
-        contribution_guidlines = "http://webkit.org/coding/contributing.html"
         # This could be queried from the status_server.
         queue_administrator = "eseidel@chromium.org"
         # This could be queried from the tool.
@@ -69,9 +63,9 @@ class CommitterValidator(object):
         message = "%s does not have %s permissions according to %s." % (
                         setter_email,
                         flag_name,
-                        self._view_source_url(committers_list))
+                        urls.view_source_url(committers_list))
         message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (
-                        flag_name, contribution_guidlines)
+                        flag_name, urls.contribution_guidelines)
         message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed).  " % (
                         flag_name, committers_list)
         message += "The %s restarts itself every 2 hours.  After restart the %s will correctly respect your %s rights." % (
@@ -102,7 +96,7 @@ class CommitterValidator(object):
     def reject_patch_from_commit_queue(self,
                                        attachment_id,
                                        additional_comment_text=None):
-        comment_text = "Rejecting patch %s from commit-queue." % attachment_id
+        comment_text = "Rejecting attachment %s from commit-queue." % attachment_id
         self._bugzilla.set_flag_on_attachment(attachment_id,
                                               "commit-queue",
                                               "-",
@@ -112,7 +106,7 @@ class CommitterValidator(object):
     def reject_patch_from_review_queue(self,
                                        attachment_id,
                                        additional_comment_text=None):
-        comment_text = "Rejecting patch %s from review queue." % attachment_id
+        comment_text = "Rejecting attachment %s from review queue." % attachment_id
         self._bugzilla.set_flag_on_attachment(attachment_id,
                                               'review',
                                               '-',

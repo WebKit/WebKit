@@ -40,15 +40,15 @@ from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.net.bugzilla import Attachment
-from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
+from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
-from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
 
@@ -312,20 +312,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
 
-    def _author_emails_for_tests(self, flaky_tests):
-        test_paths = map(path_for_layout_test, flaky_tests)
-        commit_infos = self._tool.checkout().recent_commit_infos_for_files(test_paths)
-        return set([commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()])
-
     def report_flaky_tests(self, patch, flaky_tests):
-        message = "The %s encountered the following flaky tests while processing attachment %s:" % (self.name, patch.id())
-        message += "\n\n%s\n\n" % ("\n".join(flaky_tests))
-        message += "Please file bugs against the tests.  "
-        author_emails = self._author_emails_for_tests(flaky_tests)
-        if author_emails:
-            message += "These tests were authored by %s.  " % (join_with_separators(sorted(author_emails)))
-        message += "The commit-queue is continuing to process your patch."
-        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)
+        reporter = FlakyTestReporter(self._tool, self.name)
+        reporter.report_flaky_tests(flaky_tests, patch)
 
     # StepSequenceErrorHandler methods
 

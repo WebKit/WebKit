@@ -31,7 +31,8 @@ import os
 
 import webkitpy.tool.steps as steps
 
-from webkitpy.common.checkout.changelog import ChangeLog, view_source_url
+from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.config import urls
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
@@ -355,7 +356,7 @@ class CreateRollout(AbstractRolloutPrepCommand):
         state["bug_blocked"] = state["bug_id"]
         del state["bug_id"]
         state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
-        state["bug_description"] = "%s broke the build:\n%s" % (view_source_url(state["revision"]), state["reason"])
+        state["bug_description"] = "%s broke the build:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
         #        that mention the test that regressed.
         if options.parent_command == "sheriff-bot":
