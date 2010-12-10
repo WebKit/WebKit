@@ -74,6 +74,13 @@ public:
             derefPlatformPtr(ptr);
     }
 
+    T* leakRef() WARN_UNUSED_RETURN
+    {
+        T* ptr = m_ptr;
+        m_ptr = 0;
+        return ptr;
+    }
+
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     PlatformRefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }

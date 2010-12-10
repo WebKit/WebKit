@@ -40,7 +40,7 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 {
     ASSERT(m_platformDescription);
 
-    GtkMenuItem* platformItem = ContextMenuItem::createNativeMenuItem(item.releasePlatformDescription());
+    GtkMenuItem* platformItem = item.releasePlatformDescription();
     ASSERT(platformItem);
     gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), GTK_WIDGET(platformItem));
     gtk_widget_show(GTK_WIDGET(platformItem));
