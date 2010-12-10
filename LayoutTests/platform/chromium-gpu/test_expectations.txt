@@ -207,7 +207,6 @@ BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omit
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUG62301 LINUX WIN :  canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT

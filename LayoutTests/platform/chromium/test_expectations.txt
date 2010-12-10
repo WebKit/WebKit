@@ -3242,11 +3242,13 @@ BUG66019 : fast/regex/pcre-test-1.html = TEXT
 // Mostly-flaky timeouts
 BUG66085 WIN LINUX : dom/html/level1/core/documentgetdoctypenodtd.html = PASS TIMEOUT
 BUG66085 LINUX : editing/selection/3690703-2.html = PASS TIMEOUT
+BUG66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.html = PASS TIMEOUT
 BUG66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
 BUG66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUG66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
 BUG66085 LINUX : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
 BUG66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
+BUG66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUG66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUG66085 : media/remove-from-document.html = PASS TIMEOUT
 BUG66085 WIN : media/video-currentTime.html = TIMEOUT
@@ -3258,11 +3260,10 @@ BUG66085 : media/video-source-type.html = PASS TIMEOUT
 BUG66085 LINUX : media/video-src-source.html = PASS TIMEOUT
 
 // Flaky failures
+BUG66087 LINUX : http/tests/misc/iframe404.html = PASS TEXT
 BUG66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
 BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 
-// Needs V8 investigation
-BUG66099 LINUX SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
-BUG66099 MAC WIN RELEASE SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
-BUG66099 WIN DEBUG : fast/js/array-sort-modifying-tostring.html = TIMEOUT
-BUG66099 MAC DEBUG : fast/js/array-sort-modifying-tostring.html = CRASH
+// Needs V8 investigation.  Skipped due to concern that this may be corrupting
+// memory and thus leading to unpredictable results.
+BUG66099 SKIP : fast/js/array-sort-modifying-tostring.html = TEXT CRASH TIMEOUT
