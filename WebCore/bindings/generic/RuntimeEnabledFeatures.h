@@ -112,6 +112,14 @@ public:
     static bool webGLIntArrayEnabled() { return isWebGLEnabled; }
     static bool webGLUnsignedIntArrayEnabled() { return isWebGLEnabled; }
     static bool webGLFloatArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLActiveInfoEnabled() { return isWebGLEnabled; }
+    static bool webGLBufferEnabled() { return isWebGLEnabled; }
+    static bool webGLFramebufferEnabled() { return isWebGLEnabled; }
+    static bool webGLProgramEnabled() { return isWebGLEnabled; }
+    static bool webGLRenderbufferEnabled() { return isWebGLEnabled; }
+    static bool webGLShaderEnabled() { return isWebGLEnabled; }
+    static bool webGLTextureEnabled() { return isWebGLEnabled; }
+    static bool webGLUniformLocationEnabled() { return isWebGLEnabled; }
 #endif
 
     static void setPushStateEnabled(bool isEnabled) { isPushStateEnabled = isEnabled; }

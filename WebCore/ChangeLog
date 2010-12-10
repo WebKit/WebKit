@@ -1,3 +1,31 @@
+2010-12-09  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Expose constructor functions for instanceof checks of WebGL objects
+        https://bugs.webkit.org/show_bug.cgi?id=36512
+
+        Test: fast/canvas/webgl/instanceof-test.html
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webGLActiveInfoEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLBufferEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLFramebufferEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLProgramEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLRenderbufferEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLShaderEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLTextureEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLUniformLocationEnabled):
+        * html/canvas/WebGLActiveInfo.idl: Remove OmitConstructor.
+        * html/canvas/WebGLBuffer.idl: Ditto.
+        * html/canvas/WebGLFramebuffer.idl: Ditto.
+        * html/canvas/WebGLProgram.idl: Ditto.
+        * html/canvas/WebGLRenderbuffer.idl: Ditto.
+        * html/canvas/WebGLShader.idl: Ditto.
+        * html/canvas/WebGLTexture.idl: Ditto.
+        * html/canvas/WebGLUniformLocation.idl: Ditto.
+        * page/DOMWindow.idl: Expose constructors for WebGL objects in DOMWindow.
+
 2010-12-09  Timothy Hatcher  <timothy@apple.com>
 
         Export Color::white and Color::transparent.

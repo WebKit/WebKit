@@ -59,7 +59,15 @@ function constructorNamesForWindow(globalObject)
             continue;
         var type = classNameForObject(value);
         // Ignore these properties because they do not exist in all implementations. They will be tested separately
-        if (type == "WebGLRenderingContextConstructor" || 
+        if (type == "WebGLRenderingContextConstructor" ||
+            type == "WebGLActiveInfoConstructor" ||
+            type == "WebGLBufferConstructor" ||
+            type == "WebGLFramebufferConstructor" ||
+            type == "WebGLProgramConstructor" ||
+            type == "WebGLRenderbufferConstructor" ||
+            type == "WebGLShaderConstructor" ||
+            type == "WebGLTextureConstructor" ||
+            type == "WebGLUniformLocationConstructor" ||
             type == "ArrayBufferConstructor" ||
             type == "DataViewConstructor" ||
             type =="Float32ArrayConstructor" ||

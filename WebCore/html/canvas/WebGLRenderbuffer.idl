@@ -24,6 +24,6 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, OmitConstructor] WebGLRenderbuffer {
+    interface [Conditional=3D_CANVAS] WebGLRenderbuffer {
     };
 }

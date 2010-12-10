@@ -15,7 +15,7 @@ var skippedProperties = [
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     "webkitNotifications",
     "webkitPerformance",
-    "WebGLRenderingContext",
+    "WebGLRenderingContext", "WebGLActiveInfo", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation",
     "ArrayBuffer",
     "DataView", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",
     "FileError", "FileReader", "requestFileSystem",

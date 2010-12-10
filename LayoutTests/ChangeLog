@@ -1,3 +1,19 @@
+2010-12-09  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Expose constructor functions for instanceof checks of WebGL objects
+        https://bugs.webkit.org/show_bug.cgi?id=36512
+
+        * fast/canvas/webgl/instanceof-test-expected.txt: Added.
+        * fast/canvas/webgl/instanceof-test.html: Added.
+        * fast/dom/Window/script-tests/window-property-descriptors.js: Register newly added WebGL objects.
+        * fast/dom/Window/window-properties.html: Ditto.
+        * fast/dom/script-tests/prototype-inheritance-2.js: Ditto.
+        (constructorNamesForWindow):
+        * fast/dom/script-tests/prototype-inheritance.js: Ditto.
+        * fast/js/script-tests/global-constructors.js: Ditto.
+
 2010-12-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

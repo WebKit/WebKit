@@ -485,7 +485,15 @@ module window {
         attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
         attribute ImageDataConstructor ImageData;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLActiveInfoConstructor WebGLActiveInfo;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLBufferConstructor WebGLBuffer;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLFramebufferConstructor WebGLFramebuffer;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLProgramConstructor WebGLProgram;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderbufferConstructor WebGLRenderbuffer;
         attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLShaderConstructor WebGLShader;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLTextureConstructor WebGLTexture;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLUniformLocationConstructor WebGLUniformLocation;
         attribute TextMetricsConstructor TextMetrics;
 
         attribute DOMStringMapConstructor DOMStringMap;
