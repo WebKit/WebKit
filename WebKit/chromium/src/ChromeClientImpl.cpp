@@ -776,11 +776,13 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 }
 #endif
 
+// FIXME: Remove ChromeClientImpl::requestGeolocationPermissionForFrame and ChromeClientImpl::cancelGeolocationPermissionRequestForFrame
+// once all ports have moved to client-based geolocation (see https://bugs.webkit.org/show_bug.cgi?id=40373 ).
+// For client-based geolocation, these methods are now implemented as WebGeolocationClient::requestPermission and WebGeolocationClient::cancelPermissionRequest.
+// (see https://bugs.webkit.org/show_bug.cgi?id=50061 ).
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-    // FIXME: Implement Client-based Geolocation Permissions
-#else
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     geolocationService->geolocationServiceBridge()->attachBridgeIfNeeded();
     m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
@@ -789,9 +791,7 @@ void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geoloc
 
 void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-    // FIXME: Implement Client-based Geolocation Permissions
-#else
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     m_webView->client()->geolocationService()->cancelPermissionRequestForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
 #endif

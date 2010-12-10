@@ -23,47 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
-
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
-
-namespace WebCore { class GeolocationError; }
+#ifndef WebGeolocationClient_h
+#define WebGeolocationClient_h
 
 namespace WebKit {
+class WebGeolocationController;
+class WebGeolocationPermissionRequest;
+class WebGeolocationPosition;
 
-class WebString;
-
-class WebGeolocationError {
+class WebGeolocationClient {
 public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
+    virtual ~WebGeolocationClient() {}
 
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
+    virtual void startUpdating() = 0;
+    virtual void stopUpdating() = 0;
+    virtual void setEnableHighAccuracy(bool) = 0;
+    virtual void geolocationDestroyed() = 0;
+    virtual bool lastPosition(WebGeolocationPosition&) = 0;
 
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
+    virtual void requestPermission(const WebGeolocationPermissionRequest&) = 0;
+    virtual void cancelPermissionRequest(const WebGeolocationPermissionRequest&) = 0;
 
-#if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
-#endif
-
-private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
+    // The controller is valid until geolocationDestroyed() is invoked.
+    // Ownership of the WebGeolocationController is transferred to the client.
+    virtual void setController(WebGeolocationController*) = 0;
 };
 
 } // namespace WebKit
 
-#endif // WebGeolocationError_h
+#endif // WebGeolocationClient_h

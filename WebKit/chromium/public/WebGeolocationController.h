@@ -23,47 +23,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
+#ifndef WebGeolocationController_h
+#define WebGeolocationController_h
 
 #include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "WebNonCopyable.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
-
-namespace WebCore { class GeolocationError; }
+namespace WebCore { class GeolocationController; }
 
 namespace WebKit {
 
-class WebString;
+class WebGeolocationPosition;
+class WebGeolocationError;
 
-class WebGeolocationError {
+// Note that the WebGeolocationController is invalid after the
+// WebGeolocationClient::geolocationDestroyed() has been received.
+class WebGeolocationController : public WebNonCopyable {
 public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
-
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
-
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
+    WEBKIT_API void positionChanged(const WebGeolocationPosition&);
+    WEBKIT_API void errorOccurred(const WebGeolocationError&);
 
 #if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
+    WebGeolocationController(WebCore::GeolocationController* c)
+        : m_private(c)
+    {
+    }
+
+    WebCore::GeolocationController* controller() const { return m_private; }
 #endif
 
 private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
+    // No implementation for the default constructor. Declared private to ensure that no instances
+    // can be created by the consumers of Chromium WebKit.
+    WebGeolocationController();
+
+    WebCore::GeolocationController* m_private;
 };
 
 } // namespace WebKit
 
-#endif // WebGeolocationError_h
+#endif // WebGeolocationController_h

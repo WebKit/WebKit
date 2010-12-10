@@ -52,6 +52,7 @@ class WebExternalPopupMenu;
 class WebExternalPopupMenuClient;
 class WebFileChooserCompletion;
 class WebFrame;
+class WebGeolocationClient;
 class WebGeolocationService;
 class WebImage;
 class WebInputElement;
@@ -340,7 +341,9 @@ public:
 
     // Geolocation ---------------------------------------------------------
 
-    // Access the embedder API for geolocation services.
+    // Access the embedder API for (client-based) geolocation client .
+    virtual WebGeolocationClient* geolocationClient() { return 0; }
+    // Access the embedder API for (non-client-based) geolocation services.
     virtual WebGeolocationService* geolocationService() { return 0; }
 
     // Speech --------------------------------------------------------------

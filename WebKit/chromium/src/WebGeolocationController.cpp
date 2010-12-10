@@ -23,47 +23,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
+#include "config.h"
+#include "WebGeolocationController.h"
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "GeolocationController.h"
+#include "GeolocationError.h"
+#include "GeolocationPosition.h"
+#include "WebGeolocationError.h"
+#include "WebGeolocationPosition.h"
 
-#if WEBKIT_IMPLEMENTATION
 #include <wtf/PassRefPtr.h>
-#endif
+#include <wtf/RefPtr.h>
 
-namespace WebCore { class GeolocationError; }
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebString;
+void WebGeolocationController::positionChanged(const WebGeolocationPosition& webPosition)
+{
+    m_private->positionChanged(PassRefPtr<GeolocationPosition>(webPosition).get());
+}
 
-class WebGeolocationError {
-public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
-
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
-
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
-
-#if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
-#endif
-
-private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
-};
+void WebGeolocationController::errorOccurred(const WebGeolocationError& webError)
+{
+    m_private->errorOccurred(PassRefPtr<GeolocationError>(webError).get());
+}
 
 } // namespace WebKit
-
-#endif // WebGeolocationError_h

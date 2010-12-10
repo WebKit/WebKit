@@ -31,8 +31,9 @@
 
 #if WEBKIT_IMPLEMENTATION
 #include <wtf/PassRefPtr.h>
-namespace WebCore { class GeolocationPosition; }
 #endif
+
+namespace WebCore { class GeolocationPosition; }
 
 namespace WebKit {
 

@@ -23,47 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
+#ifndef GeolocationClientProxy_h
+#define GeolocationClientProxy_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "GeolocationClient.h"
+#include "WebGeolocationController.h"
+#include <wtf/RefPtr.h>
 
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
-
-namespace WebCore { class GeolocationError; }
+namespace WebCore {
+class GeolocationPosition;
+}
 
 namespace WebKit {
+class WebGeolocationClient;
 
-class WebString;
-
-class WebGeolocationError {
+class GeolocationClientProxy : public WebCore::GeolocationClient {
 public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
+    GeolocationClientProxy(WebGeolocationClient* client);
+    ~GeolocationClientProxy();
+    void setController(WebCore::GeolocationController *controller);
+    virtual void geolocationDestroyed();
+    virtual void startUpdating();
+    virtual void stopUpdating();
+    virtual void setEnableHighAccuracy(bool);
+    virtual WebCore::GeolocationPosition* lastPosition();
 
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
-
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
-
-#if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
-#endif
+    virtual void requestPermission(WebCore::Geolocation*);
+    virtual void cancelPermissionRequest(WebCore::Geolocation*);
 
 private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
+    WebGeolocationClient* m_client;
+    RefPtr<WebCore::GeolocationPosition> m_lastPosition;
 };
 
 } // namespace WebKit
 
-#endif // WebGeolocationError_h
+#endif // GeolocationClientProxy_h

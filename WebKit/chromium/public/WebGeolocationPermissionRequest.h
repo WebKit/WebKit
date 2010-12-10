@@ -23,47 +23,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
+#ifndef WebGeolocationPermissionRequest_h
+#define WebGeolocationPermissionRequest_h
 
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
-
-namespace WebCore { class GeolocationError; }
+namespace WebCore {
+class Geolocation;
+}
 
 namespace WebKit {
+class WebSecurityOrigin;
 
-class WebString;
-
-class WebGeolocationError {
+// WebGeolocationPermissionRequest encapsulates a WebCore Geolocation object and represents
+// a request from WebCore for permission to be determined for that Geolocation object.
+// The underlying Geolocation object is guaranteed to be valid until the invocation of
+// either  WebGeolocationPermissionRequest::setIsAllowed (request complete) or
+// WebGeolocationClient::cancelPermissionRequest (request cancelled).
+class WebGeolocationPermissionRequest {
 public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
-
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
-
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
+    WEBKIT_API WebSecurityOrigin securityOrigin() const;
+    WEBKIT_API void setIsAllowed(bool);
 
 #if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
+    WebGeolocationPermissionRequest(WebCore::Geolocation* geolocation)
+        : m_private(geolocation)
+    {
+    }
+
+    WebCore::Geolocation* geolocation() const { return m_private; }
 #endif
 
 private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
+    WebCore::Geolocation* m_private;
 };
+}
 
-} // namespace WebKit
-
-#endif // WebGeolocationError_h
+#endif // WebGeolocationPermissionRequest_h

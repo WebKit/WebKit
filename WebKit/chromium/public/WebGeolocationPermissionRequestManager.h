@@ -23,47 +23,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationError_h
-#define WebGeolocationError_h
+#ifndef WebGeolocationPermissionRequestManager_h
+#define WebGeolocationPermissionRequestManager_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
-
-namespace WebCore { class GeolocationError; }
+#include "WebNonCopyable.h"
+#include "WebPrivateOwnPtr.h"
 
 namespace WebKit {
 
-class WebString;
+class WebGeolocationPermissionRequest;
+class WebGeolocationPermissionRequestManagerPrivate;
 
-class WebGeolocationError {
+// This class is used to map between integer identifiers and WebGeolocationPermissionRequest
+// instances. The intended usage is that on WebGeolocationClient::requestPermission(),
+// the implementer can call add() to associate an id with the WebGeolocationPermissionRequest object.
+// Once the permission request has been decided, the second remove() method can be used to
+// find the request. On WebGeolocationClient::cancelPermissionRequest, the first remove() method will
+// remove the association with the id.
+class WebGeolocationPermissionRequestManager : public WebNonCopyable {
 public:
-    enum Error {
-        ErrorPermissionDenied,
-        ErrorPositionUnavailable
-    };
+    WebGeolocationPermissionRequestManager() { init(); }
+    ~WebGeolocationPermissionRequestManager() { reset(); }
 
-    WebGeolocationError(Error code, const WebString& message) { assign(code, message); }
-    WebGeolocationError(const WebGeolocationError& other) { assign(other); }
-    ~WebGeolocationError() { reset(); }
-
-    WEBKIT_API void assign(Error code, const WebString& message);
-    WEBKIT_API void assign(const WebGeolocationError&);
-    WEBKIT_API void reset();
-
-#if WEBKIT_IMPLEMENTATION
-    WebGeolocationError(WTF::PassRefPtr<WebCore::GeolocationError>);
-    WebGeolocationError& operator=(WTF::PassRefPtr<WebCore::GeolocationError>);
-    operator WTF::PassRefPtr<WebCore::GeolocationError>() const;
-#endif
+    WEBKIT_API int add(const WebKit::WebGeolocationPermissionRequest&);
+    WEBKIT_API bool remove(const WebKit::WebGeolocationPermissionRequest&, int&);
+    WEBKIT_API bool remove(int, WebKit::WebGeolocationPermissionRequest&);
 
 private:
-    WebPrivatePtr<WebCore::GeolocationError> m_private;
+    WEBKIT_API void init();
+    WEBKIT_API void reset();
+
+    WebPrivateOwnPtr<WebGeolocationPermissionRequestManagerPrivate> m_private;
+    int m_lastId;
 };
 
-} // namespace WebKit
+}
 
-#endif // WebGeolocationError_h
+#endif // WebGeolocationPermissionRequestManager_h
+

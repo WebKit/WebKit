@@ -1,3 +1,61 @@
+2010-12-10  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [chromium] Implement client based geolocation bindings
+        https://bugs.webkit.org/show_bug.cgi?id=45752
+
+        Implements the necessary plumbing to expose client-based geolocation in Chromium
+        webkit. The plan is to remove the non-client-based geolocation code (GeolocationService*)
+        in the future.
+
+        * WebKit.gyp:
+        * public/WebGeolocationClient.h: Added.
+        (WebKit::WebGeolocationClient::~WebGeolocationClient):
+        * public/WebGeolocationController.h: Added.
+        (WebKit::WebGeolocationController::WebGeolocationController):
+        (WebKit::WebGeolocationController::reset):
+        * public/WebGeolocationError.h:
+        * public/WebGeolocationPermissionRequest.h: Added.
+        (WebKit::WebGeolocationPermissionRequest::WebGeolocationPermissionRequest):
+        (WebKit::WebGeolocationPermissionRequest::geolocation):
+        * public/WebGeolocationPermissionRequestManager.h: Added.
+        (WebKit::WebGeolocationPermissionRequestManager::WebGeolocationPermissionRequestManager):
+        (WebKit::WebGeolocationPermissionRequestManager::~WebGeolocationPermissionRequestManager):
+        * public/WebGeolocationPosition.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::geolocationClient):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::requestGeolocationPermissionForFrame):
+        (WebKit::ChromeClientImpl::cancelGeolocationPermissionRequestForFrame):
+        * src/GeolocationClientProxy.cpp: Added.
+        (WebKit::GeolocationClientProxy::GeolocationClientProxy):
+        (WebKit::GeolocationClientProxy::~GeolocationClientProxy):
+        (WebKit::GeolocationClientProxy::setController):
+        (WebKit::GeolocationClientProxy::geolocationDestroyed):
+        (WebKit::GeolocationClientProxy::startUpdating):
+        (WebKit::GeolocationClientProxy::stopUpdating):
+        (WebKit::GeolocationClientProxy::setEnableHighAccuracy):
+        (WebKit::GeolocationClientProxy::lastPosition):
+        (WebKit::GeolocationClientProxy::requestPermission):
+        (WebKit::GeolocationClientProxy::cancelPermissionRequest):
+        * src/GeolocationClientProxy.h: Added.
+        * src/WebGeolocationController.cpp: Added.
+        (WebKit::WebGeolocationController::positionChanged):
+        (WebKit::WebGeolocationController::errorOccurred):
+        (WebKit::WebGeolocationController::controller):
+        * src/WebGeolocationPermissionRequest.cpp: Added.
+        (WebKit::WebGeolocationPermissionRequest::securityOrigin):
+        (WebKit::WebGeolocationPermissionRequest::setIsAllowed):
+        * src/WebGeolocationPermissionRequestManager.cpp: Added.
+        (WebGeolocationPermissionRequestManager::add):
+        (WebGeolocationPermissionRequestManager::remove):
+        (WebGeolocationPermissionRequestManager::init):
+        (WebGeolocationPermissionRequestManager::reset):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2010-12-10  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
