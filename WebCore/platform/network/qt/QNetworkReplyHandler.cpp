@@ -184,7 +184,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_resourceHandle(handle)
     , m_redirected(false)
     , m_responseSent(false)
-    , m_responseDataSent(false)
+    , m_responseContainsData(false)
     , m_loadMode(loadMode)
     , m_shouldStart(true)
     , m_shouldFinish(false)
@@ -305,7 +305,7 @@ void QNetworkReplyHandler::finish()
     if (m_redirected) {
         resetState();
         start();
-    } else if (!m_reply->error() || ignoreHttpError(m_reply, m_responseDataSent)) {
+    } else if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData)) {
         client->didFinishLoading(m_resourceHandle, 0);
     } else {
         QUrl url = m_reply->url();
@@ -331,7 +331,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (m_shouldSendResponse)
         return;
 
-    if (m_reply->error() && !ignoreHttpError(m_reply, m_responseDataSent))
+    if (m_reply->error() && !ignoreHttpError(m_reply, m_responseContainsData))
         return;
 
     if (m_responseSent || !m_resourceHandle)
@@ -438,6 +438,9 @@ void QNetworkReplyHandler::forwardData()
     if (m_shouldForwardData)
         return;
 
+    if (m_reply->bytesAvailable())
+        m_responseContainsData = true;
+
     sendResponseIfNeeded();
 
     // don't emit the "Document has moved here" type of HTML
@@ -453,10 +456,8 @@ void QNetworkReplyHandler::forwardData()
     if (!client)
         return;
 
-    if (!data.isEmpty()) {
-        m_responseDataSent = true;
+    if (!data.isEmpty())
         client->didReceiveData(m_resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
-    }
 }
 
 void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
@@ -568,7 +569,7 @@ void QNetworkReplyHandler::resetState()
 {
     m_redirected = false;
     m_responseSent = false;
-    m_responseDataSent = false;
+    m_responseContainsData = false;
     m_shouldStart = true;
     m_shouldFinish = false;
     m_shouldSendResponse = false;
