@@ -65,7 +65,7 @@ class FlakyTestReporter(object):
     def _create_bug_for_flaky_test(self, flaky_test, author_emails, latest_flake_message):
         format_values = {
             'test': flaky_test,
-            'authors': join_with_separators(author_emails),
+            'authors': join_with_separators(sorted(author_emails)),
             'flake_message': latest_flake_message,
             'test_url': urls.view_source_url(flaky_test),
             'bot_name': self._bot_name,
@@ -73,6 +73,7 @@ class FlakyTestReporter(object):
         title = "Flaky Test: %(test)s" % format_values
         description = """This is an automatically generated bug from the %(bot_name)s.
 %(test)s has been flaky on the %(bot_name)s.
+
 %(test)s was authored by %(authors)s.
 %(test_url)s
 
@@ -83,9 +84,9 @@ The bots will update this with information from each new failure.
 If you would like to track this test fix with another bug, please close this bug as a duplicate.
 """ % format_values
 
-        self._tool_bugs.create_bug(title, description,
+        self._tool.bugs.create_bug(title, description,
             component="Tools / Tests",
-            cc=",".join(author_bugzilla_emails))
+            cc=",".join(author_emails))
 
     # This is over-engineered, but it makes for pretty bug messages.
     def _optional_author_string(self, author_emails):

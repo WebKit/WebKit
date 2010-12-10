@@ -1,5 +1,18 @@
 2010-12-10  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        The commit-queue should file bugs about flaky tests it encounters
+        https://bugs.webkit.org/show_bug.cgi?id=50803
+
+        create_bug_for_flaky_test was insufficiently tested, thus buggy.
+        Now it's tested.
+
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Somehow this last-minute edit didn't quite get committed.
 
         The commit-queue should file bugs about flaky tests it encounters
