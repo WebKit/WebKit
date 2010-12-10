@@ -881,7 +881,6 @@ SET(WebCore_SOURCES
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RegisteredEventListener.cpp
-    dom/ScopedEventQueue.cpp
     dom/ScriptableDocumentParser.cpp
     dom/ScriptElement.cpp
     dom/ScriptExecutionContext.cpp

@@ -1218,7 +1218,7 @@ void Element::dispatchAttrRemovalEvent(Attribute*)
     if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
     ExceptionCode ec = 0;
-    dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
+    dispatchEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
         attr->value(), document()->attrName(attr->id()), MutationEvent::REMOVAL), ec);
 #endif
 }
@@ -1231,7 +1231,7 @@ void Element::dispatchAttrAdditionEvent(Attribute*)
     if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
     ExceptionCode ec = 0;
-    dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
+    dispatchEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
         attr->value(), document()->attrName(attr->id()), MutationEvent::ADDITION), ec);
 #endif
 }

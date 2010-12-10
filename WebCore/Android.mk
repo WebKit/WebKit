@@ -165,7 +165,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/QualifiedName.cpp \
 	dom/Range.cpp \
 	dom/RegisteredEventListener.cpp \
-	dom/ScopedEventQueue.cpp \
 	dom/ScriptableDocumentParser.cpp \
 	dom/ScriptElement.cpp \
 	dom/ScriptExecutionContext.cpp \

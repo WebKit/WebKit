@@ -33,7 +33,6 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "ScopedEventQueue.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
@@ -85,13 +84,10 @@ void EditCommand::apply()
     if (isTopLevelCommand())
         updateLayout();
 
-    {
-        EventQueueScope scope;
-        DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
-        deleteButtonController->disable();
-        doApply();
-        deleteButtonController->enable();
-    }
+    DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
+    deleteButtonController->disable();
+    doApply();
+    deleteButtonController->enable();
 
     if (isTopLevelCommand()) {
         // Only need to call appliedEditing for top-level commands, and TypingCommands do it on their

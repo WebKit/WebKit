@@ -520,8 +520,7 @@ public:
     virtual void postDispatchEventHandler(Event*, void* /*dataFromPreDispatch*/) { }
 
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(PassRefPtr<Event>);
-    void dispatchScopedEvent(PassRefPtr<Event>);
+    virtual bool dispatchEvent(PassRefPtr<Event>);
 
     bool dispatchGenericEvent(PassRefPtr<Event>);
     virtual void handleLocalEvents(Event*);

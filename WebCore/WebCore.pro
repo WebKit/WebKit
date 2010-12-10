@@ -762,7 +762,6 @@ SOURCES += \
     dom/Range.cpp \
     dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
-    dom/ScopedEventQueue.cpp \
     dom/ScriptableDocumentParser.cpp \
     dom/ScriptElement.cpp \
     dom/ScriptExecutionContext.cpp \

@@ -100,7 +100,6 @@
 #include "ProgressEvent.cpp"
 #include "Range.cpp"
 #include "RegisteredEventListener.cpp"
-#include "ScopedEventQueue.cpp"
 #include "ScriptElement.cpp"
 #include "ScriptExecutionContext.cpp"
 #include "ScriptableDocumentParser.cpp"

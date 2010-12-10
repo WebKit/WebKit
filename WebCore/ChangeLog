@@ -1,3 +1,34 @@
+2010-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73684.
+        http://trac.webkit.org/changeset/73684
+        https://bugs.webkit.org/show_bug.cgi?id=50801
+
+        "missing bug number" (Requested by rniwa on #webkit).
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchAttrRemovalEvent):
+        (WebCore::Element::dispatchAttrAdditionEvent):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchUIEvent):
+        * dom/Node.h:
+        * dom/ScopedEventQueue.cpp: Removed.
+        * dom/ScopedEventQueue.h: Removed.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+
 2010-12-09  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

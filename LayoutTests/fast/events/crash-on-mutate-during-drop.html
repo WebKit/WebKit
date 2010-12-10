@@ -2,7 +2,7 @@
 <head>
 <script>
 function foo() {
-    if (event.type == "DOMNodeInserted" && event.target.nodeType == 3)
+    if (event.type == "DOMNodeInserted" && event.target.nodeName == "BR")
         document.body.innerHTML = "PASSED";
 }
 
@@ -12,7 +12,7 @@ function runTest() {
 
     window.layoutTestController.dumpAsText();
 
-    document.addEventListener("DOMNodeInserted", function() { foo() }, true);
+    document.body.addEventListener("DOMNodeInserted", function() { foo() }, true);
 
     // Select the element 'dragSource'.
     var selection = window.getSelection();

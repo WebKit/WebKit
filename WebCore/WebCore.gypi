@@ -1318,8 +1318,6 @@
             'dom/RawDataDocumentParser.h',
             'dom/RegisteredEventListener.cpp',
             'dom/RegisteredEventListener.h',
-            'dom/ScopedEventQueue.cpp',
-            'dom/ScopedEventQueue.h',
             'dom/ScriptableDocumentParser.cpp',
             'dom/ScriptableDocumentParser.h',
             'dom/ScriptElement.cpp',
