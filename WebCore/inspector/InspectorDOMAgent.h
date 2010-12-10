@@ -119,9 +119,9 @@ namespace WebCore {
         void addInspectedNode(long nodeId);
         void performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously);
         void searchCanceled();
-        bool shouldBreakOnNodeInsertion(Node* node, Node* parent, PassRefPtr<InspectorValue>* details);
-        bool shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorValue>* details);
-        bool shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorValue>* details);
+        bool shouldBreakOnNodeInsertion(Node* node, Node* parent, PassRefPtr<InspectorObject> details);
+        bool shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorObject> details);
+        bool shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorObject> details);
 
         // Methods called from the InspectorController.
         void setDocument(Document* document);
@@ -143,8 +143,8 @@ namespace WebCore {
 
         String documentURLString(Document* document) const;
 
-        String setDOMBreakpoint(long nodeId, long type);
-        void removeDOMBreakpoint(const String& breakpointId);
+        void setDOMBreakpoint(long nodeId, long type);
+        void removeDOMBreakpoint(long nodeId, long type);
 
     private:
         void startListening(Document* document);
@@ -161,9 +161,7 @@ namespace WebCore {
 
         bool hasBreakpoint(Node* node, long type);
         void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
-        void removeBreakpointsForNode(Node* node);
-        PassRefPtr<InspectorValue> descriptionForDOMEvent(Node* target, long breakpointType, bool insertion);
-        String createBreakpointId(long nodeId, long type);
+        void descriptionForDOMEvent(Node* target, long breakpointType, bool insertion, PassRefPtr<InspectorObject> description);
 
         PassRefPtr<InspectorObject> buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
         PassRefPtr<InspectorArray> buildArrayForElementAttributes(Element* element);
@@ -204,8 +202,6 @@ namespace WebCore {
         HashSet<RefPtr<Node> > m_searchResults;
         Vector<long> m_inspectedNodes;
         HashMap<Node*, uint32_t> m_breakpoints;
-        typedef pair<long, long> Breakpoint;
-        HashMap<String, Breakpoint> m_idToBreakpoint;
     };
 
 #endif

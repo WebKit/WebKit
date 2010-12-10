@@ -145,8 +145,12 @@ module core {
         [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
 
-        [domain=Inspector] void setNativeBreakpoint(in Object breakpoint, out String breakpointId);
-        [domain=Inspector] void removeNativeBreakpoint(in String breakpointId);
+        [domain=DOM] void setDOMBreakpoint(in long nodeId, in long type);
+        [domain=DOM] void removeDOMBreakpoint(in long nodeId, in long type);
+        [domain=Inspector] void setEventListenerBreakpoint(in String eventName);
+        [domain=Inspector] void removeEventListenerBreakpoint(in String eventName);
+        [domain=Inspector] void setXHRBreakpoint(in String url);
+        [domain=Inspector] void removeXHRBreakpoint(in String url);
 
         [domain=Inspector] void enableProfiler(in boolean always);
         [domain=Inspector] void disableProfiler(in boolean always);

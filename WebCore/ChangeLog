@@ -1,3 +1,48 @@
+2010-12-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce a pair of set/remove methods for each breakpoint type.
+        https://bugs.webkit.org/show_bug.cgi?id=50809
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setEventListenerBreakpoint):
+        (WebCore::InspectorController::removeEventListenerBreakpoint):
+        (WebCore::InspectorController::hasEventListenerBreakpoint):
+        (WebCore::InspectorController::setXHRBreakpoint):
+        (WebCore::InspectorController::removeXHRBreakpoint):
+        (WebCore::InspectorController::hasXHRBreakpoint):
+        (WebCore::InspectorController::clearNativeBreakpoints):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::removeDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeInsertion):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeRemoval):
+        (WebCore::InspectorDOMAgent::shouldBreakOnAttributeModification):
+        (WebCore::InspectorDOMAgent::descriptionForDOMEvent):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.NativeBreakpoint):
+        (WebInspector.DOMBreakpoint):
+        (WebInspector.EventListenerBreakpoint):
+        (WebInspector.XHRBreakpoint):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype._nativeBreakpointHit):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.debuggerPaused):
+
 2010-12-10  Adam Roben  <aroben@apple.com>
 
         Windows production build fix after r72555

@@ -760,17 +760,11 @@ void InspectorDOMAgent::searchCanceled()
     m_searchResults.clear();
 }
 
-String InspectorDOMAgent::setDOMBreakpoint(long nodeId, long type)
+void InspectorDOMAgent::setDOMBreakpoint(long nodeId, long type)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
-        return "";
-
-    String breakpointId = createBreakpointId(nodeId, type);
-    if (m_idToBreakpoint.contains(breakpointId))
-        return "";
-
-    m_idToBreakpoint.set(breakpointId, std::make_pair(nodeId, type));
+        return;
 
     uint32_t rootBit = 1 << type;
     m_breakpoints.set(node, m_breakpoints.get(node) | rootBit);
@@ -778,19 +772,15 @@ String InspectorDOMAgent::setDOMBreakpoint(long nodeId, long type)
         for (Node* child = innerFirstChild(node); child; child = innerNextSibling(child))
             updateSubtreeBreakpoints(child, rootBit, true);
     }
-
-    return breakpointId;
 }
 
-void InspectorDOMAgent::removeDOMBreakpoint(const String& breakpointId)
+void InspectorDOMAgent::removeDOMBreakpoint(long nodeId, long type)
 {
-    Breakpoint breakpoint = m_idToBreakpoint.take(breakpointId);
-
-    Node* node = nodeForId(breakpoint.first);
+    Node* node = nodeForId(nodeId);
     if (!node)
         return;
 
-    uint32_t rootBit = 1 << breakpoint.second;
+    uint32_t rootBit = 1 << type;
     uint32_t mask = m_breakpoints.get(node) & ~rootBit;
     if (mask)
         m_breakpoints.set(node, mask);
@@ -803,42 +793,41 @@ void InspectorDOMAgent::removeDOMBreakpoint(const String& breakpointId)
     }
 }
 
-bool InspectorDOMAgent::shouldBreakOnNodeInsertion(Node*, Node* parent, PassRefPtr<InspectorValue>* details)
+bool InspectorDOMAgent::shouldBreakOnNodeInsertion(Node*, Node* parent, PassRefPtr<InspectorObject> details)
 {
     if (hasBreakpoint(parent, SubtreeModified)) {
-        *details = descriptionForDOMEvent(parent, SubtreeModified, true);
+        descriptionForDOMEvent(parent, SubtreeModified, true, details);
         return true;
     }
     return false;
 }
 
-bool InspectorDOMAgent::shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorValue>* details)
+bool InspectorDOMAgent::shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorObject> details)
 {
     if (hasBreakpoint(node, NodeRemoved)) {
-        *details = descriptionForDOMEvent(node, NodeRemoved, false);
+        descriptionForDOMEvent(node, NodeRemoved, false, details);
         return true;
     }
     if (hasBreakpoint(innerParentNode(node), SubtreeModified)) {
-        *details = descriptionForDOMEvent(node, SubtreeModified, false);
+        descriptionForDOMEvent(node, SubtreeModified, false, details);
         return true;
     }
     return false;
 }
 
-bool InspectorDOMAgent::shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorValue>* details)
+bool InspectorDOMAgent::shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorObject> details)
 {
     if (hasBreakpoint(element, AttributeModified)) {
-        *details = descriptionForDOMEvent(element, AttributeModified, false);
+        descriptionForDOMEvent(element, AttributeModified, false, details);
         return true;
     }
     return false;
 }
 
-PassRefPtr<InspectorValue> InspectorDOMAgent::descriptionForDOMEvent(Node* target, long breakpointType, bool insertion)
+void InspectorDOMAgent::descriptionForDOMEvent(Node* target, long breakpointType, bool insertion, PassRefPtr<InspectorObject> description)
 {
     ASSERT(hasBreakpoint(target, breakpointType));
 
-    RefPtr<InspectorObject> description = InspectorObject::create();
     Node* breakpointOwner = target;
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
         // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
@@ -862,9 +851,8 @@ PassRefPtr<InspectorValue> InspectorDOMAgent::descriptionForDOMEvent(Node* targe
 
     long breakpointOwnerNodeId = m_documentNodeToIdMap.get(breakpointOwner);
     ASSERT(breakpointOwnerNodeId);
-    description->setString("breakpointId", createBreakpointId(breakpointOwnerNodeId, breakpointType));
-
-    return description;
+    description->setNumber("nodeId", breakpointOwnerNodeId);
+    description->setNumber("type", breakpointType);
 }
 
 String InspectorDOMAgent::documentURLString(Document* document) const
@@ -1106,14 +1094,14 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
 
     if (m_breakpoints.size()) {
         // Remove subtree breakpoints.
-        removeBreakpointsForNode(node);
+        m_breakpoints.remove(node);
         Vector<Node*> stack(1, innerFirstChild(node));
         do {
             Node* node = stack.last();
             stack.removeLast();
             if (!node)
                 continue;
-            removeBreakpointsForNode(node);
+            m_breakpoints.remove(node);
             stack.append(innerFirstChild(node));
             stack.append(innerNextSibling(node));
         } while (!stack.isEmpty());
@@ -1178,25 +1166,6 @@ void InspectorDOMAgent::updateSubtreeBreakpoints(Node* node, uint32_t rootMask, 
 
     for (Node* child = innerFirstChild(node); child; child = innerNextSibling(child))
         updateSubtreeBreakpoints(child, newRootMask, set);
-}
-
-void InspectorDOMAgent::removeBreakpointsForNode(Node* node)
-{
-    uint32_t mask = m_breakpoints.take(node);
-    if (!mask)
-        return;
-    long nodeId = m_documentNodeToIdMap.get(node);
-    if (!nodeId)
-        return;
-    for (int type = 0; type < DOMBreakpointTypesCount; ++type) {
-        if (mask && (1 << type))
-            m_idToBreakpoint.remove(createBreakpointId(nodeId, type));
-    }
-}
-
-String InspectorDOMAgent::createBreakpointId(long nodeId, long type)
-{
-    return makeString("dom:", String::number(nodeId), ':', String::number(type));
 }
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)

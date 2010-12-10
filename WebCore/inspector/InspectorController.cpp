@@ -124,10 +124,6 @@ using namespace std;
 
 namespace WebCore {
 
-static const char* const domNativeBreakpointType = "DOM";
-static const char* const eventListenerNativeBreakpointType = "EventListener";
-static const char* const xhrNativeBreakpointType = "XHR";
-
 const char* const InspectorController::ElementsPanel = "elements";
 const char* const InspectorController::ConsolePanel = "console";
 const char* const InspectorController::ScriptsPanel = "scripts";
@@ -152,7 +148,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
-    , m_lastBreakpointId(0)
+    , m_hasXHRBreakpointWithEmptyURL(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -1386,81 +1382,57 @@ void InspectorController::resume()
         m_debuggerAgent->resume();
 }
 
-void InspectorController::setNativeBreakpoint(PassRefPtr<InspectorObject> breakpoint, String* breakpointId)
+void InspectorController::setEventListenerBreakpoint(const String& eventName)
 {
-    *breakpointId = "";
-    String type;
-    if (!breakpoint->getString("type", &type))
-        return;
-    RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
-    if (!condition)
-        return;
-    if (type == xhrNativeBreakpointType) {
-        String url;
-        if (!condition->getString("url", &url))
-            return;
-        *breakpointId = String::number(++m_lastBreakpointId);
-        m_XHRBreakpoints.set(*breakpointId, url);
-        m_nativeBreakpoints.set(*breakpointId, type);
-    } else if (type == eventListenerNativeBreakpointType) {
-        String eventName;
-        if (!condition->getString("eventName", &eventName))
-            return;
-        if (m_eventListenerBreakpoints.contains(eventName))
-            return;
-        *breakpointId = eventName;
-        m_eventListenerBreakpoints.add(eventName);
-        m_nativeBreakpoints.set(*breakpointId, type);
-    } else if (type == domNativeBreakpointType) {
-        if (!m_domAgent)
-            return;
-        double nodeIdNumber;
-        if (!condition->getNumber("nodeId", &nodeIdNumber))
-            return;
-        double domBreakpointTypeNumber;
-        if (!condition->getNumber("type", &domBreakpointTypeNumber))
-            return;
-        long nodeId = (long) nodeIdNumber;
-        long domBreakpointType = (long) domBreakpointTypeNumber;
-        *breakpointId = m_domAgent->setDOMBreakpoint(nodeId, domBreakpointType);
-        if (!breakpointId->isEmpty())
-            m_nativeBreakpoints.set(*breakpointId, type);
-    }
+    m_eventListenerBreakpoints.add(eventName);
 }
 
-void InspectorController::removeNativeBreakpoint(const String& breakpointId)
+void InspectorController::removeEventListenerBreakpoint(const String& eventName)
 {
-    String type = m_nativeBreakpoints.take(breakpointId);
-    if (type == xhrNativeBreakpointType)
-        m_XHRBreakpoints.remove(breakpointId);
-    else if (type == eventListenerNativeBreakpointType)
-        m_eventListenerBreakpoints.remove(breakpointId);
-    else if (type == domNativeBreakpointType) {
-        if (m_domAgent)
-            m_domAgent->removeDOMBreakpoint(breakpointId);
-    }
+    m_eventListenerBreakpoints.remove(eventName);
 }
 
-String InspectorController::findEventListenerBreakpoint(const String& eventName)
+bool InspectorController::hasEventListenerBreakpoint(const String& eventName)
 {
-    return m_eventListenerBreakpoints.contains(eventName) ? eventName : "";
+    return m_eventListenerBreakpoints.contains(eventName);
 }
 
-String InspectorController::findXHRBreakpoint(const String& url)
+void InspectorController::setXHRBreakpoint(const String& url)
 {
-    for (HashMap<String, String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
-        if (url.contains(it->second))
-            return it->first;
+    if (url.isEmpty())
+        m_hasXHRBreakpointWithEmptyURL = true;
+    else
+        m_XHRBreakpoints.add(url);
+}
+
+void InspectorController::removeXHRBreakpoint(const String& url)
+{
+    if (url.isEmpty())
+        m_hasXHRBreakpointWithEmptyURL = false;
+    else
+        m_XHRBreakpoints.remove(url);
+}
+
+bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpointURL)
+{
+    if (m_hasXHRBreakpointWithEmptyURL) {
+        *breakpointURL = "";
+        return true;
     }
-    return "";
+    for (HashSet<String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
+        if (url.contains(*it)) {
+            *breakpointURL = *it;
+            return true;
+        }
+    }
+    return false;
 }
 
 void InspectorController::clearNativeBreakpoints()
 {
-    m_nativeBreakpoints.clear();
     m_eventListenerBreakpoints.clear();
     m_XHRBreakpoints.clear();
-    m_lastBreakpointId = 0;
+    m_hasXHRBreakpointWithEmptyURL = false;
 }
 #endif
 

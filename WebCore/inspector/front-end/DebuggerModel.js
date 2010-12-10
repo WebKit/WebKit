@@ -134,8 +134,7 @@ WebInspector.DebuggerModel.prototype = {
         if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause)
             return;
         if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            var breakpointId = details.eventData.breakpointId;
-            this.dispatchEventToListeners("native-breakpoint-hit", { breakpointId: breakpointId, eventData: details.eventData });
+            this.dispatchEventToListeners("native-breakpoint-hit", details.eventData);
             return;
         }
 

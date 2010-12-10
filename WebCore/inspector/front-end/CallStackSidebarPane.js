@@ -26,7 +26,7 @@
 WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
-    WebInspector.debuggerModel.addEventListener("native-breakpoint-hit", this._nativeBreakpointHit, this);
+    WebInspector.breakpointManager.addEventListener("native-breakpoint-hit", this._nativeBreakpointHit, this);
     WebInspector.debuggerModel.addEventListener("script-breakpoint-hit", this._scriptBreakpointHit, this);
 }
 
@@ -173,9 +173,7 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     _nativeBreakpointHit:  function(event)
     {
-        var breakpoint = WebInspector.breakpointManager.findBreakpoint(event.data.breakpointId);
-        if (!breakpoint)
-            return;
+        var breakpoint = event.data.breakpoint;
         var statusMessageElement = document.createElement("div");
         statusMessageElement.className = "info";
         breakpoint.populateStatusMessageElement(statusMessageElement, event.data.eventData);

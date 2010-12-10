@@ -255,8 +255,12 @@ public:
     InspectorDebuggerAgent* debuggerAgent() const { return m_debuggerAgent.get(); }
     void resume();
 
-    void setNativeBreakpoint(PassRefPtr<InspectorObject> breakpoint, String* breakpointId);
-    void removeNativeBreakpoint(const String& breakpointId);
+    void setEventListenerBreakpoint(const String& eventName);
+    void removeEventListenerBreakpoint(const String& eventName);
+    bool hasEventListenerBreakpoint(const String& eventName);
+    void setXHRBreakpoint(const String& url);
+    void removeXHRBreakpoint(const String& url);
+    bool hasXHRBreakpoint(const String& url, String* breakpointURL);
 #endif
 
     void evaluateForTestInFrontend(long testCallId, const String& script);
@@ -306,8 +310,6 @@ private:
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
 
-    String findEventListenerBreakpoint(const String& eventName);
-    String findXHRBreakpoint(const String& url);
     void clearNativeBreakpoints();
 #endif
 #if ENABLE(DATABASE)
@@ -386,11 +388,9 @@ private:
     bool m_attachDebuggerWhenShown;
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
 
-    HashMap<String, String> m_nativeBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
-    HashMap<String, String> m_XHRBreakpoints;
-
-    unsigned int m_lastBreakpointId;
+    HashSet<String> m_XHRBreakpoints;
+    bool m_hasXHRBreakpointWithEmptyURL;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
