@@ -627,6 +627,20 @@ private:
     const WebEvent* m_previousCurrentEvent;
 };
 
+static bool isContextClick(const PlatformMouseEvent& event)
+{
+    if (event.button() == WebCore::RightButton)
+        return true;
+
+#if PLATFORM(MAC)
+    // FIXME: this really should be about OSX-style UI, not about the Mac port
+    if (event.button() == WebCore::LeftButton && event.ctrlKey())
+        return true;
+#endif
+
+    return false;
+}
+
 static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
 {
     Frame* frame = page->mainFrame();
@@ -638,12 +652,12 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
     switch (platformMouseEvent.eventType()) {
         case WebCore::MouseEventPressed:
         {
-            if (platformMouseEvent.button() == WebCore::RightButton)
+            if (isContextClick(platformMouseEvent))
                 page->contextMenuController()->clearContextMenu();
             
             bool handled = frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
             
-            if (platformMouseEvent.button() == WebCore::RightButton) {
+            if (isContextClick(platformMouseEvent)) {
                 handled = frame->eventHandler()->sendContextMenuEvent(platformMouseEvent);
                 if (handled)
                     page->chrome()->showContextMenu();
