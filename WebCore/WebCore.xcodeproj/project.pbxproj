@@ -3928,7 +3928,7 @@
 		A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */; };
 		A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */; };
 		A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */; };
-		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; };
+		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */; };
 		A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */; };
 		A9C6E4E40D745E05006442E9 /* DOMMimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E4E20D745E05006442E9 /* DOMMimeType.h */; };

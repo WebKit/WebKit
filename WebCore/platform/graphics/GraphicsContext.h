@@ -30,9 +30,11 @@
 #include "ColorSpace.h"
 #include "DashArray.h"
 #include "FloatRect.h"
+#include "Gradient.h"
 #include "Image.h"
 #include "IntRect.h"
 #include "Path.h"
+#include "Pattern.h"
 #include "TextDirection.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -117,12 +119,9 @@ namespace WebCore {
     class DrawingBuffer;
     class Font;
     class Generator;
-    class Gradient;
     class GraphicsContextPlatformPrivate;
-    class GraphicsContextPrivate;
     class ImageBuffer;
     class KURL;
-    class Pattern;
     class SharedGraphicsContext3D;
     class TextRun;
 
@@ -147,6 +146,57 @@ namespace WebCore {
         InterpolationLow,
         InterpolationMedium,
         InterpolationHigh
+    };
+
+    struct GraphicsContextState {
+        GraphicsContextState()
+            : strokeThickness(0)
+            , shadowBlur(0)
+#if PLATFORM(CAIRO)
+            , globalAlpha(1)
+#endif
+            , textDrawingMode(TextModeFill)
+            , strokeColor(Color::black)
+            , fillColor(Color::black)
+            , strokeStyle(SolidStroke)
+            , fillRule(RULE_NONZERO)
+            , strokeColorSpace(ColorSpaceDeviceRGB)
+            , fillColorSpace(ColorSpaceDeviceRGB)
+            , shouldAntialias(true)
+            , paintingDisabled(false)
+            , shadowsIgnoreTransforms(false)
+        {
+        }
+
+        RefPtr<Gradient> strokeGradient;
+        RefPtr<Pattern> strokePattern;
+        
+        RefPtr<Gradient> fillGradient;
+        RefPtr<Pattern> fillPattern;
+
+        FloatSize shadowOffset;
+
+        float strokeThickness;
+        float shadowBlur;
+
+#if PLATFORM(CAIRO)
+        float globalAlpha;
+#endif
+        TextDrawingModeFlags textDrawingMode;
+
+        Color strokeColor;
+        Color fillColor;
+        Color shadowColor;
+
+        StrokeStyle strokeStyle;
+        WindRule fillRule;
+
+        ColorSpace strokeColorSpace;
+        ColorSpace fillColorSpace;
+
+        bool shouldAntialias;
+        bool paintingDisabled;
+        bool shadowsIgnoreTransforms;
     };
 
     class GraphicsContext : public Noncopyable {
@@ -188,6 +238,8 @@ namespace WebCore {
 
         void setShouldAntialias(bool);
         bool shouldAntialias() const;
+
+        const GraphicsContextState& state() const;
 
 #if PLATFORM(CG)
         void applyStrokePattern();
@@ -418,6 +470,13 @@ namespace WebCore {
         void markDirtyRect(const IntRect&); // Hints that a portion of the backing store is dirty.
 
     private:
+        void platformInit(PlatformGraphicsContext*);
+        void platformDestroy();
+
+#if PLATFORM(WIN)
+        void platformInit(HDC, bool hasAlpha = false);
+#endif
+
         void savePlatformState();
         void restorePlatformState();
 
@@ -441,11 +500,11 @@ namespace WebCore {
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);
 
-        static GraphicsContextPrivate* createGraphicsContextPrivate();
-        static void destroyGraphicsContextPrivate(GraphicsContextPrivate*);
+        GraphicsContextPlatformPrivate* m_data;
 
-        GraphicsContextPrivate* m_common;
-        GraphicsContextPlatformPrivate* m_data; // Deprecated; m_commmon can just be downcasted. To be removed.
+        GraphicsContextState m_state;
+        Vector<GraphicsContextState> m_stack;
+        bool m_updatingControlTints;
     };
 
 } // namespace WebCore

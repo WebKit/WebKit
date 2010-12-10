@@ -65,9 +65,15 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
 }
 
 GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
-    : m_common(createGraphicsContextPrivate())
-    , m_data(new GraphicsContextPlatformPrivate)
+    : m_updatingControlTints(false)
 {
+    platformInit(dc, hasAlpha);
+}
+
+void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
+{
+    m_data = new GraphicsContextPlatformPrivate;
+
     if (dc) {
         m_data->cr = createCairoContextWithHDC(dc, hasAlpha);
         m_data->m_hdc = dc;

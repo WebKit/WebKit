@@ -28,7 +28,6 @@
 #include "GDIExtras.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
-#include "GraphicsContextPrivate.h"
 #include "NotImplemented.h"
 #include "Path.h"
 #include "PlatformPathWinCE.h"
@@ -580,15 +579,13 @@ private:
 };
 
 
-GraphicsContext::GraphicsContext(PlatformGraphicsContext* dc)
-: m_common(createGraphicsContextPrivate())
-, m_data(new GraphicsContextPlatformPrivate(dc))
+void GraphicsContext::platformInit(PlatformGraphicsContext* dc)
 {
+    m_data = new GraphicsContextPlatformPrivate(dc);
 }
 
-GraphicsContext::~GraphicsContext()
+void GraphicsContext::platformDestroy()
 {
-    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 
@@ -1316,8 +1313,8 @@ Color gradientAverageColor(const Gradient* gradient)
 
 void GraphicsContext::fillPath(const Path& path)
 {
-    Color c = m_common->state.fillGradient
-        ? gradientAverageColor(m_common->state.fillGradient.get())
+    Color c = m_state.fillGradient
+        ? gradientAverageColor(m_state.fillGradient.get())
         : fillColor();
 
     if (!c.alpha() || !m_data->m_opacity)
@@ -1487,8 +1484,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 {
     savePlatformState();
 
-    if (m_common->state.fillGradient)
-        fillRect(rect, m_common->state.fillGradient.get());
+    if (m_state.fillGradient)
+        fillRect(rect, m_state.fillGradient.get());
     else
         fillRect(rect, fillColor(), ColorSpaceDeviceRGB);
 
