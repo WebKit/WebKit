@@ -178,6 +178,7 @@ void WebEditorClient::respondToChangedContents()
     notImplemented();
 }
 
+#if !PLATFORM(MAC)
 void WebEditorClient::respondToChangedSelection()
 {
     static const String WebViewDidChangeSelectionNotification = "WebViewDidChangeSelectionNotification";
@@ -187,7 +188,8 @@ void WebEditorClient::respondToChangedSelection()
         return;
     m_page->send(Messages::WebPageProxy::DidSelectionChange(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition()));
 }
-
+#endif
+    
 void WebEditorClient::didEndEditing()
 {
     static const String WebViewDidEndEditingNotification = "WebViewDidEndEditingNotification";

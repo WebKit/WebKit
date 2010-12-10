@@ -24,6 +24,7 @@
  */
 
 #import "WKView.h"
+#import <WebCore/Editor.h>
 #import <WebCore/KeyboardEvent.h>
 
 namespace WebKit {
@@ -38,10 +39,11 @@ namespace WebKit {
 - (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 - (Vector<WebCore::KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent;
+- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<WebCore::CompositionUnderline>&)lines;
 - (void)_setEventBeingResent:(NSEvent *)event;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition;
+- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition range:(NSRange)newrange;
 
 - (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut;
 

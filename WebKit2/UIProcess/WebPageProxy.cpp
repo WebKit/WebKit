@@ -486,6 +486,25 @@ void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreen
 
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates), m_pageID);
 }
+
+void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
+{
+    process()->sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
+}
+    
+uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
+{
+    uint64_t result;
+    process()->sendSync(Messages::WebPage::CharacterIndexForPoint(point), Messages::WebPage::CharacterIndexForPoint::Reply(result), m_pageID);
+    return result;
+}
+
+WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uint64_t length)
+{
+    IntRect resultRect;
+    process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
+    return resultRect;
+}    
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -751,9 +770,9 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::interpretKeyEvent(uint32_t type, Vector<KeypressCommand>& commandsList)
+void WebPageProxy::interpretKeyEvent(uint32_t type, Vector<KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<CompositionUnderline>& underlines)
 {
-    m_pageClient->interceptKeyEvent(m_keyEventQueue.first(), commandsList);
+    m_pageClient->interceptKeyEvent(m_keyEventQueue.first(), commandsList, selectionStart, selectionEnd, underlines);
 }
 #endif
 
@@ -1258,10 +1277,17 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
 }
 
 // Selection change support
+#if PLATFORM(MAC)
+void WebPageProxy::didSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
+{
+    m_pageClient->selectionChanged(isNone, isContentEditable, isPasswordField, hasComposition, location, length);
+}
+#else    
 void WebPageProxy::didSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
 {
     m_pageClient->selectionChanged(isNone, isContentEditable, isPasswordField, hasComposition);
 }
+#endif
     
 // Undo management
 

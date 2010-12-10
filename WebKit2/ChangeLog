@@ -1,3 +1,81 @@
+2010-12-09  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement IME support for Mac.
+        <rdar://problem/7660589> WebKit2: Implement IME support for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=50788
+            
+        This patch addes support for input methods in WebKit2.
+        In order to support IME, it was necessary to add synchronous calls from the UIProcess
+        to the WebProcess. These calls all have a timeout of 1 second.
+        The current implementation still uses the NSTextInput protocol, but the plan is to move
+        to the NSTextInputClient protocol. This has not been done yet for ease of comparison with
+        WebKit. attributedSubstringFromRange is the only method that has not been implemented, because
+        I have not yet decided what is the best way to send an NSAttributedString across the process
+        boundary.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction): Added template for member function.
+        with four reply arguments.
+        * Scripts/webkit2/messages.py: Added CompositionUnderline and relevant header.
+        * Shared/WebCoreArgumentCoders.h:
+        (CoreIPC::): Added encoder/decoder for CompositionUnderline.
+        * UIProcess/API/mac/PageClientImpl.h: Added parameters to interceptKeyEvent and selectionChanged.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::selectionChanged): Added parameters.
+        (WebKit::PageClientImpl::interceptKeyEvent): Added parameters.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:pageGroupRef:]): Added initialization of new private members.
+        (-[WKView insertText:]):
+        (-[WKView _selectionChanged:isEditable:isPassword:hasMarkedText:range:]): Added parameters.
+        (-[WKView _interceptKeyEvent:hasComposition:start:end:lines:WebCore::]): Added parameters.
+        (-[WKView keyDown:]): Modified to reset state on each keyDown.
+        (-[WKView selectedRange]): Added.
+        (-[WKView hasMarkedText]): Added.
+        (-[WKView unmarkText]): Added.
+        (-[WKView validAttributesForMarkedText]): Added.
+        (extractUnderlines): Added.
+        (-[WKView setMarkedText:selectedRange:]): Added.
+        (-[WKView markedRange]): Added.
+        (-[WKView attributedSubstringFromRange:]): Added.
+        (-[WKView characterIndexForPoint:]): Added.
+        (-[WKView firstRectForCharacterRange:]): Added.
+        (-[WKView conversationIdentifier]): Added.
+        * UIProcess/API/mac/WKViewInternal.h: Added parameters to _interceptKeyEvent and _selectionChanged.
+        * UIProcess/PageClient.h: Added parameters to interpretKeyEvent and selectionChanged.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getMarkedRange): Added.
+        (WebKit::WebPageProxy::characterIndexForPoint): Added.
+        (WebKit::WebPageProxy::firstRectForCharacterRange): Added.
+        (WebKit::WebPageProxy::interpretKeyEvent): Additional parameters.
+        (WebKit::WebPageProxy::didSelectionChange): Additional parameters for Mac platform.
+        * UIProcess/WebPageProxy.h: Added new methods and parameters to didSelectionChange
+        and interpretKeyEvent.
+        * UIProcess/WebPageProxy.messages.in: Added parameters to interpretKeyEvent and selectionChanged messages.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::sendSync): Added support for synchronous messages.
+        The default timeout is 1 second.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: respondToChangedSelection is now
+        only for non Mac platform.
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::respondToChangedSelection): Added implementation for Mac platform.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveSyncMessage): Added.
+        * WebProcess/WebPage/WebPage.h: Added new methods and support for synchronous messages.
+        * WebProcess/WebPage/WebPage.messages.in: Added new messages.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::interceptEditingKeyboardEvent): Added parameters.
+        (WebKit::WebPage::convertRangeToPlatformRange): Added.
+        (WebKit::WebPage::getMarkedRange): Added.
+        (WebKit::characterRangeAtPoint): Added.
+        (WebKit::WebPage::characterIndexForPoint): Added.
+        (WebKit::convertToRange): Added.
+        (WebKit::WebPage::firstRectForCharacterRange): Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage): Added.
+        * WebProcess/WebProcess.h: Added didReceiveSyncMessage.
+
 2010-12-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

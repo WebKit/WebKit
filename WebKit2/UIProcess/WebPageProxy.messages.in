@@ -104,7 +104,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(MAC)
     # Keyboard support
-    InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName)
+    InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)
 #endif
     
     # BackForward messages.
@@ -120,7 +120,12 @@ messages -> WebPageProxy {
     ClearAllEditCommands()
     
     # Selection messages.
+#if PLATFORM(MAC)
+    DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
+#endif
+#if !PLATFORM(MAC)
     DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
+#endif
 
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)

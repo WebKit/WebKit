@@ -250,6 +250,7 @@ def message_to_struct_declaration(message):
 def struct_or_class(namespace, type):
     structs = frozenset([
         'WebCore::KeypressCommand',
+        'WebCore::CompositionUnderline',
         'WebCore::PluginInfo',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
@@ -412,6 +413,7 @@ def headers_for_type(type):
         'WTF::String': '<wtf/text/WTFString.h>',
         'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebCore::PluginInfo': '<WebCore/PluginData.h>',
+        'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebWheelEvent': '"WebEvent.h"',

@@ -40,8 +40,10 @@
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/DOMDocumentFragmentInternal.h>
 #include <WebCore/DOMDocumentInternal.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/Page.h>
 #include <WebKit/WebResource.h>
 #include <WebKit/WebNSURLExtras.h>
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -61,6 +63,19 @@ using namespace WTF;
 
 namespace WebKit {
 
+void WebEditorClient::respondToChangedSelection()
+{
+    static const String WebViewDidChangeSelectionNotification = "WebViewDidChangeSelectionNotification";
+    m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
+    WebCore::Frame* frame = m_page->corePage()->focusController()->focusedFrame();
+    if (!frame)
+        return;
+    uint64_t location;
+    uint64_t length;
+    WebPage::convertRangeToPlatformRange(frame, frame->selection()->toNormalizedRange().get(), location, length);
+    m_page->send(Messages::WebPageProxy::DidSelectionChange(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition(), location, length));
+}
+    
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (m_page->interceptEditingKeyboardEvent(event, false))

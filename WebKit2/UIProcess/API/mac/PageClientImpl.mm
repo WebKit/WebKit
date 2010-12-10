@@ -147,9 +147,9 @@ void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 
 }
 
-void PageClientImpl::selectionChanged(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
+void PageClientImpl::selectionChanged(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
 {
-    [m_wkView _selectionChanged:isNone isEditable:isContentEditable isPassword:isPasswordField hasMarkedText:hasComposition];
+    [m_wkView _selectionChanged:isNone isEditable:isContentEditable isPassword:isPasswordField hasMarkedText:hasComposition range:NSMakeRange(location, length)];
 }
 
 static NSString* nameForEditAction(EditAction editAction)
@@ -222,9 +222,10 @@ void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabl
     [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
 }
 
-void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandsList)
+void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines)
 {
     commandsList = [m_wkView _interceptKeyEvent:event.nativeEvent()];
+    [m_wkView _getTextInputState:selectionStart selectionEnd:selectionEnd underlines:underlines];
 }
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)

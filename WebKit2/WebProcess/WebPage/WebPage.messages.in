@@ -96,6 +96,9 @@ messages -> WebPage {
 #if PLATFORM(MAC)
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates)
+    GetMarkedRange() -> (uint64_t location, uint64_t length)
+    CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
+    FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
 #endif
 
 #if PLATFORM(QT)

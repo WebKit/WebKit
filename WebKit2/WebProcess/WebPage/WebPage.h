@@ -139,6 +139,7 @@ public:
 
     // -- Called from WebProcess.
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     // -- InjectedBundle methods
     void initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClient*);
@@ -238,7 +239,13 @@ public:
     };
 
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
-
+#if PLATFORM(MAC)
+    void getMarkedRange(uint64_t& location, uint64_t& length);
+    void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
+    void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
+    static void convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length);
+#endif
+    
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -247,6 +254,7 @@ private:
     void platformInitialize();
 
     void didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);

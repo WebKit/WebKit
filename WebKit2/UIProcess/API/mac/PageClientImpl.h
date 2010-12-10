@@ -58,13 +58,13 @@ private:
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual void setEditCommandState(const String& commandName, bool isEnabled, int state);
-    virtual void interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandName);
+    virtual void interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines);
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
-    virtual void selectionChanged(bool, bool, bool, bool);
+    virtual void selectionChanged(bool, bool, bool, bool, uint64_t, uint64_t);
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);

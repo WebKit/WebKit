@@ -33,6 +33,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
@@ -327,6 +328,22 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     }
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::CompositionUnderline& underline)
+    {
+        encoder->encode(CoreIPC::In(underline.startOffset, underline.endOffset, underline.thick, underline.color.rgb()));
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::CompositionUnderline& underline)
+    {
+        uint32_t rgb;
+        if (!decoder->decode(CoreIPC::Out(underline.startOffset, underline.endOffset, underline.thick, rgb)))
+            return false;
+        underline.color = rgb;
+        return true;
+    }
+};
     
 } // namespace CoreIPC
 

@@ -35,7 +35,7 @@ namespace WebCore {
     struct KeypressCommand {
         KeypressCommand() { }
         KeypressCommand(const String& commandName) : commandName(commandName) { }
-        KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:" || commandName == "insertText"); }
+        KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { }
 
         String commandName;
         String text;

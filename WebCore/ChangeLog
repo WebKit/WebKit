@@ -1,3 +1,15 @@
+2010-12-09  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement IME support for Mac.
+        <rdar://problem/7660589> WebKit2: Implement IME support for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=50788
+
+        * dom/KeyboardEvent.h:
+        (WebCore::KeypressCommand::KeypressCommand): Removed ASSERT in constructor,
+        since it is now used for more than one command.
+
 2010-12-10  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.

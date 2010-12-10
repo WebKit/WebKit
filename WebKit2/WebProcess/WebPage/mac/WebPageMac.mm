@@ -33,9 +33,13 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/ScrollView.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 
 using namespace WebCore;
@@ -68,12 +72,31 @@ bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveC
     
     bool eventWasHandled = false;
     
-    if (shouldSaveCommand && !hasKeypressCommand) {
-        Vector<KeypressCommand> commandsList;        
-        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList), m_pageID))
+    if (shouldSaveCommand || !hasKeypressCommand) {
+        Vector<KeypressCommand> commandsList;  
+        Vector<CompositionUnderline> underlines;
+        unsigned start;
+        unsigned end;
+        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), 
+                                                         Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList, start, end, underlines),
+                                                         m_pageID, CoreIPC::Connection::NoTimeout))
             return false;
-        for (size_t i = 0; i < commandsList.size(); i++)
-            evt->keypressCommands().append(commandsList[i]);
+        if (commandsList.isEmpty())
+            return eventWasHandled;
+        
+        if (commandsList[0].commandName == "setMarkedText") {
+            frame->editor()->setComposition(commandsList[0].text, underlines, start, end);
+            eventWasHandled = true;
+        } else if (commandsList[0].commandName == "insertText" && frame->editor()->hasComposition()) {
+            frame->editor()->confirmComposition(commandsList[0].text);
+            eventWasHandled = true;
+        } else if (commandsList[0].commandName == "unmarkText") {
+            frame->editor()->confirmComposition();
+            eventWasHandled = true;
+        } else {
+            for (size_t i = 0; i < commandsList.size(); i++)
+                evt->keypressCommands().append(commandsList[i]);
+        }
     } else {
         size_t size = commands.size();
         // Are there commands that would just cause text insertion if executed via Editor?
@@ -99,6 +122,120 @@ bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveC
         }
     }
     return eventWasHandled;
+}
+
+void WebPage::convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length)
+{
+    location = NSNotFound;
+    length = 0;
+    if (!range || !range->startContainer())
+        return;
+        
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    
+    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
+    // that is not inside the current editable region.  These checks ensure we don't produce
+    // potentially invalid data when responding to such requests.
+    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
+        return;
+    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
+        return;
+            
+    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    ASSERT(testRange->startContainer() == scope);
+    location = TextIterator::rangeLength(testRange.get());
+            
+    ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    ASSERT(testRange->startContainer() == scope);
+    length = TextIterator::rangeLength(testRange.get()) - location;
+}
+    
+void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
+{
+    location = NSNotFound;
+    length = 0;
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+    
+    convertRangeToPlatformRange(frame, frame->editor()->compositionRange().get(), location, length);
+}
+
+static Range *characterRangeAtPoint(Frame* frame, const IntPoint point)
+{
+    VisiblePosition position = frame->visiblePositionForPoint(point);
+    if (position.isNull())
+        return NULL;
+    
+    VisiblePosition previous = position.previous();
+    if (previous.isNotNull()) {
+        Range *previousCharacterRange = makeRange(previous, position).get();
+        NSRect rect = frame->editor()->firstRectForRange(previousCharacterRange);
+        if (NSPointInRect(point, rect))
+            return previousCharacterRange;
+    }
+    
+    VisiblePosition next = position.next();
+    if (next.isNotNull()) {
+        Range *nextCharacterRange = makeRange(position, next).get();
+        NSRect rect = frame->editor()->firstRectForRange(nextCharacterRange);
+        if (NSPointInRect(point, rect))
+            return nextCharacterRange;
+    }
+    
+    return NULL;
+}
+    
+void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
+{
+    index = NSNotFound;
+    Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return;
+
+    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
+    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
+    
+    Range *range = characterRangeAtPoint(frame, result.point());
+    uint64_t length;
+    if (range)
+        convertRangeToPlatformRange(frame, range, index, length);
+}
+
+static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
+{
+    if (nsrange.location > INT_MAX)
+        return 0;
+    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
+        nsrange.length = INT_MAX - nsrange.location;
+        
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
+}
+    
+void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    resultRect.setLocation(IntPoint(0, 0));
+    resultRect.setSize(IntSize(0, 0));
+    
+    RefPtr<Range> range = convertToRange(frame, NSMakeRange(location, length));
+    if (range) {
+        ASSERT(range->startContainer());
+        ASSERT(range->endContainer());
+    }
+     
+    IntRect rect = frame->editor()->firstRectForRange(range.get());
+    resultRect = frame->view()->contentsToWindow(rect);
 }
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

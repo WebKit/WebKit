@@ -44,6 +44,7 @@
 #include "WebPolicyClient.h"
 #include "WebUIClient.h"
 #include <WebCore/EditAction.h>
+#include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/KeyboardEvent.h>
 #include <wtf/HashMap.h>
@@ -176,6 +177,12 @@ public:
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
+    void getMarkedRange(uint64_t& location, uint64_t& length);
+    uint64_t characterIndexForPoint(const WebCore::IntPoint);
+    WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
+    void didSelectionChange(bool, bool, bool, bool, uint64_t, uint64_t);
+#else
+    void didSelectionChange(bool, bool, bool, bool);
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -242,7 +249,6 @@ public:
     void addEditCommand(WebEditCommandProxy*);
     void removeEditCommand(WebEditCommandProxy*);
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
-    void didSelectionChange(bool, bool, bool, bool);
 
     WebProcessProxy* process() const;
     WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }
@@ -353,7 +359,7 @@ private:
 
 #if PLATFORM(MAC)
     // Keyboard handling
-    void interpretKeyEvent(uint32_t eventType, Vector<WebCore::KeypressCommand>&);
+    void interpretKeyEvent(uint32_t eventType, Vector<WebCore::KeypressCommand>&, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines);
 #endif
     
     // Find.

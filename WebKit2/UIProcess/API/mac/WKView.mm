@@ -33,6 +33,7 @@
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
+#import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
@@ -46,6 +47,7 @@
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
@@ -105,14 +107,24 @@ struct EditCommandState {
     // that has been already sent to WebCore.
     NSEvent *_keyDownEventBeingResent;
     Vector<KeypressCommand> _commandsList;
+
     BOOL _isSelectionNone;
     BOOL _isSelectionEditable;
     BOOL _isSelectionInPasswordField;
     BOOL _hasMarkedText;
+    Vector<CompositionUnderline> _underlines;
+    unsigned _selectionStart;
+    unsigned _selectionEnd;
+    NSRange _selectedRange;
 }
 @end
 
 @implementation WKViewData
+@end
+
+@interface NSObject (NSTextInputContextDetails)
+- (BOOL)wantsToHandleMouseEvents;
+- (BOOL)handleMouseEvent:(NSEvent *)event;
 @end
 
 @implementation WKView
@@ -144,10 +156,12 @@ struct EditCommandState {
 
     _data->_menuEntriesCount = 0;
     _data->_isPerformingUpdate = false;
+
     _data->_isSelectionNone = YES;
     _data->_isSelectionEditable = NO;
     _data->_isSelectionInPasswordField = NO;
     _data->_hasMarkedText = NO;
+    _data->_selectedRange = NSMakeRange(NSNotFound, 0);
 
     return self;
 }
@@ -344,12 +358,9 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
         _data->_page->handle##Type##Event(webEvent); \
     }
 
-EVENT_HANDLER(mouseDown, Mouse)
-EVENT_HANDLER(mouseDragged, Mouse)
 EVENT_HANDLER(mouseEntered, Mouse)
 EVENT_HANDLER(mouseExited, Mouse)
 EVENT_HANDLER(mouseMoved, Mouse)
-EVENT_HANDLER(mouseUp, Mouse)
 EVENT_HANDLER(otherMouseDown, Mouse)
 EVENT_HANDLER(otherMouseDragged, Mouse)
 EVENT_HANDLER(otherMouseMoved, Mouse)
@@ -362,6 +373,22 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 #undef EVENT_HANDLER
 
+#define MOUSE_EVENT_HANDLER(Selector) \
+    - (void)Selector:(NSEvent *)theEvent \
+    { \
+        NSInputManager *currentInputManager = [NSInputManager currentInputManager]; \
+        if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:theEvent]) \
+            return; \
+        WebMouseEvent webEvent = WebEventFactory::createWebMouseEvent(theEvent, self); \
+        _data->_page->handleMouseEvent(webEvent); \
+    }
+
+MOUSE_EVENT_HANDLER(mouseDown)
+MOUSE_EVENT_HANDLER(mouseDragged)
+MOUSE_EVENT_HANDLER(mouseUp)
+
+#undef MOUSE_EVENT_HANDLER
+
 - (void)doCommandBySelector:(SEL)selector
 {
     if (selector != @selector(noop:))
@@ -370,7 +397,33 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 - (void)insertText:(id)string
 {
-    _data->_commandsList.append(KeypressCommand("insertText", string));
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+    
+    LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
+    NSString *text;
+    bool isFromInputMethod = _data->_hasMarkedText;
+
+    if (isAttributedString) {
+        text = [string string];
+        // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
+        // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
+        // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
+        // NSAttributedString
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
+        LOG(TextInput, "ReplacementRange: %@", rangeString);
+        if (rangeString)
+            isFromInputMethod = YES;
+    } else
+        text = string;
+    
+    String eventText = text;
+    
+    if (!isFromInputMethod)
+        _data->_commandsList.append(KeypressCommand("insertText", text));
+    else {
+        eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+        _data->_commandsList.append(KeypressCommand("insertText", eventText));
+    }
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
@@ -432,22 +485,29 @@ EVENT_HANDLER(scrollWheel, Wheel)
     _data->_keyDownEventBeingResent = [event retain];
 }
 
-- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition
+- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition range:(NSRange)newrange
 {
     _data->_isSelectionNone = isNone;
     _data->_isSelectionEditable = isContentEditable;
     _data->_isSelectionInPasswordField = isPasswordField;
     _data->_hasMarkedText = hasComposition;
+    _data->_selectedRange = newrange;
 }
 
-- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent
+- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
 {
     _data->_commandsList.clear();
     // interpretKeyEvents will trigger one or more calls to doCommandBySelector or setText
     // that will populate the commandsList vector.
     [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    
     return _data->_commandsList;
+}
+
+- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<WebCore::CompositionUnderline>&)lines
+{
+    start = _data->_selectionStart;
+    end = _data->_selectionEnd;
+    lines = _data->_underlines;
 }
 
 - (void)keyUp:(NSEvent *)theEvent
@@ -457,6 +517,9 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    _data->_underlines.clear();
+    _data->_selectionStart = 0;
+    _data->_selectionEnd = 0;
     // We could be receiving a key down from AppKit if we have re-sent an event
     // that maps to an action that is currently unavailable (for example a copy when
     // there is no range selection).
@@ -472,17 +535,24 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 - (NSRange)selectedRange
 {
-    return NSMakeRange(NSNotFound, 0);
+    if (_data->_isSelectionNone || !_data->_isSelectionEditable)
+        return NSMakeRange(NSNotFound, 0);
+    
+    LOG(TextInput, "selectedRange -> (%u, %u)", _data->_selectedRange.location, _data->_selectedRange.length);
+    return _data->_selectedRange;
 }
 
 - (BOOL)hasMarkedText
 {
+    LOG(TextInput, "hasMarkedText -> %u", _data-> _hasMarkedText);
     return _data->_hasMarkedText;
 }
 
 - (void)unmarkText
 {
-    // Not implemented
+    LOG(TextInput, "unmarkText");
+    
+    _data->_commandsList.append(KeypressCommand("unmarkText"));
 }
 
 - (NSArray *)validAttributesForMarkedText
@@ -499,41 +569,95 @@ EVENT_HANDLER(scrollWheel, Wheel)
         //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
         CFRetain(validAttributes);
     }
+    LOG(TextInput, "validAttributesForMarkedText -> (...)");
     return validAttributes;
+}
+
+static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnderline>& result)
+{
+    int length = [[string string] length];
+    
+    int i = 0;
+    while (i < length) {
+        NSRange range;
+        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
+        
+        if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
+            Color color = Color::black;
+            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName])
+                color = colorFromNSColor([colorAttr colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
+            result.append(CompositionUnderline(range.location, NSMaxRange(range), color, [style intValue] > 1));
+        }
+        
+        i = range.location + range.length;
+    }
 }
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
-    // Not implemented
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+    
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
+    
+    NSString *text = string;
+    
+    if (isAttributedString) {
+        text = [string string];
+        extractUnderlines(string, _data->_underlines);
+    }
+    
+    _data->_commandsList.append(KeypressCommand("setMarkedText", text));
+    _data->_selectionStart = newSelRange.location;
+    _data->_selectionEnd = NSMaxRange(newSelRange);
 }
 
 - (NSRange)markedRange
 {
-    // Not implemented
-    return NSMakeRange(0, 0);
+    uint64_t location;
+    uint64_t length;
+
+    _data->_page->getMarkedRange(location, length);
+    LOG(TextInput, "markedRange -> (%u, %u)", location, length);
+    return NSMakeRange(location, length);
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
-    // Not implemented
+    // This is not implemented for now. Need to figure out how to serialize the attributed string across processes.
+    LOG(TextInput, "attributedSubstringFromRange");
     return nil;
-}
-
-- (NSInteger)conversationIdentifier
-{
-    return (NSInteger)self;
 }
 
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
-    // Not implemented
-    return NSNotFound;
+    NSWindow *window = [self window];
+    
+    if (window)
+        thePoint = [window convertScreenToBase:thePoint];
+    thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame 
+    
+    uint64_t result = _data->_page->characterIndexForPoint(IntPoint(thePoint));
+    LOG(TextInput, "characterIndexForPoint:(%f, %f) -> %u", thePoint.x, thePoint.y, result);
+    return result;
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 { 
-    // Not implemented
-    return NSMakeRect(0, 0, 0, 0);
+    // Just to match NSTextView's behavior. Regression tests cannot detect this;
+    // to reproduce, use a test application from http://bugs.webkit.org/show_bug.cgi?id=4682
+    // (type something; try ranges (1, -1) and (2, -1).
+    if ((theRange.location + theRange.length < theRange.location) && (theRange.location + theRange.length != 0))
+        theRange.length = 0;
+    
+    NSRect resultRect = _data->_page->firstRectForCharacterRange(theRange.location, theRange.length);
+    resultRect = [self convertRect:resultRect toView:nil];
+    
+    NSWindow *window = [self window];
+    if (window)
+        resultRect.origin = [window convertBaseToScreen:resultRect.origin];
+    
+    LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
+    return resultRect;
 }
 
 - (void)_updateActiveState
@@ -727,6 +851,11 @@ static bool isViewVisible(NSView *view)
         hitView = self;
 #endif
     return hitView;
+}
+
+- (NSInteger)conversationIdentifier
+{
+    return (NSInteger)self;
 }
 
 @end
