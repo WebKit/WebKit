@@ -70,7 +70,7 @@ SkXfermode::Mode WebCoreCompositeToSkiaComposite(CompositeOperator op)
             return (SkXfermode::Mode)table[i].m_xfermodeMode;
     }
 
-    SkDEBUGF(("GraphicsContext::setCompositeOperation uknown CompositeOperator %d\n", op));
+    SkDEBUGF(("GraphicsContext::setPlatformCompositeOperation unknown CompositeOperator %d\n", op));
     return SkXfermode::kSrcOver_Mode; // fall-back
 }
 

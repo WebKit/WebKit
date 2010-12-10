@@ -671,10 +671,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (isOpaqueRoot) {
             Color baseColor = view()->frameView()->baseBackgroundColor();
             if (baseColor.alpha() > 0) {
-                context->save();
+                CompositeOperator previousOperator = context->compositeOperation();
                 context->setCompositeOperation(CompositeCopy);
                 context->fillRect(rect, baseColor, style()->colorSpace());
-                context->restore();
+                context->setCompositeOperation(previousOperator);
             } else
                 context->clearRect(rect);
         }

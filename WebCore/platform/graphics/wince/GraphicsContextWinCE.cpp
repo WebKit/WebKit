@@ -1173,7 +1173,7 @@ void GraphicsContext::setAlpha(float alpha)
     m_data->m_opacity = alpha;
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     notImplemented();
 }

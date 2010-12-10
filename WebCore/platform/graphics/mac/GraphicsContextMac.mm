@@ -87,8 +87,8 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
 }
 
-#ifdef BUILDING_ON_TIGER // Post-Tiger's setCompositeOperation() is defined in GraphicsContextCG.cpp.
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+#ifdef BUILDING_ON_TIGER // Post-Tiger's setPlatformCompositeOperation() is defined in GraphicsContextCG.cpp.
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;

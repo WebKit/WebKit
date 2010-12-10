@@ -551,6 +551,17 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
     generator.fill(this, rect);
 }
 
+void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation)
+{
+    m_state.compositeOperator = compositeOperation;
+    setPlatformCompositeOperation(compositeOperation);
+}
+
+CompositeOperator GraphicsContext::compositeOperation() const
+{
+    return m_state.compositeOperator;
+}
+
 #if !PLATFORM(SKIA)
 void GraphicsContext::setPlatformFillGradient(Gradient*)
 {

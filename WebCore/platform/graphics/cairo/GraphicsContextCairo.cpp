@@ -997,7 +997,7 @@ float GraphicsContext::getAlpha()
     return m_state.globalAlpha;
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;

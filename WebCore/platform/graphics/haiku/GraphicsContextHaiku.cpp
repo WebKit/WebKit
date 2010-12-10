@@ -343,7 +343,7 @@ void GraphicsContext::setAlpha(float opacity)
     notImplemented();
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;
@@ -358,7 +358,7 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
         mode = B_OP_OVER;
         break;
     default:
-        printf("GraphicsContext::setCompositeOperation: Unsupported composite operation %s\n",
+        printf("GraphicsContext::setPlatformCompositeOperation: Unsupported composite operation %s\n",
                 compositeOperatorName(op).utf8().data());
     }
     m_data->m_view->SetDrawingMode(mode);

@@ -81,10 +81,10 @@ void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, 
     if (color.alpha() <= 0)
         return;
     
-    ctxt->save();
+    CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(!color.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
     ctxt->fillRect(dstRect, color, styleColorSpace);
-    ctxt->restore();
+    ctxt->setCompositeOperation(previousOperator);
 }
 
 static inline FloatSize calculatePatternScale(const FloatRect& dstRect, const FloatRect& srcRect, Image::TileRule hRule, Image::TileRule vRule)

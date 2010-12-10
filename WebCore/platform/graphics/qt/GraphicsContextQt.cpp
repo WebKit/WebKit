@@ -1130,13 +1130,17 @@ void GraphicsContext::setAlpha(float opacity)
     p->setOpacity(opacity);
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;
 
-    if (m_data->p()->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-        m_data->p()->setCompositionMode(toQtCompositionMode(op));
+    QPainter* painter = m_data->p();
+
+    if (!painter->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
+        return;
+
+    painter->setCompositionMode(toQtCompositionMode(op));
 }
 
 void GraphicsContext::clip(const Path& path)

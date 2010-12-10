@@ -1,3 +1,51 @@
+2010-12-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't do GraphicsContext save/restore just to preserve the CompositeOperator
+        https://bugs.webkit.org/show_bug.cgi?id=50070
+
+        Add GraphicsContext::compositeOperation() so we don't have to do a full
+        save/restore if the only context-tainting call is setCompositeOperation().
+
+        GraphicsContext::setCompositeOperation() now stores the op in its state
+        and calls a port-specific setPlatformCompositeOperation().
+
+        No new tests, this is an optimization.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::compositeOperation):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::fillWithSolidColor):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::WebCoreCompositeToSkiaComposite):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2010-12-10  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.

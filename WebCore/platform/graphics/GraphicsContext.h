@@ -162,6 +162,7 @@ namespace WebCore {
             , fillRule(RULE_NONZERO)
             , strokeColorSpace(ColorSpaceDeviceRGB)
             , fillColorSpace(ColorSpaceDeviceRGB)
+            , compositeOperator(CompositeSourceOver)
             , shouldAntialias(true)
             , paintingDisabled(false)
             , shadowsIgnoreTransforms(false)
@@ -193,6 +194,8 @@ namespace WebCore {
 
         ColorSpace strokeColorSpace;
         ColorSpace fillColorSpace;
+
+        CompositeOperator compositeOperator;
 
         bool shouldAntialias;
         bool paintingDisabled;
@@ -352,6 +355,7 @@ namespace WebCore {
 #endif
 
         void setCompositeOperation(CompositeOperator);
+        CompositeOperator compositeOperation() const;
 
 #if PLATFORM(SKIA)
         void beginPath();
@@ -497,6 +501,8 @@ namespace WebCore {
 
         void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         void clearPlatformShadow();
+
+        void setPlatformCompositeOperation(CompositeOperator);
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);
 

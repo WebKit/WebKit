@@ -364,7 +364,7 @@ void GraphicsContext::setAlpha(float opacity)
     m_data->setOpacity(opacity);
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;

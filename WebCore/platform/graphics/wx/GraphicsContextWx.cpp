@@ -442,7 +442,7 @@ void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
     notImplemented();
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (m_data->context)
     {
