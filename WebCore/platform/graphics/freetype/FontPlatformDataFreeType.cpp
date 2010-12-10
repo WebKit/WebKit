@@ -272,5 +272,17 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
     cairo_font_options_destroy(options);
 }
 
+bool FontPlatformData::hasCompatibleCharmap()
+{
+    if (!m_scaledFont)
+        return false;
+
+    FT_Face freeTypeFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
+    bool hasCompatibleCharmap = !(FT_Select_Charmap(freeTypeFace, ft_encoding_unicode)
+                                && FT_Select_Charmap(freeTypeFace, ft_encoding_symbol)
+                                && FT_Select_Charmap(freeTypeFace, ft_encoding_apple_roman));
+    cairo_ft_scaled_font_unlock_face(m_scaledFont);
+    return hasCompatibleCharmap;
+}
 
 }

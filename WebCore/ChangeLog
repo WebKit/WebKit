@@ -1,3 +1,25 @@
+2010-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] style="font-family: courier" makes text disappear
+        https://bugs.webkit.org/show_bug.cgi?id=47452
+
+        Don't ever use fonts that do not have any of the three charmaps that
+        Fontconfig supports (Unicode, Apple Roman and Symbol). If we select
+        a font that doesn't have one of these charmaps, use the next font in
+        the list.
+
+        Test: platform/gtk/fonts/font-with-no-valid-encoding.html
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::createFontPlatformData): Check whether the
+        font we selected has a valid Fontconfig charmap.
+        * platform/graphics/freetype/FontPlatformData.h: Added new method definition.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::hasCompatibleCharmap): Added this method which
+        verifies that a font has a valid Fontconfig charmap.
+
 2010-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

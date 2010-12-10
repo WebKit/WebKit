@@ -1,3 +1,17 @@
+2010-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] style="font-family: courier" makes text disappear
+        https://bugs.webkit.org/show_bug.cgi?id=47452
+
+        Added a GTK+ test for invalid fonts.
+
+        * platform/gtk/fonts/font-with-no-valid-encoding-expected.checksum: Added.
+        * platform/gtk/fonts/font-with-no-valid-encoding-expected.png: Added.
+        * platform/gtk/fonts/font-with-no-valid-encoding-expected.txt: Added.
+        * platform/gtk/fonts/font-with-no-valid-encoding.html: Added.
+
 2010-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r73687.

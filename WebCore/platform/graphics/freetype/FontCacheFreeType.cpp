@@ -181,19 +181,26 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     FcChar8* fontConfigFamilyNameAfterMatching;
     FcPatternGetString(resultPattern.get(), FC_FAMILY, 0, &fontConfigFamilyNameAfterMatching);
     String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
-    if (equalIgnoringCase(familyNameAfterConfiguration, familyNameAfterMatching))
-        return new FontPlatformData(resultPattern.get(), fontDescription);
 
     // If Fontconfig gave use a different font family than the one we requested, we should ignore it
     // and allow WebCore to give us the next font on the CSS fallback list. The only exception is if
     // this family name is a commonly used generic family.
-    if (equalIgnoringCase(familyNameString, "sans") || equalIgnoringCase(familyNameString, "sans-serif")
-        || equalIgnoringCase(familyNameString, "serif") || equalIgnoringCase(familyNameString, "monospace")
-        || equalIgnoringCase(familyNameString, "fantasy") || equalIgnoringCase(familyNameString, "cursive"))
-        return new FontPlatformData(resultPattern.get(), fontDescription);
+    if (!equalIgnoringCase(familyNameAfterConfiguration, familyNameAfterMatching)
+        && !(equalIgnoringCase(familyNameString, "sans") || equalIgnoringCase(familyNameString, "sans-serif")
+          || equalIgnoringCase(familyNameString, "serif") || equalIgnoringCase(familyNameString, "monospace")
+          || equalIgnoringCase(familyNameString, "fantasy") || equalIgnoringCase(familyNameString, "cursive")))
+        return 0;
 
-    // Fontconfig did not return a good match.
-    return 0;
+    // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
+    // supports three encodings in FcFreeTypeCharIndex: Unicode, Symbol and AppleRoman.
+    // If this font doesn't have one of these three encodings, don't select it.
+    FontPlatformData* platformData = new FontPlatformData(resultPattern.get(), fontDescription);
+    if (!platformData->hasCompatibleCharmap()) {
+        delete platformData;
+        return 0;
+    }
+
+    return platformData;
 }
 
 }

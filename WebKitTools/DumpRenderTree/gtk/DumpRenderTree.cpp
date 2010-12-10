@@ -231,6 +231,11 @@ static void initializeFonts(const char* testURL = 0)
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(ahemFontFilename.get())))
         g_error("Could not load font at %s!", ahemFontFilename.get()); 
 
+    // A font with no valid Fontconfig encoding to test https://bugs.webkit.org/show_bug.cgi?id=47452
+    GOwnPtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", NULL));
+    if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontWithNoValidEncodingFilename.get())))
+        g_error("Could not load font at %s!", fontWithNoValidEncodingFilename.get()); 
+
     if (!FcConfigSetCurrent(config))
         g_error("Could not set the current font configuration!");
 

@@ -68,6 +68,7 @@ public:
     void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
+    bool hasCompatibleCharmap();
 
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
 
