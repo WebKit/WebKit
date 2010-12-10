@@ -1,5 +1,12 @@
 2010-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix a bug uncovered by clang++.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
         Clang++ build fixes.
 
         Silence a couple of warnings.

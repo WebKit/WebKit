@@ -2135,7 +2135,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // The _hasHTMLDocument clause here is a workaround for a bug in NSAttributedString: Radar 5052369.
     // If we call _documentFromRange on an XML document we'll get "setInnerHTML: method not found".
     // FIXME: Remove this once bug 5052369 is fixed.
-    if ([self _hasHTMLDocument] && pboardType == NSRTFPboardType || pboardType == NSRTFDPboardType) {
+    if ([self _hasHTMLDocument] && (pboardType == NSRTFPboardType || pboardType == NSRTFDPboardType)) {
         NSAttributedString *string = nil;
         if (pboardType == NSRTFDPboardType)
             string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
