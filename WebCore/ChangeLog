@@ -1,3 +1,14 @@
+2010-12-09  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] enable orientation flag when QtMobility available
+        https://bugs.webkit.org/show_bug.cgi?id=50781
+
+        When QtMobility available, enable orientation flag by default.
+
+        * features.pri:
+
 2010-12-09  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.
