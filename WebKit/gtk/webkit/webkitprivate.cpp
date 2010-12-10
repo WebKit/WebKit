@@ -75,16 +75,6 @@ WebCore::NavigationType core(WebKitWebNavigationReason type)
     return static_cast<WebCore::NavigationType>(type);
 }
 
-WebCore::ResourceRequest core(WebKitNetworkRequest* request)
-{
-    SoupMessage* soupMessage = webkit_network_request_get_message(request);
-    if (soupMessage)
-        return ResourceRequest(soupMessage);
-
-    KURL url = KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
-    return ResourceRequest(url);
-}
-
 WebCore::ResourceResponse core(WebKitNetworkResponse* response)
 {
     SoupMessage* soupMessage = webkit_network_response_get_message(response);

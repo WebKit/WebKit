@@ -31,6 +31,7 @@
 #include "webkitdownload.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
+#include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include <wtf/text/CString.h>

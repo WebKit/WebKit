@@ -90,8 +90,6 @@ namespace WebKit {
     WebKitWebNavigationReason kit(WebCore::NavigationType type);
     WebCore::NavigationType core(WebKitWebNavigationReason reason);
 
-    WebCore::ResourceRequest core(WebKitNetworkRequest* request);
-
     WebCore::ResourceResponse core(WebKitNetworkResponse* response);
 
     WebCore::EditingBehaviorType core(WebKitEditingBehavior type);
@@ -208,18 +206,12 @@ extern "C" {
     void
     webkit_web_policy_decision_cancel (WebKitWebPolicyDecision* decision);
 
-    WebKitNetworkRequest*
-    webkit_network_request_new_with_core_request(const WebCore::ResourceRequest& resourceRequest);
 
     WebKitNetworkResponse*
     webkit_network_response_new_with_core_response(const WebCore::ResourceResponse& resourceResponse);
 
     WebKitGeolocationPolicyDecision*
     webkit_geolocation_policy_decision_new(WebKitWebFrame*, WebCore::Geolocation*);
-
-    // FIXME: move this to webkitnetworkrequest.h once the API is agreed upon.
-    WEBKIT_API SoupMessage*
-    webkit_network_request_get_message(WebKitNetworkRequest* request);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 

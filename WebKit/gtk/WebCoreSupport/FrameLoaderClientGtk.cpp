@@ -60,6 +60,7 @@
 #include "ScriptController.h"
 #include "webkiterror.h"
 #include "webkitnetworkrequest.h"
+#include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include "webkitwebframe.h"
@@ -313,7 +314,7 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
     WebKitWebView* webView = getViewFromFrame(m_frame);
     GOwnPtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
-    PlatformRefPtr<WebKitNetworkRequest> networkRequest(adoptPlatformRef(webkit_network_request_new_with_core_request(request)));
+    PlatformRefPtr<WebKitNetworkRequest> networkRequest(adoptPlatformRef(kitNew(request)));
 
     if (!redirectResponse.isNull()) {
         // This is a redirect, so we need to update the WebResource's knowledge
@@ -407,7 +408,7 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     }
 
     WebKitWebView* page = getViewFromFrame(m_frame);
-    WebKitNetworkRequest* request = webkit_network_request_new_with_core_request(resourceRequest);
+    PlatformRefPtr<WebKitNetworkRequest> request(adoptPlatformRef(kitNew(resourceRequest)));
 
     WebKitWebPolicyDecision* policyDecision = webkit_web_policy_decision_new(m_frame, policyFunction);
     if (m_policyDecision)
@@ -415,9 +416,7 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     m_policyDecision = policyDecision;
 
     gboolean isHandled = false;
-    g_signal_emit_by_name(page, "mime-type-policy-decision-requested", m_frame, request, mimeType.utf8().data(), policyDecision, &isHandled);
-
-    g_object_unref(request);
+    g_signal_emit_by_name(page, "mime-type-policy-decision-requested", m_frame, request.get(), mimeType.utf8().data(), policyDecision, &isHandled);
 
     if (isHandled)
         return;
@@ -489,14 +488,11 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
     m_policyDecision = policyDecision;
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
-    WebKitWebNavigationAction* navigationAction = getNavigationAction(action, frameName.utf8().data());
+    PlatformRefPtr<WebKitNetworkRequest> request(adoptPlatformRef(webkit_network_request_new(resourceRequest.url().string().utf8().data())));
+    PlatformRefPtr<WebKitWebNavigationAction> navigationAction(adoptPlatformRef(getNavigationAction(action, frameName.utf8().data())));
     gboolean isHandled = false;
 
-    g_signal_emit_by_name(webView, "new-window-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
-
-    g_object_unref(navigationAction);
-    g_object_unref(request);
+    g_signal_emit_by_name(webView, "new-window-policy-decision-requested", m_frame, request.get(), navigationAction.get(), policyDecision, &isHandled);
 
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
@@ -516,7 +512,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
     }
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    WebKitNetworkRequest* request = webkit_network_request_new_with_core_request(resourceRequest);
+    PlatformRefPtr<WebKitNetworkRequest> request(adoptPlatformRef(kitNew(resourceRequest)));
     WebKitNavigationResponse response;
     /*
      * We still support the deprecated navigation-requested signal, if the
@@ -525,11 +521,10 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
      * navigation-policy-decision-requested must be emitted after
      * navigation-requested as the policy decision can be async.
      */
-    g_signal_emit_by_name(webView, "navigation-requested", m_frame, request, &response);
+    g_signal_emit_by_name(webView, "navigation-requested", m_frame, request.get(), &response);
 
     if (response == WEBKIT_NAVIGATION_RESPONSE_IGNORE) {
         (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyIgnore);
-        g_object_unref(request);
         return;
     }
 
@@ -538,12 +533,9 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         g_object_unref(m_policyDecision);
     m_policyDecision = policyDecision;
 
-    WebKitWebNavigationAction* navigationAction = getNavigationAction(action, NULL);
+    PlatformRefPtr<WebKitWebNavigationAction> navigationAction(adoptPlatformRef(getNavigationAction(action, 0)));
     gboolean isHandled = false;
-    g_signal_emit_by_name(webView, "navigation-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
-
-    g_object_unref(navigationAction);
-    g_object_unref(request);
+    g_signal_emit_by_name(webView, "navigation-policy-decision-requested", m_frame, request.get(), navigationAction.get(), policyDecision, &isHandled);
 
     // FIXME Implement default behavior when we can query the backend what protocols it supports
     if (!isHandled)
@@ -1169,11 +1161,10 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 
 void FrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse& response)
 {
-    WebKitNetworkRequest* networkRequest = webkit_network_request_new_with_core_request(request);
+    PlatformRefPtr<WebKitNetworkRequest> networkRequest(adoptPlatformRef(kitNew(request)));
     WebKitWebView* view = getViewFromFrame(m_frame);
 
-    webkit_web_view_request_download(view, networkRequest, response, handle);
-    g_object_unref(networkRequest);
+    webkit_web_view_request_download(view, networkRequest.get(), response, handle);
 }
 
 ResourceError FrameLoaderClient::cancelledError(const ResourceRequest& request)
@@ -1258,11 +1249,10 @@ void FrameLoaderClient::setMainDocumentError(WebCore::DocumentLoader*, const Res
 
 void FrameLoaderClient::startDownload(const ResourceRequest& request)
 {
-    WebKitNetworkRequest* networkRequest = webkit_network_request_new_with_core_request(request);
+    PlatformRefPtr<WebKitNetworkRequest> networkRequest(adoptPlatformRef(kitNew(request)));
     WebKitWebView* view = getViewFromFrame(m_frame);
 
-    webkit_web_view_request_download(view, networkRequest);
-    g_object_unref(networkRequest);
+    webkit_web_view_request_download(view, networkRequest.get());
 }
 
 void FrameLoaderClient::updateGlobalHistory()

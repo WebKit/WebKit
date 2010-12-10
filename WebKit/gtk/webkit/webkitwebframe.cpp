@@ -51,6 +51,7 @@
 #include "ScriptController.h"
 #include "SubstituteData.h"
 #include "webkitenumtypes.h"
+#include "webkitnetworkrequestprivate.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 #include "webkitwebframeprivate.h"

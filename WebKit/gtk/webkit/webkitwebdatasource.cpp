@@ -30,6 +30,7 @@
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "runtime/InitializeThreading.h"
+#include "webkitnetworkrequestprivate.h"
 #include "webkitprivate.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebresource.h"
@@ -243,7 +244,7 @@ WebKitNetworkRequest* webkit_web_data_source_get_initial_request(WebKitWebDataSo
     if (priv->initialRequest)
         g_object_unref(priv->initialRequest);
 
-    priv->initialRequest = webkit_network_request_new_with_core_request(request);
+    priv->initialRequest = kitNew(request);
     return priv->initialRequest;
 }
 
@@ -276,7 +277,7 @@ WebKitNetworkRequest* webkit_web_data_source_get_request(WebKitWebDataSource* we
      if (priv->networkRequest)
          g_object_unref(priv->networkRequest);
 
-     priv->networkRequest = webkit_network_request_new_with_core_request(request);
+     priv->networkRequest = kitNew(request);
      return priv->networkRequest;
 }
 
