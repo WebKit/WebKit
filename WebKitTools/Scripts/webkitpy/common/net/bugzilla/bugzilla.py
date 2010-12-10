@@ -33,6 +33,7 @@
 import os.path
 import re
 import StringIO
+import urllib
 
 from datetime import datetime # used in timestamp()
 
@@ -72,14 +73,38 @@ class BugzillaQueries(object):
     def __init__(self, bugzilla):
         self._bugzilla = bugzilla
 
-    # Note: _load_query and _fetch_bug are the only two methods which access
-    # self._bugzilla.
+    def _is_xml_bugs_form(self, form):
+        # ClientForm.HTMLForm.find_control throws if the control is not found,
+        # so we do a manual search instead:
+        return "xml" in [control.id for control in form.controls]
+
+    # This is kinda a hack.  There is probably a better way to get this information from bugzilla.
+    def _parse_result_count(self, results_page):
+        result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'}).string
+        result_count_parts = result_count_text.split(" ")
+        if result_count_parts[0] == "Zarro":
+            return 0
+        return int(result_count_parts[0])
+
+    # Note: _load_query, _fetch_bug and _fetch_bugs_from_advanced_query
+    # are the only methods which access self._bugzilla.
 
     def _load_query(self, query):
         self._bugzilla.authenticate()
-
         full_url = "%s%s" % (self._bugzilla.bug_server_url, query)
         return self._bugzilla.browser.open(full_url)
+
+    def _fetch_bugs_from_advanced_query(self, query):
+        results_page = self._load_query(query)
+        if not self._parse_result_count(results_page):
+            return []
+        # Bugzilla results pages have an "XML" submit button at the bottom
+        # which can be used to get an XML page containing all of the <bug> elements.
+        # This is slighty lame that this assumes that _load_query used
+        # self._bugzilla.browser and that it's in an acceptable state.
+        self._bugzilla.browser.select_form(predicate=self._is_xml_bugs_form)
+        bugs_xml = self._bugzilla.browser.submit()
+        return self._bugzilla._parse_bugs_from_xml(bugs_xml)
 
     def _fetch_bug(self, bug_id):
         return self._bugzilla.fetch_bug(bug_id)
@@ -113,6 +138,13 @@ class BugzillaQueries(object):
     def fetch_bug_ids_from_pending_commit_list(self):
         needs_commit_query_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
         return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
+
+    def fetch_bugs_matching_quicksearch(self, search_string):
+        # We may want to use a more explicit query than "quicksearch".
+        # If quicksearch changes we should probably change to use
+        # a normal buglist.cgi?query_format=advanced query.
+        quicksearch_url = "buglist.cgi?quicksearch=%s" % urllib.quote(search_string)
+        return self._fetch_bugs_from_advanced_query(quicksearch_url)
 
     def fetch_patches_from_pending_commit_list(self):
         return sum([self._fetch_bug(bug_id).reviewed_patches()
@@ -250,7 +282,13 @@ class Bugzilla(object):
                 element, 'commit-queue', attachment, 'committer_email')
         return attachment
 
-    def _parse_bug_page(self, page):
+    def _parse_bugs_from_xml(self, page):
+        soup = BeautifulSoup(page)
+        # Without the unicode() call, BeautifulSoup occasionally complains of being
+        # passed None for no apparent reason.
+        return [Bug(self._parse_bug_dictionary_from_xml(unicode(bug_xml)), self) for bug_xml in soup('bug')]
+
+    def _parse_bug_dictionary_from_xml(self, page):
         soup = BeautifulSoup(page)
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
@@ -273,12 +311,12 @@ class Bugzilla(object):
 
     def fetch_bug_dictionary(self, bug_id):
         try:
-            return self._parse_bug_page(self._fetch_bug_page(bug_id))
+            return self._parse_bug_dictionary_from_xml(self._fetch_bug_page(bug_id))
         except KeyboardInterrupt:
             raise
         except:
             self.authenticate()
-            return self._parse_bug_page(self._fetch_bug_page(bug_id))
+            return self._parse_bug_dictionary_from_xml(self._fetch_bug_page(bug_id))
 
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
 

@@ -99,14 +99,7 @@ class BugzillaTest(unittest.TestCase):
         self.assertEquals(None, parse_bug_id("http://www.webkit.org/b/12345"))
         self.assertEquals(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
 
-    _example_bug = """
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
-<bugzilla version="3.2.3"
-          urlbase="https://bugs.webkit.org/"
-          maintainer="admin@webkit.org"
-          exporter="eric@webkit.org"
->
+    _bug_xml = """
     <bug>
           <bug_id>32585</bug_id>
           <creation_ts>2009-12-15 15:17 PST</creation_ts>
@@ -149,13 +142,13 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
             <type>text/plain</type> 
             <size>10882</size> 
             <attacher>mjs@apple.com</attacher> 
-            
+
               <token>1261988248-dc51409e9c421a4358f365fa8bec8357</token> 
               <data encoding="base64">SW5kZXg6IFdlYktpdC9tYWMvQ2hhbmdlTG9nCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09
 removed-because-it-was-really-long
 ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 </data>        
- 
+
             <flag name="review"
                 id="27602"
                 status="?"
@@ -163,8 +156,20 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
             />
         </attachment>
     </bug>
-</bugzilla>
 """
+
+    _single_bug_xml = """
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
+<bugzilla version="3.2.3"
+          urlbase="https://bugs.webkit.org/"
+          maintainer="admin@webkit.org"
+          exporter="eric@webkit.org"
+>
+%s
+</bugzilla>
+""" % _bug_xml
+
     _expected_example_bug_parsing = {
         "id" : 32585,
         "title" : u"bug to test webkit-patch and commit-queue failures",
@@ -194,9 +199,24 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         for key, expected_value in expected.items():
             self.assertEquals(actual[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, actual[key], expected_value)))
 
-    def test_bug_parsing(self):
-        bug = Bugzilla()._parse_bug_page(self._example_bug)
+    def test_parse_bug_dictionary_from_xml(self):
+        bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_bug_xml)
         self._assert_dictionaries_equal(bug, self._expected_example_bug_parsing)
+
+    _sample_multi_bug_xml = """
+<bugzilla version="3.2.3" urlbase="https://bugs.webkit.org/" maintainer="admin@webkit.org" exporter="eric@webkit.org">
+    %s
+    %s
+</bugzilla>
+""" % (_bug_xml, _bug_xml)
+
+    def test_parse_bugs_from_xml(self):
+        bugzilla = Bugzilla()
+        bugs = bugzilla._parse_bugs_from_xml(self._sample_multi_bug_xml)
+        self.assertEquals(len(bugs), 2)
+        self.assertEquals(bugs[0].id(), self._expected_example_bug_parsing['id'])
+        bugs = bugzilla._parse_bugs_from_xml("")
+        self.assertEquals(len(bugs), 0)
 
     # This could be combined into test_bug_parsing later if desired.
     def test_attachment_parsing(self):
@@ -327,6 +347,16 @@ class BugzillaQueriesTest(unittest.TestCase):
   </body>
 </html>
 """
+
+    def _assert_result_count(self, queries, html, count):
+        self.assertEquals(queries._parse_result_count(html), count)
+
+    def test_parse_result_count(self):
+        queries = BugzillaQueries(None)
+        # Pages with results, always list the count at least twice.
+        self._assert_result_count(queries, '<span class="bz_result_count">314 bugs found.</span><span class="bz_result_count">314 bugs found.</span>', 314)
+        self._assert_result_count(queries, '<span class="bz_result_count">Zarro Boogs found.</span>', 0)
+        self.assertRaises(Exception, queries._parse_result_count, ['Invalid'])
 
     def test_request_page_parsing(self):
         queries = BugzillaQueries(None)

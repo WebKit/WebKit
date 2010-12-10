@@ -1,5 +1,6 @@
 # Required for Python to search this directory for module files
 
+from webkitpy.tool.commands.bugsearch import BugSearch
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.openbugs import OpenBugs

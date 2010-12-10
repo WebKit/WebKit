@@ -1,3 +1,18 @@
+2010-12-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach webkit-patch how to search bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=50500
+
+        This is a step towards teaching webkitpy how to file
+        new bugs for flaky tests and update them when new flakes occur.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/bugsearch.py: Added.
+
 2010-12-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Ojan Vafai.
