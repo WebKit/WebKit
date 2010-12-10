@@ -1,3 +1,22 @@
+2010-12-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Got rid of the NonZeroBeginTimeFlag. Functionality is now hidden inside
+        the implementation.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (hasNonZeroBeginTimeFlag):
+        (setNonZeroBeginTimeFlag):
+        (PlatformCAAnimation::PlatformCAAnimation):
+        (PlatformCAAnimation::setBeginTime):
+
 2010-12-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

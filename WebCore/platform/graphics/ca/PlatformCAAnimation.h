@@ -77,9 +77,6 @@ public:
     AnimationType animationType() const { return m_type; }
     String keyPath() const;
     
-    bool hasNonZeroBeginTimeFlag() const;
-    void setNonZeroBeginTimeFlag(bool value);
-    
     CFTimeInterval beginTime() const;
     void setBeginTime(CFTimeInterval);
     

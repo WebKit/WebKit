@@ -1406,10 +1406,8 @@ void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation* caAnim, AnimatedP
 {
     PlatformCALayer* layer = animatedLayer(property);
     
-    if (timeOffset) {
+    if (timeOffset)
         caAnim->setBeginTime(CACurrentMediaTime() - timeOffset);
-        caAnim->setNonZeroBeginTimeFlag(true);
-    }
 
     String animationID = animationIdentifier(animationName, property, index);
 

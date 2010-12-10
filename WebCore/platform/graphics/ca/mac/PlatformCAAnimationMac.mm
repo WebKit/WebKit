@@ -42,6 +42,16 @@ using namespace WebCore;
 // This value must be the same as in PlatformCALayerMac.mm
 static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
 
+static bool hasNonZeroBeginTimeFlag(const PlatformCAAnimation* animation)
+{
+    return [[animation->platformAnimation() valueForKey:WKNonZeroBeginTimeFlag] boolValue];
+}
+
+static void setNonZeroBeginTimeFlag(PlatformCAAnimation* animation, bool value)
+{
+    [animation->platformAnimation() setValue:[NSNumber numberWithBool:value] forKey:WKNonZeroBeginTimeFlag];
+}
+    
 static NSString* toCAFillModeType(PlatformCAAnimation::FillModeType type)
 {
     switch (type) {
@@ -196,7 +206,7 @@ PlatformCAAnimation::PlatformCAAnimation(const PlatformCAAnimation* animation)
     newAnimation->setValueFunction(animation->valueFunction());
 #endif
 
-    newAnimation->setNonZeroBeginTimeFlag(animation->hasNonZeroBeginTimeFlag());
+    setNonZeroBeginTimeFlag(newAnimation, hasNonZeroBeginTimeFlag(animation));
     
     // Copy the specific Basic or Keyframe values
     if (animation->animationType() == Keyframe) {
@@ -213,16 +223,6 @@ PlatformCAAnimation::~PlatformCAAnimation()
 {
 }
 
-bool PlatformCAAnimation::hasNonZeroBeginTimeFlag() const
-{
-    return [[m_animation.get() valueForKey:WKNonZeroBeginTimeFlag] boolValue];
-}
-
-void PlatformCAAnimation::setNonZeroBeginTimeFlag(bool value)
-{
-    [m_animation.get() setValue:[NSNumber numberWithBool:value] forKey:WKNonZeroBeginTimeFlag];
-}
-    
 bool PlatformCAAnimation::supportsValueFunction()
 {
     static bool sHaveValueFunction = [CAPropertyAnimation instancesRespondToSelector:@selector(setValueFunction:)];
@@ -247,6 +247,13 @@ CFTimeInterval PlatformCAAnimation::beginTime() const
 void PlatformCAAnimation::setBeginTime(CFTimeInterval value)
 {
     [m_animation.get() setBeginTime:value];
+    
+    // Also set a flag to tell us if we've passed in a 0 value. 
+    // The flag is needed because later beginTime will get changed
+    // to the time at which it fired and we need to know whether
+    // or not it was 0 to begin with.
+    if (value)
+        setNonZeroBeginTimeFlag(this, true);
 }
 
 CFTimeInterval PlatformCAAnimation::duration() const
