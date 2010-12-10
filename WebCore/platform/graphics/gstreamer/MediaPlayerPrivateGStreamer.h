@@ -147,10 +147,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             void cacheDuration();
             void updateStates();
-            void cancelSeek();
-            void endPointTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
             float maxTimeLoaded() const;
-            void startEndPointTimerIfNeeded();
 
             void createGSTPlayBin();
             bool changePipelineState(GstState state);

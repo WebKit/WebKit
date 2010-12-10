@@ -526,21 +526,6 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     }
 }
 
-void MediaPlayerPrivateGStreamer::startEndPointTimerIfNeeded()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivateGStreamer::cancelSeek()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivateGStreamer::endPointTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
-{
-    notImplemented();
-}
-
 bool MediaPlayerPrivateGStreamer::paused() const
 {
     return m_paused;
