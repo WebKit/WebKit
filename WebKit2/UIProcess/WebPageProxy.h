@@ -262,8 +262,6 @@ public:
 
     void preferencesDidChange();
 
-    void getStatistics(WKContextStatistics*);
-
 #if ENABLE(TILED_BACKING_STORE)
     void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
 #endif

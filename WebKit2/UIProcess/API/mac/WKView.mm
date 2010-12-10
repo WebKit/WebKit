@@ -163,6 +163,8 @@ struct EditCommandState {
     _data->_hasMarkedText = NO;
     _data->_selectedRange = NSMakeRange(NSNotFound, 0);
 
+    WebContext::statistics().wkViewCount++;
+
     return self;
 }
 
@@ -182,6 +184,9 @@ struct EditCommandState {
     _data->_page->close();
 
     [_data release];
+
+    WebContext::statistics().wkViewCount--;
+
     [super dealloc];
 }
 

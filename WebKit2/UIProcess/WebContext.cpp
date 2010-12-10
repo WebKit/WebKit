@@ -308,14 +308,11 @@ void WebContext::populateVisitedLinks()
     m_historyClient.populateVisitedLinks(this);
 }
 
-void WebContext::getStatistics(WKContextStatistics* statistics)
+WebContext::Statistics& WebContext::statistics()
 {
-    memset(statistics, 0, sizeof(WKContextStatistics));
+    static Statistics statistics = Statistics();
 
-    statistics->numberOfWKPageNamespaces = m_pageNamespaces.size();
-
-    for (HashSet<WebPageNamespace*>::iterator it = m_pageNamespaces.begin(), end = m_pageNamespaces.end(); it != end; ++it)
-        (*it)->getStatistics(statistics);
+    return statistics;
 }
 
 void WebContext::setAdditionalPluginsDirectory(const String& directory)

@@ -108,11 +108,15 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, WebPageGroup* pageGr
     webPageProxyCounter.increment();
 #endif
 
+    WebContext::statistics().wkPageCount++;
+
     m_pageGroup->addPage(this);
 }
 
 WebPageProxy::~WebPageProxy()
 {
+    WebContext::statistics().wkPageCount--;
+
     m_pageGroup->removePage(this);
 
 #ifndef NDEBUG
@@ -716,11 +720,6 @@ void WebPageProxy::setResizesToContentsUsingLayoutSize(const WebCore::IntSize& t
     process()->send(Messages::WebPage::SetResizesToContentsUsingLayoutSize(targetLayoutSize), m_pageID);
 }
 #endif
-
-void WebPageProxy::getStatistics(WKContextStatistics* statistics)
-{
-    statistics->numberOfWKFrames += process()->frameCountInPage(this);
-}
 
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {

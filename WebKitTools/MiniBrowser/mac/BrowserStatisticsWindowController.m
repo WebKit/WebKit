@@ -41,18 +41,7 @@
 
 - (IBAction)refreshStatistics:(id)sender
 {
-    WKContextStatistics threadStats;
-    WKContextGetStatistics(_threadContext, &threadStats);
-
-    WKContextStatistics processStats;
-    WKContextGetStatistics(_processContext, &processStats);
-
-    [[_basicStatsMatrix cellWithTag:11] setIntValue:processStats.numberOfWKPages];
-    [[_basicStatsMatrix cellWithTag:12] setIntValue:processStats.numberOfWKFrames];
-
-    [[_basicStatsMatrix cellWithTag:21] setIntValue:threadStats.numberOfWKPages];
-    [[_basicStatsMatrix cellWithTag:22] setIntValue:threadStats.numberOfWKFrames];
-
+    // FIXME: (Re-)implement.
 }
 
 @end

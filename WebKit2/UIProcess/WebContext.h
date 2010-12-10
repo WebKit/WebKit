@@ -93,7 +93,6 @@ public:
 
     void populateVisitedLinks();
     
-    void getStatistics(WKContextStatistics* statistics);
     void setAdditionalPluginsDirectory(const String&);
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
@@ -126,6 +125,13 @@ public:
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
+
+    struct Statistics {
+        unsigned wkViewCount;
+        unsigned wkPageCount;
+        unsigned wkFrameCount;
+    };
+    static Statistics& statistics();
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);

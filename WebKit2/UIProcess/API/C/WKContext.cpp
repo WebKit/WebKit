@@ -92,9 +92,13 @@ void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef m
     toImpl(contextRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
 }
 
-void WKContextGetStatistics(WKContextRef contextRef, WKContextStatistics* statistics)
+void WKContextGetGlobalStatistics(WKContextStatistics* statistics)
 {
-    toImpl(contextRef)->getStatistics(statistics);
+    const WebContext::Statistics& webContextStatistics = WebContext::statistics();
+
+    statistics->wkViewCount = webContextStatistics.wkViewCount;
+    statistics->wkPageCount = webContextStatistics.wkPageCount;
+    statistics->wkFrameCount = webContextStatistics.wkViewCount;
 }
 
 void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)

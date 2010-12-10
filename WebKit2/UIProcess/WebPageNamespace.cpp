@@ -62,15 +62,4 @@ WebPageProxy* WebPageNamespace::createWebPage(WebPageGroup* group)
     return m_context->createWebPage(this, group);
 }
 
-void WebPageNamespace::getStatistics(WKContextStatistics* statistics)
-{
-    if (!process())
-        return;
-
-    statistics->numberOfWKPages += process()->numberOfPages();
-
-    for (WebProcessProxy::pages_const_iterator it = process()->pages_begin(), end = process()->pages_end(); it != end; ++it)
-        (*it)->getStatistics(statistics);
-}
-
 } // namespace WebKit
