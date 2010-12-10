@@ -1,3 +1,18 @@
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang++ build.
+
+        * Scripts/webkit2/messages.py:
+        DrawingAreaInfo is a struct.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::valueForKey):
+        Move valueForKey above code that uses it.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WebInspectorProxyObjCAdapter windowWillClose:]):
+        Remove trailing semicolon.
+
 2010-12-09  Timothy Hatcher  <timothy@apple.com>
 
         Add support for transparent WebKit2 WKViews.

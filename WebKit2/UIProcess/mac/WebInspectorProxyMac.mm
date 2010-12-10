@@ -64,7 +64,7 @@ static const CGFloat windowContentBorderThickness = 55;
     return self;
 }
 
-- (void)windowWillClose:(NSNotification *)notification;
+- (void)windowWillClose:(NSNotification *)notification
 {
     _inspectorProxy->close();
 }

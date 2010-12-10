@@ -123,6 +123,15 @@ uint32_t defaultValueForKey(const String& key)
     return defaults.get(key);
 }
 
+template<typename MapType>
+static typename MapType::MappedType valueForKey(const MapType& map, const typename MapType::KeyType& key)
+{
+    typename MapType::const_iterator it = map.find(key);
+    if (it != map.end())
+        return it->second;
+
+    return defaultValueForKey<typename MapType::MappedType>(key);
+}
 
 template<typename MapType>
 static bool setValueForKey(MapType& map, const typename MapType::KeyType& key, const typename MapType::MappedType& value)
@@ -133,16 +142,6 @@ static bool setValueForKey(MapType& map, const typename MapType::KeyType& key, c
     
     map.set(key, value);
     return true;
-}
-
-template<typename MapType>
-static typename MapType::MappedType valueForKey(const MapType& map, const typename MapType::KeyType& key)
-{
-    typename MapType::const_iterator it = map.find(key);
-    if (it != map.end())
-        return it->second;
-
-    return defaultValueForKey<typename MapType::MappedType>(key);
 }
 
 bool WebPreferencesStore::setStringValueForKey(const String& key, const String& value)
