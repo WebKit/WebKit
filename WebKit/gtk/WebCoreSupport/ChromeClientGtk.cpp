@@ -50,6 +50,7 @@
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitnetworkrequest.h"
 #include "webkitprivate.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <glib.h>

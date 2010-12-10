@@ -31,6 +31,7 @@
 #include "SubstituteData.h"
 #include "runtime/InitializeThreading.h"
 #include "webkitprivate.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebresource.h"
 #include "webkitwebviewprivate.h"
 #include "wtf/Assertions.h"

@@ -85,6 +85,7 @@
 #include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include "webkitwebbackforwardlist.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebhistoryitem.h"
 #include "webkitwebinspector.h"
 #include "webkitwebviewprivate.h"

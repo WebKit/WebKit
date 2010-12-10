@@ -50,6 +50,7 @@
 #endif
 #include "WorkerThread.h"
 #include "webkitprivate.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebviewprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebframe.h"

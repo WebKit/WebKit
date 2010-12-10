@@ -187,6 +187,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
 	WebKit/gtk/webkit/webkitwebdatasource.cpp \
 	WebKit/gtk/webkit/webkitwebframe.cpp \
+	WebKit/gtk/webkit/webkitwebframeprivate.h \
 	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
 	WebKit/gtk/webkit/webkitwebinspector.cpp \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
@@ -197,6 +198,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
+	WebKit/gtk/webkit/webkitwebviewprivate.h \
 	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
 
 pkgconfigdir = $(libdir)/pkgconfig

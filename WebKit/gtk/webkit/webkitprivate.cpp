@@ -65,31 +65,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebKitWebView* getViewFromFrame(WebKitWebFrame* frame)
-{
-    WebKitWebFramePrivate* priv = frame->priv;
-    return priv->webView;
-}
-
-WebCore::Frame* core(WebKitWebFrame* frame)
-{
-    if (!frame)
-        return 0;
-
-    WebKitWebFramePrivate* priv = frame->priv;
-    return priv ? priv->coreFrame : 0;
-}
-
-WebKitWebFrame* kit(WebCore::Frame* coreFrame)
-{
-    if (!coreFrame)
-        return 0;
-
-    ASSERT(coreFrame->loader());
-    WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
-    return client ? client->webFrame() : 0;
-}
-
 WebKitWebNavigationReason kit(WebCore::NavigationType type)
 {
     return (WebKitWebNavigationReason)type;

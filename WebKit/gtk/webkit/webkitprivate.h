@@ -82,11 +82,6 @@ namespace WebKit {
     class DocumentLoader;
     class PasteboardHelperGtk;
 
-    WebKitWebView* getViewFromFrame(WebKitWebFrame*);
-
-    WebCore::Frame* core(WebKitWebFrame*);
-    WebKitWebFrame* kit(WebCore::Frame*);
-
     WebCore::HistoryItem* core(WebKitWebHistoryItem*);
     WebKitWebHistoryItem* kit(PassRefPtr<WebCore::HistoryItem>);
 
@@ -119,19 +114,6 @@ extern "C" {
 #define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 
-    #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
-    typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
-    struct _WebKitWebFramePrivate {
-        WebCore::Frame* coreFrame;
-        WebKitWebView* webView;
-
-        gchar* name;
-        gchar* title;
-        gchar* uri;
-        WebKitLoadStatus loadStatus;
-        WebKitSecurityOrigin* origin;
-    };
-
 #define WEBKIT_SECURITY_ORIGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_SECURITY_ORIGIN, WebKitSecurityOriginPrivate))
     struct _WebKitSecurityOriginPrivate {
         RefPtr<WebCore::SecurityOrigin> coreOrigin;
@@ -163,9 +145,6 @@ extern "C" {
 
     WTF::String
     webkitUserAgent();
-
-    void
-    webkit_web_frame_core_frame_gone(WebKitWebFrame*);
 
     // WebKitWebHistoryItem private
     WebKitWebHistoryItem*
@@ -241,10 +220,6 @@ extern "C" {
     // FIXME: move this to webkitnetworkrequest.h once the API is agreed upon.
     WEBKIT_API SoupMessage*
     webkit_network_request_get_message(WebKitNetworkRequest* request);
-
-    // FIXME: move this functionality into a 'WebKitWebDataSource' once implemented
-    WEBKIT_API gchar*
-    webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 

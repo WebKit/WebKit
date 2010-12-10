@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "webkitprivate.h"
+#include "webkitwebframeprivate.h"
 
 using namespace WebKit;
 using namespace WebCore;

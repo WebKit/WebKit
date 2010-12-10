@@ -63,6 +63,7 @@
 #include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include "webkitwebframe.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebnavigationaction.h"
 #include "webkitwebpolicydecision.h"
 #include "webkitwebview.h"

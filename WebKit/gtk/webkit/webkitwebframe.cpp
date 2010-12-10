@@ -53,6 +53,7 @@
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -965,4 +966,33 @@ WebKitNetworkResponse* webkit_web_frame_get_network_response(WebKitWebFrame* fra
         return NULL;
 
     return webkit_network_response_new_with_core_response(loader->response());
+}
+
+namespace WebKit {
+
+WebKitWebView* getViewFromFrame(WebKitWebFrame* frame)
+{
+    WebKitWebFramePrivate* priv = frame->priv;
+    return priv->webView;
+}
+
+WebCore::Frame* core(WebKitWebFrame* frame)
+{
+    if (!frame)
+        return 0;
+
+    WebKitWebFramePrivate* priv = frame->priv;
+    return priv ? priv->coreFrame : 0;
+}
+
+WebKitWebFrame* kit(WebCore::Frame* coreFrame)
+{
+    if (!coreFrame)
+        return 0;
+
+    ASSERT(coreFrame->loader());
+    WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
+    return client ? client->webFrame() : 0;
+}
+
 }
