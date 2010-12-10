@@ -137,8 +137,11 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 {
 }
 
-bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
+bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"])
+        return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
+
     float currentPos = orientation == HorizontalScrollbar ? m_currentPosX : m_currentPosY;
     float newPos = std::max<float>(std::min<float>(currentPos + (step * multiplier), static_cast<float>(m_client->scrollSize(orientation))), 0);
     if (currentPos == newPos)

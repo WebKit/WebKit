@@ -1,3 +1,11 @@
+2010-12-09  Sam Weinig  <sam@webkit.org>
+
+        Fix failing Mac tests.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll): Don't smooth scroll if the default
+        AppleScrollAnimationEnabled is false.
+
 2010-12-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
