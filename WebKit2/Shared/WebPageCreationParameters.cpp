@@ -35,6 +35,8 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(store);
     encoder->encode(drawingAreaInfo);
     encoder->encode(pageGroupData);
+    encoder->encode(drawsBackground);
+    encoder->encode(drawsTransparentBackground);
 
 #if PLATFORM(WIN)
     encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
@@ -50,6 +52,10 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.drawingAreaInfo))
         return false;
     if (!decoder->decode(parameters.pageGroupData))
+        return false;
+    if (!decoder->decode(parameters.drawsBackground))
+        return false;
+    if (!decoder->decode(parameters.drawsTransparentBackground))
         return false;
 
 #if PLATFORM(WIN)

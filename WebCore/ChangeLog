@@ -1,3 +1,11 @@
+2010-12-09  Timothy Hatcher  <timothy@apple.com>
+
+        Export Color::white and Color::transparent.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+
 2010-12-09  Sam Weinig  <sam@webkit.org>
 
         Fix failing Mac tests.

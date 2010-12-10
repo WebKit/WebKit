@@ -173,6 +173,9 @@ public:
     void scaleWebView(double scale, const WebCore::IntPoint& origin);
     double viewScaleFactor() const;
 
+    bool drawsBackground() const { return m_drawsBackground; }
+    bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
+
     void stopLoading();
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -276,6 +279,9 @@ private:
     void touchEvent(const WebTouchEvent&);
 #endif
 
+    void setDrawsBackground(bool);
+    void setDrawsTransparentBackground(bool);
+
     void getContentsAsString(uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
@@ -321,6 +327,9 @@ private:
 
     WebCore::IntSize m_viewSize;
     RefPtr<DrawingArea> m_drawingArea;
+
+    bool m_drawsBackground;
+    bool m_drawsTransparentBackground;
 
     bool m_isInRedo;
     bool m_isClosed;

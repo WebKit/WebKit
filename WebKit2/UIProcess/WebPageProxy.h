@@ -158,9 +158,15 @@ public:
 
     bool canShowMIMEType(const String& mimeType) const;
 
-    void setFocused(bool isFocused);
-    void setActive(bool active);
-    void setIsInWindow(bool isInWindow);
+    bool drawsBackground() const { return m_drawsBackground; }
+    void setDrawsBackground(bool);
+
+    bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
+    void setDrawsTransparentBackground(bool);
+
+    void setFocused(bool);
+    void setActive(bool);
+    void setIsInWindow(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
 
     void executeEditCommand(const String& commandName);
@@ -435,7 +441,8 @@ private:
     double m_pageZoomFactor;
     double m_viewScaleFactor;
 
-    bool m_visibleToInjectedBundle;
+    bool m_drawsBackground;
+    bool m_drawsTransparentBackground;
 
     // If the process backing the web page is alive and kicking.
     bool m_isValid;

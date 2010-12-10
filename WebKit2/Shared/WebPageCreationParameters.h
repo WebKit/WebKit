@@ -47,6 +47,9 @@ struct WebPageCreationParameters {
     DrawingAreaInfo drawingAreaInfo;
     WebPageGroupData pageGroupData;
 
+    bool drawsBackground;
+    bool drawsTransparentBackground;
+
 #if PLATFORM(WIN)
     HWND nativeWindow;
 #endif

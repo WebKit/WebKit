@@ -104,6 +104,8 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, WebPageGroup* pageGr
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_viewScaleFactor(1)
+    , m_drawsBackground(true)
+    , m_drawsTransparentBackground(false)
     , m_isValid(true)
     , m_isClosed(false)
     , m_inDecidePolicyForMIMEType(false)
@@ -398,6 +400,28 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
         return true;
 
     return false;
+}
+
+void WebPageProxy::setDrawsBackground(bool drawsBackground)
+{
+    if (m_drawsBackground == drawsBackground)
+        return;
+
+    m_drawsBackground = drawsBackground;
+
+    if (isValid())
+        process()->send(Messages::WebPage::SetDrawsBackground(drawsBackground), m_pageID);
+}
+
+void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground)
+{
+    if (m_drawsTransparentBackground == drawsTransparentBackground)
+        return;
+
+    m_drawsTransparentBackground = drawsTransparentBackground;
+
+    if (isValid())
+        process()->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
 void WebPageProxy::setFocused(bool isFocused)
@@ -1526,6 +1550,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) 
     parameters.drawingAreaInfo = m_drawingArea->info();
     parameters.store = m_pageGroup->preferences()->store();
     parameters.pageGroupData = m_pageGroup->data();
+    parameters.drawsBackground = m_drawsBackground;
+    parameters.drawsTransparentBackground = m_drawsTransparentBackground;
 
 #if PLATFORM(WIN)
     parameters.nativeWindow = m_pageClient->nativeWindow();

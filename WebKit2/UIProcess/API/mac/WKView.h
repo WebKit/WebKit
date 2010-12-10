@@ -38,4 +38,10 @@ WK_EXPORT
 
 - (WKPageRef)pageRef;
 
+- (void)setDrawsBackground:(BOOL)flag;
+- (BOOL)drawsBackground;
+
+- (void)setDrawsTransparentBackground:(BOOL)flag;
+- (BOOL)drawsTransparentBackground;
+
 @end

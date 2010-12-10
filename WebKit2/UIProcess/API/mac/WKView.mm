@@ -176,6 +176,26 @@ struct EditCommandState {
     return toAPI(_data->_page.get());
 }
 
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    _data->_page->setDrawsBackground(drawsBackground);
+}
+
+- (BOOL)drawsBackground
+{
+    return _data->_page->drawsBackground();
+}
+
+- (void)setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
+{
+    _data->_page->setDrawsTransparentBackground(drawsTransparentBackground);
+}
+
+- (BOOL)drawsTransparentBackground
+{
+    return _data->_page->drawsTransparentBackground();
+}
+
 - (BOOL)acceptsFirstResponder
 {
     return YES;
@@ -673,21 +693,20 @@ static bool isViewVisible(NSView *view)
 }
 
 - (void)drawRect:(NSRect)rect
-{    
-    [[NSColor whiteColor] set];
-    NSRectFill(rect);
-
+{
     if (_data->_page->isValid() && _data->_page->drawingArea()) {
         CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
         _data->_page->drawingArea()->paint(IntRect(rect), context);
         _data->_page->didDraw();
+    } else if (_data->_page->drawsBackground()) {
+        [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];
+        NSRectFill(rect);
     }
 }
 
-- (BOOL)isOpaque 
+- (BOOL)isOpaque
 {
-    // FIXME: Return NO if we have a transparent background.
-    return YES;
+    return _data->_page->drawsBackground();
 }
 
 - (void)viewDidHide

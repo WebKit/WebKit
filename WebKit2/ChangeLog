@@ -1,3 +1,46 @@
+2010-12-09  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for transparent WebKit2 WKViews.
+
+        https://webkit.org/b/50785
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Encode drawsBackground and drawsTransparentBackground.
+        (WebKit::WebPageCreationParameters::decode): Decode drawsBackground and drawsTransparentBackground.
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setDrawsBackground:]): Added.
+        (-[WKView drawsBackground]): Added.
+        (-[WKView setDrawsTransparentBackground:]): Added.
+        (-[WKView drawsTransparentBackground]): Added.
+        (-[WKView drawRect:]): Only fill the background if the WebProcess isn't valid and drawsBackground.
+        Use white or clear based on setDrawsTransparentBackground.
+        (-[WKView isOpaque]): Return drawsBackground.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_drawsBackground and m_drawsTransparentBackground.
+        (WebKit::WebPageProxy::setDrawsBackground): Added. Send a SetDrawsBackground message.
+        (WebKit::WebPageProxy::setDrawsTransparentBackground): Added. Send a SetDrawsTransparentBackground message.
+        (WebKit::WebPageProxy::creationParameters): Set drawsBackground and drawsTransparentBackground.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::drawsBackground): Added. Return m_drawsBackground.
+        (WebKit::WebPageProxy::drawsTransparentBackground): Added. Return m_drawsTransparentBackground.
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint): Use the copy blend mode when drawing a background.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore): Use the copy blend mode to replace existing content.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Setup the new view's background color and transparent flag.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize m_drawsBackground and m_drawsTransparentBackground.
+        (WebKit::WebPage::setDrawsBackground): Added. Propagate the flag to the FrameViews.
+        (WebKit::WebPage::setDrawsTransparentBackground): Added. Propagate the background color to the FrameViews.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::drawsBackground): Added. Return m_drawsBackground.
+        (WebKit::WebPage::drawsTransparentBackground): Added. Return m_drawsTransparentBackground.
+        * WebProcess/WebPage/WebPage.messages.in: Added SetDrawsBackground and SetDrawsTransparentBackground.
+
 2010-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

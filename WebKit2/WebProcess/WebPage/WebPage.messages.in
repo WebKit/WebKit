@@ -25,6 +25,9 @@ messages -> WebPage {
     SetFocused(bool focused)
     SetIsInWindow(bool isInWindow)
 
+    SetDrawsBackground(bool drawsBackground)
+    SetDrawsTransparentBackground(bool drawsTransparentBackground)
+
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
     WheelEvent(WebKit::WebWheelEvent event)

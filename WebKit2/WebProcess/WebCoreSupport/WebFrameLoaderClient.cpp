@@ -1030,12 +1030,13 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebPage* webPage = m_frame->page();
+    Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
+
     bool isMainFrame = webPage->mainFrame() == m_frame;
 
 #if ENABLE(TILED_BACKING_STORE)
-
     IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->actualVisibleContentRect().size() : IntSize();
-    m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
 
     if (isMainFrame && webPage->resizesToContentsEnabled()) {
         m_frame->coreFrame()->view()->setDelegatesScrolling(true);
@@ -1048,8 +1049,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     const String& mimeType = m_frame->coreFrame()->loader()->documentLoader()->response().mimeType();
     m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForMIMEType(mimeType);
 
-    m_frame->coreFrame()->createView(m_frame->page()->size(), Color::white, false, IntSize(), false);
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, IntSize(), false);
 #endif
+
+    m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
 }
 
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)

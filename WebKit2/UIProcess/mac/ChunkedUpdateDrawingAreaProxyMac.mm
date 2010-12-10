@@ -67,6 +67,10 @@ void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContext
 
     CGContextSaveGState(context);
 
+    // Use the copy blend mode when drawing a background.
+    if (page()->drawsBackground())
+        CGContextSetBlendMode(context, kCGBlendModeCopy);
+
     // Flip the destination.
     CGContextScaleCTM(context, 1, -1);
     CGContextTranslateCTM(context, 0, -m_size.height());
@@ -84,12 +88,17 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
     RetainPtr<CGImageRef> image(updateChunk->createImage());
     IntRect updateChunkRect = updateChunk->rect();
 
-    // Flip the destination.
     CGContextSaveGState(m_bitmapContext.get());
+
+    // Use the copy blend mode to replace existing content.
+    CGContextSetBlendMode(m_bitmapContext.get(), kCGBlendModeCopy);
+
+    // Flip the destination.
     CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
     CGContextTranslateCTM(m_bitmapContext.get(), 0, -(updateChunkRect.y() + updateChunkRect.bottom()));
 
     CGContextDrawImage(m_bitmapContext.get(), updateChunkRect, image.get());
+
     CGContextRestoreGState(m_bitmapContext.get());
 
     [m_webView setNeedsDisplayInRect:NSRectFromCGRect(updateChunkRect)];

@@ -111,6 +111,8 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
+    , m_drawsBackground(true)
+    , m_drawsTransparentBackground(false)
     , m_isInRedo(false)
     , m_isClosed(false)
     , m_tabToLinks(false)
@@ -153,6 +155,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_drawingArea = DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.identifier, this);
     m_mainFrame = WebFrame::createMainFrame(this);
+
+    setDrawsBackground(parameters.drawsBackground);
+    setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
 #ifndef NDEBUG
     webPageCounter.increment();
@@ -761,6 +766,37 @@ void WebPage::setActive(bool isActive)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setWindowIsFocused(isActive);
 #endif
+}
+
+void WebPage::setDrawsBackground(bool drawsBackground)
+{
+    if (m_drawsBackground == drawsBackground)
+        return;
+
+    m_drawsBackground = drawsBackground;
+
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+        if (FrameView* view = coreFrame->view())
+            view->setTransparent(!drawsBackground);
+    }
+
+    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+}
+
+void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
+{
+    if (m_drawsTransparentBackground == drawsTransparentBackground)
+        return;
+
+    m_drawsTransparentBackground = drawsTransparentBackground;
+
+    Color backgroundColor = drawsTransparentBackground ? Color::transparent : Color::white;
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+        if (FrameView* view = coreFrame->view())
+            view->setBaseBackgroundColor(backgroundColor);
+    }
+
+    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
 void WebPage::setFocused(bool isFocused)
