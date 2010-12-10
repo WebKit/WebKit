@@ -1,5 +1,12 @@
 2010-12-10  Jessie Berlin  <jberlin@apple.com>
 
+        Qt Build Fix. Unreviewed.
+
+        * WebKit2.pro:
+        Add the Messages.h and MessageReceivers.h.
+
+2010-12-10  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Adam Roben and Sam Weinig.
 
         WebKit2: Need a WebKit2 equivalent of the WebKit1 WebDatabaseManager
