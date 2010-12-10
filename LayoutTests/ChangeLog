@@ -1,3 +1,10 @@
+2010-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Add platform specific expected files after r73715.
+
+        * platform/gtk/fast/forms/ValidityState-patternMismatch-expected.txt: Added.
+        * platform/qt/fast/forms/ValidityState-patternMismatch-expected.txt: Added.
+
 2010-12-10  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.
