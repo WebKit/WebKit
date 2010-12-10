@@ -1,3 +1,58 @@
+2010-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Implemented DOM mutations events as scoped events. A scoped event is an event whose
+        dispatch is done via ScopedEventQueue. The behavior of the queue is controlled by
+        EventQueueScope objects (RAII idiom), which increments and decrements the scoping level
+        on its constructor and destructor respectively.
+
+        When the scoping level is 0 (initial level), scoped events are dispatched as soon as
+        they are enqueued and act like synchronous events. When the scoping level is greater than 0,
+        however, events are queued in ScopedEventQueue and their dispatches are delayed until
+        the scoping level goes back to 0 (by the destruction of EventQueueScope).
+
+        DOMSubtreeModified, DOMNodeInserted, DOMNodeRemoved, DOMNodeRemovedFromDocument,
+        DOMNodeInsertedIntoDocument, DOMFocusIn, DOMFocusOut, focusin, and focusout are treated as
+        scoped events, and a scope object is instantiated in EditCommand::apply to delay dispatches
+        of the events until the completion of each call of EditCommand::doApply.
+
+        Test: fast/events/mutation/execCommands.html
+
+        * Android.mk: Added ScopedEventQueue.cpp.
+        * CMakeLists.txt: Ditto.
+        * WebCore.pro: Ditto.
+        * GNUmakefile.am: Added ScopedEventQueue.cpp and ScopedEventQueue.h.
+        * WebCore.gypi:  Ditto.
+        * WebCore.vcproj/project.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents): Calls dispatchScopedEvent.
+        (WebCore::dispatchChildRemovalEvents): Ditto.
+        * dom/DOMAllInOne.cpp: Added ScopedEventQueue.cpp.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchAttrRemovalEvent): Ditto. 
+        (WebCore::Element::dispatchAttrAdditionEvent): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEvent): Added.
+        (WebCore::Node::dispatchSubtreeModifiedEvent): Calls dispatchScopedEvent.
+        * dom/Node.h:
+        * dom/ScopedEventQueue.cpp: Added.
+        (WebCore::ScopedEventQueue::initialize): Added.
+        (WebCore::ScopedEventQueue::enqueueEvent): Added.
+        (WebCore::ScopedEventQueue::dispatchAllEvents): Added.
+        (WebCore::ScopedEventQueue::dispatchEvent): Added.
+        (WebCore::ScopedEventQueue::instance): Added.
+        (WebCore::ScopedEventQueue::incrementScopingLevel): Added.
+        (WebCore::ScopedEventQueue::decrementScopingLevel): Added.
+        * dom/ScopedEventQueue.h: Added.
+        (WebCore::ScopedEventQueue::~ScopedEventQueue): Added.
+        (WebCore::ScopedEventQueue::ScopedEventQueue): Added.
+        (WebCore::EventQueueScope::EventQueueScope): Added.
+        (WebCore::EventQueueScope::~EventQueueScope): Added.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): Instantiates EventQueueScope.
+
 2010-12-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

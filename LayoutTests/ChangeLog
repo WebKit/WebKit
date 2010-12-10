@@ -1,3 +1,14 @@
+2010-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Added a test to ensure no DOM mutation events are fired while execCommand is in progress.
+
+        * fast/events/crash-on-mutate-during-drop.html: DOMNodeInserted is fired after BR is detached
+        from the document, and can't be observed. Modify the DOM when text node is inserted.
+        * fast/events/mutation: Added.
+        * fast/events/mutation/execCommands.html: Added.
+
 2010-12-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.
