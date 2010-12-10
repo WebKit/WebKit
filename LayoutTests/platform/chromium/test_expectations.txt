@@ -3262,6 +3262,7 @@ BUG66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
 BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 
 // Needs V8 investigation
-BUG66099 MAC LINUX SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
-BUG66099 WIN RELEASE SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
+BUG66099 LINUX SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
+BUG66099 MAC WIN RELEASE SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
 BUG66099 WIN DEBUG : fast/js/array-sort-modifying-tostring.html = TIMEOUT
+BUG66099 MAC DEBUG : fast/js/array-sort-modifying-tostring.html = CRASH
