@@ -132,6 +132,8 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
         return false;
     }
 
+    m_socket->flush();
+
     return true;
 }
 
