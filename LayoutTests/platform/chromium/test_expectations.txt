@@ -2415,13 +2415,9 @@ BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 BUGWK40147 : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
-
-// Failures after WebKit roll 70949:71000
-BUGWK45991 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
 
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
@@ -2923,8 +2919,6 @@ BUG58942 : fast/dom/prototype-inheritance.html = TEXT
 BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
-
-BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
 
 // We don't support layoutTestController.nodesFromRect so this test just times out
 BUGWK46600 SKIP : fast/dom/nodesFromRect-links-and-text.html = TEXT

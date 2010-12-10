@@ -322,31 +322,33 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
 
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
-    return IntRect(convertLogicalToDevice(logicalRect.location()), convertLogicalToDevice(logicalRect.size()));
+    float left = floorf(logicalRect.left() * m_pageScaleFactor);
+    float top = floorf(logicalRect.top() * m_pageScaleFactor);
+    float right = ceilf(logicalRect.right() * m_pageScaleFactor);
+    float bottom = ceilf(logicalRect.bottom() * m_pageScaleFactor);
+    
+    return IntRect(IntPoint(left, top), convertToValidDeviceSize(right - left, bottom - top));
 }
 
 IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
 {
-    float wf = ceilf(logicalSize.width() * m_pageScaleFactor);
-    float hf = ceilf(logicalSize.height() * m_pageScaleFactor);
+    return convertToValidDeviceSize(logicalSize.width() * m_pageScaleFactor, logicalSize.height() * m_pageScaleFactor);
+}
 
-    if (!(wf >= 1 && hf >= 1 && wf * hf <= MaxCanvasArea))
+IntSize HTMLCanvasElement::convertToValidDeviceSize(float width, float height) const
+{
+    width = ceilf(width);
+    height = ceilf(height);
+    
+    if (width < 1 || height < 1 || width * height > MaxCanvasArea)
         return IntSize();
 
 #if PLATFORM(SKIA)
-    if (wf > MaxSkiaDim || hf > MaxSkiaDim)
+    if (width > MaxSkiaDim || height > MaxSkiaDim)
         return IntSize();
 #endif
 
-    return IntSize(static_cast<unsigned>(wf), static_cast<unsigned>(hf));
-}
-
-IntPoint HTMLCanvasElement::convertLogicalToDevice(const FloatPoint& logicalPos) const
-{
-    float xf = logicalPos.x() * m_pageScaleFactor;
-    float yf = logicalPos.y() * m_pageScaleFactor;
-
-    return IntPoint(static_cast<unsigned>(xf), static_cast<unsigned>(yf));
+    return IntSize(width, height);
 }
 
 const SecurityOrigin& HTMLCanvasElement::securityOrigin() const

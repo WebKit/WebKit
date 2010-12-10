@@ -107,7 +107,7 @@ public:
 
     IntRect convertLogicalToDevice(const FloatRect&) const;
     IntSize convertLogicalToDevice(const FloatSize&) const;
-    IntPoint convertLogicalToDevice(const FloatPoint&) const;
+    IntSize convertToValidDeviceSize(float width, float height) const;
 
     const SecurityOrigin& securityOrigin() const;
     void setOriginTainted() { m_originClean = false; }
