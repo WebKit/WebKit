@@ -1,5 +1,12 @@
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, another build fix. #include <wtf/UnusedParam.h> needed
+        for Release builds.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+
+2010-12-10  Kenneth Russell  <kbr@google.com>
+
         Unreviewed, build fix. Change #ifndef NDEBUG to #ifdef NDEBUG.
 
         * platform/graphics/opengl/Extensions3DOpenGL.cpp:

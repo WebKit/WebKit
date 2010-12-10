@@ -30,6 +30,7 @@
 #include "Extensions3DOpenGL.h"
 
 #include "GraphicsContext3D.h"
+#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
