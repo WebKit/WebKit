@@ -1,3 +1,13 @@
+2010-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix scrolling with mouse wheel in WebKit2 views.  Once
+        we coalesce wheel events, we can re-enable this.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll):
+
 2010-12-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.
