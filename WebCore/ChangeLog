@@ -1,3 +1,12 @@
+2010-12-10  Darin Adler  <darin@apple.com>
+
+        Try to fix Windows build.
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents): Put typedef of NodeVector inside the function
+        instead of at the top of the file, since the use is restricted to this function.
+        There's another NodeVector in ContainerNode.cpp.
+
 2010-12-09  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

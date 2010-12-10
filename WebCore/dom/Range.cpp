@@ -45,8 +45,6 @@
 
 namespace WebCore {
 
-typedef Vector<RefPtr<Node> > NodeVector;
-
 using namespace std;
 
 #ifndef NDEBUG
@@ -598,6 +596,8 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
+    typedef Vector<RefPtr<Node> > NodeVector;
+
     RefPtr<DocumentFragment> fragment;
     if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
         fragment = DocumentFragment::create(m_ownerDocument.get());
