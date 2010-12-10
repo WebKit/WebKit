@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# FIXME: This probably belongs in the buildbot module.
 class RegressionWindow(object):
     def __init__(self, build_before_failure, failing_build, failing_tests=None):
         self._build_before_failure = build_before_failure

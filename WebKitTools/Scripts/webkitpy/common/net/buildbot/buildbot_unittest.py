@@ -28,7 +28,8 @@
 
 import unittest
 
-from webkitpy.common.net.buildbot import BuildBot, Builder, Build, LayoutTestResults
+from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.net.buildbot import BuildBot, Builder, Build
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 

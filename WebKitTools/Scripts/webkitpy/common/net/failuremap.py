@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# FIXME: This probably belongs in the buildbot module.
 class FailureMap(object):
     def __init__(self):
         self._failures = []

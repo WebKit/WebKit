@@ -1,3 +1,20 @@
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move buildbot.py into its own module so we can split it out into one-file-per-class
+        https://bugs.webkit.org/show_bug.cgi?id=50806
+
+        We're adding more buildbot logic these days, so it makes sense
+        to give buildbot its own module.
+
+        * Scripts/webkitpy/common/net/buildbot/__init__.py: Added.
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py: Renamed from WebKitTools/Scripts/webkitpy/common/net/buildbot.py.
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py: Renamed from WebKitTools/Scripts/webkitpy/common/net/buildbot_unittest.py.
+        * Scripts/webkitpy/common/net/failuremap.py:
+        * Scripts/webkitpy/common/net/regressionwindow.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2010-12-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -31,7 +31,8 @@ import re
 import shutil
 import urllib
 
-from webkitpy.common.net.buildbot import BuildBot, LayoutTestResults
+from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests.port import factory
 from webkitpy.tool.grammar import pluralize
