@@ -1,3 +1,17 @@
+2010-12-10  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix crashes in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=49976
+
+        The m_methods hashmap of QtInstance contains InternalFunctions
+        whose depend on the current RuntimeObject. When we recreate the
+        RuntimeObject, we should also reset this hashmap.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+
 2010-12-10  François Sausset  <sausset@gmail.com>
 
         Reviewed by Eric Seidel.

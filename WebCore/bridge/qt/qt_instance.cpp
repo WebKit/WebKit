@@ -181,6 +181,7 @@ Class* QtInstance::getClass() const
 RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
+    m_methods.clear();
     return new (exec) QtRuntimeObject(exec, exec->lexicalGlobalObject(), this);
 }
 
