@@ -1,3 +1,21 @@
+2010-12-10  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Add DRT support for pageProperty, isPageBoxVisible, pageSizeAndMarginsInPixels, and addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=50783
+        
+        This patch allows to unskip the following test cases:
+        printing/page-rule-selection.html
+        printing/page-format-data.html
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::pageProperty): Added.
+        (DumpRenderTreeSupportGtk::isPageBoxVisible): Ditto.
+        (DumpRenderTreeSupportGtk::pageSizeAndMarginsInPixels): Ditto.
+        (DumpRenderTreeSupportGtk::addUserStyleSheet): Ditto.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2010-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Martin Robinson.

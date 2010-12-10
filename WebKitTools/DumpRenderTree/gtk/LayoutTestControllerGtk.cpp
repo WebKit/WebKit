@@ -152,20 +152,19 @@ int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
-    // FIXME: implement
-    return JSRetainPtr<JSStringRef>();
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(DumpRenderTreeSupportGtk::pageProperty(mainFrame, propertyName, pageNumber).data()));
+    return propertyValue;
 }
 
 bool LayoutTestController::isPageBoxVisible(int pageNumber) const
 {
-    // FIXME: implement
-    return false;
+    return DumpRenderTreeSupportGtk::isPageBoxVisible(mainFrame, pageNumber);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
-    // FIXME: implement
-    return JSRetainPtr<JSStringRef>();
+    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(DumpRenderTreeSupportGtk::pageSizeAndMarginsInPixels(mainFrame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft).data()));
+    return propertyValue;
 }
 
 size_t LayoutTestController::webHistoryItemCount()
@@ -716,7 +715,8 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bo
 
 void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-    printf("LayoutTestController::addUserStyleSheet not implemented.\n");
+    GOwnPtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
+    DumpRenderTreeSupportGtk::addUserStyleSheet(mainFrame, sourceCode.get());
 }
 
 void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)

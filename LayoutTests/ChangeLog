@@ -1,3 +1,15 @@
+2010-12-10  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Add DRT support for pageProperty, isPageBoxVisible, pageSizeAndMarginsInPixels, and addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=50783
+
+        Unskip the following test cases:
+        printing/page-rule-selection.html
+        printing/page-format-data.html
+        * platform/gtk/Skipped:
+
 2010-12-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Updated chromium test expectations.

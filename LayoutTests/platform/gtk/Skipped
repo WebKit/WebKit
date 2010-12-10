@@ -5120,12 +5120,6 @@ fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
 
-# LayoutTestController::pageProperty is not implemented for GTK yet.
-printing/page-rule-selection.html
-
-# LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for GTK.
-printing/page-format-data.html
-
 # Gtk seems to be pumping the lexer an extra time revealed by turning on the
 # HTML5 Lexer in r61234.
 # https://bugs.webkit.org/show_bug.cgi?id=40664

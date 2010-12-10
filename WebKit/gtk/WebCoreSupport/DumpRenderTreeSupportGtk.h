@@ -50,6 +50,10 @@ public:
     static WTF::CString counterValueForElementById(WebKitWebFrame* frame, const char* id);
     static int pageNumberForElementById(WebKitWebFrame* frame, const char* id, float pageWidth, float pageHeight);
     static int numberOfPagesForFrame(WebKitWebFrame* frame, float pageWidth, float pageHeight);
+    static WTF::CString pageProperty(WebKitWebFrame* frame, const char* propertyName, int pageNumber);
+    static bool isPageBoxVisible(WebKitWebFrame* frame, int pageNumber);
+    static WTF::CString pageSizeAndMarginsInPixels(WebKitWebFrame* mainFrame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
+    static void addUserStyleSheet(WebKitWebFrame* mainFrame, const char* sourceCode);
     static guint getPendingUnloadEventCount(WebKitWebFrame* frame);
     static bool pauseAnimation(WebKitWebFrame* frame, const char* name, double time, const char* element);
     static bool pauseTransition(WebKitWebFrame* frame, const char* name, double time, const char* element);

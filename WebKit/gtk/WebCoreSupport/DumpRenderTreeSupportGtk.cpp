@@ -39,6 +39,7 @@
 #include "JSNodeList.h"
 #include "JSValue.h"
 #include "NodeList.h"
+#include "PageGroup.h"
 #include "PlatformString.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
@@ -54,6 +55,7 @@
 #include "webkitwebviewprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebframe.h"
+#include "DOMWrapperWorld.h"
 #include <JavaScriptCore/APICast.h>
 
 using namespace JSC;
@@ -238,6 +240,86 @@ int DumpRenderTreeSupportGtk::numberOfPagesForFrame(WebKitWebFrame* frame, float
         return -1;
 
     return PrintContext::numberOfPages(coreFrame, FloatSize(pageWidth, pageHeight));
+}
+
+/**
+ * pageProperty
+ * @frame: a #WebKitWebFrame
+ * @propertyName: name of a property
+ * @pageNumber: number of a page 
+ *
+ * Return value: The value of the given property name.
+ */
+CString DumpRenderTreeSupportGtk::pageProperty(WebKitWebFrame* frame, const char* propertyName, int pageNumber)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString());
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return CString();
+
+    return PrintContext::pageProperty(coreFrame, propertyName, pageNumber).utf8();
+}
+
+/**
+ * isPageBoxVisible
+ * @frame: a #WebKitWebFrame
+ * @pageNumber: number of a page 
+ *
+ * Return value: TRUE if a page box is visible. 
+ */
+bool DumpRenderTreeSupportGtk::isPageBoxVisible(WebKitWebFrame* frame, int pageNumber)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), false);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return false;
+
+    return coreFrame->document()->isPageBoxVisible(pageNumber); 
+}
+
+/**
+ * pageSizeAndMarginsInPixels
+ * @frame: a #WebKitWebFrame
+ * @pageNumber: number of a page 
+ * @width: width of a page
+ * @height: height of a page
+ * @marginTop: top margin of a page
+ * @marginRight: right margin of a page
+ * @marginBottom: bottom margin of a page
+ * @marginLeft: left margin of a page
+ *
+ * Return value: The value of page size and margin.
+ */
+CString DumpRenderTreeSupportGtk::pageSizeAndMarginsInPixels(WebKitWebFrame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString());
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return CString();
+
+    return PrintContext::pageSizeAndMarginsInPixels(coreFrame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft).utf8();
+}
+
+/**
+ * addUserStyleSheet
+ * @frame: a #WebKitWebFrame
+ * @sourceCode: code of a user stylesheet
+ *
+ */
+void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const char* sourceCode)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    WebKitWebView* webView = getViewFromFrame(frame);
+    Page* page = core(webView);
+    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), 0, 0, WebCore::InjectInAllFrames); 
 }
 
 /**
