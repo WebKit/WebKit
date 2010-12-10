@@ -102,7 +102,7 @@ If you would like to track this test fix with another bug, please close this bug
             latest_flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
             author_emails = self._author_emails_for_test(flaky_test)
             if not bug:
-                self._create_bug_for_flaky_test(flaky_test, latest_flake_message)
+                self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
             else:
                 # FIXME: If the bug is closed we should follow the duplicate chain to the last bug,
                 # and then re-open the last bug if that too is closed.
