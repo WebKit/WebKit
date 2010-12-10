@@ -1,3 +1,11 @@
+2010-12-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed small typo in the name of a function.
+
+        * webkit/webkitwebsettings.cpp:
+        (getAvailableDictionariesCallback):
+        (webkit_web_settings_set_property):
+
 2010-12-09  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

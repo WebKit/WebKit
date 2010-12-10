@@ -961,7 +961,7 @@ static void webkit_web_settings_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
 }
 
-static void getAvilableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
+static void getAvailableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
 {
     Vector<CString>* dicts = static_cast<Vector<CString>*>(data);
 
@@ -1085,7 +1085,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
             } else {
                 // No dictionaries selected, we get one from the list
                 Vector<CString> allDictionaries;
-                enchant_broker_list_dicts(broker, getAvilableDictionariesCallback, &allDictionaries);
+                enchant_broker_list_dicts(broker, getAvailableDictionariesCallback, &allDictionaries);
                 if (!allDictionaries.isEmpty()) {
                     dict = enchant_broker_request_dict(broker, allDictionaries[0].data());
                     spellDictionaries = g_slist_append(spellDictionaries, dict);
