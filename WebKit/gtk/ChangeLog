@@ -1,3 +1,15 @@
+2010-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove unnecessary variable names from DumpRenderTreeSupportGtk
+        https://bugs.webkit.org/show_bug.cgi?id=50815
+
+        There were some unnecessary variable names in DumpRenderTreeSupportGtk,
+        so remove them.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Do it.
+
 2010-12-10  Joone Hur  <joone@kldp.org>
 
         Reviewed by Eric Seidel.
