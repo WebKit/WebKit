@@ -1,3 +1,15 @@
+2010-12-09  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Clip update rectangle for Texture::updateSubRect to texture size
+        https://bugs.webkit.org/show_bug.cgi?id=49929
+
+        Test: fast/canvas/canvas-largedraws.html
+
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect):
+
 2010-12-09  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Another speculative Gtk build fix after r73669. Add

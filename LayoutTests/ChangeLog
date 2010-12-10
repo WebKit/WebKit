@@ -1,3 +1,13 @@
+2010-12-09  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Clip update rectangle for Texture::updateSubRect to texture size
+        https://bugs.webkit.org/show_bug.cgi?id=49929
+
+        * fast/canvas/canvas-largedraws-expected.txt: Added.
+        * fast/canvas/canvas-largedraws.html: Added.
+
 2010-12-09  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium test expectations update.

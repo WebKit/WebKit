@@ -151,6 +151,9 @@ void Texture::load(void* pixels)
 
 void Texture::updateSubRect(void* pixels, const IntRect updateRect)
 {
+    IntRect updateRectSanitized(updateRect);
+    updateRectSanitized.intersect(IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
+
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
     unsigned int glFormat = 0;
     unsigned int glType = 0;
@@ -160,16 +163,16 @@ void Texture::updateSubRect(void* pixels, const IntRect updateRect)
         ASSERT(glFormat == GraphicsContext3D::RGBA && glType == GraphicsContext3D::UNSIGNED_BYTE);
         // FIXME:  This could use PBO's to save doing an extra copy here.
     }
-    int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRect
-        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRect.width()) *
-        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRect.height());
+    int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRectSanitized
+        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.width()) *
+        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.height());
     OwnArrayPtr<uint32_t> tempBuff(new uint32_t[tempBuffSize]);
 
     for (int tile = 0; tile < m_tiles.numTiles(); tile++) {
         // Intersect with tile
         IntRect tileBoundsWithBorder = m_tiles.tileBoundsWithBorder(tile);
 
-        IntRect updateRectIntersected = updateRect;
+        IntRect updateRectIntersected = updateRectSanitized;
         updateRectIntersected.intersect(tileBoundsWithBorder);
 
         IntRect dstRect = updateRectIntersected;
