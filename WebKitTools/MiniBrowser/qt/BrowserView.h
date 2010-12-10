@@ -31,7 +31,7 @@
 
 #include <QGraphicsView>
 #include "qgraphicswkview.h"
-#include "WKRetainPtr.h"
+#include "qwkcontext.h"
 
 class BrowserView : public QGraphicsView {
     Q_OBJECT
@@ -48,7 +48,7 @@ protected:
 
 private:
     QGraphicsWKView* m_item;
-    WKRetainPtr<WKContextRef> m_context;
+    QWKContext* m_context;
 };
 
 #endif

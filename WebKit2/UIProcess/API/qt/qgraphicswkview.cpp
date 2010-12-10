@@ -57,7 +57,7 @@ struct QGraphicsWKViewPrivate {
     bool m_isChangingScale;
 };
 
-QGraphicsWKView::QGraphicsWKView(WKPageNamespaceRef pageNamespaceRef, BackingStoreType backingStoreType, QGraphicsItem* parent)
+QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingStoreType, QGraphicsItem* parent)
     : QGraphicsWidget(parent)
     , d(new QGraphicsWKViewPrivate(this))
 {
@@ -79,7 +79,7 @@ QGraphicsWKView::QGraphicsWKView(WKPageNamespaceRef pageNamespaceRef, BackingSto
         break;
     }
 
-    d->page = new QWKPage(pageNamespaceRef);
+    d->page = new QWKPage(context);
     d->page->d->init(size().toSize(), drawingAreaProxy);
     connect(d->page, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
     connect(d->page, SIGNAL(loadStarted()), this, SIGNAL(loadStarted()));

@@ -24,6 +24,8 @@
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
+#include "qwkcontext.h"
+#include "qwkcontext_p.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "FindIndicator.h"
@@ -32,7 +34,6 @@
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEventFactoryQt.h"
-#include "WebPlatformStrategies.h"
 #include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
@@ -52,24 +53,14 @@
 using namespace WebKit;
 using namespace WebCore;
 
-static inline void initializePlatformStrategiesIfNeeded()
-{
-    static bool initialized = false;
-    if (initialized)
-        return;
-
-    WebPlatformStrategies::initialize();
-    initialized = true;
-}
-
-QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
+QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     : q(qq)
+    , context(c)
     , preferences(0)
     , createNewPageFn(0)
 {
-    initializePlatformStrategiesIfNeeded();
     memset(actions, 0, sizeof(actions));
-    page = toImpl(namespaceRef)->createWebPage(0); // Page gets a ref to namespace.
+    page = context->d->pageNamespace->createWebPage(0);
     page->setPageClient(this);
     history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }
@@ -312,8 +303,8 @@ void QWKPagePrivate::touchEvent(QTouchEvent* event)
 #endif
 }
 
-QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
-    : d(new QWKPagePrivate(this, namespaceRef))
+QWKPage::QWKPage(QWKContext* context)
+    : d(new QWKPagePrivate(this, context))
 {
     WKPageLoaderClient loadClient = {
         0,      /* version */

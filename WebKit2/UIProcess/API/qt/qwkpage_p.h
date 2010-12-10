@@ -36,7 +36,7 @@ class QWKPreferences;
 
 class QWKPagePrivate : WebKit::PageClient {
 public:
-    QWKPagePrivate(QWKPage*, WKPageNamespaceRef);
+    QWKPagePrivate(QWKPage*, QWKContext*);
     ~QWKPagePrivate();
 
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }
@@ -92,6 +92,7 @@ public:
 
     QWKPage* q;
 
+    QWKContext* context;
     QWKHistory* history;
 
     QAction* actions[QWKPage::WebActionCount];

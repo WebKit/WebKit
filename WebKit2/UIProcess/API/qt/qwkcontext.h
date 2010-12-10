@@ -17,12 +17,28 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WKView_h
-#define WKView_h
+#ifndef qwkcontext_h
+#define qwkcontext_h
 
-#include <WebKit2/qgraphicswkview.h>
-#include <WebKit2/qwkcontext.h>
-#include <WebKit2/qwkpage.h>
-#include <WebKit2/qwkpreferences.h>
+#include "qwebkitglobal.h"
+#include <QObject>
+#include <WebKit2/WKPageNamespace.h>
 
-#endif /* WKView_h */
+class QWKContextPrivate;
+
+class QWEBKIT_EXPORT QWKContext : public QObject {
+    Q_OBJECT
+public:
+    QWKContext(QObject* parent = 0);
+    virtual ~QWKContext();
+
+    // Bridge from the C API
+    QWKContext(WKPageNamespaceRef pageNamespaceRef, QObject* parent = 0);
+
+private:
+    QWKContextPrivate* d;
+
+    friend class QWKPagePrivate;
+};
+
+#endif /* qwkcontext_h */

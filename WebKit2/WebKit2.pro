@@ -147,6 +147,7 @@ INCLUDEPATH = \
     WebProcess/WebCoreSupport \
     WebProcess/WebCoreSupport/qt \
     WebProcess/WebPage \
+    WebProcess/qt \
     $$INCLUDEPATH
 
 INCLUDEPATH += \
@@ -296,6 +297,8 @@ HEADERS += \
     UIProcess/API/cpp/qt/WKURLQt.h \
     UIProcess/API/qt/ClientImpl.h \
     UIProcess/API/qt/qgraphicswkview.h \
+    UIProcess/API/qt/qwkcontext.h \
+    UIProcess/API/qt/qwkcontext_p.h \
     UIProcess/API/qt/qwkhistory.h \
     UIProcess/API/qt/qwkhistory_p.h \
     UIProcess/API/qt/qwkpage.h \
@@ -486,6 +489,7 @@ SOURCES += \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
+    UIProcess/API/qt/qwkcontext.cpp \
     UIProcess/API/qt/qwkhistory.cpp \
     UIProcess/API/qt/qwkpage.cpp \
     UIProcess/API/qt/qwkpreferences.cpp \

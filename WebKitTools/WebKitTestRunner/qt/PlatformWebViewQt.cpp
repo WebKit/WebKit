@@ -26,6 +26,7 @@
 
 #include "PlatformWebView.h"
 #include "qgraphicswkview.h"
+#include "qwkcontext.h"
 #include <QtGui>
 
 namespace WTR {
@@ -44,7 +45,7 @@ private:
 
 WebView::WebView(WKPageNamespaceRef namespaceRef)
     : QGraphicsView()
-    , m_item(new QGraphicsWKView(namespaceRef))
+    , m_item(new QGraphicsWKView(new QWKContext(namespaceRef, this)))
 {
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);

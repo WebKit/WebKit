@@ -11,6 +11,7 @@ QT_BEGIN_NAMESPACE
 class QCursor;
 QT_END_NAMESPACE
 
+class QWKContext;
 class QGraphicsWKViewPrivate;
 
 WKStringRef WKStringCreateWithQString(const QString& qString);
@@ -23,7 +24,7 @@ class QWEBKIT_EXPORT QGraphicsWKView : public QGraphicsWidget {
 
 public:
     enum BackingStoreType { Simple, Tiled };
-    QGraphicsWKView(WKPageNamespaceRef namespaceRef, BackingStoreType backingStoreType = Simple, QGraphicsItem* parent = 0);
+    QGraphicsWKView(QWKContext* context, BackingStoreType backingStoreType = Simple, QGraphicsItem* parent = 0);
 
     virtual ~QGraphicsWKView();
 

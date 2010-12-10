@@ -10,9 +10,9 @@
 #include <QUrl>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
 
 class QCursor;
+class QWKContext;
 class QWKGraphicsWidget;
 class QWKPreferences;
 class QWKPagePrivate;
@@ -66,7 +66,7 @@ public:
         friend class QWKPage;
     };
 
-    QWKPage(WKPageNamespaceRef);
+    QWKPage(QWKContext*);
     virtual ~QWKPage();
 
     WKPageRef pageRef() const;
@@ -102,6 +102,7 @@ public:
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
 
     QWKHistory* history() const;
+    QWKContext* context() const;
 
     void findZoomableAreaForPoint(const QPoint&);
 

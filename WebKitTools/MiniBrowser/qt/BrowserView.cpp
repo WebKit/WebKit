@@ -29,7 +29,6 @@
 #include "BrowserView.h"
 
 #include <QGraphicsScene>
-#include "WKContext.h"
 
 static QWKPage* createNewPage(QWKPage* page)
 {
@@ -39,11 +38,9 @@ static QWKPage* createNewPage(QWKPage* page)
 BrowserView::BrowserView(QGraphicsWKView::BackingStoreType backingStoreType, QWidget* parent)
     : QGraphicsView(parent)
     , m_item(0)
-    , m_context(WKContextGetSharedProcessContext())
+    , m_context(new QWKContext(this))
 {
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(m_context.get()));
-
-    m_item = new QGraphicsWKView(pageNamespace.get(), backingStoreType, 0);
+    m_item = new QGraphicsWKView(m_context, backingStoreType, 0);
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 

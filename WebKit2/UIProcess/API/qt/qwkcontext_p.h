@@ -17,12 +17,23 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WKView_h
-#define WKView_h
 
-#include <WebKit2/qgraphicswkview.h>
-#include <WebKit2/qwkcontext.h>
-#include <WebKit2/qwkpage.h>
-#include <WebKit2/qwkpreferences.h>
+#ifndef qwkcontext_p_h
+#define qwkcontext_p_h
 
-#endif /* WKView_h */
+#include "WebContext.h"
+#include "WebPageNamespace.h"
+#include <wtf/RefPtr.h>
+
+class QWKContextPrivate {
+public:
+    QWKContextPrivate(QWKContext*);
+    ~QWKContextPrivate();
+
+    QWKContext* q;
+
+    RefPtr<WebKit::WebContext> context;
+    RefPtr<WebKit::WebPageNamespace> pageNamespace;
+};
+
+#endif /* qkcontext_p_h */
