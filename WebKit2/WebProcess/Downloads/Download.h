@@ -42,6 +42,10 @@ class WKDownloadAsDelegate;
 #endif
 #endif
 
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLDownloadPriv.h>
+#endif
+
 namespace CoreIPC {
     class DataReference;
 }
@@ -97,6 +101,9 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
+#endif
+#if USE(CFNETWORK)
+    RetainPtr<CFURLDownloadRef> m_download;
 #endif
 };
 

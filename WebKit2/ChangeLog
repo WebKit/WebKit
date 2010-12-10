@@ -1,3 +1,29 @@
+2010-12-10  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Implement Download::start() and Download::startWithHandle() on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=50844
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::start): Create a CFURLDownloadRef and schedule it.
+        (WebKit::Download::startWithHandle): Create a CFURLDownloadRef with the loading connection
+        retrieved from the ResourceHandle.
+        (WebKit::Download::platformInvalidate):
+        (WebKit::downloadFromClientInfo):
+        (WebKit::didStartCallback):
+        (WebKit::willSendRequestCallback):
+        (WebKit::didReceiveAuthenticationChallengeCallback):
+        (WebKit::didReceiveResponseCallback):
+        (WebKit::willResumeWithResponseCallback):
+        (WebKit::didReceiveDataCallback):
+        (WebKit::shouldDecodeDataOfMIMETypeCallback):
+        (WebKit::decideDestinationWithSuggestedObjectNameCallback):
+        (WebKit::didCreateDestinationCallback):
+        (WebKit::didFinishCallback):
+        (WebKit::didFailCallback):
+
 2010-12-10  Enrica Casucci  <enrica@apple.com>
 
         Windows build fix. Unreviewed.
