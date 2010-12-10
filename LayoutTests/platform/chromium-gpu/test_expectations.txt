@@ -185,7 +185,6 @@ BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT PASS
 BUGWK45991 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT PASS
 BUGWK45991 DEBUG : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
-BUGWK45991 MAC RELEASE : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
@@ -198,9 +197,7 @@ BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
-BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
-BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 // Update canvas/philip in WK r71481
 BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT

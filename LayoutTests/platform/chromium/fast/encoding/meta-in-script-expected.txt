@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: Uncaught SyntaxError: Unexpected token <
+PASS: windows-1255
+This test passes if the charset is parsed from the meta tag outside the script.

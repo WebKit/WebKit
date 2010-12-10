@@ -102,10 +102,6 @@ BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
 BUG32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
 
-BUG47937 WIN DEBUG : fast/parser/residual-style-hang.html = PASS TIMEOUT
-BUG47937 LINUX DEBUG SLOW : fast/parser/residual-style-hang.html = PASS
-BUG47937 MAC DEBUG : fast/parser/residual-style-hang.html = TIMEOUT
-
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -639,6 +635,7 @@ BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 
 BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
+BUG66087 WIN : inspector/timeline-layout.html = PASS TEXT
 BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
@@ -830,14 +827,8 @@ BUG13907 BUG60223 : media/controls-styling.html = FAIL
 BUG13907 LINUX MAC : media/video-zoom.html = IMAGE PASS
 BUG13907 BUG60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
-// These two tests started timing out after r66110.
-BUG13907 BUG60746 WIN RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
-// Started failing in roll 66079:66240.
-BUG53660 BUG60746 WIN DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
 // Behavior was changed by WebKit roll 69035:69062.
 BUG53660 BUG60746 MAC : media/video-transformed.html = IMAGE
-BUG53660 BUG60746 LINUX : media/video-transformed.html = IMAGE PASS
-
 
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
@@ -1223,7 +1214,7 @@ BUG10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 // green so new mac regressions are caught much quicker.
 // (there are a few others marked w/ multiple status like this in other parts of
 // the file, but they were left there as the comments in those areas are valid.)
-BUG10384 MAC SLOW : fast/dom/Window/new-window-opener.html = FAIL
+BUG10384 MAC WIN DEBUG SLOW : fast/dom/Window/new-window-opener.html = FAIL
 
 
 BUG10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
@@ -2813,7 +2804,7 @@ BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
-BUG60651 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
+BUG60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
 BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUG60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 BUG60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TEXT
@@ -2864,7 +2855,7 @@ BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PAS
 BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 // Added by r69084
-BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT PASS
+BUG57934 WIN SLOW : http/tests/appcache/fail-on-update-2.html = TIMEOUT PASS TEXT
 
 
 // Failing since r69181. Verified as legitimate by looking at the results
@@ -3238,13 +3229,14 @@ BUG66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.html 
 BUG66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
 BUG66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUG66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
-BUG66085 LINUX : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
+BUG66085 WIN LINUX : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
 BUG66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUG66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUG66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUG66085 : media/remove-from-document.html = PASS TIMEOUT
 BUG66085 WIN : media/video-currentTime.html = TIMEOUT
 BUG66085 LINUX : media/video-currentTime.html = PASS TIMEOUT
+BUG66085 : media/video-display-toggle.html = PASS TIMEOUT
 BUG66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUG66085 : media/video-source.html = PASS TIMEOUT
 BUG66085 : media/video-source-moved.html = PASS TIMEOUT
@@ -3252,6 +3244,7 @@ BUG66085 : media/video-source-type.html = PASS TIMEOUT
 BUG66085 LINUX : media/video-src-source.html = PASS TIMEOUT
 
 // Flaky failures
+BUG66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
 BUG66087 LINUX : http/tests/misc/iframe404.html = PASS TEXT
 BUG66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
 BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
@@ -3259,3 +3252,5 @@ BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 // Needs V8 investigation.  Skipped due to concern that this may be corrupting
 // memory and thus leading to unpredictable results.
 BUG66099 SKIP : fast/js/array-sort-modifying-tostring.html = TEXT CRASH TIMEOUT
+
+BUG66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT

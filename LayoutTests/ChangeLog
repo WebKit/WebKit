@@ -1,3 +1,13 @@
+2010-12-10  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/fast/encoding: Added.
+        * platform/chromium/fast/encoding/meta-in-script-expected.txt: Added
+          V8-specific expectation.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-10  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Joseph Pecoraro.
