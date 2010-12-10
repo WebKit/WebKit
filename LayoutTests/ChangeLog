@@ -1,3 +1,10 @@
+2010-12-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Get rid of spaces in ValidityState-patternMismatch test.
+
+        * fast/forms/ValidityState-patternMismatch-expected.txt:
+        * fast/forms/ValidityState-patternMismatch.html:
+
 2010-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Add platform specific expected files after r73715.
