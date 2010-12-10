@@ -78,6 +78,7 @@ public:
     static void whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
     static unsigned int workerThreadCount();
+    static bool webkitWebFrameSelectionHasSpellingMarker(WebKitWebFrame*, gint from, gint length);
 
 private:
     static bool s_drtRun;

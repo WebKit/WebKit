@@ -816,10 +816,9 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasSpellingMarker(int, int)
+bool LayoutTestController::hasSpellingMarker(int from, int length)
 {
-    // FIXME: Implement this.
-    return false;
+    return DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(mainFrame, from, length);
 }
 
 void LayoutTestController::dumpConfigurationForViewport(int availableWidth, int availableHeight)

@@ -515,3 +515,10 @@ unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
     return 0;
 #endif
 }
+
+bool DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(WebKitWebFrame *frame, gint from, gint length)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), FALSE);
+
+    return core(frame)->editor()->selectionStartHasSpellingMarkerFor(from, length);
+}

@@ -1,3 +1,17 @@
+2010-12-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add hasSpellingMarker support to the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50739
+
+        Added a new private API function to support the spelling marker
+        tests in the DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2010-12-10  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

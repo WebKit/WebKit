@@ -1,3 +1,15 @@
+2010-12-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add hasSpellingMarker support to the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50739
+
+        Implemented the hasSpellingMarker to support spelling tests.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::hasSpellingMarker):
+
 2010-12-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.

@@ -964,13 +964,6 @@ editing/selection/unrendered-004.html
 editing/selection/unrendered-005.html
 editing/selection/unrendered-space.html
 editing/selection/word-granularity.html
-editing/spelling/inline_spelling_markers.html
-editing/spelling/spellcheck-attribute.html
-editing/spelling/spelling-hasspellingmarker.html
-editing/spelling/spelling-backspace-between-lines.html
-editing/spelling/spelling-linebreak.html
-editing/spelling/spelling-attribute-change.html
-editing/spelling/spelling-attribute-at-child.html
 editing/style/5065910.html
 editing/style/apple-style-editable-mix.html
 editing/style/block-style-001.html
@@ -5572,3 +5565,6 @@ media/controls-without-preload.html
 fast/history/history-back-initial-vs-final-url.html
 http/tests/navigation/post-frames-goback1.html
 http/tests/navigation/postredirect-frames-goback1.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50740
+editing/spelling/spelling-backspace-between-lines.html
