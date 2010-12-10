@@ -33,21 +33,15 @@
 
 namespace WTF {
 
-// String conversions
 String::String(const wxString& wxstr)
 {
 #if !wxUSE_UNICODE
     #error "This code only works in Unicode build of wxWidgets"
 #endif
 
-    // ICU's UChar is 16bit wide, UTF-16, and the code below counts on it, so
-    // it would break if the definition changed:
-    wxCOMPILE_TIME_ASSERT(sizeof(UChar) == 2, UCharSizeMustBe16Bit);
+#if SIZEOF_WCHAR_T == sizeof(UChar)
 
-#if SIZEOF_WCHAR_T == 2 // wchar_t==UChar
-
-    const UChar* str = wxstr.wc_str();
-    const size_t len = wxstr.length();
+    m_impl = StringImpl::create(wxstr.wc_str(), wxstr.length());
 
 #else // SIZEOF_WCHAR_T == 4
 
@@ -58,27 +52,19 @@ String::String(const wxString& wxstr)
 
 #if defined(wxUSE_UNICODE_UTF8) && wxUSE_UNICODE_UTF8
     // in wx3's UTF8 mode, wc_str() returns a buffer, not raw pointer
-   wxWCharBuffer widestr(wxstr.wc_str());
+    wxWCharBuffer wideString(wxstr.wc_str());
 #else
-    const wxChar *widestr = wxstr.wc_str();
+    const wxChar *wideString = wxstr.wc_str();
 #endif
-    const size_t widelen = wxstr.length();
+    size_t wideLength = wxstr.length();
 
-    // allocate buffer for the UTF-16 string:
+    UChar* data;
     wxMBConvUTF16 conv;
-    const size_t utf16bufLen = conv.FromWChar(NULL, 0, widestr, widelen);
-    wxCharBuffer utf16buf(utf16bufLen);
-
-    // and convert wxString to UTF-16 (=UChar*):
-    const UChar* str = (const UChar*)utf16buf.data();
-    size_t len = conv.FromWChar(utf16buf.data(), utf16bufLen, widestr, widelen) / 2;
+    unsigned utf16Length = conv.FromWChar(0, 0, wideString, wideLength);
+    m_impl = StringImpl::createUninitialized(utf16Length, data)
+    conv.FromWChar(data, utf16Length, wideString, wideLength);
 
 #endif // SIZEOF_WCHAR_T == 4
-
-    // conversion to UTF-16 or getting internal buffer isn't supposed to fail:
-    wxASSERT_MSG(str != NULL, _T("failed string conversion?"));
-
-    m_impl = StringImpl::create(str, len);
 }
 
 String::operator wxString() const
@@ -86,4 +72,4 @@ String::operator wxString() const
     return wxString(utf8().data(), wxConvUTF8);
 }
 
-} // namespace WebCore
+} // namespace WTF
