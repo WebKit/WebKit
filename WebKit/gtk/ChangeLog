@@ -1,3 +1,18 @@
+2010-12-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Choose a dictionary in case there is no one defined or the
+        env LANG does not propose one
+        https://bugs.webkit.org/show_bug.cgi?id=50738
+
+        In case no dict is set and we can not find one using the
+        environment just get the first dictionary installed in the list.
+
+        * webkit/webkitwebsettings.cpp:
+        (getAvilableDictionariesCallback):
+        (webkit_web_settings_set_property):
+
 2010-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

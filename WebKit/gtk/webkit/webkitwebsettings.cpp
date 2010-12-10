@@ -961,6 +961,13 @@ static void webkit_web_settings_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
 }
 
+static void getAvilableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
+{
+    Vector<CString>* dicts = static_cast<Vector<CString>*>(data);
+
+    dicts->append(languageTag);
+}
+
 static void webkit_web_settings_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
     WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
@@ -1075,6 +1082,14 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
             if (enchant_broker_dict_exists(broker, language)) {
                 dict = enchant_broker_request_dict(broker, language);
                 spellDictionaries = g_slist_append(spellDictionaries, dict);
+            } else {
+                // No dictionaries selected, we get one from the list
+                Vector<CString> allDictionaries;
+                enchant_broker_list_dicts(broker, getAvilableDictionariesCallback, &allDictionaries);
+                if (!allDictionaries.isEmpty()) {
+                    dict = enchant_broker_request_dict(broker, allDictionaries[0].data());
+                    spellDictionaries = g_slist_append(spellDictionaries, dict);
+                }
             }
         }
         g_slist_foreach(priv->enchant_dicts, free_spell_checking_language, 0);
