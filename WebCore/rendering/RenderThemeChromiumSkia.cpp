@@ -840,7 +840,8 @@ bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const
     IntRect valueRect = progressValueRectFor(renderProgress, rect);
     if (valueRect.width()) {
 
-        IntSize valueTileSize(static_cast<int>(valueImage->width() * tileScale), valueRect.height());
+        IntSize valueTileSize(std::max(1, static_cast<int>(valueImage->width() * tileScale)), valueRect.height());
+
         int leftOffset = valueRect.x() - rect.x();
         int roundedLeftOffset= (leftOffset / valueTileSize.width()) * valueTileSize.width();
         int dstLeftValueWidth = roundedLeftOffset - leftOffset + (leftOffset % valueImage->width()) ? valueTileSize.width() : 0;

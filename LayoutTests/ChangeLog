@@ -1,3 +1,17 @@
+2010-12-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Make sure a non-zero value is used for tile-width to avoid a crash
+        https://bugs.webkit.org/show_bug.cgi?id=50341
+
+        The scaled tile width can be very small at times (e.g. with 'style: font 1
+        required'). So use a minimum width of 1 instead of using 0 (which leads to a
+        crash).
+
+        * fast/dom/HTMLProgressElement/progress-element-with-style-crash.html: Added.
+        * fast/dom/HTMLProgressElement/progress-element-with-style-crash-expected.txt: Added.
+
 2010-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
