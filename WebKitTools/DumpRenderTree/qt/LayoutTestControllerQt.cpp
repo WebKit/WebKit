@@ -58,6 +58,7 @@ void LayoutTestController::reset()
     m_waitForDone = false;
     m_dumpTitleChanges = false;
     m_dumpDatabaseCallbacks = false;
+    m_dumpApplicationCacheDelegateCallbacks = false;
     m_dumpStatusCallbacks = false;
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
@@ -541,12 +542,14 @@ void LayoutTestController::dispatchPendingLoadRequests()
 
 void LayoutTestController::clearAllApplicationCaches()
 {
-    // FIXME: implement to support Application Cache quotas.
+    DumpRenderTreeSupportQt::clearAllApplicationCaches();
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
-    // FIXME: implement to support Application Cache quotas.
+    if (!m_topLoadingFrame)
+        return;
+    m_topLoadingFrame->securityOrigin().setApplicationCacheQuota(quota);
 }
 
 void LayoutTestController::setDatabaseQuota(int size)

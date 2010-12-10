@@ -51,6 +51,7 @@ public:
     qint64 databaseQuota() const;
 
     void setDatabaseQuota(qint64 quota);
+    void setApplicationCacheQuota(qint64 quota);
 
     QList<QWebDatabase> databases() const;
 

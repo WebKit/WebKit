@@ -23,6 +23,7 @@
 #include "config.h"
 #include "DumpRenderTreeSupportQt.h"
 
+#include "ApplicationCacheStorage.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "ChromeClientQt.h"
 #include "ContextMenu.h"
@@ -583,6 +584,14 @@ void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& 
         return;
 
     corePage->settings()->setEditingBehaviorType(coreEditingBehavior);
+}
+
+void DumpRenderTreeSupportQt::clearAllApplicationCaches()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    WebCore::cacheStorage().empty();
+    WebCore::cacheStorage().vacuumDatabaseFile();
+#endif
 }
 
 void DumpRenderTreeSupportQt::dumpFrameLoader(bool b)

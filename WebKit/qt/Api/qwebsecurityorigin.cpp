@@ -19,14 +19,15 @@
 
 #include "config.h"
 #include "qwebsecurityorigin.h"
-#include "qwebsecurityorigin_p.h"
-#include "qwebdatabase.h"
-#include "qwebdatabase_p.h"
 
+#include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
 #include "KURL.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "qwebdatabase.h"
+#include "qwebdatabase_p.h"
+#include "qwebsecurityorigin_p.h"
 #include <QStringList>
 
 using namespace WebCore;
@@ -152,6 +153,12 @@ void QWebSecurityOrigin::setDatabaseQuota(qint64 quota)
 #endif
 }
 
+void QWebSecurityOrigin::setApplicationCacheQuota(qint64 quota)
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    WebCore::cacheStorage().storeUpdatedQuotaForOrigin(d->origin.get(), quota);
+#endif
+}
 /*!
     Destroys the security origin.
 */

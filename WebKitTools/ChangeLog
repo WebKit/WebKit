@@ -1,3 +1,30 @@
+2010-12-10  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Bug 43455 - [Qt]: Implement Application Cache Quotas
+        https://bugs.webkit.org/show_bug.cgi?id=43455
+
+        Introduce functions to allow new appcache layout test origin-quota.html
+        to work correctly under Qt.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::dumpApplicationCacheQuota):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+
+        Introduce functions to allow new appcache layout test origin-quota.html
+        to be successful under qt. Changes required because LayoutTestControllerQt
+        does not inherit from LayoutController.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::shouldDumpApplicationCacheDelegateCallbacks):
+        (LayoutTestController::dumpApplicationCacheDelegateCallbacks):
+
 2010-12-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

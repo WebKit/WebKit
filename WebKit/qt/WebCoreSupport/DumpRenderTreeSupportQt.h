@@ -88,6 +88,8 @@ public:
     static bool elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId);
     static void setEditingBehavior(QWebPage* page, const QString& editingBehavior);
 
+    static void clearAllApplicationCaches();
+
     static void whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     static void removeWhiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();

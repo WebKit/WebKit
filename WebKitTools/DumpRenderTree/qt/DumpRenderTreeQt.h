@@ -116,6 +116,7 @@ public Q_SLOTS:
     void titleChanged(const QString &s);
     void connectFrame(QWebFrame *frame);
     void dumpDatabaseQuota(QWebFrame* frame, const QString& dbName);
+    void dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota);
     void statusBarMessage(const QString& message);
     void windowCloseRequested();
 

@@ -1,3 +1,28 @@
+2010-12-10  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Bug 43455 - [Qt]: Implement Application Cache Quotas
+        https://bugs.webkit.org/show_bug.cgi?id=43455
+
+        Added new signal to report ApplicationCache Database
+        quota.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+
+        Added new functions to accomodate new appcache layout
+        test origin-quota.html.
+
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::setApplicationCacheQuota):
+        * Api/qwebsecurityorigin.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::clearAllApplicationCaches):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2010-12-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

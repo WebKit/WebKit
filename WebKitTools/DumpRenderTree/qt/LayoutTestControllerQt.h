@@ -64,6 +64,7 @@ public:
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldDumpChildFrameScrollPositions() const { return m_dumpChildFrameScrollPositions; }
     bool shouldDumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
+    bool shouldDumpApplicationCacheDelegateCallbacks() const { return m_dumpApplicationCacheDelegateCallbacks; }
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
     bool shouldHandleErrorPages() const { return m_handleErrorPages; }
@@ -94,6 +95,7 @@ public slots:
     void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
     void dumpChildFrameScrollPositions() { m_dumpChildFrameScrollPositions = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
+    void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true;}
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void setPrinting() { m_isPrinting = true; }
@@ -263,6 +265,7 @@ private:
     bool m_waitForDone;
     bool m_dumpTitleChanges;
     bool m_dumpDatabaseCallbacks;
+    bool m_dumpApplicationCacheDelegateCallbacks;
     bool m_dumpStatusCallbacks;
     bool m_waitForPolicy;
     bool m_handleErrorPages;

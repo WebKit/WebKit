@@ -48,6 +48,7 @@ class QWebHitTestResult;
 class QWebNetworkInterface;
 class QWebPagePrivate;
 class QWebPluginFactory;
+class QWebSecurityOrigin;
 class QtViewportAttributesPrivate;
 
 namespace WebCore {
@@ -387,6 +388,7 @@ Q_SIGNALS:
     void microFocusChanged();
     void contentsChanged();
     void databaseQuotaExceeded(QWebFrame* frame, QString databaseName);
+    void applicationCacheQuotaExceeded(QWebSecurityOrigin* origin, quint64 defaultOriginQuota);
 
     void saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
     void restoreFrameStateRequested(QWebFrame* frame);

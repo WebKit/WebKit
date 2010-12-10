@@ -1508,11 +1508,6 @@ animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
 
 # ============================================================================= #
-# failing application cache quota tests
-# ============================================================================= #
-http/tests/appcache/origin-quota.html
-
-# ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
 css1/classification/white_space.html
