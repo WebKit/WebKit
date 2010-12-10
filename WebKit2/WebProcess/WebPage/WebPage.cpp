@@ -182,6 +182,10 @@ WebPage::~WebPage()
 #endif
 }
 
+void WebPage::dummy(bool&)
+{
+}
+
 CoreIPC::Connection* WebPage::connection() const
 {
     return WebProcess::shared().connection();

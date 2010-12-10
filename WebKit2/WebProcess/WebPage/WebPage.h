@@ -245,7 +245,8 @@ public:
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
     static void convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length);
 #endif
-    
+    void dummy(bool&);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

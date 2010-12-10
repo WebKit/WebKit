@@ -1,3 +1,15 @@
+2010-12-10  Enrica Casucci  <enrica@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        Adding a dummy synchronous message for platforms
+        that don't have any.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dummy):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-12-09  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
