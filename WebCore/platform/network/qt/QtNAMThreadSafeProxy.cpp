@@ -85,9 +85,7 @@ QtNetworkReplyThreadSafeProxy::QtNetworkReplyThreadSafeProxy(QNetworkAccessManag
     connect(this, SIGNAL(localHeadRequested(const QNetworkRequest&)), SLOT(localHead(const QNetworkRequest&)));
     connect(this, SIGNAL(localPutRequested(const QNetworkRequest&, QIODevice*)), SLOT(localPut(const QNetworkRequest&, QIODevice*)));
     connect(this, SIGNAL(localDeleteResourceRequested(const QNetworkRequest&)), SLOT(localDeleteResource(const QNetworkRequest&)));
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     connect(this, SIGNAL(localCustomRequestRequested(const QNetworkRequest&, const QByteArray&)), SLOT(localCustomRequest(const QNetworkRequest&, const QByteArray&)));
-#endif
     connect(this, SIGNAL(localAbortRequested()), SLOT(localAbort()));
     connect(this, SIGNAL(localSetForwardingDeferedRequested(bool)), SLOT(localSetForwardingDefered(bool)));
 }
@@ -122,12 +120,12 @@ void QtNetworkReplyThreadSafeProxy::localDeleteResource(const QNetworkRequest& r
     localSetReply(m_manager->deleteResource(request));
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 void QtNetworkReplyThreadSafeProxy::localCustomRequest(const QNetworkRequest& request, const QByteArray& verb)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     localSetReply(m_manager->sendCustomRequest(request, verb));
-}
 #endif
+}
 
 void QtNetworkReplyThreadSafeProxy::localAbort()
 {

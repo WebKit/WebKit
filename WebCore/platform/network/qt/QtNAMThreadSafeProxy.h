@@ -137,9 +137,7 @@ signals:
     void localHeadRequested(const QNetworkRequest& request);
     void localPutRequested(const QNetworkRequest& request, QIODevice* data);
     void localDeleteResourceRequested(const QNetworkRequest& request);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     void localCustomRequestRequested(const QNetworkRequest& request, const QByteArray& verb);
-#endif
     void localAbortRequested();
     void localSetForwardingDeferedRequested(bool forwardingDefered);
 
@@ -155,9 +153,7 @@ private slots:
     void localHead(const QNetworkRequest& request);
     void localPut(const QNetworkRequest& request, QIODevice* data);
     void localDeleteResource(const QNetworkRequest& request);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     void localCustomRequest(const QNetworkRequest& request, const QByteArray& verb);
-#endif
     void localAbort();
     void localForwardData();
     void localSetForwardingDefered(bool forwardingDefered);

@@ -2,6 +2,17 @@
 
         Reviewed by nobody, build fix.
 
+        [Qt] Second attempt to fix the build with Qt 4.6 broken in 73710.
+
+        * platform/network/qt/QtNAMThreadSafeProxy.cpp:
+        (WebCore::QtNetworkReplyThreadSafeProxy::QtNetworkReplyThreadSafeProxy):
+        (WebCore::QtNetworkReplyThreadSafeProxy::localCustomRequest):
+        * platform/network/qt/QtNAMThreadSafeProxy.h:
+
+2010-12-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
         [Qt] Fix the build with Qt 4.6 broken in 73710.
 
         * platform/network/qt/QtNAMThreadSafeProxy.cpp:
