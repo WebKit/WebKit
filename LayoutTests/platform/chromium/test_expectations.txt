@@ -58,7 +58,6 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
-BUG24182 SLOW WIN DEBUG : inspector/styles-disable-then-delete.html = PASS
 BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
@@ -88,7 +87,6 @@ BUG24182 WIN RELEASE SLOW : http/tests/xmlhttprequest/connection-error-sync.html
 BUG24182 WIN RELEASE SLOW : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 BUG24182 SLOW WIN : fast/images/svg-as-background.html = PASS
 BUG24182 SLOW WIN : fast/backgrounds/svg-as-background-5.html = PASS
-BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUG24182 WIN DEBUG SLOW : fast/parser/block-nesting-cap.html = PASS
 
@@ -99,8 +97,6 @@ BUG27335 WIN DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
 // --- collecting results for supported-xml-content-types.html ---
 // was slow, started to timeout
 BUG18702 WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS TIMEOUT
-
-BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PASS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
@@ -190,12 +186,6 @@ WONTFIX SKIP : fast/events/message-port-no-wrapper.html = FAIL
 WONTFIX SKIP : fast/events/message-port.html = FAIL
 WONTFIX SKIP : fast/events/message-port-multi.html = FAIL
 WONTFIX SKIP : http/tests/security/MessagePort/event-listener-context.html = FAIL
-WONTFIX SKIP : inspector/extensions.html = FAIL
-WONTFIX SKIP : inspector/extensions-api.html = FAIL
-WONTFIX SKIP : inspector/extensions-audits.html = FAIL
-WONTFIX SKIP : inspector/extensions-audits-api.html = FAIL
-WONTFIX SKIP : inspector/extensions-events.html = FAIL
-WONTFIX SKIP : inspector/extensions-eval.html = FAIL
 
 // Implement java testing harness.
 BUG36681 SKIP : java = TEXT
@@ -625,9 +615,38 @@ BUG8630 WIN LINUX : fast/text/font-initial.html = FAIL
 BUG24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
 // -----------------------------------------------------------------
-// Other
+// Inspector tests
 // -----------------------------------------------------------------
 
+// There is no message port harness to test extensions
+WONTFIX SKIP : inspector/extensions.html = FAIL
+WONTFIX SKIP : inspector/extensions-api.html = FAIL
+WONTFIX SKIP : inspector/extensions-audits.html = FAIL
+WONTFIX SKIP : inspector/extensions-audits-api.html = FAIL
+WONTFIX SKIP : inspector/extensions-events.html = FAIL
+WONTFIX SKIP : inspector/extensions-eval.html = FAIL
+WONTFIX SKIP : inspector/extensions-resources.html = TIMEOUT CRASH
+
+// Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
+// random TIMEOUTs.  Is this issue DRT-specific?
+BUG_DRT WIN DEBUG SLOW : inspector = PASS
+BUG_DRT WIN DEBUG SLOW : http/tests/inspector = PASS
+BUG_DRT WIN DEBUG SLOW : http/tests/inspector-enabled = PASS
+
+// Add support for inspector layout tests on non-Windows.
+BUG26734 LINUX MAC SKIP : inspector = PASS
+BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
+BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
+
+BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
+BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
+
+BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
+BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
+
+// -----------------------------------------------------------------
+// Other
+// -----------------------------------------------------------------
 
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
@@ -759,12 +778,6 @@ BUGWK38570 WIN : fast/forms/input-appearance-spinbutton-disabled-readonly.html =
 // The feature was disabled due to a compatibility issue.
 BUGWK40520 : fast/forms/interactive-validation-lost-focusable.html = TEXT
 BUGWK40520 : fast/forms/interactive-validation-prevented.html = TEXT
-
-// Add support for inspector layout tests.
-BUG26734 LINUX MAC SKIP : inspector = PASS
-BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
-BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
-BUG26734 WIN SLOW : inspector/timeline-layout.html = TEXT PASS
 
 // These tests need to be changed to be platform independent.
 // These tests are skipped since they hang DRT and test_shell.
@@ -2761,21 +2774,11 @@ BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS 
 // New test in r66740
 BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT CRASH
 
-// Debugger tests are slow on win debug bots
-BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/styles-source-lines-inline.html = PASS
-BUGWK45209 WIN DEBUG SLOW : inspector/styles-disable-inherited.html = PASS
-
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE
-
-//  Added in r67084
-BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT CRASH
 
 // Regressions from webkit r67182
 BUGWK45527 WIN LINUX : fast/dom/replaceChild.html = IMAGE
@@ -3091,9 +3094,6 @@ BUG_YUTAK MAC : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
-// Sometimes timeout. Just slow?
-BUG_YUTAK WIN DEBUG : http/tests/inspector/resource-har-conversion.html = TIMEOUT PASS
-
 // Not sure when this test started failing.
 BUG_YUTAK MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
@@ -3115,13 +3115,6 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
 // Similar to the above, input-search related failures
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
-
-// Inspector-related failures
-BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
-// Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
-// random TIMEOUTs.  Is this issue DRT-specific?
-BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -3267,8 +3260,6 @@ BUG66085 LINUX : media/video-src-source.html = PASS TIMEOUT
 // Flaky failures
 BUG66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
 BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
-BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
-BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
 // Needs V8 investigation
 BUG66099 MAC LINUX SLOW : fast/js/array-sort-modifying-tostring.html = TEXT
