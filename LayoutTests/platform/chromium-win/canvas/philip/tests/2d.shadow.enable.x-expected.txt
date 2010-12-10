@@ -1,8 +1,0 @@
-< [index] >
-2d.shadow.enable.x
-Shadows are drawn if shadowOffsetX is set
-References: 2d.shadow.enable 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

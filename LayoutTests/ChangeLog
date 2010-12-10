@@ -2,6 +2,38 @@
 
         Unreviewed Chromium test expectations update.
         
+        Delete a bunch of chromium-win specific baselines that were added by
+        r68608. That was done because r68568 checked in failing expectations,
+        but since Chromium was passing the tests with Skia, we wanted to keep
+        passing them. However, the failing expectations were rolled out by
+        r68737, so we no longer needed Chromium-specific expectations.
+        
+        Later, with r71481 we updated to a new version of the Philip test suite,
+        which has a different output format, and the Chromium-specific
+        expectations were out of date. Since they're not needed (we should pass
+        with the base ones), they can just be deleted.
+
+        * platform/chromium-mac/canvas/philip/tests/2d.drawImage.null-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.null-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.drawImage.null-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.line.cap.closed-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.line.join.parallel-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.line.miter.lineedge-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.pattern.image.null-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.shadow.enable.x-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.shadow.enable.y-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/2d.strokeRect.zero.4-expected.txt: Removed.
+        * platform/chromium-win/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2010-12-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
         Remove test_expectations.txt entries for 4 Philip suite canvas tests
         that pass consistently on all bots. 2d.drawImage.incomplete.html was
         fixed by r71292, the rest have been passing for as long as we have

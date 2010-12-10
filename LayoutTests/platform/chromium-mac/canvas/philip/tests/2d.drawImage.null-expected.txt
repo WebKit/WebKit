@@ -1,5 +1,0 @@
-< [index] >
-2d.drawImage.null
-References: 2d.drawImage.type
-Actual output:
-Passed
