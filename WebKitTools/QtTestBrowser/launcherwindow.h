@@ -87,6 +87,7 @@ public:
 #else
         , useFrameFlattening(false)
 #endif
+        , useThreadedQnam(true)
         , cacheWebView(false)
         , showFrameRate(false)
         , resizesToContents(false)
@@ -102,6 +103,7 @@ public:
     bool useTiledBackingStore;
     bool useWebGL;
     bool useFrameFlattening;
+    bool useThreadedQnam;
     bool cacheWebView;
     bool showFrameRate;
     bool resizesToContents;
@@ -153,6 +155,7 @@ protected slots:
     void toggleTiledBackingStore(bool toggle);
     void toggleResizesToContents(bool toggle);
     void toggleWebGL(bool toggle);
+    void toggleThreadedQnam(bool toggle);
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
     void toggleFrameFlattening(bool toggle);

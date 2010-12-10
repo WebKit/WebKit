@@ -95,6 +95,7 @@ void LauncherWindow::initializeView()
 
     QUrl url = page()->mainFrame()->url();
     setPage(new WebPage(this));
+    page()->setQnamThreaded(m_windowOptions.useThreadedQnam);
 
     QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
 
@@ -233,6 +234,10 @@ void LauncherWindow::createChrome()
     QAction* toggleWebGL = toolsMenu->addAction("Toggle WebGL", this, SLOT(toggleWebGL(bool)));
     toggleWebGL->setCheckable(true);
     toggleWebGL->setChecked(settings->testAttribute(QWebSettings::WebGLEnabled));
+
+    QAction* toggleThreadedQnam = toolsMenu->addAction("Toggle threaded network", this, SLOT(toggleThreadedQnam(bool)));
+    toggleThreadedQnam->setCheckable(true);
+    toggleThreadedQnam->setChecked(m_windowOptions.useThreadedQnam);
 
     QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
     spatialNavigationAction->setCheckable(true);
@@ -700,6 +705,12 @@ void LauncherWindow::toggleWebGL(bool toggle)
 {
     m_windowOptions.useWebGL = toggle;
     page()->settings()->setAttribute(QWebSettings::WebGLEnabled, toggle);
+}
+
+void LauncherWindow::toggleThreadedQnam(bool toggle)
+{
+    m_windowOptions.useThreadedQnam = toggle;
+    page()->setQnamThreaded(toggle);
 }
 
 void LauncherWindow::animatedFlip()

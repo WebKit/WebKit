@@ -48,8 +48,6 @@ WebPage::WebPage(QObject* parent)
 {
     applyProxy();
 
-    connect(networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
-            this, SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
     connect(this, SIGNAL(featurePermissionRequested(QWebFrame*, QWebPage::Feature)), this, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
     connect(this, SIGNAL(featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)), this, SLOT(featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)));
 }
@@ -119,6 +117,28 @@ QString WebPage::userAgentForUrl(const QUrl& url) const
     if (!m_userAgent.isEmpty())
         return m_userAgent;
     return QWebPage::userAgentForUrl(url);
+}
+
+void WebPage::setQnamThreaded(bool threaded)
+{
+    bool alreadyThreaded = networkAccessManager()->thread() != thread();
+    if (threaded == alreadyThreaded)
+        return;
+
+    if (threaded) {
+        m_qnamThread.reset(new QtNAMThread);
+        m_qnamThread->start();
+        setNetworkAccessManager(m_qnamThread->networkAccessManager());
+    } else {
+        setNetworkAccessManager(0);
+        m_qnamThread.reset();
+    }
+
+    Qt::ConnectionType connectionType = threaded ? Qt::BlockingQueuedConnection : Qt::DirectConnection;
+    connect(networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+            this, SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+            connectionType);
+    applyProxy();
 }
 
 bool WebPage::shouldInterruptJavaScript()

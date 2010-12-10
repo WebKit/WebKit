@@ -33,8 +33,13 @@
 #ifndef webpage_h
 #define webpage_h
 
+#include <QFuture>
+#include <QScopedPointer>
+#include <QThread>
 #include <qwebframe.h>
 #include <qwebpage.h>
+
+class QtNAMThread;
 
 class WebPage : public QWebPage {
     Q_OBJECT
@@ -51,6 +56,7 @@ public:
 
     QString userAgentForUrl(const QUrl& url) const;
     void setInterruptingJavaScriptEnabled(bool enabled) { m_interruptingJavaScriptEnabled = enabled; }
+    void setQnamThreaded(bool threaded);
 
 public slots:
     void openUrlInDefaultBrowser(const QUrl& url = QUrl());
@@ -64,6 +70,36 @@ private:
     void applyProxy();
     QString m_userAgent;
     bool m_interruptingJavaScriptEnabled;
+    QScopedPointer<QtNAMThread> m_qnamThread;
+};
+
+
+class QtNAMThread : public QThread {
+public:
+    QtNAMThread()
+    {
+        m_qnamFuture.reportStarted();
+    }
+    ~QtNAMThread()
+    {
+        quit();
+        wait();
+    }
+
+    QFuture<QNetworkAccessManager*> networkAccessManager()
+    {
+        return m_qnamFuture.future();
+    }
+protected:
+    void run()
+    {
+        QNetworkAccessManager qnam;
+        m_qnamFuture.reportResult(&qnam);
+        m_qnamFuture.reportFinished();
+        exec();
+    }
+private:
+    QFutureInterface<QNetworkAccessManager*> m_qnamFuture;
 };
 
 #endif
