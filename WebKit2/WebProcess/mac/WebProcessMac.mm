@@ -101,4 +101,12 @@ void WebProcess::platformClearResourceCaches()
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*)
+{
+}
+
+void WebProcess::platformShutdown()
+{
+}
+
 } // namespace WebKit

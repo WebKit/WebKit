@@ -101,6 +101,9 @@ WebProcess::WebProcess()
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
+#if PLATFORM(QT)
+    , m_networkAccessManager(0)
+#endif
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -178,6 +181,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if PLATFORM(WIN)
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
 #endif
+
+    platformInitializeWebProcess(parameters, arguments);
 }
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -462,6 +467,8 @@ void WebProcess::shutdownIfPossible()
     // Invalidate our connection.
     m_connection->invalidate();
     m_connection = nullptr;
+
+    platformShutdown();
 
     m_runLoop->stop();
 }

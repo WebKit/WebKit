@@ -21,6 +21,7 @@
 
 #include "WebFrameNetworkingContext.h"
 
+#include "WebProcess.h"
 #include <QNetworkAccessManager>
 #include <QObject>
 
@@ -29,7 +30,6 @@ namespace WebCore {
 WebFrameNetworkingContext::WebFrameNetworkingContext(Frame* frame)
     : FrameNetworkingContext(frame)
     , m_originatingObject(0)
-    , m_networkAccessManager(new QNetworkAccessManager)
 {
 }
 
@@ -45,7 +45,7 @@ QObject* WebFrameNetworkingContext::originatingObject() const
 
 QNetworkAccessManager* WebFrameNetworkingContext::networkAccessManager() const
 {
-    return m_networkAccessManager;
+    return WebKit::WebProcess::shared().networkAccessManager();
 }
 
 }

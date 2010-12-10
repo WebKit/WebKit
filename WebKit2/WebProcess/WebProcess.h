@@ -41,6 +41,10 @@
 #include "MachPort.h"
 #endif
 
+#if PLATFORM(QT)
+class QNetworkAccessManager;
+#endif
+
 namespace WebCore {
     class IntSize;
     class PageGroup;
@@ -88,6 +92,10 @@ public:
     WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
     static WebCore::PageGroup* sharedPageGroup();
 
+#if PLATFORM(QT)
+    QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
+#endif
+
     // Will shut down the web process if there are no live pages or downloads.
     void shutdownIfPossible();
 
@@ -97,6 +105,8 @@ private:
     WebProcess();
 
     void initializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*);
+    void platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*);
+    void platformShutdown();
     void setShouldTrackVisitedLinks(bool);
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;
@@ -146,6 +156,10 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     mach_port_t m_compositingRenderServerPort;
+#endif
+
+#if PLATFORM(QT)
+    QNetworkAccessManager* m_networkAccessManager;
 #endif
 
     HashMap<uint64_t, WebFrame*> m_frameMap;

@@ -35,7 +35,6 @@ private:
     virtual QNetworkAccessManager* networkAccessManager() const;
 
     QObject* m_originatingObject;
-    QNetworkAccessManager* m_networkAccessManager;
 };
 
 }

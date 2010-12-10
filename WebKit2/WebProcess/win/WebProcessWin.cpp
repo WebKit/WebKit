@@ -102,4 +102,12 @@ void WebProcess::platformClearResourceCaches()
 #endif
 }
 
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*)
+{
+}
+
+void WebProcess::platformShutdown()
+{
+}
+
 } // namespace WebKit

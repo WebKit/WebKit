@@ -25,6 +25,9 @@
 
 #include "WebProcess.h"
 
+#include "WebProcessCreationParameters.h"
+#include <QNetworkAccessManager>
+
 namespace WebKit {
 
 void WebProcess::platformSetCacheModel(CacheModel)
@@ -34,6 +37,17 @@ void WebProcess::platformSetCacheModel(CacheModel)
 
 void WebProcess::platformClearResourceCaches()
 {
+}
+
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder* arguments)
+{
+    m_networkAccessManager = new QNetworkAccessManager;
+}
+
+void WebProcess::platformShutdown()
+{
+    delete m_networkAccessManager;
+    m_networkAccessManager = 0;
 }
 
 } // namespace WebKit
