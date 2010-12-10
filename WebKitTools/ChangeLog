@@ -1,3 +1,22 @@
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        commit-queue should report port/platform information when commenting on flaky test bugs
+        https://bugs.webkit.org/show_bug.cgi?id=50839
+
+        This was a suggestion from Tony Chang this morning.
+        I added a platform.py class so I could easily mock the platform call,
+        but that may not be the final solution for this mocking.
+        We'll try it and see.
+
+        * Scripts/webkitpy/common/system/platform.py: Added.
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-12-10  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Joseph Pecoraro.

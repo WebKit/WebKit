@@ -31,7 +31,7 @@ import unittest
 from webkitpy.common.config.committers import Committer
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockStatusServer
 
 
 # Creating fake CommitInfos is a pain, so we use a mock one here.
@@ -78,5 +78,11 @@ If you would like to track this test fix with another bug, please close this bug
 
 """
         OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_stderr=expected_stderr)
+
+    def test_bot_information(self):
+        tool = MockTool()
+        tool.status_server = MockStatusServer("MockBotId")
+        reporter = FlakyTestReporter(tool, 'dummy-queue')
+        self.assertEqual(reporter._bot_information(), "Bot Id: MockBotId Port: MockPort OS: MockPlatform 1.0")
 
     # report_flaky_tests is tested by queues_unittest

@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import platform
 
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.config import urls
@@ -96,11 +97,20 @@ If you would like to track this test fix with another bug, please close this bug
         authors_string = join_with_separators(sorted(author_emails))
         return " (%s: %s)" % (heading_string, authors_string)
 
+    def _bot_information(self):
+        bot_id = self._tool.status_server.bot_id
+        bot_id_string = "Bot Id: %s " % (bot_id) if bot_id else ""
+        return "%sPort: %s OS: %s" % (bot_id_string, self._tool.port().name(), self._tool.platform.display_name())
+
+    def _latest_flake_message(self, flaky_test, patch):
+        flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
+        return "%s\n%s" % (flake_message, self._bot_information())
+
     def report_flaky_tests(self, flaky_tests, patch):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
         for flaky_test in flaky_tests:
             bug = self._lookup_bug_for_flaky_test(flaky_test)
-            latest_flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
+            latest_flake_message = self._latest_flake_message(flaky_test, patch)
             author_emails = self._author_emails_for_test(flaky_test)
             if not bug:
                 self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)

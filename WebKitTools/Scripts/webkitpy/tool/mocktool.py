@@ -613,6 +613,10 @@ class MockOptions(object):
             self.__dict__[key] = value
 
 
+class MockPort(Mock):
+    def name(self):
+        return "MockPort"
+
 class MockTestPort1(object):
 
     def skips_layout_test(self, test_name):
@@ -631,6 +635,11 @@ class MockPortFactory(object):
         return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
 
 
+class MockPlatform(object):
+    def display_name(self):
+        return "MockPlatform 1.0"
+
+
 class MockTool(object):
 
     def __init__(self, log_executive=False):
@@ -645,6 +654,7 @@ class MockTool(object):
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
         self.port_factory = MockPortFactory()
+        self.platform = MockPlatform()
 
     def scm(self):
         return self._scm
@@ -663,7 +673,7 @@ class MockTool(object):
         return "echo"
 
     def port(self):
-        return Mock()
+        return MockPort()
 
 
 class MockBrowser(object):
