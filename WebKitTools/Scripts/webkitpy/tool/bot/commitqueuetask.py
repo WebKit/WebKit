@@ -80,10 +80,16 @@ class CommitQueueTask(object):
             self.failure_status_id = self._delegate.command_failed(failure_message, script_error=self._script_error, patch=self._patch)
             return False
 
+    def _clean(self):
+        return self._run_command([
+            "clean",
+        ],
+        "Cleaned working directory",
+        "Unable to clean working directory")
+
     def _apply(self):
         return self._run_command([
             "apply-attachment",
-            "--force-clean",
             "--non-interactive",
             self._patch.id(),
         ],
@@ -178,6 +184,8 @@ class CommitQueueTask(object):
 
     def run(self):
         if not self._validate():
+            return False
+        if not self._clean():
             return False
         if not self._apply():
             raise self._script_error

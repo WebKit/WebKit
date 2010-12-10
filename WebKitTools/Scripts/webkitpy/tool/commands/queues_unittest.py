@@ -217,7 +217,8 @@ class CommitQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK: update_status: commit-queue Applied patch
+            "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Landed patch
@@ -234,7 +235,8 @@ MOCK: release_work_item: commit-queue 197
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK: update_status: commit-queue Patch does not apply
+            "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Patch does not apply
 MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'MOCK script error'
 MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 197
@@ -245,6 +247,10 @@ MOCK: release_work_item: commit-queue 197
         queue = CommitQueue()
 
         def mock_run_webkit_patch(command):
+            if command == ['clean']:
+                # We want cleaning to succeed so we can error out on a step
+                # that causes the commit-queue to reject the patch.
+                return
             raise ScriptError('MOCK script error')
 
         queue.run_webkit_patch = mock_run_webkit_patch
@@ -257,7 +263,9 @@ MOCK: release_work_item: commit-queue 197
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', 197]
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
+MOCK: update_status: commit-queue Cleaned working directory
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--non-interactive', 197]
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
@@ -282,7 +290,9 @@ MOCK: release_work_item: commit-queue 197
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', 106]
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
+MOCK: update_status: commit-queue Cleaned working directory
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--non-interactive', 106]
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
@@ -316,7 +326,8 @@ MOCK: release_work_item: commit-queue 106
         queue.bind_to_tool(MockTool())
         queue._options = Mock()
         queue._options.port = None
-        expected_stderr = """MOCK: update_status: commit-queue Applied patch
+        expected_stderr = """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry

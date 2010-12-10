@@ -1,3 +1,21 @@
+2010-12-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        commit-queue errors out due to local commits
+        https://bugs.webkit.org/show_bug.cgi?id=50766
+
+        We seem to be tripping over having local commits in the working copy a
+        lot recently.  I don't quite fully understand what the issue is, but
+        this patch attempts to solve the problem by adding an explicit clean
+        step before processing a patch.  Previously, we did the cleaning as
+        part of the apply-attachment step, so this might not actually fix the
+        problem.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-12-09  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
