@@ -290,7 +290,16 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint16Array.idl
     html/canvas/Uint32Array.idl
     html/canvas/Uint8Array.idl
+    html/canvas/WebGLActiveInfo.idl
+    html/canvas/WebGLBuffer.idl
+    html/canvas/WebGLContextAttributes.idl
+    html/canvas/WebGLFramebuffer.idl
+    html/canvas/WebGLProgram.idl
+    html/canvas/WebGLRenderbuffer.idl
     html/canvas/WebGLRenderingContext.idl
+    html/canvas/WebGLShader.idl
+    html/canvas/WebGLTexture.idl
+    html/canvas/WebGLUniformLocation.idl
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
