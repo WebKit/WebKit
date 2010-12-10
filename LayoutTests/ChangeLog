@@ -1,3 +1,12 @@
+2010-12-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, rolling out r73743.
+        http://trac.webkit.org/changeset/73743
+
+        We need gtk+ specific results
+
+        * http/tests/misc/dns-prefetch-control-expected.txt:
+
 2010-12-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Adler.
