@@ -1,3 +1,13 @@
+2010-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73703.
+        http://trac.webkit.org/changeset/73703
+        https://bugs.webkit.org/show_bug.cgi?id=49658
+
+        This patch is causing crashes on the GTK+ bots.
+
+        * wtf/PlatformRefPtr.h:
+
 2010-12-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -42,7 +42,6 @@ class NSMenuItem;
 #elif PLATFORM(WIN)
 typedef struct tagMENUITEMINFOW* LPMENUITEMINFO;
 #elif PLATFORM(GTK)
-#include <GRefPtr.h>
 typedef struct _GtkMenuItem GtkMenuItem;
 #elif PLATFORM(QT)
 #include <QAction>
@@ -186,7 +185,22 @@ namespace WebCore {
         bool enabled;
     };
 #elif PLATFORM(GTK)
-    typedef GtkMenuItem* PlatformMenuItemDescription;
+    struct PlatformMenuItemDescription {
+        PlatformMenuItemDescription()
+            : type(ActionType)
+            , action(ContextMenuItemTagNoAction)
+            , subMenu(0)
+            , checked(false)
+            , enabled(true)
+        {}
+
+        ContextMenuItemType type;
+        ContextMenuAction action;
+        String title;
+        GtkMenu* subMenu;
+        bool checked;
+        bool enabled;
+    };
 #elif PLATFORM(WX)
     struct PlatformMenuItemDescription {
         PlatformMenuItemDescription()
@@ -246,7 +260,9 @@ namespace WebCore {
 
         ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
-
+#if PLATFORM(GTK)
+        ContextMenuItem(GtkMenuItem*);
+#endif
         ~ContextMenuItem();
 
         PlatformMenuItemDescription releasePlatformDescription();
@@ -271,12 +287,13 @@ namespace WebCore {
         bool enabled() const;
 
         // FIXME: Do we need a keyboard accelerator here?
+#if PLATFORM(GTK)
+        static GtkMenuItem* createNativeMenuItem(const PlatformMenuItemDescription&);
+#endif
 
     private:
 #if PLATFORM(MAC)
         RetainPtr<NSMenuItem> m_platformDescription;
-#elif PLATFORM(GTK)
-        PlatformRefPtr<GtkMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif
