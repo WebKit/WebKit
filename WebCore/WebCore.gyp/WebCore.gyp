@@ -39,7 +39,10 @@
   'conditions': [
     ['inside_chromium_build==0', {
       # Webkit is being built outside of the full chromium project.
-      'variables': {'chromium_src_dir': '../../WebKit/chromium'},
+      'variables': {
+        'chromium_src_dir': '../../WebKit/chromium',
+        'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp',
+      },
     },{
       # WebKit is checked out in src/chromium/third_party/WebKit
       'variables': {'chromium_src_dir': '../../../..'},
@@ -724,13 +727,13 @@
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
-        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
         '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
         '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
         '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
         '<(chromium_src_dir)/third_party/libwebp/libwebp.gyp:libwebp',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
+        '<(libjpeg_gyp_path):libjpeg',
       ],
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',
@@ -836,7 +839,6 @@
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
-        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
         '<(chromium_src_dir)/third_party/libwebp/libwebp.gyp:libwebp',
         '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
         '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
@@ -845,6 +847,7 @@
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
+        '<(libjpeg_gyp_path):libjpeg',
       ],
       'export_dependent_settings': [
         'webcore_bindings',
@@ -853,7 +856,6 @@
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
-        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
         '<(chromium_src_dir)/third_party/libwebp/libwebp.gyp:libwebp',
         '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
         '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
@@ -862,6 +864,7 @@
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
+        '<(libjpeg_gyp_path):libjpeg',
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
