@@ -61,7 +61,6 @@ accessibility/ellipsis-text.html
 accessibility/aria-help.html
 accessibility/aria-hidden.html
 accessibility/aria-hidden-with-elements.html
-accessibility/aria-label.html
 accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
@@ -74,8 +73,6 @@ accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/editable-webarea-context-menu-point.html
 accessibility/ignore-spacer-elements.html
-accessibility/img-aria-button-alt-tag.html
-accessibility/input-image-alt.html
 accessibility/input-slider.html
 accessibility/language-attribute.html
 accessibility/media-element.html
@@ -101,7 +98,6 @@ accessibility/aria-labelledby-on-input.html
 accessibility/aria-roles.html
 accessibility/aria-tables.html
 accessibility/image-link.html
-accessibility/image-link-inline-cont.html
 accessibility/image-map1.html
 accessibility/image-map2.html
 accessibility/inline-continuations.html
@@ -5090,9 +5086,6 @@ svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
 fast/loader/null-request-after-willSendRequest.html
-
-# Skip this, it's pending on one patch in the commit queue
-accessibility/aria-controls-with-tabs.html
 
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39102

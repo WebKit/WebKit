@@ -1,3 +1,9 @@
+2010-12-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, unskip passing accessibility tests on GTK.
+
+        * platform/gtk/Skipped: Unskip passing tests.
+
 2010-12-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Get rid of spaces in ValidityState-patternMismatch test.
