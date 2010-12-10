@@ -1,3 +1,18 @@
+2010-12-10  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bopomofo should be part of CJK Ideographs in WebCore/platform/graphics/Font.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50668
+
+        No new tests. Note that, as said in the bug report discussion,
+        I did have a test case for the bug. However, to show the test 
+        case you need some "broken" Microsoft copyrighted fonts, such
+        as DFKai-SB.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::isCJKIdeograph):
+
 2010-12-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

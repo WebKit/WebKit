@@ -338,6 +338,13 @@ Font::CodePath Font::codePath(const TextRun& run) const
 
 bool Font::isCJKIdeograph(UChar32 c)
 {
+    // 0x2C7 Caron, Mandarin Chinese 3rd Tone
+    // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
+    // 0x2CB Modifier Letter Grave Access, Mandarin Chinese 4th Tone 
+    // 0x2D9 Dot Above, Mandarin Chinese 5th Tone 
+    if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9))
+        return true;
+
     // The basic CJK Unified Ideographs block.
     if (c >= 0x4E00 && c <= 0x9FFF)
         return true;
@@ -361,7 +368,15 @@ bool Font::isCJKIdeograph(UChar32 c)
     // CJK Symbols and Punctuation.
     if (c >= 0x3000 && c <= 0x303F)
         return true;
+   
+    // Bopomofo
+    if (c >= 0x3100 && c <= 0x312F)
+        return true;
     
+    // Bopomofo Extended
+    if (c >= 0x31A0 && c <= 0x31BF)
+        return true;
+ 
     // CJK Strokes.
     if (c >= 0x31C0 && c <= 0x31EF)
         return true;
