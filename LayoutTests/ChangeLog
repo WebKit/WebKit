@@ -1,3 +1,37 @@
+2010-12-10  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Refactor by merging tests for ValidityState (patternMismatch and customError)
+        https://bugs.webkit.org/show_bug.cgi?id=50802
+
+        * fast/forms/ValidityState-customError-expected.txt: Added.
+        * fast/forms/ValidityState-customError.html: Added.
+        * fast/forms/ValidityState-customError-001-expected.txt: Removed. Merged to ValidityState-customError-expected.txt.
+        * fast/forms/ValidityState-customError-001.html: Removed. Merged to ValidityState-customError.html.
+        * fast/forms/ValidityState-customError-002-expected.txt: Removed. Merged to ValidityState-customError-expected.txt.
+        * fast/forms/ValidityState-customError-002.html: Removed. Merged to ValidityState-customError.html.
+        * fast/forms/ValidityState-customError-003-expected.txt: Removed. Merged to ValidityState-customError-expected.txt.
+        * fast/forms/ValidityState-customError-003.html: Removed. Merged to ValidityState-customError.html.
+        * fast/forms/ValidityState-customError-004-expected.txt: Removed. Merged to ValidityState-customError-expected.txt.
+        * fast/forms/ValidityState-customError-004.html: Removed. Merged to ValidityState-customError.html.
+        * fast/forms/ValidityState-patternMismatch-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch.html: Added.
+        * fast/forms/ValidityState-patternMismatch-001-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-001.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-002-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-002.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-003-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-003.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-004-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-004.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-005-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-005.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-006-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-006.html: Removed. Merged to ValidityState-patternMismatch.html.
+        * fast/forms/ValidityState-patternMismatch-007-expected.txt: Removed. Merged to ValidityState-patternMismatch-expected.txt.
+        * fast/forms/ValidityState-patternMismatch-007.html: Removed. Merged to ValidityState-patternMismatch.html.
+
 2010-12-10  Joone Hur  <joone@kldp.org>
 
         Reviewed by Eric Seidel.
