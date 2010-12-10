@@ -1,3 +1,15 @@
+2010-12-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add CACFContextGetLastCommitTime to WebKitSystemInterface for Windows.
+        Also got rid of WebKitSystemInterface_debug.lib as recommended by
+        Adam Roben. No OpenSource builds use it since r72327.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib: Removed.
+
 2010-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
