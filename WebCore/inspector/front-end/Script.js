@@ -90,4 +90,3 @@ WebInspector.Script.prototype = {
 }
 
 WebInspector.Script.prototype.__proto__ = WebInspector.Object.prototype;
-

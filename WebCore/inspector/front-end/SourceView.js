@@ -32,8 +32,8 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
-    var delegate = new WebInspector.ResourceFrameDelegateImpl(this.resource);
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, delegate);
+    var canEditScripts = WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, resource.scripts, canEditScripts);
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }
@@ -238,28 +238,3 @@ WebInspector.SourceView.prototype = {
 }
 
 WebInspector.SourceView.prototype.__proto__ = WebInspector.ResourceView.prototype;
-
-WebInspector.ResourceFrameDelegateImpl = function(resource)
-{
-    WebInspector.SourceFrameDelegate.call(this);
-    this._resource = resource;
-}
-
-WebInspector.ResourceFrameDelegateImpl.prototype = {
-    canEditScripts: function()
-    {
-        return WebInspector.panels.scripts.canEditScripts() && this._resource.type === WebInspector.Resource.Type.Script;
-    },
-
-    editLineComplete: function(revertEditLineCallback, newContent)
-    {
-        this._resource.setContent(newContent, revertEditLineCallback);
-    },
-
-    scripts: function()
-    {
-        return this._resource.scripts;
-    }
-}
-
-WebInspector.ResourceFrameDelegateImpl.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

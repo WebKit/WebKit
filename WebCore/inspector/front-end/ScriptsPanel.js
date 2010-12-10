@@ -293,7 +293,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         // Need to clear breakpoints and re-create them later when editing source.
-        var breakpoints = WebInspector.debuggerModel.findBreakpoints(function(b) { return b.sourceID === editData.sourceID });
+        var breakpoints = WebInspector.debuggerModel.queryBreakpoints(function(b) { return b.sourceID === editData.sourceID });
         for (var i = 0; i < breakpoints.length; ++i)
             breakpoints[i].remove();
 
@@ -433,8 +433,10 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._sourceIDMap) {
             for (var sourceID in this._sourceIDMap) {
                 var object = this._sourceIDMap[sourceID];
-                if (object instanceof WebInspector.Resource)
+                if (object instanceof WebInspector.Resource) {
                     object.removeAllScripts();
+                    delete object._resourcesView;
+                }
             }
         }
 

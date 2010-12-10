@@ -30,13 +30,11 @@ WebInspector.ScriptView = function(script)
     this.element.addStyleClass("script-view");
 
     this.script = script;
+    this.script.addEventListener(WebInspector.Script.Events.SourceChanged, this._scriptSourceChanged, this);
 
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
-    var delegate = new WebInspector.ScriptFrameDelegateImpl(this.script);
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, delegate);
-
-    this.script.addEventListener(WebInspector.Script.Events.SourceChanged, this._scriptSourceChanged, this);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, [script], WebInspector.panels.scripts.canEditScripts());
 }
 
 WebInspector.ScriptView.prototype = {
@@ -113,28 +111,3 @@ WebInspector.ScriptView.prototype = {
 }
 
 WebInspector.ScriptView.prototype.__proto__ = WebInspector.View.prototype;
-
-WebInspector.ScriptFrameDelegateImpl = function(script)
-{
-    WebInspector.SourceFrameDelegate.call(this);
-    this._script = script;
-}
-
-WebInspector.ScriptFrameDelegateImpl.prototype = {
-    canEditScripts: function()
-    {
-        return WebInspector.panels.scripts.canEditScripts();
-    },
-
-    editLineComplete: function(revertEditLineCallback, newContent)
-    {
-        this._script.source = newContent;
-    },
-
-    scripts: function()
-    {
-        return [this._script];
-    }
-}
-
-WebInspector.ScriptFrameDelegateImpl.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

@@ -28,10 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, delegate)
+WebInspector.SourceFrame = function(parentElement, scripts, canEditScripts)
 {
     this._parentElement = parentElement;
-    this._delegate = delegate;
+    this._scripts = {};
+    for (var i = 0; i < scripts.length; ++i)
+        this._scripts[scripts[i].sourceID] = scripts[i];
+    this._canEditScripts = canEditScripts;
 
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.replaceTabsWithSpaces = true;
@@ -221,7 +224,7 @@ WebInspector.SourceFrame.prototype = {
 
         this._textViewer.endUpdates();
 
-        if (this._delegate.canEditScripts())
+        if (this._canEditScripts)
             this._textViewer.editCallback = this._editLine.bind(this);
     },
 
@@ -415,7 +418,7 @@ WebInspector.SourceFrame.prototype = {
     {
         var breakpoint = event.data;
 
-        if (this._shouldDisplayBreakpoint(breakpoint))
+        if (breakpoint.sourceID in this._scripts)
             this._addBreakpoint(breakpoint);
     },
 
@@ -797,8 +800,16 @@ WebInspector.SourceFrame.prototype = {
     _doEditLine: function(editData, cancelEditingCallback)
     {
         var revertEditingCallback = this._revertEditLine.bind(this, editData);
-        var commitEditingCallback = this._delegate.editLineComplete.bind(this._delegate, revertEditingCallback);
+        var commitEditingCallback = this._commitEditLine.bind(this, editData, revertEditingCallback);
         WebInspector.panels.scripts.editScriptSource(editData, commitEditingCallback, cancelEditingCallback);
+    },
+
+    _commitEditLine: function(editData, revertEditLineCallback, newContent)
+    {
+        var script = this._scripts[editData.sourceID];
+        script.source = newContent;
+        if (script.resource)
+            script.resource.setContent(newContent, revertEditLineCallback);
     },
 
     _setBreakpoint: function(lineNumber)
@@ -811,15 +822,8 @@ WebInspector.SourceFrame.prototype = {
 
     _breakpoints: function()
     {
-        var sourceIDs = {};
-        var scripts = this._delegate.scripts();
-        for (var i = 0; i < scripts.length; ++i)
-            sourceIDs[scripts[i].sourceID] = true;
-        function filter(breakpoint)
-        {
-            return breakpoint.sourceID in sourceIDs;
-        }
-        return WebInspector.debuggerModel.findBreakpoints(filter);
+        var scripts = this._scripts;
+        return WebInspector.debuggerModel.queryBreakpoints(function(b) { return b.sourceID in scripts; });
     },
 
     _findBreakpoint: function(lineNumber)
@@ -828,51 +832,19 @@ WebInspector.SourceFrame.prototype = {
         return WebInspector.debuggerModel.findBreakpoint(sourceID, lineNumber);
     },
 
-    _shouldDisplayBreakpoint: function(breakpoint)
-    {
-        var scripts = this._delegate.scripts();
-        for (var i = 0; i < scripts.length; ++i) {
-            if (breakpoint.sourceID === scripts[i].sourceID)
-                return true;
-        }
-        return false;
-    },
-
     _sourceIDForLine: function(lineNumber)
     {
-        var sourceID = null;
-        var scripts = this._delegate.scripts();
+        var sourceIDForLine = null;
         var closestStartingLine = 0;
-        for (var i = 0; i < scripts.length; ++i) {
-            var script = scripts[i];
+        for (var sourceID in this._scripts) {
+            var script = this._scripts[sourceID];
             if (script.startingLine <= lineNumber && script.startingLine >= closestStartingLine) {
                 closestStartingLine = script.startingLine;
-                sourceID = script.sourceID;
+                sourceIDForLine = sourceID;
             }
         }
-        return sourceID;
+        return sourceIDForLine;
     }
 }
 
 WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
-
-WebInspector.SourceFrameDelegate = function()
-{
-}
-
-WebInspector.SourceFrameDelegate.prototype = {
-    canEditScripts: function()
-    {
-        // Implemented by subclasses.
-    },
-
-    editLineComplete: function(revertEditLineCallback, newContent)
-    {
-        // Implemented by subclasses.
-    },
-
-    scripts: function()
-    {
-        // Implemented by subclasses.
-    }
-}

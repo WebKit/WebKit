@@ -1,3 +1,26 @@
+2010-12-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: eliminate SourceFrameDelegate by passing scripts to SourceFrame constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=50679
+
+        * inspector/front-end/Script.js:
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype._breakpointAdded):
+        (WebInspector.SourceFrame.prototype._doEditLine):
+        (WebInspector.SourceFrame.prototype._commitEditLine):
+        (WebInspector.SourceFrame.prototype._breakpoints):
+        (WebInspector.SourceFrame.prototype._sourceIDForLine):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+
 2010-12-10  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Eric Seidel.

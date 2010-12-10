@@ -66,7 +66,7 @@ WebInspector.DebuggerModel.prototype = {
         this._setBreakpoint(sourceID, url, line, enabled, condition);
     },
 
-    findBreakpoints: function(filter)
+    queryBreakpoints: function(filter)
     {
         var breakpoints = [];
         for (var id in this._breakpoints) {
