@@ -1,3 +1,13 @@
+2010-12-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests that we do not crash when we set details element with children to show as inline.
+        https://bugs.webkit.org/show_bug.cgi?id=50671
+
+        * fast/html/details-element-render-inline-crash-expected.txt: Added.
+        * fast/html/details-element-render-inline-crash.html: Added.
+
 2010-12-09  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Update Chromium GPU test expecations for canvas/philip.

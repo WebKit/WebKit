@@ -28,4 +28,13 @@ RenderDetails::RenderDetails(Node* element)
 {
 }
 
+void RenderDetails::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    // Ensure that if we ended up being inline that we set our replaced flag
+    // so that we're treated like an inline-block.
+    setReplaced(isInline());
+}
+
 }

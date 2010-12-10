@@ -1,3 +1,17 @@
+2010-12-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        For details element, ensure that if we ended up being inline that we set out replaced
+        flag so that we are treated like an inline block.
+        https://bugs.webkit.org/show_bug.cgi?id=50671
+
+        Test: fast/html/details-element-render-inline-crash.html
+
+        * rendering/RenderDetails.cpp:
+        (WebCore::RenderDetails::styleDidChange): setReplaced to true if we are set as inline.
+        * rendering/RenderDetails.h: function definition.
+
 2010-12-09  Jasmin Lapalme  <jlapalme@druide.com>
 
         Reviewed by Alexey Proskuryakov.
