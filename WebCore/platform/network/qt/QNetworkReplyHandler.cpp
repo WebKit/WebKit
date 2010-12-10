@@ -300,29 +300,33 @@ void QNetworkReplyHandler::finish()
         return;
     }
 
-    QNetworkReply* oldReply = m_reply;
+    if (!m_redirected) {
+        if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData)) {
+            client->didFinishLoading(m_resourceHandle, 0);
+        } else {
+            QUrl url = m_reply->url();
+            int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
-    if (m_redirected) {
+            if (httpStatusCode) {
+                ResourceError error("HTTP", httpStatusCode, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
+                client->didFail(m_resourceHandle, error);
+            } else {
+                ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
+                client->didFail(m_resourceHandle, error);
+            }
+        }
+        if (m_reply) {
+            m_reply->deleteLater();
+            m_reply = 0;
+        }
+    } else {
+        if (m_reply) {
+            m_reply->deleteLater();
+            m_reply = 0;
+        }
         resetState();
         start();
-    } else if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData)) {
-        client->didFinishLoading(m_resourceHandle, 0);
-    } else {
-        QUrl url = m_reply->url();
-        int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-        if (httpStatusCode) {
-            ResourceError error("HTTP", httpStatusCode, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
-            client->didFail(m_resourceHandle, error);
-        } else {
-            ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
-            client->didFail(m_resourceHandle, error);
-        }
     }
-
-    oldReply->deleteLater();
-    if (oldReply == m_reply)
-        m_reply = 0;
 }
 
 void QNetworkReplyHandler::sendResponseIfNeeded()
