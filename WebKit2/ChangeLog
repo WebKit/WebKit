@@ -1,3 +1,10 @@
+2010-12-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::sizeForNumberType):
+
 2010-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady Eidson.
