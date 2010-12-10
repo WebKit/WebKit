@@ -37,6 +37,7 @@ import time
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.file_lock import FileLock
+from webkitpy.common.system.filesystem import FileSystem
 
 
 _log = logging.getLogger("webkitpy.layout_tests.port.http_lock")
@@ -61,7 +62,7 @@ class HttpLock(object):
         """Delete the lock file if exists."""
         if os.path.exists(self._process_lock_file_name):
             _log.debug("Removing lock file: %s" % self._process_lock_file_name)
-            os.unlink(self._process_lock_file_name)
+            FileSystem().remove(self._process_lock_file_name)
 
     def _extract_lock_number(self, lock_file_name):
         """Return the lock number from lock file."""
@@ -93,7 +94,7 @@ class HttpLock(object):
             current_lock_file.close()
             if not (current_pid and self._executive.check_running_pid(int(current_pid))):
                 _log.debug("Removing stuck lock file: %s" % lock_list[0])
-                os.unlink(lock_list[0])
+                FileSystem().remove(lock_list[0])
                 return
         except (IOError, OSError):
             return

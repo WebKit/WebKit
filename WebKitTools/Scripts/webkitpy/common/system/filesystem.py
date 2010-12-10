@@ -103,12 +103,10 @@ class FileSystem(object):
         pass
 
     def remove(self, path, osremove=os.remove):
-        """On Windows, os.remove can sometimes fail.  We see this behavior in
-        Chromium tests as well and are unsure why.  Others on the internet are
-        equally confused:
-        http://social.msdn.microsoft.com/Forums/en/windowssearch/thread/55582d9d-77ea-47d9-91ce-cff7ca7ef528
-        http://codesearch.google.com/codesearch/p?hl=en#OAMlx_jo-ck/src/base/test/test_file_util_win.cc&q=diefiledie&exact_package=chromium&l=22
-        """
+        """On Windows, if a process was recently killed and it held on to a
+        file, the OS will hold on to the file for a short while.  This makes
+        attempts to delete the file fail.  To work around that, this method
+        will retry for a few seconds until Windows is done with the file."""
         try:
             exceptions.WindowsError
         except AttributeError:
