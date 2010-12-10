@@ -24925,7 +24925,6 @@
 				RelativePath="..\loader\ProgressTracker.h"
 				>
 			</File>
-			</File>
 			<File
 				RelativePath="..\loader\ResourceLoader.cpp"
 				>

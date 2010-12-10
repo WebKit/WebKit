@@ -1,3 +1,10 @@
+2010-12-10  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Remove duplicate </File> tag.
+
 2010-12-09  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Barth.
