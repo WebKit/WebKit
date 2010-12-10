@@ -45,6 +45,23 @@
 
         Reviewed by Sam Weinig.
 
+        Cannot use NSKeyedArchiver in WK2 for ResourceResponses
+        https://bugs.webkit.org/show_bug.cgi?id=50792
+        <rdar://problem/8741799>
+
+        When encoding, first convert the requests and responses to the serializable dictionary representation
+        and use the newly added CF CoreIPC encoders. When decoding, do the opposite.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+
+2010-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add CoreIPC coders for CF types
         https://bugs.webkit.org/show_bug.cgi?id=50791
 
