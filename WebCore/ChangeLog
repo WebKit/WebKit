@@ -1,5 +1,12 @@
 2010-12-09  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed. Another speculative Gtk build fix after r73669. Add
+        needed derived sources to GNUmakefile.am.
+
+        * GNUmakefile.am:
+
+2010-12-09  Kenneth Russell  <kbr@google.com>
+
         Unreviewed. Speculative Gtk build fix after
         https://bugs.webkit.org/show_bug.cgi?id=36512 / r73669. Process
         all of the WebGL classes' IDL files.
