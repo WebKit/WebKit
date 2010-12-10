@@ -723,6 +723,8 @@ PASS inner.open.isInner is true
 PASS inner.open.constructor.isInner is true
 PASS inner.openDatabase.isInner is true
 PASS inner.openDatabase.constructor.isInner is true
+FAIL inner.orientation.isInner should be true. Was false.
+FAIL inner.orientation.constructor.isInner should be true. Was false.
 FAIL inner.outerHeight.isInner should be true. Was false.
 FAIL inner.outerHeight.constructor.isInner should be true. Was false.
 FAIL inner.outerWidth.isInner should be true. Was false.
