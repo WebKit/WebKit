@@ -1,3 +1,13 @@
+2010-12-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Ada Chan.
+
+        When we are creating a ContextMenuItem, only call setSubMenu if we have
+        a subMenu to set.
+
+        * platform/ContextMenuItem.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, another build fix. #include <wtf/UnusedParam.h> needed

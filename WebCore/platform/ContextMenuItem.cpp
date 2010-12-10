@@ -39,7 +39,8 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     , m_enabled(true)
     , m_checked(false)
 {
-    setSubMenu(subMenu);
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
