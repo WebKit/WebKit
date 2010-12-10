@@ -2855,7 +2855,7 @@ BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PAS
 BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 // Added by r69084
-BUG57934 WIN SLOW : http/tests/appcache/fail-on-update-2.html = TIMEOUT PASS TEXT
+BUG57934 WIN SLOW : http/tests/appcache/fail-on-update-2.html = PASS TEXT
 
 
 // Failing since r69181. Verified as legitimate by looking at the results

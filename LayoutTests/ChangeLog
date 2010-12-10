@@ -1,3 +1,11 @@
+2010-12-10  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        Fix broken expectation from r73797.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-10  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Adam Barth.
