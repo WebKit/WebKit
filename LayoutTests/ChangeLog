@@ -1,3 +1,9 @@
+2010-12-09  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Update Chromium GPU test expecations for canvas/philip.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-12-09  Jasmin Lapalme  <jlapalme@druide.com>
 
         Reviewed by Alexey Proskuryakov.
