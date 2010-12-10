@@ -53,7 +53,7 @@ public:
     static WTF::CString pageProperty(WebKitWebFrame*, const char* propertyName, int pageNumber);
     static bool isPageBoxVisible(WebKitWebFrame*, int pageNumber);
     static WTF::CString pageSizeAndMarginsInPixels(WebKitWebFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
-    static void addUserStyleSheet(WebKitWebFrame*, const char* sourceCode);
+    static void addUserStyleSheet(WebKitWebFrame*, const char* sourceCode, bool allFrames);
     static guint getPendingUnloadEventCount(WebKitWebFrame*);
     static bool pauseAnimation(WebKitWebFrame*, const char* name, double time, const char* element);
     static bool pauseTransition(WebKitWebFrame*, const char* name, double time, const char* element);

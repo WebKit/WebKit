@@ -716,7 +716,9 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bo
 void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     GOwnPtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
-    DumpRenderTreeSupportGtk::addUserStyleSheet(mainFrame, sourceCode.get());
+    DumpRenderTreeSupportGtk::addUserStyleSheet(mainFrame, sourceCode.get(), allFrames);
+    // FIXME: needs more investigation why userscripts/user-style-top-frame-only.html fails when allFrames is false.
+
 }
 
 void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)

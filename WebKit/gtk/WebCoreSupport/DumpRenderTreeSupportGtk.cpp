@@ -309,7 +309,7 @@ CString DumpRenderTreeSupportGtk::pageSizeAndMarginsInPixels(WebKitWebFrame* fra
  * @sourceCode: code of a user stylesheet
  *
  */
-void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const char* sourceCode)
+void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const char* sourceCode, bool allFrames)
 {
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
 
@@ -319,7 +319,7 @@ void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const ch
 
     WebKitWebView* webView = getViewFromFrame(frame);
     Page* page = core(webView);
-    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), 0, 0, WebCore::InjectInAllFrames); 
+    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), 0, 0, allFrames ? InjectInAllFrames : InjectInTopFrameOnly); 
 }
 
 /**

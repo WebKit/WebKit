@@ -4701,7 +4701,16 @@ fast/events/ime-composition-events-001.html
 fast/dom/tab-in-right-alignment.html
 
 # No User Scripts
-userscripts
+userscripts/script-not-run-for-fragments.html
+userscripts/script-run-at-end.html
+userscripts/script-run-at-start.html
+userscripts/user-script-all-frames.html
+userscripts/user-script-audio-document.html
+userscripts/user-script-image-document.html
+userscripts/user-script-plugin-document.html
+userscripts/user-script-top-frame-only.html
+userscripts/user-script-video-document.html
+userscripts/user-style-top-frame-only.html
 
 # XHR sends sometimes yield null bytes sent instead of 0.
 http/tests/xmlhttprequest/workers/shared-worker-methods.html

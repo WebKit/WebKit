@@ -1,3 +1,17 @@
+2010-12-10  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Unskipping some test cases in userscripts dependent on addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=50808
+
+        Unskipping the following test cases:
+        userscripts/mixed-case-stylesheet.html
+        userscripts/simple-stylesheet.html
+        userscripts/user-style-all-frames.html
+
+        * platform/gtk/Skipped:
+
 2010-12-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
