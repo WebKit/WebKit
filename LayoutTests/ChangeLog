@@ -1,3 +1,12 @@
+2010-12-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
+        Was overly aggressive with r73661, canvas/philip/tests/
+        toDataURL.jpeg.alpha.html still fails.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-09  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
