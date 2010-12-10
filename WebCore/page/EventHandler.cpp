@@ -1855,16 +1855,12 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
         Node* node = m_nodeUnderMouse.get();
-        RenderObject* renderer = node ? node->renderer() : 0;
 
-        // Walk up the render tree to search for a node to focus.
-        // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
-        // FIXME: Rework to use shadowParent. No need to traverse with the render tree.
-        while (renderer) {
-            node = renderer->node();
-            if (node && node->isMouseFocusable()) {
-                // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a 
-                // node on mouse down if it's selected and inside a focused node. It will be 
+        // Walk up the DOM tree to search for a node to focus.
+        while (node) {
+            if (node->isMouseFocusable()) {
+                // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a
+                // node on mouse down if it's selected and inside a focused node. It will be
                 // focused if the user does a mouseup over it, however, because the mouseup
                 // will set a selection inside it, which will call setFocuseNodeIfNeeded.
                 ExceptionCode ec = 0;
@@ -1876,8 +1872,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                     
                 break;
             }
-            
-            renderer = renderer->parent();
+            node = node->parentOrHostNode();
         }
 
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
