@@ -1,3 +1,16 @@
+2010-12-10  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix crash in Range::processContents when modified during mutation event.
+        https://bugs.webkit.org/show_bug.cgi?id=50710
+
+        Test: fast/dom/Range/range-extractContents.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        Replace raw pointers with RefPtrs and add checks.
+
 2010-12-09  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

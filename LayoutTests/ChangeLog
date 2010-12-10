@@ -1,3 +1,13 @@
+2010-12-10  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add testcase for range.extractContents crash.
+        https://bugs.webkit.org/show_bug.cgi?id=50710
+
+        * fast/dom/Range/range-extractContents-expected.txt: Added.
+        * fast/dom/Range/range-extractContents.html: Added.
+
 2010-12-10  Peter Kasting  <pkasting@google.com>
 
         Unreviewed Chromium test expectations update.
