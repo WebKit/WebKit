@@ -27,7 +27,6 @@
 #if USE(GSTREAMER)
 
 #include "ColorSpace.h"
-#include "DataSourceGStreamer.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -283,16 +282,12 @@ static bool doGstInit()
     if (!gstInitialized) {
         GOwnPtr<GError> error;
         gstInitialized = gst_init_check(0, 0, &error.outPtr());
-        if (!gstInitialized) {
+        if (!gstInitialized)
             LOG_VERBOSE(Media, "Could not initialize GStreamer: %s",
                         error ? error->message : "unknown error occurred");
-        } else {
-            gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY,
-                                 WEBKIT_TYPE_DATA_SRC);
+        else
             gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100,
                                  WEBKIT_TYPE_WEB_SRC);
-        }
-
     }
     return gstInitialized;
 }

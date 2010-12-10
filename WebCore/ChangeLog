@@ -1,3 +1,19 @@
+2010-12-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] data: source could also support non-base64 encoded URIs
+        https://bugs.webkit.org/show_bug.cgi?id=30007
+
+        Removed our ancient implementation of dataurisrc. We should now
+        use the one in gst-plugins-bad which is more mature.
+
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/DataSourceGStreamer.cpp: Removed.
+        * platform/graphics/gstreamer/DataSourceGStreamer.h: Removed.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::doGstInit):
+
 2010-12-10  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Eric Seidel.
