@@ -23,6 +23,7 @@
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
+#include "QtNAMThreadSafeProxy.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -46,7 +47,7 @@
 // It is fixed in Qt 4.6.3. See https://bugs.webkit.org/show_bug.cgi?id=32113
 // and https://bugs.webkit.org/show_bug.cgi?id=36755
 #if QT_VERSION > QT_VERSION_CHECK(4, 6, 2)
-#define SIGNAL_CONN Qt::DirectConnection
+#define SIGNAL_CONN Qt::AutoConnection
 #else
 #define SIGNAL_CONN Qt::QueuedConnection
 #endif
@@ -56,8 +57,9 @@ static const int gMaxRecursionLimit = 10;
 namespace WebCore {
 
 // Take a deep copy of the FormDataElement
-FormDataIODevice::FormDataIODevice(FormData* data)
-    : m_formElements(data ? data->elements() : Vector<FormDataElement>())
+FormDataIODevice::FormDataIODevice(FormData* data, QObject* parent)
+    : QIODevice(parent)
+    , m_formElements(data ? data->elements() : Vector<FormDataElement>())
     , m_currentFile(0)
     , m_currentDelta(0)
     , m_fileSize(0)
@@ -192,6 +194,9 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_shouldForwardData(false)
     , m_redirectionTries(gMaxRecursionLimit)
 {
+    // Make this a direct function call once we require 4.6.1+.
+    connect(this, SIGNAL(processQueuedItems()), this, SLOT(sendQueuedItems()), SIGNAL_CONN);
+
     const ResourceRequest &r = m_resourceHandle->firstRequest();
 
     if (r.httpMethod() == "GET")
@@ -222,6 +227,12 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
         start();
 }
 
+QNetworkReplyHandler::~QNetworkReplyHandler()
+{
+    if (m_reply)
+        m_reply->deleteLater();
+}
+
 void QNetworkReplyHandler::setLoadMode(LoadMode mode)
 {
     // https://bugs.webkit.org/show_bug.cgi?id=26556
@@ -231,9 +242,13 @@ void QNetworkReplyHandler::setLoadMode(LoadMode mode)
     case LoadNormal:
         m_loadMode = LoadResuming;
         emit processQueuedItems();
+        // Restart forwarding only after processQueuedItems to make sure
+        // our buffered data was handled before any incoming data.
+        m_reply->setForwardingDefered(false);
         break;
     case LoadDeferred:
         m_loadMode = LoadDeferred;
+        m_reply->setForwardingDefered(true);
         break;
     case LoadResuming:
         Q_ASSERT(0); // should never happen
@@ -245,31 +260,30 @@ void QNetworkReplyHandler::abort()
 {
     m_resourceHandle = 0;
     if (m_reply) {
-        QNetworkReply* reply = release();
+        QtNetworkReplyThreadSafeProxy* reply = release();
         reply->abort();
         reply->deleteLater();
     }
     deleteLater();
 }
 
-QNetworkReply* QNetworkReplyHandler::release()
+QtNetworkReplyThreadSafeProxy* QNetworkReplyHandler::release()
 {
-    QNetworkReply* reply = m_reply;
+    QtNetworkReplyThreadSafeProxy* reply = m_reply;
     if (m_reply) {
         disconnect(m_reply, 0, this, 0);
         // We have queued connections to the QNetworkReply. Make sure any
         // posted meta call events that were the result of a signal emission
         // don't reach the slots in our instance.
         QCoreApplication::removePostedEvents(this, QEvent::MetaCall);
-        m_reply->setParent(0);
         m_reply = 0;
     }
     return reply;
 }
 
-static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
+static bool ignoreHttpError(QtNetworkReplyThreadSafeProxy* reply, bool receivedData)
 {
-    int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    int httpStatusCode = reply->httpStatusCode();
 
     if (httpStatusCode == 401 || httpStatusCode == 407)
         return true;
@@ -301,14 +315,14 @@ void QNetworkReplyHandler::finish()
     }
 
     if (!m_redirected) {
-        if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData)) {
+        if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData))
             client->didFinishLoading(m_resourceHandle, 0);
-        } else {
+        else {
             QUrl url = m_reply->url();
-            int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+            int httpStatusCode = m_reply->httpStatusCode();
 
             if (httpStatusCode) {
-                ResourceError error("HTTP", httpStatusCode, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
+                ResourceError error("HTTP", httpStatusCode, url.toString(), QString::fromAscii(m_reply->httpReasonPhrase()));
                 client->didFail(m_resourceHandle, error);
             } else {
                 ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
@@ -346,7 +360,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (!client)
         return;
 
-    WTF::String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    WTF::String contentType = m_reply->contentTypeHeader();
     WTF::String encoding = extractCharsetFromMediaType(contentType);
     WTF::String mimeType = extractMIMETypeFromMediaType(contentType);
 
@@ -357,7 +371,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     KURL url(m_reply->url());
     ResourceResponse response(url, mimeType.lower(),
-                              m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(),
+                              m_reply->contentLengthHeader(),
                               encoding, String());
 
     if (url.isLocalFile()) {
@@ -366,10 +380,10 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     }
 
     // The status code is equal to 0 for protocols not in the HTTP family.
-    int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    int statusCode = m_reply->httpStatusCode();
 
     if (url.protocolInHTTPFamily()) {
-        String suggestedFilename = filenameFromHTTPContentDisposition(QString::fromAscii(m_reply->rawHeader("Content-Disposition")));
+        String suggestedFilename = filenameFromHTTPContentDisposition(QString::fromAscii(m_reply->contentDispositionHeader()));
 
         if (!suggestedFilename.isEmpty())
             response.setSuggestedFilename(suggestedFilename);
@@ -377,21 +391,15 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
             response.setSuggestedFilename(url.lastPathComponent());
 
         response.setHTTPStatusCode(statusCode);
-        response.setHTTPStatusText(m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toByteArray().constData());
+        response.setHTTPStatusText(m_reply->httpReasonPhrase().constData());
 
         // Add remaining headers.
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-        foreach (const QNetworkReply::RawHeaderPair& pair, m_reply->rawHeaderPairs()) {
+        foreach (const QtNetworkReplyThreadSafeProxy::RawHeaderPair& pair, m_reply->rawHeaderPairs()) {
             response.setHTTPHeaderField(QString::fromAscii(pair.first), QString::fromAscii(pair.second));
         }
-#else
-        foreach (const QByteArray& headerName, m_reply->rawHeaderList()) {
-            response.setHTTPHeaderField(QString::fromAscii(headerName), QString::fromAscii(m_reply->rawHeader(headerName)));
-        }
-#endif
     }
 
-    QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+    QUrl redirection = m_reply->redirectionTarget();
     if (redirection.isValid()) {
         QUrl newUrl = m_reply->url().resolved(redirection);
 
@@ -436,13 +444,15 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     client->didReceiveResponse(m_resourceHandle, response);
 }
 
-void QNetworkReplyHandler::forwardData()
+void QNetworkReplyHandler::forwardData(const QByteArray &data)
 {
     m_shouldForwardData = (m_loadMode != LoadNormal);
-    if (m_shouldForwardData)
+    if (m_shouldForwardData) {
+        m_bufferedData += data;
         return;
+    }
 
-    if (m_reply->bytesAvailable())
+    if (!data.isEmpty())
         m_responseContainsData = true;
 
     sendResponseIfNeeded();
@@ -453,8 +463,6 @@ void QNetworkReplyHandler::forwardData()
 
     if (!m_resourceHandle)
         return;
-
-    QByteArray data = m_reply->read(m_reply->bytesAvailable());
 
     ResourceHandleClient* client = m_resourceHandle->client();
     if (!client)
@@ -498,41 +506,53 @@ void QNetworkReplyHandler::start()
         && (!url.toLocalFile().isEmpty() || url.scheme() == QLatin1String("data")))
         m_method = QNetworkAccessManager::GetOperation;
 
+    m_reply = new QtNetworkReplyThreadSafeProxy(manager);
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finish()), SIGNAL_CONN);
+
+    // For http(s) we know that the headers are complete upon metaDataChanged() emission, so we
+    // can send the response as early as possible
+    if (scheme == QLatin1String("http") || scheme == QLatin1String("https"))
+        connect(m_reply, SIGNAL(metaDataChanged()), this, SLOT(sendResponseIfNeeded()), SIGNAL_CONN);
+
+    connect(m_reply, SIGNAL(dataReceived(const QByteArray&)), this, SLOT(forwardData(const QByteArray&)), SIGNAL_CONN);
+
+    if (m_resourceHandle->firstRequest().reportUploadProgress())
+        connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
+
     switch (m_method) {
         case QNetworkAccessManager::GetOperation:
-            m_reply = manager->get(m_request);
+            m_reply->get(m_request);
             break;
         case QNetworkAccessManager::PostOperation: {
-            FormDataIODevice* postDevice = new FormDataIODevice(d->m_firstRequest.httpBody()); 
+            FormDataIODevice* postDevice = new FormDataIODevice(d->m_firstRequest.httpBody(), this);
             // We may be uploading files so prevent QNR from buffering data
             m_request.setHeader(QNetworkRequest::ContentLengthHeader, postDevice->getFormDataSize());
             m_request.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, QVariant(true));
-            m_reply = manager->post(m_request, postDevice);
-            postDevice->setParent(m_reply);
+            m_reply->post(m_request, postDevice);
             break;
         }
         case QNetworkAccessManager::HeadOperation:
-            m_reply = manager->head(m_request);
+            m_reply->head(m_request);
             break;
         case QNetworkAccessManager::PutOperation: {
-            FormDataIODevice* putDevice = new FormDataIODevice(d->m_firstRequest.httpBody()); 
+            FormDataIODevice* putDevice = new FormDataIODevice(d->m_firstRequest.httpBody(), this);
             // We may be uploading files so prevent QNR from buffering data
             m_request.setHeader(QNetworkRequest::ContentLengthHeader, putDevice->getFormDataSize());
             m_request.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, QVariant(true));
-            m_reply = manager->put(m_request, putDevice);
-            putDevice->setParent(m_reply);
+            m_reply->put(m_request, putDevice);
             break;
         }
         case QNetworkAccessManager::DeleteOperation: {
-            m_reply = manager->deleteResource(m_request);
+            m_reply->deleteResource(m_request);
             break;
         }
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         case QNetworkAccessManager::CustomOperation:
-            m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
+            m_reply->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
             break;
 #endif
         case QNetworkAccessManager::UnknownOperation: {
+            m_reply->deleteLater();
             m_reply = 0;
             ResourceHandleClient* client = m_resourceHandle->client();
             if (client) {
@@ -544,29 +564,6 @@ void QNetworkReplyHandler::start()
             return;
         }
     }
-
-    m_reply->setParent(this);
-
-    connect(m_reply, SIGNAL(finished()),
-            this, SLOT(finish()), SIGNAL_CONN);
-
-    // For http(s) we know that the headers are complete upon metaDataChanged() emission, so we
-    // can send the response as early as possible
-    if (scheme == QLatin1String("http") || scheme == QLatin1String("https"))
-        connect(m_reply, SIGNAL(metaDataChanged()),
-                this, SLOT(sendResponseIfNeeded()), SIGNAL_CONN);
-
-    connect(m_reply, SIGNAL(readyRead()),
-            this, SLOT(forwardData()), SIGNAL_CONN);
-
-    if (m_resourceHandle->firstRequest().reportUploadProgress()) {
-        connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)),
-                this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
-    }
-
-    // Make this a direct function call once we require 4.6.1+.
-    connect(this, SIGNAL(processQueuedItems()),
-            this, SLOT(sendQueuedItems()), SIGNAL_CONN);
 }
 
 void QNetworkReplyHandler::resetState()
@@ -592,8 +589,10 @@ void QNetworkReplyHandler::sendQueuedItems()
     if (m_shouldSendResponse)
         sendResponseIfNeeded();
 
-    if (m_shouldForwardData)
-        forwardData();
+    if (m_shouldForwardData) {
+        forwardData(m_bufferedData);
+        m_bufferedData.clear();
+    }
 
     if (m_shouldFinish)
         finish(); 

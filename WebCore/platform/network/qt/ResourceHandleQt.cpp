@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameNetworkingContext.h"
 #include "FrameLoaderClientQt.h"
+#include "QtNAMThreadSafeProxy.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "QNetworkReplyHandler.h"
@@ -156,20 +157,13 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame* frame)
     if (!frame)
         return false;
 
-    QNetworkAccessManager* manager = 0;
-    QAbstractNetworkCache* cache = 0;
     if (frame->loader()->networkingContext()) {
-        manager = frame->loader()->networkingContext()->networkAccessManager();
-        cache = manager->cache();
-    }
-
-    if (!cache)
-        return false;
-
-    QNetworkCacheMetaData data = cache->metaData(request.url());
-    if (data.isValid()) {
-        request.setCachePolicy(ReturnCacheDataDontLoad);
-        return true;
+        QNetworkAccessManager* manager = frame->loader()->networkingContext()->networkAccessManager();
+        QtNAMThreadSafeProxy managerProxy(manager);
+        if (managerProxy.willLoadFromCache(request.url())) {
+            request.setCachePolicy(ReturnCacheDataDontLoad);
+            return true;
+        }
     }
 
     return false;

@@ -23,6 +23,7 @@
 
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #include "FormData.h"
 
@@ -34,6 +35,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class ResourceHandle;
+class QtNetworkReplyThreadSafeProxy;
 
 class QNetworkReplyHandler : public QObject
 {
@@ -46,13 +48,12 @@ public:
     };
 
     QNetworkReplyHandler(ResourceHandle *handle, LoadMode);
+    ~QNetworkReplyHandler();
     void setLoadMode(LoadMode);
-
-    QNetworkReply* reply() const { return m_reply; }
 
     void abort();
 
-    QNetworkReply* release();
+    QtNetworkReplyThreadSafeProxy* release();
 
 signals:
     void processQueuedItems();
@@ -60,7 +61,7 @@ signals:
 private slots:
     void finish();
     void sendResponseIfNeeded();
-    void forwardData();
+    void forwardData(const QByteArray &data);
     void sendQueuedItems();
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
@@ -69,7 +70,7 @@ private:
     void resetState();
     String httpMethod() const;
 
-    QNetworkReply* m_reply;
+    QtNetworkReplyThreadSafeProxy* m_reply;
     ResourceHandle* m_resourceHandle;
     bool m_redirected;
     bool m_responseSent;
@@ -84,6 +85,7 @@ private:
     bool m_shouldSendResponse;
     bool m_shouldForwardData;
     int m_redirectionTries;
+    QByteArray m_bufferedData;
 };
 
 // Self destructing QIODevice for FormData
@@ -94,7 +96,7 @@ private:
 class FormDataIODevice : public QIODevice {
     Q_OBJECT
 public:
-    FormDataIODevice(FormData*);
+    FormDataIODevice(FormData*, QObject* parent = 0);
     ~FormDataIODevice();
 
     bool isSequential() const;

@@ -25,6 +25,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
+#include "QtNAMThreadSafeProxy.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "RenderVideo.h"
@@ -209,8 +210,8 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
 
         if (document && manager) {
             // Set the cookies
-            QNetworkCookieJar* jar = manager->cookieJar();
-            QList<QNetworkCookie> cookies = jar->cookiesForUrl(rUrl);
+            QtNAMThreadSafeProxy managerProxy(manager);
+            QList<QNetworkCookie> cookies = managerProxy.cookiesForUrl(rUrl);
 
             // Don't set the header if there are no cookies.
             // This prevents a warning from being emitted.

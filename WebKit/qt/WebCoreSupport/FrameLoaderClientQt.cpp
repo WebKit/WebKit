@@ -59,6 +59,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTTPParsers.h"
+#include "QtNAMThreadSafeProxy.h"
 #include "NotImplemented.h"
 #include "QNetworkReplyHandler.h"
 #include "ResourceHandleInternal.h"
@@ -975,13 +976,13 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCor
         return;
 
     QNetworkReplyHandler* handler = handle->getInternal()->m_job;
-    QNetworkReply* reply = handler->release();
-    if (reply) {
+    QtNetworkReplyThreadSafeProxy* replyProxy = handler->release();
+    if (replyProxy) {
         QWebPage *page = m_webFrame->page();
         if (page->forwardUnsupportedContent())
-            emit page->unsupportedContent(reply);
+            emit page->unsupportedContent(replyProxy->reply());
         else
-            reply->abort();
+            replyProxy->abort();
     }
 }
 

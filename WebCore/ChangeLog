@@ -1,3 +1,55 @@
+2010-12-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Support a QNetworkAccessManager affined to a different thread.
+        https://bugs.webkit.org/show_bug.cgi?id=50080
+
+        This patch introduce thread safe proxy classes for QNetworkAccessManager
+        and QNetworkReply.
+        If run in the same thread, these objects will forward the calls with
+        Qt::DirectConnection bindings, while in the other case they will use
+        Qt::QueuedConnection to carry requests accross threads.
+
+        This patch basically:
+        - Makes sure that all access goes through these objects
+        - Reorders signal connections to make sure we are connected when the
+          signal comes
+        - Makes sure that no QObject in the WebCore thread is a child of the
+          reply which might be in a different thread.
+        - Forward the data directly in QByteArrays in signals instead of collecting
+          the data when the signal is handled.
+
+        New test: tst_QWebPage::networkAccessManagerOnDifferentThread
+
+        * WebCore.pro:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::FormDataIODevice::FormDataIODevice):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::~QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::setLoadMode):
+        (WebCore::QNetworkReplyHandler::abort):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::ignoreHttpError):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        (WebCore::QNetworkReplyHandler::sendQueuedItems):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/QtNAMThreadSafeProxy.cpp: Added.
+        * platform/network/qt/QtNAMThreadSafeProxy.h: Added.
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::willLoadFromCache):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::networkAccessManager):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+
 2010-12-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

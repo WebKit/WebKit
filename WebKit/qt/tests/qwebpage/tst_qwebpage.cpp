@@ -128,6 +128,7 @@ private slots:
     void findText();
     void supportedContentType();
     void infiniteLoopJS();
+    void networkAccessManagerOnDifferentThread();
     
 private:
     QWebView* m_view;
@@ -2597,6 +2598,46 @@ void tst_QWebPage::supportedContentType()
       
    Q_FOREACH(const QString& mimeType, contentTypes)
       QVERIFY2(m_page->supportsContentType(mimeType), QString("Cannot handle content types '%1'!").arg(mimeType).toLatin1());
+}
+
+class QtNAMThread : public QThread {
+public:
+    QtNAMThread()
+    {
+        m_qnamFuture.reportStarted();
+    }
+    ~QtNAMThread()
+    {
+        quit();
+        wait();
+    }
+
+    QFuture<QNetworkAccessManager*> networkAccessManager()
+    {
+        return m_qnamFuture.future();
+    }
+protected:
+    void run()
+    {
+        QNetworkAccessManager* qnam = new QNetworkAccessManager;
+        m_qnamFuture.reportFinished(&qnam);
+        exec();
+        delete qnam;
+    }
+private:
+    QFutureInterface<QNetworkAccessManager*> m_qnamFuture;
+};
+
+void tst_QWebPage::networkAccessManagerOnDifferentThread()
+{
+    QtNAMThread qnamThread;
+    qnamThread.start();
+    m_page->setNetworkAccessManager(qnamThread.networkAccessManager());
+    QSignalSpy loadSpy(m_page, SIGNAL(loadFinished(bool)));
+    QUrl url = QUrl("qrc:///resources/index.html");
+    m_page->mainFrame()->load(url);
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QCOMPARE(m_page->mainFrame()->childFrames()[0]->url(), QUrl("qrc:///resources/frame_a.html"));
 }
 
 QTEST_MAIN(tst_QWebPage)
