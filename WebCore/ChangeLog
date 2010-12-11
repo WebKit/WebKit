@@ -1,3 +1,12 @@
+2010-12-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows production build fix.
+        
+        Only the vsprops are indirected through WebKitVSPropsRedirectionDir, not the scripts in WebKitLibraries/win/tools/scripts.
+
+        * WebCore.vcproj/WebCoreGeneratedCommon.vsprops:
+        * WebCore.vcproj/build-generated-files.sh:
+
 2010-12-10  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Eric Seidel.
