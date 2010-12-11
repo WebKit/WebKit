@@ -79,6 +79,11 @@ void ResourceResponse::platformLazyInit()
     m_expectedContentLength = CFURLResponseGetExpectedContentLength(m_cfResponse.get());
     m_textEncodingName = CFURLResponseGetTextEncodingName(m_cfResponse.get());
 
+    // Workaround for <rdar://problem/8757088>, can be removed once that is fixed.
+    unsigned textEncodingNameLength = m_textEncodingName.length();
+    if (textEncodingNameLength >= 2 && m_textEncodingName[0] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
+        m_textEncodingName = m_textEncodingName.substring(1, textEncodingNameLength - 2);
+
     m_lastModifiedDate = toTimeT(CFURLResponseGetLastModifiedDate(m_cfResponse.get()));
 
     RetainPtr<CFStringRef> suggestedFilename(AdoptCF, CFURLResponseCopySuggestedFilename(m_cfResponse.get()));

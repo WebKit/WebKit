@@ -74,6 +74,12 @@ void ResourceResponse::platformLazyInit()
     m_mimeType = [m_nsResponse.get() MIMEType];
     m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
     m_textEncodingName = [m_nsResponse.get() textEncodingName];
+
+    // Workaround for <rdar://problem/8757088>, can be removed once that is fixed.
+    unsigned textEncodingNameLength = m_textEncodingName.length();
+    if (textEncodingNameLength >= 2 && m_textEncodingName[0] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
+        m_textEncodingName = m_textEncodingName.substring(1, textEncodingNameLength - 2);
+
     m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
     
     if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
