@@ -187,6 +187,16 @@ _bug4 = {
 }
 
 
+_bug5 = {
+    "id": 78,
+    "title": "The fifth bug",
+    "assigned_to_email": "foo@foo.com",
+    "attachments": [],
+    "bug_status": "RESOLVED",
+    "dup_id": 76,
+}
+
+
 # FIXME: This should not inherit from Mock
 class MockBugzillaQueries(Mock):
 
@@ -226,7 +236,7 @@ class MockBugzillaQueries(Mock):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
     def fetch_bugs_matching_search(self, search_string, author_email=None):
-        return [self.bugzilla.fetch_bug(76), self.bugzilla.fetch_bug(77)]
+        return [self._bugzilla.fetch_bug(78), self._bugzilla.fetch_bug(77)]
 
 _mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
 
@@ -239,7 +249,7 @@ class MockBugzilla(Mock):
 
     bug_server_url = "http://example.com"
 
-    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4)
+    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4, _bug5)
 
     attachment_cache = _id_to_object_dictionary(_patch1,
                                                 _patch2,

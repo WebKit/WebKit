@@ -302,10 +302,12 @@ class Bugzilla(object):
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
         bug["bug_status"] = self._string_contents(soup.find("bug_status"))
+        dup_id = soup.find("dup_id")
+        if dup_id:
+            bug["dup_id"] = self._string_contents(dup_id)
         bug["reporter_email"] = self._string_contents(soup.find("reporter"))
         bug["assigned_to_email"] = self._string_contents(soup.find("assigned_to"))
-        bug["cc_emails"] = [self._string_contents(element)
-                            for element in soup.findAll('cc')]
+        bug["cc_emails"] = [self._string_contents(element) for element in soup.findAll('cc')]
         bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
         return bug
 

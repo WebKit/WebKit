@@ -1,3 +1,20 @@
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach webkitpy how to follow duplicate chains when posting comments on flake bugs
+        https://bugs.webkit.org/show_bug.cgi?id=50853
+
+        I also discovered when doing this that the code was posting
+        the comment on the wrong bug, but that's fixed here too.
+
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-12-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

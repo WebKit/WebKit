@@ -68,7 +68,7 @@ bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
 
 foo/bar.html was authored by test@test.com.
-http://trac.webkit.org/browser/trunk/foo/bar.html
+http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 FLAKE_MESSAGE
 
@@ -78,6 +78,12 @@ If you would like to track this test fix with another bug, please close this bug
 
 """
         OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_stderr=expected_stderr)
+
+    def test_follow_duplicate_chain(self):
+        tool = MockTool()
+        reporter = FlakyTestReporter(tool, 'dummy-queue')
+        bug = tool.bugs.fetch_bug(78)
+        self.assertEqual(reporter._follow_duplicate_chain(bug).id(), 76)
 
     def test_bot_information(self):
         tool = MockTool()

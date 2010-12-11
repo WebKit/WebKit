@@ -72,6 +72,9 @@ class Bug(object):
     def is_closed(self):
         return not self.is_open()
 
+    def duplicate_of(self):
+        return self.bug_dictionary.get('dup_id', None)
+
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
         attachments = self.bug_dictionary["attachments"]

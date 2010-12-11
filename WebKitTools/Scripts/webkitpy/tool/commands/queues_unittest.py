@@ -324,13 +324,13 @@ MOCK: release_work_item: commit-queue 197
     def test_report_flaky_tests(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
-        expected_stderr = """MOCK bug comment: bug_id=42, cc=None
+        expected_stderr = """MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
 Port: MockPort OS: MockPlatform 1.0
 --- End comment ---
 
-MOCK bug comment: bug_id=42, cc=None
+MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw bar/baz.html flake while processing attachment 197 on bug 42.
 Port: MockPort OS: MockPlatform 1.0
@@ -340,8 +340,8 @@ MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
 
-foo/bar.html bug 42 (author: abarth@webkit.org)
-bar/baz.html bug 42 (author: abarth@webkit.org)
+foo/bar.html bug 76 (author: abarth@webkit.org)
+bar/baz.html bug 76 (author: abarth@webkit.org)
 The commit-queue is continuing to process your patch.
 --- End comment ---
 

@@ -63,12 +63,15 @@ class FlakyTestReporter(object):
             _log.warn("Found %s %s matching '%s' from the %s (%s), using the first." % (pluralize('bug', len(bugs)), bugs, flaky_test, self._bot_name, bot_email))
         return bugs[0]
 
+    def _view_source_url_for_test(self, test_path):
+        return urls.view_source_url("LayoutTests/%s" % test_path)
+
     def _create_bug_for_flaky_test(self, flaky_test, author_emails, latest_flake_message):
         format_values = {
             'test': flaky_test,
             'authors': join_with_separators(sorted(author_emails)),
             'flake_message': latest_flake_message,
-            'test_url': urls.view_source_url(flaky_test),
+            'test_url': self._view_source_url_for_test(flaky_test),
             'bot_name': self._bot_name,
         }
         title = "Flaky Test: %(test)s" % format_values
@@ -106,6 +109,18 @@ If you would like to track this test fix with another bug, please close this bug
         flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
         return "%s\n%s" % (flake_message, self._bot_information())
 
+    def _follow_duplicate_chain(self, bug):
+        while bug.is_closed() and bug.duplicate_of():
+            bug = self._tool.bugs.fetch_bug(bug.duplicate_of())
+        return bug
+
+    # Maybe this logic should move into Bugzilla? a reopen=True arg to post_comment?
+    def _update_bug_for_flaky_test(self, bug, latest_flake_message):
+        if bug.is_closed():
+            self._tool.bugs.reopen_bug(bug.id(), latest_flake_message)
+        else:
+            self._tool.bugs.post_comment_to_bug(bug.id(), latest_flake_message)
+
     def report_flaky_tests(self, flaky_tests, patch):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
         for flaky_test in flaky_tests:
@@ -115,11 +130,10 @@ If you would like to track this test fix with another bug, please close this bug
             if not bug:
                 self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
             else:
-                # FIXME: If the bug is closed we should follow the duplicate chain to the last bug,
-                # and then re-open the last bug if that too is closed.
-                self._tool.bugs.post_comment_to_bug(patch.bug_id(), latest_flake_message)
+                bug = self._follow_duplicate_chain(bug)
+                self._update_bug_for_flaky_test(bug, latest_flake_message)
 
-            message += "%s bug %s%s\n" % (flaky_test, patch.bug_id(), self._optional_author_string(author_emails))
+            message += "%s bug %s%s\n" % (flaky_test, bug.id(), self._optional_author_string(author_emails))
 
         message += "The %s is continuing to process your patch." % self._bot_name
         self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)
