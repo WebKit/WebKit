@@ -1,5 +1,11 @@
 2010-12-11  Xan Lopez  <xlopez@igalia.com>
 
+        Skip failing http test.
+
+        * platform/gtk/Skipped:
+
+2010-12-11  Xan Lopez  <xlopez@igalia.com>
+
         Another crashing inspector test.
 
         * platform/gtk/Skipped:
