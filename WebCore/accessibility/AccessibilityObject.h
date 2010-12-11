@@ -368,7 +368,11 @@ public:
     virtual void setARIAGrabbed(bool) { }
     virtual void determineARIADropEffects(Vector<String>&) { }
     
-    virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const { return 0; }
+    // Called on the root AX object to return the deepest available element.
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return 0; }
+    // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const { return const_cast<AccessibilityObject*>(this); }
+
     virtual AccessibilityObject* focusedUIElement() const { return 0; }
 
     virtual AccessibilityObject* firstChild() const { return 0; }

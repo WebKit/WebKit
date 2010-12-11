@@ -1948,7 +1948,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (![self updateObjectBackingStore])
         return nil;
 
-    RefPtr<AccessibilityObject> axObject = m_object->doAccessibilityHitTest(IntPoint(point));
+    RefPtr<AccessibilityObject> axObject = m_object->accessibilityHitTest(IntPoint(point));
     if (axObject)
         return NSAccessibilityUnignoredAncestor(axObject->wrapper());
     return NSAccessibilityUnignoredAncestor(self);

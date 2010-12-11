@@ -41,7 +41,6 @@ public:
     static PassRefPtr<AccessibilityListBox> create(RenderObject*);
     virtual ~AccessibilityListBox();
     
-    virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
     virtual bool isListBox() const { return true; }
     
     virtual bool canSetFocusAttribute() const { return true; }
@@ -57,6 +56,7 @@ public:
 private:    
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual bool accessibilityIsIgnored() const;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 };
     
 } // namespace WebCore

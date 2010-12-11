@@ -1,3 +1,34 @@
+2010-12-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: refactor AccessibilityRenderObject::doAccessibilityHitTest
+        https://bugs.webkit.org/show_bug.cgi?id=50574
+
+        Refactors accessibility hit testing to allow for a more flexible model when handling elements
+        with fake sub-elements (like sliders or list boxes).
+
+        Renamed doAccessibilityHitTest -> accessibilityHitTest, which is called on the root
+        accessibility render object. Then subclassers are able to override 
+        elementAccessibilityHitTest to return their own specific elements.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::accessibilityHitTest):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::elementAccessibilityHitTest):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_component_ref_accessible_at_point):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Adler.

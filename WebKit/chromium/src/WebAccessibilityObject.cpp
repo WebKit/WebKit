@@ -379,7 +379,7 @@ WebAccessibilityObject WebAccessibilityObject::hitTest(const WebPoint& point) co
 
     m_private->updateBackingStore();
     IntPoint contentsPoint = m_private->documentFrameView()->windowToContents(point);
-    RefPtr<AccessibilityObject> hit = m_private->doAccessibilityHitTest(contentsPoint);
+    RefPtr<AccessibilityObject> hit = m_private->accessibilityHitTest(contentsPoint);
 
     if (hit.get())
         return WebAccessibilityObject(hit);

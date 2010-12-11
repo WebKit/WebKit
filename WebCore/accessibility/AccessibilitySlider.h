@@ -47,7 +47,7 @@ protected:
 private:
     HTMLInputElement* element() const;
     virtual bool accessibilityIsIgnored() const;
-    virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 
     virtual AccessibilityRole roleValue() const { return SliderRole; }    
     virtual bool isSlider() const { return true; }

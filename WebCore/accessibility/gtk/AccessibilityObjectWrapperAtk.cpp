@@ -1789,7 +1789,8 @@ static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coor
 static AtkObject* webkit_accessible_component_ref_accessible_at_point(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
 {
     IntPoint pos = atkToContents(core(component), coordType, x, y);
-    AccessibilityObject* target = core(component)->doAccessibilityHitTest(pos);
+    
+    AccessibilityObject* target = core(component)->accessibilityHitTest(pos);
     if (!target)
         return 0;
     g_object_ref(target->wrapper());

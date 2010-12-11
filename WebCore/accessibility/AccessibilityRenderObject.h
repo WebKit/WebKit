@@ -127,7 +127,6 @@ public:
     virtual int layoutCount() const;
     virtual double estimatedLoadingProgress() const;
     
-    virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
     virtual AccessibilityObject* focusedUIElement() const;
     virtual AccessibilityObject* firstChild() const;
     virtual AccessibilityObject* lastChild() const;
@@ -150,7 +149,10 @@ public:
     void updateAccessibilityRole();
     
     virtual AXObjectCache* axObjectCache() const;
-    
+
+    // Should be called on the root accessibility object to kick off a hit test.
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
+
     virtual Element* actionElement() const;
     Element* mouseButtonListener() const;
     FrameView* frameViewIfRenderView() const;

@@ -2733,7 +2733,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     return 0;
 }
     
-AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
 {
     if (!m_renderer || !m_renderer->hasLayer())
         return 0;
@@ -2759,17 +2759,11 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
         return 0;
     
     AccessibilityObject* result = obj->document()->axObjectCache()->getOrCreate(obj);
+    result->updateChildrenIfNecessary();
 
-    if (obj->isBoxModelObject() && toRenderBoxModelObject(obj)->isListBox()) {
-        // Make sure the children are initialized so that hit testing finds the right element.
-        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(result);
-        listBox->updateChildrenIfNecessary();
-        return listBox->doAccessibilityHitTest(point);
-    }
+    // Allow the element to perform any hit-testing it might need to do to reach non-render children.
+    result = result->elementAccessibilityHitTest(point);
     
-    if (result->isInputSlider()) 
-        return result->doAccessibilityHitTest(point);
-
     if (result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
         AccessibilityObject* controlObject = result->correspondingControlForLabelElement();

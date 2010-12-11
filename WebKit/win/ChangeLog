@@ -1,3 +1,13 @@
+2010-12-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: refactor AccessibilityRenderObject::doAccessibilityHitTest
+        https://bugs.webkit.org/show_bug.cgi?id=50574
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accHitTest):
+
 2010-12-09  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

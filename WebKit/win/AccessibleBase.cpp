@@ -574,7 +574,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pv
         return E_FAIL;
 
     IntPoint point = m_object->documentFrameView()->screenToContents(IntPoint(x, y));
-    AccessibilityObject* childObj = m_object->doAccessibilityHitTest(point);
+    AccessibilityObject* childObj = m_object->accessibilityHitTest(point);
 
     if (!childObj) {
         // If we did not hit any child objects, test whether the point hit us, and

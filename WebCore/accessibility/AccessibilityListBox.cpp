@@ -163,7 +163,7 @@ bool AccessibilityListBox::accessibilityIsIgnored() const
     return false;
 }
 
-AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const IntPoint& point) const
 {
     // the internal HTMLSelectElement methods for returning a listbox option at a point
     // ignore optgroup elements.
