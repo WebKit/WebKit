@@ -1,3 +1,12 @@
+2010-12-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows production build fix.
+        
+        Don't stop if react-to-vsprops-changes.py exits with an error,
+        since this will occur in production builds.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2010-12-10  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
