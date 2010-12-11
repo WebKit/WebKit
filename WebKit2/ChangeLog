@@ -1,3 +1,14 @@
+2010-12-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73834.
+        http://trac.webkit.org/changeset/73834
+        https://bugs.webkit.org/show_bug.cgi?id=50866
+
+        It broke Qt-WebKit2 build, because of missing WK2_DIR variable
+        (Requested by Ossy on #webkit).
+
+        * WebKit2.pro:
+
 2010-12-10  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Eric Seidel.

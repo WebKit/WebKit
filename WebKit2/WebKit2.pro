@@ -23,22 +23,11 @@ CONFIG += staticlib
 TARGET = $$WEBKIT2_TARGET
 DESTDIR = $$WEBKIT2_DESTDIR
 
-!symbian {
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-        DEFINES += NDEBUG
-    }
-}
-
-symbian {
-    # DEFINES += QT_MAKEDLL
-    DEFINES += BUILDING_WEBKIT
-    MMP_RULES += "USERINCLUDE ../WebCore/bridge"
-    MMP_RULES += "USERINCLUDE ../WebCore/platform/text"
-    MMP_RULES += "USERINCLUDE ../WebCore/platform/animation"
-    MMP_RULES += "USERINCLUDE ../WebCore/rendering"
+!CONFIG(release, debug|release) {
+    OBJECTS_DIR = obj/debug
+} else { # Release
+    OBJECTS_DIR = obj/release
+    DEFINES += NDEBUG
 }
 
 # Build both debug and release configurations
@@ -391,6 +380,10 @@ HEADERS += \
     WebProcess/Plugins/Netscape/NPJSObject.h \
     WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
+    WebProcess/Plugins/Netscape/NetscapePlugin.h \
+    WebProcess/Plugins/Netscape/NetscapePluginModule.h \
+    WebProcess/Plugins/Netscape/NetscapePluginStream.h \
     WebProcess/Plugins/Plugin.h \
     WebProcess/Plugins/PluginController.h \
     WebProcess/Plugins/PluginView.h \
@@ -592,6 +585,11 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NPJSObject.cpp \
     WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
+    WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
+    WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
+    WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
+    WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
     WebProcess/Plugins/Plugin.cpp \
     WebProcess/Plugins/PluginView.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
@@ -630,19 +628,3 @@ SOURCES += \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES
-
-    !symbian: {
-            # TODO: Resolve compiler errors with NPEvent/QEvents on Symbian
-            INCLUDEPATH += $$WK2_DIR/WebProcess/Plugins/Netscape
-            HEADERS += \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePlugin.h \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePluginModule.h \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePluginStream.h
-
-            SOURCES += \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
-                $$WK2_DIR/WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp
-    }
