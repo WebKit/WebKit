@@ -295,13 +295,13 @@ class JSONResultsGeneratorBase(object):
         for the given test_name.
         """
         if test_name not in self._test_results_map:
-            return JSONResultsGenerator.NO_DATA_RESULT
+            return self.__class__.NO_DATA_RESULT
 
         test_result = self._test_results_map[test_name]
         if test_result.modifier in self.MODIFIER_TO_CHAR.keys():
             return self.MODIFIER_TO_CHAR[test_result.modifier]
 
-        return JSONResultsGenerator.PASS_RESULT
+        return self.__class__.PASS_RESULT
 
     def _get_result_char(self, test_name):
         """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,
@@ -309,16 +309,16 @@ class JSONResultsGeneratorBase(object):
         for the given test_name.
         """
         if test_name not in self._test_results_map:
-            return JSONResultsGenerator.NO_DATA_RESULT
+            return self.__class__.NO_DATA_RESULT
 
         test_result = self._test_results_map[test_name]
         if test_result.modifier == TestResult.DISABLED:
-            return JSONResultsGenerator.SKIP_RESULT
+            return self.__class__.SKIP_RESULT
 
         if test_result.failed:
-            return JSONResultsGenerator.FAIL_RESULT
+            return self.__class__.FAIL_RESULT
 
-        return JSONResultsGenerator.PASS_RESULT
+        return self.__class__.PASS_RESULT
 
     # FIXME: Callers should use scm.py instead.
     # FIXME: Identify and fix the run-time errors that were observed on Windows
@@ -593,69 +593,6 @@ class JSONResultsGeneratorBase(object):
         return len(results) == 1 and results[0][1] == type
 
 
-# A wrapper class for JSONResultsGeneratorBase.
-# Note: There's a script outside the WebKit codebase calling this script.
-# FIXME: Please keep the interface until the other script is cleaned up.
-# (http://src.chromium.org/viewvc/chrome/trunk/src/webkit/tools/layout_tests/webkitpy/layout_tests/test_output_xml_to_json.py?view=markup)
+# Left here not to break anything.
 class JSONResultsGenerator(JSONResultsGeneratorBase):
-    # The flag is for backward compatibility.
-    output_json_in_init = True
-
-    def __init__(self, port, builder_name, build_name, build_number,
-        results_file_base_path, builder_base_url,
-        test_timings, failures, passed_tests, skipped_tests, all_tests,
-        test_results_server=None, test_type=None, master_name=None):
-        """Generates a JSON results file.
-
-        Args
-          builder_name: the builder name (e.g. Webkit).
-          build_name: the build name (e.g. webkit-rel).
-          build_number: the build number.
-          results_file_base_path: Absolute path to the directory containing the
-              results json file.
-          builder_base_url: the URL where we have the archived test results.
-          test_timings: Map of test name to a test_run-time.
-          failures: Map of test name to a failure type (of test_expectations).
-          passed_tests: A set containing all the passed tests.
-          skipped_tests: A set containing all the skipped tests.
-          all_tests: List of all the tests that were run.  This should not
-              include skipped tests.
-          test_results_server: server that hosts test results json.
-          test_type: the test type.
-          master_name: the name of the buildbot master.
-        """
-
-        self._test_type = test_type
-        self._results_directory = results_file_base_path
-
-        # Create a map of (name, TestResult).
-        test_results_map = dict()
-        get = test_results_map.get
-        for (test, time) in test_timings.iteritems():
-            test_results_map[test] = TestResult(test, elapsed_time=time)
-        for test in failures.iterkeys():
-            test_results_map[test] = test_result = get(test, TestResult(test))
-            test_result.failed = True
-        for test in skipped_tests:
-            test_results_map[test] = test_result = get(test, TestResult(test))
-        for test in passed_tests:
-            test_results_map[test] = test_result = get(test, TestResult(test))
-            test_result.failed = False
-        for test in all_tests:
-            if test not in test_results_map:
-                test_results_map[test] = TestResult(test)
-
-        # Generate the JSON with incremental flag enabled.
-        # (This should also output the full result for now.)
-        super(JSONResultsGenerator, self).__init__(
-            builder_name, build_name, build_number,
-            results_file_base_path, builder_base_url, test_results_map,
-            svn_repositories=port.test_repository_paths(),
-            generate_incremental_results=True,
-            test_results_server=test_results_server,
-            test_type=test_type,
-            master_name=master_name)
-
-        if self.__class__.output_json_in_init:
-            self.generate_json_output()
-            self.upload_json_files([self.INCREMENTAL_RESULTS_FILENAME])
+    pass

@@ -1,3 +1,16 @@
+2010-12-10  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove old JSONResultsGenerator script that existed for backward-compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=50796
+
+        Also updating the test code to use JSONResultsGeneratorBase and
+        to improve test coverage for incremental cases.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+
 2010-12-10  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.
