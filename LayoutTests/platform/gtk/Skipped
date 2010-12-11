@@ -4959,6 +4959,7 @@ inspector/console-format.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50868
 inspector/debugger-step-out.html
+inspector/styles-source-lines-inline.html
 
 #https://bugs.webkit.org/show_bug.cgi?id=37537
 plugins/npruntime/round-trip-npobject.html
