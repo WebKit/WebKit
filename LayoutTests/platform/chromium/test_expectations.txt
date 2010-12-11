@@ -1215,7 +1215,7 @@ BUG10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 // (there are a few others marked w/ multiple status like this in other parts of
 // the file, but they were left there as the comments in those areas are valid.)
 BUG10384 MAC WIN DEBUG SLOW : fast/dom/Window/new-window-opener.html = FAIL
-
+BUG10384 MAC RELEASE : fast/dom/Window/new-window-opener.html = TEXT
 
 BUG10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 

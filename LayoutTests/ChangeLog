@@ -1,3 +1,9 @@
+2010-12-10  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-10  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Eric Seidel.
