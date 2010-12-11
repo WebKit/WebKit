@@ -43,6 +43,6 @@ contains(DEFINES, USE_GSTREAMER=1) {
     SOURCES += wtf/TCSystemAlloc.cpp
 }
 
-unix: SOURCES += wtf/OSAllocatorPosix.cpp
+unix:!symbian: SOURCES += wtf/OSAllocatorPosix.cpp
 symbian: SOURCES += wtf/OSAllocatorSymbian.cpp
 win*|wince*: SOURCES += wtf/OSAllocatorWin.cpp

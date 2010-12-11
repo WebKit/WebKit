@@ -1,3 +1,12 @@
+2010-12-10  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Build fix for Symbian: don't compile POSIX memory management implementation 
+        https://bugs.webkit.org/show_bug.cgi?id=50707
+
+        * wtf/wtf.pri:
+
 2010-12-10  Steve Falkenburg  <sfalken@apple.com>
 
         Windows production build fix.
