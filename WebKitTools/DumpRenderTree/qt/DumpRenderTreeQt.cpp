@@ -420,7 +420,7 @@ DumpRenderTree::DumpRenderTree()
         setGraphicsBased(true);
 
     DumpRenderTreeSupportQt::overwritePluginDirectories();
-
+    DumpRenderTreeSupportQt::activeMockDeviceOrientationClient(true);
     QWebSettings::enablePersistentStorage(m_persistentStoragePath);
 
     m_networkAccessManager = new NetworkAccessManager(this);
@@ -496,6 +496,7 @@ DumpRenderTree::~DumpRenderTree()
 {
     delete m_mainView;
     delete m_stdin;
+    DumpRenderTreeSupportQt::removeMockDeviceOrientation();
 }
 
 static void clearHistory(QWebPage* page)

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "DeviceOrientationClientQt.h"
 
+#include "DeviceOrientationClientMockQt.h"
 #include "DeviceOrientationController.h"
 #include "DeviceOrientationProviderQt.h"
 #include "qwebpage.h"

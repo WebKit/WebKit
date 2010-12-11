@@ -75,15 +75,6 @@ svg/webarchive
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html
 
-# =========================================================================== #
-#       Feature not supported... yet
-# =========================================================================== #
-
-# This port doesn't support DeviceMotion or DeviceOrientation.
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-fast/dom/Window/window-properties-device-orientation.html
-
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
@@ -3054,6 +3045,7 @@ fast/dom/row-inner-text.html
 fast/dom/setPrimitiveValue.html
 fast/dom/stripNullFromTextNodes.html
 fast/dom/wrapper-classes.html
+fast/dom/Window/window-properties-device-orientation.html
 fast/dynamic/002.html
 fast/dynamic/004.html
 fast/dynamic/006.html

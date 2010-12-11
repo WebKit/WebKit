@@ -1,3 +1,12 @@
+2010-10-11  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Mock DeviceOrientation client for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=47490
+
+        * WebCore.pro:
+
 2010-12-11  Joone Hur  <joone@kldp.org>
 
         Reviewed by Alexey Proskuryakov.

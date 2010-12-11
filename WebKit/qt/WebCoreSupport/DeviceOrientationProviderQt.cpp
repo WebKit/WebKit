@@ -20,16 +20,22 @@
 #include "config.h"
 #include "DeviceOrientationProviderQt.h"
 
+#include "DeviceOrientationClientMockQt.h"
+
 namespace WebCore {
 
 DeviceOrientationProviderQt::DeviceOrientationProviderQt()
 {
     m_rotation.addFilter(this);
     m_orientation = DeviceOrientation::create();
+
+    if (DeviceOrientationClientMockQt::mockIsActive)
+        activeClientMock();
 }
 
 DeviceOrientationProviderQt::~DeviceOrientationProviderQt()
 {
+    disconnect();
 }
 
 void DeviceOrientationProviderQt::start()
@@ -61,6 +67,16 @@ bool DeviceOrientationProviderQt::filter(QRotationReading* reading)
     emit deviceOrientationChanged(m_orientation.get());
 
     return false;
+}
+
+void DeviceOrientationProviderQt::changeDeviceOrientation(DeviceOrientation* orientation)
+{
+    m_orientation = orientation;
+}
+
+void DeviceOrientationProviderQt::activeClientMock()
+{
+    connect(DeviceOrientationClientMockQt::client(), SIGNAL(mockOrientationChanged(DeviceOrientation*)), SLOT(changeDeviceOrientation(DeviceOrientation*)));
 }
 
 }

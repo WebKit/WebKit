@@ -48,7 +48,12 @@ public:
 Q_SIGNALS:
     void deviceOrientationChanged(DeviceOrientation*);
 
+public Q_SLOTS:
+    void changeDeviceOrientation(DeviceOrientation*);
+
 private:
+    void activeClientMock();
+
     RefPtr<DeviceOrientation> m_orientation;
     QRotationSensor m_rotation;
 };

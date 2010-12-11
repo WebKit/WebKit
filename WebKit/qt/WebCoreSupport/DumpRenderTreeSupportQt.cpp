@@ -29,6 +29,8 @@
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
+#include "DeviceOrientation.h"
+#include "DeviceOrientationClientMockQt.h"
 #include "Editor.h"
 #include "EditorClientQt.h"
 #include "Element.h"
@@ -691,6 +693,28 @@ QString DumpRenderTreeSupportQt::viewportAsText(QWebPage* page, const QSize& ava
             conf.maximumScale);
 
     return res;
+}
+
+void DumpRenderTreeSupportQt::activeMockDeviceOrientationClient(bool b)
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    DeviceOrientationClientMockQt::mockIsActive = b;
+#endif
+}
+
+void DumpRenderTreeSupportQt::removeMockDeviceOrientation()
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    DeviceOrientationClientMockQt* client = DeviceOrientationClientMockQt::client();
+    delete client;
+#endif
+}
+
+void DumpRenderTreeSupportQt::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    DeviceOrientationClientMockQt::client()->setOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
+#endif
 }
 
 void DumpRenderTreeSupportQt::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
