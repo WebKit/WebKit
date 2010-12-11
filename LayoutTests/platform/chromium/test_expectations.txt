@@ -3254,3 +3254,4 @@ BUG66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 BUG66099 SKIP : fast/js/array-sort-modifying-tostring.html = TEXT CRASH TIMEOUT
 
 BUG66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT
+BUG66554 WIN DEBUG : fast/js/kde/encode_decode_uri.html = CRASH PASS
