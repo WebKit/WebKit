@@ -65,7 +65,7 @@ unsigned Shader::loadShader(GraphicsContext3D* context, unsigned type, const cha
     String shaderSourceStr(shaderSource);
     context->shaderSource(shader, shaderSourceStr);
     context->compileShader(shader);
-    int compileStatus;
+    int compileStatus = 0;
     context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compileStatus);
     if (!compileStatus) {
         String infoLog = context->getShaderInfoLog(shader);
