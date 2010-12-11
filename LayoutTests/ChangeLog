@@ -1,3 +1,9 @@
+2010-12-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Updated chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-11  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

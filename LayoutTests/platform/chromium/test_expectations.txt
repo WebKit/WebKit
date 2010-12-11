@@ -634,7 +634,7 @@ BUG26734 LINUX MAC SKIP : inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUG66087 WIN : inspector/styles-disable-then-enable.html = PASS TEXT
+BUG66087 WIN SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
 BUG66087 WIN : inspector/timeline-layout.html = PASS TEXT
 BUG66087 WIN : inspector/timeline-parse-html.html = PASS TEXT
 
