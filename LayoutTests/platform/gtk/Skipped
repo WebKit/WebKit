@@ -4675,9 +4675,6 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 # https://bugs.webkit.org/show_bug.cgi?id=30818
 fast/css/opacity-float.html 
 
-# Media tests that keep failing on the bot
-media/video-play-pause-events.html
-
 # New events failing; see https://bugs.webkit.org/show_bug.cgi?id=28823
 fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/pageshow-pagehide-on-back-uncached.html
@@ -4948,11 +4945,6 @@ http/tests/media/video-play-suspend.html
 # Need to add functionality to DumpRenderTree to handle scrollbar police changes
 fast/overflow/scrollbar-restored-and-then-locked.html
 
-# Failing constantly on 64bits release bot since r57284,
-# which is completely unrelated
-# See https://bugs.webkit.org/show_bug.cgi?id=37344
-media/video-src-invalid-remove.html
-
 # See https://bugs.webkit.org/show_bug.cgi?id=37526
 fast/history/multiple-classes-visited.html
 
@@ -4964,9 +4956,6 @@ fast/js/kde/string-2-n.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37535
 inspector/console-format.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37536
-media/video-reverse-play-duration.html
 
 #https://bugs.webkit.org/show_bug.cgi?id=37537
 plugins/npruntime/round-trip-npobject.html
@@ -4980,26 +4969,8 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=37546
 media/audio-delete-while-slider-thumb-clicked.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37547
-media/video-currentTime-set2.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37548
-media/video-seekable.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37549
-media/video-currentTime-set.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37550
 fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37551
-media/video-seeking.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37552
-media/video-timeupdate-reverse-play.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37556
-media/video-played-reset.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37557
 http/tests/misc/image-blocked-src-change.html
@@ -5019,9 +4990,6 @@ plugins/update-widgets-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=37572
 plugins/open-and-close-window-with-plugin.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37573
-media/video-played-ranges-1.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37574
 plugins/window-open.html
 
@@ -5040,12 +5008,6 @@ scrollbars/scrollbar-crash-on-refresh.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37752
 inspector/timeline-paint.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37753
-media/audio-constructor-preload.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=40819
-media/audio-constructor-src.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37914
 fast/frames/frame-crash-with-page-cache.html
