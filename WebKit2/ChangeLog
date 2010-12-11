@@ -1,3 +1,12 @@
+2010-12-10  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt][WK2] Make WebKit2 static library compile on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=50861
+
+        * WebKit2.pro:
+
 2010-12-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
