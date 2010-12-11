@@ -79,7 +79,7 @@ MOCK: user.open_url: http://example.com/42
         self.assert_execute_outputs(Prepare(), [42])
 
     def test_prepare(self):
-        expected_stderr = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\n"
+        expected_stderr = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: MOCK cc\n"
         self.assert_execute_outputs(Prepare(), [], expected_stderr=expected_stderr)
 
     def test_upload(self):

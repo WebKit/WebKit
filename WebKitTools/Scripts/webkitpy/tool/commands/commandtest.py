@@ -33,7 +33,7 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 
 class CommandsTest(unittest.TestCase):
     def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=MockOptions(), tool=MockTool()):
-        options.blocks = True
+        options.blocks = None
         options.cc = 'MOCK cc'
         options.component = 'MOCK component'
         options.confirm = True

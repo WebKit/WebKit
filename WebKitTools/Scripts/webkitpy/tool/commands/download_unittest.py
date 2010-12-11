@@ -169,6 +169,9 @@ MOCK create_bug
 bug_title: REGRESSION(r852): Reason
 bug_description: http://trac.webkit.org/changeset/852 broke the build:
 Reason
+component: MOCK component
+cc: MOCK cc
+blocked: 42
 Running prepare-ChangeLog
 MOCK add_patch_to_bug: bug_id=None, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --

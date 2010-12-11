@@ -91,4 +91,38 @@ If you would like to track this test fix with another bug, please close this bug
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         self.assertEqual(reporter._bot_information(), "Bot Id: MockBotId Port: MockPort OS: MockPlatform 1.0")
 
-    # report_flaky_tests is tested by queues_unittest
+    def test_create_bug_for_flaky_test(self):
+        tool = MockTool()
+        reporter = FlakyTestReporter(tool, 'dummy-queue')
+        reporter._lookup_bug_for_flaky_test = lambda bug_id: None
+        patch = tool.bugs.fetch_attachment(197)
+        expected_stderr = """MOCK create_bug
+bug_title: Flaky Test: foo/bar.html
+bug_description: This is an automatically generated bug from the dummy-queue.
+foo/bar.html has been flaky on the dummy-queue.
+
+foo/bar.html was authored by abarth@webkit.org.
+http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
+
+The dummy-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
+Port: MockPort OS: MockPlatform 1.0
+
+The bots will update this with information from each new failure.
+
+If you would like to track this test fix with another bug, please close this bug as a duplicate.
+
+component: Tools / Tests
+cc: abarth@webkit.org
+blocked: 50856
+MOCK bug comment: bug_id=42, cc=None
+--- Begin comment ---
+The dummy-queue encountered the following flaky tests while processing attachment 197:
+
+foo/bar.html bug None (author: abarth@webkit.org)
+The dummy-queue is continuing to process your patch.
+--- End comment ---
+
+"""
+        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [['foo/bar.html'], patch], expected_stderr=expected_stderr)
+
+    # report_flaky_tests is also tested by queues_unittest

@@ -88,9 +88,11 @@ The bots will update this with information from each new failure.
 If you would like to track this test fix with another bug, please close this bug as a duplicate.
 """ % format_values
 
-        self._tool.bugs.create_bug(title, description,
+        master_flake_bug = 50856  # MASTER: Flaky tests found by the commit-queue
+        return self._tool.bugs.create_bug(title, description,
             component="Tools / Tests",
-            cc=",".join(author_emails))
+            cc=",".join(author_emails),
+            blocked="50856")
 
     # This is over-engineered, but it makes for pretty bug messages.
     def _optional_author_string(self, author_emails):
@@ -128,12 +130,13 @@ If you would like to track this test fix with another bug, please close this bug
             latest_flake_message = self._latest_flake_message(flaky_test, patch)
             author_emails = self._author_emails_for_test(flaky_test)
             if not bug:
-                self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
+                flake_bug_id = self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
             else:
                 bug = self._follow_duplicate_chain(bug)
                 self._update_bug_for_flaky_test(bug, latest_flake_message)
+                flake_bug_id = bug.id()
 
-            message += "%s bug %s%s\n" % (flaky_test, bug.id(), self._optional_author_string(author_emails))
+            message += "%s bug %s%s\n" % (flaky_test, flake_bug_id, self._optional_author_string(author_emails))
 
         message += "The %s is continuing to process your patch." % self._bot_name
         self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)

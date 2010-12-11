@@ -278,6 +278,12 @@ class MockBugzilla(Mock):
         log("MOCK create_bug")
         log("bug_title: %s" % bug_title)
         log("bug_description: %s" % bug_description)
+        if component:
+            log("component: %s" % component)
+        if cc:
+            log("cc: %s" % cc)
+        if blocked:
+            log("blocked: %s" % blocked)
 
     def quips(self):
         return ["Good artists copy. Great artists steal. - Pablo Picasso"]
