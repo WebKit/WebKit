@@ -1,3 +1,11 @@
+2010-12-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectation update.
+        
+        Attach more specific bug IDs to Philip canvas test suite failures.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-10  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Ojan Vafai.
