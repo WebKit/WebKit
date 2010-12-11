@@ -37,7 +37,7 @@ namespace WebCore {
     // This class decodes the JPEG image format.
     class JPEGImageDecoder : public ImageDecoder {
     public:
-        JPEGImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        JPEGImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
         virtual ~JPEGImageDecoder();
 
         // ImageDecoder

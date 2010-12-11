@@ -99,7 +99,8 @@ bool GraphicsContext3D::getImageData(Image* image,
     CGImageRef cgImage;
     RetainPtr<CGImageRef> decodedImage;
     if (image->data()) {
-        ImageSource decoder(false, ignoreGammaAndColorProfile);
+        ImageSource decoder(ImageSource::AlphaNotPremultiplied,
+                            ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
         decoder.setData(image->data(), true);
         if (!decoder.frameCount())
             return false;

@@ -39,7 +39,7 @@ namespace WebCore {
     // This class decodes the BMP image format.
     class BMPImageDecoder : public ImageDecoder {
     public:
-        BMPImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        BMPImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
 
         // ImageDecoder
         virtual String filenameExtension() const { return "bmp"; }

@@ -37,17 +37,17 @@
 
 namespace WebCore {
 
-ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     if (data.size() < 4)
         return 0;
 
-    return new ImageDecoderQt(premultiplyAlpha, ignoreGammaAndColorProfile);
+    return new ImageDecoderQt(alphaOption, gammaAndColorProfileOption);
 }
 
-ImageDecoderQt::ImageDecoderQt(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
-    : ImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile)
+ImageDecoderQt::ImageDecoderQt(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_repetitionCount(cAnimationNone)
 {
 }

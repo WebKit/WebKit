@@ -53,7 +53,7 @@ static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const 
     return bytesExtracted;
 }
 
-ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing
     // with.
@@ -65,15 +65,15 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlp
 
     // GIFs begin with GIF8(7 or 9).
     if (strncmp(contents, "GIF8", 4) == 0)
-        return new GIFImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+        return new GIFImageDecoder(alphaOption, gammaAndColorProfileOption);
 
     // Test for PNG.
     if (!memcmp(contents, "\x89\x50\x4E\x47", 4))
-        return new PNGImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+        return new PNGImageDecoder(alphaOption, gammaAndColorProfileOption);
 
     // JPEG
     if (!memcmp(contents, "\xFF\xD8\xFF", 3))
-        return new JPEGImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+        return new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption);
 
 #if USE(WEBP)
     if (!memcmp(contents, "RIFF", 4)) {
@@ -83,19 +83,19 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlp
         unsigned length = copyFromSharedBuffer(header, webpExtraMarker, data, webpExtraMarkeroffset);
         if (length >= webpExtraMarker) {
             if (!memcmp(header, "WEBPVP", webpExtraMarker))
-                return new WEBPImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+                return new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption);
         }
     }
 #endif
 
     // BMP
     if (strncmp(contents, "BM", 2) == 0)
-        return new BMPImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+        return new BMPImageDecoder(alphaOption, gammaAndColorProfileOption);
 
     // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
     // CURs begin with 2-byte 0 followed by 2-byte 2.
     if (!memcmp(contents, "\x00\x00\x01\x00", 4) || !memcmp(contents, "\x00\x00\x02\x00", 4))
-        return new ICOImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile);
+        return new ICOImageDecoder(alphaOption, gammaAndColorProfileOption);
 
     // Give up. We don't know what the heck this is.
     return 0;

@@ -1,3 +1,52 @@
+2010-12-10  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Adam Barth.
+
+        Use enums instead of booleans in ImageSource/ImageDecoder constructors
+        https://bugs.webkit.org/show_bug.cgi?id=50818
+
+        This patch basically defines two enum type in ImageSource: AlphaOption
+        and GammaAndColorProfileOption and use them as ImageSource and ImageDecoder
+        constructor parameters instead of boolean typs.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::setData):
+        * platform/graphics/ImageSource.h: Define the two enum types.
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::ImageSource):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::BMPImageDecoder):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::GIFImageDecoder):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2010-12-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

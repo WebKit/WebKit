@@ -223,10 +223,10 @@ namespace WebCore {
     // m_maxNumPixels. (Not supported by all image decoders yet)
     class ImageDecoder : public Noncopyable {
     public:
-        ImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+        ImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
             : m_scaled(false)
-            , m_premultiplyAlpha(premultiplyAlpha)
-            , m_ignoreGammaAndColorProfile(ignoreGammaAndColorProfile)
+            , m_premultiplyAlpha(alphaOption == ImageSource::AlphaPremultiplied)
+            , m_ignoreGammaAndColorProfile(gammaAndColorProfileOption == ImageSource::GammaAndColorProfileIgnored)
             , m_sizeAvailable(false)
             , m_maxNumPixels(-1)
             , m_isAllDataReceived(false)
@@ -239,7 +239,7 @@ namespace WebCore {
         // Factory function to create an ImageDecoder.  Ports that subclass
         // ImageDecoder can provide their own implementation of this to avoid
         // needing to write a dedicated setData() implementation.
-        static ImageDecoder* create(const SharedBuffer& data, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        static ImageDecoder* create(const SharedBuffer& data, ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
 
         // The the filename extension usually associated with an undecoded image
         // of this type.

@@ -169,8 +169,9 @@ private:
     unsigned m_currentBufferSize;
 };
 
-PNGImageDecoder::PNGImageDecoder(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
-    : ImageDecoder(premultiplyAlpha, ignoreGammaAndColorProfile)
+PNGImageDecoder::PNGImageDecoder(ImageSource::AlphaOption alphaOption,
+                                 ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_doNothingOnFailure(false)
 {
 }

@@ -1,3 +1,13 @@
+2010-12-10  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Adam Barth.
+
+        Use enums instead of booleans in ImageSource/ImageDecoder constructors
+        https://bugs.webkit.org/show_bug.cgi?id=50818
+
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::init): Use enums instead of boolean in ImageDecoder constructor.
+
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

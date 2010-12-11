@@ -41,7 +41,7 @@ namespace WebCore {
 class ImageDecoderQt : public ImageDecoder
 {
 public:
-    ImageDecoderQt(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+    ImageDecoderQt(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
     ~ImageDecoderQt();
 
     virtual void setData(SharedBuffer* data, bool allDataReceived);

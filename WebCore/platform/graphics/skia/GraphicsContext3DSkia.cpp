@@ -53,7 +53,8 @@ bool GraphicsContext3D::getImageData(Image* image,
     NativeImageSkia* skiaImage = 0;
     AlphaOp neededAlphaOp = AlphaDoNothing;
     if (image->data()) {
-        ImageSource decoder(false, ignoreGammaAndColorProfile);
+        ImageSource decoder(ImageSource::AlphaNotPremultiplied,
+                            ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
         decoder.setData(image->data(), true);
         if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
             return false;
