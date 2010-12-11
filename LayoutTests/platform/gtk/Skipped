@@ -5537,3 +5537,9 @@ http/tests/navigation/postredirect-frames-goback1.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50740
 editing/spelling/spelling-backspace-between-lines.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50873
+fast/dom/StyleSheet/detached-style-2.html
+fast/dom/StyleSheet/detached-style-pi-2.xhtml
+fast/dom/StyleSheet/detached-style-pi.xhtml
+fast/dom/StyleSheet/detached-style.html
