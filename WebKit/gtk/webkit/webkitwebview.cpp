@@ -96,6 +96,7 @@
 #include "webkitwebinspectorprivate.h"
 #include "webkitwebpolicydecision.h"
 #include "webkitwebresource.h"
+#include "webkitwebplugindatabaseprivate.h"
 #include "webkitwebviewprivate.h"
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
@@ -5152,6 +5153,28 @@ WebKitCacheModel webkit_get_cache_model()
 {
     webkit_init();
     return cacheModel;
+}
+
+/**
+ * webkit_get_web_plugin_database:
+ *
+ * Returns the current #WebKitWebPluginDatabase with information about
+ * all the plugins WebKit knows about in this instance.
+ *
+ * Return value: (transfer none): the current #WebKitWebPluginDatabase
+ *
+ * Since: 1.3.8
+ */
+WebKitWebPluginDatabase* webkit_get_web_plugin_database()
+{
+    static WebKitWebPluginDatabase* database = 0;
+
+    webkit_init();
+
+    if (!database)
+        database = webkit_web_plugin_database_new();
+
+    return database;
 }
 
 GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)

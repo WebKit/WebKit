@@ -39,6 +39,8 @@
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebhistoryitem.h>
+#include <webkit/webkitwebplugin.h>
+#include <webkit/webkitwebplugindatabase.h>
 #include <webkit/webkitwebpolicydecision.h>
 #include <webkit/webkitwebnavigationaction.h>
 #include <webkit/webkitwebresource.h>

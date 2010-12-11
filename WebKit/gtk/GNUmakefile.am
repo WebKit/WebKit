@@ -127,6 +127,8 @@ webkitgtk_static_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebhistoryitem.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebinspector.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebnavigationaction.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitwebplugin.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitwebplugindatabase.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebpolicydecision.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebresource.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebsettings.h \
@@ -200,6 +202,10 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebnavigationactionprivate.h \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebresource.cpp \
+	WebKit/gtk/webkit/webkitwebplugin.cpp \
+	WebKit/gtk/webkit/webkitwebpluginprivate.h \
+	WebKit/gtk/webkit/webkitwebplugindatabase.cpp \
+	WebKit/gtk/webkit/webkitwebplugindatabaseprivate.h \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebviewprivate.h \
@@ -395,6 +401,7 @@ TEST_PROGS += \
 	Programs/unittests/testwebsettings \
 	Programs/unittests/testwebresource \
 	Programs/unittests/testwebdatasource \
+	Programs/unittests/testwebplugindatabase \
 	Programs/unittests/testwebview \
 	Programs/unittests/testkeyevents \
 	Programs/unittests/testcopyandpaste
@@ -449,6 +456,11 @@ Programs_unittests_testwebframe_SOURCES = WebKit/gtk/tests/testwebframe.c
 Programs_unittests_testwebframe_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebframe_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebframe_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebplugindatabase_SOURCES = WebKit/gtk/tests/testwebplugindatabase.c
+Programs_unittests_testwebplugindatabase_CFLAGS = -DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" $(webkit_tests_cflags)
+Programs_unittests_testwebplugindatabase_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebplugindatabase_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testwebbackforwardlist_SOURCES = WebKit/gtk/tests/testwebbackforwardlist.c
 Programs_unittests_testwebbackforwardlist_CFLAGS = $(webkit_tests_cflags)
