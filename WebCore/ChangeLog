@@ -1,3 +1,30 @@
+2010-12-10  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Crash while processing ill-formed <textPath> ouside of <text>
+        https://bugs.webkit.org/show_bug.cgi?id=47759
+
+        Renderers within a <text> subtree are created only when their corresponding elements
+        satisfy the content model.
+
+        Test: svg/custom/invalid-text-content.svg
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::childShouldCreateRenderer): Fixed to comply with the content model.
+        (WebCore::SVGTRefElement::rendererIsNeeded): Added.
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer): Fixed to comply with the content model.
+        (WebCore::SVGTSpanElement::rendererIsNeeded): Added.
+        * svg/SVGTSpanElement.h: Changed indentation.
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer): Reformatted.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer): Fixed to comply with the content model.
+        (WebCore::SVGTextPathElement::rendererIsNeeded): Added.
+        * svg/SVGTextPathElement.h:
+
 2010-12-10  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Adam Barth.

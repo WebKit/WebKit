@@ -84,17 +84,32 @@ void SVGTRefElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
-bool SVGTRefElement::childShouldCreateRenderer(Node* child) const
-{
-    if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
-        child->hasTagName(SVGNames::trefTag))
-        return true;
-    return false;
-}
-
 RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGInline(this);
+}
+
+bool SVGTRefElement::childShouldCreateRenderer(Node* child) const
+{
+    if (child->isTextNode())
+        return true;
+
+    return false;
+}
+
+bool SVGTRefElement::rendererIsNeeded(RenderStyle* style)
+{
+    if (parentNode()
+        && (parentNode()->hasTagName(SVGNames::aTag)
+#if ENABLE(SVG_FONTS)
+            || parentNode()->hasTagName(SVGNames::altGlyphTag)
+#endif
+            || parentNode()->hasTagName(SVGNames::textTag)
+            || parentNode()->hasTagName(SVGNames::textPathTag)
+            || parentNode()->hasTagName(SVGNames::tspanTag)))
+        return StyledElement::rendererIsNeeded(style);
+
+    return false;
 }
 
 }

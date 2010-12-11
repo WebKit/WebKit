@@ -62,9 +62,10 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool rendererIsNeeded(RenderStyle*);
 
     virtual bool selfHasRelativeLengths() const;
 

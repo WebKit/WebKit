@@ -39,24 +39,38 @@ PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName
     return adoptRef(new SVGTSpanElement(tagName, document));
 }
 
+RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGTSpan(this);
+}
+
 bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isTextNode()
+        || child->hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
         || child->hasTagName(SVGNames::altGlyphTag)
 #endif
-        || child->hasTagName(SVGNames::tspanTag)
         || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::aTag)
-        || child->hasTagName(SVGNames::textPathTag))
+        || child->hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;
 }
 
-RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
+bool SVGTSpanElement::rendererIsNeeded(RenderStyle* style)
 {
-    return new (arena) RenderSVGTSpan(this);
+    if (parentNode()
+        && (parentNode()->hasTagName(SVGNames::aTag)
+#if ENABLE(SVG_FONTS)
+            || parentNode()->hasTagName(SVGNames::altGlyphTag)
+#endif
+            || parentNode()->hasTagName(SVGNames::textTag)
+            || parentNode()->hasTagName(SVGNames::textPathTag)
+            || parentNode()->hasTagName(SVGNames::tspanTag)))
+        return StyledElement::rendererIsNeeded(style);
+
+    return false;
 }
 
 }

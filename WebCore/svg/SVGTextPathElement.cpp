@@ -118,14 +118,20 @@ RenderObject* SVGTextPathElement::createRenderer(RenderArena* arena, RenderStyle
 bool SVGTextPathElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isTextNode()
-#if ENABLE(SVG_FONTS)
-        || child->hasTagName(SVGNames::altGlyphTag)
-#endif
-        || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::tspanTag)
         || child->hasTagName(SVGNames::aTag)
-        || child->hasTagName(SVGNames::textPathTag))
+        || child->hasTagName(SVGNames::trefTag)
+        || child->hasTagName(SVGNames::tspanTag))
         return true;
+
+    return false;
+}
+
+bool SVGTextPathElement::rendererIsNeeded(RenderStyle* style)
+{
+    if (parentNode()
+        && (parentNode()->hasTagName(SVGNames::aTag)
+            || parentNode()->hasTagName(SVGNames::textTag)))
+        return StyledElement::rendererIsNeeded(style);
 
     return false;
 }

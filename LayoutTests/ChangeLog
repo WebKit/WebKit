@@ -1,3 +1,17 @@
+2010-12-10  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Crash while processing ill-formed <textPath> ouside of <text>
+        https://bugs.webkit.org/show_bug.cgi?id=47759
+
+        Ensure that ill-formed text content child elements do not crash.
+
+        * svg/custom/invalid-text-content.svg: Added.
+        * svg/custom/invalid-text-content-expected.checksum: Added.
+        * svg/custom/invalid-text-content-expected.png: Added.
+        * svg/custom/invalid-text-content-expected.txt: Added.
+
 2010-12-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
