@@ -1,3 +1,10 @@
+2010-12-11  Xan Lopez  <xlopez@igalia.com>
+
+        inspector/debugger-step-out.html crashing intermittently in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=50868
+
+        * platform/gtk/Skipped:
+
 2010-12-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip some media tests on GTK that don't fail locally.
