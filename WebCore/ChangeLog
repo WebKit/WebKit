@@ -1,3 +1,16 @@
+2010-12-10  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Texture::updateSubRect should pass IntRect by reference
+        https://bugs.webkit.org/show_bug.cgi?id=50845
+
+        No test, changing to pass by ref.
+
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect):
+        * platform/graphics/gpu/Texture.h:
+
 2010-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

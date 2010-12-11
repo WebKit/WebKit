@@ -149,7 +149,7 @@ void Texture::load(void* pixels)
     updateSubRect(pixels, IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
 }
 
-void Texture::updateSubRect(void* pixels, const IntRect updateRect)
+void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
 {
     IntRect updateRectSanitized(updateRect);
     updateRectSanitized.intersect(IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));

@@ -50,7 +50,7 @@ public:
     static PassRefPtr<Texture> create(GraphicsContext3D*, Format, int width, int height);
     void bindTile(int tile);
     void load(void* pixels);
-    void updateSubRect(void* pixels, const IntRect);
+    void updateSubRect(void* pixels, const IntRect&);
     Format format() const { return m_format; }
     const TilingData& tiles() const { return m_tiles; }
 private:
