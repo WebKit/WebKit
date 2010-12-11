@@ -31,7 +31,7 @@ import platform
 
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.config import urls
-from webkitpy.tool.grammar import pluralize, join_with_separators
+from webkitpy.tool.grammar import plural, pluralize, join_with_separators
 
 _log = logging.getLogger(__name__)
 

@@ -125,4 +125,10 @@ The dummy-queue is continuing to process your patch.
 """
         OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [['foo/bar.html'], patch], expected_stderr=expected_stderr)
 
+    def test_optional_author_string(self):
+        reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
+        self.assertEqual(reporter._optional_author_string([]), "")
+        self.assertEqual(reporter._optional_author_string(["foo@bar.com"]), " (author: foo@bar.com)")
+        self.assertEqual(reporter._optional_author_string(["a@b.com", "b@b.com"]), " (authors: a@b.com and b@b.com)")
+
     # report_flaky_tests is also tested by queues_unittest

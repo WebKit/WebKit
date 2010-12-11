@@ -1,3 +1,13 @@
+2010-12-10  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Exception seen while reporting flaky test with commit-queue.
+        Just a missing include.
+
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+
 2010-12-10  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.
