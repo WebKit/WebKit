@@ -1,3 +1,19 @@
+2010-12-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Infinite redirect on developer.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=45627
+
+        Tests originally by Tony Gentilcore.
+
+        * fast/loader/form-submit-aborts-parsing-expected.txt: Added.
+        * fast/loader/form-submit-aborts-parsing.html: Added.
+        * fast/loader/location-change-aborts-parsing-expected.txt: Added.
+        * fast/loader/location-change-aborts-parsing.html: Added.
+        * fast/loader/resources/location-change-aborts-parsing-fail.html: Added.
+        * fast/loader/resources/location-change-aborts-parsing-pass.html: Added.
+
 2010-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

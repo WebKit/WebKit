@@ -217,6 +217,15 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     HTMLParserScheduler::PumpSession session;
     // FIXME: This loop body has is now too long and needs cleanup.
     while (mode == ForceSynchronous || m_parserScheduler->shouldContinueParsing(session)) {
+        // FIXME: It's wrong for the HTMLDocumentParser to reach back to the
+        //        Frame, but this approach is how the old parser handled
+        //        stopping when the page assigns window.location.  What really
+        //        should happen is that assigning window.location causes the
+        //        parser to stop parsing cleanly.  The problem is we're not
+        //        perpared to do that at every point where we run JavaScript.
+        if (!m_treeBuilder->isParsingFragment()
+            && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
+            break;
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
 

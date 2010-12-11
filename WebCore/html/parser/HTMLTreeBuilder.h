@@ -62,6 +62,8 @@ public:
     }
     ~HTMLTreeBuilder();
 
+    bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
+
     void detach();
 
     void setPaused(bool paused) { m_isPaused = paused; }
@@ -113,8 +115,6 @@ private:
 
     HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks);
     HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks);
-
-    bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
 
     void processToken(AtomicHTMLToken&);
 
