@@ -89,7 +89,7 @@ If you would like to track this test fix with another bug, please close this bug
         tool = MockTool()
         tool.status_server = MockStatusServer("MockBotId")
         reporter = FlakyTestReporter(tool, 'dummy-queue')
-        self.assertEqual(reporter._bot_information(), "Bot Id: MockBotId Port: MockPort OS: MockPlatform 1.0")
+        self.assertEqual(reporter._bot_information(), "Bot: MockBotId  Port: MockPort  Platform: MockPlatform 1.0")
 
     def test_create_bug_for_flaky_test(self):
         tool = MockTool()
@@ -105,7 +105,7 @@ foo/bar.html was authored by abarth@webkit.org.
 http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 The dummy-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
-Port: MockPort OS: MockPlatform 1.0
+Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
 

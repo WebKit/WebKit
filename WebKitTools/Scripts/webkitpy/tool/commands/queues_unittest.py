@@ -327,13 +327,13 @@ MOCK: release_work_item: commit-queue 197
         expected_stderr = """MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
-Port: MockPort OS: MockPlatform 1.0
+Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
 MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw bar/baz.html flake while processing attachment 197 on bug 42.
-Port: MockPort OS: MockPlatform 1.0
+Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
 MOCK bug comment: bug_id=42, cc=None

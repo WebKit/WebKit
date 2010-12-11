@@ -29,8 +29,15 @@
 import platform
 
 
-# We use this instead of calls to platform directly so allow mocking.
+# We use this instead of calls to platform directly to allow mocking.
 class PlatformInfo(object):
 
     def display_name(self):
-        return platform.platform(aliased=1, terse=1)
+        # platform.platform() returns Darwin information for Mac, which is just confusing.
+        if platform.system() == "Darwin":
+            return "Mac OS X %s" % platform.mac_ver()[0]
+
+        # Returns strings like:
+        # Linux-2.6.18-194.3.1.el5-i686-with-redhat-5.5-Final
+        # Windows-2008ServerR2-6.1.7600
+        return platform.platform()

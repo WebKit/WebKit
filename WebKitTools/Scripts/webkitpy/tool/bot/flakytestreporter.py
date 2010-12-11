@@ -104,8 +104,8 @@ If you would like to track this test fix with another bug, please close this bug
 
     def _bot_information(self):
         bot_id = self._tool.status_server.bot_id
-        bot_id_string = "Bot Id: %s " % (bot_id) if bot_id else ""
-        return "%sPort: %s OS: %s" % (bot_id_string, self._tool.port().name(), self._tool.platform.display_name())
+        bot_id_string = "Bot: %s  " % (bot_id) if bot_id else ""
+        return "%sPort: %s  Platform: %s" % (bot_id_string, self._tool.port().name(), self._tool.platform.display_name())
 
     def _latest_flake_message(self, flaky_test, patch):
         flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
