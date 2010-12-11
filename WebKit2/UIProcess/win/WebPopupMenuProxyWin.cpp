@@ -816,7 +816,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
     translatedDamageRect.move(IntSize(0, m_scrollOffset * m_itemHeight));
     m_data.m_notSelectedBackingStore->paint(context, damageRect.location(), translatedDamageRect);
 
-    IntRect selectedIndexRectInBackingStore(0, focusedIndex() * m_itemHeight, m_data.m_popupWidth, m_itemHeight);
+    IntRect selectedIndexRectInBackingStore(0, focusedIndex() * m_itemHeight, m_data.m_selectedBackingStore->size().width(), m_itemHeight);
     IntPoint selectedIndexDstPoint = selectedIndexRectInBackingStore.location();
     selectedIndexDstPoint.move(0, -m_scrollOffset * m_itemHeight);
 

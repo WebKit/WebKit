@@ -1,3 +1,42 @@
+2010-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Select menus with short option titles do not paint properly
+        https://bugs.webkit.org/show_bug.cgi?id=50860
+        <rdar://problem/8660807>
+
+        The backing stores used for painting the popup menu items were only as
+        wide as the widest option title, but the popup window that we create is
+        at least as wide as the <select> element. This adjusts the backing
+        stores to be at least as wide as the <select>, as well.
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::paint):
+        Paint using the width of the backing store.
+
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        Pass the page coordinates of the <select> element to
+        setUpPlatformData().
+
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        Added new parameter to setUpPlatformData().
+
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        Ditto.
+
+        * WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        Ditto.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        Fixed a typo in a comment. Adjust the backing store size to be at least
+        as wide as the <select> element, and use that width when painting the
+        items to the backing store.
+
 2010-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Qt buildfix after r73808.

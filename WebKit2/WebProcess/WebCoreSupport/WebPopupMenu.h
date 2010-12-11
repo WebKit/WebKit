@@ -55,7 +55,7 @@ private:
     WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);
 
     Vector<WebPopupItem> populateItems();
-    void setUpPlatformData(PlatformPopupMenuData&);
+    void setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
 
     WebCore::PopupMenuClient* m_popupClient;
     WebPage* m_page;

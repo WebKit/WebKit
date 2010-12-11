@@ -100,7 +100,7 @@ void WebPopupMenu::show(const IntRect& rect, FrameView* view, int index)
     IntRect pageCoordinates(view->contentsToWindow(rect.location()), rect.size());
 
     PlatformPopupMenuData platformData;
-    setUpPlatformData(platformData);
+    setUpPlatformData(pageCoordinates, platformData);
 
     WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, items, index, platformData), m_page->pageID());
 }

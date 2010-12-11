@@ -27,9 +27,11 @@
 
 #include "PlatformPopupMenuData.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
-void WebPopupMenu::setUpPlatformData(PlatformPopupMenuData&)
+void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData&)
 {
 }
 
