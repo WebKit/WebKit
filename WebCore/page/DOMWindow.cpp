@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,14 @@
 
 #include "AbstractDatabase.h"
 #include "BackForwardController.h"
-#include "Base64.h"
 #include "BarInfo.h"
+#include "Base64.h"
 #include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
-#include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMSettableTokenList.h"
@@ -48,8 +47,8 @@
 #include "DatabaseCallback.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
-#include "PageTransitionEvent.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "EventException.h"
 #include "EventListener.h"
@@ -57,6 +56,7 @@
 #include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -75,6 +75,7 @@
 #include "NotificationCenter.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
@@ -88,6 +89,7 @@
 #include "StyleMedia.h"
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
+#include "WindowFeatures.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -340,38 +342,26 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     window.setY(max(screen.y(), min(window.y(), screen.bottom() - window.height())));
 }
 
-void DOMWindow::parseModalDialogFeatures(const String& featuresArg, HashMap<String, String>& map)
+// FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.
+void DOMWindow::parseModalDialogFeatures(const String& string, HashMap<String, String>& map)
 {
-    Vector<String> features;
-    featuresArg.split(';', features);
-    Vector<String>::const_iterator end = features.end();
-    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
-        String s = *it;
-        size_t pos = s.find('=');
-        size_t colonPos = s.find(':');
-        if (pos != notFound && colonPos != notFound)
-            continue; // ignore any strings that have both = and :
-        if (pos == notFound)
-            pos = colonPos;
-        if (pos == notFound) {
-            // null string for value means key without value
-            map.set(s.stripWhiteSpace().lower(), String());
-        } else {
-            String key = s.left(pos).stripWhiteSpace().lower();
-            String val = s.substring(pos + 1).stripWhiteSpace().lower();
-            size_t spacePos = val.find(' ');
-            if (spacePos != notFound)
-                val = val.left(spacePos);
-            map.set(key, val);
-        }
-    }
+    WindowFeatures::parseDialogFeatures(string, map);
 }
 
-bool DOMWindow::allowPopUp(Frame* activeFrame)
+bool DOMWindow::allowPopUp(Frame* firstFrame)
 {
-    ASSERT(activeFrame);
-    Settings* settings = activeFrame->settings();
+    ASSERT(firstFrame);
+
+    if (ScriptController::processingUserGesture())
+        return true;
+
+    Settings* settings = firstFrame->settings();
     return settings && settings->javaScriptCanOpenWindowsAutomatically();
+}
+
+bool DOMWindow::allowPopUp()
+{
+    return m_frame && allowPopUp(m_frame);
 }
 
 bool DOMWindow::canShowModalDialog(const Frame* frame)
@@ -1618,34 +1608,29 @@ void DOMWindow::revokeObjectURL(const String& blobURLString)
 }
 #endif
 
-void DOMWindow::setLocation(const String& location, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
 {
     Frame* activeFrame = activeWindow->frame();
     if (!activeFrame)
         return;
+
     if (!activeFrame->loader()->shouldAllowNavigation(m_frame))
         return;
 
     Frame* firstFrame = firstWindow->frame();
     if (!firstFrame)
         return;
-    KURL locationURL = firstFrame->loader()->completeURL(location);
-    if (locationURL.isNull())
+
+    KURL completedURL = firstFrame->document()->completeURL(urlString);
+    if (completedURL.isNull())
         return;
 
-    if (protocolIsJavaScript(locationURL)) {
-        // FIXME: Is there some way to eliminate the need for a separate "activeWindow != this" check?
-        // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
-        // Can we name the SecurityOrigin function better to make this more clear?
-        if (activeWindow != this && !activeWindow->securityOrigin()->canAccess(securityOrigin())) {
-            printErrorMessage(crossDomainAccessErrorMessage(activeWindow));
-            return;
-        }
-    }
+    if (isInsecureScriptAccess(activeWindow, urlString))
+        return;
 
     // We want a new history item if we are processing a user gesture.
     m_frame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
-        locationURL, activeFrame->loader()->outgoingReferrer(),
+        completedURL, activeFrame->loader()->outgoingReferrer(),
         !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
 }
 
@@ -1675,6 +1660,158 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
     return makeString("Unsafe JavaScript attempt to access frame with URL ", m_url.string(),
         " from frame with URL ", activeWindowURL.string(), ". Domains, protocols and ports must match.\n");
+}
+
+bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)
+{
+    if (!protocolIsJavaScript(urlString))
+        return false;
+
+    // FIXME: Is there some way to eliminate the need for a separate "activeWindow == this" check?
+    if (activeWindow == this)
+        return false;
+
+    // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
+    // Can we name the SecurityOrigin function better to make this more clear?
+    if (activeWindow->securityOrigin()->canAccess(securityOrigin()))
+        return false;
+
+    printErrorMessage(crossDomainAccessErrorMessage(activeWindow));
+    return true;
+}
+
+Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures& windowFeatures,
+    DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame, PrepareDialogFunction function, void* functionContext)
+{
+    Frame* activeFrame = activeWindow->frame();
+
+    // FIXME: It's much better for client API if a new window starts with a URL, here where we
+    // know what URL we are going to open. Unfortunately, this code passes the empty string
+    // for the URL, but there's a reason for that. Before loading we have to set up the opener,
+    // openedByDOM, and dialogArguments values. Also, to decide whether to use the URL we currently
+    // do an isInsecureScriptAccess call using the window we create, which can't be done before
+    // creating it. We'd have to resolve all those issues to pass the URL instead of an empty string.
+
+    // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
+    String referrer = firstFrame->loader()->outgoingReferrer();
+
+    ResourceRequest request(KURL(), referrer);
+    FrameLoader::addHTTPOriginIfNeeded(request, firstFrame->loader()->outgoingOrigin());
+    FrameLoadRequest frameRequest(activeWindow->securityOrigin(), request, frameName);
+
+    // We pass the opener frame for the lookupFrame in case the active frame is different from
+    // the opener frame, and the name references a frame relative to the opener frame.
+    bool created;
+    Frame* newFrame = WebCore::createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
+    if (!newFrame)
+        return 0;
+
+    newFrame->loader()->setOpener(openerFrame);
+    newFrame->page()->setOpenedByDOM();
+
+    if (newFrame->domWindow()->isInsecureScriptAccess(activeWindow, urlString))
+        return newFrame;
+
+    if (function)
+        function(newFrame->domWindow(), functionContext);
+
+    KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, "") : firstFrame->document()->completeURL(urlString);
+
+    if (created)
+        newFrame->loader()->changeLocation(activeWindow->securityOrigin(), completedURL, referrer, false, false);
+    else if (!urlString.isEmpty()) {
+        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->securityOrigin(), completedURL.string(), referrer,
+            !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+    }
+
+    return newFrame;
+}
+
+PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
+    DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return 0;
+    Frame* activeFrame = activeWindow->frame();
+    if (!activeFrame)
+        return 0;
+    Frame* firstFrame = firstWindow->frame();
+    if (!firstFrame)
+        return 0;
+
+    if (!firstWindow->allowPopUp()) {
+        // Because FrameTree::find() returns true for empty strings, we must check for empty frame names.
+        // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
+        if (frameName.isEmpty() || !m_frame->tree()->find(frameName))
+            return 0;
+    }
+
+    // Get the target frame for the special cases of _top and _parent.
+    // In those cases, we schedule a location change right now and return early.
+    Frame* targetFrame = 0;
+    if (frameName == "_top")
+        targetFrame = m_frame->tree()->top();
+    else if (frameName == "_parent") {
+        if (Frame* parent = m_frame->tree()->parent())
+            targetFrame = parent;
+        else
+            targetFrame = m_frame;
+    }
+    if (targetFrame) {
+        if (!activeFrame->loader()->shouldAllowNavigation(targetFrame))
+            return 0;
+
+        if (isInsecureScriptAccess(activeWindow, urlString))
+            return targetFrame->domWindow();
+
+        if (urlString.isEmpty())
+            return targetFrame->domWindow();
+
+        // For whatever reason, Firefox uses the first window rather than the active window to
+        // determine the outgoing referrer. We replicate that behavior here.
+        targetFrame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
+            firstFrame->document()->completeURL(urlString).string(),
+            firstFrame->loader()->outgoingReferrer(),
+            !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+
+        return targetFrame->domWindow();
+    }
+
+    WindowFeatures windowFeatures(windowFeaturesString);
+    FloatRect windowRect(windowFeatures.xSet ? windowFeatures.x : 0, windowFeatures.ySet ? windowFeatures.y : 0,
+        windowFeatures.widthSet ? windowFeatures.width : 0, windowFeatures.heightSet ? windowFeatures.height : 0);
+    Page* page = m_frame->page();
+    DOMWindow::adjustWindowRect(screenAvailableRect(page ? page->mainFrame()->view() : 0), windowRect, windowRect);
+    windowFeatures.x = windowRect.x();
+    windowFeatures.y = windowRect.y();
+    windowFeatures.height = windowRect.height();
+    windowFeatures.width = windowRect.width();
+
+    Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
+    return result ? result->domWindow() : 0;
+}
+
+void DOMWindow::showModalDialog(const String& urlString, const String& dialogFeaturesString,
+    DOMWindow* activeWindow, DOMWindow* firstWindow, PrepareDialogFunction function, void* functionContext)
+{
+    if (!m_frame)
+        return;
+    Frame* activeFrame = activeWindow->frame();
+    if (!activeFrame)
+        return;
+    Frame* firstFrame = firstWindow->frame();
+    if (!firstFrame)
+        return;
+
+    if (!canShowModalDialogNow(m_frame) || !firstWindow->allowPopUp())
+        return;
+
+    Frame* dialogFrame = createWindow(urlString, emptyAtom, WindowFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view())),
+        activeWindow, firstFrame, m_frame, function, functionContext);
+    if (!dialogFrame)
+        return;
+
+    dialogFrame->page()->chrome()->runModal();
 }
 
 } // namespace WebCore

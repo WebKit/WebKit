@@ -1,3 +1,62 @@
+2010-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move open and showModalDialog implementations from bindings into DOM class DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=50836
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open): Removed most of the code and changed to call
+        DOMWindow::open.
+        (WebCore::DialogHandler::DialogHandler): Added. Object is used to handle the
+        arguments and return value in showModalDialog.
+        (WebCore::DialogHandler::dialogCreated): Ditto.
+        (WebCore::DialogHandler::returnValue): Ditto.
+        (WebCore::setUpDialog): Added. Function passed to showModalDialog that just
+        casts pointer to DialogHandler can calls dialogCreated.
+        (WebCore::JSDOMWindow::showModalDialog): Removed most of the code and changed
+        to call DOMWindow::showModalDialog.
+        (WebCore::JSDOMWindow::postMessage): Made style match the rest of the file by
+        renaming local variables and getting rid of a needless ones.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parseModalDialogFeatures): Moved body of this function
+        to the WindowFeatures class.
+        (WebCore::DOMWindow::allowPopUp): Renamed argument from activeFrame to firstFrame,
+        because that's the frame we pass in here. Also added an overload so this can be
+        called on a window rather than a frame.
+        (WebCore::DOMWindow::setLocation): Renamed a couple variables so the names are
+        the same as in open and showModalDialog. Factored the JavaScript security check
+        into a new function named isInsecureScriptAccess.
+        (WebCore::DOMWindow::isInsecureScriptAccess): Here is the new function.
+        (WebCore::DOMWindow::createWindow): Added. Contains logic shared by open and
+        showModalDialog just as the function named createWindow in JSDOMWindowCustom.cpp
+        used to.
+        (WebCore::DOMWindow::open): Added. Code from JSDOMWindowCustom without the
+        JavaScript language binding part, and with a bit of refactoring to share code
+        with the rest of the DOMWindow class.
+        (WebCore::DOMWindow::showModalDialog): Ditto.
+
+        * page/DOMWindow.h: Moved conditional parts of the file into separate paragraphs
+        in alphabetical order so they are not scattered thorugh the file. Removed redundant
+        includes. Added some blank lines for clarity. Added an open function and a
+        showModalDialog function. Added private createWindow and isInsecureScriptAccess
+        functions.
+
+        * page/WindowFeatures.cpp:
+        (WebCore::isWindowFeaturesSeparator): Renamed from isSeparator for clarity.
+        (WebCore::WindowFeatures::WindowFeatures): Updated for name change. Used isEmpty
+        instead of checking length. Added a new constructor for use when making dialogs,
+        with code from the showModalDialog function.
+        (WebCore::WindowFeatures::boolFeature): Use DialogFeaturesMap typedef.
+        (WebCore::WindowFeatures::floatFeature): Use DialogFeaturesMap typedef.
+        Renamed a local variable and tweaked the comments a bit.
+        (WebCore::WindowFeatures::parseDialogFeatures): Added. Code moved here from
+        DOMWindow::parseDialogFeatures and refactored a bit.
+
+        * page/WindowFeatures.h: Added new constructor, new parseDialogFeatures
+        function, DialogFeaturesMap typedef, and made setWindowFeature function private.
+
 2010-12-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

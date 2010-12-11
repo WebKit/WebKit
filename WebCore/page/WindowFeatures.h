@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,10 @@
 
 namespace WebCore {
 
+    class FloatRect;
+
     struct WindowFeatures {
+        // FIXME: We can delete this constructor once V8 showModalDialog is changed to use DOMWindow.
         WindowFeatures()
             : xSet(false)
             , ySet(false)
@@ -51,12 +54,8 @@ namespace WebCore {
         {
         }
 
-        WindowFeatures(const String& features);
-
-        void setWindowFeature(const String& keyString, const String& valueString);
-
-        static bool boolFeature(const HashMap<String, String>& features, const char* key, bool defaultValue = false);
-        static float floatFeature(const HashMap<String, String>& features, const char* key, float min, float max, float defaultValue);
+        WindowFeatures(const String& windowFeaturesString);
+        WindowFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
 
         float x;
         bool xSet;
@@ -78,6 +77,15 @@ namespace WebCore {
         bool dialog;
 
         Vector<String> additionalFeatures;
+
+        // FIXME: We can make these functions private non-member functions once V8 showModalDialog is changed to use DOMWindow.
+        typedef HashMap<String, String> DialogFeaturesMap;
+        static void parseDialogFeatures(const String&, HashMap<String, String>&);
+        static bool boolFeature(const DialogFeaturesMap&, const char* key, bool defaultValue = false);
+        static float floatFeature(const DialogFeaturesMap&, const char* key, float min, float max, float defaultValue);
+
+    private:
+        void setWindowFeature(const String& keyString, const String& valueString);
     };
 
 } // namespace WebCore

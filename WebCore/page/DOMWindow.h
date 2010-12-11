@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,27 @@
 #ifndef DOMWindow_h
 #define DOMWindow_h
 
-#include "EventTarget.h"
 #include "KURL.h"
 #include "MessagePort.h"
-#include "PlatformString.h"
-#include "RegisteredEventListener.h"
 #include "SecurityOrigin.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
     class BarInfo;
-    class BeforeUnloadEvent;
     class Blob;
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
+    class DOMApplicationCache;
     class DOMSelection;
     class Database;
     class DatabaseCallback;
     class Document;
     class Element;
     class ErrorCallback;
-    class Event;
     class EventListener;
     class FileSystemCallback;
     class FloatRect;
-    class Frame;
     class History;
     class IDBFactory;
     class Location;
@@ -63,25 +55,16 @@ namespace WebCore {
     class Navigator;
     class Node;
     class NotificationCenter;
-    class StyleMedia;
-
-#if ENABLE(WEB_TIMING)
     class Performance;
-#endif
-
     class PostMessageTimer;
     class ScheduledAction;
-    class SerializedScriptValue;
     class Screen;
+    class SerializedScriptValue;
+    class Storage;
+    class StyleMedia;
     class WebKitPoint;
 
-#if ENABLE(DOM_STORAGE)
-    class Storage;
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    class DOMApplicationCache;
-#endif
+    struct WindowFeatures;
 
     typedef int ExceptionCode;
 
@@ -100,13 +83,6 @@ namespace WebCore {
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
-#if ENABLE(ORIENTATION_EVENTS)
-        // This is the interface orientation in degrees. Some examples are:
-        //  0 is straight up; -90 is when the device is rotated 90 clockwise;
-        //  90 is when rotated counter clockwise.
-        int orientation() const;
-#endif
-
         void setSecurityOrigin(SecurityOrigin* securityOrigin) { m_securityOrigin = securityOrigin; }
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
@@ -119,13 +95,17 @@ namespace WebCore {
         static void dispatchAllPendingUnloadEvents();
 
         static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges);
-        static void parseModalDialogFeatures(const String& featuresArg, HashMap<String, String>& map);
 
-        static bool allowPopUp(Frame* activeFrame);
+        // FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.
+        static void parseModalDialogFeatures(const String&, HashMap<String, String>&);
+
+        bool allowPopUp(); // Call on first window, not target window.
+        static bool allowPopUp(Frame* firstFrame);
         static bool canShowModalDialog(const Frame*);
         static bool canShowModalDialogNow(const Frame*);
 
         // DOM Level 0
+
         Screen* screen() const;
         History* history() const;
         BarInfo* locationbar() const;
@@ -136,11 +116,8 @@ namespace WebCore {
         BarInfo* toolbar() const;
         Navigator* navigator() const;
         Navigator* clientInformation() const { return navigator(); }
-#if ENABLE(WEB_TIMING)
-        Performance* webkitPerformance() const;
-#endif
-        Location* location() const;
 
+        Location* location() const;
         void setLocation(const String& location, DOMWindow* activeWindow, DOMWindow* firstWindow);
 
         DOMSelection* getSelection();
@@ -152,6 +129,13 @@ namespace WebCore {
         void close();
         void print();
         void stop();
+
+        PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
+            DOMWindow* activeWindow, DOMWindow* firstWindow);
+
+        typedef void (*PrepareDialogFunction)(DOMWindow*, void* context);
+        void showModalDialog(const String& urlString, const String& dialogFeaturesString,
+            DOMWindow* activeWindow, DOMWindow* firstWindow, PrepareDialogFunction, void* functionContext);
 
         void alert(const String& message);
         bool confirm(const String& message);
@@ -187,11 +171,13 @@ namespace WebCore {
         void setStatus(const String&);
         String defaultStatus() const;
         void setDefaultStatus(const String&);
+
         // This attribute is an alias of defaultStatus and is necessary for legacy uses.
         String defaultstatus() const { return defaultStatus(); }
         void setDefaultstatus(const String& status) { setDefaultStatus(status); }
 
-        // Self referential attributes
+        // Self-referential attributes
+
         DOMWindow* self() const;
         DOMWindow* window() const { return self(); }
         DOMWindow* frames() const { return self(); }
@@ -201,58 +187,31 @@ namespace WebCore {
         DOMWindow* top() const;
 
         // DOM Level 2 AbstractView Interface
+
         Document* document() const;
+
         // CSSOM View Module
+
         PassRefPtr<StyleMedia> styleMedia() const;
 
         // DOM Level 2 Style Interface
+
         PassRefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;
 
         // WebKit extensions
+
         PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         double devicePixelRatio() const;
 
-        PassRefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node* node, const WebKitPoint* p) const;
-        PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const;        
-
-#if ENABLE(DATABASE)
-        // HTML 5 client-side database
-        PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
-#endif
-
-#if ENABLE(DOM_STORAGE)
-        // HTML 5 key/value storage
-        Storage* sessionStorage(ExceptionCode&) const;
-        Storage* localStorage(ExceptionCode&) const;
-#endif
+        PassRefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
+        PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;        
 
         Console* console() const;
 
         void printErrorMessage(const String&);
         String crossDomainAccessErrorMessage(DOMWindow* activeWindow);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        DOMApplicationCache* applicationCache() const;
-#endif
-
-#if ENABLE(NOTIFICATIONS)
-        NotificationCenter* webkitNotifications() const;
-#endif
-
         void pageDestroyed();
-
-#if ENABLE(INDEXED_DATABASE)
-        IDBFactory* webkitIndexedDB() const;
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-        // They are placed here and in all capital letters to enforce compile-time enum checking.
-        enum FileSystemType {
-            TEMPORARY,
-            PERSISTENT,
-        };
-        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
-#endif
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
@@ -352,33 +311,17 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitbeginfullscreen);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitendfullscreen);
 
-#if ENABLE(ORIENTATION_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(orientationchange);
-#endif
-
-#if ENABLE(DEVICE_ORIENTATION)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(devicemotion);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
-#endif
-
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationiteration, webkitAnimationIteration);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationend, webkitAnimationEnd);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkittransitionend, webkitTransitionEnd);
 
-#if ENABLE(TOUCH_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
-#endif
         void captureEvents();
         void releaseEvents();
 
         void finishedLoading();
 
-        // These methods are used for GC marking. See JSDOMWindow::markChildren(MarkStack&) in
-        // JSDOMWindowCustom.cpp.
+        // These functions are used for GC marking. See JSDOMWindow::markChildren(MarkStack&) in JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }
         DOMSelection* optionalSelection() const { return m_selection.get(); }
         History* optionalHistory() const { return m_history.get(); }
@@ -390,25 +333,78 @@ namespace WebCore {
         BarInfo* optionalToolbar() const { return m_toolbar.get(); }
         Console* optionalConsole() const { return m_console.get(); }
         Navigator* optionalNavigator() const { return m_navigator.get(); }
-#if ENABLE(WEB_TIMING)
-        Performance* optionalWebkitPerformance() const { return m_performance.get(); }
-#endif
         Location* optionalLocation() const { return m_location.get(); }
         StyleMedia* optionalMedia() const { return m_media.get(); }
-#if ENABLE(DOM_STORAGE)
-        Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
-        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
-#endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
-#endif
+
+        using RefCounted<DOMWindow>::ref;
+        using RefCounted<DOMWindow>::deref;
+
 #if ENABLE(BLOB)
         String createObjectURL(Blob*);
         void revokeObjectURL(const String&);
 #endif
 
-        using RefCounted<DOMWindow>::ref;
-        using RefCounted<DOMWindow>::deref;
+#if ENABLE(DATABASE)
+        // HTML 5 client-side database
+        PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(devicemotion);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
+#endif
+
+#if ENABLE(DOM_STORAGE)
+        // HTML 5 key/value storage
+        Storage* sessionStorage(ExceptionCode&) const;
+        Storage* localStorage(ExceptionCode&) const;
+        Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
+        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+        // They are placed here and in all capital letters so they can be checked against the constants in the
+        // IDL at compile time.
+        enum FileSystemType {
+            TEMPORARY,
+            PERSISTENT,
+        };
+        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+        IDBFactory* webkitIndexedDB() const;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+        NotificationCenter* webkitNotifications() const;
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        DOMApplicationCache* applicationCache() const;
+        DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
+#endif
+
+#if ENABLE(ORIENTATION_EVENTS)
+        // This is the interface orientation in degrees. Some examples are:
+        //  0 is straight up; -90 is when the device is rotated 90 clockwise;
+        //  90 is when rotated counter clockwise.
+        int orientation() const;
+
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(orientationchange);
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
+#endif
+
+#if ENABLE(WEB_TIMING)
+        Performance* webkitPerformance() const;
+        Performance* optionalWebkitPerformance() const { return m_performance.get(); }
+#endif
 
     private:
         DOMWindow(Frame*);
@@ -417,6 +413,11 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
+
+        static Frame* createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
+            DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,
+            PrepareDialogFunction = 0, void* functionContext = 0);
+        bool isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString);
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;
@@ -434,29 +435,34 @@ namespace WebCore {
         mutable RefPtr<BarInfo> m_toolbar;
         mutable RefPtr<Console> m_console;
         mutable RefPtr<Navigator> m_navigator;
-#if ENABLE(WEB_TIMING)
-        mutable RefPtr<Performance> m_performance;
-#endif
         mutable RefPtr<Location> m_location;
         mutable RefPtr<StyleMedia> m_media;
-#if ENABLE(DOM_STORAGE)
-        mutable RefPtr<Storage> m_sessionStorage;
-        mutable RefPtr<Storage> m_localStorage;
-#endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        mutable RefPtr<DOMApplicationCache> m_applicationCache;
-#endif
-#if ENABLE(NOTIFICATIONS)
-        mutable RefPtr<NotificationCenter> m_notifications;
-#endif
-#if ENABLE(INDEXED_DATABASE)
-        mutable RefPtr<IDBFactory> m_idbFactory;
-#endif
 
         EventTargetData m_eventTargetData;
 
         String m_status;
         String m_defaultStatus;
+
+#if ENABLE(DOM_STORAGE)
+        mutable RefPtr<Storage> m_sessionStorage;
+        mutable RefPtr<Storage> m_localStorage;
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+        mutable RefPtr<IDBFactory> m_idbFactory;
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        mutable RefPtr<DOMApplicationCache> m_applicationCache;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+        mutable RefPtr<NotificationCenter> m_notifications;
+#endif
+
+#if ENABLE(WEB_TIMING)
+        mutable RefPtr<Performance> m_performance;
+#endif
     };
 
     inline String DOMWindow::status() const
