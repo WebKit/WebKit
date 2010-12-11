@@ -30,7 +30,6 @@
 #include "Extensions3DOpenGL.h"
 
 #include "GraphicsContext3D.h"
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -88,10 +87,7 @@ bool Extensions3DOpenGL::supports(const String& name)
 
 void Extensions3DOpenGL::ensureEnabled(const String& name)
 {
-#ifdef NDEBUG
-    UNUSED_PARAM(name);
-#endif
-    ASSERT(supports(name));
+    ASSERT_UNUSED(name, supports(name));
 }
 
 int Extensions3DOpenGL::getGraphicsResetStatusARB()

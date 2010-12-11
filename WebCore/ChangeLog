@@ -1,3 +1,15 @@
+2010-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up assertion in Extensions3DOpenGL.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=50852
+
+        Built Release mode to test. No functionality change.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+
 2010-12-10  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Eric Seidel.
