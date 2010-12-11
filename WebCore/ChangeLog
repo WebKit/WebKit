@@ -1,3 +1,21 @@
+2010-12-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add an overload to makeString for Vector<char>
+        https://bugs.webkit.org/show_bug.cgi?id=50123
+
+        This also contains a segfault fix for ImageBuffer::toDataURL of the Haiku port.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/haiku/ImageBufferHaiku.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
 2010-12-10  Alexey Proskuryakov  <ap@apple.com>
 
         Mac build fix.

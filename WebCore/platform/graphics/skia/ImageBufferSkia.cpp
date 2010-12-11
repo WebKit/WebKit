@@ -339,9 +339,8 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 
     Vector<char> base64Data;
     base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
-    base64Data.append('\0');
 
-    return makeString("data:", mimeType, ";base64,", base64Data.data());
+    return makeString("data:", mimeType, ";base64,", base64Data);
 }
 
 } // namespace WebCore

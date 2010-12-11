@@ -1,3 +1,14 @@
+2010-12-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add an overload to makeString for Vector<char>
+        https://bugs.webkit.org/show_bug.cgi?id=50123
+
+        Also cleanup StringTypeAdapter.
+
+        * wtf/text/StringConcatenate.h:
+
 2010-12-10  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Eric Seidel.

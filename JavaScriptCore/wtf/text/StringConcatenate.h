@@ -68,7 +68,7 @@ template<>
 class StringTypeAdapter<char*> {
 public:
     StringTypeAdapter<char*>(char* buffer)
-        : m_buffer((unsigned char*)buffer)
+        : m_buffer(buffer)
         , m_length(strlen(buffer))
     {
     }
@@ -77,12 +77,14 @@ public:
 
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
+        for (unsigned i = 0; i < m_length; ++i) {
+            unsigned char c = m_buffer[i];
+            destination[i] = c;
+        }
     }
 
 private:
-    const unsigned char* m_buffer;
+    const char* m_buffer;
     unsigned m_length;
 };
 
@@ -90,7 +92,7 @@ template<>
 class StringTypeAdapter<const char*> {
 public:
     StringTypeAdapter<const char*>(const char* buffer)
-        : m_buffer((unsigned char*)buffer)
+        : m_buffer(buffer)
         , m_length(strlen(buffer))
     {
     }
@@ -99,35 +101,59 @@ public:
 
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
+        for (unsigned i = 0; i < m_length; ++i) {
+            unsigned char c = m_buffer[i];
+            destination[i] = c;
+        }
     }
 
 private:
-    const unsigned char* m_buffer;
+    const char* m_buffer;
     unsigned m_length;
+};
+
+template<>
+class StringTypeAdapter<Vector<char> > {
+public:
+    StringTypeAdapter<Vector<char> >(const Vector<char>& buffer)
+        : m_buffer(buffer)
+    {
+    }
+
+    size_t length() { return m_buffer.size(); }
+
+    void writeTo(UChar* destination)
+    {
+        for (size_t i = 0; i < m_buffer.size(); ++i) {
+            unsigned char c = m_buffer[i];
+            destination[i] = c;
+        }
+    }
+
+private:
+    const Vector<char>& m_buffer;
 };
 
 template<>
 class StringTypeAdapter<String> {
 public:
-    StringTypeAdapter<String>(String& string)
-        : m_data(string.characters())
-        , m_length(string.length())
+    StringTypeAdapter<String>(const String& string)
+        : m_buffer(string)
     {
     }
 
-    unsigned length() { return m_length; }
+    unsigned length() { return m_buffer.length(); }
 
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_data[i];
+        const UChar* data = m_buffer.characters();
+        unsigned length = m_buffer.length();
+        for (unsigned i = 0; i < length; ++i)
+            destination[i] = data[i];
     }
 
 private:
-    const UChar* m_data;
-    unsigned m_length;
+    const String& m_buffer;
 };
 
 inline void sumWithOverflow(unsigned& total, unsigned addend, bool& overflow)
