@@ -1,3 +1,10 @@
+2010-12-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac build fix.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp: (WebCore::ResourceResponse::platformLazyInit):
+        Resolve string[0] ambiguity by passing 0U.
+
 2010-12-10  Steve Falkenburg  <sfalken@apple.com>
 
         Windows production build fix.
