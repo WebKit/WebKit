@@ -113,7 +113,7 @@ my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $updateChangeLogs = 1;
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
-               "bug:i" => \$bugNumber,
+               "bug|b:i" => \$bugNumber,
                "name:s" => \$name,
                "email:s" => \$emailAddress,
                "merge-base:s" => \$mergeBase,
@@ -125,8 +125,8 @@ my $parseOptionsResult =
                "write!" => \$writeChangeLogs,
                "update!" => \$updateChangeLogs);
 if (!$parseOptionsResult || $showHelp) {
-    print STDERR basename($0) . " [--bug] [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
-    print STDERR "  --bug          Fill in the ChangeLog bug information from the given bug.\n";
+    print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
+    print STDERR "  -b|--bug       Fill in the ChangeLog bug information from the given bug.\n";
     print STDERR "  -d|--diff      Spew diff to stdout when running\n";
     print STDERR "  --merge-base   Populate the ChangeLogs with the diff to this branch\n";
     print STDERR "  --git-commit   Populate the ChangeLogs from the specified git commit\n";
