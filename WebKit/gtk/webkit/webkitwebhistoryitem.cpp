@@ -23,11 +23,11 @@
 #include "webkitwebhistoryitem.h"
 #include "webkitprivate.h"
 
-#include <glib.h>
-#include <glib/gi18n-lib.h>
-
 #include "HistoryItem.h"
 #include "PlatformString.h"
+#include "webkitwebhistoryitemprivate.h"
+#include <glib.h>
+#include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
 /**

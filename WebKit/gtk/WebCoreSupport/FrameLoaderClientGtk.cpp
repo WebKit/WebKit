@@ -62,11 +62,18 @@
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
+#include "webkitnetworkresponseprivate.h"
 #include "webkitprivate.h"
+#include "webkitviewportattributes.h"
+#include "webkitviewportattributesprivate.h"
 #include "webkitwebframe.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebnavigationaction.h"
+#include "webkitwebnavigationactionprivate.h"
 #include "webkitwebpolicydecision.h"
+#include "webkitwebpolicydecisionprivate.h"
+#include "webkitwebresource.h"
+#include "webkitwebresourceprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -309,7 +316,7 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
     if (redirectResponse.isNull())
         static_cast<WebKit::DocumentLoader*>(loader)->increaseLoadCount(identifier);
     else
-        networkResponse = adoptPlatformRef(webkit_network_response_new_with_core_response(redirectResponse));
+        networkResponse = adoptPlatformRef(kitNew(redirectResponse));
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
     GOwnPtr<gchar> identifierString(toString(identifier));

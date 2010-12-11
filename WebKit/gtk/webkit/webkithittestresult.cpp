@@ -22,6 +22,8 @@
 #include "webkithittestresult.h"
 
 #include "GOwnPtr.h"
+#include "HitTestResult.h"
+#include "WebKitDOMBinding.h"
 #include "WebKitDOMNode.h"
 #include "webkitenumtypes.h"
 #include "webkitprivate.h"
@@ -229,4 +231,49 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
 static void webkit_hit_test_result_init(WebKitHitTestResult* web_hit_test_result)
 {
     web_hit_test_result->priv = WEBKIT_HIT_TEST_RESULT_GET_PRIVATE(web_hit_test_result);
+}
+
+namespace WebKit {
+
+WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
+{
+    guint context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
+    GOwnPtr<char> linkURI(0);
+    GOwnPtr<char> imageURI(0);
+    GOwnPtr<char> mediaURI(0);
+    WebKitDOMNode* node = 0;
+
+    if (!result.absoluteLinkURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
+        linkURI.set(g_strdup(result.absoluteLinkURL().string().utf8().data()));
+    }
+
+    if (!result.absoluteImageURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
+        imageURI.set(g_strdup(result.absoluteImageURL().string().utf8().data()));
+    }
+
+    if (!result.absoluteMediaURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
+        mediaURI.set(g_strdup(result.absoluteMediaURL().string().utf8().data()));
+    }
+
+    if (result.isSelected())
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
+
+    if (result.isContentEditable())
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
+
+    if (result.innerNonSharedNode())
+        node = kit(result.innerNonSharedNode());
+
+    return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
+                                               "link-uri", linkURI.get(),
+                                               "image-uri", imageURI.get(),
+                                               "media-uri", mediaURI.get(),
+                                               "context", context,
+                                               "inner-node", node,
+                                               NULL));
+}
+
 }

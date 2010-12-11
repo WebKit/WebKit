@@ -29,10 +29,12 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "webkitdownload.h"
+#include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
+#include "webkitnetworkresponseprivate.h"
 #include "webkitprivate.h"
 #include <wtf/text/CString.h>
 
@@ -594,7 +596,7 @@ WebKitNetworkResponse* webkit_download_get_network_response(WebKitDownload* down
 static void webkit_download_set_response(WebKitDownload* download, const ResourceResponse& response)
 {
     WebKitDownloadPrivate* priv = download->priv;
-    priv->networkResponse = webkit_network_response_new_with_core_response(response);
+    priv->networkResponse = kitNew(response);
 
     if (!response.isNull() && !response.suggestedFilename().isEmpty())
         webkit_download_set_suggested_filename(download, response.suggestedFilename().utf8().data());

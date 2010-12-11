@@ -26,16 +26,15 @@
 #include "config.h"
 #include "webkitwebsettings.h"
 
+#include "FileSystem.h"
+#include "Language.h"
+#include "PluginDatabase.h"
 #include "webkitenumtypes.h"
 #include "webkitprivate.h"
 #include "webkitversion.h"
-
-#include "FileSystem.h"
-#include "PluginDatabase.h"
-#include "Language.h"
+#include "webkitwebsettingsprivate.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
-
 #include <glib/gi18n-lib.h>
 #if OS(UNIX)
 #include <sys/utsname.h>

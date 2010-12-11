@@ -160,12 +160,12 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.h \
 	WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/DragClientGtk.h \
+	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.cpp \
+	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h \
 	WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
-	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.cpp \
-	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h \
 	WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h \
 	WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp \
 	WebKit/gtk/WebCoreSupport/FullscreenVideoController.h \
@@ -176,26 +176,30 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitapplicationcache.cpp \
 	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkiterror.cpp \
+	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
 	WebKit/gtk/webkit/webkithittestresult.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
+	WebKit/gtk/webkit/webkitnetworkrequestprivate.h \
 	WebKit/gtk/webkit/webkitnetworkresponse.cpp \
+	WebKit/gtk/webkit/webkitnetworkresponseprivate.h \
 	WebKit/gtk/webkit/webkitprivate.cpp \
 	WebKit/gtk/webkit/webkitprivate.h \
+	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitsoupauthdialog.c \
 	WebKit/gtk/webkit/webkitversion.cpp \
 	WebKit/gtk/webkit/webkitviewportattributes.cpp \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
+	WebKit/gtk/webkit/webkitwebdatabase.cpp \
 	WebKit/gtk/webkit/webkitwebdatasource.cpp \
 	WebKit/gtk/webkit/webkitwebframe.cpp \
 	WebKit/gtk/webkit/webkitwebframeprivate.h \
 	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
 	WebKit/gtk/webkit/webkitwebinspector.cpp \
+	WebKit/gtk/webkit/webkitwebinspectorprivate.h \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
+	WebKit/gtk/webkit/webkitwebnavigationactionprivate.h \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
-	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebresource.cpp \
-	WebKit/gtk/webkit/webkitwebdatabase.cpp \
-	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebviewprivate.h \

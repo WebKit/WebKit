@@ -24,7 +24,9 @@
 #include "BackForwardListImpl.h"
 #include "HistoryItem.h"
 #include "webkitprivate.h"
+#include "webkitwebbackforwardlistprivate.h"
 #include "webkitwebhistoryitem.h"
+#include "webkitwebhistoryitemprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <glib.h>

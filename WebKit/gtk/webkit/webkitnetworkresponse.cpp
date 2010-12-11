@@ -158,16 +158,6 @@ static void webkit_network_response_init(WebKitNetworkResponse* response)
     response->priv = WEBKIT_NETWORK_RESPONSE_GET_PRIVATE(response);
 }
 
-// for internal use only
-WebKitNetworkResponse* webkit_network_response_new_with_core_response(const WebCore::ResourceResponse& resourceResponse)
-{
-    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceResponse.toSoupMessage()));
-    if (soupMessage)
-        return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "message", soupMessage.get(), NULL));
-
-    return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "uri", resourceResponse.url().string().utf8().data(), NULL));
-}
-
 /**
  * webkit_network_response_new:
  * @uri: an URI
@@ -258,4 +248,26 @@ SoupMessage* webkit_network_response_get_message(WebKitNetworkResponse* response
     WebKitNetworkResponsePrivate* priv = response->priv;
 
     return priv->message;
+}
+
+namespace WebKit {
+
+WebCore::ResourceResponse core(WebKitNetworkResponse* response)
+{
+    SoupMessage* soupMessage = webkit_network_response_get_message(response);
+    if (soupMessage)
+        return WebCore::ResourceResponse(soupMessage);
+
+    return WebCore::ResourceResponse();
+}
+
+WebKitNetworkResponse* kitNew(const WebCore::ResourceResponse& resourceResponse)
+{
+    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceResponse.toSoupMessage()));
+    if (soupMessage)
+        return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "message", soupMessage.get(), NULL));
+
+    return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "uri", resourceResponse.url().string().utf8().data(), NULL));
+}
+
 }

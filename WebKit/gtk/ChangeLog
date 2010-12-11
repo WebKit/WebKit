@@ -1,3 +1,56 @@
+2010-12-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Split webkitprivate.{cpp,h} in more manageable chunks
+        https://bugs.webkit.org/show_bug.cgi?id=50698
+
+        Split private bits of several objects to their own private
+        headers, and to their implementation files.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest):
+        * webkit/webkitdownload.cpp:
+        (webkit_download_set_response):
+        * webkit/webkitdownloadprivate.h: Added.
+        * webkit/webkithittestresult.cpp:
+        (WebKit::kit):
+        * webkit/webkithittestresultprivate.h: Added.
+        * webkit/webkitnetworkresponse.cpp:
+        (WebKit::core):
+        (WebKit::kitNew):
+        * webkit/webkitnetworkresponseprivate.h: Added.
+        * webkit/webkitprivate.cpp:
+        * webkit/webkitprivate.h:
+        * webkit/webkitsecurityorigin.cpp:
+        (webkit_security_origin_get_web_database):
+        (WebKit::core):
+        (WebKit::kit):
+        * webkit/webkitsecurityoriginprivate.h: Added.
+        * webkit/webkitviewportattributes.cpp:
+        * webkit/webkitviewportattributesprivate.h: Added.
+        * webkit/webkitwebbackforwardlist.cpp:
+        * webkit/webkitwebbackforwardlistprivate.h: Added.
+        * webkit/webkitwebdatabase.cpp:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_network_response):
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebhistoryitemprivate.h: Added.
+        * webkit/webkitwebnavigationaction.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        * webkit/webkitwebnavigationactionprivate.h: Added.
+        * webkit/webkitwebpolicydecision.cpp:
+        * webkit/webkitwebpolicydecisionprivate.h: Added.
+        * webkit/webkitwebresource.cpp:
+        * webkit/webkitwebresourceprivate.h: Added.
+        * webkit/webkitwebsettings.cpp:
+        * webkit/webkitwebsettingsprivate.h: Added.
+        * webkit/webkitwebview.cpp:
+
 2010-12-10  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fixed small typo in the name of a function.

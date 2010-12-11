@@ -20,13 +20,12 @@
 #include "config.h"
 #include "webkitwebdatabase.h"
 
-#include "webkitprivate.h"
-
 #include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
-#include <wtf/text/CString.h>
-
+#include "webkitprivate.h"
+#include "webkitsecurityoriginprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitwebdatabase

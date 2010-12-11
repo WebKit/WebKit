@@ -18,9 +18,7 @@
  */
 
 #include "config.h"
-
 #include "webkitwebresource.h"
-#include "webkitprivate.h"
 
 #include "ArchiveResource.h"
 #include "KURL.h"
@@ -28,7 +26,9 @@
 #include "SharedBuffer.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
-#include "wtf/Assertions.h"
+#include "webkitprivate.h"
+#include "webkitwebresourceprivate.h"
+#include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
 #include <glib.h>

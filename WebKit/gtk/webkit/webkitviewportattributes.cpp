@@ -23,8 +23,8 @@
 
 #include "Chrome.h"
 #include "webkitprivate.h"
+#include "webkitviewportattributesprivate.h"
 #include "webkitwebviewprivate.h"
-
 #include <glib/gi18n-lib.h>
 
 /**

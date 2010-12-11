@@ -369,3 +369,17 @@ static void webkit_web_navigation_action_set_target_frame(WebKitWebNavigationAct
     navigationAction->priv->targetFrame = g_strdup(targetFrame);
     g_object_notify(G_OBJECT(navigationAction), "target-frame");
 }
+
+namespace WebKit {
+
+WebKitWebNavigationReason kit(WebCore::NavigationType type)
+{
+    return (WebKitWebNavigationReason)type;
+}
+
+WebCore::NavigationType core(WebKitWebNavigationReason type)
+{
+    return static_cast<WebCore::NavigationType>(type);
+}
+
+}

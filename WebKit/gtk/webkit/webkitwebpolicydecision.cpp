@@ -18,12 +18,12 @@
  */
 
 #include "config.h"
-
 #include "webkitwebpolicydecision.h"
 
 #include "FrameLoaderTypes.h"
 #include "webkitprivate.h"
 #include "webkitwebframeprivate.h"
+#include "webkitwebpolicydecisionprivate.h"
 
 using namespace WebKit;
 using namespace WebCore;

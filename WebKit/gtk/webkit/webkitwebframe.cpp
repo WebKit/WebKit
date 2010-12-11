@@ -52,8 +52,10 @@
 #include "SubstituteData.h"
 #include "webkitenumtypes.h"
 #include "webkitnetworkrequestprivate.h"
+#include "webkitnetworkresponseprivate.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
+#include "webkitsecurityoriginprivate.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
@@ -966,7 +968,7 @@ WebKitNetworkResponse* webkit_web_frame_get_network_response(WebKitWebFrame* fra
     if (!loader)
         return NULL;
 
-    return webkit_network_response_new_with_core_response(loader->response());
+    return kitNew(loader->response());
 }
 
 namespace WebKit {
