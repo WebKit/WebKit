@@ -1,3 +1,17 @@
+2010-12-11  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        enumeration value ‘ResponseTypeArrayBuffer’ not handled in switch
+        https://bugs.webkit.org/show_bug.cgi?id=50871
+
+        Fix the warning which occurs when enumeration value is not handled in switch.
+
+        No new tests, no change in behavior.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response):
+
 2010-12-11  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

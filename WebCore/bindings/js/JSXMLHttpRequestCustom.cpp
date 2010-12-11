@@ -188,8 +188,8 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
         return jsUndefined();
 #endif
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
     case XMLHttpRequest::ResponseTypeArrayBuffer:
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
         {
             ExceptionCode ec = 0;
             ArrayBuffer* arrayBuffer = impl()->responseArrayBuffer(ec);
@@ -199,6 +199,8 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
             }
             return toJS(exec, globalObject(), arrayBuffer);
         }
+#else
+        return jsUndefined();
 #endif
     }
 
