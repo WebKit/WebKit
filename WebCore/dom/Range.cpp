@@ -794,11 +794,15 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
             Node* n = m_end.container()->firstChild();
             if (n && m_end.offset()) {
                 NodeVector nodes;
-                for (int i = 0; i + 1 < m_end.offset() && n; i++, n = n->nextSibling()) {
+                int i = 0;
+                do {
                     nodes.append(n);
-                }
+                    if (!n->nextSibling())
+                        break;
+                    n = n->nextSibling();
+                } while (i + 1 < m_end.offset());
                 for (int i = nodes.size() - 1; i >= 0; i--) {
-                    Node* n = nodes[i].get();
+                    n = nodes[i].get();
                     if (action == EXTRACT_CONTENTS)
                         rightContents->insertBefore(n, rightContents->firstChild(), ec); // will remove n from its parent
                     else if (action == CLONE_CONTENTS)

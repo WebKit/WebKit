@@ -1,3 +1,16 @@
+2010-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r73799): editing/execCommand/4920488.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50854
+
+        The regression was caused by Range::processContents's not extracting
+        m_end.container()->firstChild(). Fixed the bug by always adding the first child.
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+
 2010-12-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
