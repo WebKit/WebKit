@@ -88,6 +88,7 @@ VPATH = \
     PluginProcess \
     WebProcess/Authentication \
     WebProcess/Plugins \
+    WebProcess/WebCoreSupport \
     WebProcess/WebPage \
     WebProcess \
     UIProcess \
@@ -102,6 +103,8 @@ MESSAGE_RECEIVERS = \
     PluginProcessProxy.messages.in \
     PluginProxy.messages.in \
     WebContext.messages.in \
+    WebDatabaseManager.messages.in \
+    WebDatabaseManagerProxy.messages.in \
     WebInspectorProxy.messages.in \
     WebPage/WebInspector.messages.in \
     WebPage/WebPage.messages.in \

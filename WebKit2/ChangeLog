@@ -1,3 +1,12 @@
+2010-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Qt buildfix after r73808.
+
+        WebKit2: Need a WebKit2 equivalent of the WebKit1 WebDatabaseManager
+        https://bugs.webkit.org/show_bug.cgi?id=50606
+
+        * DerivedSources.pro:
+
 2010-12-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73834.
