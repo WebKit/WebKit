@@ -1,3 +1,23 @@
+2010-12-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Ensure that we are not getting too many wheel events
+        <rdar://problem/7881465>
+
+        Add simple coalescing of wheel events being sent to the WebProcess. This 
+        adds two models, one which drops interim events and one which merges events
+        together. For now, we are using the simpler dropping model.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::modifiers):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::coalesceWheelEvents):
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+
 2010-12-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

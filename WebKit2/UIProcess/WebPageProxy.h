@@ -459,9 +459,11 @@ private:
     WebCore::PolicyAction m_syncMimeTypePolicyAction;
     uint64_t m_syncMimeTypePolicyDownloadID;
 
-    uint64_t m_pageID;
-
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
+    bool m_processingWheelEvent;
+    OwnPtr<WebWheelEvent> m_nextWheelEvent;
+
+    uint64_t m_pageID;
 };
 
 } // namespace WebKit

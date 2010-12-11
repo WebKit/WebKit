@@ -79,6 +79,8 @@ public:
     bool altKey() const { return m_modifiers & AltKey; }
     bool metaKey() const { return m_modifiers & MetaKey; }
 
+    Modifiers modifiers() const { return static_cast<Modifiers>(m_modifiers); }
+
     double timestamp() const { return m_timestamp; }
 
 protected:

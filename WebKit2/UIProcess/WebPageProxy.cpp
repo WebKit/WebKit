@@ -70,6 +70,9 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+// This controls what strategy we use for mouse wheel coalesing.
+#define MERGE_WHEEL_EVENTS 0
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -102,6 +105,7 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, WebPageGroup* pageGr
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
     , m_syncMimeTypePolicyDownloadID(0)
+    , m_processingWheelEvent(false)
     , m_pageID(pageID)
 {
 #ifndef NDEBUG
@@ -522,13 +526,39 @@ void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
+static PassOwnPtr<WebWheelEvent> coalesceWheelEvents(WebWheelEvent* oldNextWheelEvent, const WebWheelEvent& newWheelEvent)
+{
+#if MERGE_WHEEL_EVENTS
+    // Merge model: Combine wheel event deltas (and wheel ticks) into a single wheel event.
+    if (!oldNextWheelEvent)
+        return adoptPtr(new WebWheelEvent(newWheelEvent));
+
+    if (oldNextWheelEvent->position() != newWheelEvent.position() || oldNextWheelEvent->modifiers() != newWheelEvent.modifiers() || oldNextWheelEvent->granularity() != newWheelEvent.granularity())
+        return adoptPtr(new WebWheelEvent(newWheelEvent));
+
+    FloatSize mergedDelta = oldNextWheelEvent->delta() + newWheelEvent.delta();
+    FloatSize mergedWheelTicks = oldNextWheelEvent->wheelTicks() + newWheelEvent.wheelTicks();
+
+    return adoptPtr(new WebWheelEvent(WebEvent::Wheel, newWheelEvent.position(), newWheelEvent.globalPosition(), mergedDelta, mergedWheelTicks, newWheelEvent.granularity(), newWheelEvent.modifiers(), newWheelEvent.timestamp()));
+#else
+    // Simple model: Just keep the last event, dropping all interim events.
+    return adoptPtr(new WebWheelEvent(newWheelEvent));
+#endif
+}
+
 void WebPageProxy::handleWheelEvent(const WebWheelEvent& event)
 {
     if (!isValid())
         return;
 
+    if (m_processingWheelEvent) {
+        m_nextWheelEvent = coalesceWheelEvents(m_nextWheelEvent.get(), event);
+        return;
+    }
+
     process()->responsivenessTimer()->start();
     process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
+    m_processingWheelEvent = true;
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -1417,32 +1447,51 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
 
     switch (type) {
-        case WebEvent::MouseMove:
-            break;
+    case WebEvent::MouseMove:
+        break;
 
-        case WebEvent::MouseDown:
-        case WebEvent::MouseUp:
-        case WebEvent::Wheel:
-        case WebEvent::KeyDown:
-        case WebEvent::KeyUp:
-        case WebEvent::RawKeyDown:
-        case WebEvent::Char:
-            process()->responsivenessTimer()->stop();
-            break;
+    case WebEvent::MouseDown:
+    case WebEvent::MouseUp:
+    case WebEvent::Wheel:
+    case WebEvent::KeyDown:
+    case WebEvent::KeyUp:
+    case WebEvent::RawKeyDown:
+    case WebEvent::Char:
+        process()->responsivenessTimer()->stop();
+        break;
     }
 
-    if (!WebKeyboardEvent::isKeyboardEventType(type))
-        return;
+    switch (type) {
+    case WebEvent::MouseMove:
+    case WebEvent::MouseDown:
+    case WebEvent::MouseUp:
+        break;
 
-    NativeWebKeyboardEvent event = m_keyEventQueue.first();
-    ASSERT(type == event.type());
-    m_keyEventQueue.removeFirst();
+    case WebEvent::Wheel: {
+        m_processingWheelEvent = false;
+        if (m_nextWheelEvent) {
+            handleWheelEvent(*m_nextWheelEvent);
+            m_nextWheelEvent.clear();
+        }
+        break;
+    }
 
-    if (handled)
-        return;
+    case WebEvent::KeyDown:
+    case WebEvent::KeyUp:
+    case WebEvent::RawKeyDown:
+    case WebEvent::Char: {
+        NativeWebKeyboardEvent event = m_keyEventQueue.first();
+        ASSERT(type == event.type());
+        m_keyEventQueue.removeFirst();
 
-    m_pageClient->didNotHandleKeyEvent(event);
-    m_uiClient.didNotHandleKeyEvent(this, event);
+        if (handled)
+            break;
+
+        m_pageClient->didNotHandleKeyEvent(event);
+        m_uiClient.didNotHandleKeyEvent(this, event);
+        break;
+    }
+    }
 }
 
 void WebPageProxy::didGetContentsAsString(const String& resultString, uint64_t callbackID)
