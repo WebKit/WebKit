@@ -1,3 +1,17 @@
+2010-12-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] launcher: disable the Mozilla-style fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=50874
+
+        Disabling the fullscreen API until its implementation for GTK is
+        mature enough. The webview setting for it is already FALSE by
+        default.
+
+        * GtkLauncher/main.c:
+        (createWindow):
+
 2010-12-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
