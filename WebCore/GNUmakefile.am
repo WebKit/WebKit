@@ -206,6 +206,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDocument.h \
 	DerivedSources/WebCore/JSDocumentType.cpp \
 	DerivedSources/WebCore/JSDocumentType.h \
+	DerivedSources/WebCore/JSDOMApplicationCache.h \
 	DerivedSources/WebCore/JSDOMCoreException.cpp \
 	DerivedSources/WebCore/JSDOMCoreException.h \
 	DerivedSources/WebCore/JSDOMFormData.cpp \
@@ -517,12 +518,19 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSpeechInputResult.h \
 	DerivedSources/WebCore/JSSpeechInputResultList.cpp \
 	DerivedSources/WebCore/JSSpeechInputResultList.h \
+	DerivedSources/WebCore/JSSQLException.h \
+	DerivedSources/WebCore/JSSQLResultSetRowList.h \
+	DerivedSources/WebCore/JSSQLStatementErrorCallback.cpp \
+	DerivedSources/WebCore/JSSQLTransaction.h \
+	DerivedSources/WebCore/JSSQLTransactionSync.h \
+	DerivedSources/WebCore/JSStorage.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
 	DerivedSources/WebCore/JSStyleSheet.h \
 	DerivedSources/WebCore/JSStyleSheetList.cpp \
 	DerivedSources/WebCore/JSStyleSheetList.h \
+	DerivedSources/WebCore/JSSVGElementInstance.h \
 	DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp \
 	DerivedSources/WebCore/JSText.cpp \
 	DerivedSources/WebCore/JSTextEvent.cpp \
@@ -3902,8 +3910,7 @@ if ENABLE_OFFLINE_WEB_APPLICATIONS
 FEATURE_DEFINES += ENABLE_OFFLINE_WEB_APPLICATIONS=1
 webcore_cppflags += -DENABLE_OFFLINE_WEB_APPLICATIONS=1
 webcore_built_sources += \
-	DerivedSources/WebCore/JSDOMApplicationCache.cpp \
-	DerivedSources/WebCore/JSDOMApplicationCache.h
+	DerivedSources/WebCore/JSDOMApplicationCache.cpp
 endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 
 # ----
@@ -3922,23 +3929,18 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLError.cpp \
 	DerivedSources/WebCore/JSSQLError.h \
 	DerivedSources/WebCore/JSSQLException.cpp \
-	DerivedSources/WebCore/JSSQLException.h \
 	DerivedSources/WebCore/JSSQLResultSet.cpp \
 	DerivedSources/WebCore/JSSQLResultSet.h \
 	DerivedSources/WebCore/JSSQLResultSetRowList.cpp \
-	DerivedSources/WebCore/JSSQLResultSetRowList.h \
 	DerivedSources/WebCore/JSSQLStatementCallback.cpp \
 	DerivedSources/WebCore/JSSQLStatementCallback.h \
-	DerivedSources/WebCore/JSSQLStatementErrorCallback.cpp \
 	DerivedSources/WebCore/JSSQLStatementErrorCallback.h \
 	DerivedSources/WebCore/JSSQLTransaction.cpp \
-	DerivedSources/WebCore/JSSQLTransaction.h \
 	DerivedSources/WebCore/JSSQLTransactionCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransactionCallback.h \
 	DerivedSources/WebCore/JSSQLTransactionErrorCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransactionErrorCallback.h \
 	DerivedSources/WebCore/JSSQLTransactionSync.cpp \
-	DerivedSources/WebCore/JSSQLTransactionSync.h \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
 else
@@ -4017,7 +4019,6 @@ FEATURE_DEFINES += ENABLE_DOM_STORAGE=1
 webcore_cppflags += -DENABLE_DOM_STORAGE=1
 webcore_built_sources += \
 	DerivedSources/WebCore/JSStorage.cpp \
-	DerivedSources/WebCore/JSStorage.h \
 	DerivedSources/WebCore/JSStorageEvent.cpp \
 	DerivedSources/WebCore/JSStorageEvent.h
 endif # END ENABLE_DOM_STORAGE
@@ -4338,7 +4339,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGElement.cpp \
 	DerivedSources/WebCore/JSSVGElement.h \
 	DerivedSources/WebCore/JSSVGElementInstance.cpp \
-	DerivedSources/WebCore/JSSVGElementInstance.h \
 	DerivedSources/WebCore/JSSVGElementInstanceList.cpp \
 	DerivedSources/WebCore/JSSVGElementInstanceList.h \
 	DerivedSources/WebCore/JSSVGEllipseElement.cpp \

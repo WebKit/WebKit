@@ -1,3 +1,16 @@
+2010-12-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        build-webkit --gtk --minimal fails
+        https://bugs.webkit.org/show_bug.cgi?id=46267
+
+        No new tests, build fix only.
+
+        * GNUmakefile.am: Include some JS bindings generated headers in
+        the build even if their corresponding feature is disabled. They
+        are needed to make the DOM bindings build.
+
 2010-12-12  Sam Magnuson  <smagnuso@gmail.com>
 
         Reviewed by Eric Seidel.
