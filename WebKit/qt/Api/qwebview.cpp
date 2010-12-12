@@ -353,9 +353,9 @@ void QWebViewPrivate::detachCurrentPage()
     // to destroy it.
 
     if (page->d->client && page->d->client->isQWidgetClient())
-        delete page->d->client;
+        page->d->client.clear();
 
-    page->d->client = 0;
+    page->d->client.release();
 
     // if the page was created by us, we own it and need to
     // destroy it as well.

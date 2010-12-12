@@ -80,8 +80,13 @@ public:
     {
         if (!page || !page->d->client)
             return 0;
-        return static_cast<PageClientQGraphicsWidget*>(page->d->client)->overlay;
+        return pageClient()->overlay;
     }
+
+    PageClientQGraphicsWidget* pageClient() const
+    {
+        return static_cast<WebCore::PageClientQGraphicsWidget*> (page->d->client.get());
+    } 
 };
 
 QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
@@ -92,7 +97,7 @@ QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
 void QGraphicsWebViewPrivate::syncLayers()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    static_cast<PageClientQGraphicsWidget*>(page->d->client)->syncLayers();
+    pageClient()->syncLayers();
 #endif
 }
 
@@ -128,7 +133,7 @@ void QGraphicsWebViewPrivate::_q_pageDestroyed()
 void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
 {
     ASSERT(page);
-    static_cast<PageClientQGraphicsWidget*>(page->d->client)->viewResizesToContents = resizesToContents;
+    pageClient()->viewResizesToContents = resizesToContents;
     if (resizesToContents) {
         // resizes to contents mode requires preferred contents size to be set
         if (!page->preferredContentsSize().isValid())
@@ -156,7 +161,7 @@ void QGraphicsWebViewPrivate::_q_scaleChanged()
 #if ENABLE(TILED_BACKING_STORE)
     if (!page)
         return;
-    static_cast<PageClientQGraphicsWidget*>(page->d->client)->updateTiledBackingStoreScale();
+    pageClient()->updateTiledBackingStoreScale();
 #endif
 }
 
@@ -414,9 +419,6 @@ void QGraphicsWebViewPrivate::detachCurrentPage()
         return;
 
     page->d->view.clear();
-
-    // The client has always to be deleted.
-    delete page->d->client;
     page->d->client = 0;
 
     // if the page was created by us, we own it and need to

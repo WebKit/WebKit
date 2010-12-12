@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #include "ViewportArguments.h"
@@ -160,7 +161,7 @@ public:
 
     QWebPage *q;
     WebCore::Page *page;
-    QWebPageClient* client;
+    OwnPtr<QWebPageClient> client;
     QPointer<QWebFrame> mainFrame;
 
 #ifndef QT_NO_UNDOSTACK

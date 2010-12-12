@@ -74,6 +74,7 @@
 #include <qeventloop.h>
 #include <qtextdocument.h>
 #include <qtooltip.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -453,7 +454,7 @@ IntPoint ChromeClientQt::screenToWindow(const IntPoint& point) const
 
 PlatformPageClient ChromeClientQt::platformPageClient() const
 {
-    return m_webPage->d->client;
+    return m_webPage->d->client.get();
 }
 
 void ChromeClientQt::contentsSizeChanged(Frame* frame, const IntSize& size) const

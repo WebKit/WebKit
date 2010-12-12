@@ -53,6 +53,7 @@
 
 #include <QUndoStack>
 #include <stdio.h>
+#include <wtf/OwnPtr.h>
 
 #define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
 
@@ -574,7 +575,7 @@ void EditorClientQt::willSetInputMethodState()
 
 void EditorClientQt::setInputMethodState(bool active)
 {
-    QWebPageClient* webPageClient = m_page->d->client;
+    QWebPageClient* webPageClient = m_page->d->client.get();
     if (webPageClient) {
         Qt::InputMethodHints hints;
 

@@ -86,6 +86,7 @@
 #include <QNetworkReply>
 #include <QStringList>
 #include "qwebhistory_p.h"
+#include <wtf/OwnPtr.h>
 
 static QMap<unsigned long, QString> dumpAssignedUrls;
 
@@ -1536,7 +1537,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         Vector<String> values = paramValues;
 #if !OS(SYMBIAN)
         if (mimeType == "application/x-shockwave-flash") {
-            QWebPageClient* client = m_webFrame->page()->d->client;
+            QWebPageClient* client = m_webFrame->page()->d->client.get();
             const bool isQWebView = client && qobject_cast<QWidget*>(client->pluginParent());
 #if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
             size_t wmodeIndex = params.find("wmode");

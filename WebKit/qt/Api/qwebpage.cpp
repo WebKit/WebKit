@@ -2008,7 +2008,7 @@ void QWebPage::setView(QWidget* view)
 
     if (d->client) {
         if (d->client->isQWidgetClient())
-            static_cast<PageClientQWidget*>(d->client)->view = view;
+            static_cast<PageClientQWidget*>(d->client.get())->view = view;
         return;
     }
 
