@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 
 static void notify_load_status_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 #else
 int main(int argc, char** argv)
 {
-    g_critical("You will need at least glib-2.16.0 and gtk-2.14.0 to run the unit tests. Doing nothing now.");
+    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
     return 0;
 }
 

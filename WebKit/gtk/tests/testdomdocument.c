@@ -24,7 +24,7 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 
 #define HTML_DOCUMENT_TITLE "<html><head><title>This is the title</title></head><body></body></html>"
 #define HTML_DOCUMENT_ELEMENTS "<html><body><ul><li>1</li><li>2</li><li>3</li></ul></body></html>"
@@ -368,7 +368,7 @@ int main(int argc, char** argv)
 #else
 int main(int argc, char** argv)
 {
-    g_critical("You will need at least glib-2.16.0 and gtk-2.14.0 to run the unit tests. Doing nothing now.");
+    g_critical("You will gtk-2.14.0 to run the unit tests. Doing nothing now.");
     return 0;
 }
 

@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <webkit/webkit.h>
 
-#if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 
 static const char* centeredContents = "<html><body><p style='text-align: center;'>Short line</p><p style='text-align: center;'>Long-size line with some foo bar baz content</p><p style='text-align: center;'>Short line</p><p style='text-align: center;'>This is a multi-line paragraph<br />where the first line<br />is the biggest one</p></body></html>";
 
@@ -1338,7 +1338,7 @@ int main(int argc, char** argv)
 #else
 int main(int argc, char** argv)
 {
-    g_critical("You will need at least glib-2.16.0 and gtk-2.14.0 to run the unit tests. Doing nothing now.");
+    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
     return 0;
 }
 

@@ -23,7 +23,7 @@
 #include <string.h>
 #include <webkit/webkit.h>
 
-#if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 
 #define INDEX_HTML "<html></html>"
 #define MAIN_HTML "<html><head><script language=\"javascript\" src=\"/javascript.js\"></script></head><body><h1>hah</h1></html>"
@@ -335,7 +335,7 @@ int main(int argc, char** argv)
 #else
 int main(int argc, char** argv)
 {
-    g_critical("You will need at least glib-2.16.0 and gtk-2.14.0 to run the unit tests. Doing nothing now.");
+    g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
     return 0;
 }
 
