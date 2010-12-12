@@ -27,33 +27,155 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebPageProxy.h"
+#include "WebView.h"
+#include <WebCore/WebCoreInstanceHandle.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
+using namespace WebCore;
 
 namespace WebKit {
 
+static const LPCWSTR kWebKit2InspectorWindowClassName = L"WebKit2InspectorWindowClass";
+
+bool WebInspectorProxy::registerInspectorViewWindowClass()
+{
+    static bool haveRegisteredWindowClass = false;
+    if (haveRegisteredWindowClass)
+        return true;
+    haveRegisteredWindowClass = true;
+
+    WNDCLASSEX wcex;
+
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.style          = CS_DBLCLKS;
+    wcex.lpfnWndProc    = WebInspectorProxy::InspectorViewWndProc;
+    wcex.cbClsExtra     = 0;
+    wcex.cbWndExtra     = sizeof(WebInspectorProxy*);
+    wcex.hInstance      = instanceHandle();
+    wcex.hIcon          = 0;
+    wcex.hCursor        = ::LoadCursor(0, IDC_ARROW);
+    wcex.hbrBackground  = 0;
+    wcex.lpszMenuName   = 0;
+    wcex.lpszClassName  = kWebKit2InspectorWindowClassName;
+    wcex.hIconSm        = 0;
+
+    return !!::RegisterClassEx(&wcex);
+}
+
+LRESULT CALLBACK WebInspectorProxy::InspectorViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    LONG_PTR longPtr = ::GetWindowLongPtr(hWnd, 0);
+    
+    if (WebInspectorProxy* inspectorView = reinterpret_cast<WebInspectorProxy*>(longPtr))
+        return inspectorView->wndProc(hWnd, message, wParam, lParam);
+
+    if (message == WM_CREATE) {
+        LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+
+        // Associate the WebInspectorProxy with the window.
+        ::SetWindowLongPtr(hWnd, 0, (LONG_PTR)createStruct->lpCreateParams);
+        return 0;
+    }
+
+    return ::DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT WebInspectorProxy::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    LRESULT lResult = 0;
+    bool handled = true;
+
+    switch (message) {
+    case WM_SIZE:
+        lResult = onSizeEvent(hWnd, message, wParam, lParam, handled);
+        break;
+    case WM_GETMINMAXINFO:
+        lResult = onMinMaxInfoEvent(hWnd, message, wParam, lParam, handled);
+        break;
+    case WM_CLOSE:
+        lResult = onCloseEvent(hWnd, message, wParam, lParam, handled);
+        break;
+    default:
+        handled = false;
+        break;
+    }
+
+    if (!handled)
+        lResult = ::DefWindowProc(hWnd, message, wParam, lParam);
+
+    return lResult;
+}
+
+LRESULT WebInspectorProxy::onSizeEvent(HWND, UINT, WPARAM, LPARAM, bool&)
+{
+    RECT rect;
+    ::GetClientRect(m_inspectorWindow, &rect);
+
+    ::SetWindowPos(m_inspectorView->window(), 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
+
+    return 0;
+}
+
+LRESULT WebInspectorProxy::onMinMaxInfoEvent(HWND, UINT, WPARAM, LPARAM lParam, bool&)
+{
+    MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+    POINT size = {minimumWindowWidth, minimumWindowHeight};
+    info->ptMinTrackSize = size;
+
+    return 0;
+}
+
+LRESULT WebInspectorProxy::onCloseEvent(HWND, UINT, WPARAM, LPARAM, bool&)
+{
+    ::ShowWindow(m_inspectorWindow, SW_HIDE);
+    close();
+
+    return 0;
+}
+
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
-    notImplemented();
-    return 0;
+    ASSERT(!m_inspectorView);
+    ASSERT(!m_inspectorWindow);
+
+    RECT emptyRect = {0};
+    m_inspectorView = WebView::create(emptyRect, m_page->pageNamespace(), inspectorPageGroup(), 0).leakRef();
+    
+    return m_inspectorView->page();
 }
 
 void WebInspectorProxy::platformOpen()
 {
-    notImplemented();
+    registerInspectorViewWindowClass();
+
+    m_inspectorWindow = ::CreateWindowEx(0, kWebKit2InspectorWindowClassName, 0, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+        0, 0, initialWindowWidth, initialWindowHeight, 0, 0, instanceHandle(), this);
+    ASSERT(::IsWindow(m_inspectorWindow));
+
+    m_inspectorView->setParentWindow(m_inspectorWindow);
+    ::ShowWindow(m_inspectorWindow, SW_SHOW);
 }
 
 void WebInspectorProxy::platformClose()
 {
-    notImplemented();
+    ASSERT(m_inspectorWindow);
+    ASSERT(m_inspectorView);
+
+    ::DestroyWindow(m_inspectorWindow);
+
+    m_inspectorWindow = 0;
+    m_inspectorView = 0;
 }
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    notImplemented();
-    return String();
+    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
+    if (!htmlURLRef)
+        return String();
+
+    return String(CFURLGetString(htmlURLRef.get()));
 }
 
 } // namespace WebKit

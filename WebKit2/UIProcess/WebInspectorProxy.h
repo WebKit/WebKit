@@ -52,6 +52,10 @@ class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
 
+#if PLATFORM(WIN)
+class WebView;
+#endif
+
 class WebInspectorProxy : public APIObject {
 public:
     static const Type APIType = TypeInspector;
@@ -112,6 +116,16 @@ private:
 
     static WebPageGroup* inspectorPageGroup();
 
+#if PLATFORM(WIN)
+    static bool registerInspectorViewWindowClass();
+    static LRESULT CALLBACK InspectorViewWndProc(HWND, UINT, WPARAM, LPARAM);
+    LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+    LRESULT onSizeEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onMinMaxInfoEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onCloseEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+#endif
+
     static const unsigned minimumWindowWidth = 500;
     static const unsigned minimumWindowHeight = 400;
 
@@ -130,6 +144,9 @@ private:
     RetainPtr<WKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
+#elif PLATFORM(WIN)
+    HWND m_inspectorWindow;
+    WebView* m_inspectorView;
 #endif
 };
 

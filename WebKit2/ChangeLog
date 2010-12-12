@@ -1,3 +1,33 @@
+2010-12-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Web Inspector: Make inspector on Windows show and be usable in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50877
+        
+        Hook up the unimplemented methods in WebInspectorProxyWin to get the web inspector
+        showing and usable in WebKit2 on Windows.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy): Initialize Windows-specific variables to 0.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::registerInspectorViewWindowClass): Sets up the inspector view class.
+        (WebKit::WebInspectorProxy::InspectorViewWndProc): Calls through to the WebInspectorProxy's non-static
+            WndProc.
+        (WebKit::WebInspectorProxy::wndProc): Handles WM_SIZE, WM_CLOSE, and WM_GETMINMAXINFO, the rest go to 
+            ::DefWindowProc.
+        (WebKit::WebInspectorProxy::onSizeEvent): Resize the WKView that has the inspector page to match the
+            outer window that was just resized.
+        (WebKit::WebInspectorProxy::onMinMaxInfoEvent): Set the minimum size the window can be resized to.
+        (WebKit::WebInspectorProxy::onCloseEvent): Hide the window, and call WebInspectorProxy::close.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Create a WKView and return its page.
+        (WebKit::WebInspectorProxy::platformOpen): Create an HWND for the inspector, put the inspector's WKView
+            inside of it, and show the window.
+        (WebKit::WebInspectorProxy::platformClose): Destroy the inspector's window (which destroys the child WKView), 
+            and 0 out instance variables.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Finds inspector/inspector.html in the WebKit bundle.
+
 2010-12-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
