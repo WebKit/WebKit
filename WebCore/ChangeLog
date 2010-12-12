@@ -1,3 +1,12 @@
+2010-12-12  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Missing style for date pickers on Qt Mobile theme
+        https://bugs.webkit.org/show_bug.cgi?id=50628
+
+        * css/themeQtMobile.css:
+
 2010-12-11  Alice Liu  <alice.liu@apple.com>
 
         Mac build fix.
