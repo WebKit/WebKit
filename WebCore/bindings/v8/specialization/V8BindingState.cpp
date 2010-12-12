@@ -55,6 +55,11 @@ DOMWindow* State<V8Binding>::getActiveWindow()
     return V8Proxy::retrieveWindow(activeContext);
 }
 
+DOMWindow* State<V8Binding>::getFirstWindow()
+{
+    return V8Proxy::retrieveWindow(v8::Context::GetEntered());
+}
+
 Frame* State<V8Binding>::getActiveFrame()
 {
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();

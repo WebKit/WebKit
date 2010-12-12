@@ -1,3 +1,22 @@
+2010-12-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        [V8] Move to DOMWindow::setLocation
+        https://bugs.webkit.org/show_bug.cgi?id=50876
+
+        Recently, JavaScriptCore moved to implementing setLocation in WebCore.
+        This patch change V8 to use that common code path.  I haven't removed
+        the old code path because it's still used for other things (like
+        assigning window.location.href), but I'll move the rest over in a
+        future patch.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::locationAccessorSetter):
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::getFirstWindow):
+        * bindings/v8/specialization/V8BindingState.h:
+
 2010-10-11  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

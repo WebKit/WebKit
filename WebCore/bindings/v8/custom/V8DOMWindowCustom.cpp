@@ -193,9 +193,18 @@ v8::Handle<v8::Value> V8DOMWindow::cryptoAccessorGetter(v8::Local<v8::String> na
 void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
-    V8DOMWindowShell::setLocation(imp, toWebCoreString(value));
-}
+    State<V8Binding>* state = V8BindingState::Only();
 
+    DOMWindow* activeWindow = state->getActiveWindow();
+    if (!activeWindow)
+      return;
+
+    DOMWindow* firstWindow = state->getFirstWindow();
+    if (!firstWindow)
+      return;
+
+    imp->setLocation(toWebCoreString(value), activeWindow, firstWindow);
+}
 
 void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
