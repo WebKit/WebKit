@@ -1,3 +1,16 @@
+2010-12-10  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION Hang inside Yarr::RegexCodeBlock::execute when visiting
+        bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=50816
+
+        New test to verify proper backtracking of alternative nested parens.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2010-12-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Updated chromium test expectations.

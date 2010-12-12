@@ -125,6 +125,18 @@ var regexp28 = new RegExp(
 );
 shouldBe("regexp28.exec('file:///Users/Someone/Desktop/HelloWorld/index.html')", "['file:','file',undefined,undefined,undefined,undefined,undefined]");
 
+var regexp29 = /^\s*((\[[^\]]+\])|(u?)("[^"]+"))\s*/;
+shouldBeNull("regexp29.exec('Committer:')");
+
+var regexp30 = /^\s*((\[[^\]]+\])|m(u?)("[^"]+"))\s*/;
+shouldBeNull("regexp30.exec('Committer:')");
+
+var regexp31 = /^\s*(m(\[[^\]]+\])|m(u?)("[^"]+"))\s*/;
+shouldBeNull("regexp31.exec('Committer:')");
+
+var regexp32 = /\s*(m(\[[^\]]+\])|m(u?)("[^"]+"))\s*/;
+shouldBeNull("regexp32.exec('Committer:')");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

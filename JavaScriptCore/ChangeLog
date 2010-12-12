@@ -1,3 +1,28 @@
+2010-12-10  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION Hang inside Yarr::RegexCodeBlock::execute when visiting
+        bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=50816
+
+        First nested parentheses of the second or greater alternative
+        where backtracking to the prior parentheses.  Changed the default
+        handling of initial parentheses for all alternatives to go back
+        to the immediate outer paren.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::GenerationState::addParenthesesTail):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::TermGenerationState):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isLastTerm):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::getTermIndex):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::setParenthesesTail):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::getParenthesesTail):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::ParenthesesTail):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::processBacktracks):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+
 2010-12-11  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

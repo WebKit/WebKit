@@ -33,6 +33,10 @@ PASS regexp25.exec('!this is a test') is null
 PASS regexp26.exec('aaa') is ['aaa',undefined,undefined]
 PASS regexp27.exec('file:///Users/Someone/Desktop/HelloWorld/index.html') is ['file:///Users/Someone/Desktop/HelloWorld/index.html','file','//','',undefined,undefined,undefined,'',undefined,'/Users/Someone/Desktop/HelloWorld/index.html',undefined,undefined]
 PASS regexp28.exec('file:///Users/Someone/Desktop/HelloWorld/index.html') is ['file:','file',undefined,undefined,undefined,undefined,undefined]
+PASS regexp29.exec('Committer:') is null
+PASS regexp30.exec('Committer:') is null
+PASS regexp31.exec('Committer:') is null
+PASS regexp32.exec('Committer:') is null
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 

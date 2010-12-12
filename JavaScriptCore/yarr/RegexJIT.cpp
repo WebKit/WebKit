@@ -374,9 +374,9 @@ class RegexGenerator : private MacroAssembler {
             --m_parenNestingLevel;
         }
 
-        ParenthesesTail* addParenthesesTail(PatternTerm& term)
+        ParenthesesTail* addParenthesesTail(PatternTerm& term, ParenthesesTail* nextOuterParenTail)
         {
-            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel);
+            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel, nextOuterParenTail);
             m_parenTails.append(parenthesesTail);
             m_parenTailsForIteration.append(parenthesesTail);
 
@@ -766,7 +766,9 @@ class RegexGenerator : private MacroAssembler {
         TermGenerationState(PatternDisjunction* disjunction, unsigned checkedTotal)
             : disjunction(disjunction)
             , checkedTotal(checkedTotal)
+            , m_subParenNum(0)
             , m_linkedBacktrack(0)
+            , m_parenthesesTail(0)
         {
         }
 
@@ -796,6 +798,7 @@ class RegexGenerator : private MacroAssembler {
         {
             ASSERT(alternativeValid());
             t = 0;
+            m_subParenNum = 0;
         }
         bool termValid()
         {
@@ -816,12 +819,26 @@ class RegexGenerator : private MacroAssembler {
         {
             ASSERT(alternativeValid());
             return (t + 1) == alternative()->m_terms.size();
+        }        
+        unsigned getSubParenNum()
+        {
+            return m_subParenNum++;
         }
         bool isMainDisjunction()
         {
             return !disjunction->m_parent;
         }
+        
+        void setParenthesesTail(ParenthesesTail* parenthesesTail)
+        {
+            m_parenthesesTail = parenthesesTail;
+        }
 
+        ParenthesesTail* getParenthesesTail()
+        {
+            return m_parenthesesTail;
+        }
+        
         PatternTerm& lookaheadTerm()
         {
             ASSERT(alternativeValid());
@@ -949,15 +966,19 @@ class RegexGenerator : private MacroAssembler {
     private:
         unsigned alt;
         unsigned t;
+        unsigned m_subParenNum;
         BacktrackDestination m_backtrack;
         BacktrackDestination* m_linkedBacktrack;
+        ParenthesesTail* m_parenthesesTail;
 
     };
 
     struct ParenthesesTail {
-        ParenthesesTail(PatternTerm& term, int nestingLevel)
+        ParenthesesTail(PatternTerm& term, int nestingLevel, ParenthesesTail* nextOuterParenTail)
             : m_term(term)
             , m_nestingLevel(nestingLevel)
+            , m_subParenIndex(0)
+            , m_nextOuterParenTail(nextOuterParenTail)
         {
         }
 
@@ -966,6 +987,7 @@ class RegexGenerator : private MacroAssembler {
             m_nonGreedyTryParentheses = nonGreedyTryParentheses;
             m_fallThrough = fallThrough;
 
+            m_subParenIndex = state.getSubParenNum();
             parenthesesState.getBacktrackDestination().copyTo(m_parenBacktrack);
             state.chainBacktracks(&m_backtrack);
             BacktrackDestination& stateBacktrack = state.getBacktrackDestination();
@@ -1023,6 +1045,13 @@ class RegexGenerator : private MacroAssembler {
                 if (m_backtrackToLabel.isSet()) {
                     m_backtrack.setLabel(m_backtrackToLabel);
                     nextBacktrackFallThrough = false;
+                } else if (!m_subParenIndex && m_nextOuterParenTail) {
+                    // If we don't have a destination and we are the first term of a nested paren, go
+                    // back to the outer paren.
+                    // There is an optimization if the next outer paren is the next paren to be emitted.
+                    // In that case we really want the else clause.
+                    m_backtrack.setBacktrackJumpList(&m_nextOuterParenTail->m_withinBacktrackJumps);
+                    nextBacktrackFallThrough = false;
                 } else
                     m_backtrack.setBacktrackJumpList(&jumpsToNext);
             } else
@@ -1053,6 +1082,7 @@ class RegexGenerator : private MacroAssembler {
             if (needJumpForPriorParenTail)
                 fromPriorBacktrack.link(generator);
             m_parenBacktrack.linkAlternativeBacktracks(generator);
+            m_withinBacktrackJumps.link(generator);            
 
             if (m_term.capture())
                 generator->store32(Imm32(-1), Address(output, (m_term.parentheses.subpatternId << 1) * sizeof(int)));
@@ -1072,12 +1102,15 @@ class RegexGenerator : private MacroAssembler {
 
         PatternTerm& m_term;
         int m_nestingLevel;
+        unsigned m_subParenIndex;
+        ParenthesesTail* m_nextOuterParenTail;
         Label m_nonGreedyTryParentheses;
         Label m_fallThrough;
         Label m_backtrackToLabel;
         Label m_backtrackFromAfterParens;
         DataLabelPtr m_dataAfterLabelPtr;
         JumpList m_pattBacktrackJumps;
+        JumpList m_withinBacktrackJumps;
         BacktrackDestination m_parenBacktrack;
         BacktrackDestination m_backtrack;
         bool m_doDirectBacktrack;
@@ -1598,12 +1631,16 @@ class RegexGenerator : private MacroAssembler {
                     store32(index, Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
             }
 
-            ParenthesesTail* parenthesesTail = m_expressionState.addParenthesesTail(term);
+            ParenthesesTail* parenthesesTail = m_expressionState.addParenthesesTail(term, state.getParenthesesTail());
 
             m_expressionState.incrementParenNestingLevel();
 
-            // generate the body of the parentheses
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            
+            // Save the parenthesesTail for backtracking from nested parens to this one.
+            parenthesesState.setParenthesesTail(parenthesesTail);
+
+            // generate the body of the parentheses
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
 
             // For non-fixed counts, backtrack if we didn't match anything.
