@@ -1,3 +1,9 @@
+2010-12-12  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, skipping failing tests in the bots.
+
+        * platform/gtk/Skipped:
+
 2010-12-10  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
