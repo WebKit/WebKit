@@ -30,6 +30,7 @@
 
 import logging
 import os
+import signal
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
@@ -81,3 +82,35 @@ class GtkPort(WebKitPort):
                 # file), so if kill fails on the given PID, just try to
                 # 'killall' web servers.
                 self._shut_down_http_server(None)
+
+    def _path_to_driver(self):
+        return self._build_path('Programs', 'DumpRenderTree')
+
+    def check_build(self, needs_http):
+        if not self._check_driver():
+            return False
+        return True
+
+    def _path_to_apache(self):
+        if self._is_redhat_based():
+            return '/usr/sbin/httpd'
+        else:
+            return '/usr/sbin/apache2'
+
+    def _path_to_apache_config_file(self):
+        if self._is_redhat_based():
+            config_name = 'fedora-httpd.conf'
+        else:
+            config_name = 'apache2-debian-httpd.conf'
+
+        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
+                            config_name)
+
+    def _path_to_wdiff(self):
+        if self._is_redhat_based():
+            return '/usr/bin/dwdiff'
+        else:
+            return '/usr/bin/wdiff'
+
+    def _is_redhat_based(self):
+        return os.path.exists(os.path.join('/etc', 'redhat-release'))
