@@ -1,5 +1,12 @@
 2010-12-12  Xan Lopez  <xlopez@igalia.com>
 
+        Rubber-stamped by Martin Robinson.
+
+        * webkit/webkitwebplugin.h: add a note about the extension list
+        being a NULL-terminated array.
+
+2010-12-12  Xan Lopez  <xlopez@igalia.com>
+
         Rubber-stamped by Gustavo Noronha.
 
         Stop checking for glib >= 2.16, we have dependend on a newer

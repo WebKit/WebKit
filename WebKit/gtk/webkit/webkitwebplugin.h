@@ -38,7 +38,8 @@ typedef struct _WebKitWebPluginPrivate WebKitWebPluginPrivate;
  * WebKitWebPluginMIMEType:
  * @name: the name of the MIME type.
  * @description: the description of the MIME type.
- * @extensions: the extensions associated with this MIME type.
+ * @extensions: a %NULL-terminated array with the extensions
+ * associated with this MIME type.
  *
  * A structure representing one of the MIME types associated with a
  * plugin. A #GSList of these objects will be returned by
