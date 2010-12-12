@@ -201,6 +201,21 @@ void QWEBKIT_EXPORT qtwebkit_webframe_scrollRecursively(QWebFrame* qFrame, int d
     } while (qFrame);
 }
 
+static inline ResourceRequestCachePolicy cacheLoadControlToCachePolicy(uint cacheLoadControl)
+{
+    switch (cacheLoadControl) {
+    case QNetworkRequest::AlwaysNetwork:
+        return WebCore::ReloadIgnoringCacheData;
+    case QNetworkRequest::PreferCache:
+        return WebCore::ReturnCacheDataElseLoad;
+    case QNetworkRequest::AlwaysCache:
+        return WebCore::ReturnCacheDataDontLoad;
+    default:
+        break;
+    }
+    return WebCore::UseProtocolCachePolicy;
+}
+
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
                              WebCore::HTMLFrameOwnerElement* ownerFrameElement,
                              const WTF::String& frameName)
@@ -881,6 +896,14 @@ void QWebFrame::load(const QNetworkRequest &req,
         case QNetworkAccessManager::UnknownOperation:
             // eh?
             break;
+    }
+
+    QVariant cacheLoad = req.attribute(QNetworkRequest::CacheLoadControlAttribute);
+    if (cacheLoad.isValid()) {
+        bool ok;
+        uint cacheLoadValue = cacheLoad.toUInt(&ok);
+        if (ok)
+            request.setCachePolicy(cacheLoadControlToCachePolicy(cacheLoadValue));
     }
 
     QList<QByteArray> httpHeaders = req.rawHeaderList();

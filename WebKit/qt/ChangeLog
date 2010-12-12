@@ -1,3 +1,18 @@
+2010-12-11  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebFrame does not support QNetworkRequest::CacheLoadControl
+        https://bugs.webkit.org/show_bug.cgi?id=35671
+
+        Make QWebFrame respect the QNetworkRequest::CacheLoadControl attribute
+        set on the request, if any.
+
+        * Api/qwebframe.cpp:
+        (cacheLoadControlToCachePolicy):
+        (QWebFrame::load):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-10-11  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

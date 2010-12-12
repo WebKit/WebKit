@@ -625,6 +625,7 @@ private slots:
     void introspectQtMethods();
     void setContent_data();
     void setContent();
+    void setCacheLoadControlAttribute();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3066,6 +3067,59 @@ void tst_QWebFrame::setContent()
     m_view->setContent(testContents, mimeType);
     QWebFrame* mainFrame = m_view->page()->mainFrame();
     QCOMPARE(expected , mainFrame->toPlainText());
+}
+
+class CacheNetworkAccessManager : public QNetworkAccessManager {
+public:
+    CacheNetworkAccessManager(QObject* parent = 0)
+        : QNetworkAccessManager(parent)
+        , m_lastCacheLoad(QNetworkRequest::PreferNetwork)
+    {
+    }
+
+    virtual QNetworkReply* createRequest(Operation, const QNetworkRequest& request, QIODevice*)
+    {
+        QVariant cacheLoad = request.attribute(QNetworkRequest::CacheLoadControlAttribute);
+        if (cacheLoad.isValid())
+            m_lastCacheLoad = static_cast<QNetworkRequest::CacheLoadControl>(cacheLoad.toUInt());
+        else
+            m_lastCacheLoad = QNetworkRequest::PreferNetwork; // default value
+        return new FakeReply(request, this);
+    }
+
+    QNetworkRequest::CacheLoadControl lastCacheLoad() const
+    {
+        return m_lastCacheLoad;
+    }
+
+private:
+    QNetworkRequest::CacheLoadControl m_lastCacheLoad;
+};
+
+void tst_QWebFrame::setCacheLoadControlAttribute()
+{
+    QWebPage page;
+    CacheNetworkAccessManager* manager = new CacheNetworkAccessManager(&page);
+    page.setNetworkAccessManager(manager);
+    QWebFrame* frame = page.mainFrame();
+
+    QNetworkRequest request(QUrl("http://abcdef.abcdef/"));
+
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysCache);
+    frame->load(request);
+    QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::AlwaysCache);
+
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+    frame->load(request);
+    QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::PreferCache);
+
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+    frame->load(request);
+    QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::AlwaysNetwork);
+
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferNetwork);
+    frame->load(request);
+    QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::PreferNetwork);
 }
 
 QTEST_MAIN(tst_QWebFrame)
