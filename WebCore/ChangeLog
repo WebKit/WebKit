@@ -1,3 +1,11 @@
+2010-12-11  Alice Liu  <alice.liu@apple.com>
+
+        Mac build fix.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+        Resolve string[0] ambiguity by passing 0U.
+
 2010-12-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
