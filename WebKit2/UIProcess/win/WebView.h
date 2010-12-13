@@ -43,7 +43,7 @@ class WebView : public APIObject, public PageClient, WebCore::WindowMessageListe
 public:
     static PassRefPtr<WebView> create(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
     {
-        return adoptRef(new WebView(rect, context, pageGroup, parentWindow, false));
+        return adoptRef(new WebView(rect, context, pageGroup, parentWindow));
     }
     ~WebView();
 
