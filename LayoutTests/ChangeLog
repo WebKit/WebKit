@@ -1,3 +1,12 @@
+2010-12-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove some empty files that should've been removed as part of r73942.
+
+        Reviewed by Ojan Vafai.
+
+        * editing/selection/extend-to-line-boundary-expected.txt: Removed.
+        * editing/selection/extend-to-line-boundary.html: Removed.
+
 2010-12-13  Antti Koivisto  <antti@apple.com>
 
         Unreviewed.
