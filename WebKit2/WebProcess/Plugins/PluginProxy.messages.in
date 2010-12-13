@@ -55,6 +55,11 @@ messages -> PluginProxy {
 
     # Set the status bar text.
     SetStatusbarText(WTF::String statusbarText)
+
+#if PLATFORM(MAC)
+    # Change whether complext text input is enabled for this plug-in.
+    SetComplexTextInputEnabled(bool complexTextInputEnabled)
+#endif
 }
 
 #endif

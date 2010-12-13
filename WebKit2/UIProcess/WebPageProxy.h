@@ -395,6 +395,8 @@ private:
 
     void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& data);
 
+    void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
+
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;

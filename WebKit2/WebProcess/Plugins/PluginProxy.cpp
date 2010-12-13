@@ -317,6 +317,12 @@ void PluginProxy::windowVisibilityChanged(bool isVisible)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::WindowVisibilityChanged(isVisible), m_pluginInstanceID);
 }
+
+uint64_t PluginProxy::pluginComplexTextInputIdentifier() const
+{
+    return m_pluginInstanceID;
+}
+
 #endif
 
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
@@ -406,6 +412,13 @@ void PluginProxy::setStatusbarText(const String& statusbarText)
 {
     m_pluginController->setStatusbarText(statusbarText);
 }
+
+#if PLATFORM(MAC)
+void PluginProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
+{
+    m_pluginController->setComplexTextInputEnabled(complexTextInputEnabled);
+}
+#endif
     
 void PluginProxy::update(const IntRect& paintedRect)
 {

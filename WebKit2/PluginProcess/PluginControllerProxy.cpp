@@ -241,7 +241,8 @@ void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnab
         return;
 
     m_isComplexTextInputEnabled = complexTextInputEnabled;
-    // FIXME: Let the web process know that this plug-in wants complex text input enabled.
+
+    m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputEnabled(complexTextInputEnabled), m_pluginInstanceID);
 }
 
 String PluginControllerProxy::proxiesForURL(const String& urlString)

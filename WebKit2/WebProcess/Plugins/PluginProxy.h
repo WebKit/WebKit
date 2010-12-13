@@ -95,6 +95,7 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+    virtual uint64_t pluginComplexTextInputIdentifier() const;
 #endif
 
     virtual void privateBrowsingStateChanged(bool);
@@ -115,6 +116,9 @@ private:
     void cancelStreamLoad(uint64_t streamID);
     void cancelManualStreamLoad();
     void setStatusbarText(const String& statusbarText);
+#if PLATFORM(MAC)
+    void setComplexTextInputEnabled(bool);
+#endif
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;

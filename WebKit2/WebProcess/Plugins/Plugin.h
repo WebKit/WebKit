@@ -150,6 +150,9 @@ public:
 
     // Tells the plug-in about window visibility changes.
     virtual void windowVisibilityChanged(bool) = 0;
+
+    // Get the per complex text input identifier.
+    virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
 #endif
 
     // Called when the private browsing state for this plug-in changes.

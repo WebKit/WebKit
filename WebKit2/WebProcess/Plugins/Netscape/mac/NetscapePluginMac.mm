@@ -709,7 +709,14 @@ void NetscapePlugin::windowVisibilityChanged(bool)
 {
     // FIXME: Implement.
 }
-    
+
+uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
+{
+    // This is never called for NetscapePlugin.
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 PlatformLayer* NetscapePlugin::pluginLayer()
 {
     return static_cast<PlatformLayer*>(m_pluginLayer.get());

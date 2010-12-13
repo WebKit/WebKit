@@ -1675,4 +1675,11 @@ void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::Da
     m_pageClient->didFinishLoadingDataForCustomRepresentation(dataReference);
 }
 
+#if PLATFORM(MAC)
+void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+{
+    // FIXME: Call the page client.
+}
+#endif
+
 } // namespace WebKit

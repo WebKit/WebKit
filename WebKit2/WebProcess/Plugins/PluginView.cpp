@@ -29,6 +29,7 @@
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/DocumentLoader.h>
@@ -870,10 +871,9 @@ HWND PluginView::nativeParentWindow()
 #endif
 
 #if PLATFORM(MAC)
-void PluginView::setComplexTextInputEnabled(bool)
+void PluginView::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
-    // This should never be called.
-    ASSERT_NOT_REACHED();
+    m_webPage->send(Messages::WebPageProxy::SetComplexTextInputEnabled(m_plugin->pluginComplexTextInputIdentifier(), complexTextInputEnabled));
 }
 #endif
     
