@@ -426,8 +426,8 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
-    unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(origin);
-    unsigned long long newQuota = 0;
+    uint64_t currentQuota = DatabaseTracker::tracker().quotaForOrigin(origin);
+    uint64_t newQuota = 0;
     WebProcess::shared().connection()->sendSync(
         Messages::WebPageProxy::ExceededDatabaseQuota(webFrame->frameID(), origin->databaseIdentifier(), databaseName, details.displayName(), currentQuota, details.currentUsage(), details.expectedUsage()),
         Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID());
