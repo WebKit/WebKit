@@ -1,3 +1,9 @@
+2010-12-13  Simon Fraser  <simon.fraser@apple.com>
+
+        GraphicsContextPrivate.h was removed. Nuke it from the project.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.
