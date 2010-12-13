@@ -41,4 +41,4 @@ class PrepareChangeLogForRevert(AbstractStep):
         for changelog_path in changelog_paths:
             # FIXME: Seems we should prepare the message outside of changelogs.py and then just pass in
             # text that we want to use to replace the reviewed by line.
-            ChangeLog(changelog_path).update_for_revert(state["revision"], state["reason"], bug_url)
+            ChangeLog(changelog_path).update_for_revert(state["revision_list"], state["reason"], bug_url)

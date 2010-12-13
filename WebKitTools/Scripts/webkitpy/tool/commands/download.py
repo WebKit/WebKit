@@ -289,7 +289,7 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
 
 
 class AbstractRolloutPrepCommand(AbstractSequencedCommand):
-    argument_names = "REVISION REASON"
+    argument_names = "REVISION [REVISIONS] REASON"
 
     def _commit_info(self, revision):
         commit_info = self._tool.checkout().commit_info_for_revision(revision)
@@ -304,13 +304,23 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
         return commit_info
 
     def _prepare_state(self, options, args, tool):
-        revision = args[0]
-        commit_info = self._commit_info(revision)
+        revision_list = []
+        for revision in str(args[0]).split():
+            if revision.isdigit():
+                revision_list.append(int(revision))
+            else:
+                raise ScriptError(message="Invalid svn revision number: " + revision)
+        revision_list.sort()
+
+        # We use the earliest revision for the bug info
+        earliest_revision = revision_list[0]
+        commit_info = self._commit_info(earliest_revision)
         cc_list = sorted([party.bugzilla_email()
                           for party in commit_info.responsible_parties()
                           if party.bugzilla_email()])
         return {
-            "revision": revision,
+            "revision": earliest_revision,
+            "revision_list": revision_list,
             "bug_id": commit_info.bug_id(),
             # FIXME: We should used the list as the canonical representation.
             "bug_cc": ",".join(cc_list),
@@ -320,9 +330,9 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
 
 class PrepareRollout(AbstractRolloutPrepCommand):
     name = "prepare-rollout"
-    help_text = "Revert the given revision in the working copy and prepare ChangeLogs with revert reason"
+    help_text = "Revert the given revision(s) in the working copy and prepare ChangeLogs with revert reason"
     long_help = """Updates the working copy.
-Applies the inverse diff for the provided revision.
+Applies the inverse diff for the provided revision(s).
 Creates an appropriate rollout ChangeLog, including a trac link and bug link.
 """
     steps = [
@@ -335,7 +345,7 @@ Creates an appropriate rollout ChangeLog, including a trac link and bug link.
 
 class CreateRollout(AbstractRolloutPrepCommand):
     name = "create-rollout"
-    help_text = "Creates a bug to track a broken SVN revision and uploads a rollout patch."
+    help_text = "Creates a bug to track the broken SVN revision(s) and uploads a rollout patch."
     steps = [
         steps.CleanWorkingDirectory,
         steps.Update,
@@ -375,7 +385,7 @@ so that we can track how often these flaky tests case pain.
 class Rollout(AbstractRolloutPrepCommand):
     name = "rollout"
     show_in_main_help = True
-    help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
+    help_text = "Revert the given revision(s) in the working copy and optionally commit the revert and re-open the original bug"
     long_help = """Updates the working copy.
 Applies the inverse diff for the provided revision.
 Creates an appropriate rollout ChangeLog, including a trac link and bug link.

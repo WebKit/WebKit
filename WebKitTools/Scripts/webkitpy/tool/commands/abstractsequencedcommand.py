@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.deprecated_logging import log
 from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
@@ -40,4 +42,10 @@ class AbstractSequencedCommand(AbstractDeclarativeCommand):
         return None
 
     def execute(self, options, args, tool):
-        self._sequence.run_and_handle_errors(tool, options, self._prepare_state(options, args, tool))
+        try:
+            state = self._prepare_state(options, args, tool)
+        except ScriptError, e:
+            log(e.message_with_output())
+            exit(e.exit_code or 2)
+
+        self._sequence.run_and_handle_errors(tool, options, state)

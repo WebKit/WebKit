@@ -508,7 +508,7 @@ class MockCheckout(object):
     def apply_patch(self, patch, force=False):
         pass
 
-    def apply_reverse_diff(self, revision):
+    def apply_reverse_diffs(self, revision):
         pass
 
     def suggested_reviewers(self, git_commit, changed_files=None):

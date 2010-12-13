@@ -38,6 +38,7 @@ from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config import urls
 from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.tool.grammar import join_with_separators
 
 
 class ChangeLogEntry(object):
@@ -145,9 +146,10 @@ class ChangeLog(object):
         return "\n".join(lines)
 
     # This probably does not belong in changelogs.py
-    def _message_for_revert(self, revision, reason, bug_url):
-        message = "Unreviewed, rolling out r%s.\n" % revision
-        message += "%s\n" % urls.view_revision_url(revision)
+    def _message_for_revert(self, revision_list, reason, bug_url):
+        message = "Unreviewed, rolling out %s.\n" % join_with_separators(['r' + str(revision) for revision in revision_list])
+        for revision in revision_list:
+            message += "%s\n" % urls.view_revision_url(revision)
         if bug_url:
             message += "%s\n" % bug_url
         # Add an extra new line after the rollout links, before any reason.
@@ -156,14 +158,14 @@ class ChangeLog(object):
             message += "%s\n\n" % reason
         return self._wrap_lines(message)
 
-    def update_for_revert(self, revision, reason, bug_url=None):
+    def update_for_revert(self, revision_list, reason, bug_url=None):
         reviewed_by_regexp = re.compile(
                 "%sReviewed by NOBODY \(OOPS!\)\." % self._changelog_indent)
         removing_boilerplate = False
         # inplace=1 creates a backup file and re-directs stdout to the file
         for line in fileinput.FileInput(self.path, inplace=1):
             if reviewed_by_regexp.search(line):
-                message_lines = self._message_for_revert(revision,
+                message_lines = self._message_for_revert(revision_list,
                                                          reason,
                                                          bug_url)
                 print reviewed_by_regexp.sub(message_lines, line),

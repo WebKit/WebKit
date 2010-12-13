@@ -1,3 +1,22 @@
+2010-12-13  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch rollout should be able to do multi-revision rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=33336
+
+        Make it possible to pass more than one revision to webkit-patch.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/revertrevision.py:
+
 2010-12-13  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.

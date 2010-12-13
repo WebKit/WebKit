@@ -32,7 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
-from webkitpy.tool.mocktool import MockOptions, MockTool
+from webkitpy.tool.mocktool import MockCheckout, MockOptions, MockTool
 
 
 class AbstractRolloutPrepCommandTest(unittest.TestCase):
@@ -52,6 +52,18 @@ class AbstractRolloutPrepCommandTest(unittest.TestCase):
         expected_stderr = "Unable to parse bug number from diff.\n"
         commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_stderr=expected_stderr)
         self.assertEqual(commit_info, mock_commit_info)
+
+    def test_prepare_state(self):
+        command = AbstractRolloutPrepCommand()
+        mock_commit_info = MockCheckout().commit_info_for_revision(123)
+        command._commit_info = lambda revision: mock_commit_info
+
+        state = command._prepare_state(None, ["124 123 125", "Reason"], None)
+        self.assertEqual(123, state["revision"])
+        self.assertEqual([123, 124, 125], state["revision_list"])
+
+        self.assertRaises(ScriptError, command._prepare_state, options=None, args=["125 r122  123", "Reason"], tool=None)
+        self.assertRaises(ScriptError, command._prepare_state, options=None, args=["125 foo 123", "Reason"], tool=None)
 
 
 class DownloadCommandsTest(CommandsTest):
@@ -185,6 +197,7 @@ where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
+        self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
         expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nMOCK: user.open_url: file://...\nBuilding WebKit\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\n"

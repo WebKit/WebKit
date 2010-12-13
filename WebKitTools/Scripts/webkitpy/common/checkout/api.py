@@ -158,3 +158,7 @@ class Checkout(object):
         conflicts = self._scm.conflicted_files()
         if len(conflicts):
             raise ScriptError(message="Failed to apply reverse diff for revision %s because of the following conflicts:\n%s" % (revision, "\n".join(conflicts)))
+
+    def apply_reverse_diffs(self, revision_list):
+        for revision in sorted(revision_list, reverse=True):
+            self.apply_reverse_diff(revision)
