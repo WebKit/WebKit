@@ -279,14 +279,6 @@ public:
 
     // AutoFill  -----------------------------------------------------------
 
-    // DEPRECATED.
-    virtual void applyAutoFillSuggestions(
-        const WebNode&,
-        const WebVector<WebString>& names,
-        const WebVector<WebString>& labels,
-        const WebVector<int>& uniqueIDs,
-        int separatorIndex) = 0;
-
     // Notifies the WebView that AutoFill suggestions are available for a node.
     // |uniqueIDs| is a vector of IDs that represent the unique ID of each
     // AutoFill profile in the suggestions popup.  If a unique ID is 0, then the
@@ -301,14 +293,6 @@ public:
         const WebVector<WebString>& icons,
         const WebVector<int>& uniqueIDs,
         int separatorIndex) = 0;
-
-    // Notifies the WebView that Autocomplete suggestions are available for a
-    // node.
-    // DEPRECATED: merging with applyAutoFillSuggestions.
-    virtual void applyAutocompleteSuggestions(
-        const WebNode&,
-        const WebVector<WebString>& suggestions,
-        int defaultSuggestionIndex) = 0;
 
     // Hides any popup (suggestions, selects...) that might be showing.
     virtual void hidePopups() = 0;

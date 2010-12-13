@@ -114,10 +114,6 @@ public:
                         const WebVector<int>& uniqueIDs,
                         int separatorIndex);
 
-    // DEPRECATED: Will be removed once Autocomplete and AutoFill merge is
-    // complete.
-    void setAutocompleteMode(bool enabled) { m_AutocompleteModeEnabled = enabled; }
-
 private:
     // Convert the specified index from an index into the visible list (which might
     // include a separator entry) to an index to |m_names| and |m_labels|.
@@ -147,10 +143,6 @@ private:
     RefPtr<WebCore::HTMLInputElement> m_textField;
     OwnPtr<WebCore::PopupMenuStyle> m_regularStyle;
     OwnPtr<WebCore::PopupMenuStyle> m_warningStyle;
-
-    // DEPRECATED: Will be removed once Autocomplete and AutoFill merge is
-    // complete.
-    bool m_AutocompleteModeEnabled;
 };
 
 } // namespace WebKit

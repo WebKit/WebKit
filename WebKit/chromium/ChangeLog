@@ -1,3 +1,23 @@
+2010-12-13  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Removes deprecated logic following the consolidation of AutoFill and
+        Autocomplete popup menu handling (https://bugs.webkit.org/show_bug.cgi?id=41236).
+        Filling of the form fields is now handled completely on the Chromium side, for
+        both AutoFill and Autocomplete.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41822
+
+        * public/WebView.h:
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::AutoFillPopupMenuClient):
+        (WebKit::AutoFillPopupMenuClient::valueChanged):
+        * src/AutoFillPopupMenuClient.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        * src/WebViewImpl.h:
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.

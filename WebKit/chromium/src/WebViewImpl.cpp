@@ -1921,17 +1921,6 @@ void WebViewImpl::applyAutoFillSuggestions(
     const WebNode& node,
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
-    const WebVector<int>& uniqueIDs,
-    int separatorIndex)
-{
-    WebVector<WebString> icons(names.size());
-    applyAutoFillSuggestions(node, names, labels, icons, uniqueIDs, separatorIndex);
-}
-
-void WebViewImpl::applyAutoFillSuggestions(
-    const WebNode& node,
-    const WebVector<WebString>& names,
-    const WebVector<WebString>& labels,
     const WebVector<WebString>& icons,
     const WebVector<int>& uniqueIDs,
     int separatorIndex)
@@ -1977,30 +1966,6 @@ void WebViewImpl::applyAutoFillSuggestions(
         m_autoFillPopup->show(focusedNode->getRect(), focusedNode->ownerDocument()->view(), 0);
         m_autoFillPopupShowing = true;
     }
-
-    // DEPRECATED: This special mode will go away once AutoFill and Autocomplete
-    // merge is complete.
-    if (m_autoFillPopupClient)
-        m_autoFillPopupClient->setAutocompleteMode(false);
-}
-
-// DEPRECATED: replacing with applyAutoFillSuggestions.
-void WebViewImpl::applyAutocompleteSuggestions(
-    const WebNode& node,
-    const WebVector<WebString>& suggestions,
-    int defaultSuggestionIndex)
-{
-    WebVector<WebString> names(suggestions.size());
-    WebVector<WebString> labels(suggestions.size());
-    WebVector<WebString> icons(suggestions.size());
-    WebVector<int> uniqueIDs(suggestions.size());
-
-    for (size_t i = 0; i < suggestions.size(); ++i)
-        names[i] = suggestions[i];
-
-    applyAutoFillSuggestions(node, names, labels, icons, uniqueIDs, -1);
-    if (m_autoFillPopupClient)
-        m_autoFillPopupClient->setAutocompleteMode(true);
 }
 
 void WebViewImpl::hidePopups()

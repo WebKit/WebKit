@@ -180,13 +180,6 @@ public:
                                      const WebString& value);
     virtual WebDevToolsAgent* devToolsAgent();
     virtual WebAccessibilityObject accessibilityObject();
-    // DEPRECATED.
-    virtual void applyAutoFillSuggestions(
-        const WebNode&,
-        const WebVector<WebString>& names,
-        const WebVector<WebString>& labels,
-        const WebVector<int>& uniqueIDs,
-        int separatorIndex);
     virtual void applyAutoFillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
@@ -194,11 +187,6 @@ public:
         const WebVector<WebString>& icons,
         const WebVector<int>& uniqueIDs,
         int separatorIndex);
-    // DEPRECATED: replacing with applyAutoFillSuggestions.
-    virtual void applyAutocompleteSuggestions(
-        const WebNode&,
-        const WebVector<WebString>& suggestions,
-        int defaultSuggestionIndex);
     virtual void hidePopups();
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,

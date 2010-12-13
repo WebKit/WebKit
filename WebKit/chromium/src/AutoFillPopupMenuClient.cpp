@@ -51,7 +51,6 @@ AutoFillPopupMenuClient::AutoFillPopupMenuClient()
     : m_separatorIndex(-1)
     , m_selectedIndex(-1)
     , m_textField(0)
-    , m_AutocompleteModeEnabled(false)
 {
 }
 
@@ -123,36 +122,20 @@ bool AutoFillPopupMenuClient::canRemoveSuggestionAtIndex(unsigned listIndex)
 
 void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
 {
-    // DEPRECATED: Will be removed once AutoFill and Autocomplete merge is
-    // completed.
-    if (m_AutocompleteModeEnabled) {
-        m_textField->setValue(getSuggestion(listIndex));
+    WebViewImpl* webView = getWebView();
+    if (!webView)
+        return;
 
-        WebViewImpl* webView = getWebView();
-        if (!webView)
-            return;
+    if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
+        --listIndex;
 
-        EditorClientImpl* editor =
-            static_cast<EditorClientImpl*>(webView->page()->editorClient());
-        ASSERT(editor);
-        editor->onAutocompleteSuggestionAccepted(
-            static_cast<HTMLInputElement*>(m_textField.get()));
-    } else {
-      WebViewImpl* webView = getWebView();
-      if (!webView)
-          return;
+    ASSERT(listIndex < m_names.size());
 
-      if (m_separatorIndex != -1 && listIndex > static_cast<unsigned>(m_separatorIndex))
-          --listIndex;
-
-      ASSERT(listIndex < m_names.size());
-
-      webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
-                                                     m_names[listIndex],
-                                                     m_labels[listIndex],
-                                                     m_uniqueIDs[listIndex],
-                                                     listIndex);
-    }
+    webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
+                                                   m_names[listIndex],
+                                                   m_labels[listIndex],
+                                                   m_uniqueIDs[listIndex],
+                                                   listIndex);
 }
 
 void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
