@@ -42,9 +42,17 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
     didFinishLoad = true;
 }
 
+static bool didPopStateWithinPage;
 static bool didChangeLocationWithinPage;
 static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
 {
+    if (!didPopStateWithinPage) {
+        TEST_ASSERT(type == kWKSameDocumentNavigationSessionStatePop);
+        TEST_ASSERT(!didChangeLocationWithinPage);
+        didPopStateWithinPage = true;
+        return;
+    }
+
     TEST_ASSERT(type == kWKSameDocumentNavigationAnchorNavigation);
     didChangeLocationWithinPage = true;
 }

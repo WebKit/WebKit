@@ -1,3 +1,14 @@
+2010-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix failing API test. It turns out that a pop-state event
+        is sent before every fragment navigation, so we have to test
+        for it in addition in PageLoadDidChangeLocationWithinPageForFrame.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::didSameDocumentNavigationForFrame):
+
 2010-12-12  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Eric Seidel.
