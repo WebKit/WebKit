@@ -94,6 +94,9 @@ LRESULT WebInspectorProxy::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
     case WM_GETMINMAXINFO:
         lResult = onMinMaxInfoEvent(hWnd, message, wParam, lParam, handled);
         break;
+    case WM_SETFOCUS:
+        lResult = onSetFocusEvent(hWnd, message, wParam, lParam, handled);
+        break;
     case WM_CLOSE:
         lResult = onCloseEvent(hWnd, message, wParam, lParam, handled);
         break;
@@ -114,6 +117,13 @@ LRESULT WebInspectorProxy::onSizeEvent(HWND, UINT, WPARAM, LPARAM, bool&)
     ::GetClientRect(m_inspectorWindow, &rect);
 
     ::SetWindowPos(m_inspectorView->window(), 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
+
+    return 0;
+}
+
+LRESULT WebInspectorProxy::onSetFocusEvent(HWND, UINT, WPARAM, LPARAM lParam, bool&)
+{    
+    ::SetFocus(m_inspectorView->window());
 
     return 0;
 }

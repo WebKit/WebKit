@@ -1,3 +1,18 @@
+2010-12-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Focusing Web Inspector window doesn't focus contents on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50947
+        <rdar://problem/8762468>
+        
+        When we get the notification that the inspector window has focused, focus the inner inspector view.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::onSetFocusEvent): Set the focus of the inspector view, because that is what
+            needs to be focused in the inspector window.
+
 2010-12-13  Dan Bernstein  <mitz@apple.com>
 
         Coding style fix.
