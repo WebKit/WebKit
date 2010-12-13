@@ -2,6 +2,26 @@
 
         Reviewed by Anders Carlsson.
 
+        Remove associated page concept from WKView constructor
+        https://bugs.webkit.org/show_bug.cgi?id=50983
+
+        Step 1: Remove associate page constructors from WKView and make
+        all views use the shared namespace for the context.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+
+2010-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Change the WebKit2 public API so there is no explicit WKPageNamespace object
         https://bugs.webkit.org/show_bug.cgi?id=50898
 

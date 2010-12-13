@@ -182,7 +182,7 @@ bool WebView::registerWebViewWindowClass()
     return !!::RegisterClassEx(&wcex);
 }
 
-WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow, bool usingSharedProcess)
+WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
     : m_rect(rect)
     , m_topLevelParentWindow(0)
     , m_toolTipWindow(0)
@@ -192,26 +192,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
 {
-    RefPtr<WebPageNamespace> pageNamespace;
-    if (usingSharedProcess)
-        pageNamespace = context->sharedPageNamespace();
-    else
-        pageNamespace = context->createPageNamespace();
-
-    initialize(pageNamespace.get(), pageGroup, parentWindow);
-}
-
-WebView::WebView(RECT rect, WebPageProxy* page, WebPageGroup* pageGroup, HWND parentWindow)
-    : m_rect(rect)
-    , m_topLevelParentWindow(0)
-    , m_toolTipWindow(0)
-    , m_lastCursorSet(0)
-    , m_webCoreCursor(0)
-    , m_overrideCursor(0)
-    , m_trackingMouseLeave(false)
-    , m_isBeingDestroyed(false)
-{
-    initialize(page->pageNamespace(), pageGroup, parentWindow);
+    initialize(context->sharedPageNamespace(), pageGroup, parentWindow);
 }
 
 void WebView::initialize(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup, HWND parentWindow)

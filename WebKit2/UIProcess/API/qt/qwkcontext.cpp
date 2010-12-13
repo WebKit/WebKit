@@ -61,14 +61,6 @@ QWKContext::QWKContext(WKContextRef contextRef, QObject* parent)
     d->pageNamespace = d->context->sharedPageNamespace();
 }
 
-QWKContext::QWKContext(WKPageRef pageRef, QObject* parent)
-    : QObject(parent)
-    , d(new QWKContextPrivate(this))
-{
-    d->context = toImpl(pageRef)->context();
-    d->pageNamespace = d->context->sharedPageNamespace();
-}
-
 QWKContext::~QWKContext()
 {
     delete d;

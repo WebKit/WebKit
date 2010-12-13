@@ -41,18 +41,6 @@ WKViewRef WKViewCreate(RECT rect, WKContextRef contextRef, WKPageGroupRef pageGr
     return toAPI(view.release().releaseRef());
 }
 
-WKViewRef WKViewCreateUsingSharedProcess(RECT rect, WKContextRef contextRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
-{
-    RefPtr<WebView> view = WebView::createUsingSharedProcess(rect, toImpl(contextRef), toImpl(pageGroupRef), parentWindow);
-    return toAPI(view.release().releaseRef());
-}
-
-WKViewRef WKViewCreateForAssociatedPage(RECT rect, WKPageRef pageRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
-{
-    RefPtr<WebView> view = WebView::createForAssociatedPage(rect, toImpl(pageRef), toImpl(pageGroupRef), parentWindow);
-    return toAPI(view.release().releaseRef());
-}
-
 HWND WKViewGetWindow(WKViewRef viewRef)
 {
     return toImpl(viewRef)->window();

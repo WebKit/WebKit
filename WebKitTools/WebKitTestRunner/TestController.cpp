@@ -106,7 +106,7 @@ static void closeOtherPage(WKPageRef page, const void* clientInfo)
 
 static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
 {
-    PlatformWebView* view = new PlatformWebView(oldPage, WKPageGetPageGroup(oldPage));
+    PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage));
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);

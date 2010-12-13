@@ -36,12 +36,6 @@ WK_EXPORT
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef usingSharedProcess:(BOOL)usingSharedProcess;
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef usingSharedProcess:(BOOL)usingSharedProcess;;
-
-- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef;
-- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
-
 @property(readonly) WKPageRef pageRef;
 
 @property BOOL drawsBackground;
