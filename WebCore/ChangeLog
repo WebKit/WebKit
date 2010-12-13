@@ -1,3 +1,11 @@
+2010-12-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix after r73840.
+
+        * WebCore.vcproj/WebCoreGeneratedCairo.vsprops: Update property file
+        to pass three arguments to build-generated-files.sh, just like
+        the official Apple port.
+
 2010-12-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
