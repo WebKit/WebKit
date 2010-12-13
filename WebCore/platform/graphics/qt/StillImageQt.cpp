@@ -28,6 +28,7 @@
 #include "config.h"
 #include "StillImageQt.h"
 
+#include "ContextShadow.h"
 #include "GraphicsContext.h"
 #include "IntSize.h"
 
@@ -67,7 +68,6 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     if (m_pixmap->isNull())
         return;
 
-
     FloatRect normalizedSrc = src.normalized();
     FloatRect normalizedDst = dst.normalized();
 
@@ -76,21 +76,14 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
     ctxt->setCompositeOperation(op);
 
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    if (ctxt->getShadow(shadowOffset, shadowBlur, shadowColor)) {
-        FloatRect shadowImageRect(normalizedDst);
-        shadowImageRect.move(shadowOffset.width(), shadowOffset.height());
-
-        QImage shadowImage(QSize(static_cast<int>(normalizedSrc.width()), static_cast<int>(normalizedSrc.height())), QImage::Format_ARGB32_Premultiplied);
-        QPainter p(&shadowImage);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(shadowImage.rect(), shadowColor);
-        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.drawPixmap(QRect(0, 0, normalizedDst.width(), normalizedDst.height()), *m_pixmap, normalizedSrc);
-        p.end();
-        painter->drawImage(shadowImageRect, shadowImage, normalizedSrc);
+    ContextShadow* shadow = ctxt->contextShadow();
+    if (shadow->m_type != ContextShadow::NoShadow) {
+        QPainter* shadowPainter = shadow->beginShadowLayer(painter, normalizedDst);
+        if (shadowPainter) {
+            shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
+            shadowPainter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
+            shadow->endShadowLayer(painter);
+        }
     }
 
     painter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);

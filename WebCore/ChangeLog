@@ -1,3 +1,22 @@
+2010-12-13  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] StillImage::draw() should use ContextShadow
+        https://bugs.webkit.org/show_bug.cgi?id=50849
+
+        The branch that checks for a shadow requirement in StillImage::draw()
+        is executed when drawing a canvas onto a canvas with
+        ctx1.drawImage(canvas2, x, y). The current implementation supports
+        solid shadows only. And if transformations are present, the offset gets
+        transformed as well. Thus, ContextShadow must be used instead in order
+        to support blur and correct offset transformations.
+
+        Test: fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+
 2010-12-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Unreviewed build fix.
