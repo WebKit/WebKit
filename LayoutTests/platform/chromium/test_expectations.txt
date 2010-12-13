@@ -2486,7 +2486,7 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
 // Need to implement EditorClient::requestCheckingOfString()
-BUGWK41423 : editing/spelling/spellcheck-paste.html = TIMEOUT
+BUGWK41423 WIN LINUX : editing/spelling/spellcheck-paste.html = TEXT
 
 // Flaky tests.
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS

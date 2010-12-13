@@ -1,3 +1,9 @@
+2010-12-13  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-13  Helder Correia  <helder@sencha.com>
 
         Reviewed by Eric Seidel.
