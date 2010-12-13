@@ -1,3 +1,21 @@
+2010-12-09  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        Spatial Navigation: code clean up (part II)
+        https://bugs.webkit.org/show_bug.cgi?id=50666
+
+        No new tests needed.
+
+        * page/FocusController.cpp: Removed static declaration of updateFocusCandidateIfNeeded() from
+        the top of FocusController.cpp, and added the 'static' keyword where the function is implemented;
+        * page/SpatialNavigation.cpp: In FocusCandidate constructor, renamed 'n' to 'node', and added an assert to it;
+        (WebCore::FocusCandidate::FocusCandidate):
+        (WebCore::virtualRectForAreaElementAndDirection): Added an assert to 'node';
+        * page/SpatialNavigation.h:I reordered the declaration of some methods in order to group related ones;
+        Removed isScrollableContainerNode() function declaration since it is not used outside SpatialNavigation.cpp;
+        And removed the declaration of isNodeDeepDescendantOfDocument() since it does not exist anymore.
+
 2010-12-12  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

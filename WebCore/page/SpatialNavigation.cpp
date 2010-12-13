@@ -51,11 +51,11 @@ static bool areRectsPartiallyAligned(FocusDirection, const IntRect&, const IntRe
 static bool areRectsMoreThanFullScreenApart(FocusDirection direction, const IntRect& curRect, const IntRect& targetRect, const IntSize& viewSize);
 static bool isRectInDirection(FocusDirection, const IntRect&, const IntRect&);
 static void deflateIfOverlapped(IntRect&, IntRect&);
-static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect& rect);
+static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect&);
 static void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& startingRect, const IntRect& potentialRect, IntPoint& exitPoint, IntPoint& entryPoint);
+static bool isScrollableContainerNode(const Node*);
 
-
-FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
+FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     : visibleNode(0)
     , focusableNode(0)
     , enclosingScrollableBox(0)
@@ -66,8 +66,9 @@ FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
     , isOffscreen(true)
     , isOffscreenAfterScrolling(true)
 {
-    if (n->hasTagName(HTMLNames::areaTag)) {
-        HTMLAreaElement* area = static_cast<HTMLAreaElement*>(n);
+    ASSERT(node);
+    if (node->hasTagName(HTMLNames::areaTag)) {
+        HTMLAreaElement* area = static_cast<HTMLAreaElement*>(node);
         HTMLImageElement* image = area->imageElement();
         if (!image || !image->renderer())
             return;
@@ -75,14 +76,14 @@ FocusCandidate::FocusCandidate(Node* n, FocusDirection direction)
         visibleNode = image;
         rect = virtualRectForAreaElementAndDirection(direction, area);
     } else {
-        if (!n->renderer())
+        if (!node->renderer())
             return;
 
-        visibleNode = n;
-        rect = nodeRectInAbsoluteCoordinates(n, true /* ignore border */);
+        visibleNode = node;
+        rect = nodeRectInAbsoluteCoordinates(node, true /* ignore border */);
     }
 
-    focusableNode = n;
+    focusableNode = node;
     isOffscreen = hasOffscreenRect(visibleNode);
     isOffscreenAfterScrolling = hasOffscreenRect(visibleNode, direction);
 }
@@ -693,6 +694,8 @@ IntRect virtualRectForDirection(FocusDirection direction, const IntRect& startin
 
 IntRect virtualRectForAreaElementAndDirection(FocusDirection direction, HTMLAreaElement* area)
 {
+    ASSERT(area);
+    ASSERT(area->imageElement());
     // Area elements tend to overlap more than other focusable elements. We flatten the rect of the area elements
     // to minimize the effect of overlapping areas.
     IntRect rect = virtualRectForDirection(direction, rectToAbsoluteCoordinates(area->document()->frame(), area->getRect(area->imageElement()->renderer())), 1);

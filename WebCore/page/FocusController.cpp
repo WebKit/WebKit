@@ -61,7 +61,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& startingRect, FocusCandidate& candidate, FocusCandidate& closest);
 static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool focused)
 {
     // If we have a focused node we should dispatch blur on it before we blur the window.
@@ -414,7 +413,7 @@ void FocusController::setActive(bool active)
         dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), active);
 }
 
-void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& startingRect, FocusCandidate& candidate, FocusCandidate& closest)
+static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& startingRect, FocusCandidate& candidate, FocusCandidate& closest)
 {
     if (!candidate.visibleNode->isElementNode() || !candidate.visibleNode->renderer())
         return;
