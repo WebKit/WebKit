@@ -81,9 +81,11 @@ class BugzillaQueries(object):
     # This is kinda a hack.  There is probably a better way to get this information from bugzilla.
     def _parse_result_count(self, results_page):
         result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'}).string
-        result_count_parts = result_count_text.split(" ")
+        result_count_parts = result_count_text.strip().split(" ")
         if result_count_parts[0] == "Zarro":
             return 0
+        if result_count_parts[0] == "One":
+            return 1
         return int(result_count_parts[0])
 
     # Note: _load_query, _fetch_bug and _fetch_bugs_from_advanced_query

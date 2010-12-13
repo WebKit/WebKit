@@ -1,3 +1,16 @@
+2010-12-13  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Teach webkit-patch how to search bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=50500
+
+        webkit-patch bug-search fails when there is only one result.
+        Turns out we needed a bit more logic in our result count parsing code.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+
 2010-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey Proskuryakov.

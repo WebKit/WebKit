@@ -356,6 +356,7 @@ class BugzillaQueriesTest(unittest.TestCase):
         # Pages with results, always list the count at least twice.
         self._assert_result_count(queries, '<span class="bz_result_count">314 bugs found.</span><span class="bz_result_count">314 bugs found.</span>', 314)
         self._assert_result_count(queries, '<span class="bz_result_count">Zarro Boogs found.</span>', 0)
+        self._assert_result_count(queries, '<span class="bz_result_count">\n \nOne bug found.</span>', 1)
         self.assertRaises(Exception, queries._parse_result_count, ['Invalid'])
 
     def test_request_page_parsing(self):
