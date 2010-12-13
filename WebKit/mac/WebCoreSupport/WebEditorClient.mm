@@ -63,6 +63,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/SpellChecker.h>
 #import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
@@ -989,4 +990,74 @@ void WebEditorClient::willSetInputMethodState()
 
 void WebEditorClient::setInputMethodState(bool)
 {
+}
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+@interface WebEditorSpellCheckResponder : NSObject
+{
+    WebCore::SpellChecker* _sender;
+    int _sequence;
+    RetainPtr<NSArray> _results;
+}
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence results:(NSArray*)results;
+- (void)perform;
+- (WTF::Vector<WebCore::SpellCheckingResult>) _coreResults;
+@end
+
+@implementation WebEditorSpellCheckResponder
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence results:(NSArray*)results
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _sender = sender;
+    _sequence = sequence;
+    _results = results;
+    return self;
+}
+
+- (void)perform
+{
+    _sender->didCheck(_sequence, [self _coreResults]);
+}
+
+static SpellCheckingResult toCoreSpellingResult(NSTextCheckingResult* result)
+{
+    NSTextCheckingType type = [result resultType];
+    NSRange range = [result range];
+    DocumentMarker::MarkerType coreType;
+    if (type & NSTextCheckingTypeSpelling)
+        coreType = DocumentMarker::Spelling;
+    else if (type & NSTextCheckingTypeGrammar)
+        coreType = DocumentMarker::Grammar;
+    else
+        coreType = DocumentMarker::AllMarkers;
+
+    return SpellCheckingResult(coreType, range.location, range.length);
+}
+
+- (WTF::Vector<WebCore::SpellCheckingResult>)_coreResults
+{
+    WTF::Vector<WebCore::SpellCheckingResult> coreResults;
+    coreResults.reserveCapacity([_results.get() count]);
+    for (NSTextCheckingResult* result in _results.get())
+        coreResults.append(toCoreSpellingResult(result));
+    return coreResults;
+}
+
+@end
+#endif
+
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, const String& text)
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    NSRange range = NSMakeRange(0, text.length());
+    NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
+    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:text range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0 
+                                         completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
+            [currentLoop performSelector:@selector(perform) 
+                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence results:results] autorelease]
+                                argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        }];
+#endif
 }

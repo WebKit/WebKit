@@ -3112,6 +3112,8 @@
 		A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979240D6B9E64003851B9 /* JSImageData.cpp */; };
 		A77979290D6B9E64003851B9 /* JSImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979250D6B9E64003851B9 /* JSImageData.h */; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
+		A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */; };
+		A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A78FE13A12366B1000ACE8D0 /* SpellChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
 		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
 		A7AA66D611C5ED6A001D8C8C /* RenderIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7AA66D411C5ED6A001D8C8C /* RenderIndicator.cpp */; };
@@ -9439,6 +9441,8 @@
 		A77979240D6B9E64003851B9 /* JSImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageData.cpp; sourceTree = "<group>"; };
 		A77979250D6B9E64003851B9 /* JSImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageData.h; sourceTree = "<group>"; };
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
+		A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellChecker.cpp; sourceTree = "<group>"; };
+		A78FE13A12366B1000ACE8D0 /* SpellChecker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SpellChecker.h; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
 		A7AA66D411C5ED6A001D8C8C /* RenderIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderIndicator.cpp; sourceTree = "<group>"; };
@@ -15104,6 +15108,8 @@
 				4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */,
 				4B6FA6F20C39E48C00087011 /* SmartReplace.h */,
 				4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */,
+				A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */,
+				A78FE13A12366B1000ACE8D0 /* SpellChecker.h */,
 				93309DC2099E64910056E581 /* SplitElementCommand.cpp */,
 				93309DC3099E64910056E581 /* SplitElementCommand.h */,
 				93309DC4099E64910056E581 /* SplitTextNodeCommand.cpp */,
@@ -21584,6 +21590,7 @@
 				75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */,
 				7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */,
 				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
+				A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */,
 				93309E12099E64920056E581 /* SplitElementCommand.h in Headers */,
 				93309E14099E64920056E581 /* SplitTextNodeCommand.h in Headers */,
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
@@ -24350,6 +24357,7 @@
 				75415C28129A9920003AD669 /* SpeechInputEvent.cpp in Sources */,
 				758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */,
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
+				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,

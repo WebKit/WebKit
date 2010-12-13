@@ -491,8 +491,7 @@ public:
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
     virtual void willSetInputMethodState() { }
     virtual void setInputMethodState(bool) { }
-
-
+    virtual void requestCheckingOfString(SpellChecker*, int, const String&) { }
 };
 
 #if ENABLE(CONTEXT_MENUS)

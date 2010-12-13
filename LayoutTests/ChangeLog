@@ -1,3 +1,21 @@
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        * editing/spelling/script-tests/spellcheck-paste.js: Added.
+        * editing/spelling/spellcheck-paste.html: Added.
+        * editing/spelling/spellcheck-paste-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-12-12  Sam Weinig  <sam@webkit.org>
 
         Update WebKit2 skipped list.

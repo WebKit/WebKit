@@ -170,6 +170,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &LayoutTestController::setWillSendRequestReturnsNullOnRedirect);
     bindMethod("setWindowIsKey", &LayoutTestController::setWindowIsKey);
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
+    bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
@@ -621,6 +622,11 @@ void LayoutTestController::setAlwaysAcceptCookies(const CppArgumentList& argumen
     if (arguments.size() > 0)
         webkit_support::SetAcceptAllCookies(cppVariantToBool(arguments[0]));
     result->setNull();
+}
+
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*)
+{
+    // FIXME: Implement this.
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

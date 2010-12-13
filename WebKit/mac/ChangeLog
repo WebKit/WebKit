@@ -1,3 +1,35 @@
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Added asynchronous spell checking API to WebEditorClient using
+        -[NSSpellChecker requestCheckingOfString].
+        Note that WebEditorSpellCheckResponder is a small class to receive
+        requested spell-checking result. Note that this feature is
+        disabled at default.
+        
+        Also added [WebPreferences setAsynchronousSpellCheckingEnabled:] to 
+        enable the feature from LayoutTestController.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditorSpellCheckResponder initWithSender:WebCore::sequence:results:]):
+        (-[WebEditorSpellCheckResponder perform]):
+        (toCoreSpellingResult):
+        (-[WebEditorSpellCheckResponder WTF::WebCore::]):
+        (WebEditorClient::requestCheckingOfString):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setAsynchronousSpellCheckingEnabled:]):
+        (-[WebPreferences asynchronousSpellCheckingEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-12-09  Anders Carlsson  <andersca@apple.com>
 
         Fix a bug uncovered by clang++.
@@ -2269,6 +2301,32 @@
         * WebView/WebView.mm:
         (-[WebView setEditable:]):
         Changed call sites to use editor().
+
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Implemented async spell-check APIs on WebEditorClient.
+        The implementations are using [NSSpellChecker requestCheckingOfString]
+        which is available only on Mac OS 10.6 or later.
+        
+        Note that [NSSpellChecker requestCheckingOfString] could invoke
+        the callback block on on of their worker thread, so we need to
+        return the result to the main thread where WebCore is running.
+        For that purpose, we made WebEditorSpellCheckResponder class.
+        
+        Test: editing/spelling/spellcheck-pasted-text-001.html
+        
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::isAsynchronousSpellCheckingEnabled): Added.
+        (-[WebEditorSpellCheckResponder initWithSender:WebCore::sequence:results:]): Added.
+        (-[WebEditorSpellCheckResponder perform]): Added.
+        (WebEditorClient::requestCheckingOfString): Added.
+        * WebView/WebFramePrivate.h:
 
 2010-09-08  MORITA Hajime  <morrita@google.com>
 

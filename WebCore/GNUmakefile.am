@@ -1423,6 +1423,8 @@ webcore_sources += \
 	WebCore/editing/SmartReplace.cpp \
 	WebCore/editing/SmartReplace.h \
 	WebCore/editing/SmartReplaceICU.cpp \
+	WebCore/editing/SpellChecker.cpp \
+	WebCore/editing/SpellChecker.h \
 	WebCore/editing/SplitElementCommand.cpp \
 	WebCore/editing/SplitElementCommand.h \
 	WebCore/editing/SplitTextNodeCommand.cpp \

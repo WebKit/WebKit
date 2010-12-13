@@ -410,4 +410,9 @@ void WebEditorClient::setInputMethodState(bool)
     notImplemented();
 }
 
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

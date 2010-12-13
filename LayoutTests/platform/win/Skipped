@@ -945,6 +945,9 @@ editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spelling-contenteditable.html
 editing/spelling/spelling-textarea.html
 
+# EditorClient::requestCheckingOfString() is not implemented
+editing/spelling/spellcheck-paste.html
+
 # IndexedDB is not yet enabled.
 storage/indexeddb
 

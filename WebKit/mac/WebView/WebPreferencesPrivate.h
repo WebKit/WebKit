@@ -221,6 +221,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (void)setFullScreenEnabled:(BOOL)flag;
 - (BOOL)fullScreenEnabled;
 
+- (void)setAsynchronousSpellCheckingEnabled:(BOOL)flag;
+- (BOOL)asynchronousSpellCheckingEnabled;
+
 - (void)setUsePreHTML5ParserQuirks:(BOOL)flag;
 - (BOOL)usePreHTML5ParserQuirks;
 

@@ -66,6 +66,7 @@ class HTMLElement;
 class KeyboardEvent;
 class Node;
 class Range;
+class SpellChecker;
 class VisibleSelection;
 class VisiblePosition;
 
@@ -203,6 +204,7 @@ public:
     virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) = 0;
     virtual void willSetInputMethodState() = 0;
     virtual void setInputMethodState(bool enabled) = 0;
+    virtual void requestCheckingOfString(SpellChecker*, int, const String&) = 0;
 };
 
 }

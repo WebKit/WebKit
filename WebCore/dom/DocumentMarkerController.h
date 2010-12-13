@@ -62,6 +62,10 @@ public:
     Vector<DocumentMarker> markersForNode(Node*);
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
 
+#ifndef NDEBUG
+    void showMarkers() const;
+#endif
+
 private:
     typedef std::pair<Vector<DocumentMarker>, Vector<IntRect> > MarkerMapVectorPair;
     typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
@@ -70,5 +74,9 @@ private:
 };
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+void showDocumentMarkers(const WebCore::DocumentMarkerController*);
+#endif
 
 #endif // DocumentMarkerController_h

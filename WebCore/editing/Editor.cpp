@@ -67,9 +67,11 @@
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
 #include "RenderPart.h"
+#include "RenderTextControl.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
 #include "Sound.h"
+#include "SpellChecker.h"
 #include "Text.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -423,6 +425,10 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     
     applyCommand(ReplaceSelectionCommand::create(m_frame->document(), fragment, selectReplacement, smartReplace, matchStyle));
     revealSelectionAfterEditingOperation();
+
+    Node* nodeToCheck = m_frame->selection()->rootEditableElement();
+    if (m_spellChecker->canCheckAsynchronously(nodeToCheck))
+        m_spellChecker->requestCheckingFor(nodeToCheck);
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
@@ -1140,6 +1146,7 @@ Editor::Editor(Frame* frame)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
     , m_killRing(adoptPtr(new KillRing))
+    , m_spellChecker(new SpellChecker(frame, frame->page() ? frame->page()->editorClient() : 0))
     , m_correctionPanelTimer(this, &Editor::correctionPanelTimerFired)
     , m_areMarkedTextMatchesHighlighted(false)
 {
@@ -3476,12 +3483,29 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, boo
     respondToChangedSelection(oldSelection);
 }
 
+static Node* findFirstMarkable(Node* node)
+{
+    while (node) {
+        if (!node->renderer())
+            return 0;
+        if (node->renderer()->isText())
+            return node;
+        if (node->renderer()->isTextControl())
+            node = toRenderTextControl(node->renderer())->visiblePositionForIndex(1).deepEquivalent().node();
+        else if (node->firstChild())
+            node = node->firstChild();
+        else
+            node = node->nextSibling();
+    }
+
+    return 0;
+}
+
 bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
 {
-    Node* node = m_frame->selection()->start().node();
-    if (!node || !node->renderer())
+    Node* node = findFirstMarkable(m_frame->selection()->start().node());
+    if (!node)
         return false;
-    ASSERT(node->renderer()->isText());
 
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);

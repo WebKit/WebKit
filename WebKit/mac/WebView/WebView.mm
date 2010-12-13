@@ -1505,6 +1505,10 @@ static bool fastDocumentTeardownEnabled()
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    // Asynchronous spell checking API is available for 10.6 or later.
+    settings->setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
+#endif
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
     settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);

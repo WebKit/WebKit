@@ -132,6 +132,7 @@ namespace WebKit {
         virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
         virtual void willSetInputMethodState();
         virtual void setInputMethodState(bool enabled);
+        virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
 
     private:
         WebKitWebView* m_webView;

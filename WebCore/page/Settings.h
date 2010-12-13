@@ -331,6 +331,9 @@ namespace WebCore {
         bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
 #endif
 
+        void setAsynchronousSpellCheckingEnabled(bool flag) { m_asynchronousSpellCheckingEnabled = flag; }
+        bool asynchronousSpellCheckingEnabled() const  { return m_asynchronousSpellCheckingEnabled; }
+
         void setMemoryInfoEnabled(bool flag) { m_memoryInfoEnabled = flag; }
         bool memoryInfoEnabled() const { return m_memoryInfoEnabled; }
 
@@ -438,6 +441,7 @@ namespace WebCore {
 #if ENABLE(FULLSCREEN_API)
         bool m_fullScreenAPIEnabled : 1;
 #endif
+        bool m_asynchronousSpellCheckingEnabled: 1;
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
         bool m_usePreHTML5ParserQuirks: 1;

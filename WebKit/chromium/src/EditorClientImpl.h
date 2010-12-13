@@ -111,6 +111,7 @@ public:
                                    WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
 
     // Shows the form autofill popup for |node| if it is an HTMLInputElement and
     // it is empty.  This is called when you press the up or down arrow in a

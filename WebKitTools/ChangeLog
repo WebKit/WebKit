@@ -1,3 +1,35 @@
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Added LayoutTestController::setAsynchronousSpellCheckingEnabled()
+        to control the setting.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAsynchronousSpellCheckingEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+
 2010-12-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

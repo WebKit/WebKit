@@ -2090,6 +2090,9 @@ editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-attribute-at-child.html
 
+# EditorClient::requestCheckingOfString() is not implemented
+editing/spelling/spellcheck-paste.html
+
 # ============================================================================= #
 # failing editing/style tests
 # ============================================================================= #

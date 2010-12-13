@@ -164,6 +164,7 @@ Settings::Settings(Page* page)
 #if ENABLE(FULLSCREEN_API)
     , m_fullScreenAPIEnabled(false)
 #endif
+    , m_asynchronousSpellCheckingEnabled(false)
     , m_memoryInfoEnabled(false)
     , m_interactiveFormValidation(false)
     , m_usePreHTML5ParserQuirks(false)

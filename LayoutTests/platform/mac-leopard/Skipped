@@ -88,6 +88,9 @@ fast/text/hyphenate-locale.html
 # See https://bugs.webkit.org/show_bug.cgi?id=35271
 http/tests/media/video-seekable-stall.html
 
+# Available 10.6 or later
+editing/spelling/spellcheck-paste.html
+
 # Disable tests which started failing after r66961
 # Failures look like an underlying platform issue
 # https://bugs.webkit.org/show_bug.cgi?id=45546

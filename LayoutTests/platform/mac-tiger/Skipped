@@ -209,6 +209,9 @@ fast/harness/show-modal-dialog.html
 # Loading fails on Tiger with error -1012 after asking NSURLConnection to continue without credentials.
 http/tests/misc/401-alternative-content.php
 
+# Available only 10.6 or later
+editing/spelling/spellcheck-paste.html
+
 # Disable spelling tests for autocorrection panel
 platform/mac/editing/spelling/autocorrection-contraction.html
 platform/mac/editing/spelling/autocorrection-delete.html

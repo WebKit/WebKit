@@ -384,6 +384,11 @@ void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enabled);
 }
 
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::showWebInspector()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);

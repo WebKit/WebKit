@@ -1174,6 +1174,11 @@ void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
     prefsPrivate->setDeveloperExtrasEnabled(enabled);
 }
 
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::showWebInspector()
 {
     COMPtr<IWebView> webView;

@@ -951,6 +951,7 @@ SET(WebCore_SOURCES
     editing/SelectionController.cpp
     editing/SetNodeAttributeCommand.cpp
     editing/SmartReplace.cpp
+    editing/SpellChecker.cpp
     editing/SplitElementCommand.cpp
     editing/SplitTextNodeCommand.cpp
     editing/SplitTextNodeContainingElementCommand.cpp

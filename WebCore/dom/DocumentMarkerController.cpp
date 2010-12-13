@@ -567,4 +567,31 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
     return false;
 }
 
+#ifndef NDEBUG
+void DocumentMarkerController::showMarkers() const
+{
+    fprintf(stderr, "%d nodes have markers:\n", m_markers.size());
+    MarkerMap::const_iterator end = m_markers.end();
+    for (MarkerMap::const_iterator nodeIterator = m_markers.begin(); nodeIterator != end; ++nodeIterator) {
+        Node* node = nodeIterator->first.get();
+        fprintf(stderr, "%p", node);
+        MarkerMapVectorPair* vectorPair = nodeIterator->second;
+        Vector<DocumentMarker>& markers = vectorPair->first;
+        unsigned markerCount = markers.size();
+        for (unsigned markerIndex = 0; markerIndex < markerCount; ++markerIndex)
+            fprintf(stderr, " %d:[%d:%d](%d)", markers[markerIndex].type, markers[markerIndex].startOffset, markers[markerIndex].endOffset, markers[markerIndex].activeMatch);
+        fprintf(stderr, "\n");
+    }
+}
+#endif
+
 } // namespace WebCore
+
+
+#ifndef NDEBUG
+void showDocumentMarkers(const WebCore::DocumentMarkerController* controller)
+{
+    if (controller)
+        controller->showMarkers();
+}
+#endif

@@ -152,6 +152,9 @@ public:
     // Changes the cookie policy from the default to allow all cookies.
     void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
 
+    // Changes asynchronous spellchecking flag on the settings.
+    void setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*);
+
     // Shows DevTools window.
     void showWebInspector(const CppArgumentList&, CppVariant*);
     void closeWebInspector(const CppArgumentList&, CppVariant*);

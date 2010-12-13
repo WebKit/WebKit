@@ -732,6 +732,11 @@ void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
     g_object_set(webSettings, "enable-developer-extras", enabled, NULL);
 }
 
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::showWebInspector()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);

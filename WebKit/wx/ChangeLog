@@ -1,3 +1,15 @@
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Added a stub implememntation.
+
+        * WebKitSupport/EditorClientWx.h:
+        (WebCore::EditorClientWx::requestCheckingOfString):
+
 2010-12-07  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r73392.

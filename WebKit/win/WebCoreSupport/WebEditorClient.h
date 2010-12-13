@@ -111,6 +111,7 @@ public:
 
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
 
 private:
     WebView* m_webView;

@@ -55,6 +55,7 @@ class HitTestResult;
 class KillRing;
 class Pasteboard;
 class SimpleFontData;
+class SpellChecker;
 class Text;
 class TextEvent;
 
@@ -300,6 +301,7 @@ public:
     VisibleSelection selectionForCommand(Event*);
 
     KillRing* killRing() const { return m_killRing.get(); }
+    SpellChecker* spellChecker() const { return m_spellChecker.get(); }
 
     EditingBehavior behavior() const;
 
@@ -385,6 +387,7 @@ private:
     bool m_shouldStyleWithCSS;
     OwnPtr<KillRing> m_killRing;
     CorrectionPanelInfo m_correctionPanelInfo;
+    OwnPtr<SpellChecker> m_spellChecker;
     Timer<Editor> m_correctionPanelTimer;
     bool m_correctionPanelIsDismissedByEditor;
     VisibleSelection m_mark;

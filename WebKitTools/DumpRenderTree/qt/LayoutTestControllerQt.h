@@ -140,6 +140,7 @@ public slots:
     QString decodeHostName(const QString& host);
     void dumpSelectionRect() const {}
     void setDeveloperExtrasEnabled(bool);
+    void setAsynchronousSpellCheckingEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, const QString& script);

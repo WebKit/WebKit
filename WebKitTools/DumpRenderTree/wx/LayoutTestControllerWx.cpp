@@ -534,6 +534,11 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pa
     return 0;
 }
 
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+{
+    // FIXME: Implement this.
+}
+
 bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     // FIXME: Implement

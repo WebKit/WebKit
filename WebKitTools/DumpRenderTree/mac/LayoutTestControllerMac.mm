@@ -746,6 +746,11 @@ void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
     [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:enabled];
 }
 
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool enabled)
+{
+    [[[mainFrame webView] preferences] setAsynchronousSpellCheckingEnabled:enabled];
+}
+
 void LayoutTestController::showWebInspector()
 {
     [[[mainFrame webView] inspector] show:nil];
