@@ -320,15 +320,16 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
 
 void FETurbulence::apply()
 {
-    if (!effectContext())
+    if (hasResult())
+        return;
+    ImageData* resultImage = createUnmultipliedImageResult();
+    if (!resultImage)
         return;
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
-    if (!imageRect.size().width() || !imageRect.size().height())
+    if (absolutePaintRect().isEmpty())
         return;
 
-    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    ByteArray* pixelArray = imageData->data()->data();
+    ByteArray* pixelArray = resultImage->data()->data();
     PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);
 
@@ -336,16 +337,15 @@ void FETurbulence::apply()
     FloatPoint point;
     point.setY(filterRegion.y());
     int indexOfPixelChannel = 0;
-    for (int y = 0; y < imageRect.height(); ++y) {
+    for (int y = 0; y < absolutePaintRect().height(); ++y) {
         point.setY(point.y() + 1);
         point.setX(filterRegion.x());
-        for (int x = 0; x < imageRect.width(); ++x) {
+        for (int x = 0; x < absolutePaintRect().width(); ++x) {
             point.setX(point.x() + 1);
             for (paintingData.channel = 0; paintingData.channel < 4; ++paintingData.channel, ++indexOfPixelChannel)
                 pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(paintingData, filter()->mapAbsolutePointToLocalPoint(point)));
         }
     }
-    resultImage()->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FETurbulence::dump()

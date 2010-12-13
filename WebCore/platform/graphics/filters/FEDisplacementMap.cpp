@@ -78,57 +78,57 @@ void FEDisplacementMap::setScale(float scale)
 
 void FEDisplacementMap::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
     in->apply();
     in2->apply();
-    if (!in->resultImage() || !in2->resultImage())
+    if (!in->hasResult() || !in2->hasResult())
         return;
 
     if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
         return;
 
-    if (!effectContext())
+    ImageData* resultImage = createPremultipliedImageResult();
+    if (!resultImage)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataA = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
-    ByteArray* srcPixelArrayA = srcImageDataA->data()->data() ;
+    RefPtr<ImageData> srcImageDataA = in->asPremultipliedImage(effectADrawingRect);
+    ByteArray* srcPixelArrayA = srcImageDataA->data()->data();
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataB = in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect);
+    RefPtr<ImageData> srcImageDataB = in2->asUnmultipliedImage(effectBDrawingRect);
     ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
-    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    ByteArray* dstPixelArray = imageData->data()->data();
+    ByteArray* dstPixelArray = resultImage->data()->data();
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 
     Filter* filter = this->filter();
+    IntSize paintSize = absolutePaintRect().size();
     float scaleX = filter->applyHorizontalScale(m_scale / 255);
     float scaleY = filter->applyVerticalScale(m_scale / 255);
     float scaleAdjustmentX = filter->applyHorizontalScale(0.5f - 0.5f * m_scale);
     float scaleAdjustmentY = filter->applyVerticalScale(0.5f - 0.5f * m_scale);
-    int stride = imageRect.width() * 4;
-    for (int y = 0; y < imageRect.height(); ++y) {
+    int stride = paintSize.width() * 4;
+    for (int y = 0; y < paintSize.height(); ++y) {
         int line = y * stride;
-        for (int x = 0; x < imageRect.width(); ++x) {
+        for (int x = 0; x < paintSize.width(); ++x) {
             int dstIndex = line + x * 4;
             int srcX = x + static_cast<int>(scaleX * srcPixelArrayB->get(dstIndex + m_xChannelSelector - 1) + scaleAdjustmentX);
             int srcY = y + static_cast<int>(scaleY * srcPixelArrayB->get(dstIndex + m_yChannelSelector - 1) + scaleAdjustmentY);
             for (unsigned channel = 0; channel < 4; ++channel) {
-                if (srcX < 0 || srcX >= imageRect.width() || srcY < 0 || srcY >= imageRect.height())
+                if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height())
                     dstPixelArray->set(dstIndex + channel, static_cast<unsigned char>(0));
                 else {
                     unsigned char pixelValue = srcPixelArrayA->get(srcY * stride + srcX * 4 + channel);
                     dstPixelArray->set(dstIndex + channel, pixelValue);
                 }
             }
-
         }
     }
-    resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEDisplacementMap::dump()

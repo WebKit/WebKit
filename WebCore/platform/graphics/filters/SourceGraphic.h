@@ -19,7 +19,7 @@
  */
 
 #ifndef SourceGraphic_h
-#define SourceGrahpic_h
+#define SourceGraphic_h
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"

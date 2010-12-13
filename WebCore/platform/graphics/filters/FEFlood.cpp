@@ -64,12 +64,14 @@ void FEFlood::setFloodOpacity(float floodOpacity)
 
 void FEFlood::apply()
 {
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    if (hasResult())
+        return;
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
     Color color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
-    filterContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color, ColorSpaceDeviceRGB);
+    resultImage->context()->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color, ColorSpaceDeviceRGB);
 }
 
 void FEFlood::dump()

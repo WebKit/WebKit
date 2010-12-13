@@ -41,22 +41,25 @@ PassRefPtr<FEMerge> FEMerge::create(Filter* filter)
 
 void FEMerge::apply()
 {
+    if (hasResult())
+        return;
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
         in->apply();
-        if (!in->resultImage())
+        if (!in->hasResult())
             return;
     }
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
+    GraphicsContext* filterContext = resultImage->context();
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 }
 

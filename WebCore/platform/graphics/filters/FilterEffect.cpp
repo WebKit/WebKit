@@ -23,6 +23,7 @@
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
+#include "ImageData.h"
 
 namespace WebCore {
 
@@ -54,10 +55,10 @@ void FilterEffect::determineAbsolutePaintRect()
 
 IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect) const
 {
-    ASSERT(m_effectBuffer);
+    ASSERT(hasResult());
     IntPoint location = m_absolutePaintRect.location();
     location.move(-effectRect.x(), -effectRect.y());
-    return IntRect(location, m_effectBuffer->size());
+    return IntRect(location, m_absolutePaintRect.size());
 }
 
 IntRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
@@ -72,15 +73,170 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
-GraphicsContext* FilterEffect::effectContext()
+ImageBuffer* FilterEffect::asImageBuffer()
 {
+    if (!hasResult())
+        return 0;
+    if (m_imageBufferResult)
+        return m_imageBufferResult.get();
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB);
+    IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
+    if (m_premultipliedImageResult)
+        m_imageBufferResult->putPremultipliedImageData(m_premultipliedImageResult.get(), destinationRect, IntPoint());
+    else
+        m_imageBufferResult->putUnmultipliedImageData(m_unmultipliedImageResult.get(), destinationRect, IntPoint());
+    return m_imageBufferResult.get();
+}
+
+PassRefPtr<ImageData> FilterEffect::asUnmultipliedImage(const IntRect& rect)
+{
+    RefPtr<ImageData> imageData = ImageData::create(rect.width(), rect.height());
+    copyUnmultipliedImage(imageData.get(), rect);
+    return imageData.release();
+}
+
+PassRefPtr<ImageData> FilterEffect::asPremultipliedImage(const IntRect& rect)
+{
+    RefPtr<ImageData> imageData = ImageData::create(rect.width(), rect.height());
+    copyPremultipliedImage(imageData.get(), rect);
+    return imageData.release();
+}
+
+inline void FilterEffect::copyImageBytes(ImageData* source, ImageData* destination, const IntRect& rect)
+{
+    // Copy the necessary lines.
+    ASSERT(IntSize(destination->width(), destination->height()) == rect.size());
+    if (rect.x() < 0 || rect.y() < 0 || rect.bottom() > m_absolutePaintRect.width() || rect.bottom() > m_absolutePaintRect.height())
+        memset(destination->data()->data()->data(), 0, destination->data()->length());
+
+    int xOrigin = rect.x();
+    int xDest = 0;
+    if (xOrigin < 0) {
+        xDest = -xOrigin;
+        xOrigin = 0;
+    }
+    int xEnd = rect.right();
+    if (xEnd > m_absolutePaintRect.width())
+        xEnd = m_absolutePaintRect.width();
+
+    int yOrigin = rect.y();
+    int yDest = 0;
+    if (yOrigin < 0) {
+        yDest = -yOrigin;
+        yOrigin = 0;
+    }
+    int yEnd = rect.bottom();
+    if (yEnd > m_absolutePaintRect.height())
+        yEnd = m_absolutePaintRect.height();
+
+    int size = (xEnd - xOrigin) * 4;
+    int destinationScanline = rect.width() * 4;
+    int sourceScanline = m_absolutePaintRect.width() * 4;
+    unsigned char *destinationPixel = destination->data()->data()->data() + ((yDest * rect.width()) + xDest) * 4;
+    unsigned char *sourcePixel = source->data()->data()->data() + ((yOrigin * m_absolutePaintRect.width()) + xOrigin) * 4;
+
+    while (yOrigin < yEnd) {
+        memcpy(destinationPixel, sourcePixel, size);
+        destinationPixel += destinationScanline;
+        sourcePixel += sourceScanline;
+        ++yOrigin;
+    }
+}
+
+void FilterEffect::copyUnmultipliedImage(ImageData* destination, const IntRect& rect)
+{
+    ASSERT(hasResult());
+
+    if (!m_unmultipliedImageResult) {
+        // We prefer a conversion from the image buffer.
+        if (m_imageBufferResult)
+            m_unmultipliedImageResult = m_imageBufferResult->getUnmultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
+        else {
+            m_unmultipliedImageResult = ImageData::create(m_absolutePaintRect.width(), m_absolutePaintRect.height());
+            unsigned char* sourceComponent = m_premultipliedImageResult->data()->data()->data();
+            unsigned char* destinationComponent = m_unmultipliedImageResult->data()->data()->data();
+            unsigned char* end = sourceComponent + (m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            while (sourceComponent < end) {
+                int alpha = sourceComponent[3];
+                if (alpha) {
+                    destinationComponent[0] = static_cast<int>(sourceComponent[0]) * 255 / alpha;
+                    destinationComponent[1] = static_cast<int>(sourceComponent[1]) * 255 / alpha;
+                    destinationComponent[2] = static_cast<int>(sourceComponent[2]) * 255 / alpha;
+                } else {
+                    destinationComponent[0] = 0;
+                    destinationComponent[1] = 0;
+                    destinationComponent[2] = 0;
+                }
+                destinationComponent[3] = alpha;
+                sourceComponent += 4;
+                destinationComponent += 4;
+            }
+        }
+    }
+    copyImageBytes(m_unmultipliedImageResult.get(), destination, rect);
+}
+
+void FilterEffect::copyPremultipliedImage(ImageData* destination, const IntRect& rect)
+{
+    ASSERT(hasResult());
+
+    if (!m_premultipliedImageResult) {
+        // We prefer a conversion from the image buffer.
+        if (m_imageBufferResult)
+            m_premultipliedImageResult = m_imageBufferResult->getPremultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
+        else {
+            m_premultipliedImageResult = ImageData::create(m_absolutePaintRect.width(), m_absolutePaintRect.height());
+            unsigned char* sourceComponent = m_unmultipliedImageResult->data()->data()->data();
+            unsigned char* destinationComponent = m_premultipliedImageResult->data()->data()->data();
+            unsigned char* end = sourceComponent + (m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            while (sourceComponent < end) {
+                int alpha = sourceComponent[3];
+                destinationComponent[0] = static_cast<int>(sourceComponent[0]) * alpha / 255;
+                destinationComponent[1] = static_cast<int>(sourceComponent[1]) * alpha / 255;
+                destinationComponent[2] = static_cast<int>(sourceComponent[2]) * alpha / 255;
+                destinationComponent[3] = alpha;
+                sourceComponent += 4;
+                destinationComponent += 4;
+            }
+        }
+    }
+    copyImageBytes(m_premultipliedImageResult.get(), destination, rect);
+}
+
+ImageBuffer* FilterEffect::createImageBufferResult()
+{
+    // Only one result type is allowed.
+    ASSERT(!hasResult());
     determineAbsolutePaintRect();
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_effectBuffer = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB);
-    if (!m_effectBuffer)
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB);
+    if (!m_imageBufferResult)
         return 0;
-    return m_effectBuffer->context();
+    ASSERT(m_imageBufferResult->context());
+    return m_imageBufferResult.get();
+}
+
+ImageData* FilterEffect::createUnmultipliedImageResult()
+{
+    // Only one result type is allowed.
+    ASSERT(!hasResult());
+    determineAbsolutePaintRect();
+    if (m_absolutePaintRect.isEmpty())
+        return 0;
+    m_unmultipliedImageResult = ImageData::create(m_absolutePaintRect.width(), m_absolutePaintRect.height());
+    return m_unmultipliedImageResult.get();
+}
+
+ImageData* FilterEffect::createPremultipliedImageResult()
+{
+    // Only one result type is allowed.
+    ASSERT(!hasResult());
+    determineAbsolutePaintRect();
+    if (m_absolutePaintRect.isEmpty())
+        return 0;
+    m_premultipliedImageResult = ImageData::create(m_absolutePaintRect.width(), m_absolutePaintRect.height());
+    return m_premultipliedImageResult.get();
 }
 
 TextStream& FilterEffect::externalRepresentation(TextStream& ts, int) const

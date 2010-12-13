@@ -149,12 +149,15 @@ static void gamma(unsigned char* values, const ComponentTransferFunction& transf
 
 void FEComponentTransfer::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    if (!effectContext())
+    ImageData* imageData = createUnmultipliedImageResult();
+    if (!imageData)
         return;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
@@ -168,7 +171,7 @@ void FEComponentTransfer::apply()
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> imageData = in->resultImage()->getUnmultipliedImageData(drawingRect);
+    in->copyUnmultipliedImage(imageData, drawingRect);
     ByteArray* pixelArray = imageData->data()->data();
 
     unsigned pixelArrayLength = pixelArray->length();
@@ -178,8 +181,6 @@ void FEComponentTransfer::apply()
             pixelArray->set(pixelOffset + channel, tables[channel][c]);
         }
     }
-
-    resultImage()->putUnmultipliedImageData(imageData.get(), IntRect(IntPoint(), resultImage()->size()), IntPoint());
 }
 
 void FEComponentTransfer::dump()

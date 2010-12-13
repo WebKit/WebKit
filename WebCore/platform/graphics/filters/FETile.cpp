@@ -45,13 +45,15 @@ void FETile::apply()
 {
 // FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.
 #if ENABLE(SVG)
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -73,13 +75,14 @@ void FETile::apply()
 
     GraphicsContext* tileImageContext = tileImage->context();
     tileImageContext->translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
+    tileImageContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
 
     RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(), true, true);
 
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());
     pattern->setPatternSpaceTransform(patternTransform);
+    GraphicsContext* filterContext = resultImage->context();
     filterContext->setFillPattern(pattern);
     filterContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
 #endif

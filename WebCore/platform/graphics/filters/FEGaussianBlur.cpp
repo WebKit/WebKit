@@ -164,34 +164,35 @@ void FEGaussianBlur::determineAbsolutePaintRect()
 
 void FEGaussianBlur::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    if (!effectContext())
+    ImageData* resultImage = createPremultipliedImageResult();
+    if (!resultImage)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageData = in->resultImage()->getPremultipliedImageData(effectDrawingRect);
-    IntRect imageRect(IntPoint(), resultImage()->size());
+    in->copyPremultipliedImage(resultImage, effectDrawingRect);
 
-    if (!m_stdX && !m_stdY) {
-        resultImage()->putPremultipliedImageData(srcImageData.get(), imageRect, IntPoint());
+    if (!m_stdX && !m_stdY)
         return;
-    }
 
     unsigned kernelSizeX = 0;
     unsigned kernelSizeY = 0;
     calculateKernelSize(filter(), kernelSizeX, kernelSizeY, m_stdX, m_stdY);
 
-    ByteArray* srcPixelArray = srcImageData->data()->data();
-    RefPtr<ImageData> tmpImageData = ImageData::create(imageRect.width(), imageRect.height());
+    IntSize paintSize = absolutePaintRect().size();
+    ByteArray* srcPixelArray = resultImage->data()->data();
+    RefPtr<ImageData> tmpImageData = ImageData::create(paintSize.width(), paintSize.height());
     ByteArray* tmpPixelArray = tmpImageData->data()->data();
 
-    int stride = 4 * imageRect.width();
+    int stride = 4 * paintSize.width();
     int dxLeft = 0;
     int dxRight = 0;
     int dyLeft = 0;
@@ -199,7 +200,7 @@ void FEGaussianBlur::apply()
     for (int i = 0; i < 3; ++i) {
         if (kernelSizeX) {
             kernelPosition(i, kernelSizeX, dxLeft, dxRight);
-            boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, imageRect.width(), imageRect.height(), isAlphaImage());
+            boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage());
         } else {
             ByteArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
@@ -208,15 +209,13 @@ void FEGaussianBlur::apply()
 
         if (kernelSizeY) {
             kernelPosition(i, kernelSizeY, dyLeft, dyRight);
-            boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, imageRect.height(), imageRect.width(), isAlphaImage());
+            boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage());
         } else {
             ByteArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
             srcPixelArray = auxPixelArray;
         }
     }
-
-    resultImage()->putPremultipliedImageData(srcImageData.get(), imageRect, IntPoint());
 }
 
 void FEGaussianBlur::dump()

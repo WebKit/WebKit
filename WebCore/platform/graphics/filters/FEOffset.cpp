@@ -74,13 +74,15 @@ void FEOffset::determineAbsolutePaintRect()
 
 void FEOffset::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -88,7 +90,7 @@ void FEOffset::apply()
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     Filter* filter = this->filter();
     drawingRegion.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
-    filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegion);
+    resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegion);
 }
 
 void FEOffset::dump()

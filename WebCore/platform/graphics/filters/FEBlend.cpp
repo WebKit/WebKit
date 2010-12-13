@@ -88,30 +88,31 @@ static unsigned char lighten(unsigned char colorA, unsigned char colorB, unsigne
 
 void FEBlend::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
     in->apply();
     in2->apply();
-    if (!in->resultImage() || !in2->resultImage())
+    if (!in->hasResult() || !in2->hasResult())
         return;
 
     if (m_mode <= FEBLEND_MODE_UNKNOWN || m_mode > FEBLEND_MODE_LIGHTEN)
         return;
 
-    if (!effectContext())
+    ImageData* resultImage = createPremultipliedImageResult();
+    if (!resultImage)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataA = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
+    RefPtr<ImageData> srcImageDataA = in->asPremultipliedImage(effectADrawingRect);
     ByteArray* srcPixelArrayA = srcImageDataA->data()->data();
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataB = in2->resultImage()->getPremultipliedImageData(effectBDrawingRect);
+    RefPtr<ImageData> srcImageDataB = in2->asPremultipliedImage(effectBDrawingRect);
     ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
-    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    ByteArray* dstPixelArray = imageData->data()->data();
+    ByteArray* dstPixelArray = resultImage->data()->data();
 
     // Keep synchronized with BlendModeType
     static const BlendType callEffect[] = {unknown, normal, multiply, screen, darken, lighten};
@@ -131,8 +132,6 @@ void FEBlend::apply()
         unsigned char alphaR = 255 - ((255 - alphaA) * (255 - alphaB)) / 255;
         dstPixelArray->set(pixelOffset + 3, alphaR);
     }
-
-    resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEBlend::dump()

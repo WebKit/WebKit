@@ -51,12 +51,14 @@ void SourceGraphic::determineAbsolutePaintRect()
 
 void SourceGraphic::apply()
 {
-    GraphicsContext* filterContext = effectContext();
+    if (hasResult())
+        return;
+    ImageBuffer* resultImage = createImageBufferResult();
     Filter* filter = this->filter();
-    if (!filterContext || !filter->sourceImage())
+    if (!resultImage || !filter->sourceImage())
         return;
 
-    filterContext->drawImageBuffer(filter->sourceImage(), ColorSpaceDeviceRGB, IntPoint());
+    resultImage->context()->drawImageBuffer(filter->sourceImage(), ColorSpaceDeviceRGB, IntPoint());
 }
 
 void SourceGraphic::dump()

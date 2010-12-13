@@ -372,35 +372,40 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
 
 void FEConvolveMatrix::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    if (!effectContext())
+    ImageData* resultImage;
+    if (m_preserveAlpha)
+        resultImage = createUnmultipliedImageResult();
+    else
+        resultImage = createPremultipliedImageResult();
+    if (!resultImage)
         return;
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
 
     RefPtr<CanvasPixelArray> srcPixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = in->resultImage()->getUnmultipliedImageData(effectDrawingRect)->data();
+        srcPixelArray = in->asUnmultipliedImage(effectDrawingRect)->data();
     else
-        srcPixelArray = in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data();
+        srcPixelArray = in->asPremultipliedImage(effectDrawingRect)->data();
 
-    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-
+    IntSize paintSize = absolutePaintRect().size();
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();
-    paintingData.dstPixelArray = imageData->data();
-    paintingData.width = imageRect.width();
-    paintingData.height = imageRect.height();
+    paintingData.dstPixelArray = resultImage->data();
+    paintingData.width = paintSize.width();
+    paintingData.height = paintSize.height();
     paintingData.bias = m_bias * 255;
 
     // Drawing fully covered pixels
-    int clipRight = imageRect.width() - m_kernelSize.width();
-    int clipBottom = imageRect.height() - m_kernelSize.height();
+    int clipRight = paintSize.width() - m_kernelSize.width();
+    int clipBottom = paintSize.height() - m_kernelSize.height();
 
     if (clipRight >= 0 && clipBottom >= 0) {
         setInteriorPixels(paintingData, clipRight, clipBottom);
@@ -408,22 +413,17 @@ void FEConvolveMatrix::apply()
         clipRight += m_targetOffset.x() + 1;
         clipBottom += m_targetOffset.y() + 1;
         if (m_targetOffset.y() > 0)
-            setOuterPixels(paintingData, 0, 0, imageRect.width(), m_targetOffset.y());
-        if (clipBottom < imageRect.height())
-            setOuterPixels(paintingData, 0, clipBottom, imageRect.width(), imageRect.height());
+            setOuterPixels(paintingData, 0, 0, paintSize.width(), m_targetOffset.y());
+        if (clipBottom < paintSize.height())
+            setOuterPixels(paintingData, 0, clipBottom, paintSize.width(), paintSize.height());
         if (m_targetOffset.x() > 0)
             setOuterPixels(paintingData, 0, m_targetOffset.y(), m_targetOffset.x(), clipBottom);
-        if (clipRight < imageRect.width())
-            setOuterPixels(paintingData, clipRight, m_targetOffset.y(), imageRect.width(), clipBottom);
+        if (clipRight < paintSize.width())
+            setOuterPixels(paintingData, clipRight, m_targetOffset.y(), paintSize.width(), clipBottom);
     } else {
         // Rare situation, not optimizied for speed
-        setOuterPixels(paintingData, 0, 0, imageRect.width(), imageRect.height());
+        setOuterPixels(paintingData, 0, 0, paintSize.width(), paintSize.height());
     }
-
-    if (m_preserveAlpha)
-        resultImage()->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());
-    else
-        resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEConvolveMatrix::dump()

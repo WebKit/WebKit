@@ -331,19 +331,22 @@ bool FELighting::drawLighting(ByteArray* pixels, int width, int height)
 
 void FELighting::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    if (!effectContext())
+    ImageData* resultImage = createUnmultipliedImageResult();
+    if (!resultImage)
         return;
 
     setIsAlphaImage(false);
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageData = in->resultImage()->getUnmultipliedImageData(effectDrawingRect);
-    ByteArray* srcPixelArray = srcImageData->data()->data();
+    in->copyUnmultipliedImage(resultImage, effectDrawingRect);
+    ByteArray* srcPixelArray = resultImage->data()->data();
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
@@ -351,8 +354,7 @@ void FELighting::apply()
     // Anyway, feConvolveMatrix should also use the implementation
 
     IntSize absolutePaintSize = absolutePaintRect().size();
-    if (drawLighting(srcPixelArray, absolutePaintSize.width(), absolutePaintSize.height()))
-        resultImage()->putUnmultipliedImageData(srcImageData.get(), IntRect(IntPoint(), absolutePaintSize), IntPoint());
+    drawLighting(srcPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
 }
 
 } // namespace WebCore

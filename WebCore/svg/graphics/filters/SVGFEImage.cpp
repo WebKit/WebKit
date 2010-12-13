@@ -59,8 +59,8 @@ void FEImage::apply()
     if (!m_image.get())
         return;
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
     FloatRect srcRect(FloatPoint(), m_image->size());
@@ -70,7 +70,7 @@ void FEImage::apply()
     IntPoint paintLocation = absolutePaintRect().location();
     destRect.move(-paintLocation.x(), -paintLocation.y());
 
-    filterContext->drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+    resultImage->context()->drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 void FEImage::dump()

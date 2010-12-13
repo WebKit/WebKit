@@ -50,13 +50,12 @@ class FilterEffect : public RefCounted<FilterEffect> {
 public:
     virtual ~FilterEffect();
 
-    // The result is bounded to the size of the filter primitive to save resources.
-    ImageBuffer* resultImage() const { return m_effectBuffer.get(); }
-    void setEffectBuffer(PassOwnPtr<ImageBuffer> effectBuffer) { m_effectBuffer = effectBuffer; }
-
-    // Creates the ImageBuffer for the current filter primitive result in the size of the
-    // repaintRect. Gives back the GraphicsContext of the own ImageBuffer.
-    GraphicsContext* effectContext();
+    bool hasResult() const { return m_imageBufferResult || m_unmultipliedImageResult || m_premultipliedImageResult; }
+    ImageBuffer* asImageBuffer();
+    PassRefPtr<ImageData> asUnmultipliedImage(const IntRect&);
+    PassRefPtr<ImageData> asPremultipliedImage(const IntRect&);
+    void copyUnmultipliedImage(ImageData* destination, const IntRect&);
+    void copyPremultipliedImage(ImageData* destination, const IntRect&);
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
@@ -110,8 +109,14 @@ public:
 protected:
     FilterEffect(Filter*);
 
+    ImageBuffer* createImageBufferResult();
+    ImageData* createUnmultipliedImageResult();
+    ImageData* createPremultipliedImageResult();
+
 private:
-    OwnPtr<ImageBuffer> m_effectBuffer;
+    OwnPtr<ImageBuffer> m_imageBufferResult;
+    RefPtr<ImageData> m_unmultipliedImageResult;
+    RefPtr<ImageData> m_premultipliedImageResult;
     FilterEffectVector m_inputEffects;
 
     bool m_alphaImage;
@@ -124,6 +129,8 @@ private:
     Filter* m_filter;
 
 private:
+    inline void copyImageBytes(ImageData* source, ImageData* destination, const IntRect&);
+
     // The following member variables are SVG specific and will move to RenderSVGResourceFilterPrimitive.
     // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
 

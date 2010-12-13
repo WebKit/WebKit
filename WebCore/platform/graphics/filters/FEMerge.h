@@ -20,7 +20,7 @@
  */
 
 #ifndef FEMerge_h
-#define EMerge_h
+#define FEMerge_h
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"

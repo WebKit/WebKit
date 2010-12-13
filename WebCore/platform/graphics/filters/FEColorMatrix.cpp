@@ -150,19 +150,21 @@ void effectType(ByteArray* pixelArray, const Vector<float>& values)
 
 void FEColorMatrix::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
 
-    filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+    resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
-    RefPtr<ImageData> imageData = resultImage()->getUnmultipliedImageData(imageRect);
+    IntRect imageRect(IntPoint(), absolutePaintRect().size());
+    RefPtr<ImageData> imageData = resultImage->getUnmultipliedImageData(imageRect);
     ByteArray* pixelArray = imageData->data()->data();
 
     switch (m_type) {
@@ -183,7 +185,7 @@ void FEColorMatrix::apply()
             break;
     }
 
-    resultImage()->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());
+    resultImage->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEColorMatrix::dump()

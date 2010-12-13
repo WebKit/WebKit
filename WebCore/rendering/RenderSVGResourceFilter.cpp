@@ -293,14 +293,14 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
             filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
             lastEffect->apply();
 #if !PLATFORM(CG)
-            ImageBuffer* resultImage = lastEffect->resultImage();
+            ImageBuffer* resultImage = lastEffect->asImageBuffer();
             if (resultImage)
                 resultImage->transformColorSpace(ColorSpaceLinearRGB, ColorSpaceDeviceRGB);
 #endif
             filterData->builded = true;
         }
 
-        ImageBuffer* resultImage = lastEffect->resultImage();
+        ImageBuffer* resultImage = lastEffect->asImageBuffer();
         if (resultImage) {
             context->concatCTM(filterData->shearFreeAbsoluteTransform.inverse());
 

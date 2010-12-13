@@ -52,14 +52,17 @@ void SourceAlpha::determineAbsolutePaintRect()
 
 void SourceAlpha::apply()
 {
-    GraphicsContext* filterContext = effectContext();
+    if (hasResult())
+        return;
+    ImageBuffer* resultImage = createImageBufferResult();
     Filter* filter = this->filter();
-    if (!filterContext || !filter->sourceImage())
+    if (!resultImage || !filter->sourceImage())
         return;
 
     setIsAlphaImage(true);
 
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
+    GraphicsContext* filterContext = resultImage->context();
     filterContext->save();
     filterContext->clipToImageBuffer(filter->sourceImage(), imageRect);
     filterContext->fillRect(imageRect, Color::black, ColorSpaceDeviceRGB);

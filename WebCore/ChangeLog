@@ -1,3 +1,78 @@
+2010-12-13  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Better result passing in filter primitives
+        https://bugs.webkit.org/show_bug.cgi?id=49907
+
+        SVG filter primitives can use the output of other filters. The
+        input and output format of a filter can be a premultiplied or
+        unmultiplied RGBA array, or an image buffer. All filter
+        primitive results were converted to image buffers before, which
+        could be an unecessary (and really costly) operation, if
+        a filter expects its input in the same format as the output
+        of the input filter primitive. This overhead is removed by
+        this patch. All apply() methods are updated according to this
+        new filter primitive interface.
+
+        Filters do not generate their results twice (or more) anymore,
+        when their apply() called multiple times.
+
+        The existing tests cover this feature.
+
+        * manual-tests/svg-filter-animation.svg: Added.
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::apply):
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::apply):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply):
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::apply):
+        * platform/graphics/filters/FEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * platform/graphics/filters/FEMerge.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::apply):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::apply):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::requestedRegionOfInputImageData):
+        (WebCore::FilterEffect::asImageBuffer):
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        (WebCore::FilterEffect::copyImageBytes):
+        (WebCore::FilterEffect::copyUnmultipliedImage):
+        (WebCore::FilterEffect::copyPremultipliedImage):
+        (WebCore::FilterEffect::createImageBufferResult):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::hasResult):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/filters/SourceGraphic.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::apply):
+
 2010-12-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

@@ -137,52 +137,55 @@ void FEComposite::determineAbsolutePaintRect()
 
 void FEComposite::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
     in->apply();
     in2->apply();
-    if (!in->resultImage() || !in2->resultImage())
+    if (!in->hasResult() || !in2->hasResult())
         return;
 
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    ImageBuffer* resultImage = createImageBufferResult();
+    if (!resultImage)
         return;
+    GraphicsContext* filterContext = resultImage->context();
 
     FloatRect srcRect = FloatRect(0, 0, -1, -1);
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext->drawImageBuffer(in2->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
     case FECOMPOSITE_OPERATOR_IN:
         filterContext->save();
-        filterContext->clipToImageBuffer(in2->resultImage(), drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->clipToImageBuffer(in2->asImageBuffer(), drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
         filterContext->restore();
         break;
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext->drawImageBuffer(in2->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()), srcRect, CompositeDestinationOut);
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()), srcRect, CompositeDestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext->drawImageBuffer(in2->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeSourceAtop);
+        filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeSourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext->drawImageBuffer(in2->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeXOR);
+        filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeXOR);
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC: {
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        RefPtr<ImageData> srcImageData = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
+        RefPtr<ImageData> srcImageData = in->asImageBuffer()->getPremultipliedImageData(effectADrawingRect);
         ByteArray* srcPixelArrayA = srcImageData->data()->data();
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        RefPtr<ImageData> imageData = in2->resultImage()->getPremultipliedImageData(effectBDrawingRect);
+        RefPtr<ImageData> imageData = in2->asImageBuffer()->getPremultipliedImageData(effectBDrawingRect);
         ByteArray* srcPixelArrayB = imageData->data()->data();
 
         arithmetic(srcPixelArrayA, srcPixelArrayB, m_k1, m_k2, m_k3, m_k4);
-        resultImage()->putPremultipliedImageData(imageData.get(), IntRect(IntPoint(), resultImage()->size()), IntPoint());
+        resultImage->putPremultipliedImageData(imageData.get(), IntRect(IntPoint(), resultImage->size()), IntPoint());
         }
         break;
     default:

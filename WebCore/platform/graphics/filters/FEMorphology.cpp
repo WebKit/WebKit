@@ -91,12 +91,15 @@ void FEMorphology::setRadiusY(float radiusY)
 
 void FEMorphology::apply()
 {
+    if (hasResult())
+        return;
     FilterEffect* in = inputEffect(0);
     in->apply();
-    if (!in->resultImage())
+    if (!in->hasResult())
         return;
 
-    if (!effectContext())
+    ImageData* resultImage = createPremultipliedImageResult();
+    if (!resultImage)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -107,12 +110,10 @@ void FEMorphology::apply()
     int radiusX = static_cast<int>(floorf(filter->applyHorizontalScale(m_radiusX)));
     int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
 
-    IntRect imageRect(IntPoint(), resultImage()->size());
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageData = in->resultImage()->getPremultipliedImageData(effectDrawingRect);
+    RefPtr<ImageData> srcImageData = in->asPremultipliedImage(effectDrawingRect);
     ByteArray* srcPixelArray = srcImageData->data()->data();
-    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    ByteArray* dstPixelArray = imageData->data()->data();
+    ByteArray* dstPixelArray = resultImage->data()->data();
 
     int effectWidth = effectDrawingRect.width() * 4;
     
@@ -162,7 +163,6 @@ void FEMorphology::apply()
             }
         }
     }
-    resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEMorphology::dump()
