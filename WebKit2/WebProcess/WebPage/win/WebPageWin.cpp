@@ -205,9 +205,6 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         else
             m_page->goBack();
         break;
-    case VK_SPACE:
-        logicalScroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward, ScrollByPage);
-        break;
     case VK_LEFT:
         scroll(m_page.get(), ScrollLeft, ScrollByLine);
         break;

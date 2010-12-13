@@ -2719,8 +2719,8 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent*)
 
 void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
 {
-    ScrollDirection direction = event->shiftKey() ? ScrollUp : ScrollDown;
-    if (scrollOverflow(direction, ScrollByPage)) {
+    ScrollLogicalDirection direction = event->shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
+    if (logicalScrollOverflow(direction, ScrollByPage)) {
         event->setDefaultHandled();
         return;
     }
@@ -2729,7 +2729,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
     if (!view)
         return;
 
-    if (view->scroll(direction, ScrollByPage))
+    if (view->logicalScroll(direction, ScrollByPage))
         event->setDefaultHandled();
 }
 
