@@ -63,6 +63,7 @@
 #include <SetNodeAttributeCommand.cpp>
 #include <SmartReplace.cpp>
 #include <SmartReplaceCF.cpp>
+#include <SpellChecker.cpp>
 #include <SplitElementCommand.cpp>
 #include <SplitTextNodeCommand.cpp>
 #include <SplitTextNodeContainingElementCommand.cpp>

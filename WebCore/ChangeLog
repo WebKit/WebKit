@@ -2,6 +2,13 @@
 
         Unreviewed build fix.
 
+        * editing/EditingAllInOne.cpp:
+        Add new file to the all-in-one.
+
+2010-12-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Unreviewed build fix.
+
         * WebCore.vcproj/WebCore.vcproj:
         Remove accidentally-committed conflict marker.
 
