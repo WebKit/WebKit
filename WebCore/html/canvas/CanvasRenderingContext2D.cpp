@@ -1756,6 +1756,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
     if (!state().m_invertibleCTM)
         return;
+    if (!isfinite(x) | !isfinite(y))
+        return;
 
     const Font& font = accessFont();
 

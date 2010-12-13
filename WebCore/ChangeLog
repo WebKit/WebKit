@@ -1,3 +1,19 @@
+2010-12-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] canvas/philip/tests/2d.missingargs.html hangs on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=50841
+
+        Test: fast/canvas/strokeText-missing-args.html
+        
+        We didn't have isfinite checks for the x and y coordinates that are
+        passed to strokeText/drawTextInternal (unlike all the other methods,
+        which got checks in r50910 and r59447).
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
 2010-12-09  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
