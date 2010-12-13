@@ -4,6 +4,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Updated chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-13  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

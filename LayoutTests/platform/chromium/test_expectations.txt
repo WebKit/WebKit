@@ -3261,4 +3261,4 @@ BUG66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT
 BUG66554 WIN DEBUG : fast/js/kde/encode_decode_uri.html = CRASH PASS
 
 BUG66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
-BUG66682 WIN LINUX MAC SLOW : editing/spelling/spellcheck-paste.html = TEXT TIMEOUT
+BUG66682 WIN LINUX MAC : editing/spelling/spellcheck-paste.html = TEXT TIMEOUT
