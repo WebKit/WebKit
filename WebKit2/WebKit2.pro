@@ -239,7 +239,6 @@ HEADERS += \
     Shared/ChildProcess.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
-    Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
     Shared/MutableArray.h \

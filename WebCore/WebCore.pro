@@ -1975,7 +1975,6 @@ HEADERS += \
     loader/NetscapePlugInStreamLoader.h \
     loader/PlaceholderDocument.h \
     loader/ProgressTracker.h \
-    loader/Request.h \
     loader/ResourceLoader.h \
     loader/SubresourceLoader.h \
     loader/TextResourceDecoder.h \

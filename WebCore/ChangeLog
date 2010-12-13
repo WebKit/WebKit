@@ -1,3 +1,9 @@
+2010-12-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        * WebCore.pro: Remove non-existant loader/Request.h from build system.
+
 2010-12-13  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Eric Seidel.

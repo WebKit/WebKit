@@ -1,3 +1,9 @@
+2010-12-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        * WebKit2.pro: Remove non-existant Shared/DrawingAreaBase.h from build system.
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
