@@ -1,3 +1,19 @@
+2010-12-13  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Reduce canvas.toDataURL("image/jpeg") run-time cost by 10%
+        https://bugs.webkit.org/show_bug.cgi?id=50804
+
+        Follow on from r73173, unroll the SkUnPreMultiply::PMColorToColor() call
+        viz., compute the unpremultiplatcion in-place. This reduces the run-time
+        cost of jpeg encoding by 10-15% for my image test set.
+
+        No new tests: canvas.toDataURL() is covered by existing tests.
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGB):
+
 2010-12-13  Helder Correia  <helder@sencha.com>
 
         Reviewed by Eric Seidel.

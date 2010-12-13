@@ -34,6 +34,7 @@
 #include "IntSize.h"
 #include "SkBitmap.h"
 #include "SkUnPreMultiply.h"
+#include "SkColorPriv.h"
 extern "C" {
 #include <stdio.h> // jpeglib.h needs stdio.h FILE
 #include "jpeglib.h"
@@ -82,11 +83,19 @@ static void handleError(j_common_ptr common)
 // be ignored? See bug http://webkit.org/b/40147.
 void preMultipliedBGRAtoRGB(const SkPMColor* input, unsigned int pixels, unsigned char* output)
 {
-    while (pixels-- > 0) {
-        SkColor unmultiplied = SkUnPreMultiply::PMColorToColor(*input++);
-        *output++ = SkColorGetR(unmultiplied);
-        *output++ = SkColorGetG(unmultiplied);
-        *output++ = SkColorGetB(unmultiplied);
+    static const SkUnPreMultiply::Scale* scale = SkUnPreMultiply::GetScaleTable();
+
+    for (; pixels-- > 0; ++input) {
+        const unsigned alpha = SkGetPackedA32(*input);
+        if ((alpha != 0) && (alpha != 255)) {
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedR32(*input));
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedG32(*input));
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedB32(*input));
+        } else {
+            *output++ = SkGetPackedR32(*input);
+            *output++ = SkGetPackedG32(*input);
+            *output++ = SkGetPackedB32(*input);
+        }
     }
 }
 
