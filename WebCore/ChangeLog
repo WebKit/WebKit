@@ -1,3 +1,21 @@
+2010-12-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Additional support is needed for caret browsing
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+
+        Enable "MoveTo{Beginninng|End}OfDocument" commands when caret
+        browsing is enabled.
+
+        This change impacts the GTK-port only as caret browsing is a
+        feature only used in that platform so far.
+
+        Test: platform/gtk/editing/selection/caret-mode-document-begin-end.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap): Enable the commads when in caret browsing.
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Qt build fix.

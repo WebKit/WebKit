@@ -1,3 +1,16 @@
+2010-12-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Additional support is needed for caret browsing
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+
+        New layout test to check the "MoveTo{Beginninng|End}OfDocument"
+        commands when caret browsing is enabled.
+
+        * platform/gtk/editing/selection/caret-mode-document-begin-end-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-mode-document-begin-end.html: Added.
+
 2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

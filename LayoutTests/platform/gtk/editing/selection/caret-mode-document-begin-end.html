@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="startHere">
+  First text line.<br />
+  Second text line.<br />
+  Third text line.
+</div>
+<p>A paragraph to finish.</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests direct navigation to the begin and end of the document in caret mode.");
+
+if (window.layoutTestController) {
+  layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
+  layoutTestController.dumpAsText();
+  layoutTestController.dumpEditingCallbacks();
+
+  startPoint = document.getElementById("startHere");
+  window.getSelection().setPosition(startPoint.childNodes.item(0), 5);
+
+  // Move to the beginning and the end of the document.
+  layoutTestController.execCommand("MoveToBeginningOfDocument");
+  layoutTestController.execCommand("MoveToEndOfDocument");
+
+  // Try the same commands modifying the selection.
+  layoutTestController.execCommand("MoveToBeginningOfDocumentAndModifySelection");
+  window.getSelection().setPosition(startPoint.childNodes.item(0), 5);
+  layoutTestController.execCommand("MoveToEndOfDocumentAndModifySelection");
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
