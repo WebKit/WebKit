@@ -1,56 +1,11 @@
 Choose a shipping method:
 Overnight
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 2>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {780, 54}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: <AXGroup>
-AXAccessKey: (null)
-AXRequired: 0
+This tests that a fieldset's title ui element is the legend's static text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
------------------------------
-
-AXRole: AXStaticText
-AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXStaticText>
-AXSize: NSSize: {172, 18}
-AXTitle: 
-AXDescription: 
-AXValue: Choose a shipping method:
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXStaticText>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
-
-------------
-
-
+PASS titleUIElement.role is 'AXRole: AXGroup'
+PASS titleUIElement.childAtIndex(0).role is 'AXRole: AXStaticText'
+PASS titleUIElement.childAtIndex(0).stringValue is 'AXValue: Choose a shipping method:'
 

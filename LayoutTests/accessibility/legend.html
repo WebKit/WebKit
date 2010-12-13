@@ -1,35 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+var successfullyParsed = false;
 </script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
 <body id="body">
- 
-    <!-- this test should output the attributes of the fieldset which should be a group
-         and it's title ui element's children, which should be the <legend> tag's static text -->
 
-    <fieldset>
-        <legend>Choose a shipping method:</legend>
-        <input id="overnight" type="radio" name="shipping" value="overnight" />Overnight
-    </fieldset>
+<fieldset>
+    <legend>Choose a shipping method:</legend>
+    <input id="overnight" type="radio" name="shipping" value="overnight" />Overnight
+</fieldset>
 
-    
-    <div id="result"></div>
+<p id="description"></p>
+<div id="console"></div>
 
-     
-    <script>
+<script>
+
+    description("This tests that a fieldset's title ui element is the legend's static text.");
+    if (window.accessibilityController) {
+
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
 
             var body = document.getElementById("body");
             body.focus();
+
             var fieldset = accessibilityController.focusedElement.childAtIndex(0);
             var titleUIElement = fieldset.titleUIElement();
-
-            result.innerText += fieldset.allAttributes() + "\n\n";
-            result.innerText += "-----------------------------\n\n"; 
-            result.innerText += titleUIElement.attributesOfChildren() + "\n\n"; 
+            shouldBe("titleUIElement.role", "'AXRole: AXGroup'");
+            shouldBe("titleUIElement.childAtIndex(0).role", "'AXRole: AXStaticText'");
+            shouldBe("titleUIElement.childAtIndex(0).stringValue", "'AXValue: Choose a shipping method:'");
         }
-    </script>
+    }
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
