@@ -1,3 +1,11 @@
+2010-12-13  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by nobody, build fix.
+
+        Unlinking IOSurface framework from xcodeproj.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-12-13  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dimitri Glazkov.
