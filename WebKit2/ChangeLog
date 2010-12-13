@@ -1,3 +1,87 @@
+2010-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Change the WebKit2 public API so there is no explicit WKPageNamespace object
+        https://bugs.webkit.org/show_bug.cgi?id=50898
+
+        * Shared/API/c/WKBase.h: Remove definition of WKPageNamespaceRef.
+        * UIProcess/API/C/WKAPICast.h: Remove toAPI/toImpl for WKPageNamespaceRef.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        Replace WKPageGetPageNamespace with WKPageGetContext.
+
+        * UIProcess/API/C/WKPageNamespace.cpp: Removed.
+        * UIProcess/API/C/WKPageNamespace.h: Removed.
+
+        * UIProcess/API/C/WebKit2.h: Remove #include of WKPageNamespace.h.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate): Changed to take a WKContextRef instead of a WKPageNamespaceRef.
+        (WKViewCreateUsingSharedProcess): Added. Similar to WKViewCreate except that
+        all callers of it will have their views end up in the same shared process, whereas 
+        with WKViewCreate, a new internal page namespace will be created and could place
+        the view's WebPage into a new process.
+        (WKViewCreateForAssociatedPage): Added. Creates a view that is forced to use the
+        same process as the passed in page.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::initialize):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::create):
+        (WebKit::WebView::createUsingSharedProcess):
+        (WebKit::WebView::createForAssociatedPage):
+        Implementation of the WKView create functions.
+
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:]):
+        (-[WKView initWithFrame:contextRef:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView initWithFrame:contextRef:usingSharedProcess:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:usingSharedProcess:]):
+        (-[WKView initWithFrame:forAssociatedPageRef:]):
+        (-[WKView initWithFrame:forAssociatedPageRef:pageGroupRef:]):
+        (-[WKView initWithFrame:pageNamespace:pageGroup:]):
+        Add new initializers for the objective-c WKView. It follows the same
+        pattern as WKViewRef.
+
+        * UIProcess/API/qt/qwkcontext.cpp:
+        (QWKContext::QWKContext):
+        * UIProcess/API/qt/qwkcontext.h:
+        Remove uses of WKPageNamespaceRef.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::sharedPageNamespace): Returns a shared
+        page namespace used by the view's createUsingSharedProcess constructions.
+        (WebKit::WebContext::createPageNamespace): Change to return
+        a PassRefPtr to make things clearer.
+        (WebKit::WebContext::pageNamespaceWasDestroyed): Clear the shared
+        namespace if it is cleared.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/WebPageNamespace.h: Remove unused "struct WKContextStatistics".
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::context):
+        * UIProcess/WebPageProxy.h:
+        Add context getter.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Use forAssociatedPageRef constructor for the WebInspector view.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Remove WKPageNamespace.h/cpp.
+
 2010-12-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.

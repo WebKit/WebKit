@@ -51,7 +51,6 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKNavigationData.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKPage.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKPageGroup.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
-    xcopy /y /d "..\UIProcess\API\C\WKPageNamespace.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKPreferences.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKPreferencesPrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKProtectionSpace.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

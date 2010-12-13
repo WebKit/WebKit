@@ -50,7 +50,6 @@ public:
     WKStringRef testPluginDirectory() { return m_testPluginDirectory.get(); }
 
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
-    WKPageNamespaceRef pageNamespace() { return m_pageNamespace.get(); }
     WKContextRef context() { return m_context.get(); }
 
     // Runs the run loop until `done` is true or the timeout elapses.
@@ -96,9 +95,8 @@ private:
 
     OwnPtr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
-    WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
-    
+
     enum State {
         Initial,
         Resetting,

@@ -50,15 +50,23 @@ QWKContext::QWKContext(QObject* parent)
     , d(new QWKContextPrivate(this))
 {
     d->context = WebContext::create(String());
-    d->pageNamespace = d->context->createPageNamespace();
+    d->pageNamespace = d->context->sharedPageNamespace();
 }
 
-QWKContext::QWKContext(WKPageNamespaceRef pageNamespaceRef, QObject* parent)
+QWKContext::QWKContext(WKContextRef contextRef, QObject* parent)
     : QObject(parent)
     , d(new QWKContextPrivate(this))
 {
-    d->pageNamespace = toImpl(pageNamespaceRef);
-    d->context = d->pageNamespace->context();
+    d->context = toImpl(contextRef);
+    d->pageNamespace = d->context->sharedPageNamespace();
+}
+
+QWKContext::QWKContext(WKPageRef pageRef, QObject* parent)
+    : QObject(parent)
+    , d(new QWKContextPrivate(this))
+{
+    d->context = toImpl(pageRef)->context();
+    d->pageNamespace = d->context->sharedPageNamespace();
 }
 
 QWKContext::~QWKContext()

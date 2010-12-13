@@ -54,7 +54,6 @@ class WebFrameProxy;
 class WebInspectorProxy;
 class WebNavigationData;
 class WebPageGroup;
-class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
 class WebProtectionSpace;
@@ -70,15 +69,15 @@ WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)
 WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
-#if ENABLE(INSPECTOR)
-WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
-#endif
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
 WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
-WK_ADD_API_MAPPING(WKPageNamespaceRef, WebPageNamespace)
 WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
+
+#if ENABLE(INSPECTOR)
+WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
+#endif
 
 /* Enum conversions */
 

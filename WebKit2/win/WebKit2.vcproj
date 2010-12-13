@@ -2281,14 +2281,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKPageNamespace.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKPageNamespace.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKPagePrivate.h"
 						>
 					</File>

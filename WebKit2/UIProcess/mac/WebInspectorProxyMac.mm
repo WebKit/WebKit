@@ -78,10 +78,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_page);
     ASSERT(!m_inspectorView);
 
-    m_inspectorView.adoptNS([[WKView alloc] initWithFrame:NSZeroRect pageNamespaceRef:toAPI(m_page->pageNamespace()) pageGroupRef:toAPI(inspectorPageGroup())]);
+    m_inspectorView.adoptNS([[WKView alloc] initWithFrame:NSZeroRect forAssociatedPageRef:toAPI(page()) pageGroupRef:toAPI(inspectorPageGroup())]);
     ASSERT(m_inspectorView);
 
-    return toImpl([m_inspectorView.get() pageRef]);
+    return toImpl(m_inspectorView.get().pageRef);
 }
 
 void WebInspectorProxy::platformOpen()

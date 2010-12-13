@@ -29,10 +29,24 @@
 
 namespace TestWebKitAPI {
 
-PlatformWebView::PlatformWebView(WKPageNamespaceRef pageNamespaceRef, WKPageGroupRef pageGroupRef)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     NSRect rect = NSMakeRect(0, 0, 800, 600);
-    m_view = [[WKView alloc] initWithFrame:rect pageNamespaceRef:pageNamespaceRef pageGroupRef:pageGroupRef];
+    m_view = [[WKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef];
+
+    NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
+    m_window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+    [m_window setColorSpace:[[NSScreen mainScreen] colorSpace]];
+    [[m_window contentView] addSubview:m_view];
+    [m_window orderBack:nil];
+    [m_window setAutodisplay:NO];
+    [m_window setReleasedWhenClosed:NO];
+}
+
+PlatformWebView::PlatformWebView(WKPageRef pageRef, WKPageGroupRef pageGroupRef)
+{
+    NSRect rect = NSMakeRect(0, 0, 800, 600);
+    m_view = [[WKView alloc] initWithFrame:rect forAssociatedPageRef:pageRef pageGroupRef:pageGroupRef];
 
     NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     m_window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];

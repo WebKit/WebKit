@@ -53,7 +53,6 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 TEST(WebKit2, InjectedBundleBasic)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleBasicTest"));
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
 
     WKContextInjectedBundleClient injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -62,7 +61,7 @@ TEST(WebKit2, InjectedBundleBasic)
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient);
  
-    PlatformWebView webView(pageNamespace.get());
+    PlatformWebView webView(context.get());
 
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

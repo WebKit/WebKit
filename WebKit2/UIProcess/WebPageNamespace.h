@@ -31,8 +31,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-struct WKContextStatistics;
-
 namespace WebKit {
 
 class WebContext;

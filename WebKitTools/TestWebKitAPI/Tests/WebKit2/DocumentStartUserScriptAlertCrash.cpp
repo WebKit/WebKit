@@ -48,8 +48,7 @@ TEST(WebKit2, DocumentStartUserScriptAlertCrashTest)
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
 
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest", pageGroup.get()));
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-    PlatformWebView webView(pageNamespace.get(), pageGroup.get());
+    PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClient uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

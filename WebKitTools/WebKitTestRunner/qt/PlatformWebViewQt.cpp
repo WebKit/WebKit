@@ -33,7 +33,8 @@ namespace WTR {
 
 class WebView : public QGraphicsView {
 public:
-    WebView(WKPageNamespaceRef);
+    WebView(WKContextRef);
+    WebView(WKPageRef);
 
     QGraphicsWKView* wkView() const { return m_item; }
 
@@ -43,16 +44,33 @@ private:
     QGraphicsWKView* m_item;
 };
 
-WebView::WebView(WKPageNamespaceRef namespaceRef)
+WebView::WebView(WKContextRef contextRef)
     : QGraphicsView()
-    , m_item(new QGraphicsWKView(new QWKContext(namespaceRef, this)))
+    , m_item(new QGraphicsWKView(new QWKContext(contextRef, this)))
 {
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 }
 
-PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef, WKPageGroupRef)
-    : m_view(new WebView(namespaceRef))
+WebView::WebView(WKPageRef pageRef)
+    : QGraphicsView()
+    , m_item(new QGraphicsWKView(new QWKContext(pageRef, this)))
+{
+    setScene(new QGraphicsScene(this));
+    scene()->addItem(m_item);
+}
+
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef)
+    : m_view(new WebView(contextRef))
+    , m_window(new QMainWindow())
+{
+    m_view->setParent(m_window);
+    m_window->setCentralWidget(m_view);
+    m_window->setGeometry(0, 0, 800, 600);
+}
+
+PlatformWebView::PlatformWebView(WKPageRef pageRef, WKPageGroupRef)
+    : m_view(new WebView(pageRef))
     , m_window(new QMainWindow())
 {
     m_view->setParent(m_window);

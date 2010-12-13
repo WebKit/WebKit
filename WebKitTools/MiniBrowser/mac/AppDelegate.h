@@ -30,12 +30,12 @@ enum ProcessModel {
 typedef unsigned long ProcessModel;
 
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
-    ProcessModel currentProcessModel;
-    WKPageNamespaceRef threadPageNamespace;
-    WKPageNamespaceRef processPageNamespace;
+    ProcessModel _currentProcessModel;
+    WKContextRef _threadContext;
+    WKContextRef _processContext;
 }
 
-- (WKPageNamespaceRef)getCurrentPageNamespace;
+- (WKContextRef)getCurrentContext;
 
 - (IBAction)setSharedProcessProcessModel:(id)sender;
 - (IBAction)setSharedThreadProcessModel:(id)sender;

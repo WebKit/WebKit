@@ -114,9 +114,9 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
     self = [super init];
     if (self) {
         if ([NSEvent modifierFlags] & NSShiftKeyMask)
-            currentProcessModel = kProcessModelSharedSecondaryThread;
+            _currentProcessModel = kProcessModelSharedSecondaryThread;
         else
-            currentProcessModel = kProcessModelSharedSecondaryProcess;
+            _currentProcessModel = kProcessModelSharedSecondaryProcess;
 
         WKContextHistoryClient historyClient = {
             0,
@@ -128,17 +128,14 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             populateVisitedLinks
         };
 
-        WKContextRef threadContext = WKContextGetSharedThreadContext();
-        WKContextSetHistoryClient(threadContext, &historyClient);
-        WKContextSetCacheModel(threadContext, kWKCacheModelPrimaryWebBrowser);
-
-        threadPageNamespace = WKPageNamespaceCreate(threadContext);
-        WKRelease(threadContext);
+        _threadContext = WKContextGetSharedThreadContext();
+        WKContextSetHistoryClient(_threadContext, &historyClient);
+        WKContextSetCacheModel(_threadContext, kWKCacheModelPrimaryWebBrowser);
 
         CFStringRef bundlePathCF = (CFStringRef)[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"WebBundle.bundle"];
         WKStringRef bundlePath = WKStringCreateWithCFString(bundlePathCF);
 
-        WKContextRef processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
+        _processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
         
         WKContextInjectedBundleClient bundleClient = {
             0,      /* version */
@@ -146,12 +143,9 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             didRecieveMessageFromInjectedBundle,
             0
         };
-        WKContextSetInjectedBundleClient(processContext, &bundleClient);
-        WKContextSetHistoryClient(processContext, &historyClient);
-        WKContextSetCacheModel(processContext, kWKCacheModelPrimaryWebBrowser);
-
-        processPageNamespace = WKPageNamespaceCreate(processContext);
-        WKRelease(processContext);
+        WKContextSetInjectedBundleClient(_processContext, &bundleClient);
+        WKContextSetHistoryClient(_processContext, &historyClient);
+        WKContextSetCacheModel(_processContext, kWKCacheModelPrimaryWebBrowser);
 
         WKRelease(bundlePath);
     }
@@ -161,32 +155,32 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (IBAction)newWindow:(id)sender
 {
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:[self getCurrentPageNamespace]];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext]];
     [[controller window] makeKeyAndOrderFront:sender];
     
     [controller loadURLString:defaultURL];
 }
 
-- (WKPageNamespaceRef)getCurrentPageNamespace
+- (WKContextRef)getCurrentContext
 {
-    return (currentProcessModel == kProcessModelSharedSecondaryThread) ? threadPageNamespace : processPageNamespace;
+    return (_currentProcessModel == kProcessModelSharedSecondaryThread) ? _threadContext : _processContext;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     if ([menuItem action] == @selector(setSharedProcessProcessModel:))
-        [menuItem setState:currentProcessModel == kProcessModelSharedSecondaryProcess ? NSOnState : NSOffState];
+        [menuItem setState:_currentProcessModel == kProcessModelSharedSecondaryProcess ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(setSharedThreadProcessModel:))
-        [menuItem setState:currentProcessModel == kProcessModelSharedSecondaryThread ? NSOnState : NSOffState];
+        [menuItem setState:_currentProcessModel == kProcessModelSharedSecondaryThread ? NSOnState : NSOffState];
     return YES;
 }        
 
 - (void)_setProcessModel:(ProcessModel)processModel
 {
-    if (processModel == currentProcessModel)
+    if (processModel == _currentProcessModel)
         return;
  
-    currentProcessModel = processModel;
+    _currentProcessModel = processModel;
 }
 
 - (IBAction)setSharedProcessProcessModel:(id)sender
@@ -203,8 +197,8 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 {
     static BrowserStatisticsWindowController* windowController;
     if (!windowController)
-        windowController = [[BrowserStatisticsWindowController alloc] initWithThreadedWKContextRef:WKPageNamespaceGetContext(threadPageNamespace) 
-                                                                               processWKContextRef:WKPageNamespaceGetContext(processPageNamespace)];
+        windowController = [[BrowserStatisticsWindowController alloc] initWithThreadedWKContextRef:_threadContext
+                                                                               processWKContextRef:_processContext];
 
     [[windowController window] makeKeyAndOrderFront:self];
 }
@@ -224,12 +218,9 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             [controller applicationTerminating];
         }
     }
-    
-    WKRelease(threadPageNamespace);
-    threadPageNamespace = 0;
 
-    WKRelease(processPageNamespace);
-    processPageNamespace = 0;
+    WKRelease(_processContext);
+    _processContext = 0;
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -265,7 +256,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
     BrowserWindowController *controller = [self frontmostBrowserWindowController];
     if (!controller) {
-        controller = [[BrowserWindowController alloc] initWithPageNamespace:[self getCurrentPageNamespace]];
+        controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext]];
         [[controller window] makeKeyAndOrderFront:self];
     }
     

@@ -288,7 +288,6 @@ HEADERS += \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageGroup.h \
-    UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
@@ -488,7 +487,6 @@ SOURCES += \
     UIProcess/API/C/WKNavigationData.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageGroup.cpp \
-    UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKProtectionSpace.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \

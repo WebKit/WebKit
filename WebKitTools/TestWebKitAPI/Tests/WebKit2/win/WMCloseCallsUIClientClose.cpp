@@ -41,9 +41,7 @@ static void close(WKPageRef, const void*)
 TEST(WebKit2, WMCloseCallsUIClientClose)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-
-    PlatformWebView webView(pageNamespace.get());
+    PlatformWebView webView(context.get());
 
     WKPageUIClient uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

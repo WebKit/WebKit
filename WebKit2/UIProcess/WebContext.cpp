@@ -79,6 +79,7 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
+    , m_sharedNamespace(0)
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
@@ -228,15 +229,25 @@ void WebContext::relaunchProcessIfNecessary()
     ensureWebProcess();
 }
 
-WebPageNamespace* WebContext::createPageNamespace()
+WebPageNamespace* WebContext::sharedPageNamespace()
+{
+    if (!m_sharedNamespace)
+        m_sharedNamespace = createPageNamespace();
+    return m_sharedNamespace.get();
+}
+
+PassRefPtr<WebPageNamespace> WebContext::createPageNamespace()
 {
     RefPtr<WebPageNamespace> pageNamespace = WebPageNamespace::create(this);
     m_pageNamespaces.add(pageNamespace.get());
-    return pageNamespace.release().releaseRef();
+    return pageNamespace.release();
 }
 
 void WebContext::pageNamespaceWasDestroyed(WebPageNamespace* pageNamespace)
 {
+    if (pageNamespace == m_sharedNamespace)
+        m_sharedNamespace = 0;
+
     ASSERT(m_pageNamespaces.contains(pageNamespace));
     m_pageNamespaces.remove(pageNamespace);
 }

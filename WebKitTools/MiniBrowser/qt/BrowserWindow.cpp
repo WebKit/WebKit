@@ -28,8 +28,6 @@
 
 #include "BrowserWindow.h"
 
-#include "WKPageNamespace.h"
-
 BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
     : m_backingStoreType(type)
 {

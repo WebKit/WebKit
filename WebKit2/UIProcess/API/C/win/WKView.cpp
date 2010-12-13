@@ -35,9 +35,21 @@ WKTypeID WKViewGetTypeID()
     return toAPI(APIObject::TypeView);
 }
 
-WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
+WKViewRef WKViewCreate(RECT rect, WKContextRef contextRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
 {
-    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), toImpl(pageGroupRef), parentWindow);
+    RefPtr<WebView> view = WebView::create(rect, toImpl(contextRef), toImpl(pageGroupRef), parentWindow);
+    return toAPI(view.release().releaseRef());
+}
+
+WKViewRef WKViewCreateUsingSharedProcess(RECT rect, WKContextRef contextRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
+{
+    RefPtr<WebView> view = WebView::createUsingSharedProcess(rect, toImpl(contextRef), toImpl(pageGroupRef), parentWindow);
+    return toAPI(view.release().releaseRef());
+}
+
+WKViewRef WKViewCreateForAssociatedPage(RECT rect, WKPageRef pageRef, WKPageGroupRef pageGroupRef, HWND parentWindow)
+{
+    RefPtr<WebView> view = WebView::createForAssociatedPage(rect, toImpl(pageRef), toImpl(pageGroupRef), parentWindow);
     return toAPI(view.release().releaseRef());
 }
 

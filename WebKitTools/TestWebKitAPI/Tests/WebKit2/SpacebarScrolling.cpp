@@ -79,9 +79,7 @@ static bool runJSTest(WKPageRef page, const char* script, const char* expectedRe
 TEST(WebKit2, SpacebarScrolling)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-
-    PlatformWebView webView(pageNamespace.get());
+    PlatformWebView webView(context.get());
 
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

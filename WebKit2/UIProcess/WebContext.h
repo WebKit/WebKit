@@ -42,8 +42,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-struct WKContextStatistics;
-
 namespace WebKit {
 
 class DownloadProxy;
@@ -77,7 +75,8 @@ public:
 
     void relaunchProcessIfNecessary();
 
-    WebPageNamespace* createPageNamespace();
+    WebPageNamespace* sharedPageNamespace();
+    PassRefPtr<WebPageNamespace> createPageNamespace();
     void pageNamespaceWasDestroyed(WebPageNamespace*);
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
@@ -164,6 +163,7 @@ private:
     // FIXME: In the future, this should be one or more WebProcessProxies.
     RefPtr<WebProcessProxy> m_process;
 
+    RefPtr<WebPageNamespace> m_sharedNamespace;
     HashSet<WebPageNamespace*> m_pageNamespaces;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;

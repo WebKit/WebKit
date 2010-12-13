@@ -34,7 +34,7 @@
     
     IBOutlet NSWindow *findPanelWindow;
     
-    WKPageNamespaceRef _pageNamespace;
+    WKContextRef _context;
     WKView *_webView;
     BOOL _zoomTextOnly;
 }
@@ -47,7 +47,7 @@
 - (IBAction)showHideWebView:(id)sender;
 - (IBAction)removeReinsertWebView:(id)sender;
 
-- (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace;
+- (id)initWithContext:(WKContextRef)context;
 - (void)loadURLString:(NSString *)urlString;
 - (void)applicationTerminating;
 

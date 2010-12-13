@@ -33,15 +33,18 @@ WK_EXPORT
     WKViewData *_data;
 }
 
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef;
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
-- (WKPageRef)pageRef;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef usingSharedProcess:(BOOL)usingSharedProcess;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef usingSharedProcess:(BOOL)usingSharedProcess;;
 
-- (void)setDrawsBackground:(BOOL)flag;
-- (BOOL)drawsBackground;
+- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef;
+- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
-- (void)setDrawsTransparentBackground:(BOOL)flag;
-- (BOOL)drawsTransparentBackground;
+@property(readonly) WKPageRef pageRef;
+
+@property BOOL drawsBackground;
+@property BOOL drawsTransparentBackground;
 
 @end

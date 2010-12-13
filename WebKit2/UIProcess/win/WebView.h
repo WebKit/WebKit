@@ -41,9 +41,17 @@ class WebPageNamespace;
 
 class WebView : public APIObject, public PageClient, WebCore::WindowMessageListener {
 public:
-    static PassRefPtr<WebView> create(RECT rect, WebPageNamespace* pageNamespace, WebPageGroup* pageGroup, HWND parentWindow)
+    static PassRefPtr<WebView> create(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
     {
-        return adoptRef(new WebView(rect, pageNamespace, pageGroup, parentWindow));
+        return adoptRef(new WebView(rect, context, pageGroup, parentWindow, false));
+    }
+    static PassRefPtr<WebView> createUsingSharedProcess(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
+    {
+        return adoptRef(new WebView(rect, context, pageGroup, parentWindow, true));
+    }
+    static PassRefPtr<WebView> createForAssociatedPage(RECT rect, WebPageProxy* page, WebPageGroup* pageGroup, HWND parentWindow)
+    {
+        return adoptRef(new WebView(rect, page, pageGroup, parentWindow));
     }
     ~WebView();
 
@@ -58,7 +66,10 @@ public:
     WebPageProxy* page() const { return m_page.get(); }
 
 private:
-    WebView(RECT, WebPageNamespace*, WebPageGroup*, HWND parentWindow);
+    WebView(RECT, WebContext*, WebPageGroup*, HWND parentWindow, bool usingSharedProcess);
+    WebView(RECT, WebPageProxy*, WebPageGroup*, HWND parentWindow);
+
+    void initialize(WebPageNamespace*, WebPageGroup*, HWND parentWindow);
 
     virtual Type type() const { return TypeView; }
 

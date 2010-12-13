@@ -1,3 +1,43 @@
+2010-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Change the WebKit2 public API so there is no explicit WKPageNamespace object
+        https://bugs.webkit.org/show_bug.cgi?id=50898
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        * MiniBrowser/win/BrowserView.cpp:
+        Convert MiniBrowser to not use PageNamespaces.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/Find.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp:
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/AltKeyGeneratesWMSysCommand.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/WMCloseCallsUIClientClose.cpp:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        Convert TestWebKitAPI to not use PageNamespaces.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        Convert WebKitTestRunner to not use PageNamespaces.
+
 2010-12-13  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.

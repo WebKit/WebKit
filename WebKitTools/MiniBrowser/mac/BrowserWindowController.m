@@ -43,10 +43,10 @@
 
 @implementation BrowserWindowController
 
-- (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace
+- (id)initWithContext:(WKContextRef)context
 {
     if ((self = [super initWithWindowNibName:@"BrowserWindow"])) {
-        _pageNamespace = WKRetain(pageNamespace);
+        _context = WKRetain(context);
         _zoomTextOnly = NO;
     }
     
@@ -55,7 +55,7 @@
 
 - (void)dealloc
 {
-    assert(!_pageNamespace);
+    assert(!_context);
     [super dealloc];
 }
 
@@ -157,8 +157,8 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    WKRelease(_pageNamespace);
-    _pageNamespace = 0;
+    WKRelease(_context);
+    _context = 0;
 }
 
 - (void)applicationTerminating
@@ -380,7 +380,7 @@ static void decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLR
 static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
 {
     LOG(@"createNewPage");
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:WKPageGetPageNamespace(page)];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:WKPageGetContext(page)];
     [controller loadWindow];
 
     return controller->_webView.pageRef;
@@ -537,7 +537,7 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
 
 - (void)awakeFromNib
 {
-    _webView = [[WKView alloc] initWithFrame:[containerView frame] pageNamespaceRef:_pageNamespace];
+    _webView = [[WKView alloc] initWithFrame:[containerView frame] contextRef:_context];
 
     [containerView addSubview:_webView];
     [_webView setFrame:[containerView frame]];

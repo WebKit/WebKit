@@ -42,9 +42,9 @@ WKTypeID WKPageGetTypeID()
     return toAPI(WebPageProxy::APIType);
 }
 
-WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)
+WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->pageNamespace());
+    return toAPI(toImpl(pageRef)->context());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)

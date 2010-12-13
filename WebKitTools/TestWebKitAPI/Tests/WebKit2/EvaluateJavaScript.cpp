@@ -49,8 +49,7 @@ static void didRunJavaScript(WKStringRef resultString, WKErrorRef error, void* c
 TEST(WebKit2, EvaluateJavaScriptThatThrowsAnException)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-    PlatformWebView webView(pageNamespace.get());
+    PlatformWebView webView(context.get());
 
     WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("throw 'Hello'"));
     WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);

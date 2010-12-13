@@ -217,7 +217,7 @@ typedef struct WKPageContextMenuClient WKPageContextMenuClient;
 
 WK_EXPORT WKTypeID WKPageGetTypeID();
 
-WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
+WK_EXPORT WKContextRef WKPageGetContext(WKPageRef page);
 WK_EXPORT WKPageGroupRef WKPageGetPageGroup(WKPageRef page);
 
 WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);

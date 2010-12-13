@@ -61,9 +61,7 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 TEST(WebKit2, AltKeyGeneratesWMSysCommand)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
-
-    PlatformWebView webView(pageNamespace.get());
+    PlatformWebView webView(context.get());
 
     WKPageUIClient uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

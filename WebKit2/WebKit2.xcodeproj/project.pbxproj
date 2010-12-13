@@ -541,8 +541,6 @@
 		BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE966B112FAF57006BCC24 /* Attachment.h */; };
 		BCEE98C6113314D7006BCC24 /* WebPageNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */; };
 		BCEE98C7113314D7006BCC24 /* WebPageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE98C5113314D7006BCC24 /* WebPageNamespace.h */; };
-		BCEE98CC1133174C006BCC24 /* WKPageNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE98CA1133174C006BCC24 /* WKPageNamespace.cpp */; };
-		BCEE98CD1133174C006BCC24 /* WKPageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF5011F123ED3B3005955AE /* ThreadLauncher.h */; };
@@ -1196,8 +1194,6 @@
 		BCEE966B112FAF57006BCC24 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageNamespace.cpp; sourceTree = "<group>"; };
 		BCEE98C5113314D7006BCC24 /* WebPageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageNamespace.h; sourceTree = "<group>"; };
-		BCEE98CA1133174C006BCC24 /* WKPageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageNamespace.cpp; sourceTree = "<group>"; };
-		BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageNamespace.h; sourceTree = "<group>"; };
 		BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleFramePrivate.h; sourceTree = "<group>"; };
 		BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePrivate.h; sourceTree = "<group>"; };
 		BCF04C8C11FF9B7D00F86A58 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
@@ -1970,8 +1966,6 @@
 				BCD597D5112B56DC00EC8C23 /* WKPage.h */,
 				BC7B633612A45ABA00D174A4 /* WKPageGroup.cpp */,
 				BC7B633512A45ABA00D174A4 /* WKPageGroup.h */,
-				BCEE98CA1133174C006BCC24 /* WKPageNamespace.cpp */,
-				BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */,
 				BC177464118B9FF4007D9E9A /* WKPagePrivate.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
 				BCD597CE112B56AC00EC8C23 /* WKPreferences.h */,
@@ -2510,7 +2504,6 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
-				BCEE98CD1133174C006BCC24 /* WKPageNamespace.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
 				BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */,
 				762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */,
@@ -2935,7 +2928,6 @@
 				BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */,
 				BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
-				BCEE98CC1133174C006BCC24 /* WKPageNamespace.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,

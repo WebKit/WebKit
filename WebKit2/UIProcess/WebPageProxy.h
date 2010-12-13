@@ -71,8 +71,6 @@ namespace WebCore {
     struct WindowFeatures;
 }
 
-struct WKContextStatistics;
-
 namespace WebKit {
 
 class DrawingAreaProxy;
@@ -252,6 +250,7 @@ public:
 
     WebProcessProxy* process() const;
     WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }
+    WebContext* context() const;
 
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 

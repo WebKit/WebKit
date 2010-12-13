@@ -56,14 +56,25 @@ void PlatformWebView::registerWindowClass()
     ::RegisterClassExW(&wndClass);
 }
 
-PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef, WKPageGroupRef pageGroupRef)
+
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_parentWindowMessageObserver(0)
 {
     registerWindowClass();
 
     RECT viewRect = {0, 0, 800, 600};
     m_window = CreateWindowExW(0, hostWindowClassName, L"TestWebKitAPI", WS_OVERLAPPEDWINDOW, viewRect.left, viewRect.top, viewRect.right, viewRect.bottom, 0, 0, 0, this);
-    m_view = WKViewCreate(viewRect, namespaceRef, pageGroupRef, m_window);
+    m_view = WKViewCreate(viewRect, contextRef, pageGroupRef, m_window);
+}
+
+PlatformWebView::PlatformWebView(WKPageRef pageRef, WKPageGroupRef pageGroupRef)
+    : m_parentWindowMessageObserver(0)
+{
+    registerWindowClass();
+
+    RECT viewRect = {0, 0, 800, 600};
+    m_window = CreateWindowExW(0, hostWindowClassName, L"TestWebKitAPI", WS_OVERLAPPEDWINDOW, viewRect.left, viewRect.top, viewRect.right, viewRect.bottom, 0, 0, 0, this);
+    m_view = WKViewCreateForAssociatedPage(viewRect, pageRef, pageGroupRef, m_window);
 }
 
 PlatformWebView::~PlatformWebView()

@@ -127,9 +127,54 @@ struct EditCommandState {
 - (BOOL)handleMouseEvent:(NSEvent *)event;
 @end
 
+@interface WKView ()
+- (id)initWithFrame:(NSRect)frame pageNamespace:(WebPageNamespace*)pageNamespace pageGroup:(WebPageGroup*)pageGroup;
+@end
+
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+- (id)initWithFrame:(NSRect)frame
+{
+    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
+{   
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef usingSharedProcess:NO];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef usingSharedProcess:(BOOL)usingSharedProcess
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil usingSharedProcess:usingSharedProcess];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef usingSharedProcess:(BOOL)usingSharedProcess
+{
+    RefPtr<WebPageNamespace> pageNamespace;
+    if (usingSharedProcess)
+        pageNamespace = toImpl(contextRef)->sharedPageNamespace();
+    else
+        pageNamespace = toImpl(contextRef)->createPageNamespace();
+
+    return [self initWithFrame:frame pageNamespace:pageNamespace.get() pageGroup:toImpl(pageGroupRef)];
+}
+
+- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef
+{
+    return [self initWithFrame:frame forAssociatedPageRef:pageRef pageGroupRef:nil];
+}
+
+- (id)initWithFrame:(NSRect)frame forAssociatedPageRef:(WKPageRef)pageRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame pageNamespace:toImpl(pageRef)->pageNamespace() pageGroup:toImpl(pageGroupRef)];
+}
+
+- (id)initWithFrame:(NSRect)frame pageNamespace:(WebPageNamespace*)pageNamespace pageGroup:(WebPageGroup*)pageGroup
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -148,7 +193,7 @@ struct EditCommandState {
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toImpl(pageNamespaceRef)->createWebPage(toImpl(pageGroupRef));
+    _data->_page = pageNamespace->createWebPage(pageGroup);
     _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->initializeWebPage(IntSize(frame.size));
@@ -166,17 +211,6 @@ struct EditCommandState {
     WebContext::statistics().wkViewCount++;
 
     return self;
-}
-
-- (id)initWithFrame:(NSRect)frame pageNamespaceRef:(WKPageNamespaceRef)pageNamespaceRef
-{
-    return [self initWithFrame:frame pageNamespaceRef:pageNamespaceRef pageGroupRef:nil];
-}
-
-- (id)initWithFrame:(NSRect)frame
-{
-    WebContext* context = WebContext::sharedProcessContext();
-    return [self initWithFrame:frame pageNamespaceRef:toAPI(context->createPageNamespace())];
 }
 
 - (void)dealloc

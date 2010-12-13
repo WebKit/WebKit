@@ -75,7 +75,6 @@ typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
 typedef const struct OpaqueWKPage* WKPageRef;
 typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
-typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 

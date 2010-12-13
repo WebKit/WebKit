@@ -152,8 +152,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(!m_inspectorWindow);
 
     RECT emptyRect = {0};
-    m_inspectorView = WebView::create(emptyRect, m_page->pageNamespace(), inspectorPageGroup(), 0).leakRef();
-    
+    m_inspectorView = WebView::createForAssociatedPage(emptyRect, m_page, inspectorPageGroup(), 0).leakRef();
+
     return m_inspectorView->page();
 }
 

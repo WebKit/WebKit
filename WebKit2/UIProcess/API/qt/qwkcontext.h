@@ -22,7 +22,8 @@
 
 #include "qwebkitglobal.h"
 #include <QObject>
-#include <WebKit2/WKPageNamespace.h>
+#include <WebKit2/WKContext.h>
+#include <WebKit2/WKPage.h>
 
 class QWKContextPrivate;
 
@@ -33,7 +34,8 @@ public:
     virtual ~QWKContext();
 
     // Bridge from the C API
-    QWKContext(WKPageNamespaceRef pageNamespaceRef, QObject* parent = 0);
+    QWKContext(WKContextRef contextRef, QObject* parent = 0);
+    QWKContext(WKPageRef pageRef, QObject* parent = 0);
 
 private:
     QWKContextPrivate* d;

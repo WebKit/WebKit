@@ -133,6 +133,11 @@ WebProcessProxy* WebPageProxy::process() const
     return m_pageNamespace->process();
 }
 
+WebContext* WebPageProxy::context() const
+{
+    return m_pageNamespace->context();
+}
+
 bool WebPageProxy::isValid()
 {
     // A page that has been explicitly closed is never valid.
