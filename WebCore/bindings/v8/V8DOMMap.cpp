@@ -90,24 +90,26 @@ DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap()
 
 void removeAllDOMObjectsInCurrentThread()
 {
+    DOMDataStore& store = getDOMDataStore();
+
     v8::HandleScope scope;
 
     // The DOM objects with the following types only exist on the main thread.
     if (WTF::isMainThread()) {
         // Remove all DOM nodes.
-        DOMData::removeObjectsFromWrapperMap<Node>(getDOMNodeMap());
+        DOMData::removeObjectsFromWrapperMap<Node>(&store, store.domNodeMap());
 
 #if ENABLE(SVG)
         // Remove all SVG element instances in the wrapper map.
-        DOMData::removeObjectsFromWrapperMap<SVGElementInstance>(getDOMSVGElementInstanceMap());
+        DOMData::removeObjectsFromWrapperMap<SVGElementInstance>(&store, store.domSvgElementInstanceMap());
 #endif
     }
 
     // Remove all DOM objects in the wrapper map.
-    DOMData::removeObjectsFromWrapperMap<void>(getDOMObjectMap());
+    DOMData::removeObjectsFromWrapperMap<void>(&store, store.domObjectMap());
 
     // Remove all active DOM objects in the wrapper map.
-    DOMData::removeObjectsFromWrapperMap<void>(getActiveDOMObjectMap());
+    DOMData::removeObjectsFromWrapperMap<void>(&store, store.activeDomObjectMap());
 }
 
 void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor* visitor)
@@ -121,7 +123,7 @@ void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        store->domNodeMap().visit(visitor);
+        store->domNodeMap().visit(store, visitor);
     }
 }
 
@@ -136,7 +138,7 @@ void visitDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        store->domObjectMap().visit(visitor);
+        store->domObjectMap().visit(store, visitor);
     }
 }
 
@@ -151,7 +153,7 @@ void visitActiveDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        store->activeDomObjectMap().visit(visitor);
+        store->activeDomObjectMap().visit(store, visitor);
     }
 }
 
@@ -168,7 +170,7 @@ void visitDOMSVGElementInstancesInCurrentThread(DOMWrapperMap<SVGElementInstance
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        store->domSvgElementInstanceMap().visit(visitor);
+        store->domSvgElementInstanceMap().visit(store, visitor);
     }
 }
 

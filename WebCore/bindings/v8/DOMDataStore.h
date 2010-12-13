@@ -106,14 +106,14 @@ namespace WebCore {
             m_last = m_current + CHUNK_SIZE;
         }
 
-        void visit(typename Traits::Visitor* visitor)
+        void visit(DOMDataStore* store, typename Traits::Visitor* visitor)
         {
             if (!m_chunks)
                 return;
 
-            visitEntries(m_chunks->m_entries, m_current, visitor);
+            visitEntries(store, m_chunks->m_entries, m_current, visitor);
             for (Chunk* chunk = m_chunks->m_previous; chunk; chunk = chunk->m_previous)
-                visitEntries(chunk->m_entries, chunk->m_entries + CHUNK_SIZE, visitor);
+                visitEntries(store, chunk->m_entries, chunk->m_entries + CHUNK_SIZE, visitor);
         }
 
       private:
@@ -129,10 +129,10 @@ namespace WebCore {
                 Traits::clear(entry);
         }
 
-        static void visitEntries(T* first, T* last, typename Traits::Visitor* visitor)
+        static void visitEntries(DOMDataStore* store, T* first, T* last, typename Traits::Visitor* visitor)
         {
             for (T* entry = first; entry < last; entry++)
-                Traits::visit(entry, visitor);
+                Traits::visit(store, entry, visitor);
         }
 
         Chunk* m_chunks;
@@ -185,9 +185,9 @@ namespace WebCore {
                 return obj->wrapper();
             }
 
-            virtual void visit(Visitor* visitor)
+            virtual void visit(DOMDataStore* store, Visitor* visitor)
             {
-                m_table.visit(visitor);
+                m_table.visit(store, visitor);
             }
 
             virtual bool removeIfPresent(Node* key, v8::Persistent<v8::Data> value);
@@ -220,12 +220,12 @@ namespace WebCore {
                     entry->Dispose();
                 }
 
-                static void visit(v8::Persistent<v8::Object>* entry, Visitor* visitor)
+                static void visit(DOMDataStore* store, v8::Persistent<v8::Object>* entry, Visitor* visitor)
                 {
                     Node* node = V8Node::toNative(*entry);
                     ASSERT(node->wrapper() == entry);
 
-                    visitor->visitDOMWrapper(node, *entry);
+                    visitor->visitDOMWrapper(store, node, *entry);
                 }
             };
 

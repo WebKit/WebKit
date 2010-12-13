@@ -1,3 +1,35 @@
+2010-12-13  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] More CSS wrappers GC work: keep document's style sheets, style sheet and css rule lists' items in proper object groups
+        https://bugs.webkit.org/show_bug.cgi?id=50828
+
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::WrapperMapObjectRemover::visitDOMWrapper):
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::ChunkedTable::visit):
+        (WebCore::ChunkedTable::visitEntries):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::visit):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::ChunkedTableTraits::visit):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::removeAllDOMObjectsInCurrentThread):
+        (WebCore::visitDOMNodesInCurrentThread):
+        (WebCore::visitDOMObjectsInCurrentThread):
+        (WebCore::visitActiveDOMObjectsInCurrentThread):
+        (WebCore::visitDOMSVGElementInstancesInCurrentThread):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::visit):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::DOMObjectVisitor::visitDOMWrapper):
+        (WebCore::EnsureWeakDOMNodeVisitor::visitDOMWrapper):
+        (WebCore::GCPrologueVisitor::visitDOMWrapper):
+        (WebCore::NodeGrouperVisitor::visitDOMWrapper):
+        (WebCore::NodeGrouperVisitor::applyGrouping):
+        (WebCore::DOMObjectGrouperVisitor::visitDOMWrapper):
+        (WebCore::GCEpilogueVisitor::visitDOMWrapper):
+
 2010-12-13  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Unreviewed build fix for r73894.

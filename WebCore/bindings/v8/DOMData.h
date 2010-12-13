@@ -55,7 +55,7 @@ namespace WebCore {
         static void handleWeakObject(DOMDataStore::DOMWrapperMapType, v8::Persistent<v8::Object>, T* domObject);
 
         template<typename T>
-        static void removeObjectsFromWrapperMap(AbstractWeakReferenceMap<T, v8::Object>& domMap);
+        static void removeObjectsFromWrapperMap(DOMDataStore* store, AbstractWeakReferenceMap<T, v8::Object>& domMap);
 
         ThreadIdentifier owningThread() const { return m_owningThread; }
 
@@ -65,7 +65,7 @@ namespace WebCore {
         template<typename T>
         class WrapperMapObjectRemover : public WeakReferenceMap<T, v8::Object>::Visitor {
         public:
-            virtual void visitDOMWrapper(T* domObject, v8::Persistent<v8::Object> v8Object)
+            virtual void visitDOMWrapper(DOMDataStore* store, T* domObject, v8::Persistent<v8::Object> v8Object)
             {
                 WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
                 derefObject(type, domObject);
@@ -102,10 +102,10 @@ namespace WebCore {
     }
 
     template<typename T>
-    void DOMData::removeObjectsFromWrapperMap(AbstractWeakReferenceMap<T, v8::Object>& domMap)
+    void DOMData::removeObjectsFromWrapperMap(DOMDataStore* store, AbstractWeakReferenceMap<T, v8::Object>& domMap)
     {
         WrapperMapObjectRemover<T> remover;
-        domMap.visit(&remover);
+        domMap.visit(store, &remover);
         domMap.clear();
     }
 

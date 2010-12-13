@@ -45,11 +45,13 @@
 #include "V8CSSFontFaceRule.h"
 #include "V8CSSImportRule.h"
 #include "V8CSSMediaRule.h"
+#include "V8CSSRuleList.h"
 #include "V8CSSStyleRule.h"
 #include "V8CSSStyleSheet.h"
 #include "V8DOMMap.h"
 #include "V8MessagePort.h"
 #include "V8Proxy.h"
+#include "V8StyleSheetList.h"
 #include "WrapperTypeInfo.h"
 
 #include <algorithm>
@@ -135,7 +137,7 @@ static void enumerateDOMObjectMap(DOMObjectMap& wrapperMap)
 
 class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
-    void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
         UNUSED_PARAM(type);
@@ -145,7 +147,7 @@ public:
 
 class EnsureWeakDOMNodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
-    void visitDOMWrapper(Node* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, Node* object, v8::Persistent<v8::Object> wrapper)
     {
         UNUSED_PARAM(object);
         ASSERT(wrapper.IsWeak());
@@ -193,7 +195,7 @@ void V8GCController::gcUnprotect(void* domObject)
 
 class GCPrologueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
-    void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
 
@@ -287,7 +289,7 @@ public:
         // FIXME: grouper_.reserveCapacity(node_map.size());  ?
     }
 
-    void visitDOMWrapper(Node* node, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
     {
         // If the node is in document, put it in the ownerDocument's object group.
         //
@@ -320,28 +322,30 @@ public:
             groupId = reinterpret_cast<uintptr_t>(root);
         }
         m_grouper.append(GrouperItem(groupId, wrapper));
-    }
-
-    void applyGrouping()
-    {
-        /* FIXME: Re-enabled this code to avoid GCing these wrappers!
-                      Currently this depends on looking up the wrapper
-                      during a GC, but we don't know which isolated world
-                      we're in, so it's unclear which map to look in...
 
         // If the node is styled and there is a wrapper for the inline
         // style declaration, we need to keep that style declaration
         // wrapper alive as well, so we add it to the object group.
         if (node->isStyledElement()) {
-          StyledElement* element = reinterpret_cast<StyledElement*>(node);
-          CSSStyleDeclaration* style = element->inlineStyleDecl();
-          if (style != NULL) {
-            wrapper = getDOMObjectMap().get(style);
-            if (!wrapper.IsEmpty())
-              group.append(wrapper);
-          }
+            StyledElement* element = reinterpret_cast<StyledElement*>(node);
+            CSSStyleDeclaration* style = element->inlineStyleDecl();
+            if (style) {
+                wrapper = store->domObjectMap().get(style);
+                if (!wrapper.IsEmpty())
+                    m_grouper.append(GrouperItem(groupId, wrapper));
+            }
         }
-        */
+
+        if (node->isDocumentNode()) {
+            Document* document = reinterpret_cast<Document*>(node);
+            wrapper = store->domObjectMap().get(document->styleSheets());
+            if (!wrapper.IsEmpty())
+                m_grouper.append(GrouperItem(groupId, wrapper));
+        }
+    }
+
+    void applyGrouping()
+    {
         makeV8ObjectGroups(m_grouper);
     }
 
@@ -365,34 +369,54 @@ public:
         makeV8ObjectGroups(m_grouper);
     }
 
-    void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
-        // FIXME: extend WrapperTypeInfo with isStyle to simplify the check below.
+        // FIXME: extend WrapperTypeInfo with isStyle to simplify the check below or consider
+        // adding a virtual method to WrapperTypeInfo which would know how to group objects.
         // FIXME: check if there are other StyleBase wrappers we should care of.
-        if (!V8CSSStyleSheet::info.equals(typeInfo)
-            && !V8CSSCharsetRule::info.equals(typeInfo)
-            && !V8CSSFontFaceRule::info.equals(typeInfo)
-            && !V8CSSStyleRule::info.equals(typeInfo)
-            && !V8CSSImportRule::info.equals(typeInfo)
-            && !V8CSSMediaRule::info.equals(typeInfo)) {
-            return;
-        }
-        StyleBase* styleBase = static_cast<StyleBase*>(object);
+        if (V8CSSStyleSheet::info.equals(typeInfo)
+            || V8CSSCharsetRule::info.equals(typeInfo)
+            || V8CSSFontFaceRule::info.equals(typeInfo)
+            || V8CSSStyleRule::info.equals(typeInfo)
+            || V8CSSImportRule::info.equals(typeInfo)
+            || V8CSSMediaRule::info.equals(typeInfo)) {
+            StyleBase* styleBase = static_cast<StyleBase*>(object);
 
-        // We put the whole tree of style elements into a single object group.
-        // To achieve that we group elements by the roots of their trees.
-        StyleBase* root = styleBase;
-        ASSERT(root);
-        while (true) {
-          StyleBase* parent = root->parent();
-          if (!parent)
-              break;
-          root = parent;
+            // We put the whole tree of style elements into a single object group.
+            // To achieve that we group elements by the roots of their trees.
+            StyleBase* root = styleBase;
+            ASSERT(root);
+            while (true) {
+                StyleBase* parent = root->parent();
+                if (!parent)
+                    break;
+                root = parent;
+            }
+            // Group id is an address of the root.
+            uintptr_t groupId = reinterpret_cast<uintptr_t>(root);
+            m_grouper.append(GrouperItem(groupId, wrapper));
+        } else if (V8StyleSheetList::info.equals(typeInfo)) {
+            StyleSheetList* styleSheetList = static_cast<StyleSheetList*>(object);
+            uintptr_t groupId = reinterpret_cast<uintptr_t>(styleSheetList);
+            m_grouper.append(GrouperItem(groupId, wrapper));
+            for (unsigned i = 0; i < styleSheetList->length(); i++) {
+                StyleSheet* styleSheet = styleSheetList->item(i);
+                wrapper = store->domObjectMap().get(styleSheet);
+                if (!wrapper.IsEmpty())
+                    m_grouper.append(GrouperItem(groupId, wrapper));
+            }
+        } else if (V8CSSRuleList::info.equals(typeInfo)) {
+            CSSRuleList* cssRuleList = static_cast<CSSRuleList*>(object);
+            uintptr_t groupId = reinterpret_cast<uintptr_t>(cssRuleList);
+            m_grouper.append(GrouperItem(groupId, wrapper));
+            for (unsigned i = 0; i < cssRuleList->length(); i++) {
+                CSSRule* cssRule = cssRuleList->item(i);
+                wrapper = store->domObjectMap().get(cssRule);
+                if (!wrapper.IsEmpty())
+                    m_grouper.append(GrouperItem(groupId, wrapper));
+            }
         }
-        // Group id is an address of the root.
-        uintptr_t groupId = reinterpret_cast<uintptr_t>(root);
-        m_grouper.append(GrouperItem(groupId, wrapper));
     }
 
 private:
@@ -429,7 +453,7 @@ void V8GCController::gcPrologue()
 
 class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
-    void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
         if (V8MessagePort::info.equals(typeInfo)) {
