@@ -1,0 +1,4 @@
+You should see a log record if window.onerror is working properly for this test.Bug 8519.
+
+Error caught successfully: ReferenceError: Left side of assignment is not a reference. File: undefined Line: 1
+

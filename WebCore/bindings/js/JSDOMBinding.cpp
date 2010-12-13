@@ -55,6 +55,7 @@
 #include "ProcessingInstruction.h"
 #include "RangeException.h"
 #include "ScriptCachedFrameData.h"
+#include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
@@ -598,7 +599,7 @@ void reportException(ExecState* exec, JSValue exception)
     if (!scriptExecutionContext)
         return;
 
-    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL));
+    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
 }
 
 void reportCurrentException(ExecState* exec)

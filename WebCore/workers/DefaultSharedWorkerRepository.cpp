@@ -42,6 +42,7 @@
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SharedWorker.h"
@@ -155,7 +156,7 @@ void SharedWorkerProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutio
 
 static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    context->reportException(errorMessage, lineNumber, sourceURL);
+    context->reportException(errorMessage, lineNumber, sourceURL, 0);
 }
 
 void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL)
@@ -167,7 +168,7 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
 
 static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    document->addMessage(source, type, level, message, lineNumber, sourceURL);
+    document->addMessage(source, type, level, message, lineNumber, sourceURL, 0);
 }
 
 void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)

@@ -1,0 +1,5 @@
+Test that window.onerror is called on window object. Bug 8519.
+
+Main frame window.onerror: 2010 at undefined:0
+PASSED: this === window
+

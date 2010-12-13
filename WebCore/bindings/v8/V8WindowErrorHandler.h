@@ -28,37 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWorkerContextErrorHandler_h
-#define JSWorkerContextErrorHandler_h
+#ifndef V8WindowErrorHandler_h
+#define V8WindowErrorHandler_h
 
-#include "JSEventListener.h"
+#include "V8CustomEventListener.h"
+#include <v8.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class JSWorkerContextErrorHandler : public JSEventListener {
+class V8WindowErrorHandler : public V8EventListener {
 public:
-    static PassRefPtr<JSWorkerContextErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+    static PassRefPtr<V8WindowErrorHandler> create(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
     {
-        return adoptRef(new JSWorkerContextErrorHandler(listener, wrapper, isAttribute, isolatedWorld));
+        return adoptRef(new V8WindowErrorHandler(listener, isInline, worldContext));
     }
 
-    virtual ~JSWorkerContextErrorHandler();
-
 private:
-    JSWorkerContextErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
+    V8WindowErrorHandler(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
+
+    virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
 };
-
-// Creates a JS EventListener for "onerror" event handler in worker context. It has custom implementation because
-// unlike other event listeners it accepts three parameters.
-inline PassRefPtr<JSWorkerContextErrorHandler> createJSWorkerContextErrorHandler(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
-{
-    if (!listener.isObject())
-        return 0;
-
-    return JSWorkerContextErrorHandler::create(asObject(listener), wrapper, true, currentWorld(exec));
-}
 
 } // namespace WebCore
 
-#endif // JSWorkerContextErrorHandler_h
+#endif // V8WindowErrorHandler_h

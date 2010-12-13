@@ -34,11 +34,10 @@
 
 #include "WorkerScriptController.h"
 
-#include <v8.h>
-
+#include "DOMTimer.h"
+#include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "DOMTimer.h"
 #include "V8DOMMap.h"
 #include "V8Proxy.h"
 #include "V8WorkerContext.h"
@@ -46,6 +45,7 @@
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
+#include <v8.h>
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
         if (exception)
             *exception = state.exception;
         else
-            m_workerContext->reportException(state.errorMessage, state.lineNumber, state.sourceURL);
+            m_workerContext->reportException(state.errorMessage, state.lineNumber, state.sourceURL, 0);
     }
 
     return result;
