@@ -1,3 +1,12 @@
+2010-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Disable WebKit2 logging by default.
+
+        * Platform/Logging.cpp:
+        (initializeLogChannelsIfNecessary):
+
 2010-12-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Sam Weinig.
