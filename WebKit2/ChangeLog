@@ -1,3 +1,19 @@
+2010-12-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Leaks a WebView when opening/closing Web Inspector on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50975
+        <rdar://problem/8763501>
+        
+        Make m_inspectorView be a RefPtr<WebView>, instead of a WebView*.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy): If we are on Windows, include WebView.h.
+        * UIProcess/WebInspectorProxy.h: Change the type of m_inspectorView to a RefPtr<WebView>.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Remove the call to leakRef when creating the WebView.
+
 2010-12-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

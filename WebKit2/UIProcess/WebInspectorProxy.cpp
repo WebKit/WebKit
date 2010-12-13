@@ -33,6 +33,10 @@
 #include "WebProcessProxy.h"
 #include "WebPageGroup.h"
 
+#if PLATFORM(WIN)
+#include "WebView.h"
+#endif
+
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
@@ -55,7 +59,6 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_isProfilingPage(false)
 #if PLATFORM(WIN)
     , m_inspectorWindow(0)
-    , m_inspectorView(0)
 #endif
 {
 }

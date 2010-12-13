@@ -32,6 +32,7 @@
 #include "Connection.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -147,7 +148,7 @@ private:
     RetainPtr<WebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
 #elif PLATFORM(WIN)
     HWND m_inspectorWindow;
-    WebView* m_inspectorView;
+    RefPtr<WebView> m_inspectorView;
 #endif
 };
 
