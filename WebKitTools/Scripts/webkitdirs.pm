@@ -1547,6 +1547,7 @@ sub buildQMakeProject($@)
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
         push @subdirs, "WebKit2";
         push @subdirs, "WebKitTools/WebKitTestRunner";
+        push @subdirs, "WebKitTools/MiniBrowser";
     }
 
     for my $subdir (@subdirs) {

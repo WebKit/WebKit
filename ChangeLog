@@ -1,3 +1,12 @@
+2010-12-13  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Fix build if WebKitTools are not available
+        https://bugs.webkit.org/show_bug.cgi?id=50242
+
+        * DerivedSources.pro: add new DerivedSources.pro to SUBDIRS.
+
 2010-12-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

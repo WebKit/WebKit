@@ -41,17 +41,6 @@ SBOX_CHECK = $$(_SBOX_DIR)
     PYTHON = python
 }
 
-
-DIRS = \
-    $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt
-
-for(DIR, DIRS) {
-    DIR = $$replace(DIR, /, $$QMAKE_DIR_SEP)
-    !exists($$DIR): system($$QMAKE_MKDIR $$DIR)
-}
-
-QMAKE_EXTRA_TARGETS += createdirs
-
 SRC_ROOT_DIR = $$replace(PWD, /WebKit2, /)
 
 defineTest(addExtraCompiler) {
@@ -119,22 +108,6 @@ SCRIPTS = \
     $$PWD/Scripts/webkit2/__init__.py \
     $$PWD/Scripts/webkit2/messages.py
 
-ualist_copier.input = $${SRC_ROOT_DIR}WebKitTools/QtTestBrowser/useragentlist.txt
-ualist_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/useragentlist.txt
-ualist_copier.tempNames = $$ualist_copier.input $$ualist_copier.output
-ualist_copier.commands = $$QMAKE_COPY $$replace(ualist_copier.tempNames, "/", $$QMAKE_DIR_SEP)
-ualist_copier.depends = $$ualist_copier.input
-generated_files.depends += ualist_copier
-QMAKE_EXTRA_TARGETS += ualist_copier
-
-qrc_copier.input = $${SRC_ROOT_DIR}WebKitTools/MiniBrowser/MiniBrowser.qrc
-qrc_copier.output = $$OUTPUT_DIR/WebKitTools/MiniBrowser/qt/MiniBrowser.qrc
-qrc_copier.tempNames = $$qrc_copier.input $$qrc_copier.output
-qrc_copier.commands = $$QMAKE_COPY $$replace(qrc_copier.tempNames, "/", $$QMAKE_DIR_SEP)
-qrc_copier.depends = ualist_copier $$qrc_copier.input
-generated_files.depends += qrc_copier
-QMAKE_EXTRA_TARGETS += qrc_copier
-
 message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_header_generator.input = MESSAGE_RECEIVERS
 message_header_generator.depends = $$SCRIPTS
@@ -147,8 +120,8 @@ message_receiver_generator.depends = $$SCRIPTS
 message_receiver_generator.output_function = message_receiver_generator_output
 addExtraCompiler(message_receiver_generator)
 
-fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKitTools/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/WebKit2 $${OUTPUT_DIR}/include qt
-fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKitTools/Scripts/generate-forwarding-headers.pl
+fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/WebKit2 ../include qt
+fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl
 generated_files.depends     += fwheader_generator
 QMAKE_EXTRA_TARGETS         += fwheader_generator
 
