@@ -68,7 +68,7 @@ static KURL originatingURLFromBackForwardList(WebPage *webPage)
     for (int backIndex = 0; backIndex <= backCount; backIndex++) {
         // FIXME: At one point we had code here to check a "was user gesture" flag.
         // Do we need to restore that logic?
-        HistoryItem *historyItem = page->backForward()->itemAtIndex(-backIndex);
+        HistoryItem* historyItem = page->backForward()->itemAtIndex(-backIndex);
         if (!historyItem)
             continue;
 

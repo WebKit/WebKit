@@ -1,3 +1,10 @@
+2010-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Coding style fix.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::originatingURLFromBackForwardList):
+
 2010-12-13  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed trivial build fix (linux, 64 bit, gcc-4.5.1)
