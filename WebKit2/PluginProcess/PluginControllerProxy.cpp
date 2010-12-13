@@ -57,6 +57,9 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
     , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_waitingForDidUpdate(false)
+#if PLATFORM(MAC)
+    , m_isComplexTextInputEnabled(false)
+#endif
 {
 }
 
@@ -230,6 +233,15 @@ void PluginControllerProxy::pluginProcessCrashed()
 {
     // This should never be called from here.
     ASSERT_NOT_REACHED();
+}
+
+void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
+{
+    if (m_isComplexTextInputEnabled == complexTextInputEnabled)
+        return;
+
+    m_isComplexTextInputEnabled = complexTextInputEnabled;
+    // FIXME: Let the web process know that this plug-in wants complex text input enabled.
 }
 
 String PluginControllerProxy::proxiesForURL(const String& urlString)

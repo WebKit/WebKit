@@ -87,6 +87,11 @@ private:
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
+
+#if PLATFORM(MAC)
+    virtual void setComplexTextInputEnabled(bool);
+#endif
+
     virtual String proxiesForURL(const String&);
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
@@ -148,13 +153,16 @@ private:
     // backing store into the web process backing store.
     bool m_waitingForDidUpdate;
 
-    // The backing store that this plug-in draws into.
-    RefPtr<BackingStore> m_backingStore;
-
 #if PLATFORM(MAC)
+    // Whether complex text input is enabled for this plug-in.
+    bool m_isComplexTextInputEnabled;
+
     // For CA plug-ins, this holds the information needed to export the layer hierarchy to the UI process.
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
 #endif
+    
+    // The backing store that this plug-in draws into.
+    RefPtr<BackingStore> m_backingStore;
 };
 
 } // namespace WebKit

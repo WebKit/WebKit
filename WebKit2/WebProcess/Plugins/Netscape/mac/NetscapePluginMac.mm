@@ -25,6 +25,7 @@
 
 #include "NetscapePlugin.h"
 
+#include "PluginController.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -602,6 +603,9 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
 
 void NetscapePlugin::platformSetFocus(bool hasFocus)
 {
+    m_pluginHasFocus = hasFocus;
+    m_pluginController->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventFocusChanged);
@@ -627,6 +631,9 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
 
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
 {
+    m_windowHasFocus = hasFocus;
+    m_pluginController->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventWindowFocusChanged);
@@ -638,8 +645,6 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
         
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            m_isWindowActive = hasFocus;
-            
             HiliteWindow(windowRef(), hasFocus);
             if (hasFocus)
                 SetUserFocusWindow(windowRef());

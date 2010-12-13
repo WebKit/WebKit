@@ -88,6 +88,11 @@ public:
     virtual HWND nativeParentWindow() = 0;
 #endif
 
+#if PLATFORM(MAC)
+    // Tells the controller that complex text input be enabled or disabled for the plug-in.
+    virtual void setComplexTextInputEnabled(bool) = 0;
+#endif
+
     // Returns the proxies for the given URL or null on failure.
     virtual String proxiesForURL(const String&) = 0;
 

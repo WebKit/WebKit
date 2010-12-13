@@ -125,6 +125,9 @@ private:
 #if PLATFORM(WIN)
     virtual HWND nativeParentWindow();
 #endif
+#if PLATFORM(MAC)
+    virtual void setComplexTextInputEnabled(bool);
+#endif
     virtual String proxiesForURL(const String&);
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);

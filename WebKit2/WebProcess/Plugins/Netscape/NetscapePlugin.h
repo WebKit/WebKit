@@ -55,7 +55,7 @@ public:
     NPError setEventModel(NPEventModel);
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
-    bool isWindowActive() const { return m_isWindowActive; }
+    bool isWindowActive() const { return m_windowHasFocus; }
 
     static NetscapePlugin* netscapePluginFromWindow(WindowRef);
     static unsigned buttonState();
@@ -195,6 +195,10 @@ private:
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
     RetainPtr<PlatformLayer> m_pluginLayer;
+
+    bool m_pluginHasFocus;
+    bool m_windowHasFocus;
+
 #ifndef NP_NO_CARBON
     void nullEventTimerFired();
 
@@ -202,7 +206,6 @@ private:
     // We should investigate having one per window.
     RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
-    bool m_isWindowActive;
 #endif
 #elif PLATFORM(WIN)
     HWND m_window;

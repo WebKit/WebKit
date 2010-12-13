@@ -869,6 +869,14 @@ HWND PluginView::nativeParentWindow()
 }
 #endif
 
+#if PLATFORM(MAC)
+void PluginView::setComplexTextInputEnabled(bool)
+{
+    // This should never be called.
+    ASSERT_NOT_REACHED();
+}
+#endif
+    
 String PluginView::proxiesForURL(const String& urlString)
 {
     const FrameLoader* frameLoader = frame() ? frame()->loader() : 0;

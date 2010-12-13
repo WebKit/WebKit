@@ -1,3 +1,41 @@
+2010-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add the ability for plug-ins to toggle complex text input
+        https://bugs.webkit.org/show_bug.cgi?id=50966
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Initialize m_isComplexTextInputEnabled.
+
+        (WebKit::PluginControllerProxy::setComplexTextInputEnabled):
+        Update m_isComplexTextInputEnabled.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_pluginHasFocus and m_windowHasFocus.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::isWindowActive):
+        Return m_windowHasFocus.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformSetFocus):
+        Update m_pluginHasFocus and call setComplexTextInputEnabled.
+
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        Update m_windowHasFocus and call setComplexTextInputEnabled.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add setComplexTextInputEnabled.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setComplexTextInputEnabled):
+        * WebProcess/Plugins/PluginView.h:
+        Add setComplexTextInputEnabled
+
 2010-12-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
