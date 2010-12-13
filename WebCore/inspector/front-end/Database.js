@@ -101,21 +101,3 @@ WebInspector.Database.prototype = {
         InspectorBackend.executeSQL(this._id, query, callback);
     }
 }
-
-WebInspector.sqlTransactionSucceeded = function(transactionId, columnNames, values)
-{
-    var callback = WebInspector.Database.successCallbacks[transactionId];
-    if (!callback)
-        return;
-    delete WebInspector.Database.successCallbacks[transactionId];
-    callback(columnNames, values);
-}
-
-WebInspector.sqlTransactionFailed = function(transactionId, errorObj)
-{
-    var callback = WebInspector.Database.errorCallbacks[transactionId];
-    if (!callback)
-        return;
-    delete WebInspector.Database.errorCallbacks[transactionId];
-    callback(errorObj);
-}

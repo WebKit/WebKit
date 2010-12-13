@@ -100,15 +100,3 @@ WebInspector.Worker = function(id, url, shared)
     this.url = url;
     this.shared = shared;
 }
-
-WebInspector.didCreateWorker = function()
-{
-    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    workersPane.addWorker.apply(workersPane, arguments);
-}
-
-WebInspector.didDestroyWorker = function()
-{
-    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    workersPane.removeWorker.apply(workersPane, arguments);
-}

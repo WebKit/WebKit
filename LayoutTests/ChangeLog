@@ -1,3 +1,22 @@
+2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Protocol cleanup task. Assign domain attribute to Resources and Debugger specific functions.
+
+        Debugger and Resources related notification functions of Inspector.idl were
+        marked as such with help of "domain" attribute. The other changes in js files
+        are reflecting this change. Some wrappers in WebInspector namespace were dropped,
+        the others were moved to DebuggerModel class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50906
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest.startTest):
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.disableDebugger):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.

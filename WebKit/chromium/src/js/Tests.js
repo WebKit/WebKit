@@ -730,7 +730,7 @@ TestSuite.prototype._waitForScriptPause = function(expectations, callback)
     var test = this;
     // Wait until script is paused.
     test.addSniffer(
-        WebInspector,
+        WebInspector.debuggerModel,
         "pausedScript",
         function(details) {
             var callFrames = details.callFrames;
@@ -805,7 +805,7 @@ TestSuite.prototype._waitUntilScriptsAreParsed = function(expectedScripts, callb
         if (test._scriptsAreParsed(expectedScripts))
             callback();
         else
-            test.addSniffer(WebInspector, "parsedScriptSource", waitForAllScripts);
+            test.addSniffer(WebInspector.debuggerModel, "parsedScriptSource", waitForAllScripts);
     }
 
     waitForAllScripts();
@@ -852,7 +852,7 @@ TestSuite.prototype.testPauseInEval = function()
 
     devtools.tools.evaluateJavaScript("fib(10)");
 
-    this.addSniffer(WebInspector, "pausedScript",
+    this.addSniffer(WebInspector.debuggerModel, "pausedScript",
         function() {
             test.releaseControl();
         });

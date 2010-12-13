@@ -30,36 +30,14 @@
 
 WebInspector.ResourceManager = function()
 {
-    this._registerNotifyHandlers(
-        "identifierForInitialRequest",
-        "willSendRequest",
-        "markResourceAsCached",
-        "didReceiveResponse",
-        "didReceiveContentLength",
-        "didFinishLoading",
-        "didFailLoading",
-        "didLoadResourceFromMemoryCache",
-        "setInitialContent",
-        "didCommitLoadForFrame",
-        "frameDetachedFromParent",
-        "didCreateWebSocket",
-        "willSendWebSocketHandshakeRequest",
-        "didReceiveWebSocketHandshakeResponse",
-        "didCloseWebSocket");
-
     this._resourcesById = {};
     this._resourcesByURL = {};
     this._resourceTreeModel = new WebInspector.ResourceTreeModel();
     InspectorBackend.cachedResources(this._processCachedResources.bind(this));
+    InspectorBackend.registerDomainDispatcher("Resources", this);
 }
 
 WebInspector.ResourceManager.prototype = {
-    _registerNotifyHandlers: function()
-    {
-        for (var i = 0; i < arguments.length; ++i)
-            WebInspector[arguments[i]] = this[arguments[i]].bind(this);
-    },
-
     identifierForInitialRequest: function(identifier, url, loader, callStack)
     {
         var resource = this._createResource(identifier, url, loader, callStack);
@@ -428,6 +406,89 @@ WebInspector.ResourceManager.prototype = {
         }
 
         delete this._resourcesByURL[resource.url];
+    },
+
+    updateDOMStorage: function(storageId)
+    {
+        WebInspector.panels.resources.updateDOMStorage(storageId);
+    },
+
+    updateApplicationCacheStatus: function(status)
+    {
+        WebInspector.panels.resources.updateApplicationCacheStatus(status);
+    },
+
+    didGetFileSystemPath: function(root, type, origin)
+    {
+        WebInspector.panels.resources.updateFileSystemPath(root, type, origin);
+    },
+
+    didGetFileSystemError: function(type, origin)
+    {
+        WebInspector.panels.resources.updateFileSystemError(type, origin);
+    },
+
+    didGetFileSystemDisabled: function()
+    {
+        WebInspector.panels.resources.setFileSystemDisabled();
+    },
+
+    updateNetworkState: function(isNowOnline)
+    {
+        WebInspector.panels.resources.updateNetworkState(isNowOnline);
+    },
+
+    addDOMStorage: function(payload)
+    {
+        if (!WebInspector.panels.resources)
+            return;
+        var domStorage = new WebInspector.DOMStorage(
+            payload.id,
+            payload.host,
+            payload.isLocalStorage);
+        WebInspector.panels.resources.addDOMStorage(domStorage);
+    },
+
+    selectDOMStorage: function(o)
+    {
+        WebInspector.showPanel("resources");
+        WebInspector.panels.resources.selectDOMStorage(o);
+    },
+
+    addDatabase: function(payload)
+    {
+        if (!WebInspector.panels.resources)
+            return;
+        var database = new WebInspector.Database(
+            payload.id,
+            payload.domain,
+            payload.name,
+            payload.version);
+        WebInspector.panels.resources.addDatabase(database);
+    },
+
+    selectDatabase: function(o)
+    {
+        WebInspector.showPanel("resources");
+        WebInspector.panels.resources.selectDatabase(o);
+    },
+
+    sqlTransactionSucceeded: function(transactionId, columnNames, values)
+    {
+        var callback = WebInspector.Database.successCallbacks[transactionId];
+        if (!callback)
+            return;
+        delete WebInspector.Database.successCallbacks[transactionId];
+        callback(columnNames, values);
+    },
+
+    sqlTransactionFailed: function(transactionId, errorObj)
+    {
+        var callback = WebInspector.Database.errorCallbacks[transactionId];
+        if (!callback)
+            return;
+        delete WebInspector.Database.errorCallbacks[transactionId];
+        callback(errorObj);
     }
 }
 

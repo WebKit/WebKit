@@ -31,6 +31,7 @@
 WebInspector.DebuggerModel = function()
 {
     this._breakpoints = {};
+    InspectorBackend.registerDomainDispatcher("Debugger", this);
 }
 
 WebInspector.DebuggerModel.prototype = {
@@ -127,7 +128,7 @@ WebInspector.DebuggerModel.prototype = {
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     },
 
-    debuggerPaused: function(details)
+    pausedScript: function(details)
     {
         this.dispatchEventToListeners("debugger-paused", details.callFrames);
 
@@ -147,7 +148,7 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners("script-breakpoint-hit", breakpoint);
     },
 
-    debuggerResumed: function()
+    resumedScript: function()
     {
         this.dispatchEventToListeners("debugger-resumed");
 
@@ -155,6 +156,43 @@ WebInspector.DebuggerModel.prototype = {
             return;
         this._lastHitBreakpoint.hit = false;
         delete this._lastHitBreakpoint;
+    },
+
+    attachDebuggerWhenShown: function()
+    {
+        WebInspector.panels.scripts.attachDebuggerWhenShown();
+    },
+
+    debuggerWasEnabled: function()
+    {
+        WebInspector.panels.scripts.debuggerWasEnabled();
+    },
+
+    debuggerWasDisabled: function()
+    {
+        WebInspector.panels.scripts.debuggerWasDisabled();
+    },
+
+    parsedScriptSource: function(sourceID, sourceURL, source, startingLine, scriptWorldType)
+    {
+        WebInspector.panels.scripts.addScript(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
+    },
+
+    failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
+    {
+        WebInspector.panels.scripts.addScript(null, sourceURL, source, startingLine, errorLine, errorMessage);
+    },
+
+    didCreateWorker: function()
+    {
+        var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
+        workersPane.addWorker.apply(workersPane, arguments);
+    },
+
+    didDestroyWorker: function()
+    {
+        var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
+        workersPane.removeWorker.apply(workersPane, arguments);
     }
 }
 
