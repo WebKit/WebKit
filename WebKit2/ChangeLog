@@ -1,3 +1,16 @@
+2010-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Crash when clicking a download link that targets a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=50935
+        <rdar://problem/8760572>
+
+        Check for a null history item.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::originatingURLFromBackForwardList):
+
 2010-12-13  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
