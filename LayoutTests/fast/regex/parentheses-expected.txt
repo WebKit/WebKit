@@ -37,6 +37,7 @@ PASS regexp29.exec('Committer:') is null
 PASS regexp30.exec('Committer:') is null
 PASS regexp31.exec('Committer:') is null
 PASS regexp32.exec('Committer:') is null
+PASS regexp33.exec('> <head>') is ['>',undefined,undefined,'>']
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 

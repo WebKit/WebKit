@@ -1,3 +1,21 @@
+2010-12-13  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION: mobileme mail viewing is broken
+        https://bugs.webkit.org/show_bug.cgi?id=50884
+
+        Fixed problem where simple parenthesis (those without capture and
+        with a fixed count) where not propagating backtrack to labels for 
+        nested parentheses.  Also added the nesting level for the parentheses 
+        state created in that case as well.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::copyBacktrackToLabel):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::isLastTerm):
+        (JSC::Yarr::RegexGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+
 2010-12-13  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

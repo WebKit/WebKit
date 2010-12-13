@@ -1,3 +1,17 @@
+2010-12-13  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION: mobileme mail viewing is broken
+        https://bugs.webkit.org/show_bug.cgi?id=50884
+
+        Added a test to check parentheses nesting within parentheses that
+        don't capture and that are fixed count.  There is special handling
+        for this case in the RegExp JIT code.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2010-12-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

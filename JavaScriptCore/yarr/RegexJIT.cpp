@@ -572,6 +572,12 @@ class RegexGenerator : private MacroAssembler {
                 m_nextBacktrack->setLabel(label);
         }
 
+        void copyBacktrackToLabel(BacktrackDestination& rhs)
+        {
+            if (rhs.m_backtrackToLabel)
+                m_backtrackToLabel = rhs.m_backtrackToLabel;
+        }
+
         void setBacktrackToLabel(Label* backtrackToLabel)
         {
             if (!m_backtrackToLabel)
@@ -819,7 +825,7 @@ class RegexGenerator : private MacroAssembler {
         {
             ASSERT(alternativeValid());
             return (t + 1) == alternative()->m_terms.size();
-        }        
+        }
         unsigned getSubParenNum()
         {
             return m_subParenNum++;
@@ -828,7 +834,7 @@ class RegexGenerator : private MacroAssembler {
         {
             return !disjunction->m_parent;
         }
-        
+
         void setParenthesesTail(ParenthesesTail* parenthesesTail)
         {
             m_parenthesesTail = parenthesesTail;
@@ -838,7 +844,7 @@ class RegexGenerator : private MacroAssembler {
         {
             return m_parenthesesTail;
         }
-        
+
         PatternTerm& lookaheadTerm()
         {
             ASSERT(alternativeValid());
@@ -1082,7 +1088,7 @@ class RegexGenerator : private MacroAssembler {
             if (needJumpForPriorParenTail)
                 fromPriorBacktrack.link(generator);
             m_parenBacktrack.linkAlternativeBacktracks(generator);
-            m_withinBacktrackJumps.link(generator);            
+            m_withinBacktrackJumps.link(generator);
 
             if (m_term.capture())
                 generator->store32(Imm32(-1), Address(output, (m_term.parentheses.subpatternId << 1) * sizeof(int)));
@@ -1602,12 +1608,18 @@ class RegexGenerator : private MacroAssembler {
 
         // optimized case - no capture & no quantifier can be handled in a light-weight manner.
         if (!term.capture() && (term.quantityType == QuantifierFixedCount)) {
+            m_expressionState.incrementParenNestingLevel();
+
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
             // this expects that any backtracks back out of the parentheses will be in the
             // parenthesesState's m_backTrackJumps vector, and that if they need backtracking
             // they will have set an entry point on the parenthesesState's m_backtrackLabel.
-            state.propagateBacktrackingFrom(this, parenthesesState.getBacktrackDestination());
+            BacktrackDestination& parenthesesBacktrack = parenthesesState.getBacktrackDestination();
+            state.propagateBacktrackingFrom(this, parenthesesBacktrack);
+            state.getBacktrackDestination().copyBacktrackToLabel(parenthesesBacktrack);
+
+            m_expressionState.decrementParenNestingLevel();
         } else {
             Jump nonGreedySkipParentheses;
             Label nonGreedyTryParentheses;
@@ -1636,7 +1648,7 @@ class RegexGenerator : private MacroAssembler {
             m_expressionState.incrementParenNestingLevel();
 
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
-            
+
             // Save the parenthesesTail for backtracking from nested parens to this one.
             parenthesesState.setParenthesesTail(parenthesesTail);
 
