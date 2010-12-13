@@ -1,3 +1,23 @@
+2010-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73922.
+        http://trac.webkit.org/changeset/73922
+        https://bugs.webkit.org/show_bug.cgi?id=50964
+
+        Remove rebaseline results due to that 73914 has been rolled
+        out (Requested by jianli on #webkit).
+
+        * platform/chromium-linux/http/tests/security/xss-DENIED-frame-name-expected.txt: Copied from LayoutTests/platform/chromium-win/http/tests/security/xss-DENIED-frame-name-expected.txt.
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/chromium-mac/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/chromium-win/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove some empty files that should've been removed as part of r73942.
