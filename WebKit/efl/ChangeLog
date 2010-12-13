@@ -1,3 +1,30 @@
+2010-12-13  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Remove one row/column of renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=50456
+
+        This changes the algorithm in a way that it will require one less column
+        and row of renderers to fill the viewport. The direct result of this is
+        that now less tiles need to be rendered at once when displaying the
+        viewport.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_wrap_right):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_flush):
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.

@@ -914,11 +914,11 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object *o)
     priv->view.offset.cur.y = 0;
     priv->view.offset.old.x = 0;
     priv->view.offset.old.y = 0;
-    priv->view.offset.base.x = -TILE_W;
-    priv->view.offset.base.y = -TILE_H;
+    priv->view.offset.base.x = 0;
+    priv->view.offset.base.y = 0;
 
-    priv->model.base.col = -1;
-    priv->model.base.row = -1;
+    priv->model.base.col = 0;
+    priv->model.base.row = 0;
     priv->model.cur.cols = 1;
     priv->model.cur.rows = 1;
     priv->model.old.cols = 0;
@@ -1022,8 +1022,8 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
     long cols, rows, old_rows, old_cols;
     INF("o=%p, new size: %dx%d", priv->self, w, h);
 
-    cols = 2 + (int)ceil((float)w / (float)tw);
-    rows = 2 + (int)ceil((float)h / (float)th);
+    cols = 1 + (int)ceil((float)w / (float)tw);
+    rows = 1 + (int)ceil((float)h / (float)th);
 
     INF("o=%p new grid size cols: %ld, rows: %ld, was %ld, %ld",
         priv->self, cols, rows, priv->view.cols, priv->view.rows);
@@ -1158,7 +1158,7 @@ static void _ewk_tiled_backing_store_view_wrap_up(Ewk_Tiled_Backing_Store_Data *
     unsigned int last_row = priv->view.rows - 1;
     Evas_Coord tw = priv->view.tile.w;
     Evas_Coord th = priv->view.tile.h;
-    Evas_Coord off_y = (priv->view.offset.base.y % th) - th;
+    Evas_Coord off_y = priv->view.offset.base.y + count * th;
     Evas_Coord oy = y + (last_row - count + 1) * th + off_y;
     Eina_Inlist **itr_start, **itr_end;
 
@@ -1205,7 +1205,7 @@ static void _ewk_tiled_backing_store_view_wrap_down(Ewk_Tiled_Backing_Store_Data
 {
     Evas_Coord tw = priv->view.tile.w;
     Evas_Coord th = priv->view.tile.h;
-    Evas_Coord off_y = (priv->view.offset.base.y % th) - th;
+    Evas_Coord off_y = priv->view.offset.base.y - count * th;
     Evas_Coord oy = y + off_y + (count - 1) * th;
     Eina_Inlist **itr_start, **itr_end;
 
@@ -1253,7 +1253,7 @@ static void _ewk_tiled_backing_store_view_wrap_left(Ewk_Tiled_Backing_Store_Data
     unsigned int r, last_col = priv->view.cols - 1;
     Evas_Coord tw = priv->view.tile.w;
     Evas_Coord th = priv->view.tile.h;
-    Evas_Coord off_x = (priv->view.offset.base.x % tw) - tw;
+    Evas_Coord off_x = priv->view.offset.base.x + count * tw;
     Evas_Coord oy = y + priv->view.offset.base.y;
     Eina_Inlist **itr;
     Eina_Inlist **itr_end;
@@ -1300,7 +1300,7 @@ static void _ewk_tiled_backing_store_view_wrap_right(Ewk_Tiled_Backing_Store_Dat
     unsigned int r;
     Evas_Coord tw = priv->view.tile.w;
     Evas_Coord th = priv->view.tile.h;
-    Evas_Coord off_x = (priv->view.offset.base.x % tw) - tw;
+    Evas_Coord off_x = priv->view.offset.base.x - count * tw;
     Evas_Coord oy = y + priv->view.offset.base.y;
     Eina_Inlist **itr, **itr_end;
 
@@ -1402,8 +1402,10 @@ static void _ewk_tiled_backing_store_smart_calculate_offset_force(Ewk_Tiled_Back
     tw = priv->view.tile.w;
     th = priv->view.tile.h;
 
-    step_x = (dx + priv->view.offset.base.x + tw) / tw;
-    step_y = (dy + priv->view.offset.base.y + th) / th;
+    long new_col = -priv->view.offset.cur.x / tw;
+    step_x = priv->model.base.col - new_col;
+    long new_row = -priv->view.offset.cur.y / th;
+    step_y = priv->model.base.row - new_row;
 
     priv->view.offset.old.x = priv->view.offset.cur.x;
     priv->view.offset.old.y = priv->view.offset.cur.y;
@@ -1435,8 +1437,10 @@ static void _ewk_tiled_backing_store_smart_calculate_offset(Ewk_Tiled_Backing_St
     tw = priv->view.tile.w;
     th = priv->view.tile.h;
 
-    step_x = (dx + priv->view.offset.base.x + tw) / tw;
-    step_y = (dy + priv->view.offset.base.y + th) / th;
+    long new_col = -priv->view.offset.cur.x / tw;
+    step_x = priv->model.base.col - new_col;
+    long new_row = -priv->view.offset.cur.y / th;
+    step_y = priv->model.base.row - new_row;
 
     priv->view.offset.old.x = priv->view.offset.cur.x;
     priv->view.offset.old.y = priv->view.offset.cur.y;
@@ -1569,10 +1573,10 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object *o)
 
     _ewk_tiled_backing_store_updates_process(priv);
 
-    if (priv->view.offset.base.x >= 0
-        || priv->view.offset.base.x <= -2 * priv->view.tile.w
-        || priv->view.offset.base.y >= 0
-        || priv->view.offset.base.y <= -2 * priv->view.tile.h)
+    if (priv->view.offset.base.x > 0
+        || priv->view.offset.base.x <= - priv->view.tile.w
+        || priv->view.offset.base.y > 0
+        || priv->view.offset.base.y <= - priv->view.tile.h)
         ERR("incorrect base offset %+4d,%+4d, tile=%dx%d, cur=%+4d,%+4d\n",
             priv->view.offset.base.x, priv->view.offset.base.y,
             priv->view.tile.w, priv->view.tile.h,
@@ -1700,8 +1704,8 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     priv->view.tile.h = th;
 
     if (!priv->view.w || !priv->view.h) {
-        priv->view.offset.base.x = -tw;
-        priv->view.offset.base.y = -th;
+        priv->view.offset.base.x = 0;
+        priv->view.offset.base.y = 0;
         return EINA_TRUE;
     }
     Eina_Inlist **itr, **itr_end;
@@ -1725,10 +1729,10 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     else if (-new_y + priv->view.h >= model_height)
         new_y = -model_height + priv->view.h;
 
-    bx = new_x % tw - tw;
-    priv->model.base.col = - new_x / tw - 1;
-    by = new_y % th - th;
-    priv->model.base.row = - new_y / th - 1;
+    bx = new_x % tw;
+    priv->model.base.col = - new_x / tw;
+    by = new_y % th;
+    priv->model.base.row = - new_y / th;
 
     priv->changed.size = EINA_TRUE;
     _ewk_tiled_backing_store_changed(priv);
@@ -1804,14 +1808,14 @@ Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas
     evas_object_resize(priv->contents_clipper,
                        model_width, model_height);
 
-    int vrows = ceil((float)priv->view.h / (float)th) + 2;
-    int vcols = ceil((float)priv->view.w / (float)tw) + 2;
+    int vrows = ceil((float)priv->view.h / (float)th) + 1;
+    int vcols = ceil((float)priv->view.w / (float)tw) + 1;
     Evas_Coord new_x = cx + (priv->view.offset.cur.x - cx) * scale;
     Evas_Coord new_y = cy + (priv->view.offset.cur.y - cy) * scale;
-    Evas_Coord bx = new_x % tw - tw;
-    Evas_Coord by = new_y % th - th;
-    unsigned long base_row = -new_y / th - 1;
-    unsigned long base_col = -new_x / tw - 1;
+    Evas_Coord bx = new_x % tw;
+    Evas_Coord by = new_y % th;
+    unsigned long base_row = -new_y / th;
+    unsigned long base_col = -new_x / tw;
 
     if (base_row != priv->model.base.row || base_col != priv->model.base.col) {
         priv->model.base.row = base_row;
@@ -1869,24 +1873,24 @@ void ewk_tiled_backing_store_fix_offsets(Evas_Object *o, Evas_Coord w, Evas_Coor
 
     if (-new_x > w) {
         new_x = -w;
-        bx = new_x % tw - tw;
-        priv->model.base.col = -new_x / tw - 1;
+        bx = new_x % tw;
+        priv->model.base.col = -new_x / tw;
     }
 
     if (-new_y > h) {
         new_y = -h;
-        by = new_y % th - th;
-        priv->model.base.row = -new_y / th - 1;
+        by = new_y % th;
+        priv->model.base.row = -new_y / th;
     }
 
     if (bx >= 0 || bx <= -2 * priv->view.tile.w) {
-        bx = new_x % tw - tw;
-        priv->model.base.col = -new_x / tw - 1;
+        bx = new_x % tw;
+        priv->model.base.col = -new_x / tw;
     }
 
     if (by >= 0 || by <= -2 * priv->view.tile.h) {
-        by = new_y % th - th;
-        priv->model.base.row = -new_y / th - 1;
+        by = new_y % th;
+        priv->model.base.row = -new_y / th;
     }
 
     priv->view.offset.cur.x = new_x;
@@ -2006,10 +2010,10 @@ void ewk_tiled_backing_store_flush(Evas_Object *o)
     priv->view.offset.cur.y = 0;
     priv->view.offset.old.x = 0;
     priv->view.offset.old.y = 0;
-    priv->view.offset.base.x = -priv->view.tile.w;
-    priv->view.offset.base.y = -priv->view.tile.h;
-    priv->model.base.col = -1;
-    priv->model.base.row = -1;
+    priv->view.offset.base.x = 0;
+    priv->view.offset.base.y = 0;
+    priv->model.base.col = 0;
+    priv->model.base.row = 0;
     priv->changed.size = EINA_TRUE;
 
 #ifdef DEBUG_MEM_LEAKS
