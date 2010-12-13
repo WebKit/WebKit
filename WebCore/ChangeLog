@@ -1,3 +1,19 @@
+2010-12-13  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Build fix for r73927
+        https://bugs.webkit.org/show_bug.cgi?id=50946
+
+        Reverting CSSCanvasValue::canvasDestroyed to its code before r73927
+        because it's breaking the build and I changed it only because it
+        appeared redunudant after r73927.
+
+        No behavior changed so no new tests needed.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasDestroyed):
+
 2010-12-13  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by nobody, build fix.
