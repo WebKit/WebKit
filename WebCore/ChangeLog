@@ -1,3 +1,13 @@
+2010-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        HTMLMediaElement::endedPlayback should not return true if duration is zero
+        https://bugs.webkit.org/show_bug.cgi?id=50962
+
+        (WebCore::HTMLMediaElement::endedPlayback): Don't return true when duration is zero because a 
+        media file can't play if it has no duration, therefore it can't have ended playback.
+
 2010-12-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix after r73840.
