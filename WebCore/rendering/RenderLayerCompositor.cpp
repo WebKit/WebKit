@@ -297,6 +297,14 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
                 repaintOnCompositingChange(layer);
 
             layer->ensureBacking();
+
+#if PLATFORM(MAC) && PLATFORM(CA)
+            if (layer->renderer()->isCanvas()) {
+                HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(layer->renderer()->node());
+                if (canvas->renderingContext() && canvas->renderingContext()->isAccelerated())
+                    layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
+            }
+#endif
             layerChanged = true;
         }
     } else {

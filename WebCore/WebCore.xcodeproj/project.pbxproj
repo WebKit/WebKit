@@ -689,6 +689,7 @@
 		20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20D629241253690B00081543 /* InspectorInstrumentation.cpp */; };
 		20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 20D629251253690B00081543 /* InspectorInstrumentation.h */; };
 		228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */ = {isa = PBXBuildFile; fileRef = 228C284410D82500009D0D0E /* ScriptWrappable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2298CCE712AD8BCA00C42E51 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2298CCE612AD8BCA00C42E51 /* IOSurface.framework */; };
 		24F54EAC101FE914000AE741 /* ApplicationCacheHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */; };
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
@@ -6972,6 +6973,7 @@
 		20D629241253690B00081543 /* InspectorInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentation.cpp; sourceTree = "<group>"; };
 		20D629251253690B00081543 /* InspectorInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentation.h; sourceTree = "<group>"; };
 		228C284410D82500009D0D0E /* ScriptWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappable.h; sourceTree = "<group>"; };
+		2298CCE612AD8BCA00C42E51 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = /System/Library/Frameworks/IOSurface.framework; sourceTree = "<absolute>"; };
 		2442BBF81194C9D300D49469 /* HashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashChangeEvent.h; sourceTree = "<group>"; };
 		24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheHost.cpp; sourceTree = "<group>"; };
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
@@ -12229,6 +12231,7 @@
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
 				FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */,
 				FD2DBF1512B048A300ED98C6 /* CoreAudio.framework in Frameworks */,
+				2298CCE712AD8BCA00C42E51 /* IOSurface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12325,6 +12328,7 @@
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
 				1AB33DA412551E320024457A /* IOKit.framework */,
+				2298CCE612AD8BCA00C42E51 /* IOSurface.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,

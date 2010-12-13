@@ -1256,6 +1256,8 @@ _wkSignalCFReadStreamHasBytes
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
+_wkIOSurfaceContextCreate
+_wkIOSurfaceContextCreateImage
 #endif
 
 #if ENABLE(3D_RENDERING)

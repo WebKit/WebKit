@@ -66,7 +66,7 @@ ImageBufferData::~ImageBufferData()
     m_bitmap.Unlock();
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool, bool& success)
     : m_data(size)
     , m_size(size)
 {

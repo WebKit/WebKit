@@ -372,7 +372,11 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!size.width() || !size.height())
         return;
 
+#if defined(USE_IOSURFACE)
+    m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Accelerated);
+#else
     m_imageBuffer = ImageBuffer::create(size);
+#endif
     // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
     // where ImageBuffer::create() returns 0, however we could still be low on memory.
     if (!m_imageBuffer)

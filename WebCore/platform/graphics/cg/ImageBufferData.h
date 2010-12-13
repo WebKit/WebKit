@@ -30,6 +30,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
+typedef struct __IOSurface *IOSurfaceRef;
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGDataProvider *CGDataProviderRef;
 typedef uint32_t CGBitmapInfo;
@@ -48,6 +49,7 @@ public:
     CGBitmapInfo m_bitmapInfo;
     unsigned m_bytesPerRow;
     CGColorSpaceRef m_colorSpace;
+    RetainPtr<IOSurfaceRef> m_surface;
 };
 
 }  // namespace WebCore

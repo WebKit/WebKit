@@ -144,7 +144,9 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
 
 bool CanvasRenderingContext2D::isAccelerated() const
 {
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    return true;
+#elif ENABLE(ACCELERATED_2D_CANVAS)
     return m_context3D;
 #else
     return false;
@@ -1819,7 +1821,11 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         // FIXME: The rect is not big enough for miters on stroked text.
         IntRect maskRect = enclosingIntRect(textRect);
 
+#if defined(USE_IOSURFACE)
+        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), ColorSpaceDeviceRGB, Accelerated);
+#else
         OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size());
+#endif
 
         GraphicsContext* maskImageContext = maskImage->context();
 

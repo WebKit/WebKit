@@ -1,3 +1,31 @@
+2010-12-09  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Adopt new CG API for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=50591
+
+        No new tests. All current layout tests are sufficient.
+
+        * html/HTMLCanvasElement.cpp: Add in accelerateRendering flag for imagebuffer creation.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isAccelerated): Always return true if using CA on new platforms.
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Use accelerateRendering for imagebuffer.
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create): Plumb through new flag.
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Update method sig.
+        * platform/graphics/cg/ImageBufferCG.cpp: Switch off of accelerateRendering flag for new accelerated paths.
+        * platform/graphics/cg/ImageBufferData.h: Add in surface ref
+        * platform/graphics/haiku/ImageBufferHaiku.cpp: Update method sig.
+        * platform/graphics/qt/ImageBufferQt.cpp: ^^
+        * platform/graphics/skia/ImageBufferSkia.cpp: ^^
+        * platform/graphics/wince/ImageBufferWinCE.cpp: ^^
+        * platform/graphics/wx/ImageBufferWx.cpp: ^^
+        * platform/mac/WebCoreSystemInterface.h: Add new method sigs
+        * platform/mac/WebCoreSystemInterface.mm: ^^
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerCompositor.cpp: Set acceleratesDrawing for canvas backings.
+
 2010-12-13  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.

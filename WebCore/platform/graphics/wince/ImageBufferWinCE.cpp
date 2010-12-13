@@ -72,7 +72,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     m_bitmap->setHasAlpha(true);
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace colorSpace, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace colorSpace, bool, bool& success)
     : m_data(size)
     , m_size(size)
 {

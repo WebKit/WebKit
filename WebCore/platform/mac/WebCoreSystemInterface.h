@@ -29,6 +29,10 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <objc/objc.h>
 
+#if PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#include <IOSurface/IOSurface.h>
+#endif
+
 typedef struct _NSRange NSRange;
 
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -179,6 +183,9 @@ extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFInde
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
+
+extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
+extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 #endif
 
 }

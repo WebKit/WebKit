@@ -42,9 +42,56 @@
 #include <wtf/Threading.h>
 #include <math.h>
 
+#if defined(USE_IOSURFACE)
+#include <IOSurface/IOSurface.h>
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#include "WebCoreSystemInterface.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
+
+#if defined(USE_IOSURFACE)
+static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
+{
+    unsigned pixelFormat = 'BGRA';
+    unsigned bytesPerElement = 4;
+    int width = size.width();
+    int height = size.height();
+
+    unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, size.width() * bytesPerElement);
+    if (!bytesPerRow || bytesPerRow != (size.width() * bytesPerElement))
+        return 0;
+
+    unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, size.height() * bytesPerRow);
+    if (!allocSize || allocSize != (size.height() * bytesPerRow))
+        return 0;
+
+    const void *keys[6];
+    const void *values[6];
+    keys[0] = kIOSurfaceWidth;
+    values[0] = CFNumberCreate(0, kCFNumberIntType, &width);
+    keys[1] = kIOSurfaceHeight;
+    values[1] = CFNumberCreate(0, kCFNumberIntType, &height);
+    keys[2] = kIOSurfacePixelFormat;
+    values[2] = CFNumberCreate(0, kCFNumberIntType, &pixelFormat);
+    keys[3] = kIOSurfaceBytesPerElement;
+    values[3] = CFNumberCreate(0, kCFNumberIntType, &bytesPerElement);
+    keys[4] = kIOSurfaceBytesPerRow;
+    values[4] = CFNumberCreate(0, kCFNumberLongType, &bytesPerRow);
+    keys[5] = kIOSurfaceAllocSize;
+    values[5] = CFNumberCreate(0, kCFNumberLongType, &allocSize);
+
+    RetainPtr<CFDictionaryRef> dict(AdoptCF, CFDictionaryCreate(0, keys, values, 6, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    for (unsigned i = 0; i < 6; i++)
+        CFRelease(values[i]);
+
+    return RetainPtr<IOSurfaceRef>(AdoptCF, IOSurfaceCreate(dict.get()));
+}
+#endif
 
 static void releaseImageData(void*, const void* data, size_t)
 {
@@ -53,32 +100,29 @@ static void releaseImageData(void*, const void* data, size_t)
 
 ImageBufferData::ImageBufferData(const IntSize&)
     : m_data(0)
+#if defined(USE_IOSURFACE)
+    , m_surface(0)
+#endif
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool accelerateRendering, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_accelerateRendering(accelerateRendering)
 {
     success = false;  // Make early return mean failure.
     if (size.width() < 0 || size.height() < 0)
         return;
 
     unsigned bytesPerRow = size.width();
-
-    // Protect against overflow
-    if (bytesPerRow > 0x3FFFFFFF)
+    if (bytesPerRow > 0x3FFFFFFF) // Protect against overflow
         return;
     bytesPerRow *= 4;
     m_data.m_bytesPerRow = bytesPerRow;
-
     size_t dataSize = size.height() * bytesPerRow;
-    if (!tryFastCalloc(size.height(), bytesPerRow).getValue(m_data.m_data))
-        return;
 
-    ASSERT((reinterpret_cast<size_t>(m_data.m_data) & 2) == 0);
-
-    switch(imageColorSpace) {
+    switch (imageColorSpace) {
     case ColorSpaceDeviceRGB:
         m_data.m_colorSpace = deviceRGBColorSpaceRef();
         break;
@@ -90,9 +134,25 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool& 
         break;
     }
 
-    m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
-    RetainPtr<CGContextRef> cgContext(AdoptCF, CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow,
-                                                                     m_data.m_colorSpace, m_data.m_bitmapInfo));
+    RetainPtr<CGContextRef> cgContext;
+    if (!m_accelerateRendering) {
+        if (!tryFastCalloc(size.height(), bytesPerRow).getValue(m_data.m_data))
+            return;
+        ASSERT(!(reinterpret_cast<size_t>(m_data.m_data) & 2));
+
+        m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
+        cgContext.adoptCF(CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow, m_data.m_colorSpace, m_data.m_bitmapInfo));
+        // Create a live image that wraps the data.
+        m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize, releaseImageData));
+    } else {
+#if defined(USE_IOSURFACE)
+        m_data.m_surface = createIOSurface(size);
+        cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), size.width(), size.height(), m_data.m_colorSpace));
+#else
+        m_accelerateRendering = false; // Force to false on older platforms
+#endif
+    }
+
     if (!cgContext)
         return;
 
@@ -100,9 +160,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool& 
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -size.height());
     success = true;
-    
-    // Create a live image that wraps the data.
-    m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize, releaseImageData));
 }
 
 ImageBuffer::~ImageBuffer()
@@ -122,7 +179,14 @@ bool ImageBuffer::drawsUsingCopy() const
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     // BitmapImage will release the passed in CGImage on destruction
-    return BitmapImage::create(CGBitmapContextCreateImage(context()->platformContext()));
+    CGImageRef ctxImage = 0;
+    if (!m_accelerateRendering)
+        ctxImage = CGBitmapContextCreateImage(context()->platformContext());
+#if defined(USE_IOSURFACE)
+    else
+        ctxImage = wkIOSurfaceContextCreateImage(context()->platformContext());
+#endif
+    return BitmapImage::create(ctxImage);
 }
 
 static CGImageRef cgImage(const IntSize& size, const ImageBufferData& data)
@@ -134,34 +198,50 @@ static CGImageRef cgImage(const IntSize& size, const ImageBufferData& data)
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    if (destContext == context()) {
-        // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
-        RefPtr<Image> copy = copyImage();
-        destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, useLowQualityScale);
+    if (!m_accelerateRendering) {
+        if (destContext == context()) {
+            // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+            RefPtr<Image> copy = copyImage();
+            destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, useLowQualityScale);
+        } else {
+            RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
+            destContext->drawImage(imageForRendering.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+        }
     } else {
-        RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
-        destContext->drawImage(imageForRendering.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+        RefPtr<Image> copy = copyImage();
+        ColorSpace colorSpace = (destContext == context()) ? ColorSpaceDeviceRGB : styleColorSpace;
+        destContext->drawImage(copy.get(), colorSpace, destRect, srcRect, op, useLowQualityScale);
     }
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    if (destContext == context()) {
-        // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+    if (!m_accelerateRendering) {
+        if (destContext == context()) {
+            // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+            RefPtr<Image> copy = copyImage();
+            copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        } else {
+            RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
+            imageForRendering->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        }
+    } else {
         RefPtr<Image> copy = copyImage();
         copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
-    } else {
-        RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
-        imageForRendering->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
     }
 }
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 {
-    RetainPtr<CGImageRef> image(AdoptCF, cgImage(m_size, m_data));
-                                                                                          
     CGContextRef platformContext = context->platformContext();
+    RetainPtr<CGImageRef> image;
+    if (!m_accelerateRendering)
+        image.adoptCF(cgImage(m_size, m_data));
+#if defined(USE_IOSURFACE)
+    else
+        image.adoptCF(wkIOSurfaceContextCreateImage(platformContext));
+#endif
     CGContextTranslateCTM(platformContext, rect.x(), rect.y() + rect.height());
     CGContextScaleCTM(platformContext, 1, -1);
     CGContextClipToMask(platformContext, FloatRect(FloatPoint(), rect.size()), image.get());
@@ -170,7 +250,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 }
 
 template <Multiply multiplied>
-PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
+PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
 {
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* data = result->data()->data()->data();
@@ -199,43 +279,83 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
-
-    unsigned srcBytesPerRow = 4 * size.width();
+    
     unsigned destBytesPerRow = 4 * rect.width();
-
-    // ::create ensures that all ImageBuffers have valid data, so we don't need to check it here.
-    unsigned char* srcRows = reinterpret_cast<unsigned char*>(imageData.m_data) + originy * srcBytesPerRow + originx * 4;
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
-    for (int y = 0; y < numRows; ++y) {
-        for (int x = 0; x < numColumns; x++) {
-            int basex = x * 4;
-            unsigned char alpha = srcRows[basex + 3];
-            if (multiplied == Unmultiplied && alpha) {
-                destRows[basex] = (srcRows[basex] * 255) / alpha;
-                destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
-                destRows[basex + 3] = alpha;
-            } else
-                reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+
+    unsigned srcBytesPerRow;
+    unsigned char* srcRows;
+
+    if (!accelerateRendering) {
+        srcBytesPerRow = 4 * size.width();
+        srcRows = reinterpret_cast<unsigned char*>(imageData.m_data) + originy * srcBytesPerRow + originx * 4;
+        
+        for (int y = 0; y < numRows; ++y) {
+            for (int x = 0; x < numColumns; x++) {
+                int basex = x * 4;
+                unsigned char alpha = srcRows[basex + 3];
+                if (multiplied == Unmultiplied && alpha) {
+                    destRows[basex] = (srcRows[basex] * 255) / alpha;
+                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                    destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
+                    destRows[basex + 3] = alpha;
+                } else
+                    reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+            }
+            srcRows += srcBytesPerRow;
+            destRows += destBytesPerRow;
         }
-        srcRows += srcBytesPerRow;
-        destRows += destBytesPerRow;
+    } else {
+#if defined(USE_IOSURFACE)
+        IOSurfaceRef surface = imageData.m_surface.get();
+        IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
+        srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
+        srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
+        
+        for (int y = 0; y < numRows; ++y) {
+            for (int x = 0; x < numColumns; x++) {
+                int basex = x * 4;
+                unsigned char alpha = srcRows[basex + 3];
+                if (multiplied == Unmultiplied && alpha) {
+                    destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
+                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                    destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
+                    destRows[basex + 3] = alpha;
+                } else {
+                    destRows[basex] = srcRows[basex + 2];
+                    destRows[basex + 1] = srcRows[basex + 1];
+                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 3] = alpha;
+                }
+            }
+            srcRows += srcBytesPerRow;
+            destRows += destBytesPerRow;
+        }
+        IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, 0);
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
+    
     return result;
 }
 
 PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    return getImageData<Unmultiplied>(rect, m_data, m_size);
+    if (m_accelerateRendering)
+        CGContextFlush(context()->platformContext());
+    return getImageData<Unmultiplied>(rect, m_data, m_size, m_accelerateRendering);
 }
 
 PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    return getImageData<Premultiplied>(rect, m_data, m_size);
+    if (m_accelerateRendering)
+        CGContextFlush(context()->platformContext());
+    return getImageData<Premultiplied>(rect, m_data, m_size, m_accelerateRendering);
 }
 
 template <Multiply multiplied>
-void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size)
+void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -264,35 +384,73 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * source->width();
-    unsigned destBytesPerRow = 4 * size.width();
-
     unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
-    unsigned char* destRows = reinterpret_cast<unsigned char*>(imageData.m_data) + desty * destBytesPerRow + destx * 4;
-    for (int y = 0; y < numRows; ++y) {
-        for (int x = 0; x < numColumns; x++) {
-            int basex = x * 4;
-            unsigned char alpha = srcRows[basex + 3];
-            if (multiplied == Unmultiplied && alpha != 255) {
-                destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
-                destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
-                destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
-                destRows[basex + 3] = alpha;
-            } else
-                reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+    unsigned destBytesPerRow;
+    unsigned char* destRows;
+
+    if (!accelerateRendering) {
+        destBytesPerRow = 4 * size.width();
+        destRows = reinterpret_cast<unsigned char*>(imageData.m_data) + desty * destBytesPerRow + destx * 4;
+        for (int y = 0; y < numRows; ++y) {
+            for (int x = 0; x < numColumns; x++) {
+                int basex = x * 4;
+                unsigned char alpha = srcRows[basex + 3];
+                if (multiplied == Unmultiplied && alpha != 255) {
+                    destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
+                    destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
+                    destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
+                    destRows[basex + 3] = alpha;
+                } else
+                    reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+            }
+            destRows += destBytesPerRow;
+            srcRows += srcBytesPerRow;
         }
-        destRows += destBytesPerRow;
-        srcRows += srcBytesPerRow;
+    } else {
+#if defined(USE_IOSURFACE)
+        IOSurfaceRef surface = imageData.m_surface.get();
+        IOSurfaceLock(surface, 0, 0);
+        destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
+        destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
+        
+        for (int y = 0; y < numRows; ++y) {
+            for (int x = 0; x < numColumns; x++) {
+                int basex = x * 4;
+                unsigned char alpha = srcRows[basex + 3];
+                if (multiplied == Unmultiplied && alpha != 255) {
+                    destRows[basex] = (srcRows[basex + 2] * alpha + 254) / 255;
+                    destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
+                    destRows[basex + 2] = (srcRows[basex] * alpha + 254) / 255;
+                    destRows[basex + 3] = alpha;
+                } else {
+                    destRows[basex] = srcRows[basex + 2];
+                    destRows[basex + 1] = srcRows[basex + 1];
+                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 3] = alpha;
+                }
+            }
+            destRows += destBytesPerRow;
+            srcRows += srcBytesPerRow;
+        }
+        IOSurfaceUnlock(surface, 0, 0);
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 }
 
 void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    if (m_accelerateRendering)
+        CGContextFlush(context()->platformContext());
+    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
 }
 
 void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    if (m_accelerateRendering)
+        CGContextFlush(context()->platformContext());
+    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
 }
 
 static inline CFStringRef jpegUTI()
@@ -332,7 +490,14 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
+    RetainPtr<CGImageRef> image;
+    if (!m_accelerateRendering)
+        image.adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
+#if defined(USE_IOSURFACE)
+    else
+        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
+#endif
+
     if (!image)
         return "data:,";
 
@@ -364,5 +529,4 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 
     return makeString("data:", mimeType, ";base64,", out);
 }
-
 } // namespace WebCore

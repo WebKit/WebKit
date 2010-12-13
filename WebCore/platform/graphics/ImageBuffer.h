@@ -39,6 +39,10 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
+#if (PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
+#define USE_IOSURFACE 1
+#endif
+
 namespace WebCore {
 
     class GraphicsContext;
@@ -51,13 +55,18 @@ namespace WebCore {
         Unmultiplied
     };
 
+    enum RenderingMode {
+        Unaccelerated,
+        Accelerated
+    };
+
     class ImageBuffer : public Noncopyable {
     public:
         // Will return a null pointer on allocation failure.
-        static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB)
+        static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
         {
             bool success = false;
-            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, success));
+            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, renderingMode == Accelerated, success));
             if (success)
                 return buf.release();
             return 0;
@@ -104,6 +113,7 @@ namespace WebCore {
         ImageBufferData m_data;
 
         IntSize m_size;
+        bool m_accelerateRendering;
         OwnPtr<GraphicsContext> m_context;
 
 #if !PLATFORM(CG)
@@ -113,7 +123,7 @@ namespace WebCore {
 
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, ColorSpace colorSpace, bool& success);
+        ImageBuffer(const IntSize&, ColorSpace colorSpace, bool accelerateRendering, bool& success);
     };
 
 } // namespace WebCore

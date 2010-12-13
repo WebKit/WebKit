@@ -121,6 +121,8 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateCTLineWithUniCharProvider);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
+    INIT(IOSurfaceContextCreate);
+    INIT(IOSurfaceContextCreateImage);
 #endif
 
     didInit = true;
