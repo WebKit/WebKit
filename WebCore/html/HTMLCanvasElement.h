@@ -65,7 +65,8 @@ public:
     static PassRefPtr<HTMLCanvasElement> create(const QualifiedName&, Document*);
     virtual ~HTMLCanvasElement();
 
-    void setObserver(CanvasObserver* observer) { m_observer = observer; }
+    void addObserver(CanvasObserver* observer);
+    void removeObserver(CanvasObserver* observer);
 
     // Attributes and functions exposed to script
     int width() const { return size().width(); }
@@ -138,7 +139,7 @@ private:
     void setSurfaceSize(const IntSize&);
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
-    CanvasObserver* m_observer;
+    HashSet<CanvasObserver*> m_observers;
 
     IntSize m_size;
 

@@ -1,3 +1,13 @@
+2010-12-13  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        HTMLCanvasElement should handle multiple observers.
+        https://bugs.webkit.org/show_bug.cgi?id=50899
+
+        * fast/canvas/canvas-bg-multiple-removal-expected.txt: Added.
+        * fast/canvas/canvas-bg-multiple-removal.html: Added.
+
 2010-12-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

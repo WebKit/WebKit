@@ -71,7 +71,6 @@ static const float MaxSkiaDim = 32767.0F; // Maximum width/height in CSS pixels.
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_observer(0)
     , m_size(DefaultWidth, DefaultHeight)
     , m_ignoreReset(false)
     , m_pageScaleFactor(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
@@ -93,8 +92,9 @@ PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tag
 
 HTMLCanvasElement::~HTMLCanvasElement()
 {
-    if (m_observer)
-        m_observer->canvasDestroyed(this);
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasDestroyed(this);
 }
 
 void HTMLCanvasElement::parseMappedAttribute(Attribute* attr)
@@ -115,6 +115,16 @@ RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle*
 
     m_rendererIsCanvas = false;
     return HTMLElement::createRenderer(arena, style);
+}
+
+void HTMLCanvasElement::addObserver(CanvasObserver* observer)
+{
+    m_observers.add(observer);
+}
+
+void HTMLCanvasElement::removeObserver(CanvasObserver* observer)
+{
+    m_observers.remove(observer);
 }
 
 void HTMLCanvasElement::setHeight(int value)
@@ -200,8 +210,9 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
         ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
     }
 
-    if (m_observer)
-        m_observer->canvasChanged(this, rect);
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasChanged(this, rect);
 }
 
 void HTMLCanvasElement::reset()
@@ -238,8 +249,9 @@ void HTMLCanvasElement::reset()
         }
     }
 
-    if (m_observer)
-        m_observer->canvasResized(this);
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasResized(this);
 }
 
 void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)

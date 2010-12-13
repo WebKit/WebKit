@@ -1,3 +1,25 @@
+2010-12-13  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        HTMLCanvasElement should handle multiple observers.
+        https://bugs.webkit.org/show_bug.cgi?id=50899
+
+        Test: fast/canvas/canvas-bg-multiple-removal.html
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::~CSSCanvasValue):
+        (WebCore::CSSCanvasValue::canvasDestroyed):
+        (WebCore::CSSCanvasValue::element):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::addObserver):
+        (WebCore::HTMLCanvasElement::removeObserver):
+        (WebCore::HTMLCanvasElement::didDraw):
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLCanvasElement.h:
+
 2010-12-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
