@@ -773,8 +773,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEntryCustom.cpp \
 	WebCore/bindings/js/JSEntrySyncCustom.cpp \
-	WebCore/bindings/js/JSErrorHandler.cpp \
-	WebCore/bindings/js/JSErrorHandler.h \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \
@@ -872,6 +870,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSWorkerContextBase.cpp \
 	WebCore/bindings/js/JSWorkerContextBase.h \
 	WebCore/bindings/js/JSWorkerContextCustom.cpp \
+	WebCore/bindings/js/JSWorkerContextErrorHandler.cpp \
+	WebCore/bindings/js/JSWorkerContextErrorHandler.h \
 	WebCore/bindings/js/JSWorkerCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \

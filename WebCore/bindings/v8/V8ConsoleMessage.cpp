@@ -54,14 +54,7 @@ V8ConsoleMessage::V8ConsoleMessage(const String& string, const String& sourceID,
 
 void V8ConsoleMessage::dispatchNow(Page* page)
 {
-    ASSERT(page);
-
-    // Process any delayed messages to make sure that messages
-    // appear in the right order in the console.
-    processDelayed();
-
-    Console* console = page->mainFrame()->domWindow()->console();
-    console->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, m_string, m_lineNumber, m_sourceID);
+    dispatchNow(page, 0);
 }
 
 void V8ConsoleMessage::dispatchLater()
@@ -112,8 +105,8 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
     if (!frame)
         return;
-    Document* document = frame->document();
-    if (!document)
+    Page* page = frame->page();
+    if (!page)
         return;
 
     v8::Handle<v8::String> errorMessageString = message->Get();
@@ -129,7 +122,21 @@ void V8ConsoleMessage::handler(v8::Handle<v8::Message> message, v8::Handle<v8::V
     v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
     bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
     String resourceNameString = useURL ? frame->document()->url() : toWebCoreString(resourceName);
-    document->reportException(errorMessage, message->GetLineNumber(), resourceNameString, callStack);
+    V8ConsoleMessage consoleMessage(errorMessage, resourceNameString, message->GetLineNumber());
+    consoleMessage.dispatchNow(page, callStack);
+}
+
+void V8ConsoleMessage::dispatchNow(Page* page, PassRefPtr<ScriptCallStack> callStack)
+{
+    ASSERT(page);
+
+    // Process any delayed messages to make sure that messages
+    // appear in the right order in the console.
+    processDelayed();
+
+    Console* console = page->mainFrame()->domWindow()->console();
+    MessageType messageType = callStack ? UncaughtExceptionMessageType : LogMessageType;
+    console->addMessage(JSMessageSource, messageType, ErrorMessageLevel, m_string, m_lineNumber, m_sourceID, callStack);
 }
 
 } // namespace WebCore

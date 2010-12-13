@@ -385,7 +385,6 @@ v8 {
         bindings/v8/V8NodeFilterCondition.cpp \
         bindings/v8/V8Proxy.cpp \
         bindings/v8/V8Utilities.cpp \
-        bindings/v8/V8WindowErrorHandler.cpp \
         bindings/v8/V8WorkerContextEventListener.cpp \
         bindings/v8/WorkerContextExecutionProxy.cpp \
         bindings/v8/WorkerScriptController.cpp \
@@ -530,7 +529,6 @@ v8 {
         bindings/js/JSDeviceOrientationEventCustom.cpp \
         bindings/js/JSDocumentCustom.cpp \
         bindings/js/JSElementCustom.cpp \
-        bindings/js/JSErrorHandler.cpp \
         bindings/js/JSEventCustom.cpp \
         bindings/js/JSEventListener.cpp \
         bindings/js/JSEventSourceCustom.cpp \
@@ -590,6 +588,7 @@ v8 {
         bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
         bindings/js/JSWebKitCSSMatrixCustom.cpp \
         bindings/js/JSWebKitPointCustom.cpp \
+        bindings/js/JSWorkerContextErrorHandler.cpp \
         bindings/js/JSXMLHttpRequestCustom.cpp \
         bindings/js/JSXMLHttpRequestUploadCustom.cpp \
         bindings/js/ScheduledAction.cpp \
@@ -1461,7 +1460,6 @@ v8 {
         bindings/v8/V8NPUtils.h \
         bindings/v8/V8Proxy.h \
         bindings/v8/V8Utilities.h \
-        bindings/v8/V8WindowErrorHandler.h \
         bindings/v8/V8WorkerContextEventListener.h \
         bindings/v8/WorkerContextExecutionProxy.h \
         bindings/v8/WorkerScriptController.h \
@@ -1488,7 +1486,6 @@ v8 {
         bindings/js/JSDOMWindowCustom.h \
         bindings/js/JSDOMWindowShell.h \
         bindings/js/JSDOMWrapper.h \
-        bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
         bindings/js/JSEventTarget.h \
         bindings/js/JSHistoryCustom.h \
@@ -1506,6 +1503,7 @@ v8 {
         bindings/js/JSPluginElementFunctions.h \
         bindings/js/JSStorageCustom.h \
         bindings/js/JSWorkerContextBase.h \
+        bindings/js/JSWorkerContextErrorHandler.h \
         bindings/js/JavaScriptCallFrame.h \
         bindings/js/ScheduledAction.h \
         bindings/js/ScriptCachedFrameData.h \

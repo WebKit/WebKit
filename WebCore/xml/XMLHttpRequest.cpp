@@ -39,7 +39,6 @@
 #include "InspectorInstrumentation.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
-#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -812,7 +811,7 @@ static void reportUnsafeUsage(ScriptExecutionContext* context, const String& mes
         return;
     // FIXME: It's not good to report the bad usage without indicating what source line it came from.
     // We should pass additional parameters so we can tell the console where the mistake occurred.
-    context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+    context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
 }
 
 void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& value, ExceptionCode& ec)

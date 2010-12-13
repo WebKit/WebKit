@@ -1,3 +1,16 @@
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.
+
+        REGRESSION(r73914): "Chromium page_cycler_morejs fails" (Requested by yurys on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=50950
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask):
+
 2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

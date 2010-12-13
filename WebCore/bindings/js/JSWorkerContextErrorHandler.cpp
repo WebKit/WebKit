@@ -30,7 +30,9 @@
 
 #include "config.h"
 
-#include "JSErrorHandler.h"
+#if ENABLE(WORKERS)
+
+#include "JSWorkerContextErrorHandler.h"
 
 #include "ErrorEvent.h"
 #include "Event.h"
@@ -41,23 +43,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+JSWorkerContextErrorHandler::JSWorkerContextErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
     : JSEventListener(function, wrapper, isAttribute, isolatedWorld)
 {
 }
 
-JSErrorHandler::~JSErrorHandler()
+JSWorkerContextErrorHandler::~JSWorkerContextErrorHandler()
 {
 }
 
-void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
+void JSWorkerContextErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
     ASSERT(scriptExecutionContext);
     if (!scriptExecutionContext)
         return;
-
-    ASSERT(event->isErrorEvent());
-    ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
     JSLock lock(SilenceAssertionsOnly);
 
@@ -75,10 +74,14 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
     CallType callType = jsFunction->getCallData(callData);
 
     if (callType != CallTypeNone) {
-        RefPtr<JSErrorHandler> protectedctor(this);
+
+        ref();
 
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
+
+        ASSERT(event->isErrorEvent());
+        ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
         MarkedArgumentBuffer args;
         args.append(jsString(exec, errorEvent->message()));
@@ -103,7 +106,11 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
             if (returnValue.getBoolean(retvalbool) && !retvalbool)
                 event->preventDefault();
         }
+
+        deref();
     }
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WORKERS)

@@ -37,7 +37,6 @@
 
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
-#include "ScriptCallStack.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
@@ -73,7 +72,7 @@ static void v8MessageHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Val
         String errorMessage = toWebCoreString(message->Get());
         int lineNumber = message->GetLineNumber();
         String sourceURL = toWebCoreString(message->GetScriptResourceName());
-        context->reportException(errorMessage, lineNumber, sourceURL, 0);
+        context->reportException(errorMessage, lineNumber, sourceURL);
     }
 
     isReportingException = false;

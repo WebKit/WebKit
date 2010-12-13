@@ -31,6 +31,8 @@
 #ifndef ErrorEvent_h
 #define ErrorEvent_h
 
+#if ENABLE(WORKERS)
+
 #include "Event.h"
 #include "PlatformString.h"
 
@@ -66,5 +68,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(WORKERS)
 
 #endif // ErrorEvent_h

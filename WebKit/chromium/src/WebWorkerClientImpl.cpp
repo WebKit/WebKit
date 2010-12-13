@@ -41,7 +41,6 @@
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
@@ -248,7 +247,7 @@ void WebWorkerClientImpl::postExceptionToWorkerObject(const WebString& errorMess
                                                                 sourceURL,
                                                                 lineNumber));
     if (unhandled)
-        m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL, 0);
+        m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL);
 }
 
 void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destination,
@@ -275,7 +274,7 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destination,
                                          static_cast<MessageType>(messageType),
                                          static_cast<MessageLevel>(messageLevel),
                                          String(message), lineNumber,
-                                         String(sourceURL), 0);
+                                         String(sourceURL));
 }
 
 void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int sourceId,
@@ -382,7 +381,9 @@ void WebWorkerClientImpl::postExceptionToWorkerObjectTask(
                                                                       sourceURL,
                                                                       lineNumber));
     if (!handled)
-        thisPtr->m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL, 0);
+        thisPtr->m_scriptExecutionContext->reportException(errorMessage,
+                                                           lineNumber,
+                                                           sourceURL);
 }
 
 void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionContext* context,
@@ -397,7 +398,8 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionCo
     thisPtr->m_scriptExecutionContext->addMessage(static_cast<MessageSource>(sourceId),
                                                   static_cast<MessageType>(messageType),
                                                   static_cast<MessageLevel>(messageLevel),
-                                                  message, lineNumber, sourceURL, 0);
+                                                  message, lineNumber,
+                                                  sourceURL);
 }
 
 void WebWorkerClientImpl::confirmMessageFromWorkerObjectTask(ScriptExecutionContext* context,

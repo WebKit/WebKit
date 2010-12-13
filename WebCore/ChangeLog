@@ -1,3 +1,75 @@
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.
+
+        REGRESSION(r73914): "Chromium page_cycler_morejs fails" (Requested by yurys on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=50950
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSWorkerContextErrorHandler.cpp: Renamed from WebCore/bindings/js/JSErrorHandler.cpp.
+        (WebCore::JSWorkerContextErrorHandler::JSWorkerContextErrorHandler):
+        (WebCore::JSWorkerContextErrorHandler::~JSWorkerContextErrorHandler):
+        (WebCore::JSWorkerContextErrorHandler::handleEvent):
+        * bindings/js/JSWorkerContextErrorHandler.h: Renamed from WebCore/bindings/js/JSErrorHandler.h.
+        (WebCore::JSWorkerContextErrorHandler::create):
+        (WebCore::createJSWorkerContextErrorHandler):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8ConsoleMessage.cpp:
+        (WebCore::V8ConsoleMessage::dispatchNow):
+        (WebCore::V8ConsoleMessage::handler):
+        * bindings/v8/V8ConsoleMessage.h:
+        * bindings/v8/V8WindowErrorHandler.cpp: Removed.
+        * bindings/v8/V8WindowErrorHandler.h: Removed.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::v8MessageHandler):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * dom/Document.cpp:
+        (WebCore::Document::reportException):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readStatusLine):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::postExceptionTask):
+        (WebCore::postConsoleMessageTask):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::reportException):
+        (WebCore::WorkerContext::addMessage):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::performTask):
+        (WebCore::postConsoleMessageTask):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::reportUnsafeUsage):
+
 2010-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey Proskuryakov.

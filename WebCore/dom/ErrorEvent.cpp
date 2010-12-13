@@ -30,6 +30,8 @@
 
 #include "config.h"
 
+#if ENABLE(WORKERS)
+
 #include "ErrorEvent.h"
 
 #include "EventNames.h"
@@ -70,3 +72,5 @@ bool ErrorEvent::isErrorEvent() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WORKERS)

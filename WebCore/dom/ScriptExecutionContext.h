@@ -33,7 +33,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -53,14 +52,11 @@ namespace WebCore {
     class DatabaseThread;
 #endif
     class DOMTimer;
-    class EventListener;
-    class EventTarget;
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     class FileThread;
 #endif
     class MessagePort;
     class SecurityOrigin;
-    class ScriptCallStack;
 #if ENABLE(INSPECTOR)
     class InspectorController;
 #endif
@@ -95,8 +91,8 @@ namespace WebCore {
         virtual InspectorController* inspectorController() const { return 0; }
 #endif
 
-        void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
-        virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>) = 0;
+        virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
+        virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;
 
         // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
         bool canSuspendActiveDOMObjects();
@@ -158,10 +154,6 @@ namespace WebCore {
         virtual const KURL& virtualURL() const = 0;
         virtual KURL virtualCompleteURL(const String&) const = 0;
 
-        virtual EventTarget* errorEventTarget() = 0;
-        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>) = 0;
-        bool dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL);
-
         void closeMessagePorts();
 
         RefPtr<SecurityOrigin> m_securityOrigin;
@@ -178,10 +170,6 @@ namespace WebCore {
 
         virtual void refScriptExecutionContext() = 0;
         virtual void derefScriptExecutionContext() = 0;
-
-        bool m_inDispatchErrorEvent;
-        class PendingException;
-        OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
 
 #if ENABLE(DATABASE)
         RefPtr<DatabaseThread> m_databaseThread;

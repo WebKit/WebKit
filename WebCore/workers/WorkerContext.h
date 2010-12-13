@@ -100,7 +100,8 @@ namespace WebCore {
         void clearInterval(int timeoutId);
 
         // ScriptExecutionContext
-        virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+        virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
 #if ENABLE(NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
@@ -173,9 +174,6 @@ namespace WebCore {
         virtual const KURL& virtualURL() const;
         virtual KURL virtualCompleteURL(const String&) const;
 
-        virtual EventTarget* errorEventTarget();
-        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
-
         KURL m_url;
         String m_userAgent;
 
@@ -189,6 +187,7 @@ namespace WebCore {
         mutable RefPtr<NotificationCenter> m_notifications;
 #endif
         bool m_closing;
+        bool m_reportingException;
         EventTargetData m_eventTargetData;
 
         HashSet<Observer*> m_workerObservers;

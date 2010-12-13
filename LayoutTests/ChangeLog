@@ -1,3 +1,58 @@
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.
+
+        REGRESSION(r73914): "Chromium page_cycler_morejs fails" (Requested by yurys on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=50950
+
+        * fast/events/resources/window-onerror.js: Removed.
+        * fast/events/window-onerror1-expected.txt: Removed.
+        * fast/events/window-onerror1.html: Removed.
+        * fast/events/window-onerror10-expected.txt: Removed.
+        * fast/events/window-onerror10.html: Removed.
+        * fast/events/window-onerror11-expected.txt: Removed.
+        * fast/events/window-onerror11.html: Removed.
+        * fast/events/window-onerror2-expected.txt: Removed.
+        * fast/events/window-onerror2.html: Removed.
+        * fast/events/window-onerror3-expected.txt: Removed.
+        * fast/events/window-onerror3.html: Removed.
+        * fast/events/window-onerror4-expected.txt: Removed.
+        * fast/events/window-onerror4.html: Removed.
+        * fast/events/window-onerror5-expected.txt: Removed.
+        * fast/events/window-onerror5.html: Removed.
+        * fast/events/window-onerror6-expected.txt: Removed.
+        * fast/events/window-onerror6.html: Removed.
+        * fast/events/window-onerror7-expected.txt: Removed.
+        * fast/events/window-onerror7.html: Removed.
+        * fast/events/window-onerror8-expected.txt: Removed.
+        * fast/events/window-onerror8.html: Removed.
+        * fast/events/window-onerror9-expected.txt: Removed.
+        * fast/events/window-onerror9.html: Removed.
+        * fast/workers/worker-script-error-expected.txt:
+        * http/tests/security/resources/onerror-iframe.html: Removed.
+        * http/tests/security/window-onerror-exception-in-iframe-expected.txt: Removed.
+        * http/tests/security/window-onerror-exception-in-iframe.html: Removed.
+        * platform/chromium-win/fast/workers/worker-script-error-expected.txt:
+        * platform/chromium/fast/events/window-onerror1-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror10-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror11-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror2-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror3-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror4-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror5-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror6-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror7-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror8-expected.txt: Removed.
+        * platform/chromium/fast/events/window-onerror9-expected.txt: Removed.
+        * platform/chromium/http/tests/security/window-onerror-exception-in-iframe-expected.txt: Removed.
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-1-expected.txt: Removed.
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-2-expected.txt: Removed.
+        * platform/gtk/Skipped:
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt: Removed.
+        * userscripts/window-onerror-for-isolated-world-1.html: Removed.
+        * userscripts/window-onerror-for-isolated-world-2-expected.txt: Removed.
+        * userscripts/window-onerror-for-isolated-world-2.html: Removed.
+
 2010-12-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey Proskuryakov.
