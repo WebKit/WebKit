@@ -31,6 +31,7 @@
 #include "WebView.h"
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

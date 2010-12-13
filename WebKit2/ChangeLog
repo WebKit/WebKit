@@ -1,5 +1,12 @@
 2010-12-13  Brent Fulgham  <bfulgham@webkit.org>
 
+        Unreviewed build fix.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp: Non-Apple builds
+        need to include <wtf/RetainPtr.h>.
+
+2010-12-13  Brent Fulgham  <bfulgham@webkit.org>
+
         Unreviewed build fix after r73807.
 
         Added stub implementation of Download object.
