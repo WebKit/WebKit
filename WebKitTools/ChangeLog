@@ -1,3 +1,26 @@
+2010-12-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS Queues should remove orpahned pyc files before starting
+        https://bugs.webkit.org/show_bug.cgi?id=50904
+
+        A previous check added a platform.py which caused
+        EWS bots on some platforms to hit an import exception.
+        The platform.py file was removed in a subsequent commit, but
+        the EWS bots in question stayed stuck.  This change will
+        fix those bots once restarted (and prevent this in the future).
+
+        I also went ahead and unified start-queue and start-commit-queue
+        since they were nearly identical.  I also added bot_id support
+        to both force all EWSes to have bot ids as well as get rid of the one
+        remaining reason why I had my own copies of these scripts.
+        Hopefully this will be enough to get all the other bot admins
+        (ahem, Adam, ahem) to move to using these checked in copies as well.
+
+        * EWSTools/start-commit-queue.sh: Removed.
+        * EWSTools/start-queue.sh:
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
