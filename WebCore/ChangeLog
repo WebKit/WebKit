@@ -1,3 +1,9 @@
+2010-12-13  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r73914
+
+        * WebCore.vcproj/WebCore.vcproj: Fix malformed XML.
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Qt build fix.
