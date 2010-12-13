@@ -1,3 +1,15 @@
+2010-12-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        WebKit2: Implement WebInspector::localizedStringsURL on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50896
+        
+        Find the localized strings file using CFBundleCopyResourceURL.
+
+        * WebProcess/WebPage/win/WebInspectorWin.cpp:
+        (WebKit::WebInspector::localizedStringsURL):
+
 2010-12-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
