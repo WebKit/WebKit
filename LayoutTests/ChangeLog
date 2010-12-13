@@ -1,3 +1,17 @@
+2010-12-13  Antti Koivisto  <antti@apple.com>
+
+        Unreviewed.
+
+        Adding 
+        
+        http/tests/local/link-stylesheet-load-order.html
+        http/tests/local/link-stylesheet-load-order-preload.html
+        
+        to Mac WebKit2 and Qt skip lists.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2010-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73923.
