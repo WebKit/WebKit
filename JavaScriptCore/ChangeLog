@@ -1,3 +1,10 @@
+2010-12-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows production build fix.
+        Try copying ICU 4.6 in addition to 4.4 and 4.2.
+
+        * JavaScriptCore.vcproj/jsc/jscPostBuild.cmd:
+
 2010-12-13  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,6 +1,8 @@
 if exist "%WEBKITOUTPUTDIR%\buildfailed" del "%WEBKITOUTPUTDIR%\buildfailed"
 
 mkdir 2>NUL "%WEBKITOUTPUTDIR%\bin"
+if exist "%WEBKITLIBRARIESDIR%\bin\icudt46.dll" xcopy /y /d "%WEBKITLIBRARIESDIR%\bin\icudt46.dll" "%WEBKITOUTPUTDIR%\bin"
+if exist "%WEBKITLIBRARIESDIR%\bin\icudt46%LIBRARYCONFIGSUFFIX%.dll" xcopy /y /d "%WEBKITLIBRARIESDIR%\bin\icudt46%LIBRARYCONFIGSUFFIX%.dll" "%WEBKITOUTPUTDIR%\bin"
 if exist "%WEBKITLIBRARIESDIR%\bin\icudt44.dll" xcopy /y /d "%WEBKITLIBRARIESDIR%\bin\icudt44.dll" "%WEBKITOUTPUTDIR%\bin"
 if exist "%WEBKITLIBRARIESDIR%\bin\icudt44%LIBRARYCONFIGSUFFIX%.dll" xcopy /y /d "%WEBKITLIBRARIESDIR%\bin\icudt44%LIBRARYCONFIGSUFFIX%.dll" "%WEBKITOUTPUTDIR%\bin"
 if exist "%WEBKITLIBRARIESDIR%\bin\libicuin%LIBRARYCONFIGSUFFIX%.dll" xcopy /y /d "%WEBKITLIBRARIESDIR%\bin\libicuin%LIBRARYCONFIGSUFFIX%.dll" "%WEBKITOUTPUTDIR%\bin"
