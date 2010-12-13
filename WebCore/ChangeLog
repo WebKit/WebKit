@@ -1,3 +1,23 @@
+2010-12-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50963
+
+        REGRESSION: Scrolling nested iframes is messed up on platforms that use the cross-platform ScrollView.
+       
+        The selfClipRect and childrenClipRect methods of RenderLayer were incorrectly relying on the bounding box
+        of the root layer.  This bounding box was only coincidentally incorporating overflow as part of the 
+        RenderLayer's bounds.  Since I fixed the RenderLayer bounds to not include layout overflow any longer,
+        this check is now exposed as incorrect.  Use the entire document size  when computing layer clip
+        rects.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::documentRect):
+
 2010-12-13  Simon Fraser  <simon.fraser@apple.com>
 
         GraphicsContextPrivate.h was removed. Nuke it from the project.

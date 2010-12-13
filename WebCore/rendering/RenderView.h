@@ -172,6 +172,7 @@ public:
     int docLeft() const;
     int docRight() const;
     int docWidth() const { return docRight() - docLeft(); }
+    IntRect documentRect() const { return IntRect(docLeft(), docTop(), docWidth(), docHeight()); }
 
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
