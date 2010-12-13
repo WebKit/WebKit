@@ -1,3 +1,12 @@
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Qt build fix.
+
+        * dom/Event.cpp:
+        (WebCore::Event::isErrorEvent):
+        * dom/Event.h: remove ENABLE(WORKERS) guard since ErrorEvent is now used not
+        only in workers.
+
 2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
