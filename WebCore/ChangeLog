@@ -1,3 +1,11 @@
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Qt build fix.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+
 2010-12-13  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

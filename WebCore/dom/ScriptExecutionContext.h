@@ -179,6 +179,10 @@ namespace WebCore {
         virtual void refScriptExecutionContext() = 0;
         virtual void derefScriptExecutionContext() = 0;
 
+        bool m_inDispatchErrorEvent;
+        class PendingException;
+        OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
+
 #if ENABLE(DATABASE)
         RefPtr<DatabaseThread> m_databaseThread;
         bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
@@ -187,9 +191,6 @@ namespace WebCore {
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         RefPtr<FileThread> m_fileThread;
 #endif
-        bool m_inDispatchErrorEvent;
-        class PendingException;
-        OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
     };
 
 } // namespace WebCore

@@ -82,10 +82,10 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
+    : m_inDispatchErrorEvent(false)
 #if ENABLE(DATABASE)
-    : m_hasOpenDatabases(false)
+    , m_hasOpenDatabases(false)
 #endif
-    , m_inDispatchErrorEvent(false)
 {
 }
 
