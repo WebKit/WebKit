@@ -46,7 +46,6 @@ WebDatabaseManagerProxy::WebDatabaseManagerProxy(WebContext* webContext)
 
 WebDatabaseManagerProxy::~WebDatabaseManagerProxy()
 {
-    ASSERT(!m_webContext);
 }
 
 void WebDatabaseManagerProxy::invalidate()
