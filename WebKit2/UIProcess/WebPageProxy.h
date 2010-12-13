@@ -395,7 +395,9 @@ private:
 
     void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& data);
 
+#if PLATFORM(MAC)
     void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
+#endif
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
