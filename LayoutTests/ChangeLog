@@ -1,3 +1,9 @@
+2010-12-12  Sam Weinig  <sam@webkit.org>
+
+        Update WebKit2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-12-12  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skipping failing tests in the bots.

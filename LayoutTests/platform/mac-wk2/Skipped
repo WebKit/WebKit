@@ -61,7 +61,6 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-editing/inserting/insert-paste-bidi-control.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -75,6 +74,7 @@ editing/execCommand/findString-2.html
 editing/input/option-page-up-down.html
 editing/input/page-up-down-scrolls.html
 editing/input/scroll-viewport-page-up-down.html
+editing/inserting/insert-paste-bidi-control.html
 editing/inserting/return-key-in-hidden-field.html
 editing/inserting/typing-tab-designmode-forms.html
 editing/inserting/typing-tab-designmode.html
@@ -117,7 +117,13 @@ editing/selection/anchor-focus1.html
 editing/selection/anchor-focus2.html
 editing/selection/anchor-focus3.html
 editing/selection/button-right-click.html
+editing/selection/caret-ltr-2-left.html
+editing/selection/caret-ltr-2.html
+editing/selection/caret-ltr-right.html
+editing/selection/caret-ltr.html
+editing/selection/caret-rtl-2-left.html
 editing/selection/caret-rtl-2.html
+editing/selection/caret-rtl-right.html
 editing/selection/caret-rtl.html
 editing/selection/click-after-nested-block.html
 editing/selection/click-before-and-after-table.html
@@ -196,15 +202,15 @@ fast/css/resize-single-axis.html
 fast/css/universal-hover-quirk.html
 fast/css/user-drag-none.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
+fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dom/Node/mutation-blur.html
 fast/dom/replaced-image-map.html
+fast/dom/vertical-scrollbar-in-rtl.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-xy-properties.html
-fast/dom/horizontal-scrollbar-in-rtl.html
-fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/hover-style-recalc-crash.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/layer-hit-test-crash.html
@@ -397,8 +403,8 @@ fast/forms/select-cache-desynchronization.html
 fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-listbox-focus-displaynone.html
-fast/forms/select-popup-pagekeys.html
 fast/forms/select-option-accesskey-crash.html
+fast/forms/select-popup-pagekeys.html
 fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html
 fast/forms/select-type-ahead-non-latin.html
@@ -406,6 +412,7 @@ fast/forms/slider-delete-while-dragging-thumb.html
 fast/forms/slider-mouse-events.html
 fast/forms/slider-onchange-event.html
 fast/forms/tabbing-input-iframe.html
+fast/forms/text-input-event.html
 fast/forms/textarea-arrow-navigation.html
 fast/forms/textarea-input-event.html
 fast/forms/textarea-live-pseudo-selectors.html
@@ -469,8 +476,8 @@ http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/drag-over-remote-content.html
-http/tests/local/formdata
 http/tests/local/fileapi
+http/tests/local/formdata
 http/tests/misc/bubble-drag-events.html
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 http/tests/misc/isindex-with-no-form.html
@@ -1012,6 +1019,7 @@ fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html
 fast/canvas/webgl/index-validation-verifies-too-many-indices.html
 fast/canvas/webgl/index-validation-with-resized-buffer.html
 fast/canvas/webgl/index-validation.html
+fast/canvas/webgl/instanceof-test.html
 fast/canvas/webgl/invalid-passed-params.html
 fast/canvas/webgl/invalid-UTF-16.html
 fast/canvas/webgl/is-object.html
@@ -1889,10 +1897,11 @@ fast/events/popup-allowed-from-gesture-initiated-form-submit.html
 fast/events/popup-blocked-from-fake-button-click.html
 fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
-fast/events/popup-blocked-to-post-blank.html
-fast/events/popup-blocked-from-iframe-script.html
 fast/events/popup-blocked-from-history-reload.html
+fast/events/popup-blocked-from-iframe-script.html
+fast/events/popup-blocked-from-untrusted-mouse-click.html
 fast/events/popup-blocked-from-window-open.html
+fast/events/popup-blocked-to-post-blank.html
 
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
@@ -2264,10 +2273,11 @@ platform/mac/fast/AppleScript/array.html
 platform/mac/fast/AppleScript/date.html
 
 # WebKitTestRunner doesn't have objCController
-platform/mac/fast/objc/dom-html-select-activate.html
 platform/mac/fast/dom/objc-wrapper-identity.html
 platform/mac/fast/dom/wrapper-classes-objc.html
 platform/mac/fast/dom/wrapper-round-tripping.html
+platform/mac/fast/objc/dom-html-select-activate.html
+platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html
 platform/mac/fast/objc/longlongTest.html
 platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html
 platform/mac/plugins/bindings-array-apply-crash.html
