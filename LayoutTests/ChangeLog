@@ -1,3 +1,23 @@
+2010-12-13  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove unnecessary pixel results, use platform-independent text results, re Changeset 72802
+        https://bugs.webkit.org/show_bug.cgi?id=50233
+
+        Remove redundant, platform-specific test results.
+
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-1-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-2-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-3-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-4-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-5-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-parse-overflow-1-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-parse-overflow-2-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-parse-overflow-3-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-parse-overflow-4-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-parse-overflow-5-expected.txt: Removed.
+
 2010-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r73898.
