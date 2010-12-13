@@ -1,3 +1,12 @@
+2010-12-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: lists and list boxes need different attributes
+        https://bugs.webkit.org/show_bug.cgi?id=50978
+
+        * platform/mac/accessibility/lists-expected.txt:
+
 2010-12-13  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Updated chromium test expectations.

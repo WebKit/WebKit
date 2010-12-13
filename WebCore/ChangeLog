@@ -1,3 +1,15 @@
+2010-12-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: lists and list boxes need different attributes
+        https://bugs.webkit.org/show_bug.cgi?id=50978
+
+        Separate out the attributes being returned for lists (<ul>) and listboxes (<select multiple>).
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2010-12-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
