@@ -1,3 +1,16 @@
+2010-12-13  Mike Thole  <mthole@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50956
+        WebAuthenticationPanel.nib appears to have a cut-off sentence
+        
+        Replace the sentence fragment in the sheet layout with "<-- do not localize -->" style text.
+        The contents of this text field are updated dynamically before the sheet is displayed.
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+
 2010-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey Proskuryakov.
