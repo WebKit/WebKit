@@ -292,7 +292,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
             bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->second, lineNumber, &actualLineNumber);
             if (!success)
                 continue;
-            m_frontend->breakpointRestored(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
+            m_frontend->restoredBreakpoint(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
             String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
             m_breakpointsMapping.set(breakpointId, lineNumber);
         }

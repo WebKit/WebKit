@@ -1208,6 +1208,59 @@ WebInspector.loadEventFired = function(time)
     this.mainResourceLoadTime = time;
 }
 
+WebInspector.addDatabase = function(payload)
+{
+    if (!this.panels.resources)
+        return;
+    var database = new WebInspector.Database(
+        payload.id,
+        payload.domain,
+        payload.name,
+        payload.version);
+    this.panels.resources.addDatabase(database);
+}
+
+WebInspector.addDOMStorage = function(payload)
+{
+    if (!this.panels.resources)
+        return;
+    var domStorage = new WebInspector.DOMStorage(
+        payload.id,
+        payload.host,
+        payload.isLocalStorage);
+    this.panels.resources.addDOMStorage(domStorage);
+}
+
+WebInspector.updateDOMStorage = function(storageId)
+{
+    this.panels.resources.updateDOMStorage(storageId);
+}
+
+WebInspector.updateApplicationCacheStatus = function(status)
+{
+    this.panels.resources.updateApplicationCacheStatus(status);
+}
+
+WebInspector.didGetFileSystemPath = function(root, type, origin)
+{
+    this.panels.resources.updateFileSystemPath(root, type, origin);
+}
+
+WebInspector.didGetFileSystemError = function(type, origin)
+{
+    this.panels.resources.updateFileSystemError(type, origin);
+}
+
+WebInspector.didGetFileSystemDisabled = function()
+{
+    this.panels.resources.setFileSystemDisabled();
+}
+
+WebInspector.updateNetworkState = function(isNowOnline)
+{
+    this.panels.resources.updateNetworkState(isNowOnline);
+}
+
 WebInspector.searchingForNodeWasEnabled = function()
 {
     this.panels.elements.searchingForNodeWasEnabled();
@@ -1216,6 +1269,56 @@ WebInspector.searchingForNodeWasEnabled = function()
 WebInspector.searchingForNodeWasDisabled = function()
 {
     this.panels.elements.searchingForNodeWasDisabled();
+}
+
+WebInspector.attachDebuggerWhenShown = function()
+{
+    this.panels.scripts.attachDebuggerWhenShown();
+}
+
+WebInspector.debuggerWasEnabled = function()
+{
+    this.panels.scripts.debuggerWasEnabled();
+}
+
+WebInspector.debuggerWasDisabled = function()
+{
+    this.panels.scripts.debuggerWasDisabled();
+}
+
+WebInspector.profilerWasEnabled = function()
+{
+    this.panels.profiles.profilerWasEnabled();
+}
+
+WebInspector.profilerWasDisabled = function()
+{
+    this.panels.profiles.profilerWasDisabled();
+}
+
+WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine, scriptWorldType)
+{
+    this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
+}
+
+WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
+{
+    this.debuggerModel.breakpointRestored(sourceID, sourceURL, line, enabled, condition);
+}
+
+WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)
+{
+    this.panels.scripts.addScript(null, sourceURL, source, startingLine, errorLine, errorMessage);
+}
+
+WebInspector.pausedScript = function(details)
+{
+    this.debuggerModel.debuggerPaused(details);
+}
+
+WebInspector.resumedScript = function()
+{
+    this.debuggerModel.debuggerResumed();
 }
 
 WebInspector.reset = function()
@@ -1238,6 +1341,12 @@ WebInspector.reset = function()
     this.breakpointManager.restoreBreakpoints();
 }
 
+WebInspector.resetProfilesPanel = function()
+{
+    if (WebInspector.panels.profiles)
+        WebInspector.panels.profiles.resetProfiles();
+}
+
 WebInspector.bringToFront = function()
 {
     InspectorFrontendHost.bringToFront();
@@ -1252,6 +1361,12 @@ WebInspector.inspectedURLChanged = function(url)
         this.breakpointManager.restoreBreakpoints();
         this._breakpointsRestored = true;
     }
+}
+
+WebInspector.didCommitLoad = function()
+{
+    // Cleanup elements panel early on inspected page refresh.
+    WebInspector.domAgent.setDocument(null);
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)
@@ -1364,6 +1479,41 @@ WebInspector.log = function(message, messageLevel)
 
     // log the message
     logMessage(message);
+}
+
+WebInspector.addProfileHeader = function(profile)
+{
+    this.panels.profiles.addProfileHeader(profile);
+}
+
+WebInspector.setRecordingProfile = function(isProfiling)
+{
+    this.panels.profiles.getProfileType(WebInspector.CPUProfileType.TypeId).setRecordingProfile(isProfiling);
+    if (this.panels.profiles.hasTemporaryProfile(WebInspector.CPUProfileType.TypeId) !== isProfiling) {
+        if (!this._temporaryRecordingProfile) {
+            this._temporaryRecordingProfile = {
+                typeId: WebInspector.CPUProfileType.TypeId,
+                title: WebInspector.UIString("Recording…"),
+                uid: -1,
+                isTemporary: true
+            };
+        }
+        if (isProfiling)
+            this.panels.profiles.addProfileHeader(this._temporaryRecordingProfile);
+        else
+            this.panels.profiles.removeProfileHeader(this._temporaryRecordingProfile);
+    }
+    this.panels.profiles.updateProfileTypeButtons();
+}
+
+WebInspector.addHeapSnapshotChunk = function(uid, chunk)
+{
+    this.panels.profiles.addHeapSnapshotChunk(uid, chunk);
+}
+
+WebInspector.finishHeapSnapshot = function(uid)
+{
+    this.panels.profiles.finishHeapSnapshot(uid);
 }
 
 WebInspector.drawLoadingPieChart = function(canvas, percent) {
