@@ -1,3 +1,17 @@
+2010-12-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move user stylesheet test into platform independent directory
+        https://bugs.webkit.org/show_bug.cgi?id=47335
+
+        There is nothing platform specific in the test, so move it out of the mac directory.
+
+        * fast/loader/user-stylesheet-fast-path-expected.txt: Copied from LayoutTests/platform/mac/fast/loader/user-stylesheet-fast-path-expected.txt.
+        * fast/loader/user-stylesheet-fast-path.html: Copied from LayoutTests/platform/mac/fast/loader/user-stylesheet-fast-path.html.
+        * platform/mac/fast/loader/user-stylesheet-fast-path-expected.txt: Removed.
+        * platform/mac/fast/loader/user-stylesheet-fast-path.html: Removed.
+
 2010-12-13  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation update.
