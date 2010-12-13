@@ -1,3 +1,13 @@
+2010-12-13  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Shift-End does not select to the end of the line
+        https://bugs.webkit.org/show_bug.cgi?id=50610
+
+        * editing/selection/extend-to-line-boundary-expected.txt: Added.
+        * editing/selection/extend-to-line-boundary.html: Added.
+
 2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaseline xss tests for window.onerror.
