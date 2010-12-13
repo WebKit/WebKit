@@ -679,6 +679,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     static NSArray* anchorAttrs = nil;
     static NSArray* webAreaAttrs = nil;
     static NSArray* textAttrs = nil;
+    static NSArray* listAttrs = nil;
     static NSArray* listBoxAttrs = nil;
     static NSArray* rangeAttrs = nil;
     static NSArray* commonMenuAttrs = nil;
@@ -766,12 +767,17 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
         textAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
-    if (listBoxAttrs == nil) {
+    if (listAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        listAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (listBoxAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:listAttrs];    
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
@@ -964,9 +970,11 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     else if (m_object->isTreeItem())
         objectAttributes = outlineRowAttrs;
     
-    else if (m_object->isListBox() || m_object->isList())
+    else if (m_object->isListBox())
         objectAttributes = listBoxAttrs;
-
+    else if (m_object->isList())
+        objectAttributes = listAttrs;
+    
     else if (m_object->isComboBox())
         objectAttributes = comboBoxAttrs;
     
