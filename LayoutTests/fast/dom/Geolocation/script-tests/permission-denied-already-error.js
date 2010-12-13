@@ -23,7 +23,7 @@ function continueTest()
 {
     // Make another request, with permission already denied.
     if (window.layoutTestController)
-        layoutTestController.setMockGeolocationError(0, 'test');
+        layoutTestController.setMockGeolocationError(2, 'test');
 
     navigator.geolocation.getCurrentPosition(function(p) {
         testFailed('Success callback invoked unexpectedly');
