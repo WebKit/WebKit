@@ -1,3 +1,21 @@
+2010-12-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add API to enable/disable plugins at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=50891
+
+        * tests/testwebplugindatabase.c:
+        (test_webkit_web_plugin_database_get_plugins): test that disabling
+        a plugin works.
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_get_property): hook 'enabled' property.
+        (webkit_web_plugin_set_property): ditto.
+        (webkit_web_plugin_class_init): define 'enabled' property.
+        (webkit_web_plugin_set_enabled): setter for the property.
+        (webkit_web_plugin_get_enabled): getter for the property.
+        * webkit/webkitwebplugin.h: add the APIs to the header.
+
 2010-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

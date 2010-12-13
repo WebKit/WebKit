@@ -34,6 +34,7 @@ static void test_webkit_web_plugin_database_get_plugins()
     WebKitWebPluginDatabase* database;
     GSList* pluginList, *p;
     gboolean found = FALSE;
+    gboolean enabled = FALSE;
 
     webkit_web_settings_add_extra_plugin_directory(view, TEST_PLUGIN_DIR);
     g_object_ref_sink(G_OBJECT(view));
@@ -43,11 +44,27 @@ static void test_webkit_web_plugin_database_get_plugins()
     for (p = pluginList; p; p = p->next) {
         WebKitWebPlugin* plugin = (WebKitWebPlugin*)p->data;
         if (!g_strcmp0(webkit_web_plugin_get_name(plugin), "WebKit Test PlugIn") &&
-            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape plug-in that handles test content for WebKit"))
+            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape plug-in that handles test content for WebKit")) {
             found = TRUE;
+            enabled = webkit_web_plugin_get_enabled(plugin);
+            webkit_web_plugin_set_enabled(plugin, FALSE);
+        }
     }
     webkit_web_plugin_database_plugins_list_free(pluginList);
     g_assert(found);
+    g_assert(enabled);
+
+    webkit_web_plugin_database_refresh(database);
+    pluginList = webkit_web_plugin_database_get_plugins(database);
+
+    for (p = pluginList; p; p = p->next) {
+        WebKitWebPlugin* plugin = (WebKitWebPlugin*)p->data;
+        if (!g_strcmp0(webkit_web_plugin_get_name(plugin), "WebKit Test PlugIn") &&
+            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape plug-in that handles test content for WebKit"))
+            enabled = webkit_web_plugin_get_enabled(plugin);
+    }
+    webkit_web_plugin_database_plugins_list_free(pluginList);
+    g_assert(!enabled);
 
     g_object_unref(view);
 }

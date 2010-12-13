@@ -79,6 +79,12 @@ webkit_web_plugin_get_description (WebKitWebPlugin*);
 WEBKIT_API GSList*
 webkit_web_plugin_get_mimetypes   (WebKitWebPlugin*);
 
+WEBKIT_API void
+webkit_web_plugin_set_enabled     (WebKitWebPlugin*, gboolean);
+
+WEBKIT_API gboolean
+webkit_web_plugin_get_enabled     (WebKitWebPlugin*);
+
 G_END_DECLS
 
 #endif

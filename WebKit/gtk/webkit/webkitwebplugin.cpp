@@ -22,8 +22,15 @@
 #include "PluginPackage.h"
 #include "webkitprivate.h"
 #include "webkitwebpluginprivate.h"
+#include <glib/gi18n-lib.h>
 
 using namespace WebCore;
+
+enum {
+    PROP_0,
+
+    PROP_ENABLED
+};
 
 G_DEFINE_TYPE(WebKitWebPlugin, webkit_web_plugin, G_TYPE_OBJECT)
 
@@ -57,6 +64,32 @@ static void webkit_web_plugin_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_plugin_parent_class)->dispose(object);
 }
 
+static void webkit_web_plugin_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* paramSpec)
+{
+    WebKitWebPlugin* plugin = WEBKIT_WEB_PLUGIN(object);
+
+    switch (prop_id) {
+    case PROP_ENABLED:
+        g_value_set_boolean(value, webkit_web_plugin_get_enabled(plugin));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, paramSpec);
+    }
+}
+
+static void webkit_web_plugin_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* paramSpec)
+{
+    WebKitWebPlugin* plugin = WEBKIT_WEB_PLUGIN(object);
+
+    switch (prop_id) {
+    case PROP_ENABLED:
+        webkit_web_plugin_set_enabled(plugin, g_value_get_boolean(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, paramSpec);
+    }
+}
+
 static void webkit_web_plugin_class_init(WebKitWebPluginClass* klass)
 {
     webkit_init();
@@ -64,6 +97,16 @@ static void webkit_web_plugin_class_init(WebKitWebPluginClass* klass)
     GObjectClass* gobjectClass = reinterpret_cast<GObjectClass*>(klass);
 
     gobjectClass->finalize = webkit_web_plugin_finalize;
+    gobjectClass->get_property = webkit_web_plugin_get_property;
+    gobjectClass->set_property = webkit_web_plugin_set_property;
+
+    g_object_class_install_property(gobjectClass,
+                                    PROP_ENABLED,
+                                    g_param_spec_boolean("enabled",
+                                                         _("Enabled"),
+                                                         _("Whether the plugin is enabled"),
+                                                         FALSE,
+                                                         WEBKIT_PARAM_READWRITE));
 
     g_type_class_add_private(klass, sizeof(WebKitWebPluginPrivate));
 }
@@ -162,4 +205,43 @@ GSList* webkit_web_plugin_get_mimetypes(WebKitWebPlugin* plugin)
     }
 
     return priv->mimeTypes;
+}
+
+/**
+ * webkit_web_plugin_set_enabled:
+ * @plugin: a #WebKitWebPlugin
+ * @enabled: whether to enable the plugin
+ *
+ * Sets the enabled status of the @plugin.
+ *
+ * Since: 1.3.8
+ */
+void webkit_web_plugin_set_enabled(WebKitWebPlugin* plugin, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_PLUGIN(plugin));
+    WebKitWebPluginPrivate* priv = plugin->priv;
+
+    ASSERT(priv->corePlugin);
+    if (priv->corePlugin->isEnabled() == enabled)
+        return;
+
+    priv->corePlugin->setEnabled(enabled);
+
+    g_object_notify(G_OBJECT(plugin), "enabled");
+}
+
+/**
+ * webkit_web_plugin_get_enabled:
+ * @plugin: a #WebKitWebPlugin
+ *
+ * Returns: %TRUE if the plugin is enabled, %FALSE otherwise
+ *
+ * Since: 1.3.8
+ */
+gboolean webkit_web_plugin_get_enabled(WebKitWebPlugin* plugin)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PLUGIN(plugin), FALSE);
+
+    ASSERT(plugin->priv->corePlugin);
+    return plugin->priv->corePlugin->isEnabled();
 }
