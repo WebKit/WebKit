@@ -5358,4 +5358,6 @@ plugins/keyboard-events.html
 editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
 
-
+# [Qt] fast/loader/user-stylesheet-fast-path.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=50911
+fast/loader/user-stylesheet-fast-path.html

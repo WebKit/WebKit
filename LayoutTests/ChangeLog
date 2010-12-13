@@ -1,3 +1,12 @@
+2010-12-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] fast/loader/user-stylesheet-fast-path.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50911
+
+        * platform/qt/Skipped: Add the failing test until fix.
+
 2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Updated chromium gpu test expectations.
