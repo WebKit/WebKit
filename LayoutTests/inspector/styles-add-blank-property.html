@@ -39,8 +39,9 @@ function frontend_dumpInspectedStyle(testController)
 
     var evt = document.createEvent("KeyboardEvent");
     evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, "Enter", "");
-    treeElement.listItemElement.textContent = "text-decoration: none";
-    treeElement.listItemElement.dispatchEvent(evt);
+    treeElement.nameElement.textContent = "text-decoration";
+    treeElement.valueElement.textContent = "none";
+    treeElement.nameElement.dispatchEvent(evt);
 
     testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
 }

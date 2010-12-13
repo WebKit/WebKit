@@ -704,6 +704,26 @@ WebInspector.StylePropertiesSection.prototype = {
         return true;
     },
 
+    nextEditableSibling: function()
+    {
+        var curSection = this;
+        do {
+            curSection = curSection.nextSibling;
+        } while (curSection && !curSection.editable);
+
+        return curSection;
+    },
+
+    previousEditableSibling: function()
+    {
+        var curSection = this;
+        do {
+            curSection = curSection.previousSibling;
+        } while (curSection && !curSection.editable);
+
+        return curSection;
+    },
+
     update: function(full)
     {
         if (full) {
@@ -795,6 +815,7 @@ WebInspector.StylePropertiesSection.prototype = {
         this.propertiesTreeOutline.appendChild(item);
         item.listItemElement.textContent = "";
         item._newProperty = true;
+        item.updateTitle();
         return item;
     },
 
@@ -875,22 +896,35 @@ WebInspector.StylePropertiesSection.prototype = {
         if (WebInspector.isBeingEdited(element))
             return;
 
-        WebInspector.startEditing(this._selectorElement, this.editingSelectorCommitted.bind(this), this.editingSelectorCancelled.bind(this), null);
+        WebInspector.startEditing(this._selectorElement, {
+            context: null,
+            commitHandler: this.editingSelectorCommitted.bind(this),
+            cancelHandler: this.editingSelectorCancelled.bind(this)
+        });
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
     editingSelectorCommitted: function(element, newContent, oldContent, context, moveDirection)
     {
         function moveToNextIfNeeded() {
-            if (!moveDirection || moveDirection !== "forward")
+            if (!moveDirection)
                 return;
 
-            this.expand();
-            if (this.propertiesTreeOutline.children.length === 0)
-                this.addNewBlankProperty().startEditing();
-            else {
-                var item = this.propertiesTreeOutline.children[0]
-                item.startEditing(item.valueElement);
+            if (moveDirection === "forward") {
+                this.expand();
+                if (this.propertiesTreeOutline.children.length === 0)
+                    this.addNewBlankProperty().startEditing();
+                else {
+                    var item = this.propertiesTreeOutline.children[0]
+                    item.startEditing(item.nameElement);
+                }
+            } else {
+                var previousSection = this.previousEditableSibling();
+                if (!previousSection)
+                    return;
+
+                previousSection.expand();
+                previousSection.addNewBlankProperty().startEditing();
             }
         }
 
@@ -1346,8 +1380,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.listItemElement.appendChild(valueElement);
         this.listItemElement.appendChild(document.createTextNode(";"));
 
-        if (!this.parsedOk)
+        if (!this.parsedOk) {
+            // Avoid having longhands under an invalid shorthand.
+            this.hasChildren = false;
             this.listItemElement.addStyleClass("not-parsed-ok");
+        }
         if (this.property.inactive)
             this.listItemElement.addStyleClass("inactive");
 
@@ -1460,60 +1497,146 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (this.parent.shorthand)
             return;
 
-        if (WebInspector.isBeingEdited(this.listItemElement) || (this.treeOutline.section && !this.treeOutline.section.editable))
+        if (this.treeOutline.section && !this.treeOutline.section.editable)
+            return;
+
+        if (!selectElement)
+            selectElement = this.nameElement; // No arguments passed in - edit the name element by default.
+        else
+            selectElement = selectElement.enclosingNodeOrSelfWithClass("webkit-css-property") || selectElement.enclosingNodeOrSelfWithClass("value");
+
+        var isEditingName = selectElement === this.nameElement;
+        if (!isEditingName && selectElement !== this.valueElement) {
+            // Double-click in the LI - start editing value.
+            isEditingName = false;
+            selectElement = this.valueElement;
+        }
+
+        if (WebInspector.isBeingEdited(selectElement))
             return;
 
         var context = {
             expanded: this.expanded,
             hasChildren: this.hasChildren,
-            keyDownListener: this.editingKeyDown.bind(this),
-            keyPressListener: this.editingKeyPress.bind(this)
+            keyDownListener: isEditingName ? this.editingNameKeyDown.bind(this) : this.editingValueKeyDown.bind(this),
+            keyPressListener: isEditingName ? this.editingNameKeyPress.bind(this) : this.editingValueKeyPress.bind(this),
+            isEditingName: isEditingName,
         };
 
         // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
 
-        if (!selectElement)
-            selectElement = this.listItemElement;
+        selectElement.addEventListener("keydown", context.keyDownListener, false);
+        selectElement.addEventListener("keypress", context.keyPressListener, false);
+        if (selectElement.parentElement)
+            selectElement.parentElement.addStyleClass("child-editing");
+        selectElement.textContent = selectElement.textContent; // remove color swatch and the like
 
-        this.listItemElement.addEventListener("keydown", context.keyDownListener, false);
-        this.listItemElement.addEventListener("keypress", context.keyPressListener, false);
+        function shouldCommitValueSemicolon(text, cursorPosition)
+        {
+            // FIXME: should this account for semicolons inside comments?
+            var openQuote = "";
+            for (var i = 0; i < cursorPosition; ++i) {
+                var ch = text[i];
+                if (ch === "\\" && openQuote !== "")
+                    ++i; // skip next character inside string
+                else if (!openQuote && (ch === "\"" || ch === "'"))
+                    openQuote = ch;
+                else if (openQuote === ch)
+                    openQuote = "";
+            }
+            return !openQuote;
+        }
 
-        WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+        function nameValueFinishHandler(context, isEditingName, event)
+        {
+            // FIXME: the ":"/";" detection does not work for non-US layouts due to the event being keydown rather than keypress.
+            var isFieldInputTerminated = (event.keyCode === WebInspector.KeyboardShortcut.Keys.Semicolon.code) &&
+                (isEditingName ? event.shiftKey : (!event.shiftKey && shouldCommitValueSemicolon(event.target.textContent, event.target.selectionLeftOffset)));
+            if (isEnterKey(event) || isFieldInputTerminated) {
+                // Enter or colon (for name)/semicolon outside of string (for value).
+                event.preventDefault();
+                return "move-forward";
+            } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
+                return "cancel";
+            else if (event.keyIdentifier === "U+0009") // Tab key.
+                return "move-" + (event.shiftKey ? "backward" : "forward");
+        }
+
+        WebInspector.startEditing(selectElement, {
+            context: context,
+            commitHandler: this.editingCommitted.bind(this),
+            cancelHandler: this.editingCancelled.bind(this),
+            customFinishHandler: nameValueFinishHandler.bind(this, context, isEditingName)
+        });
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
     },
 
-    editingKeyPress: function(event)
+    editingNameKeyPress: function(event)
     {
-        var selection = window.getSelection();
-        var colonIndex = this.listItemElement.textContent.indexOf(":");
-        var selectionLeftOffset = event.target.selectionLeftOffset;
+        // Complete property names.
+        var character = event.data.toLowerCase();
+        if (character && /[a-z-]/.test(character)) {
+            var selection = window.getSelection();
+            var prefix = selection.anchorNode.textContent.substring(0, selection.anchorOffset);
+            var property = WebInspector.CSSCompletions.firstStartsWith(prefix + character);
 
-        if (colonIndex < 0 || selectionLeftOffset <= colonIndex) {
-            // Complete property names.
-            var character = event.data.toLowerCase();
-            if (character && /[a-z-]/.test(character)) {
-                var prefix = selection.anchorNode.textContent.substring(0, selection.anchorOffset);
-                var property = WebInspector.CSSCompletions.firstStartsWith(prefix + character);
+            if (!selection.isCollapsed)
+                selection.deleteFromDocument();
 
-                if (!selection.isCollapsed)
-                    selection.deleteFromDocument();
+            this.restoreNameElement();
 
-                this.restoreNameElement();
-
-                if (property) {
-                    if (property !== this.nameElement.textContent)
-                        this.nameElement.textContent = property;
-                    this.nameElement.firstChild.select(prefix.length + 1);
-                    event.preventDefault();
-                }
+            if (property) {
+                if (property !== this.nameElement.textContent)
+                    this.nameElement.textContent = property;
+                this.nameElement.firstChild.select(prefix.length + 1);
+                event.preventDefault();
             }
-        } else {
-            // FIXME: This should complete property values.
         }
     },
 
-    editingKeyDown: function(event)
+    editingValueKeyPress: function(event)
+    {
+        // FIXME: This should complete property values.
+    },
+
+    editingNameKeyDown: function(event)
+    {
+        var showNext;
+        if (event.keyIdentifier === "Up")
+            showNext = false;
+        else if (event.keyIdentifier === "Down")
+            showNext = true;
+        else
+            return;
+
+        var selection = window.getSelection();
+        if (!selection.rangeCount)
+            return;
+
+        var selectionRange = selection.getRangeAt(0);
+        if (selectionRange.commonAncestorContainer !== this.nameElement && !selectionRange.commonAncestorContainer.isDescendant(this.nameElement))
+            return;
+
+        const styleValueDelimeters = " \t\n\"':;,/()";
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.nameElement);
+        var wordString = wordRange.toString();
+        var prefix = selectionRange.startContainer.textContent.substring(0, selectionRange.startOffset);
+        var property;
+
+        if (showNext)
+            property = WebInspector.CSSCompletions.next(wordString, prefix);
+        else
+            property = WebInspector.CSSCompletions.previous(wordString, prefix);
+
+        if (property) {
+            this.nameElement.textContent = property;
+            this.nameElement.firstChild.select(selectionRange.startOffset);
+        }
+        event.preventDefault();
+    },
+
+    editingValueKeyDown: function(event)
     {
         var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
         var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
@@ -1525,33 +1648,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        if (selectionRange.commonAncestorContainer !== this.listItemElement && !selectionRange.commonAncestorContainer.isDescendant(this.listItemElement))
+        if (selectionRange.commonAncestorContainer !== this.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this.valueElement))
             return;
 
-        // If there are several properties in the text, do not handle increments/decrements.
-        var text = event.target.textContent.trim();
-        var openQuote;
-        var wasEscape = false;
-        // Exclude the last character from the check since it is allowed to be ";".
-        for (var i = 0; i < text.length - 1; ++i) {
-            var ch = text.charAt(i);
-            if (ch === "\\") {
-                wasEscape = true;
-                continue;
-            }
-            if (ch === ";" && !openQuote)
-                return; // Do not handle name/value shifts if the property is compound.
-            if ((ch === "'" || ch === "\"") && !wasEscape) {
-                if (!openQuote)
-                    openQuote = ch;
-                else if (ch === openQuote)
-                    openQuote = null;
-            }
-            wasEscape = false;
-        }
-
         const styleValueDelimeters = " \t\n\"':;,/()";
-        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.listItemElement);
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.valueElement);
         var wordString = wordRange.toString();
         var replacementString = wordString;
 
@@ -1593,22 +1694,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             replacementString = prefix + number + suffix;
-        } else if (selection.containsNode(this.nameElement, true)) {
-            var prefix = selectionRange.startContainer.textContent.substring(0, selectionRange.startOffset);
-            var property;
-
-            if (event.keyIdentifier === "Up")
-                property = WebInspector.CSSCompletions.previous(wordString, prefix);
-            else if (event.keyIdentifier === "Down")
-                property = WebInspector.CSSCompletions.next(wordString, prefix);
-
-            var startOffset = selectionRange.startOffset;
-            if (property) {
-                this.nameElement.textContent = property;
-                this.nameElement.firstChild.select(startOffset);
-            }
-            event.preventDefault();
-            return;
         } else {
             // FIXME: this should cycle through known keywords for the current property value.
         }
@@ -1632,7 +1717,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // if the editing is canceled and before each apply.
             this.originalPropertyText = this.property.propertyText;
         }
-        this.applyStyleText(this.listItemElement.textContent);
+
+        // Synthesize property text disregarding any comments, custom whitespace etc.
+        this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
     },
 
     editingEnded: function(context)
@@ -1640,8 +1727,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
-        this.listItemElement.removeEventListener("keydown", context.keyDownListener, false);
-        this.listItemElement.removeEventListener("keypress", context.keyPressListener, false);
+        var editedElement = context.isEditingName ? this.nameElement : this.valueElement;
+        editedElement.removeEventListener("keydown", context.keyDownListener, false);
+        editedElement.removeEventListener("keypress", context.keyPressListener, false);
+        if (editedElement.parentElement)
+            editedElement.parentElement.removeStyleClass("child-editing");
+
         delete this.originalPropertyText;
     },
 
@@ -1661,58 +1752,93 @@ WebInspector.StylePropertyTreeElement.prototype = {
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
         this.editingEnded(context);
+        var isEditingName = context.isEditingName;
 
         // Determine where to move to before making changes
-        var newProperty, moveToPropertyName, moveToSelector;
+        var createNewProperty, moveToPropertyName, moveToSelector;
         var moveTo = this;
-        do {
-            moveTo = (moveDirection === "forward" ? moveTo.nextSibling : moveTo.previousSibling);
-        } while(moveTo && !moveTo.selectable);
+        var moveToOther = (isEditingName ^ (moveDirection === "forward"));
+        var abandonNewProperty = this._newProperty && !userInput && (moveToOther || isEditingName);
+        if (moveDirection === "forward" && !isEditingName || moveDirection === "backward" && isEditingName) {
+            do {
+                moveTo = (moveDirection === "forward" ? moveTo.nextSibling : moveTo.previousSibling);
+            } while(moveTo && !moveTo.selectable);
 
-        if (moveTo)
-            moveToPropertyName = moveTo.name;
-        else if (moveDirection === "forward")
-            newProperty = true;
-        else if (moveDirection === "backward" && this.treeOutline.section.rule)
-            moveToSelector = true;
+           if (moveTo)
+                moveToPropertyName = moveTo.name;
+            else if (moveDirection === "forward" && (!this._newProperty || userInput))
+                createNewProperty = true;
+            else if (moveDirection === "backward" && this.treeOutline.section.rule)
+                moveToSelector = true;
+        }
 
-        // Make the Changes and trigger the moveToNextCallback after updating
+        // Make the Changes and trigger the moveToNextCallback after updating.
         var blankInput = /^\s*$/.test(userInput);
-        if (userInput !== previousContent || (this._newProperty && blankInput)) { // only if something changed, or adding a new style and it was blank
-            this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput);
-            this.applyStyleText(userInput, true);
-        } else
-            moveToNextCallback(this._newProperty, false, this.treeOutline.section, false);
+        var shouldCommitNewProperty = this._newProperty && (moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
 
-        // The Callback to start editing the next property
+        if ((userInput !== previousContent && !this._newProperty) || shouldCommitNewProperty) {
+            this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput, this.treeOutline.section);
+            var propertyText;
+            if (blankInput || (this._newProperty && /^\s*$/.test(this.valueElement.textContent)))
+                propertyText = "";
+            else {
+                if (isEditingName)
+                    propertyText = userInput + ": " + this.valueElement.textContent;
+                else
+                    propertyText = this.nameElement.textContent + ": " + userInput;
+            }
+            this.applyStyleText(propertyText, true);
+        } else {
+            if (!this._newProperty)
+                this.updateTitle();
+            moveToNextCallback(this._newProperty, false, this.treeOutline.section);
+        }
+
+        var moveToIndex = moveTo && this.treeOutline ? this.treeOutline.children.indexOf(moveTo) : -1;
+
+        // The Callback to start editing the next/previous property/selector.
         function moveToNextCallback(alreadyNew, valueChanged, section)
         {
             if (!moveDirection)
                 return;
 
-            // User just tabbed through without changes
+            // User just tabbed through without changes.
             if (moveTo && moveTo.parent) {
-                moveTo.startEditing(moveTo.valueElement);
+                moveTo.startEditing(!isEditingName ? moveTo.nameElement : moveTo.valueElement);
                 return;
             }
 
-            // User has made a change then tabbed, wiping all the original treeElements,
-            // recalculate the new treeElement for the same property we were going to edit next
-            // FIXME(apavlov): this will not work for multiple same-named properties in a style
-            //                 (the first one will always be returned).
+            // User has made a change then tabbed, wiping all the original treeElements.
+            // Recalculate the new treeElement for the same property we were going to edit next.
             if (moveTo && !moveTo.parent) {
-                var treeElement = section.findTreeElementWithName(moveToPropertyName);
-                if (treeElement)
-                    treeElement.startEditing(treeElement.valueElement);
-                return;
+                var propertyElements = section.propertiesTreeOutline.children;
+                if (moveDirection === "forward" && blankInput && !isEditingName)
+                    --moveToIndex;
+                if (moveToIndex >= propertyElements.length && !this._newProperty)
+                    createNewProperty = true;
+                else {
+                    var treeElement = moveToIndex >= 0 ? propertyElements[moveToIndex] : null;
+                    if (treeElement) {
+                        treeElement.startEditing(!isEditingName ? treeElement.nameElement : treeElement.valueElement);
+                        return;
+                    } else if (!alreadyNew)
+                        moveToSelector = true;
+                }
             }
 
-            // Create a new attribute in this section
-            if (newProperty) {
-                if (alreadyNew && !valueChanged)
+            // Create a new attribute in this section (or move to next editable selector if possible).
+            if (createNewProperty) {
+                if (alreadyNew && !valueChanged && (isEditingName ^ (moveDirection === "backward")))
                     return;
 
                 section.addNewBlankProperty().startEditing();
+                return;
+            }
+
+            if (abandonNewProperty) {
+                var sectionToEdit = moveDirection === "backward" ? section : section.nextEditableSibling();
+                if (sectionToEdit && sectionToEdit.rule)
+                    sectionToEdit.startEditingSelector();
                 return;
             }
 
@@ -1725,16 +1851,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
-        styleText = styleText.replace(/\s/g, " ").trim(); // replace &nbsp; with whitespace.
+        styleText = styleText.replace(/\s/g, " ").trim(); // Replace &nbsp; with whitespace.
         var styleTextLength = styleText.length;
-        if (!styleTextLength && updateInterface) {
-            if (this._newProperty) {
-                // The user deleted everything, so remove the tree element and update.
-                this.parent.removeChild(this);
-                section.afterUpdate();
-                return;
-            } else
-                delete section._afterUpdate;
+        if (!styleTextLength && updateInterface && this._newProperty) {
+            // The user deleted everything, so remove the tree element and update.
+            this.parent.removeChild(this);
+            section.afterUpdate();
+            return;
         }
 
         function callback(newStyle)

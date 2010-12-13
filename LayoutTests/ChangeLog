@@ -1,3 +1,13 @@
+2010-12-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Enable CSS property editing name/value-wise (like Firebug does)
+        https://bugs.webkit.org/show_bug.cgi?id=50565
+
+        * inspector/console-dir.html:
+        * inspector/styles-add-blank-property.html:
+
 2010-12-13  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Csaba Osztrogonác.

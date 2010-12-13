@@ -268,7 +268,12 @@ WebInspector.TextViewer.prototype = {
         var oldContent = lineRow.lastChild.innerHTML;
         var cancelEditingCallback = this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent);
         var commitEditingCallback = this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild, cancelEditingCallback);
-        this._editingLine = WebInspector.startEditing(lineRow.lastChild, commitEditingCallback, cancelEditingCallback, null, true);
+        this._editingLine = WebInspector.startEditing(lineRow.lastChild, {
+            context: null,
+            commitHandler: commitEditingCallback,
+            cancelHandler: cancelEditingCallback,
+            multiline: true
+        });
     },
 
     _commitEditingLine: function(lineNumber, element, cancelEditingCallback)

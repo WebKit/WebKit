@@ -175,7 +175,11 @@ WebInspector.MetricsSidebarPane.prototype = {
 
         var context = { box: box, styleProperty: styleProperty };
 
-        WebInspector.startEditing(targetElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+        WebInspector.startEditing(targetElement, {
+            context: context,
+            commitHandler: this.editingCommitted.bind(this),
+            cancelHandler: this.editingCancelled.bind(this)
+        });
     },
 
     editingCancelled: function(element, context)

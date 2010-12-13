@@ -1915,13 +1915,23 @@ WebInspector.isEditingAnyField = function()
     return this.__editing;
 }
 
-WebInspector.startEditing = function(element, committedCallback, cancelledCallback, context, multiline)
+// Available config fields (all optional):
+// context: Object - an arbitrary context object to be passed to the commit and cancel handlers
+// commitHandler: Function - handles editing "commit" outcome
+// cancelHandler: Function - handles editing "cancel" outcome
+// customFinishHandler: Function - custom finish handler for the editing session (invoked on keydown)
+// multiline: Boolean - whether the edited element is multiline
+WebInspector.startEditing = function(element, config)
 {
     if (element.__editing)
         return;
     element.__editing = true;
     WebInspector.__editing = true;
 
+    config = config || {};
+    var committedCallback = config.commitHandler;
+    var cancelledCallback = config.cancelHandler;
+    var context = config.context;
     var oldText = getContent(element);
     var moveDirection = "";
 
@@ -1977,20 +1987,36 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
             committedCallback(this, getContent(this), oldText, context, moveDirection);
     }
 
-    function keyDownEventListener(event) {
+    function defaultFinishHandler(event)
+    {
         var isMetaOrCtrl = WebInspector.isMac() ?
             event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey :
             event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-        if (isEnterKey(event) && (!multiline || isMetaOrCtrl)) {
+        if (isEnterKey(event) && (!config.multiline || isMetaOrCtrl))
+            return "commit";
+        else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
+            return "cancel";
+        else if (event.keyIdentifier === "U+0009") // Tab key
+            return "move-" + (event.shiftKey ? "backward" : "forward");
+    }
+
+    function keyDownEventListener(event)
+    {
+        var handler = config.customFinishHandler || defaultFinishHandler;
+        var result = handler(event);
+        if (result === "commit") {
             editingCommitted.call(element);
             event.preventDefault();
             event.stopPropagation();
-        } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+        } else if (result === "cancel") {
             editingCancelled.call(element);
             event.preventDefault();
             event.stopPropagation();
-        } else if (event.keyIdentifier === "U+0009") // Tab key
-            moveDirection = (event.shiftKey ? "backward" : "forward");
+        } else if (result && result.indexOf("move-") === 0) {
+            moveDirection = result.substring(5);
+            if (event.keyIdentifier !== "U+0009")
+                blurEventListener();
+        }
     }
 
     element.addEventListener("blur", blurEventListener, false);

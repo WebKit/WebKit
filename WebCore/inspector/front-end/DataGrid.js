@@ -169,7 +169,11 @@ WebInspector.DataGrid.prototype = {
         this._editingNode.select();
 
         var element = this._editingNode._element.children[column];
-        WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
+        WebInspector.startEditing(element, {
+            context: element.textContent,
+            commitHandler: this._editingCommitted.bind(this),
+            cancelHandler: this._editingCancelled.bind(this)
+        });
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
@@ -191,7 +195,11 @@ WebInspector.DataGrid.prototype = {
             return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
 
         this._editing = true;
-        WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
+        WebInspector.startEditing(element, {
+            context: element.textContent,
+            commitHandler: this._editingCommitted.bind(this),
+            cancelHandler: this._editingCancelled.bind(this)
+        });
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 

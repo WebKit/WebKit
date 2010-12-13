@@ -31,7 +31,7 @@ WebInspector.Section = function(title, subtitle)
 {
     this.element = document.createElement("div");
     this.element.className = "section";
-    this.element.sectionForTest = this;
+    this.element._section = this;
 
     this.headerElement = document.createElement("div");
     this.headerElement.className = "header";
@@ -122,6 +122,26 @@ WebInspector.Section.prototype = {
             this.onpopulate(this);
             this._populated = true;
         }
+    },
+
+    get nextSibling()
+    {
+        var curElement = this.element;
+        do {
+            curElement = curElement.nextSibling;
+        } while (curElement && !curElement._section);
+
+        return curElement ? curElement._section : null;
+    },
+
+    get previousSibling()
+    {
+        var curElement = this.element;
+        do {
+            curElement = curElement.previousSibling;
+        } while (curElement && !curElement._section);
+
+        return curElement ? curElement._section : null;
     },
 
     expand: function()

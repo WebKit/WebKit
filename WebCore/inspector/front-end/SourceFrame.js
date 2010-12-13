@@ -705,7 +705,11 @@ WebInspector.SourceFrame.prototype = {
         var dismissedHandler = dismissed.bind(this);
         this._conditionEditorElement.addEventListener("blur", dismissedHandler, false);
 
-        WebInspector.startEditing(this._conditionEditorElement, committed.bind(this), dismissedHandler);
+        WebInspector.startEditing(this._conditionEditorElement, {
+            context: null,
+            commitHandler: committed.bind(this),
+            cancelHandler: dismissedHandler
+        });
         this._conditionEditorElement.value = breakpoint.condition;
         this._conditionEditorElement.select();
     },

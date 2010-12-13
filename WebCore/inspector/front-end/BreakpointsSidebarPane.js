@@ -145,7 +145,10 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
 
         var commitHandler = this._hideEditBreakpointDialog.bind(this, inputElement, true, breakpointItem);
         var cancelHandler = this._hideEditBreakpointDialog.bind(this, inputElement, false, breakpointItem);
-        WebInspector.startEditing(inputElement, commitHandler, cancelHandler);
+        WebInspector.startEditing(inputElement, {
+            commitHandler: commitHandler,
+            cancelHandler: cancelHandler
+        });
     },
 
     _hideEditBreakpointDialog: function(inputElement, accept, breakpointItem)

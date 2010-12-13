@@ -1,3 +1,59 @@
+2010-12-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Enable CSS property editing name/value-wise (like Firebug does)
+        https://bugs.webkit.org/show_bug.cgi?id=50565
+
+        For CSS property editing, the property name and value have become two fields separated
+        by a colon (rather than one field containing the full property text.) A user can tab
+        between the name and value fields forward and backward. A colon typed in the name field
+        and a semicolon in the value field (unless found inside a string) act as a Tab and focus
+        the next editable field (while applying the entire property value.)
+
+        Now a user can tab through all editable styles for an element, even across rule boundaries.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._startEditingBreakpoint):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._startEditingColumnOfDataGridNode):
+        (WebInspector.DataGrid.prototype._startEditing):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditingAttribute):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTextNode):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.startEditing):
+        * inspector/front-end/Section.js:
+        (WebInspector.Section):
+        (WebInspector.Section.prototype.get subtitleAsTextForTest):
+        (WebInspector.Section.prototype.get nextSibling):
+        (WebInspector.Section.prototype.get previousSibling):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.nextEditableSibling):
+        (WebInspector.StylePropertiesSection.prototype.previousEditableSibling):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.StylePropertiesSection.prototype.startEditingSelector):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._handleDoubleClick):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionTreeElement.prototype.startEditing):
+        * inspector/front-end/inspector.css:
+        (.child-editing):
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.defaultFinishHandler):
+        (WebInspector.startEditing):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.select):
+
 2010-12-13  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

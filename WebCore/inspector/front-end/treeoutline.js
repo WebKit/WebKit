@@ -821,6 +821,10 @@ TreeElement.prototype.select = function(supressOnSelect, selectedByUser)
 
     this.selected = true;
     this.treeOutline._childrenListNode.focus();
+
+    // Focusing on another node may detach "this" from tree.
+    if (!this.treeOutline)
+        return;
     this.treeOutline.selectedTreeElement = this;
     if (this._listItemNode)
         this._listItemNode.addStyleClass("selected");

@@ -37,9 +37,9 @@ function frontend_expandAndDumpConsoleMessages(testController)
         var element = messages[i].toMessageElement();
         var node = element.traverseNextNode(element);
         while (node) {
-            if (node.sectionForTest) {
-                messages[i].section = node.sectionForTest;
-                node.sectionForTest.expanded = true;
+            if (node._section) {
+                messages[i].section = node._section;
+                node._section.expanded = true;
                 break;
             }
             node = node.traverseNextNode(element);

@@ -238,7 +238,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         this.listItemElement.addStyleClass("editing-sub-part");
 
-        WebInspector.startEditing(this.valueElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+        WebInspector.startEditing(this.valueElement, {
+            context: context,
+            commitHandler: this.editingCommitted.bind(this),
+            cancelHandler: this.editingCancelled.bind(this)
+        });
     },
 
     editingEnded: function(context)

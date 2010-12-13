@@ -240,7 +240,11 @@ WebInspector.WatchExpressionTreeElement.prototype = {
 
         this.listItemElement.addStyleClass("editing-sub-part");
 
-        WebInspector.startEditing(this.nameElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+        WebInspector.startEditing(this.nameElement, {
+            context: context,
+            commitHandler: this.editingCommitted.bind(this),
+            cancelHandler: this.editingCancelled.bind(this)
+        });
     },
 
     editingCancelled: function(element, context)
