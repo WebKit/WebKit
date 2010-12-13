@@ -1,3 +1,20 @@
+2010-12-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48545, Home/End, PageUp/PageDwn should respect writing-mode.  Use
+        logical scrolling instead of physical scrolling for those keys in WebKit2.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::logicalScroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::logicalScroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::logicalScroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2010-12-13  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

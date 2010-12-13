@@ -250,6 +250,9 @@ protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
 
+    virtual bool isVerticalDocument() const;
+    virtual bool isFlippedDocument() const;
+
 private:
     FrameView(Frame*);
 

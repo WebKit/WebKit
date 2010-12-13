@@ -515,6 +515,11 @@ bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granular
     return m_vBar && m_vBar->scroll(direction, granularity, multiplier);
 }
 
+bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node**)
+{
+    return m_vBar && m_vBar->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier);
+}
+
 void RenderListBox::valueChanged(unsigned listIndex)
 {
     Element* element = static_cast<Element*>(node());

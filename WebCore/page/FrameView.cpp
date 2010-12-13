@@ -2437,4 +2437,30 @@ void FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(d
     s_deferredRepaintDelayIncrementDuringLoading = p;
 }
 
+bool FrameView::isVerticalDocument() const
+{
+    if (!m_frame)
+        return true;
+    Document* doc = m_frame->document();
+    if (!doc)
+        return true;
+    RenderObject* renderView = doc->renderer();
+    if (!renderView)
+        return true;
+    return renderView->style()->isHorizontalWritingMode();
+}
+
+bool FrameView::isFlippedDocument() const
+{
+    if (!m_frame)
+        return false;
+    Document* doc = m_frame->document();
+    if (!doc)
+        return false;
+    RenderObject* renderView = doc->renderer();
+    if (!renderView)
+        return false;
+    return renderView->style()->isFlippedBlocksWritingMode();
+}
+    
 } // namespace WebCore

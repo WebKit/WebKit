@@ -1,3 +1,47 @@
+2010-12-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48545, Home/End, PageUp/PageDwn should respect writing-mode. 
+
+        Add logical scrolling to WebCore.  It basically mirrors physical scrolling but works in abstract logical
+        directions and only converts to physical when it's time to attempt the scroll.
+        
+        Also fixed bugs in scrollRecursively and logicalScrollRecursively where overflow sections in containing
+        frames got skipped over.
+        
+        Made the resetting of the inline axis scroll position on Home/End Mac-specific for overflow sections.
+        
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::logicalScrollOverflow):
+        (WebCore::EventHandler::scrollRecursively):
+        (WebCore::EventHandler::logicalScrollRecursively):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isVerticalDocument):
+        (WebCore::FrameView::isFlippedDocument):
+        * page/FrameView.h:
+        * platform/ScrollTypes.h:
+        (WebCore::logicalToPhysical):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scroll):
+        (WebCore::ScrollView::logicalScroll):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::isVerticalDocument):
+        (WebCore::ScrollView::isFlippedDocument):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::logicalScroll):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scroll):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::logicalScroll):
+        * rendering/RenderListBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::logicalScroll):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.

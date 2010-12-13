@@ -188,6 +188,11 @@ static inline void scroll(Page* page, ScrollDirection direction, ScrollGranulari
     page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
 }
 
+static inline void logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
+{
+    page->focusController()->focusedOrMainFrame()->eventHandler()->logicalScrollRecursively(direction, granularity);
+}
+
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)
@@ -199,6 +204,9 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
             m_page->goForward();
         else
             m_page->goBack();
+        break;
+    case VK_SPACE:
+        logicalScroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward, ScrollByPage);
         break;
     case VK_LEFT:
         scroll(m_page.get(), ScrollLeft, ScrollByLine);
@@ -213,16 +221,16 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         scroll(m_page.get(), ScrollDown, ScrollByLine);
         break;
     case VK_HOME:
-        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByDocument);
         break;
     case VK_END:
-        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByDocument);
         break;
     case VK_PRIOR:
-        scroll(m_page.get(), ScrollUp, ScrollByPage);
+        logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByPage);
         break;
     case VK_NEXT:
-        scroll(m_page.get(), ScrollDown, ScrollByPage);
+        logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByPage);
         break;
     default:
         return false;

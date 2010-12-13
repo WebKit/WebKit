@@ -69,6 +69,7 @@ private:
     virtual bool isPointInOverflowControl(HitTestResult&, int x, int y, int tx, int ty);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
 
     virtual void computePreferredLogicalWidths();
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;

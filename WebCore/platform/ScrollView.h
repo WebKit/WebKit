@@ -172,7 +172,10 @@ public:
 
     // This function scrolls by lines, pages or pixels.
     bool scroll(ScrollDirection, ScrollGranularity);
-        
+    
+    // A logical scroll that just ends up calling the corresponding physical scroll() based off the document's writing mode.
+    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity);
+
     // Scroll the actual contents of the view (either blitting or invalidating as needed).
     void scrollContents(const IntSize& scrollDelta);
 
@@ -284,6 +287,10 @@ protected:
 
     void setScrollOrigin(const IntPoint&, bool updatePosition);
     IntPoint scrollOrigin() { return m_scrollOrigin; }
+
+    // Subclassed by FrameView to check the writing-mode of the document.
+    virtual bool isVerticalDocument() const { return true; }
+    virtual bool isFlippedDocument() const { return false; }
 
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;

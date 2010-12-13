@@ -997,22 +997,71 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     return false;
 }
 
+bool EventHandler::logicalScrollOverflow(ScrollLogicalDirection direction, ScrollGranularity granularity, Node* startingNode)
+{
+    Node* node = startingNode;
+
+    if (!node)
+        node = m_frame->document()->focusedNode();
+
+    if (!node)
+        node = m_mousePressNode.get();
+    
+    if (node) {
+        RenderObject* r = node->renderer();
+        if (r && !r->isListBox() && r->enclosingBox()->logicalScroll(direction, granularity)) {
+            setFrameWasScrolledByUser();
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
     // The layout needs to be up to date to determine if we can scroll. We may be
     // here because of an onLoad event, in which case the final layout hasn't been performed yet.
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
-    bool handled = scrollOverflow(direction, granularity, startingNode);
-    if (!handled) {
-        Frame* frame = m_frame;
-        do {
-            FrameView* view = frame->view();
-            handled = view ? view->scroll(direction, granularity) : false;
-            frame = frame->tree()->parent();
-        } while (!handled && frame);
-     }
+    if (scrollOverflow(direction, granularity, startingNode))
+        return true;    
+    Frame* frame = m_frame;
+    FrameView* view = frame->view();
+    if (view && view->scroll(direction, granularity))
+        return true;
+    frame = frame->tree()->parent();
+    if (!frame)
+        return false;
+    return frame->eventHandler()->scrollRecursively(direction, granularity, m_frame->document()->ownerElement());
+}
 
-    return handled;
+bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, Node* startingNode)
+{
+    // The layout needs to be up to date to determine if we can scroll. We may be
+    // here because of an onLoad event, in which case the final layout hasn't been performed yet.
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    if (logicalScrollOverflow(direction, granularity, startingNode))
+        return true;    
+    Frame* frame = m_frame;
+    FrameView* view = frame->view();
+    
+    bool scrolled = false;
+#if PLATFORM(MAC)
+    // Mac also resets the scroll position in the inline direction.
+    if (granularity == ScrollByDocument && view && view->logicalScroll(ScrollInlineDirectionBackward, ScrollByDocument))
+        scrolled = true;
+#endif
+    if (view && view->logicalScroll(direction, granularity))
+        scrolled = true;
+    
+    if (scrolled)
+        return true;
+    
+    frame = frame->tree()->parent();
+    if (!frame)
+        return false;
+
+    return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->document()->ownerElement());
 }
 
 IntPoint EventHandler::currentMousePosition() const

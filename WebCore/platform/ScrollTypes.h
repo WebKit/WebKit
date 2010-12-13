@@ -35,6 +35,72 @@ namespace WebCore {
         ScrollRight
     };
 
+    enum ScrollLogicalDirection {
+        ScrollBlockDirectionBackward,
+        ScrollBlockDirectionForward,
+        ScrollInlineDirectionBackward,
+        ScrollInlineDirectionForward
+    };
+    
+    
+    inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped) 
+    {
+        switch (direction) {
+        case ScrollBlockDirectionBackward: {
+            if (isVertical) {
+                if (!isFlipped)
+                    return ScrollUp;
+                return ScrollDown;
+            } else {
+                if (!isFlipped)
+                    return ScrollLeft;
+                return ScrollRight;
+            }
+            break;
+        }
+        case ScrollBlockDirectionForward: {
+            if (isVertical) {
+                if (!isFlipped)
+                    return ScrollDown;
+                return ScrollUp;
+            } else {
+                if (!isFlipped)
+                    return ScrollRight;
+                return ScrollLeft;
+            }
+            break;
+        }
+        case ScrollInlineDirectionBackward: {
+            if (isVertical) {
+                if (!isFlipped)
+                    return ScrollLeft;
+                return ScrollRight;
+            } else {
+                if (!isFlipped)
+                    return ScrollUp;
+                return ScrollDown;
+            }
+            break;
+        }
+        case ScrollInlineDirectionForward: {
+            if (isVertical) {
+                if (!isFlipped)
+                    return ScrollRight;
+                return ScrollLeft;
+            } else {
+                if (!isFlipped)
+                    return ScrollDown;
+                return ScrollUp;
+            }
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        return ScrollUp;
+    }
+
     enum ScrollGranularity {
         ScrollByLine,
         ScrollByPage,

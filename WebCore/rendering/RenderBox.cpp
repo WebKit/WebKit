@@ -585,6 +585,36 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
     return false;
 }
 
+bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+{
+    bool scrolled = false;
+    
+    RenderLayer* l = layer();
+    if (l) {
+#if PLATFORM(MAC)
+        // On Mac only we reset the inline direction position when doing a document scroll (e.g., hitting Home/End).
+        if (granularity == ScrollByDocument)
+            scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
+#endif
+        if (l->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
+            scrolled = true;
+        
+        if (scrolled) {
+            if (stopNode)
+                *stopNode = node();
+            return true;
+        }
+    }
+
+    if (stopNode && *stopNode && *stopNode == node())
+        return true;
+
+    RenderBlock* b = containingBlock();
+    if (b && !b->isRenderView())
+        return b->logicalScroll(direction, granularity, multiplier, stopNode);
+    return false;
+}
+
 bool RenderBox::canBeScrolledAndHasScrollableArea() const
 {
     return canBeProgramaticallyScrolled(false) && (scrollHeight() != clientHeight() || scrollWidth() != clientWidth());

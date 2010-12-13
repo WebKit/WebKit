@@ -372,7 +372,7 @@ bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity
 {
     if (platformWidget())
         return platformScroll(direction, granularity);
-
+    
     if (direction == ScrollUp || direction == ScrollDown) {
         if (m_verticalScrollbar)
             return m_verticalScrollbar->scroll(direction, granularity);
@@ -381,6 +381,11 @@ bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity
             return m_horizontalScrollbar->scroll(direction, granularity);
     }
     return false;
+}
+
+bool ScrollView::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity)
+{
+    return scroll(logicalToPhysical(direction, isVerticalDocument(), isFlippedDocument()), granularity);
 }
 
 void ScrollView::windowResizerRectChanged()

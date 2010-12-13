@@ -1086,6 +1086,14 @@ bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranul
     return RenderBlock::scroll(direction, granularity, multiplier, stopNode);
 }
 
+bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+{
+    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
+        return true;
+    return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
+}
+
 PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
