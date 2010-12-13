@@ -48,7 +48,7 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         if (!parser->wellFormed())
             return;
 
-        parser->handleError(XMLDocumentParser::fatal, errorMessage.latin1().data(), parser->lineNumber(), parser->columnNumber());
+        parser->handleError(XMLDocumentParser::fatal, errorMessage.latin1().data(), parser->textPosition().m_line.zeroBasedInt(), parser->textPosition().m_column.zeroBasedInt());
     } else {
         Frame* frame = doc->frame();
         if (!frame)

@@ -101,7 +101,6 @@ namespace WebCore {
 
         // WMLErrorHandling uses these functions.
         virtual bool wellFormed() const { return !m_sawError; }
-        virtual int lineNumber() const;
         TextPosition0 textPosition() const;
 
         static bool supportsXMLVersion(const String&);
@@ -118,6 +117,8 @@ namespace WebCore {
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();
         virtual void detach();
+        virtual int lineNumber() const;
+        int columnNumber() const;
 
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource*);
@@ -129,7 +130,6 @@ namespace WebCore {
 
         bool appendFragmentSource(const String&);
 
-        int columnNumber() const;
 
         // This method is introduced to temporary legalize existing line/column
         // coordinate bug: it is believed that numbers that originally were zero-based
