@@ -1,3 +1,18 @@
+2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaseline xss tests for window.onerror.
+
+        * platform/chromium-linux/http/tests/security/xss-DENIED-frame-name-expected.txt: Removed.
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/chromium-mac/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/chromium-win/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-13  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
