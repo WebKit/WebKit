@@ -372,3 +372,5 @@ BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-fillRect-shadow.html = TEXT
 BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-fillPath-shadow.html = TEXT
 BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
+
+BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT

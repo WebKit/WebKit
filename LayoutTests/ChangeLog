@@ -1,5 +1,11 @@
 2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Updated chromium gpu test expectations.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
+2010-12-13  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Updated chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
