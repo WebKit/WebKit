@@ -1,5 +1,13 @@
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Qt build fix. 
+
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h: remove ENABLE(WORKERS) guard since ErrorEvent is now used not
+        only in workers.
+
+2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Adam Barth.
 
         WebCore doesn't fire window.onerror event when uncaught JavaScript exceptions are thrown
