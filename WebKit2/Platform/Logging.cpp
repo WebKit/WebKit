@@ -29,7 +29,7 @@
 
 WTFLogChannel LogSessionState = { 0x00000001, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogContextMenu  = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogTextInput    = { 0x00000003, "WebKit2LogLevel", WTFLogChannelOff };
+WTFLogChannel LogTextInput    = { 0x00000004, "WebKit2LogLevel", WTFLogChannelOff };
 
 static inline void initializeLogChannel(WTFLogChannel* channel)
 {

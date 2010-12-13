@@ -2,6 +2,14 @@
 
         Reviewed by Anders Carlsson.
 
+        Give LogTextInput a sensible flag value.
+
+        * Platform/Logging.cpp:
+
+2010-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Remove incorrect assertion that has been firing in the API tester.
 
         * UIProcess/WebDatabaseManagerProxy.cpp:
