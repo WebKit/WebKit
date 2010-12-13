@@ -1,3 +1,17 @@
+2010-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73923.
+        http://trac.webkit.org/changeset/73923
+        https://bugs.webkit.org/show_bug.cgi?id=50944
+
+        Broke editing/selection/extend-selection-home-end.html on non-
+        mac platforms. Looks like a real bug. (Requested by ojan on
+        #webkit).
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::positionForPlatform):
+        (WebCore::SelectionController::modifyExtendingForward):
+
 2010-12-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

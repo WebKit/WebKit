@@ -1,3 +1,16 @@
+2010-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r73923.
+        http://trac.webkit.org/changeset/73923
+        https://bugs.webkit.org/show_bug.cgi?id=50944
+
+        Broke editing/selection/extend-selection-home-end.html on non-
+        mac platforms. Looks like a real bug. (Requested by ojan on
+        #webkit).
+
+        * editing/selection/extend-to-line-boundary-expected.txt: Removed.
+        * editing/selection/extend-to-line-boundary.html: Removed.
+
 2010-12-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout 73914, 73915, 73917, 73920 and 73921.

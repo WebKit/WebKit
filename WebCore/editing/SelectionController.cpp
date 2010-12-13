@@ -302,17 +302,19 @@ TextDirection SelectionController::directionOfEnclosingBlock()
 
 VisiblePosition SelectionController::positionForPlatform(bool isGetStart) const
 {
+    Position pos;
     Settings* settings = m_frame ? m_frame->settings() : 0;
     if (settings && settings->editingBehaviorType() == EditingMacBehavior)
-        return isGetStart ? m_selection.visibleStart() : m_selection.visibleEnd();
+        pos = isGetStart ? m_selection.start() : m_selection.end();
     else {
         // Linux and Windows always extend selections from the extent endpoint.
         // FIXME: VisibleSelection should be fixed to ensure as an invariant that
         // base/extent always point to the same nodes as start/end, but which points
         // to which depends on the value of isBaseFirst. Then this can be changed
         // to just return m_sel.extent().
-        return m_selection.isBaseFirst() ? m_selection.visibleEnd() : m_selection.visibleStart();
+        pos = m_selection.isBaseFirst() ? m_selection.end() : m_selection.start();
     }
+    return VisiblePosition(pos, m_selection.affinity());
 }
 
 VisiblePosition SelectionController::startForPlatform() const
@@ -383,7 +385,9 @@ VisiblePosition SelectionController::modifyExtendingForward(TextGranularity gran
         pos = endOfSentence(endForPlatform());
         break;
     case LineBoundary:
-        pos = logicalEndOfLine(endForPlatform());
+        pos = endForPlatform();
+        pos.setAffinity(UPSTREAM);
+        pos = logicalEndOfLine(pos);
         break;
     case ParagraphBoundary:
         pos = endOfParagraph(endForPlatform());

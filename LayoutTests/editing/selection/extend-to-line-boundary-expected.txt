@@ -1,4 +1,0 @@
-Tests selecting from the start of a line to the end using lineboundary
-| "
-Lorem ipsum dolor sit amet, <#selection-anchor>consectetur adipisicing elit, sed <#selection-focus>do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-"
