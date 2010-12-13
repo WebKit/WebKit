@@ -2,6 +2,12 @@
 
         Fix windows build.
 
+        * UIProcess/win/WebView.h:
+
+2010-12-13  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
         * UIProcess/win/WebInspectorProxyWin.cpp:
         (WebKit::WebInspectorProxy::platformCreateInspectorPage):
         * UIProcess/win/WebView.h:

@@ -58,7 +58,7 @@ public:
     WebPageProxy* page() const { return m_page.get(); }
 
 private:
-    WebView(RECT, WebContext*, WebPageGroup*, HWND parentWindow;
+    WebView(RECT, WebContext*, WebPageGroup*, HWND parentWindow);
 
     void initialize(WebPageNamespace*, WebPageGroup*, HWND parentWindow);
 
