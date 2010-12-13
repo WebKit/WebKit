@@ -12,6 +12,7 @@
         Reviewed by Anders Carlsson.
 
         Disable WebKit2 logging by default.
+        https://bugs.webkit.org/show_bug.cgi?id=50878
 
         * Platform/Logging.cpp:
         (initializeLogChannelsIfNecessary):
