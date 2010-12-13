@@ -1,3 +1,12 @@
+2010-12-13  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Unreviewed build fix for r73894.
+
+        SVGFEImage should also check its hasResult() in its apply().
+
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::apply):
+
 2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

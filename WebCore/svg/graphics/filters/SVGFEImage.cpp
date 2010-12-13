@@ -56,7 +56,7 @@ void FEImage::determineAbsolutePaintRect()
 
 void FEImage::apply()
 {
-    if (!m_image.get())
+    if (!m_image.get() || hasResult())
         return;
 
     ImageBuffer* resultImage = createImageBufferResult();
