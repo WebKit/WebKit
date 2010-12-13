@@ -106,11 +106,14 @@ ImageBufferData::ImageBufferData(const IntSize&)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool accelerateRendering, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
-    , m_accelerateRendering(accelerateRendering)
+    , m_accelerateRendering(renderingMode == Accelerated)
 {
+#if !defined(USE_IOSURFACE)
+    ASSERT(renderingMode == Unaccelerated);
+#endif
     success = false;  // Make early return mean failure.
     if (size.width() < 0 || size.height() < 0)
         return;

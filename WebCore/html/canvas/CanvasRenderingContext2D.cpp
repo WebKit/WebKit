@@ -144,7 +144,7 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
 
 bool CanvasRenderingContext2D::isAccelerated() const
 {
-#if PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(USE_IOSURFACE)
     return true;
 #elif ENABLE(ACCELERATED_2D_CANVAS)
     return m_context3D;

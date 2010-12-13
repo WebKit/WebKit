@@ -55,7 +55,7 @@ OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework QuartzCore;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit $(WEBKIT2_LDFLAGS) $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction;
+OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction -framework IOSurface;
 
 PRODUCTION_FRAMEWORKS_DIR = $(PRODUCTION_FRAMEWORKS_DIR_$(REAL_PLATFORM_NAME));
 PRODUCTION_FRAMEWORKS_DIR_iphoneos = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;

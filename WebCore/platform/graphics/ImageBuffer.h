@@ -66,7 +66,7 @@ namespace WebCore {
         static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
         {
             bool success = false;
-            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, renderingMode == Accelerated, success));
+            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, renderingMode, success));
             if (success)
                 return buf.release();
             return 0;
@@ -123,7 +123,7 @@ namespace WebCore {
 
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, ColorSpace colorSpace, bool accelerateRendering, bool& success);
+        ImageBuffer(const IntSize&, ColorSpace colorSpace, RenderingMode renderingMode, bool& success);
     };
 
 } // namespace WebCore

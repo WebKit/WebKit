@@ -37,7 +37,7 @@ ImageBufferData::ImageBufferData(const IntSize&)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize&, ColorSpace imageColorSpace, bool, bool& success) : 
+ImageBuffer::ImageBuffer(const IntSize&, ColorSpace imageColorSpace, RenderingMode, bool& success) : 
     m_data(IntSize())
 {
     notImplemented();
