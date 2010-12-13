@@ -1,3 +1,17 @@
+2010-12-13  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Reduce the size of the RegexStackSpaceForBackTrackInfoParentheses in YARR
+        https://bugs.webkit.org/show_bug.cgi?id=49385
+
+        Remove the BackTrackInfoParentheses struct prevBegin and prevEnd members.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        * yarr/RegexPattern.h:
+
 2010-12-10  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

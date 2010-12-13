@@ -68,8 +68,6 @@ public:
     struct BackTrackInfoParentheses {
         uintptr_t matchAmount;
         ParenthesesDisjunctionContext* lastContext;
-        uintptr_t prevBegin;
-        uintptr_t prevEnd;
     };
 
     static inline void appendParenthesesDisjunctionContext(BackTrackInfoParentheses* backTrack, ParenthesesDisjunctionContext* context)
@@ -841,12 +839,7 @@ public:
         ASSERT(term.type == ByteTerm::TypeParenthesesSubpattern);
 
         BackTrackInfoParentheses* backTrack = reinterpret_cast<BackTrackInfoParentheses*>(context->frame + term.frameLocation);
-
-        unsigned subpatternId = term.atom.subpatternId;
         ByteDisjunction* disjunctionBody = term.atom.parenthesesDisjunction;
-
-        backTrack->prevBegin = output[(subpatternId << 1)];
-        backTrack->prevEnd = output[(subpatternId << 1) + 1];
 
         backTrack->matchAmount = 0;
         backTrack->lastContext = 0;
@@ -927,13 +920,6 @@ public:
         ASSERT(term.type == ByteTerm::TypeParenthesesSubpattern);
 
         BackTrackInfoParentheses* backTrack = reinterpret_cast<BackTrackInfoParentheses*>(context->frame + term.frameLocation);
-
-        if (term.capture()) {
-            unsigned subpatternId = term.atom.subpatternId;
-            output[(subpatternId << 1)] = backTrack->prevBegin;
-            output[(subpatternId << 1) + 1] = backTrack->prevEnd;
-        }
-
         ByteDisjunction* disjunctionBody = term.atom.parenthesesDisjunction;
 
         switch (term.atom.quantityType) {

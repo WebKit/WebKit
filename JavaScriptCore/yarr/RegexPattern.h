@@ -39,7 +39,7 @@ namespace JSC { namespace Yarr {
 #define RegexStackSpaceForBackTrackInfoParentheticalAssertion 1
 #define RegexStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
 #define RegexStackSpaceForBackTrackInfoParenthesesTerminal 1
-#define RegexStackSpaceForBackTrackInfoParentheses 4
+#define RegexStackSpaceForBackTrackInfoParentheses 2
 
 struct PatternDisjunction;
 
