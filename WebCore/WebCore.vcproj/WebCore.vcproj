@@ -24725,8 +24725,12 @@
 		<Filter
 			Name="loader"
 			>
+            <File
+				RelativePath="..\loader\ResourceLoadPriority.h"
+				>
+			</File>
 			<File
-				RelativePath="..\loader\ ResourceLoadScheduler.h"
+				RelativePath="..\loader\ResourceLoadScheduler.h"
 				>
 			</File>
 			<File

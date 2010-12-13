@@ -29,6 +29,7 @@
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
+#include "ResourceLoadPriority.h"
 #include "loader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -57,7 +58,7 @@ public:
     ~CachedResourceLoader();
 
     CachedImage* requestImage(const String& url);
-    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
+    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved);
     CachedCSSStyleSheet* requestUserCSSStyleSheet(const String& url, const String& charset);
     CachedScript* requestScript(const String& url, const String& charset);
     CachedFont* requestFont(const String& url);
@@ -105,7 +106,7 @@ public:
     void printPreloadStats();
     
 private:
-    CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, bool isPreload = false);
+    CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved, bool isPreload = false);
     void requestPreload(CachedResource::Type, const String& url, const String& charset);
 
     void checkForReload(const KURL&);

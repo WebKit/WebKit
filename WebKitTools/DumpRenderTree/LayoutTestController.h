@@ -287,6 +287,8 @@ public:
     bool hasSpellingMarker(int from, int length);
 
     void dumpConfigurationForViewport(int availableWidth, int availableHeight);
+    
+    static void setSerializeHTTPLoads(bool serialize);
 
     // The following API test functions should probably be moved to platform-specific 
     // unit tests outside of DRT once they exist.

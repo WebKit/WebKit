@@ -524,6 +524,9 @@ Could be worth adding to the API.
 + (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world;
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName;
 
+// SPI for DumpRenderTree
++ (void)_setLoadResourcesSerially:(BOOL)serialize;
+
 /*!
     @method cssAnimationsSuspended
     @abstract Returns whether or not CSS Animations are suspended.

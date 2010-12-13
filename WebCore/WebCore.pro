@@ -1978,6 +1978,7 @@ HEADERS += \
     loader/PlaceholderDocument.h \
     loader/ProgressTracker.h \
     loader/ResourceLoader.h \
+    loader/ResourceLoadPriority.h \
     loader/SubresourceLoader.h \
     loader/TextResourceDecoder.h \
     loader/ThreadableLoader.h \

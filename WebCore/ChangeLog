@@ -1,3 +1,71 @@
+2010-12-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50758
+        <rdar://problem/8722094> 
+        Defer loading print stylesheets
+        
+        - Make preload scanner skip stylesheets with non-screen media types.
+        - Make it possible to specify non-default load priority from the client.
+        - Use this mechanism to load print stylesheets using very low priority so they get loaded after everything else.
+        - Move default priority code from Loader to CachedResource.
+        - Move ResourceLoadScheduler::Priority enum to a separate file (as ResourceLoadPriority).
+        - Add a way to make ResourceLoadScheduler load resources one at the time so the above functionality can be tested reliably.
+
+        Tests: http/tests/local/link-stylesheet-load-order-preload.html
+               http/tests/local/link-stylesheet-load-order.html
+
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::PreloadTask):
+        (WebCore::HTMLNames::PreloadTask::processAttributes):
+        (WebCore::HTMLNames::PreloadTask::relAttributeIsStyleSheet):
+        (WebCore::HTMLNames::PreloadTask::linkMediaAttributeIsScreen):
+        (WebCore::HTMLNames::PreloadTask::preload):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ResourceLoadPriority.h: Added.
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::ResourceLoadScheduler):
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad):
+        (WebCore::ResourceLoadScheduler::schedulePluginStreamLoad):
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+        (WebCore::ResourceLoadScheduler::servePendingRequests):
+        (WebCore::ResourceLoadScheduler::HostInformation::~HostInformation):
+        (WebCore::ResourceLoadScheduler::HostInformation::schedule):
+        (WebCore::ResourceLoadScheduler::HostInformation::remove):
+        (WebCore::ResourceLoadScheduler::HostInformation::hasRequests):
+        (WebCore::ResourceLoadScheduler::HostInformation::limitRequests):
+        * loader/ResourceLoadScheduler.h:
+        (WebCore::ResourceLoadScheduler::isSerialLoadingEnabled):
+        (WebCore::ResourceLoadScheduler::setSerialLoadingEnabled):
+        (WebCore::ResourceLoadScheduler::HostInformation::requestsPending):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::loadPriority):
+        (WebCore::CachedResource::setLoadPriority):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::requestPreload):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::requestResource):
+        * loader/cache/MemoryCache.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+
 2010-12-13  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,18 @@
+2010-12-09  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50758
+        <rdar://problem/8722094> 
+        Defer loading print stylesheets
+        
+        Test load ordering.
+
+        * http/tests/local/link-stylesheet-load-order-expected.txt: Added.
+        * http/tests/local/link-stylesheet-load-order-preload-expected.txt: Added.
+        * http/tests/local/link-stylesheet-load-order-preload.html: Added.
+        * http/tests/local/link-stylesheet-load-order.html: Added.
+
 2010-12-13  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dimitri Glazkov.

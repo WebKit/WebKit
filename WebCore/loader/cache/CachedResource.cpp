@@ -47,6 +47,28 @@
 using namespace WTF;
 
 namespace WebCore {
+    
+static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type type)
+{
+    switch (type) {
+        case CachedResource::CSSStyleSheet:
+#if ENABLE(XSLT)
+        case CachedResource::XSLStyleSheet:
+#endif
+            return ResourceLoadPriorityHigh;
+        case CachedResource::Script:
+        case CachedResource::FontResource:
+            return ResourceLoadPriorityMedium;
+        case CachedResource::ImageResource:
+            return ResourceLoadPriorityLow;
+#if ENABLE(LINK_PREFETCH)
+        case CachedResource::LinkPrefetch:
+            return ResourceLoadPriorityVeryLow;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return ResourceLoadPriorityLow;
+}
 
 #ifndef NDEBUG
 static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
@@ -55,6 +77,7 @@ static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
 CachedResource::CachedResource(const String& url, Type type)
     : m_url(url)
     , m_request(0)
+    , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
     , m_lastDecodedAccessTime(0)
     , m_encodedSize(0)

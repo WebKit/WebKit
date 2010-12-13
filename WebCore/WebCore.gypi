@@ -2163,6 +2163,7 @@
             'loader/ResourceLoader.h',
             'loader/ResourceLoadNotifier.cpp',
             'loader/ResourceLoadNotifier.h',
+            'loader/ResourceLoadPriority.h',
             'loader/ResourceLoadScheduler.cpp',
             'loader/ResourceLoadScheduler.h',
             'loader/SinkDocument.cpp',

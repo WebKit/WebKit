@@ -145,9 +145,9 @@ CachedFont* CachedResourceLoader::requestFont(const String& url)
     return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, url, String()));
 }
 
-CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(const String& url, const String& charset)
+CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(const String& url, const String& charset, ResourceLoadPriority priority)
 {
-    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, charset));
+    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, charset, priority));
 }
 
 CachedCSSStyleSheet* CachedResourceLoader::requestUserCSSStyleSheet(const String& url, const String& charset)
@@ -243,7 +243,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     return true;
 }
 
-CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, bool isPreload)
+CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, ResourceLoadPriority priority, bool isPreload)
 {
     KURL fullURL = m_document->completeURL(url);
 
@@ -262,7 +262,7 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
     checkForReload(fullURL);
 
     bool allowForHistoryOnlyResources = cachePolicy() == CachePolicyHistoryBuffer;
-    CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, isPreload, allowForHistoryOnlyResources);
+    CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, priority, isPreload, allowForHistoryOnlyResources);
     if (resource) {
         // Check final URL of resource to catch redirects.
         // See <https://bugs.webkit.org/show_bug.cgi?id=21963>.
@@ -431,7 +431,7 @@ void CachedResourceLoader::requestPreload(CachedResource::Type type, const Strin
     if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)
         encoding = charset.isEmpty() ? m_document->frame()->loader()->writer()->encoding() : charset;
 
-    CachedResource* resource = requestResource(type, url, encoding, true);
+    CachedResource* resource = requestResource(type, url, encoding, ResourceLoadPriorityUnresolved, true);
     if (!resource || (m_preloads && m_preloads->contains(resource)))
         return;
     resource->increasePreloadCount();

@@ -998,3 +998,8 @@ void LayoutTestController::dumpConfigurationForViewport(int /*availableWidth*/, 
 {
 
 }
+
+void LayoutTestController::setSerializeHTTPLoads(bool serialize)
+{
+    [WebView _setLoadResourcesSerially:serialize];
+}

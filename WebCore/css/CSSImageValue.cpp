@@ -74,7 +74,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
             cachedImage = loader->requestImage(url);
         else {
             // FIXME: Should find a way to make these images sit in their own memory partition, since they are user agent images.
-            cachedImage = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(ParsedURLString, url), String()));
+            cachedImage = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(ParsedURLString, url), String(), ResourceLoadPriorityUnresolved));
         }
 
         if (cachedImage) {

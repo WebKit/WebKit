@@ -224,10 +224,15 @@ void HTMLLinkElement::process()
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
 
-    // Stylesheet
-    // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css"))) && document()->frame() && m_url.isValid()) {
-        // also, don't load style sheets for standalone documents
+    bool mediaIsScreen = true;
+    if (!m_media.isEmpty()) {
+        RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
+        MediaQueryEvaluator screenEvaluator("screen", true);
+        mediaIsScreen = screenEvaluator.eval(media.get());
+    }
+    
+    if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css"))) 
+        && document()->frame() && m_url.isValid()) {
         
         String charset = getAttribute(charsetAttr);
         if (charset.isEmpty() && document()->frame())
@@ -250,7 +255,9 @@ void HTMLLinkElement::process()
         if (!isAlternate())
             document()->addPendingSheet();
 
-        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(m_url, charset);
+        // Load non-screen stylesheets with low priority so they don't affect normal page loading.
+        ResourceLoadPriority priority = mediaIsScreen ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
+        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(m_url, charset, priority);
         
         if (m_cachedSheet)
             m_cachedSheet->addClient(this);

@@ -5486,6 +5486,7 @@
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1830D9A1A830033CE97 /* ElementTimeControl.h */; };
+		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613920CD6331000FADA75 /* HTMLMediaElement.cpp */; };
@@ -11779,6 +11780,7 @@
 		E415F1830D9A1A830033CE97 /* ElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTimeControl.h; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
+		E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadPriority.h; sourceTree = "<group>"; };
 		E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAudioElement.cpp; sourceTree = "<group>"; };
 		E44613900CD6331000FADA75 /* HTMLAudioElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAudioElement.h; sourceTree = "<group>"; };
 		E44613910CD6331000FADA75 /* HTMLAudioElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAudioElement.idl; sourceTree = "<group>"; };
@@ -17870,6 +17872,7 @@
 				656D37270ADBA5DE00A4554D /* ResourceLoader.h */,
 				973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */,
 				973E325510883B7C005BC493 /* ResourceLoadNotifier.h */,
+				E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */,
 				D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */,
 				D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */,
 				51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */,
@@ -22114,6 +22117,7 @@
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
 				499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */,
+				E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */,
 				FD315FF712B0267600C1A359 /* AudioBasicProcessorNode.h in Headers */,
 				FD315FF912B0267600C1A359 /* AudioBuffer.h in Headers */,
 				FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */,

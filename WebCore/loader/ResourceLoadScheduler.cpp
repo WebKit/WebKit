@@ -76,13 +76,14 @@ ResourceLoadScheduler::ResourceLoadScheduler()
     : m_nonHTTPProtocolHost(new HostInformation(String(), maxRequestsInFlightForNonHTTPProtocols))
     , m_requestTimer(this, &ResourceLoadScheduler::requestTimerFired)
     , m_isSuspendingPendingRequests(false)
+    , m_isSerialLoadingEnabled(false)
 {
 #if REQUEST_MANAGEMENT_ENABLED
     maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
 #endif
 }
 
-PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, Priority priority, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
+PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, ResourceLoadPriority priority, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
 {
     PassRefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, client, request, securityCheck, sendResourceLoadCallbacks, shouldContentSniff);
     if (loader)
@@ -94,7 +95,7 @@ PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStre
 {
     PassRefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), Low);
+        scheduleLoad(loader.get(), ResourceLoadPriorityLow);
     return loader;
 }
 
@@ -103,11 +104,12 @@ void ResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoader)
     hostForURL(resourceLoader->url(), CreateIfNotFound)->addLoadInProgress(resourceLoader);
 }
 
-void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Priority priority)
+void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
     ASSERT(resourceLoader);
+    ASSERT(priority != ResourceLoadPriorityUnresolved);
 #if !REQUEST_MANAGEMENT_ENABLED
-    priority = HighestPriority;
+    priority = ResourceLoadPriorityHighest;
 #endif
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
@@ -115,7 +117,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Priorit
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);
 
-    if (priority > Low || !resourceLoader->url().protocolInHTTPFamily() || (priority == Low && !hadRequests)) {
+    if (priority > ResourceLoadPriorityLow || !resourceLoader->url().protocolInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequests(host, priority);
     } else {
@@ -148,7 +150,7 @@ void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resource
     oldHost->remove(resourceLoader);
 }
 
-void ResourceLoadScheduler::servePendingRequests(Priority minimumPriority)
+void ResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
     LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests. m_isSuspendingPendingRequests=%d", m_isSuspendingPendingRequests); 
     if (m_isSuspendingPendingRequests)
@@ -174,12 +176,12 @@ void ResourceLoadScheduler::servePendingRequests(Priority minimumPriority)
     }
 }
 
-void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Priority minimumPriority)
+void ResourceLoadScheduler::servePendingRequests(HostInformation* host, ResourceLoadPriority minimumPriority)
 {
     LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
 
-    for (int priority = HighestPriority; priority >= minimumPriority; --priority) {
-        HostInformation::RequestQueue& requestsPending = host->requestsPending((Priority) priority);
+    for (int priority = ResourceLoadPriorityHighest; priority >= minimumPriority; --priority) {
+        HostInformation::RequestQueue& requestsPending = host->requestsPending((ResourceLoadPriority) priority);
 
         while (!requestsPending.isEmpty()) {
             RefPtr<ResourceLoader> resourceLoader = requestsPending.first();
@@ -235,11 +237,11 @@ ResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsi
 ResourceLoadScheduler::HostInformation::~HostInformation()
 {
     ASSERT(m_requestsLoading.isEmpty());
-    for (unsigned p = 0; p <= HighestPriority; p++)
+    for (unsigned p = 0; p <= ResourceLoadPriorityHighest; p++)
         ASSERT(m_requestsPending[p].isEmpty());
 }
     
-void ResourceLoadScheduler::HostInformation::schedule(ResourceLoader* resourceLoader, Priority priority)
+void ResourceLoadScheduler::HostInformation::schedule(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
     m_requestsPending[priority].append(resourceLoader);
 }
@@ -257,7 +259,7 @@ void ResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoad
         return;
     }
     
-    for (int priority = HighestPriority; priority >= LowestPriority; --priority) {  
+    for (int priority = ResourceLoadPriorityHighest; priority >= ResourceLoadPriorityLowest; --priority) {  
         RequestQueue::iterator end = m_requestsPending[priority].end();
         for (RequestQueue::iterator it = m_requestsPending[priority].begin(); it != end; ++it) {
             if (*it == resourceLoader) {
@@ -272,11 +274,16 @@ bool ResourceLoadScheduler::HostInformation::hasRequests() const
 {
     if (!m_requestsLoading.isEmpty())
         return true;
-    for (unsigned p = 0; p <= HighestPriority; p++) {
+    for (unsigned p = 0; p <= ResourceLoadPriorityHighest; p++) {
         if (!m_requestsPending[p].isEmpty())
             return true;
     }
     return false;
+}
+
+bool ResourceLoadScheduler::HostInformation::limitRequests() const 
+{ 
+    return m_requestsLoading.size() >= (resourceLoadScheduler()->isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
 } // namespace WebCore

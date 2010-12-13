@@ -1845,6 +1845,16 @@ static JSValueRef setEditingBehaviorCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    bool serialize = true;
+    if (argumentCount == 1)
+        serialize = JSValueToBoolean(context, arguments[0]);
+
+    LayoutTestController::setSerializeHTTPLoads(serialize);
+    return JSValueMakeUndefined(context);
+}
+
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2029,6 +2039,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setPrinting", setPrintingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPrivateBrowsingEnabled", setPrivateBrowsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectTrailingWhitespaceEnabled", setSelectTrailingWhitespaceEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setSerializeHTTPLoads", setSerializeHTTPLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSmartInsertDeleteEnabled", setSmartInsertDeleteEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSpatialNavigationEnabled", setSpatialNavigationEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

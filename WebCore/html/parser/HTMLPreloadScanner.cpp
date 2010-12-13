@@ -35,6 +35,8 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
@@ -47,6 +49,7 @@ public:
     PreloadTask(const HTMLToken& token)
         : m_tagName(token.name().data(), token.name().size())
         , m_linkIsStyleSheet(false)
+        , m_linkMediaAttributeIsScreen(true)
     {
         processAttributes(token.attributes());
     }
@@ -72,16 +75,30 @@ public:
                     setUrlToLoad(attributeValue);
                 else if (attributeName == relAttr)
                     m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
+                else if (attributeName == mediaAttr)
+                    m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
             }
         }
     }
 
-    bool relAttributeIsStyleSheet(const String& attributeValue)
+    static bool relAttributeIsStyleSheet(const String& attributeValue)
     {
-        ASSERT(m_tagName == linkTag);
         HTMLLinkElement::RelAttribute rel;
         HTMLLinkElement::tokenizeRelAttribute(attributeValue, rel);
         return rel.m_isStyleSheet && !rel.m_isAlternate && !rel.m_isIcon && !rel.m_isDNSPrefetch;
+    }
+    
+    static bool linkMediaAttributeIsScreen(const String& attributeValue)
+    {
+        if (attributeValue.isEmpty())
+            return true;
+        RefPtr<MediaList> mediaList = MediaList::createAllowingDescriptionSyntax(attributeValue);
+    
+        // Only preload screen media stylesheets. Used this way, the evaluator evaluates to true for any 
+        // rules containing complex queries (full evaluation is possible but it requires a frame and a style selector which
+        // may be problematic here).
+        MediaQueryEvaluator mediaQueryEvaluator("screen");
+        return mediaQueryEvaluator.eval(mediaList.get());
     }
 
     void setUrlToLoad(const String& attributeValue)
@@ -103,7 +120,7 @@ public:
             cachedResourceLoader->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody);
         else if (m_tagName == imgTag) 
             cachedResourceLoader->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody);
-        else if (m_tagName == linkTag && m_linkIsStyleSheet) 
+        else if (m_tagName == linkTag && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen) 
             cachedResourceLoader->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody);
     }
 
@@ -114,6 +131,7 @@ private:
     String m_urlToLoad;
     String m_charset;
     bool m_linkIsStyleSheet;
+    bool m_linkMediaAttributeIsScreen;
 };
 
 } // namespace

@@ -1,3 +1,23 @@
+2010-12-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add setSerializeHTTPLoads function to allow testing resource load order on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=50758
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setSerializeHTTPLoadsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setSerializeHTTPLoads):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setSerializeHTTPLoads):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setSerializeHTTPLoads):
+
 2010-12-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.

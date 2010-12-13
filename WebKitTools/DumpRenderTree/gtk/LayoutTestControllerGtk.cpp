@@ -835,3 +835,8 @@ void LayoutTestController::dumpConfigurationForViewport(int availableWidth, int 
     ASSERT(webView);
     DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, availableWidth, availableHeight);
 }
+
+void LayoutTestController::setSerializeHTTPLoads(bool)
+{
+    // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.
+}

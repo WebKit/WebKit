@@ -464,6 +464,8 @@ static void resetDefaultsToConsistentValues()
     [preferences setAsynchronousSpellCheckingEnabled:NO];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+    
+    LayoutTestController::setSerializeHTTPLoads(false);
 
     setlocale(LC_ALL, "");
 }

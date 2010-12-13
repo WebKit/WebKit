@@ -65,28 +65,6 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     return ResourceRequest::TargetIsSubresource;
 }
 
-static ResourceLoadScheduler::Priority determinePriority(const CachedResource* resource)
-{
-    switch (resource->type()) {
-        case CachedResource::CSSStyleSheet:
-#if ENABLE(XSLT)
-        case CachedResource::XSLStyleSheet:
-#endif
-            return ResourceLoadScheduler::High;
-        case CachedResource::Script:
-        case CachedResource::FontResource:
-            return ResourceLoadScheduler::Medium;
-        case CachedResource::ImageResource:
-            return ResourceLoadScheduler::Low;
-#if ENABLE(LINK_PREFETCH)
-        case CachedResource::LinkPrefetch:
-            return ResourceLoadScheduler::VeryLow;
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return ResourceLoadScheduler::Low;
-}
-
 Loader::Loader(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental)
     : m_cachedResourceLoader(cachedResourceLoader)
     , m_resource(resource)
@@ -133,9 +111,11 @@ PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, Cach
     if (resource->type() == CachedResource::LinkPrefetch)
         resourceRequest.setHTTPHeaderField("X-Purpose", "prefetch");
 #endif
+    
+    ResourceLoadPriority priority = resource->loadPriority();
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
-        request.get(), resourceRequest, determinePriority(resource), securityCheck, sendResourceLoadCallbacks);
+        request.get(), resourceRequest, priority, securityCheck, sendResourceLoadCallbacks);
     if (!loader || loader->reachedTerminalState()) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
         LOG(ResourceLoading, "Cannot start loading '%s'", resource->url().latin1().data());

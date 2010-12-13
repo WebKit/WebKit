@@ -2668,6 +2668,11 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return [self findString:string options:((forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (wrapFlag ? WebFindOptionsWrapAround : 0) | (startInSelection ? WebFindOptionsStartInSelection : 0))];
 }
 
++ (void)_setLoadResourcesSerially:(BOOL)serialize 
+{
+    resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
+}
+
 @end
 
 @implementation _WebSafeForwarder

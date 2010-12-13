@@ -1,3 +1,17 @@
+2010-12-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50758
+        <rdar://problem/8722094> 
+        Defer loading print stylesheets
+        
+        Expose SPI for DRT for making resources load serially. This is useful for testing resource load order.
+
+        * WebView/WebView.mm:
+        (+[WebView _setLoadResourcesSerially:forHost:]):
+        * WebView/WebViewPrivate.h:
+
 2010-12-09  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

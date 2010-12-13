@@ -1425,3 +1425,8 @@ void LayoutTestController::dumpConfigurationForViewport(int /*availableWidth*/, 
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::setSerializeHTTPLoads(bool)
+{
+    // FIXME: Implement.
+}

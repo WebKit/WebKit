@@ -95,10 +95,10 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     return 0;
 }
 
-CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload, bool forHistory)
+CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, ResourceLoadPriority priority, bool requestIsPreload, bool forHistory)
 {
-    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', preload=%u, forHistory=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload, forHistory);
-
+    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', priority=%d, preload=%u, forHistory=%u", url.string().latin1().data(), charset.latin1().data(), priority, requestIsPreload, forHistory);
+    
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
     if (url.isEmpty())
@@ -144,6 +144,10 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
         // FIXME: CachedResource should just use normal refcounting instead.
         resource->setInCache(true);
         
+        // Default priority based on resource type is used if the request did not specify one.
+        if (priority != ResourceLoadPriorityUnresolved)
+            resource->setLoadPriority(priority);
+
         resource->load(cachedResourceLoader);
         
         if (resource->errorOccurred()) {
@@ -162,6 +166,12 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
             resource->setInCache(false);
             resource->setCachedResourceLoader(cachedResourceLoader);
         }
+    } else {
+        // FIXME: Upgrading the priority doesn't really do much since the ResourceLoadScheduler does not currently
+        // allow changing priorities. This might become important if we make scheduling priorities
+        // more dynamic.
+        if (priority != ResourceLoadPriorityUnresolved && resource->loadPriority() < priority)
+            resource->setLoadPriority(priority);
     }
 
     if (!disabled()) {
