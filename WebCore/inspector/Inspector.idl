@@ -33,44 +33,44 @@
 module core {
     interface [Conditional=INSPECTOR] Inspector {
         [notify, domain=Timeline] void addRecordToTimeline(out Object record);
-        [notify] void addNodesToSearchResult(out Array nodeIds);
+        [notify, domain=Inspector] void addNodesToSearchResult(out Array nodeIds);
         [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
-        [notify] void bringToFront();
+        [notify, domain=Inspector] void bringToFront();
         [notify, domain=DOM] void characterDataModified(out long id, out String newValue);
         [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
         [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
-        [notify] void didCommitLoad();
-        [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
-        [notify] void disconnectFromBackend();
-        [notify] void domContentEventFired(out double time);
-        [notify] void inspectedURLChanged(out String url);
-        [notify] void loadEventFired(out double time);
-        [notify] void reset();
-        [notify] void resetProfilesPanel();
+        [notify, domain=DOM] void didCommitLoad();
+        [notify, domain=Inspector] void evaluateForTestInFrontend(out long testCallId, out String script);
+        [notify, domain=Inspector] void disconnectFromBackend();
+        [notify, domain=Inspector] void domContentEventFired(out double time);
+        [notify, domain=Inspector] void inspectedURLChanged(out String url);
+        [notify, domain=Inspector] void loadEventFired(out double time);
+        [notify, domain=Inspector] void reset();
+        [notify, domain=Profiler] void resetProfiles();
         [notify, domain=DOM] void setChildNodes(out long parentId, out Array nodes);
         [notify, domain=DOM] void setDetachedRoot(out Object root);
         [notify, domain=DOM] void setDocument(out Value root);
-        [notify] void showPanel(out String panel);
+        [notify, domain=Inspector] void showPanel(out String panel);
         [notify, domain=Timeline] void timelineProfilerWasStarted();
         [notify, domain=Timeline] void timelineProfilerWasStopped();
         [notify] void updateFocusedNode(out long nodeId);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [notify] void addProfileHeader(out Object header);
-        [notify] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
-        [notify] void attachDebuggerWhenShown();
-        [notify] void debuggerWasEnabled();
-        [notify] void debuggerWasDisabled();
-        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
-        [notify] void finishHeapSnapshot(out unsigned long uid);
-        [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
-        [notify] void pausedScript(out Object details);
-        [notify] void profilerWasEnabled();
-        [notify] void profilerWasDisabled();
-        [notify] void restoredBreakpoint(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
-        [notify] void resumedScript();
-        [notify] void setRecordingProfile(out boolean isProfiling);
+        [notify, domain=Profiler] void addProfileHeader(out Object header);
+        [notify, domain=Profiler] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
+        [notify, domain=Debugger] void attachDebuggerWhenShown();
+        [notify, domain=Debugger] void debuggerWasEnabled();
+        [notify, domain=Debugger] void debuggerWasDisabled();
+        [notify, domain=Debugger] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+        [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
+        [notify, domain=Debugger] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
+        [notify, domain=Debugger] void pausedScript(out Object details);
+        [notify, domain=Profiler] void profilerWasEnabled();
+        [notify, domain=Profiler] void profilerWasDisabled();
+        [notify, domain=Debugger] void breakpointRestored(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
+        [notify, domain=Debugger] void resumedScript();
+        [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
         [notify] void updatePauseOnExceptionsState(out long state);
 #endif
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
@@ -78,9 +78,9 @@ module core {
         [notify] void selectDatabase(out int databaseId);
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [notify] void addDOMStorage(out Object storage);
-        [notify] void updateDOMStorage(out int storageId);
-        [notify] void selectDOMStorage(out int storageId);
+        [notify, domain=Resources] void addDOMStorage(out Object storage);
+        [notify, domain=Resources] void updateDOMStorage(out int storageId);
+        [notify, domain=Resources] void selectDOMStorage(out int storageId);
 #endif
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         [notify] void updateApplicationCacheStatus(out int status);
@@ -107,22 +107,22 @@ module core {
 
         [domain=Resources] void cachedResources(out Object resources);
         [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
-        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
-        [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
-        [notify] void markResourceAsCached(out long identifier);
-        [notify] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
-        [notify] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
-        [notify] void didFinishLoading(out long identifier, out double finishTime);
-        [notify] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [notify] void didLoadResourceFromMemoryCache(out double time, out Object resource);
-        [notify] void setInitialContent(out long identifier, out String sourceString, out String type);
-        [notify] void didCommitLoadForFrame(out Object frame, out Object loader);
-        [notify] void frameDetachedFromParent(out unsigned long frameId);
+        [notify, domain=Resources] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
+        [notify, domain=Resources] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
+        [notify, domain=Resources] void markResourceAsCached(out long identifier);
+        [notify, domain=Resources] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
+        [notify, domain=Resources] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
+        [notify, domain=Resources] void didFinishLoading(out long identifier, out double finishTime);
+        [notify, domain=Resources] void didFailLoading(out long identifier, out double time, out String localizedDescription);
+        [notify, domain=Resources] void didLoadResourceFromMemoryCache(out double time, out Object resource);
+        [notify, domain=Resources] void setInitialContent(out long identifier, out String sourceString, out String type);
+        [notify, domain=Resources] void didCommitLoadForFrame(out Object frame, out Object loader);
+        [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
 
-        [notify] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
-        [notify] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
-        [notify] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
-        [notify] void didCloseWebSocket(out unsigned long identifier, out double time);
+        [notify, domain=Resources] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
+        [notify, domain=Resources] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
+        [notify, domain=Resources] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
+        [notify, domain=Resources] void didCloseWebSocket(out unsigned long identifier, out double time);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [domain=Backend] void enableDebugger(in boolean always);

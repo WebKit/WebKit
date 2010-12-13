@@ -1,3 +1,50 @@
+2010-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Protocol cleanup task. Assign domain attribute to Resources and Debugger specific functions.
+
+        Debugger and Resources related notification functions of Inspector.idl were
+        marked as such with help of "domain" attribute. The other changes in js files
+        are reflecting this change. Some wrappers in WebInspector namespace were dropped,
+        the others were moved to DebuggerModel class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50906
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.didCommitLoad):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.pausedScript):
+        (WebInspector.DebuggerModel.prototype.resumedScript):
+        (WebInspector.DebuggerModel.prototype.attachDebuggerWhenShown):
+        (WebInspector.DebuggerModel.prototype.debuggerWasEnabled):
+        (WebInspector.DebuggerModel.prototype.debuggerWasDisabled):
+        (WebInspector.DebuggerModel.prototype.parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype.failedToParseScriptSource):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.addHeapSnapshots):
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth):
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        * inspector/front-end/ResourceManager.js:
+        (WebInspector.ResourceManager):
+        (WebInspector.ResourceManager.prototype._unbindResourceURL):
+        (WebInspector.ResourceManager.prototype.updateDOMStorage):
+        (WebInspector.ResourceManager.prototype.updateApplicationCacheStatus):
+        (WebInspector.ResourceManager.prototype.didGetFileSystemPath):
+        (WebInspector.ResourceManager.prototype.didGetFileSystemError):
+        (WebInspector.ResourceManager.prototype.didGetFileSystemDisabled):
+        (WebInspector.ResourceManager.prototype.updateNetworkState):
+        (WebInspector.ResourceManager.prototype.addDatabase):
+        (WebInspector.ResourceManager.prototype.addDOMStorage):
+        * inspector/front-end/inspector.js:
+
 2010-12-13  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.

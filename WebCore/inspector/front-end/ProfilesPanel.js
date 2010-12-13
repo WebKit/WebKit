@@ -124,6 +124,7 @@ WebInspector.ProfilesPanel = function()
     this._profiles = [];
     this._profilerEnabled = Preferences.profilerAlwaysEnabled;
     this._reset();
+    InspectorBackend.registerDomainDispatcher("Profiler", this);
 }
 
 WebInspector.ProfilesPanel.prototype = {
@@ -597,7 +598,7 @@ WebInspector.ProfilesPanel.prototype = {
             var profileHeadersLength = profileHeaders.length;
             for (var i = 0; i < profileHeadersLength; ++i)
                 if (!this.hasProfile(profileHeaders[i]))
-                    WebInspector.addProfileHeader(profileHeaders[i]);
+                    WebInspector.panels.profiles.addProfileHeader(profileHeaders[i]);
         }
 
         InspectorBackend.getProfileHeaders(populateCallback.bind(this));
@@ -611,6 +612,26 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViews.style.left = width + "px";
         this.profileViewStatusBarItemsContainer.style.left = Math.max(155, width) + "px";
         this.resize();
+    },
+
+    setRecordingProfile: function(isProfiling)
+    {
+        this.getProfileType(WebInspector.CPUProfileType.TypeId).setRecordingProfile(isProfiling);
+        if (this.hasTemporaryProfile(WebInspector.CPUProfileType.TypeId) !== isProfiling) {
+            if (!this._temporaryRecordingProfile) {
+                this._temporaryRecordingProfile = {
+                    typeId: WebInspector.CPUProfileType.TypeId,
+                    title: WebInspector.UIString("Recording"),
+                    uid: -1,
+                    isTemporary: true
+                };
+            }
+            if (isProfiling)
+                this.addProfileHeader(this._temporaryRecordingProfile);
+            else
+                this.removeProfileHeader(this._temporaryRecordingProfile);
+        }
+        this.updateProfileTypeButtons();
     }
 }
 

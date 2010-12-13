@@ -211,7 +211,7 @@ void InspectorProfilerAgent::resetState()
     m_nextUserInitiatedProfileNumber = 1;
     m_nextUserInitiatedHeapSnapshotNumber = 1;
     if (m_frontend)
-        m_frontend->resetProfilesPanel();
+        m_frontend->resetProfiles();
 }
 
 void InspectorProfilerAgent::startUserInitiatedProfiling()

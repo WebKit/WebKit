@@ -373,6 +373,12 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
+    didCommitLoad: function()
+    {
+        // Cleanup elements panel early on inspected page refresh.
+        this.setDocument(null);
+    },
+
     setDocument: function(payload)
     {
         this._idToDOMNode = {};
