@@ -35,7 +35,6 @@ WebCore::SecurityOrigin* core(WebKitSecurityOrigin*);
 
 extern "C" {
 
-#define WEBKIT_SECURITY_ORIGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_SECURITY_ORIGIN, WebKitSecurityOriginPrivate))
 struct _WebKitSecurityOriginPrivate {
     RefPtr<WebCore::SecurityOrigin> coreOrigin;
     gchar* protocol;

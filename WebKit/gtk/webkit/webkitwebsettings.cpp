@@ -917,7 +917,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
 {
-    web_settings->priv = WEBKIT_WEB_SETTINGS_GET_PRIVATE(web_settings);
+    web_settings->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_settings, WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate);
 }
 
 static EnchantBroker* get_enchant_broker()

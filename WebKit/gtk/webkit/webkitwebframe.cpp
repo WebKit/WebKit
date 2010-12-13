@@ -381,7 +381,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
 
 static void webkit_web_frame_init(WebKitWebFrame* frame)
 {
-    WebKitWebFramePrivate* priv = WEBKIT_WEB_FRAME_GET_PRIVATE(frame);
+    WebKitWebFramePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(frame, WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate);
 
     // TODO: Move constructor code here.
     frame->priv = priv;
@@ -404,7 +404,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
 
     WebKitWebFrame* frame = WEBKIT_WEB_FRAME(g_object_new(WEBKIT_TYPE_WEB_FRAME, NULL));
     WebKitWebFramePrivate* priv = frame->priv;
-    WebKitWebViewPrivate* viewPriv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebViewPrivate* viewPriv = webView->priv;
 
     priv->webView = webView;
     WebKit::FrameLoaderClient* client = new WebKit::FrameLoaderClient(frame);

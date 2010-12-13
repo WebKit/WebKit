@@ -217,7 +217,7 @@ static void webkit_web_resource_set_property(GObject* object, guint prop_id, con
 
 static void webkit_web_resource_init(WebKitWebResource* webResource)
 {
-    webResource->priv = WEBKIT_WEB_RESOURCE_GET_PRIVATE(webResource);
+    webResource->priv = G_TYPE_INSTANCE_GET_PRIVATE(webResource, WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResourcePrivate);
 }
 
 // internal use only

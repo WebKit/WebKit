@@ -32,7 +32,6 @@ WebKitWebPlugin* kitNew(WebCore::PluginPackage* package);
 
 extern "C" {
 
-#define WEBKIT_WEB_PLUGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_PLUGIN, WebKitWebPluginPrivate))
 typedef struct _WebKitWebPluginPrivate WebKitWebPluginPrivate;
 struct _WebKitWebPluginPrivate {
     RefPtr<WebCore::PluginPackage> corePlugin;

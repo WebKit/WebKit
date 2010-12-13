@@ -46,8 +46,6 @@ struct _WebKitWebPolicyDecisionPrivate {
     gboolean isCancelled;
 };
 
-#define WEBKIT_WEB_POLICY_DECISION_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_POLICY_DECISION, WebKitWebPolicyDecisionPrivate))
-
 static void webkit_web_policy_decision_class_init(WebKitWebPolicyDecisionClass* decisionClass)
 {
     g_type_class_add_private(decisionClass, sizeof(WebKitWebPolicyDecisionPrivate));
@@ -55,7 +53,7 @@ static void webkit_web_policy_decision_class_init(WebKitWebPolicyDecisionClass* 
 
 static void webkit_web_policy_decision_init(WebKitWebPolicyDecision* decision)
 {
-    decision->priv = WEBKIT_WEB_POLICY_DECISION_GET_PRIVATE(decision);
+    decision->priv = G_TYPE_INSTANCE_GET_PRIVATE(decision, WEBKIT_TYPE_WEB_POLICY_DECISION, WebKitWebPolicyDecisionPrivate);
 }
 
 WebKitWebPolicyDecision* webkit_web_policy_decision_new(WebKitWebFrame* frame, WebCore::FramePolicyFunction function)

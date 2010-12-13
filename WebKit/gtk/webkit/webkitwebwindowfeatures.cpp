@@ -276,7 +276,7 @@ static void webkit_web_window_features_class_init(WebKitWebWindowFeaturesClass* 
 
 static void webkit_web_window_features_init(WebKitWebWindowFeatures* web_window_features)
 {
-    web_window_features->priv = WEBKIT_WEB_WINDOW_FEATURES_GET_PRIVATE(web_window_features);
+    web_window_features->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_window_features, WEBKIT_TYPE_WEB_WINDOW_FEATURES, WebKitWebWindowFeaturesPrivate);
 }
 
 static void webkit_web_window_features_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)

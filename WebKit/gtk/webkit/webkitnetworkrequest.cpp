@@ -48,8 +48,6 @@ struct _WebKitNetworkRequestPrivate {
     SoupMessage* message;
 };
 
-#define WEBKIT_NETWORK_REQUEST_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestPrivate))
-
 enum {
     PROP_0,
 
@@ -157,7 +155,7 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
 
 static void webkit_network_request_init(WebKitNetworkRequest* request)
 {
-    WebKitNetworkRequestPrivate* priv = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+    WebKitNetworkRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestPrivate);
     request->priv = priv;
 }
 

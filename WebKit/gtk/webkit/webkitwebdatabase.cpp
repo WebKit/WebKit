@@ -77,8 +77,6 @@ struct _WebKitWebDatabasePrivate {
 static gchar* webkit_database_directory_path = NULL;
 static guint64 webkit_default_database_quota = 5 * 1024 * 1024;
 
-#define WEBKIT_WEB_DATABASE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_DATABASE, WebKitWebDatabasePrivate))
-
 static void webkit_web_database_set_security_origin(WebKitWebDatabase* webDatabase, WebKitSecurityOrigin* security_origin);
 
 static void webkit_web_database_set_name(WebKitWebDatabase* webDatabase, const gchar* name);
@@ -250,7 +248,7 @@ static void webkit_web_database_class_init(WebKitWebDatabaseClass* klass)
 
 static void webkit_web_database_init(WebKitWebDatabase* webDatabase)
 {
-    webDatabase->priv = WEBKIT_WEB_DATABASE_GET_PRIVATE(webDatabase);
+    webDatabase->priv = G_TYPE_INSTANCE_GET_PRIVATE(webDatabase, WEBKIT_TYPE_WEB_DATABASE, WebKitWebDatabasePrivate);
 }
 
 // Internal use only

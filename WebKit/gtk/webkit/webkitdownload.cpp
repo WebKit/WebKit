@@ -72,8 +72,6 @@ class DownloadClient : public Noncopyable, public ResourceHandleClient {
         WebKitDownload* m_download;
 };
 
-#define WEBKIT_DOWNLOAD_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_DOWNLOAD, WebKitDownloadPrivate))
-
 struct _WebKitDownloadPrivate {
     gchar* destinationURI;
     gchar* suggestedFilename;
@@ -390,7 +388,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
 
 static void webkit_download_init(WebKitDownload* download)
 {
-    WebKitDownloadPrivate* priv = WEBKIT_DOWNLOAD_GET_PRIVATE(download);
+    WebKitDownloadPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(download, WEBKIT_TYPE_DOWNLOAD, WebKitDownloadPrivate);
     download->priv = priv;
 
     priv->downloadClient = new DownloadClient(download);

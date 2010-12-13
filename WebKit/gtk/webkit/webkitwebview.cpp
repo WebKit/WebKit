@@ -251,7 +251,7 @@ static GtkIMContext* webkit_web_view_get_im_context(WebKitWebView*);
 static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(userData);
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(view);
+    WebKitWebViewPrivate* priv = view->priv;
     GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(view));
     GtkRequisition menuSize;
 
@@ -363,7 +363,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     if (!items)
         return FALSE;
 
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebViewPrivate* priv = webView->priv;
     priv->currentMenu = menu;
     priv->lastPopupXPosition = event.globalX();
     priv->lastPopupYPosition = event.globalY();
@@ -1511,7 +1511,7 @@ static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& cli
 static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebViewPrivate* priv = webView->priv;
 
     // This might happen if a drag is still in progress after a WebKitWebView
     // is disposed and before it is finalized.
@@ -1549,7 +1549,7 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 
 static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(widget));
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
 
     // This might happen if a drag is still in progress after a WebKitWebView
     // is diposed and before it is finalized.
@@ -1686,7 +1686,7 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
 #if GTK_CHECK_VERSION(2, 12, 0)
 static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(widget);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
 
     if (keyboard_mode) {
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -3457,7 +3457,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 static void webkit_web_view_init(WebKitWebView* webView)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebViewPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
     webView->priv = priv;
     // This is the placement new syntax: http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.10
     // It allows us to call a constructor on manually allocated locations in memory. We must use it

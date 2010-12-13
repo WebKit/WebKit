@@ -48,8 +48,6 @@ struct _WebKitWebNavigationActionPrivate {
     gchar* targetFrame;
 };
 
-#define WEBKIT_WEB_NAVIGATION_ACTION_GET_PRIVATE(obj)(G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_NAVIGATION_ACTION, WebKitWebNavigationActionPrivate))
-
 enum  {
     PROP_0,
 
@@ -118,7 +116,7 @@ static void webkit_web_navigation_action_set_property(GObject* object, guint pro
 
 static void webkit_web_navigation_action_init(WebKitWebNavigationAction* navigationAction)
 {
-    navigationAction->priv = WEBKIT_WEB_NAVIGATION_ACTION_GET_PRIVATE(navigationAction);
+    navigationAction->priv = G_TYPE_INSTANCE_GET_PRIVATE(navigationAction, WEBKIT_TYPE_WEB_NAVIGATION_ACTION, WebKitWebNavigationActionPrivate);
 }
 
 static void webkit_web_navigation_action_finalize(GObject* obj)

@@ -49,8 +49,6 @@ struct _WebKitHitTestResultPrivate {
     WebKitDOMNode* innerNode;
 };
 
-#define WEBKIT_HIT_TEST_RESULT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultPrivate))
-
 enum {
     PROP_0,
 
@@ -230,7 +228,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
 
 static void webkit_hit_test_result_init(WebKitHitTestResult* web_hit_test_result)
 {
-    web_hit_test_result->priv = WEBKIT_HIT_TEST_RESULT_GET_PRIVATE(web_hit_test_result);
+    web_hit_test_result->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_hit_test_result, WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultPrivate);
 }
 
 namespace WebKit {

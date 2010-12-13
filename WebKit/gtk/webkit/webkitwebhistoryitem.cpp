@@ -62,8 +62,6 @@ struct _WebKitWebHistoryItemPrivate {
     gboolean disposed;
 };
 
-#define WEBKIT_WEB_HISTORY_ITEM_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_HISTORY_ITEM, WebKitWebHistoryItemPrivate))
-
 enum {
     PROP_0,
 
@@ -217,7 +215,7 @@ static void webkit_web_history_item_class_init(WebKitWebHistoryItemClass* klass)
 
 static void webkit_web_history_item_init(WebKitWebHistoryItem* webHistoryItem)
 {
-    webHistoryItem->priv = WEBKIT_WEB_HISTORY_ITEM_GET_PRIVATE(webHistoryItem);
+    webHistoryItem->priv = G_TYPE_INSTANCE_GET_PRIVATE(webHistoryItem, WEBKIT_TYPE_WEB_HISTORY_ITEM, WebKitWebHistoryItemPrivate);
 }
 
 static void webkit_web_history_item_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)

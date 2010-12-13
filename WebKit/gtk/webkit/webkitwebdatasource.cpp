@@ -74,8 +74,6 @@ struct _WebKitWebDataSourcePrivate {
     gchar* unreachableURL;
 };
 
-#define WEBKIT_WEB_DATA_SOURCE_GET_PRIVATE(obj)        (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_DATA_SOURCE, WebKitWebDataSourcePrivate))
-
 G_DEFINE_TYPE(WebKitWebDataSource, webkit_web_data_source, G_TYPE_OBJECT);
 
 static void webkit_web_data_source_dispose(GObject* object)
@@ -135,7 +133,7 @@ static void webkit_web_data_source_class_init(WebKitWebDataSourceClass* klass)
 
 static void webkit_web_data_source_init(WebKitWebDataSource* webDataSource)
 {
-    webDataSource->priv = WEBKIT_WEB_DATA_SOURCE_GET_PRIVATE(webDataSource);
+    webDataSource->priv = G_TYPE_INSTANCE_GET_PRIVATE(webDataSource, WEBKIT_TYPE_WEB_DATA_SOURCE, WebKitWebDataSourcePrivate);
 }
 
 WebKitWebDataSource* webkit_web_data_source_new_with_loader(PassRefPtr<WebKit::DocumentLoader> loader)

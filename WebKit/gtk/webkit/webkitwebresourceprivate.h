@@ -28,7 +28,6 @@
 
 extern "C" {
 
-#define WEBKIT_WEB_RESOURCE_GET_PRIVATE(obj)        (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResourcePrivate))
 struct _WebKitWebResourcePrivate {
     WebCore::ArchiveResource* resource;
 

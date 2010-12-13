@@ -47,7 +47,7 @@ static void webkit_web_plugin_database_class_init(WebKitWebPluginDatabaseClass* 
 
 static void webkit_web_plugin_database_init(WebKitWebPluginDatabase* database)
 {
-    WebKitWebPluginDatabasePrivate* priv = WEBKIT_WEB_PLUGIN_DATABASE_GET_PRIVATE(database);
+    WebKitWebPluginDatabasePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(database, WEBKIT_TYPE_WEB_PLUGIN_DATABASE, WebKitWebPluginDatabasePrivate);
     database->priv = priv;
 
     priv->coreDatabase = PluginDatabase::installedPlugins();

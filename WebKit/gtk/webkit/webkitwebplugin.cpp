@@ -70,7 +70,7 @@ static void webkit_web_plugin_class_init(WebKitWebPluginClass* klass)
 
 static void webkit_web_plugin_init(WebKitWebPlugin *plugin)
 {
-    WebKitWebPluginPrivate* priv = WEBKIT_WEB_PLUGIN_GET_PRIVATE(plugin);
+    WebKitWebPluginPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(plugin, WEBKIT_TYPE_WEB_PLUGIN, WebKitWebPluginPrivate);
     plugin->priv = priv = new WebKitWebPluginPrivate();
 }
 

@@ -98,8 +98,6 @@ struct _WebKitWebInspectorPrivate {
     gchar* inspected_uri;
 };
 
-#define WEBKIT_WEB_INSPECTOR_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspectorPrivate))
-
 static void webkit_web_inspector_finalize(GObject* object);
 
 static void webkit_web_inspector_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec);
@@ -326,7 +324,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
 
 static void webkit_web_inspector_init(WebKitWebInspector* web_inspector)
 {
-    web_inspector->priv = WEBKIT_WEB_INSPECTOR_GET_PRIVATE(web_inspector);
+    web_inspector->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_inspector, WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspectorPrivate);
 }
 
 static void webkit_web_inspector_finalize(GObject* object)

@@ -110,8 +110,6 @@ enum {
 
 G_DEFINE_TYPE(WebKitViewportAttributes, webkit_viewport_attributes, G_TYPE_OBJECT);
 
-#define WEBKIT_VIEWPORT_ATTRIBUTES_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, WebKitViewportAttributesPrivate))
-
 static void webkit_viewport_attributes_get_property(GObject* object, guint propertyID, GValue* value, GParamSpec* paramSpec);
 static void webkit_viewport_attributes_set_property(GObject* object, guint propertyID, const GValue* value, GParamSpec* paramSpec);
 
@@ -414,7 +412,7 @@ static void webkit_viewport_attributes_class_init(WebKitViewportAttributesClass*
 
 static void webkit_viewport_attributes_init(WebKitViewportAttributes* viewport)
 {
-    viewport->priv = WEBKIT_VIEWPORT_ATTRIBUTES_GET_PRIVATE(viewport);
+    viewport->priv = G_TYPE_INSTANCE_GET_PRIVATE(viewport, WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, WebKitViewportAttributesPrivate);
 
     viewport->priv->deviceWidth = 0;
     viewport->priv->deviceHeight = 0;

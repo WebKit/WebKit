@@ -28,7 +28,6 @@ class PluginDatabase;
 
 extern "C" {
 
-#define WEBKIT_WEB_PLUGIN_DATABASE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_PLUGIN_DATABASE, WebKitWebPluginDatabasePrivate))
 typedef struct _WebKitWebPluginDatabasePrivate WebKitWebPluginDatabasePrivate;
 struct _WebKitWebPluginDatabasePrivate {
     WebCore::PluginDatabase* coreDatabase;

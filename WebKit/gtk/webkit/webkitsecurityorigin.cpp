@@ -212,7 +212,7 @@ static void webkit_security_origin_class_init(WebKitSecurityOriginClass* klass)
 
 static void webkit_security_origin_init(WebKitSecurityOrigin* securityOrigin)
 {
-    WebKitSecurityOriginPrivate* priv = WEBKIT_SECURITY_ORIGIN_GET_PRIVATE(securityOrigin);
+    WebKitSecurityOriginPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(securityOrigin, WEBKIT_TYPE_SECURITY_ORIGIN, WebKitSecurityOriginPrivate);
     priv->webDatabases = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
     securityOrigin->priv = priv;
 }

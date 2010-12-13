@@ -1,3 +1,72 @@
+2010-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Do not use GET_PRIVATE macros
+        https://bugs.webkit.org/show_bug.cgi?id=50915
+
+        GET_PRIVATE macros are slow and should only be used in the object
+        init() method.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::FrameLoaderClient::setTitle):
+        (WebKit::FrameLoaderClient::dispatchCreatePage):
+        (WebKit::postCommitFrameViewSetup):
+        * webkit/webkitdownload.cpp:
+        (webkit_download_init):
+        * webkit/webkitgeolocationpolicydecision.cpp:
+        (webkit_geolocation_policy_decision_init):
+        * webkit/webkithittestresult.cpp:
+        (webkit_hit_test_result_init):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_init):
+        * webkit/webkitsecurityorigin.cpp:
+        (webkit_security_origin_init):
+        * webkit/webkitsecurityoriginprivate.h:
+        * webkit/webkitviewportattributes.cpp:
+        (webkit_viewport_attributes_init):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_init):
+        * webkit/webkitwebdatabase.cpp:
+        (webkit_web_database_init):
+        * webkit/webkitwebdatasource.cpp:
+        (webkit_web_data_source_init):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_init):
+        (webkit_web_frame_new):
+        * webkit/webkitwebframeprivate.h:
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_init):
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_init):
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_init):
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_init):
+        * webkit/webkitwebplugindatabase.cpp:
+        (webkit_web_plugin_database_init):
+        * webkit/webkitwebplugindatabaseprivate.h:
+        * webkit/webkitwebpluginprivate.h:
+        * webkit/webkitwebpolicydecision.cpp:
+        (webkit_web_policy_decision_init):
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_init):
+        * webkit/webkitwebresourceprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_init):
+        * webkit/webkitwebview.cpp:
+        (PopupMenuPositionFunc):
+        (webkit_web_view_forward_context_menu_event):
+        (webkit_web_view_drag_end):
+        (webkit_web_view_drag_data_get):
+        (webkit_web_view_query_tooltip):
+        (webkit_web_view_init):
+        * webkit/webkitwebwindowfeatures.cpp:
+        (webkit_web_window_features_init):
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.

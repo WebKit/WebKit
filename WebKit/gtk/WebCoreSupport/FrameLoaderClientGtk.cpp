@@ -378,7 +378,7 @@ void FrameLoaderClient::postProgressEstimateChangedNotification()
 void FrameLoaderClient::postProgressFinishedNotification()
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebViewPrivate* privateData = webView->priv;
 
     // We can get a stopLoad() from dispose when the object is being
     // destroyed, don't emit the signal in that case.
@@ -1051,7 +1051,7 @@ void FrameLoaderClient::prepareForDataSourceReplacement()
 
 void FrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
-    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(m_frame);
+    WebKitWebFramePrivate* frameData = m_frame->priv;
     g_free(frameData->title);
     frameData->title = g_strdup(title.utf8().data());
 }
@@ -1236,7 +1236,7 @@ Frame* FrameLoaderClient::dispatchCreatePage(const NavigationAction&)
     if (!newWebView)
         return 0;
 
-    WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(newWebView);
+    WebKitWebViewPrivate* privateData = newWebView->priv;
     return core(privateData->mainFrame);
 }
 
@@ -1287,7 +1287,7 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
     WebKitWebView* containingWindow = getViewFromFrame(frame);
     webkit_web_view_clear_resources(containingWindow);
 
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
+    WebKitWebViewPrivate* priv = containingWindow->priv;
     view->setGtkAdjustments(priv->horizontalAdjustment.get(), priv->verticalAdjustment.get(), resetValues);
 
     // Invalidate the viewport attributes - they will only be valid
