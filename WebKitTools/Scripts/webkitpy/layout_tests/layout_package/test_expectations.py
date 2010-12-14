@@ -727,15 +727,25 @@ class TestExpectationsFile:
     def _expand_tests(self, test_list_path):
         """Convert the test specification to an absolute, normalized
         path and make sure directories end with the OS path separator."""
+        # FIXME: full_test_list can quickly contain a big amount of
+        # elements. We should consider at some point to use a more
+        # efficient structure instead of a list. Maybe a dictionary of
+        # lists to represent the tree of tests, leaves being test
+        # files and nodes being categories.
+
         path = os.path.join(self._port.layout_tests_dir(), test_list_path)
         path = os.path.normpath(path)
         if self._port.path_isdir(path):
+            # this is a test category, return all the tests of the category.
             path = os.path.join(path, '')
 
+            return [test for test in self._full_test_list if test.startswith(path)]
+
+        # this is a test file, do a quick check if it's in the
+        # full test suite.
         result = []
-        for test in self._full_test_list:
-            if test.startswith(path):
-                result.append(test)
+        if path in self._full_test_list:
+            result = [path, ]
         return result
 
     def _add_tests(self, tests, expectations, test_list_path, lineno,

@@ -1,3 +1,17 @@
+2010-12-14  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Ojan Vafai.
+
+        [new-run-webkit-tests] expectations parsing is slow
+        https://bugs.webkit.org/show_bug.cgi?id=50635
+
+        Avoid expensive iteration of all the tests when checking if a test
+        file is to be skipped or not.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

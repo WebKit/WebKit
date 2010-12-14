@@ -145,6 +145,20 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.assert_exp('failures/expected/text.html', TEXT)
         self.assert_exp('failures/expected/crash.html', IMAGE)
 
+    def test_category_expectations(self):
+        # This test checks unknown tests are not present in the
+        # expectations and that known test part of a test category is
+        # present in the expectations.
+        exp_str = """
+BUGX WONTFIX : failures/expected = IMAGE
+"""
+        self.parse_exp(exp_str)
+        test_name = 'failures/expected/unknown-test.html'
+        unknown_test = self.get_test(test_name)
+        self.assertRaises(KeyError, self._exp.get_expectations,
+                          unknown_test)
+        self.assert_exp('failures/expected/crash.html', IMAGE)
+
     def test_release_mode(self):
         self.parse_exp('BUGX DEBUG : failures/expected/text.html = TEXT',
                        is_debug_mode=True)

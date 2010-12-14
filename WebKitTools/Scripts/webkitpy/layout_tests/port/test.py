@@ -205,10 +205,25 @@ class TestPort(base.Port):
     def path_isdir(self, path):
         # Used by test_expectations.py
         #
-        # We assume that a path is a directory if we have any tests that
-        # whose prefix matches the path plus a directory modifier.
+        # We assume that a path is a directory if we have any tests
+        # that whose prefix matches the path plus a directory modifier
+        # and not a file extension.
         if path[-1] != '/':
             path += '/'
+
+        # FIXME: Directories can have a dot in the name. We should
+        # probably maintain a white list of known cases like CSS2.1
+        # and check it here in the future.
+        if path.find('.') != -1:
+            # extension separator found, assume this is a file
+            return False
+
+        # strip out layout tests directory path if found. The tests
+        # keys are relative to it.
+        tests_dir = self.layout_tests_dir()
+        if path.startswith(tests_dir):
+            path = path[len(tests_dir) + 1:]
+
         return any([t.startswith(path) for t in self._tests.keys()])
 
     def test_dirs(self):
