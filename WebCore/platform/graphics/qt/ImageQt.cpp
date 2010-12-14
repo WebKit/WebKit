@@ -114,7 +114,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
         pixmap = pixmap.copy(tr);
 
-    ctxt->save();
+    CompositeOperator previousOperator = ctxt->compositeOperation();
 
     ctxt->setCompositeOperation(op);
     QPainter* p = ctxt->platformContext();
@@ -130,7 +130,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     b.setTransform(transform);
     p->fillRect(dr, b);
 
-    ctxt->restore();
+    ctxt->setCompositeOperation(previousOperator);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
