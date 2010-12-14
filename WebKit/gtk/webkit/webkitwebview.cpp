@@ -285,6 +285,19 @@ static void contextMenuItemActivated(GtkMenuItem* item, ContextMenuController* c
     controller->contextMenuItemSelected(&contextItem);
 }
 
+static void contextMenuConnectActivate(GtkMenuItem* item, ContextMenuController* controller)
+{
+    if (GTK_IS_SEPARATOR_MENU_ITEM(item))
+        return;
+
+    if (GtkWidget* menu = gtk_menu_item_get_submenu(item)) {
+        gtk_container_foreach(GTK_CONTAINER(menu), (GtkCallback)contextMenuConnectActivate, controller);
+        return;
+    }
+
+    g_signal_connect(item, "activate", G_CALLBACK(contextMenuItemActivated), controller);
+}
+
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
 {
     Page* page = core(webView);
@@ -346,20 +359,12 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 
     // We connect the "activate" signal here rather than in ContextMenuGtk to avoid
     // a layering violation. ContextMenuGtk should not know about the ContextMenuController.
-    // FIXME: This should handle submenu items.
-    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
-    GList* currentListItem = items.get();
-    while (currentListItem) {
-        GtkMenuItem* item = GTK_MENU_ITEM(currentListItem->data);
-        if (!GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_menu_item_get_submenu(item))
-            g_signal_connect(item, "activate", G_CALLBACK(contextMenuItemActivated), controller);
-        currentListItem = currentListItem->next;
-    }
+    gtk_container_foreach(GTK_CONTAINER(menu), (GtkCallback)contextMenuConnectActivate, controller);
 
     g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, menu);
 
     // If the context menu is now empty, don't show it.
-    items.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
     if (!items)
         return FALSE;
 

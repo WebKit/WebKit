@@ -1,5 +1,20 @@
 2010-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [GTK] Simplify context-menu handling code
+        https://bugs.webkit.org/show_bug.cgi?id=49658
+
+        Use gtk_container_foreach() so that we only iterate the list of
+        children once and we avoid creating/destroying the list. It also
+        connects the activate signal for submenu items.
+
+        * webkit/webkitwebview.cpp:
+        (contextMenuConnectActivate):
+        (webkit_web_view_forward_context_menu_event):
+
+2010-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Fix several issues in r73858
