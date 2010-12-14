@@ -1,3 +1,25 @@
+2010-12-14  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Added missing expectations in chromium-mac-leopard to
+        complete the move in r74042.
+
+        * platform/chromium-mac-leopard/editing/deleting/5144139-2-expected.checksum:
+        * platform/chromium-mac-leopard/editing/deleting/5144139-2-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/extend-selection-bidi-expected.checksum:
+        * platform/chromium-mac-leopard/editing/selection/extend-selection-bidi-expected.png:
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.png:
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-run-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-run-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/bidi-neutral-run-expected.txt: Added.
+
 2010-12-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
