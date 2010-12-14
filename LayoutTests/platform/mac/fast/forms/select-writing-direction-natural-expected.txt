@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
             text run at (0,18) width 324: "directionality to match the items in the popup menu"
         RenderText {#text} at (324,18) size 4x18
           text run at (324,18) width 4: "."
-      RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 664x18
-          text run at (0,0) width 508: "In all of the popup buttons below, the letter A should be on the left and the letter "
-          text run at (508,0) width 11 RTL: "\x{5D0}"
-          text run at (519,0) width 145: " should be on the right."
-      RenderBlock {DIV} at (0,86) size 784x44
+      RenderBlock {P} at (0,52) size 784x19
+        RenderText {#text} at (0,1) size 664x18
+          text run at (0,1) width 508: "In all of the popup buttons below, the letter A should be on the left and the letter "
+          text run at (508,1) width 11 RTL: "\x{5D0}"
+          text run at (519,1) width 145: " should be on the right."
+      RenderBlock {DIV} at (0,87) size 784x44
         RenderBlock {DIV} at (0,0) size 784x22
           RenderMenuList {SELECT} at (0,2) size 70x18 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (0,0) size 70x18
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
                 text run at (8,2) width 12: "(A"
                 text run at (20,2) width 8 RTL: "\x{5D0}"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,130) size 784x44
+      RenderBlock {DIV} at (0,131) size 784x44
         RenderBlock {DIV} at (0,0) size 784x22
           RenderMenuList {SELECT} at (222,2) size 70x18 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (0,0) size 70x18

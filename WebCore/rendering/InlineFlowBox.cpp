@@ -497,23 +497,27 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
         }
 
-        if (usedFonts && curr->renderer()->style(m_firstLine)->lineHeight().isNegative()) {
+        if (usedFonts && !usedFonts->isEmpty() && curr->renderer()->style(m_firstLine)->lineHeight().isNegative()) {
             usedFonts->append(curr->renderer()->style(m_firstLine)->font().primaryFont());
             bool baselineSet = false;
             baseline = 0;
             int baselineToBottom = 0;
             for (size_t i = 0; i < usedFonts->size(); ++i) {
                 int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->height()) / 2;
-                int usedFontAscent = halfLeading + usedFonts->at(i)->ascent(baselineType);
-                int usedFontDescent = usedFonts->at(i)->lineSpacing() - usedFontAscent;
+                int usedFontBaseline = halfLeading + usedFonts->at(i)->ascent(baselineType);
+                int usedFontBaselineToBottom = usedFonts->at(i)->lineSpacing() - usedFontBaseline;
                 if (!baselineSet) {
                     baselineSet = true;
-                    baseline = usedFontAscent;
-                    baselineToBottom = usedFontDescent;
+                    baseline = usedFontBaseline;
+                    baselineToBottom = usedFontBaselineToBottom;
                 } else {
-                    baseline = max(baseline, usedFontAscent);
-                    baselineToBottom = max(baselineToBottom, usedFontDescent);
+                    baseline = max(baseline, usedFontBaseline);
+                    baselineToBottom = max(baselineToBottom, usedFontBaselineToBottom);
                 }
+                if (!affectsAscent)
+                    affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
+                if (!affectsDescent)
+                    affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
             }
             lineHeight = baseline + baselineToBottom;
         } else {
