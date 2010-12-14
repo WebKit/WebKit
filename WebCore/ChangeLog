@@ -1,3 +1,20 @@
+2010-12-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=50974 
+        getComputedStyle() returns wrong values for zoomed elements when 
+        display is none
+        -and corresponding-
+        <rdar://problem/8522731>
+
+        If there is no renderer but the RenderStyle's value is a fixed 
+        length, send it through zoomAdjustedPixelValue(). There's not much 
+        we can do for other length types without a renderer.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::zoomAdjustedPixelValueForLength):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2010-12-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

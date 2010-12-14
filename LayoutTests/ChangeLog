@@ -1,3 +1,16 @@
+2010-12-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        New test for https://bugs.webkit.org/show_bug.cgi?id=50974 
+        getComputedStyle() returns wrong values for zoomed elements when 
+        display is none
+        -and corresponding-
+        <rdar://problem/8522731>
+
+        * fast/css/getComputedStyle/zoom-on-display-none-expected.txt: Added.
+        * fast/css/getComputedStyle/zoom-on-display-none.html: Added.
+
 2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Move chromium-mac expectations to chromium-mac-leopard.
