@@ -1,3 +1,11 @@
+2010-12-14  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Revert accidental change disabling the JIT for most platforms.
+
+        * wtf/Platform.h:
+
 2010-12-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Eric Seidel.
