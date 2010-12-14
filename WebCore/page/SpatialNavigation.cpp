@@ -334,7 +334,7 @@ bool hasOffscreenRect(Node* node, FocusDirection direction)
 
 bool scrollInDirection(Frame* frame, FocusDirection direction)
 {
-    ASSERT(frame && canScrollInDirection(direction, frame->document()));
+    ASSERT(frame);
 
     if (frame && canScrollInDirection(direction, frame->document())) {
         int dx = 0;
@@ -365,13 +365,14 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
 
 bool scrollInDirection(Node* container, FocusDirection direction)
 {
+    ASSERT(container);
     if (container->isDocumentNode())
         return scrollInDirection(static_cast<Document*>(container)->frame(), direction);
 
     if (!container->renderBox())
         return false;
 
-    if (container && canScrollInDirection(direction, container)) {
+    if (canScrollInDirection(direction, container)) {
         int dx = 0;
         int dy = 0;
         switch (direction) {
@@ -397,6 +398,7 @@ bool scrollInDirection(Node* container, FocusDirection direction)
         container->renderBox()->enclosingLayer()->scrollByRecursively(dx, dy);
         return true;
     }
+
     return false;
 }
 

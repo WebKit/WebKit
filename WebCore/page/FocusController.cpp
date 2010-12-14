@@ -500,13 +500,10 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
     findFocusCandidateInContainer(container, newStartingRect, direction, event, focusCandidate);
 
     if (focusCandidate.isNull()) {
-        if (canScrollInDirection(direction, container)) {
-            // Nothing to focus, scroll if possible.
-            scrollInDirection(container, direction);
-            return true;
-        }
-        // Return false will cause a re-try, skipping this container.
-        return false;
+        // Nothing to focus, scroll if possible.
+        // NOTE: If no scrolling is performed (i.e. scrollInDirection returns false), the
+        // spatial navigation algorithm will skip this container.
+        return scrollInDirection(container, direction);
     }
 
     if (HTMLFrameOwnerElement* frameElement = frameOwnerElement(focusCandidate)) {
