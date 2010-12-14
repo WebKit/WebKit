@@ -45,23 +45,17 @@ static void freeMIMEType(WebKitWebPluginMIMEType* mimeType)
     g_slice_free(WebKitWebPluginMIMEType, mimeType);
 }
 
-void webkit_web_plugin_mime_type_list_free(GSList* list)
-{
-    for (GSList* p = list; p; p = p->next)
-        freeMIMEType((WebKitWebPluginMIMEType*)p->data);
-    g_slist_free(list);
-}
-
 static void webkit_web_plugin_finalize(GObject* object)
 {
-    WebKitWebPluginPrivate* priv = WEBKIT_WEB_PLUGIN(object)->priv;
+    WebKitWebPlugin* plugin = WEBKIT_WEB_PLUGIN(object);
+    WebKitWebPluginPrivate* priv = plugin->priv;
 
-    if (priv->mimeTypes)
-        webkit_web_plugin_mime_type_list_free(priv->mimeTypes);
+    g_slist_foreach(priv->mimeTypes, (GFunc)freeMIMEType, 0);
+    g_slist_free(priv->mimeTypes);
 
-    delete WEBKIT_WEB_PLUGIN(object)->priv;
+    delete plugin->priv;
 
-    G_OBJECT_CLASS(webkit_web_plugin_parent_class)->dispose(object);
+    G_OBJECT_CLASS(webkit_web_plugin_parent_class)->finalize(object);
 }
 
 static void webkit_web_plugin_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* paramSpec)
@@ -107,14 +101,12 @@ static void webkit_web_plugin_class_init(WebKitWebPluginClass* klass)
                                                          _("Whether the plugin is enabled"),
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
-
-    g_type_class_add_private(klass, sizeof(WebKitWebPluginPrivate));
 }
 
 static void webkit_web_plugin_init(WebKitWebPlugin *plugin)
 {
-    WebKitWebPluginPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(plugin, WEBKIT_TYPE_WEB_PLUGIN, WebKitWebPluginPrivate);
-    plugin->priv = priv = new WebKitWebPluginPrivate();
+    plugin->priv = new WebKitWebPluginPrivate();
+    plugin->priv->mimeTypes = 0;
 }
 
 namespace WebKit {
@@ -175,7 +167,7 @@ const char* webkit_web_plugin_get_description(WebKitWebPlugin* plugin)
  * Returns all the #WebKitWebPluginMIMEType that @plugin is handling
  * at the moment.
  *
- * Returns: (transfer container) (element-type WebKitWebPluginMIMEType): a #GSList of #WebKitWebPluginMIMEType
+ * Returns: (transfer none) (element-type WebKitWebPluginMIMEType): a #GSList of #WebKitWebPluginMIMEType
  *
  * Since: 1.3.8
  */

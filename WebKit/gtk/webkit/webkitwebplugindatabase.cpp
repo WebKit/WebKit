@@ -76,6 +76,7 @@ void webkit_web_plugin_database_plugins_list_free(GSList* list)
  * @database: a #WebKitWebPluginDatabase
  *
  * Returns all #WebKitWebPlugin available in @database.
+ * The returned list must be freed with webkit_web_plugin_database_plugins_list_free()
  *
  * Returns: (transfer full) (element-type WebKitWebPlugin): a #GSList of #WebKitWebPlugin
  *

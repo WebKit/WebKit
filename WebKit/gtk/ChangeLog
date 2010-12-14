@@ -1,3 +1,32 @@
+2010-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix several issues in r73858
+        https://bugs.webkit.org/show_bug.cgi?id=51032
+
+        - It uses both glib private data and it allocates its own private
+          structure.
+        - It calls parent's dispose method from finalize.
+        - webkit_web_plugin_get_mimetypes() uses a wrong annotation for the
+          returned value, it should be transfer none rather than transfer
+          container.
+        - Since the mime type list is internal and we return the list and not a
+          copy, it should never be freed by the caller, so
+          webkit_web_plugin_mime_type_list_free() should be removed from the
+          public API.
+        - Mime types list is used uninitialized.
+        - Mention in the docs that list returned by
+          webkit_web_plugin_database_get_plugins() must be freed with
+          webkit_web_plugin_database_plugins_list_free().
+
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_finalize):
+        (webkit_web_plugin_class_init):
+        (webkit_web_plugin_init):
+        * webkit/webkitwebplugin.h:
+        * webkit/webkitwebplugindatabase.cpp:
+
 2010-12-14  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

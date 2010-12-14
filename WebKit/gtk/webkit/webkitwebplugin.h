@@ -54,9 +54,6 @@ typedef struct _WebKitWebPluginMIMEType {
     char** extensions;
 } WebKitWebPluginMIMEType;
 
-WEBKIT_API void
-webkit_web_plugin_mime_type_list_free (GSList*);
-
 struct _WebKitWebPluginClass {
     GObjectClass parentClass;
 };
