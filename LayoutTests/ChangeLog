@@ -1,3 +1,13 @@
+2010-12-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
+        Now that we've switched Chromium to the DRT (and the switch seems to
+        have stuck), remove the BUG_AWESOME lines about tests that only pass
+        with the DRT (but not test_shell).
+        
+        * platform/chromium/test_expectations.txt:
+
 2010-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
