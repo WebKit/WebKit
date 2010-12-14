@@ -338,13 +338,6 @@ Font::CodePath Font::codePath(const TextRun& run) const
 
 bool Font::isCJKIdeograph(UChar32 c)
 {
-    // 0x2C7 Caron, Mandarin Chinese 3rd Tone
-    // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
-    // 0x2CB Modifier Letter Grave Access, Mandarin Chinese 4th Tone 
-    // 0x2D9 Dot Above, Mandarin Chinese 5th Tone 
-    if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9))
-        return true;
-
     // The basic CJK Unified Ideographs block.
     if (c >= 0x4E00 && c <= 0x9FFF)
         return true;
@@ -361,46 +354,14 @@ bool Font::isCJKIdeograph(UChar32 c)
     if (c >= 0x2F00 && c <= 0x2FDF)
         return true;
     
-    // Ideographic Description Characters.
-    if (c >= 0x2FF0 && c <= 0x2FFF)
-        return true;
-    
-    // CJK Symbols and Punctuation.
-    if (c >= 0x3000 && c <= 0x303F)
-        return true;
-   
-    // Bopomofo
-    if (c >= 0x3100 && c <= 0x312F)
-        return true;
-    
-    // Bopomofo Extended
-    if (c >= 0x31A0 && c <= 0x31BF)
-        return true;
- 
     // CJK Strokes.
     if (c >= 0x31C0 && c <= 0x31EF)
-        return true;
-    
-    // Enclosed CJK Letters and Months.
-    if (c >= 0x3200 && c <= 0x32FF)
-        return true;
-    
-    // CJK Compatibility.
-    if (c >= 0x3300 && c <= 0x33FF)
         return true;
     
     // CJK Compatibility Ideographs.
     if (c >= 0xF900 && c <= 0xFAFF)
         return true;
     
-    // CJK Compatibility Forms.
-    if (c >= 0xFE30 && c <= 0xFE4F)
-        return true;
-
-    // Emoji.
-    if (c >= 0x1F200 && c <= 0x1F6F)
-        return true;
-
     // CJK Unified Ideographs Extension B.
     if (c >= 0x20000 && c <= 0x2A6DF)
         return true;
@@ -418,6 +379,50 @@ bool Font::isCJKIdeograph(UChar32 c)
         return true;
 
     return false;
+}
+
+bool Font::isCJKIdeographOrSymbol(UChar32 c)
+{
+    // 0x2C7 Caron, Mandarin Chinese 3rd Tone
+    // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
+    // 0x2CB Modifier Letter Grave Access, Mandarin Chinese 4th Tone 
+    // 0x2D9 Dot Above, Mandarin Chinese 5th Tone 
+    if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9))
+        return true;
+
+    // Ideographic Description Characters.
+    if (c >= 0x2FF0 && c <= 0x2FFF)
+        return true;
+    
+    // CJK Symbols and Punctuation.
+    if (c >= 0x3000 && c <= 0x303F)
+        return true;
+   
+    // Bopomofo
+    if (c >= 0x3100 && c <= 0x312F)
+        return true;
+    
+    // Bopomofo Extended
+    if (c >= 0x31A0 && c <= 0x31BF)
+        return true;
+ 
+    // Enclosed CJK Letters and Months.
+    if (c >= 0x3200 && c <= 0x32FF)
+        return true;
+    
+    // CJK Compatibility.
+    if (c >= 0x3300 && c <= 0x33FF)
+        return true;
+    
+    // CJK Compatibility Forms.
+    if (c >= 0xFE30 && c <= 0xFE4F)
+        return true;
+
+    // Emoji.
+    if (c >= 0x1F200 && c <= 0x1F6F)
+        return true;
+
+    return isCJKIdeograph(c);
 }
 
 }

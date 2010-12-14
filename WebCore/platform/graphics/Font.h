@@ -144,6 +144,7 @@ public:
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 
     static bool isCJKIdeograph(UChar32);
+    static bool isCJKIdeographOrSymbol(UChar32);
     
 #if PLATFORM(QT)
     QFont font() const;

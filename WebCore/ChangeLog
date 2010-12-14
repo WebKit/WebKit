@@ -1,3 +1,23 @@
+2010-12-13  takano takumi  <takano@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        GlyphPage::fill() is slow on vertical writing (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=50865
+
+        No test. Just a performance improvement.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::isCJKIdeograph): Now this only checks pure ideographs (Hanji).
+        (WebCore::Font::isCJKIdeographOrSymbol): Added this for Hanji and Hanji related symbols.
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Changed to call isCJKIdeographOrSymbol() instead of isCJKIdeograph().
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::shouldUseCoreText): This tests if GlyphPage::fill() should use CoreText or not.
+        For vertical writing, if the current page contains only ideographs, we go CG path.
+        (WebCore::GlyphPage::fill): Made to call shouldUseCoreText() and switch code path.
+
 2010-12-13  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Daniel Bates.

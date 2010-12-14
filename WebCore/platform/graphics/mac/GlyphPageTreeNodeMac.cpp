@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "GlyphPageTreeNode.h"
+#include "Font.h"
 
 #include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
@@ -35,12 +36,27 @@
 
 namespace WebCore {
 
+#ifndef BUILDING_ON_TIGER
+static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+{
+    if (fontData->orientation() == Vertical && !fontData->isBrokenIdeographFont()) {
+        // Ideographs don't have a vertical variant.
+        for (unsigned i = 0; i < bufferLength; ++i) {
+            if (!Font::isCJKIdeograph(buffer[i]))
+                return true;
+        }
+    }
+
+    return false;
+}
+#endif
+
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     bool haveGlyphs = false;
 
 #ifndef BUILDING_ON_TIGER
-    if (fontData->orientation() == Horizontal || fontData->isBrokenIdeographFont()) {
+    if (!shouldUseCoreText(buffer, bufferLength, fontData)) {
         Vector<CGGlyph, 512> glyphs(bufferLength);
         wkGetGlyphsForCharacters(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
         for (unsigned i = 0; i < length; ++i) {
