@@ -1,3 +1,12 @@
+2010-12-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix for EFL.
+
+        Remove DataSourceGStreamer.cpp in WebCore/CMakeListsEfl.txt
+        Because, DataSourceGStreamer.cpp was removed by Bug 30007.
+
+        * ../WebCore/CMakeListsEfl.txt:
+
 2010-12-13  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
