@@ -1,3 +1,13 @@
+2010-12-13  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Daniel Bates.
+
+        [skia] ignore transform for canvas shadows
+        https://bugs.webkit.org/show_bug.cgi?id=50437
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2010-12-13  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

@@ -1066,13 +1066,15 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     double height = size.height();
     double blur = blurFloat;
 
-    // TODO(tc): This still does not address the issue that shadows
-    // within canvas elements should ignore transforms.
+    SkBlurDrawLooper::BlurFlags blurFlags = SkBlurDrawLooper::kNone_BlurFlag;
+
     if (m_state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
         // CanvasRenderingContext for HTMLCanvasElement have shadows ignore
         // Transforms. So with this flag set, we know this state is associated
         // with a CanvasRenderingContext.
+        blurFlags = SkBlurDrawLooper::kIgnoreTransform_BlurFlag;
+        
         // CG uses natural orientation for Y axis, but the HTML5 canvas spec
         // does not.
         // So we now flip the height since it was flipped in
@@ -1088,7 +1090,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
 
     // TODO(tc): Should we have a max value for the blur?  CG clamps at 1000.0
     // for perf reasons.
-    SkDrawLooper* dl = new SkBlurDrawLooper(blur / 2, width, height, c);
+    SkDrawLooper* dl = new SkBlurDrawLooper(blur / 2, width, height, c, blurFlags);
     platformContext()->setDrawLooper(dl);
     dl->unref();
 }
