@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010 Sencha, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -204,8 +205,20 @@ HashSet<String> ClipboardQt::types() const
 
 PassRefPtr<FileList> ClipboardQt::files() const
 {
-    notImplemented();
-    return 0;
+    if (policy() != ClipboardReadable || !m_readableData->hasUrls())
+        return FileList::create();
+
+    RefPtr<FileList> fileList = FileList::create();
+    QList<QUrl> urls = m_readableData->urls();
+
+    for (int i = 0; i < urls.size(); i++) {
+        QUrl url = urls[i];
+        if (url.scheme() != QLatin1String("file"))
+            continue;
+        fileList->append(File::create(url.toLocalFile()));
+    }
+
+    return fileList.release();
 }
 
 void ClipboardQt::setDragImage(CachedImage* image, const IntPoint& point)
