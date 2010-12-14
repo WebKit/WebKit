@@ -76,6 +76,7 @@ class Element;
 class EntityReference;
 class Event;
 class EventListener;
+class EventQueue;
 class FormAssociatedElement;
 class Frame;
 class FrameView;
@@ -1026,10 +1027,11 @@ public:
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
 
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueWindowEvent(PassRefPtr<Event>);
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
+    EventQueue* eventQueue() const { return m_eventQueue.get(); }
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1127,8 +1129,6 @@ private:
     void cacheDocumentElement() const;
 
     void createStyleSelector();
-
-    void pendingEventTimerFired(Timer<Document>*);
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
@@ -1352,9 +1352,8 @@ private:
 #endif
 
     bool m_usingGeolocation;
-
-    Timer<Document> m_pendingEventTimer;
-    Vector<RefPtr<Event> > m_pendingEventQueue;
+    
+    OwnPtr<EventQueue> m_eventQueue;
 
 #if ENABLE(WML)
     bool m_containsWMLContent;

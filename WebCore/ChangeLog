@@ -1,3 +1,40 @@
+2010-12-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Move asynchronous event dispatching out of Document
+        https://bugs.webkit.org/show_bug.cgi?id=49785
+        
+        Move asynchonous event code out of Document and into a standalone
+        EventQueue class (which supports async events for both regular nodes
+        and the window object).
+
+        No new tests necessary, since no new functionality is exposed (existing
+        layout tests pass).
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::enqueueWindowEvent):
+        (WebCore::Document::enqueueHashchangeEvent):
+        * dom/DOMAllInOne.cpp:
+        (WebCore::Document::eventQueue):
+        * dom/Document.h:
+        * dom/EventQueue.cpp: Added.
+        (WebCore::EventQueue::EventQueue):
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        (WebCore::EventQueue::dispatchEvent):
+        * dom/EventQueue.h: Added.
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2010-12-14  Kyounga Ra  <kyounga.ra@gmail.com>
 
         Reviewed by Adam Barth.

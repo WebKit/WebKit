@@ -1206,6 +1206,8 @@ webcore_sources += \
 	WebCore/dom/EventNames.h \
 	WebCore/dom/EventTarget.cpp \
 	WebCore/dom/EventTarget.h \
+	WebCore/dom/EventQueue.cpp \
+	WebCore/dom/EventQueue.h \
 	WebCore/dom/ExceptionBase.cpp \
 	WebCore/dom/ExceptionBase.h \
 	WebCore/dom/ExceptionCode.cpp \

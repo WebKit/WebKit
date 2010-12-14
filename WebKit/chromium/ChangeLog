@@ -1,3 +1,15 @@
+2010-12-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Move asynchronous event dispatching out of Document
+        https://bugs.webkit.org/show_bug.cgi?id=49785
+        
+        Change enqueueEvent callsite.
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::storageEvent):
+
 2010-12-13  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by James Robinson.

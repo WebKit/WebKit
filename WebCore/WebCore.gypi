@@ -1246,6 +1246,8 @@
             'dom/EventNames.h',
             'dom/EventTarget.cpp',
             'dom/EventTarget.h',
+            'dom/EventQueue.cpp',
+            'dom/EventQueue.h',
             'dom/ExceptionBase.cpp',
             'dom/ExceptionBase.h',
             'dom/ExceptionCode.cpp',

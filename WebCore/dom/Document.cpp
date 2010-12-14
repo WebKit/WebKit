@@ -59,6 +59,7 @@
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "EventQueue.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
 #include "FormAssociatedElement.h"
@@ -403,7 +404,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     , m_normalWorldWrapperCache(0)
 #endif
     , m_usingGeolocation(false)
-    , m_pendingEventTimer(this, &Document::pendingEventTimerFired)
+    , m_eventQueue(adoptPtr(new EventQueue))
 #if ENABLE(WML)
     , m_containsWMLContent(false)
 #endif
@@ -3473,23 +3474,10 @@ void Document::dispatchWindowLoadEvent()
     domWindow->dispatchLoadEvent();
 }
 
-void Document::enqueueEvent(PassRefPtr<Event> event)
+void Document::enqueueWindowEvent(PassRefPtr<Event> event)
 {
-    m_pendingEventQueue.append(event);
-    if (!m_pendingEventTimer.isActive())
-        m_pendingEventTimer.startOneShot(0);
-}
-
-void Document::pendingEventTimerFired(Timer<Document>*)
-{
-    ASSERT(!m_pendingEventTimer.isActive());
-    Vector<RefPtr<Event> > eventQueue;
-    eventQueue.swap(m_pendingEventQueue);
-
-    typedef Vector<RefPtr<Event> >::const_iterator Iterator;
-    Iterator end = eventQueue.end();
-    for (Iterator it = eventQueue.begin(); it != end; ++it)
-        dispatchWindowEvent(*it);
+    event->setTarget(domWindow());
+    m_eventQueue->enqueueEvent(event);
 }
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
@@ -4751,7 +4739,7 @@ void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)
 
 void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
 {
-    enqueueEvent(HashChangeEvent::create(oldURL, newURL));
+    enqueueWindowEvent(HashChangeEvent::create(oldURL, newURL));
 }
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)

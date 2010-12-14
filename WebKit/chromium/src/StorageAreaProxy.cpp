@@ -129,7 +129,7 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
             ExceptionCode ec = 0;
             Storage* storage = frames[i]->domWindow()->sessionStorage(ec);
             if (!ec)
-                frames[i]->document()->enqueueEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
+                frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
         }
     } else {
         // Send events to every page.
@@ -146,7 +146,7 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
             ExceptionCode ec = 0;
             Storage* storage = frames[i]->domWindow()->localStorage(ec);
             if (!ec)
-                frames[i]->document()->enqueueEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
+                frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
         }
     }
 }

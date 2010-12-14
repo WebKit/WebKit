@@ -71,6 +71,7 @@
 #include "Event.cpp"
 #include "EventContext.cpp"
 #include "EventNames.cpp"
+#include "EventQueue.cpp"
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCode.cpp"

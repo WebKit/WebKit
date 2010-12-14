@@ -132,6 +132,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/EventContext.cpp \
 	dom/EventNames.cpp \
 	dom/EventTarget.cpp \
+	dom/EventQueue.cpp \
 	dom/ExceptionBase.cpp \
 	dom/ExceptionCode.cpp \
 	dom/InputElement.cpp \
