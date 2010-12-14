@@ -64,7 +64,7 @@ public:
 
     template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
     template<typename T> bool send(const T& message, uint64_t destinationID);
-    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout);
+    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = 1);
     
     CoreIPC::Connection* connection() const
     { 
@@ -168,7 +168,7 @@ bool WebProcessProxy::send(const T& message, uint64_t destinationID)
 }
 
 template<typename U> 
-bool WebProcessProxy::sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = 1)
+bool WebProcessProxy::sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout)
 {
     return m_connection->sendSync(message, reply, destinationID, timeout);
 }

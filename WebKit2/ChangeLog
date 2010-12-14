@@ -1,3 +1,11 @@
+2010-12-14  Alice Liu  <alice.liu@apple.com>
+
+        Fix clang++ build.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::sendSync):
+        Move the default argument to the declaration.
+
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
