@@ -1,3 +1,14 @@
+2010-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: regroup Inspector.idl entries.
+        Just for better visibility.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51025
+
+        * inspector/Inspector.idl:
+
 2010-12-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

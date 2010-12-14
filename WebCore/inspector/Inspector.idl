@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,80 +31,58 @@
 
 module core {
     interface [Conditional=INSPECTOR] Inspector {
-        [notify, domain=Timeline] void addRecordToTimeline(out Object record);
-        [notify, domain=Inspector] void addNodesToSearchResult(out Array nodeIds);
-        [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
-        [notify, domain=Inspector] void bringToFront();
-        [notify, domain=DOM] void characterDataModified(out long id, out String newValue);
-        [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
-        [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
-        [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
-        [notify, domain=DOM] void didCommitLoad();
-        [notify, domain=Inspector] void evaluateForTestInFrontend(out long testCallId, out String script);
-        [notify, domain=Inspector] void disconnectFromBackend();
-        [notify, domain=Inspector] void domContentEventFired(out double time);
-        [notify, domain=Inspector] void inspectedURLChanged(out String url);
-        [notify, domain=Inspector] void loadEventFired(out double time);
-        [notify, domain=Inspector] void reset();
-        [notify, domain=Profiler] void resetProfiles();
-        [notify, domain=DOM] void setChildNodes(out long parentId, out Array nodes);
-        [notify, domain=DOM] void setDetachedRoot(out Object root);
-        [notify, domain=DOM] void setDocument(out Value root);
-        [notify, domain=Inspector] void showPanel(out String panel);
-        [notify, domain=Timeline] void timelineProfilerWasStarted();
-        [notify, domain=Timeline] void timelineProfilerWasStopped();
-        [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [notify, domain=Profiler] void addProfileHeader(out Object header);
-        [notify, domain=Profiler] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
-        [notify, domain=Debugger] void attachDebuggerWhenShown();
-        [notify, domain=Debugger] void debuggerWasEnabled();
-        [notify, domain=Debugger] void debuggerWasDisabled();
-        [notify, domain=Debugger] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
-        [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
-        [notify, domain=Debugger] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
-        [notify, domain=Debugger] void pausedScript(out Object details);
-        [notify, domain=Profiler] void profilerWasEnabled();
-        [notify, domain=Profiler] void profilerWasDisabled();
-        [notify, domain=Debugger] void breakpointRestored(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
-        [notify, domain=Debugger] void resumedScript();
-        [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
-#endif
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [notify, domain=Resources] void addDatabase(out Object database);
-        [notify, domain=Resources] void selectDatabase(out int databaseId);
-#endif
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [notify, domain=Resources] void addDOMStorage(out Object storage);
-        [notify, domain=Resources] void updateDOMStorage(out int storageId);
-        [notify, domain=Resources] void selectDOMStorage(out int storageId);
-#endif
-#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        [notify, domain=Resources] void updateApplicationCacheStatus(out int status);
-        [notify, domain=Resources] void updateNetworkState(out boolean isNowOnline);
-#endif
-#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);
-        [notify, domain=Debugger] void didDestroyWorker(out long id);
-#endif
+        ///////////////////////////////////////////////////////////////////////
+        // generic Inspector's methods
+        ///////////////////////////////////////////////////////////////////////
 
-        // This method is going to be broken down into smaller parts.
+        [domain=Backend] void setInjectedScriptSource(in String scriptSource);
+        // HUGE FIXME: we need to expose InjectedScript methods here. Or document InjectedScript capabilities.
+        [domain=Backend] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
+        [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
+        [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
+        [domain=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+        [domain=Inspector] void getInspectorState(out Object state);
+        [domain=Inspector] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
+        [domain=Inspector] void reloadPage();
         [domain=Inspector] void populateScriptObjects();
 
-        [domain=Inspector] void getInspectorState(out Object state);
-
+        [domain=Inspector] void openInInspectedWindow(in String url);
         [domain=Inspector] void setSearchingForNode(in boolean enabled, out boolean newState);
+        [notify, domain=Inspector] void addNodesToSearchResult(out Array nodeIds);
+        [notify, domain=Inspector] void bringToFront();
+        [notify, domain=Inspector] void disconnectFromBackend();
+        [notify, domain=Inspector] void inspectedURLChanged(out String url);
+        [notify, domain=Inspector] void domContentEventFired(out double time);
+        [notify, domain=Inspector] void loadEventFired(out double time);
+        [notify, domain=Inspector] void reset();
+        [notify, domain=Inspector] void showPanel(out String panel);
 
-        [domain=Inspector] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
+        [notify, domain=Inspector] void evaluateForTestInFrontend(out long testCallId, out String script);
+        [domain=Inspector] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 
-        [domain=Inspector] void reloadPage();
+        [domain=Inspector] void highlightDOMNode(in long nodeId);
+        [domain=Inspector] void hideDOMNodeHighlight();
+        [domain=Inspector] void highlightFrame(in unsigned long frameId);
+        [domain=Inspector] void hideFrameHighlight();
+        [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
 
-        [domain=Inspector] void startTimelineProfiler();
-        [domain=Inspector] void stopTimelineProfiler();
+        ///////////////////////////////////////////////////////////////////////
+        // Console API
+        ///////////////////////////////////////////////////////////////////////
 
-        [domain=Resources] void cachedResources(out Object resources);
-        [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
+        [domain=Inspector] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
+        [notify, domain=Inspector] void addConsoleMessage(out Object messageObj);
+        [notify, domain=Inspector] void updateConsoleMessageExpiredCount(out unsigned long count);
+        [notify, domain=Inspector] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [domain=Inspector] void clearConsoleMessages();
+        [notify, domain=Inspector] void consoleMessagesCleared();
+
+        ///////////////////////////////////////////////////////////////////////
+        // Resources API
+        ///////////////////////////////////////////////////////////////////////
+
+        // FIXME: Network domain
         [notify, domain=Resources] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
         [notify, domain=Resources] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify, domain=Resources] void markResourceAsCached(out long identifier);
@@ -117,58 +94,55 @@ module core {
         [notify, domain=Resources] void setInitialContent(out long identifier, out String sourceString, out String type);
         [notify, domain=Resources] void didCommitLoadForFrame(out Object frame, out Object loader);
         [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
+       
+        [domain=Resources] void cachedResources(out Object resources);
+        [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
 
         [notify, domain=Resources] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
         [notify, domain=Resources] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
         [notify, domain=Resources] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
         [notify, domain=Resources] void didCloseWebSocket(out unsigned long identifier, out double time);
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [domain=Backend] void enableDebugger(in boolean always);
-        [domain=Inspector] void disableDebugger(in boolean always);
-
-        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
-        [domain=Debugger] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
-        [domain=Debugger] void activateBreakpoints();
-        [domain=Debugger] void deactivateBreakpoints();
-
-        [domain=Debugger] void pause();
-        [domain=Debugger] void resume();
-
-        [domain=Debugger] void stepOverStatement();
-        [domain=Debugger] void stepIntoStatement();
-        [domain=Debugger] void stepOutOfFunction();
-
-        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
-
-        [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
-        [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
-
-        [domain=DOM] void setDOMBreakpoint(in long nodeId, in long type);
-        [domain=DOM] void removeDOMBreakpoint(in long nodeId, in long type);
-        [domain=Inspector] void setEventListenerBreakpoint(in String eventName);
-        [domain=Inspector] void removeEventListenerBreakpoint(in String eventName);
-        [domain=Inspector] void setXHRBreakpoint(in String url);
-        [domain=Inspector] void removeXHRBreakpoint(in String url);
-
-        [domain=Inspector] void enableProfiler(in boolean always);
-        [domain=Inspector] void disableProfiler(in boolean always);
-
-        [domain=Inspector] void startProfiling();
-        [domain=Inspector] void stopProfiling();
-
-        [domain=Profiler] void getProfileHeaders(out Array headers);
-        [domain=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);
-
-        [domain=Profiler] void removeProfile(in String type, in unsigned long uid);
-        [domain=Profiler] void clearProfiles();
-
-        [domain=Profiler] void takeHeapSnapshot();
+        // FIXME: Introduce new StorageDomain.
+        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
+        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+        [notify, domain=Resources] void addDatabase(out Object database);
+        [notify, domain=Resources] void selectDatabase(out int databaseId);
+        [domain=Backend] void getDatabaseTableNames(in long databaseId, out Array tableNames);
+        [domain=Backend] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
+        [notify, domain=Resources] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
+        [notify, domain=Resources] void sqlTransactionFailed(out long transactionId, out Value sqlError);
 #endif
-        [domain=Backend] void setInjectedScriptSource(in String scriptSource);
-        [domain=Backend] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
-        [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
-        [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+        [domain=Inspector] void getDOMStorageEntries(in long storageId, out Array entries);
+        [domain=Inspector] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
+        [domain=Inspector] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
+        // FIXME: nuke these from resource manager asap, dispatch on StorageDomain.
+        [notify, domain=Resources] void addDOMStorage(out Object storage);
+        [notify, domain=Resources] void updateDOMStorage(out int storageId);
+        [notify, domain=Resources] void selectDOMStorage(out int storageId);
+#endif
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
+        [notify, domain=Resources] void updateApplicationCacheStatus(out int status);
+        [notify, domain=Resources] void updateNetworkState(out boolean isNowOnline);
+#endif
+#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
+        [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
+#endif
+#if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
+        [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
+        [domain=FileSystem] void revealFolderInOS(in String path);
+
+        // FIXME: nuke these from resource manager asap, dispatch on FileSystem.
+        [notify, domain=Resources] void didGetFileSystemPath(out String root, out int type, out String origin);
+        [notify, domain=Resources] void didGetFileSystemError(out int type, out String origin);
+        [notify, domain=Resources] void didGetFileSystemDisabled();
+#endif
+
+        ///////////////////////////////////////////////////////////////////////
+        // DOM API
+        ///////////////////////////////////////////////////////////////////////
 
         [domain=DOM] void getChildNodes(in long nodeId);
         [domain=DOM] void setAttribute(in long elementId, in String name, in String value, out boolean success);
@@ -185,20 +159,19 @@ module core {
         [domain=DOM] void searchCanceled();
         [domain=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
 
-        [domain=Inspector] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
-        [notify, domain=Inspector] void addConsoleMessage(out Object messageObj);
-        [notify, domain=Inspector] void updateConsoleMessageExpiredCount(out unsigned long count);
-        [notify, domain=Inspector] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [notify, domain=DOM] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
+        [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
+        [notify, domain=DOM] void characterDataModified(out long id, out String newValue);
+        [notify, domain=DOM] void setChildNodes(out long parentId, out Array nodes);
+        [notify, domain=DOM] void setDetachedRoot(out Object root);
+        [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
+        [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
+        [notify, domain=DOM] void didCommitLoad();
 
-        [domain=Inspector] void clearConsoleMessages();
-        [notify, domain=Inspector] void consoleMessagesCleared();
-
-        [domain=Inspector] void highlightDOMNode(in long nodeId);
-        [domain=Inspector] void hideDOMNodeHighlight();
-        [domain=Inspector] void openInInspectedWindow(in String url);
-
-        [domain=Inspector] void highlightFrame(in unsigned long frameId);
-        [domain=Inspector] void hideFrameHighlight();
+        ///////////////////////////////////////////////////////////////////////
+        // CSS API
+        ///////////////////////////////////////////////////////////////////////
 
         [domain=CSS] void getStylesForNode2(in long nodeId, out Value styles);
         [domain=CSS] void getComputedStyleForNode2(in long nodeId, out Value style);
@@ -214,35 +187,92 @@ module core {
         [domain=CSS] void getSupportedCSSProperties(out Array cssProperties);
         [domain=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
 
-        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
-        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+        ///////////////////////////////////////////////////////////////////////
+        // Timeline API
+        ///////////////////////////////////////////////////////////////////////
 
-#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
-#endif
+        [domain=Inspector] void startTimelineProfiler();
+        [domain=Inspector] void stopTimelineProfiler();
+        [notify, domain=Timeline] void timelineProfilerWasStarted();
+        [notify, domain=Timeline] void timelineProfilerWasStopped();
+        [notify, domain=Timeline] void addRecordToTimeline(out Object record);
 
-#if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
-        [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
-        [domain=FileSystem] void revealFolderInOS(in String path);
-        [notify, domain=Resources] void didGetFileSystemPath(out String root, out int type, out String origin);
-        [notify, domain=Resources] void didGetFileSystemError(out int type, out String origin);
-        [notify, domain=Resources] void didGetFileSystemDisabled();
-#endif
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
 
-        [domain=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-        [domain=Inspector] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
+        ///////////////////////////////////////////////////////////////////////
+        // Debugger API
+        ///////////////////////////////////////////////////////////////////////
 
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [domain=Backend] void getDatabaseTableNames(in long databaseId, out Array tableNames);
-        [domain=Backend] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
-        [notify, domain=Resources] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
-        [notify, domain=Resources] void sqlTransactionFailed(out long transactionId, out Value sqlError);
-#endif
+        [domain=Backend] void enableDebugger(in boolean always);
+        [domain=Inspector] void disableDebugger(in boolean always); // FIXME: should be on the same domain as enableDebugger.
+        [notify, domain=Debugger] void debuggerWasEnabled();
+        [notify, domain=Debugger] void debuggerWasDisabled();
 
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [domain=Inspector] void getDOMStorageEntries(in long storageId, out Array entries);
-        [domain=Inspector] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
-        [domain=Inspector] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
-#endif
+        [notify, domain=Debugger] void attachDebuggerWhenShown(); // FIXME: do something with this eventually.
+
+        [notify, domain=Debugger] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
+        [notify, domain=Debugger] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+
+        [domain=Debugger] void activateBreakpoints();
+        [domain=Debugger] void deactivateBreakpoints();
+
+        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
+        [domain=Debugger] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
+
+        [domain=DOM] void setDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=DOM] void removeDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=Inspector] void setEventListenerBreakpoint(in String eventName); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=Inspector] void removeEventListenerBreakpoint(in String eventName); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=Inspector] void setXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=Inspector] void removeXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=Debugger] void stepOverStatement(); // FIXME: rename to stepOver
+        [domain=Debugger] void stepIntoStatement(); // FIXME: rename to stepInto
+        [domain=Debugger] void stepOutOfFunction(); // FIXME: rename to stepOut
+        [domain=Debugger] void pause();
+        [notify, domain=Debugger] void pausedScript(out Object details);
+        [domain=Debugger] void resume();
+        [notify, domain=Debugger] void resumedScript(); // FIXME: Make this out parameter fo resume if possible.
+
+        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
+
+        [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
+
+        [notify, domain=Debugger] void breakpointRestored(out String sourceID, out String url, out int line, out boolean enabled, out String condition); // FIXME: should be breakpointResolved
+
+#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
+        [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);
+        [notify, domain=Debugger] void didDestroyWorker(out long id);
+#endif // ENABLE_WORKERS
+
+        ///////////////////////////////////////////////////////////////////////
+        // Profiler API
+        ///////////////////////////////////////////////////////////////////////
+
+        [domain=Inspector] void enableProfiler(in boolean always); // FIXME: preferrable with Inspector domain, dispatched on backend.
+        [domain=Inspector] void disableProfiler(in boolean always);
+        [notify, domain=Profiler] void profilerWasEnabled();
+        [notify, domain=Profiler] void profilerWasDisabled();
+
+        [domain=Inspector] void startProfiling(); // FIXME: dispatch on profiler agent.
+        [domain=Inspector] void stopProfiling(); // FIXME: dispatch on profiler agent.
+
+        [domain=Profiler] void getProfileHeaders(out Array headers);
+        [domain=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);
+        [domain=Profiler] void removeProfile(in String type, in unsigned long uid);
+        [domain=Profiler] void clearProfiles();
+
+        // FIXME: split into Profiler and HeapProfiler.
+        [domain=Profiler] void takeHeapSnapshot();
+        [notify, domain=Profiler] void addProfileHeader(out Object header);
+        [notify, domain=Profiler] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
+        [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
+        [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
+        [notify, domain=Profiler] void resetProfiles();
+
+#endif // ENABLE_JAVASCRIPT_DEBUGGER
     };
 }
