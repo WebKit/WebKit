@@ -1,3 +1,29 @@
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. More chromium rebaselines.
+
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.png: Added.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.checksum:
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.txt: Added.
+
 2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping flaky test on GTK debug bot.
