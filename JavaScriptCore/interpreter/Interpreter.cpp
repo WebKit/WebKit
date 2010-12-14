@@ -3196,8 +3196,10 @@ skip_id_custom_self:
             vPC += OPCODE_LENGTH(op_get_by_pname);
             NEXT_INSTRUCTION();
         }
-        Identifier propertyName(callFrame, subscript.toString(callFrame));
-        result = baseValue.get(callFrame, propertyName);
+        {
+            Identifier propertyName(callFrame, subscript.toString(callFrame));
+            result = baseValue.get(callFrame, propertyName);
+        }
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
         vPC += OPCODE_LENGTH(op_get_by_pname);

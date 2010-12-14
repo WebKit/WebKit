@@ -1,3 +1,17 @@
+2010-12-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Clang fails to build the JSC interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=51016
+
+        Clang does not allow indirect gotos out of scopes with cleanup. GCC 4.2 allows
+        them, but it does not correctly generate the cleanup, causing a leak if the
+        cleanup decrements a reference count.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Put an Identifier into its own scope.
+
 2010-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

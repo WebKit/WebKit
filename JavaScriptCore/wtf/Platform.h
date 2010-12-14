@@ -973,7 +973,7 @@
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4,1,0)) \
     && !OS(WINCE)
-#define ENABLE_JIT 1
+#define ENABLE_JIT 0
 #endif
 
 /* Ensure that either the JIT or the interpreter has been enabled. */
