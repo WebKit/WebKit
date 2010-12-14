@@ -30,6 +30,7 @@
 #include "LayerBackedDrawingAreaProxy.h"
 #include "RunLoop.h"
 #include "NativeWebKeyboardEvent.h"
+#include "WebContext.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
