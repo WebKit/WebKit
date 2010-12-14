@@ -67,10 +67,10 @@ void FEColorMatrix::setValues(const Vector<float> &values)
 
 inline void matrix(double& red, double& green, double& blue, double& alpha, const Vector<float>& values)
 {
-    double r = values[0]  * red + values[1]  * green + values[2]  * blue + values[3]  * alpha;
-    double g = values[5]  * red + values[6]  * green + values[7]  * blue + values[8]  * alpha;
-    double b = values[10]  * red + values[11]  * green + values[12] * blue + values[13] * alpha;
-    double a = values[15] * red + values[16] * green + values[17] * blue + values[18] * alpha;
+    double r = values[0]  * red + values[1]  * green + values[2]  * blue + values[3]  * alpha + values[4] * 255;
+    double g = values[5]  * red + values[6]  * green + values[7]  * blue + values[8]  * alpha + values[9] * 255;
+    double b = values[10]  * red + values[11]  * green + values[12] * blue + values[13] * alpha + values[14] * 255;
+    double a = values[15] * red + values[16] * green + values[17] * blue + values[18] * alpha + values[19] * 255;
 
     red = r;
     green = g;

@@ -1,3 +1,15 @@
+2010-12-14  Pieter Senster  <psenster@google.com>
+
+        Reviewed by Dirk Schulze.
+
+        Test that the channel offsets in the ColorMatrix filter are correctly incorporated
+        https://bugs.webkit.org/show_bug.cgi?id=50682
+
+        * platform/mac/svg/filters/feColorMatrix-offset-expected.checksum: Added.
+        * platform/mac/svg/filters/feColorMatrix-offset-expected.png: Added.
+        * platform/mac/svg/filters/feColorMatrix-offset-expected.txt: Added.
+        * svg/filters/feColorMatrix-offset.svg: Added.
+
 2010-12-13  Dan Bernstein  <mitz@apple.com>
 
         Updated Leopard-specific results after r73993.
