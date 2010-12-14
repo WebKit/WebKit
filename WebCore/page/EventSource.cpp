@@ -180,7 +180,7 @@ ScriptExecutionContext* EventSource::scriptExecutionContext() const
 void EventSource::didReceiveResponse(const ResourceResponse& response)
 {
     int statusCode = response.httpStatusCode();
-    if (statusCode == 200 && response.httpHeaderField("Content-Type") == "text/event-stream") {
+    if (statusCode == 200 && response.mimeType() == "text/event-stream") {
         m_state = OPEN;
         dispatchEvent(Event::create(eventNames().openEvent, false, false));
     } else {

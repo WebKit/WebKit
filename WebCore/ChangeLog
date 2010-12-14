@@ -1,3 +1,17 @@
+2010-12-14  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        Test for: EventSource fails to connect if Content-Type header has a charset attribute
+        https://bugs.webkit.org/show_bug.cgi?id=45372
+
+        Tests: http/tests/eventsource/eventsource-content-type-charset.html
+               http/tests/eventsource/eventsource-content-type-text-event-stream-foobar.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse): Use the mimeType instead of the Content-Type
+        header directly. This makes the detection of the "text/stream" mimeType more accurate.
+
 2010-12-14  Pieter Senster  <psenster@google.com>
 
         Reviewed by Dirk Schulze.
