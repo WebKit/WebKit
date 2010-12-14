@@ -125,6 +125,7 @@ public:
         AXRowCountChanged,
         AXRowCollapsed,
         AXRowExpanded,
+        AXInvalidStatusChanged,
     };
 
     void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);

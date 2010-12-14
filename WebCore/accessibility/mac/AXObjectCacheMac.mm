@@ -79,6 +79,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXLoadComplete:
             macNotification = "AXLoadComplete";
             break;
+        case AXInvalidStatusChanged:
+            macNotification = "AXInvalidStatusChanged";
+            break;
         case AXSelectedChildrenChanged:
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
             break;

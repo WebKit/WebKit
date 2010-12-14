@@ -90,6 +90,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     case AXSelectedChildrenChanged:
     case AXSelectedTextChanged:
     case AXValueChanged:
+    case AXInvalidStatusChanged:
         break;
     }
 

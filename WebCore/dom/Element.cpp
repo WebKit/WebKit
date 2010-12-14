@@ -703,6 +703,8 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
         document()->axObjectCache()->handleAriaExpandedChange(renderer());
     else if (attrName == aria_hiddenAttr)
         document()->axObjectCache()->childrenChanged(renderer());
+    else if (attrName == aria_invalidAttr)
+        document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXInvalidStatusChanged, true);
 }
     
 void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)

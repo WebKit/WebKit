@@ -26,6 +26,7 @@ aria-grabbed
 aria-haspopup
 aria-help
 aria-hidden
+aria-invalid
 aria-label
 aria-labeledby
 aria-labelledby
