@@ -546,7 +546,7 @@ extern "C" {
 #endif // USE(JSVALUE32_64)
 
 #if CPU(MIPS)
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".set noreorder" "\n"
@@ -585,7 +585,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 ".end " SYMBOL_STRING(ctiTrampoline) "\n"
 );
 
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".set noreorder" "\n"
@@ -616,7 +616,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 ".end " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 );
 
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".set noreorder" "\n"
@@ -639,7 +639,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #if COMPILER(GCC) && CPU(ARM_THUMB2)
 
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -666,7 +666,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "bx lr" "\n"
 );
 
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
@@ -684,7 +684,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "bx lr" "\n"
 );
 
-asm volatile(
+asm (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
@@ -702,7 +702,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
 
-asm volatile(
+asm (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
@@ -720,7 +720,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "mov pc, lr" "\n"
 );
 
-asm volatile(
+asm (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
@@ -1108,7 +1108,7 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
     extern "C" { \
         rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
     }; \
-    asm volatile( \
+    asm ( \
         ".text" "\n" \
         ".align 2" "\n" \
         ".set noreorder" "\n" \
@@ -1138,7 +1138,7 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
     extern "C" { \
         rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
     }; \
-    asm volatile( \
+    asm ( \
         ".text" "\n" \
         ".align 2" "\n" \
         ".set noreorder" "\n" \
