@@ -3212,7 +3212,6 @@ BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
 // WebKit roll 73514:73595
-BUG66018 : fast/html/marquee-element.html = TEXT
 BUG66019 : fast/regex/pcre-test-1.html = TEXT
 
 // Mostly-flaky timeouts

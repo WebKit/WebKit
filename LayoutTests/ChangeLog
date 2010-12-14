@@ -1,3 +1,14 @@
+2010-12-14  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Reflected unsigned attributes should be in the range [0, 2^31)
+        https://bugs.webkit.org/show_bug.cgi?id=51023
+
+        Remove test that now passes from chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping failing test in the release bots.

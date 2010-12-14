@@ -3088,6 +3088,14 @@ sub ReturnNativeToJSValue
     return "return v8Boolean($value)" if $type eq "boolean";
     return "return v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
 
+    # HTML5 says that unsigned reflected attributes should be in the range
+    # [0, 2^31). When a value isn't in this range, a default value (or 0)
+    # should be returned instead.
+    if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
+        $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
+        return "return v8::Integer::NewFromUnsigned(std::max(0, " . $value . "))";
+    }
+
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.
     my $nativeType = GetNativeType($type);
