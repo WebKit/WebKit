@@ -1,5 +1,23 @@
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Move PluginInfoStore::getPluginInfo to NetscapePluginModule
+        https://bugs.webkit.org/show_bug.cgi?id=51058
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        Move implementation of PluginInfoStore::getPluginInfo and related
+        helper functions here.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        Just call NetscapePluginModule::getPluginInfo here for now.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add NetscapePluginModuleMac.mm.
+
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Switch name and description order when fetching Carbon plug-in info

@@ -31,6 +31,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+// FIXME: We should not include PluginInfoStore.h here. Instead,
+// PluginInfoStore::Plugin should be moved out into its own header which we can
+// put in Shared/Plugins.
+#include "PluginInfoStore.h"
+
 namespace WebKit {
 
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
@@ -42,6 +47,8 @@ public:
 
     void pluginCreated();
     void pluginDestroyed();
+
+    static bool getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin&);
 
 private:
     explicit NetscapePluginModule(const String& pluginPath);
