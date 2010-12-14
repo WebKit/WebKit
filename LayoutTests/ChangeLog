@@ -1,3 +1,153 @@
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Chromium tests rebaselined.
+
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0805-c5519-brdr-r-00-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5519-brdr-r-00-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0805-c5520-brdr-b-01-e-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5520-brdr-b-01-e-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-00-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-00-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-01-e-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-01-e-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-02-c-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-02-c-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-03-c-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-03-c-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-04-c-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-04-c-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-fit-01-d-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-fit-01-d-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltblck-01-d-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltblck-01-d-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-flthw-00-c-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-flthw-00-c-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-03-c-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5526-flthw-00-c-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5526-flthw-00-c-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t090501-c414-flt-01-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t090501-c414-flt-01-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t090501-c414-flt-03-b-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.png: Added.
+        * platform/chromium-mac/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.png:
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1202-counter-09-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1202-counter-09-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1202-counters-09-b-expected.checksum:
+        * platform/chromium-mac/css2.1/t1202-counters-09-b-expected.png:
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.png:
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.png: Added.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.png: Added.
+        * platform/chromium-mac/fast/css/font-face-opentype-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/font-face-opentype-expected.png: Added.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.checksum:
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.png:
+        * platform/chromium-mac/fast/css/text-security-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/text-security-expected.png: Added.
+        * platform/chromium-mac/fast/encoding/denormalised-voiced-japanese-chars-expected.checksum: Added.
+        * platform/chromium-mac/fast/encoding/denormalised-voiced-japanese-chars-expected.png: Added.
+        * platform/chromium-mac/fast/encoding/invalid-UTF-8-expected.checksum: Added.
+        * platform/chromium-mac/fast/encoding/invalid-UTF-8-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.png: Added.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.png: Added.
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-euc-expected.checksum:
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-expected.checksum:
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-expected.png:
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.png: Added.
+        * platform/chromium-mac/fast/text/cg-fallback-bolding-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/cg-fallback-bolding-expected.png: Added.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/001-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/001-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/complex-character-based-fallback-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/complex-character-based-fallback-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/danda-space-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/danda-space-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/hindi-whitespace-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/hindi-whitespace-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/plane2-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/plane2-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/wrap-CJK-001-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/wrap-CJK-001-expected.png: Added.
+        * platform/chromium-win/svg/filters/feColorMatrix-offset-expected.checksum: Added.
+        * platform/chromium-win/svg/filters/feColorMatrix-offset-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Darin Adler.
