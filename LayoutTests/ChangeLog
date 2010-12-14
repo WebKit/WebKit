@@ -1,3 +1,18 @@
+2010-12-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Update the pixel expectations for the Mac port.
+        
+        For the tests that currently fail on Snow Leopard with --pixel-tests
+        --tolerance 0, this moves the current pixel results to mac-leopard and
+        adds new Snow Leopard-specific results to platform/mac.
+
+        List of files omitted due to length but composed entirely of moves from
+        platform/mac to platform/mac-leopard and newly added files in
+        platform/mac.
+
+        Also removes most of platform/mac/test_expectations.txt, those 
+        expectations were from April and are un-maintained.
+
 2010-12-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Added missing expectations in chromium-mac-leopard to
