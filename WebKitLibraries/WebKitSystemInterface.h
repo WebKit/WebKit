@@ -157,6 +157,9 @@ size_t WKGetGlyphVectorRecordSize(WKGlyphVectorRef glyphVector);
 CTLineRef WKCreateCTLineWithUniCharProvider(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
+
+CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
+CGImageRef WKIOSurfaceContextCreateImage(CGContextRef context);
 #endif
 
 #ifndef __LP64__
@@ -336,7 +339,11 @@ NSURLRequest *WKNSURLRequestFromSerializableRepresentation(CFDictionaryRef repre
 
 CFDictionaryRef WKNSURLResponseCreateSerializableRepresentation(NSURLResponse *response, CFTypeRef tokenNull);
 NSURLResponse *WKNSURLResponseFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
-    
+
+#ifndef __LP64__
+ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
+#endif
+
 #endif
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
