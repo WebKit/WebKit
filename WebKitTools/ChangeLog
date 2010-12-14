@@ -1,3 +1,15 @@
+2010-12-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add option to build-webkit to not build WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=50988
+        
+        Add support for a --no-webkit2 option to build-webkit. It seems to save
+        ~1 minute from clean builds and ~10 seconds from no-op builds.
+
+        * Scripts/build-webkit:
+
 2010-12-13  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Dave Kilzer.

@@ -55,6 +55,7 @@ my $installHeaders;
 my $installLibs;
 my $prefixPath;
 my $makeArgs;
+my $noWebKit2 = 0;
 my $startTime = time();
 
 my (
@@ -325,6 +326,7 @@ my %options = (
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
     'v8' => \$v8,
+    'no-webkit2' => \$noWebKit2,
 );
 
 # Build usage text and options list from features
@@ -403,7 +405,7 @@ if (isGtk()) {
     splice @projects, 0, 0, "ANGLE";
 
     # WebKit2 is only supported in SnowLeopard and later at present.
-    push @projects, ("WebKit2", "WebKitTools/MiniBrowser") if osXVersion()->{"minor"} >= 6;
+    push @projects, ("WebKit2", "WebKitTools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my @librariesToCopy = (
