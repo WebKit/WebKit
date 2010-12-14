@@ -1,3 +1,22 @@
+2010-12-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Rebaseline Windows test results after r73993. All of these results were updated on the Mac with this
+        change, and this rebaselines Windows results to pass.
+
+        * platform/win/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Added.
+        * platform/win/css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltwrap-00-b-expected.txt: Added.
+        * platform/win/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/win/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/win/editing/deleting/5144139-2-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/win/fast/text/international/bold-bengali-expected.txt:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+        * platform/win/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
 2010-12-13  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
