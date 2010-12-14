@@ -33,7 +33,6 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
-#include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
@@ -702,5 +701,9 @@ IntRect virtualRectForAreaElementAndDirection(FocusDirection direction, HTMLArea
     return rect;
 }
 
+HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate& candidate)
+{
+    return candidate.isFrameOwnerElement() ? static_cast<HTMLFrameOwnerElement*>(candidate.visibleNode) : 0;
+};
 
 } // namespace WebCore

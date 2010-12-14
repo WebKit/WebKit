@@ -1,3 +1,24 @@
+2010-12-13  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        Spatial Navigation: code clean up (part III)
+        https://bugs.webkit.org/show_bug.cgi?id=50666
+
+        No new tests needed.
+
+        * page/SpatialNavigation.h: Added FocusCandidate::isFrameOwnerElement and
+        WebCore::frameOwnerElement helper functions.
+        (WebCore::FocusCandidate::isFrameOwnerElement): Returns true if the Node pointer
+        wrapped by FocusCandidate is an instance of HTMLFrameOwnerElement. Returns false
+        otherwise.
+        * page/SpatialNavigation.cpp:
+        (WebCore::frameOwnerElement): Returns the HTMLFrameOwnerElement associated with
+        the FocusCandidate if appropriate.
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded): Make use of newly added frameOwnerElement() helper.
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer): Ditto.
+
 2010-12-13  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Daniel Bates.

@@ -41,7 +41,6 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
-#include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -419,7 +418,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect
         return;
 
     // Ignore iframes that don't have a src attribute
-    if (candidate.visibleNode->isFrameOwnerElement() && (!static_cast<HTMLFrameOwnerElement*>(candidate.visibleNode)->contentFrame() || candidate.rect.isEmpty()))
+    if (frameOwnerElement(candidate) && (!frameOwnerElement(candidate)->contentFrame() || candidate.rect.isEmpty()))
         return;
 
     // Ignore off screen child nodes of containers that do not scroll (overflow:hidden)
@@ -509,8 +508,8 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         // Return false will cause a re-try, skipping this container.
         return false;
     }
-    if (focusCandidate.visibleNode->isFrameOwnerElement()) {
-        HTMLFrameOwnerElement* frameElement = static_cast<HTMLFrameOwnerElement*>(focusCandidate.visibleNode);
+
+    if (HTMLFrameOwnerElement* frameElement = frameOwnerElement(focusCandidate)) {
         // If we have an iframe without the src attribute, it will not have a contentFrame().
         // We ASSERT here to make sure that
         // updateFocusCandidateIfNeeded() will never consider such an iframe as a candidate.
