@@ -2,6 +2,35 @@
 
         Reviewed by Andreas Kling.
 
+        Remove adjacent tiles rendering queue.
+        https://bugs.webkit.org/show_bug.cgi?id=50023
+
+        In the current implementation of the tiled backing store, one extra row
+        and column of tiles are needed to render the entire viewport. These
+        extra row/col proved to be expensive when being rendered, and were
+        postponed to a queue that would render them after rendering the other
+        tiles of the viewport first. This approach complicated unnecessarily
+        the logics with no gain for keeping the extra row and column. This
+        change removes this rendering queue, for later removing the extra row
+        and column of tiles.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_flush):
+        (_ewk_tiled_backing_store_pre_render_request_clear):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        (ewk_tiled_backing_store_pre_render_cancel):
+
+2010-12-13  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
         Remove one row/column of renderers.
         https://bugs.webkit.org/show_bug.cgi?id=50456
 

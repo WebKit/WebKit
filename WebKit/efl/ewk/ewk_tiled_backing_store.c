@@ -62,7 +62,6 @@ struct _Ewk_Tiled_Backing_Store_Item {
         unsigned long row, col;
         float zoom;
     } update;
-    Ewk_Tiled_Backing_Store_Pre_Render_Request *pre_render;
     Eina_Bool smooth_scale;
 };
 
@@ -70,7 +69,6 @@ struct _Ewk_Tiled_Backing_Store_Pre_Render_Request {
     EINA_INLIST;
     unsigned long col, row;
     float zoom;
-    struct _Ewk_Tiled_Backing_Store_Item *it;
 };
 
 struct _Ewk_Tiled_Backing_Store_Data {
@@ -266,7 +264,7 @@ static void _ewk_tiled_backing_store_tile_dissociate_all(Ewk_Tiled_Backing_Store
     }
 }
 
-static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tiled_Backing_Store_Data *priv, unsigned long col, unsigned long row, float zoom, Ewk_Tiled_Backing_Store_Item *it, Ewk_Tiled_Backing_Store_Pre_Render_Priority priority)
+static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tiled_Backing_Store_Data *priv, unsigned long col, unsigned long row, float zoom, Ewk_Tiled_Backing_Store_Pre_Render_Priority priority)
 {
     Ewk_Tiled_Backing_Store_Pre_Render_Request *r;
 
@@ -282,10 +280,7 @@ static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tile
     r->col = col;
     r->row = row;
     r->zoom = zoom;
-    r->it = it;
 
-    if (it)
-        it->pre_render = r;
     return EINA_TRUE;
 }
 
@@ -309,14 +304,12 @@ static void _ewk_tiled_backing_store_pre_render_request_flush(Ewk_Tiled_Backing_
     while (*pl) {
         Ewk_Tiled_Backing_Store_Pre_Render_Request *r;
         r = _ewk_tiled_backing_store_pre_render_request_first(priv);
-        if (r->it && r->it->pre_render)
-            r->it->pre_render = NULL;
         *pl = eina_inlist_remove(*pl, *pl);
         free(r);
     }
 }
 
-static void _ewk_tiled_backing_store_pre_render_request_remove_unassociated(Ewk_Tiled_Backing_Store_Data *priv)
+static void _ewk_tiled_backing_store_pre_render_request_clear(Ewk_Tiled_Backing_Store_Data *priv)
 {
     Eina_Inlist **pl = &priv->render.pre_render_requests;
     Eina_Inlist *iter = *pl, *tmp;
@@ -324,33 +317,10 @@ static void _ewk_tiled_backing_store_pre_render_request_remove_unassociated(Ewk_
         Ewk_Tiled_Backing_Store_Pre_Render_Request *r =
             EINA_INLIST_CONTAINER_GET(
                 iter, Ewk_Tiled_Backing_Store_Pre_Render_Request);
-        if (!r->it) {
-            tmp = iter->next;
-            *pl = eina_inlist_remove(*pl, iter);
-            iter = tmp;
-            free(r);
-        } else
-            iter = iter->next;
-    }
-}
-
-static void _ewk_tiled_backing_store_pre_render_request_remove_associated(Ewk_Tiled_Backing_Store_Data *priv)
-{
-    Eina_Inlist **pl = &priv->render.pre_render_requests;
-    Eina_Inlist *iter = *pl, *tmp;
-    while (iter) {
-        Ewk_Tiled_Backing_Store_Pre_Render_Request *r =
-            EINA_INLIST_CONTAINER_GET(
-                iter, Ewk_Tiled_Backing_Store_Pre_Render_Request);
-        if (r->it) {
-            if (r->it->pre_render)
-                r->it->pre_render = NULL;
-            tmp = iter->next;
-            *pl = eina_inlist_remove(*pl, iter);
-            iter = tmp;
-            free(r);
-        } else
-            iter = iter->next;
+        tmp = iter->next;
+        *pl = eina_inlist_remove(*pl, iter);
+        iter = tmp;
+        free(r);
     }
 }
 
@@ -379,11 +349,6 @@ static void _ewk_tiled_backing_store_pre_render_request_process_single(Ewk_Tiled
         goto end;
     }
 
-    if (req->it && req->it->tile) {
-        CRITICAL("it->tile = %p (%lu, %lu), but should be NULL", req->it->tile, req->it->tile->row, req->it->tile->col);
-        goto end;
-    }
-
     t = _ewk_tiled_backing_store_tile_new(priv, col, row, zoom);
     if (!t)
         goto end;
@@ -399,12 +364,7 @@ static void _ewk_tiled_backing_store_pre_render_request_process_single(Ewk_Tiled
         area.x, area.y, area.w, area.h);
     ewk_tile_matrix_tile_updates_clear(tm, t);
 
-    if (req->it) {
-        _ewk_tiled_backing_store_tile_associate(priv, t, req->it);
-        if (req->it->pre_render)
-            req->it->pre_render = NULL;
-    } else
-        ewk_tile_matrix_tile_put(tm, t, last_used);
+    ewk_tile_matrix_tile_put(tm, t, last_used);
 
 end:
     _ewk_tiled_backing_store_pre_render_request_del(priv, req);
@@ -610,12 +570,6 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
             _ewk_tiled_backing_store_item_request_del(priv, it);
         }
 
-        if (it->pre_render) {
-            _ewk_tiled_backing_store_pre_render_request_del(
-                priv, it->pre_render);
-            it->pre_render = NULL;
-        }
-
         if (it->tile) {
             Ewk_Tile *old = it->tile;
             if (old->row != m_row || old->col != m_col || old->zoom != zoom) {
@@ -640,19 +594,6 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
 
             /* Do not add new requests to the render queue */
             if (!priv->render.suspend) {
-                if (!_ewk_tiled_backing_store_tile_is_inside_viewport(
-                        priv, m_col, m_row)) {
-                    DBG("%d,%d is not inside the viewport", m_col, m_row);
-                    if (_ewk_tiled_backing_store_tile_is_adjacent_to_viewport(
-                            priv, m_col, m_row))
-                        _ewk_tiled_backing_store_pre_render_request_add(
-                            priv, m_col, m_row, zoom, it,
-                            PRE_RENDER_PRIORITY_HIGH);
-                    _ewk_tiled_backing_store_item_process_idler_start(priv);
-
-                    goto end;
-                }
-
                 t = _ewk_tiled_backing_store_tile_new(priv, m_col, m_row, zoom);
                 if (!t)
                     return EINA_FALSE;
@@ -692,7 +633,6 @@ static Ewk_Tiled_Backing_Store_Item *_ewk_tiled_backing_store_item_add(Ewk_Tiled
     it->tile = NULL;
     it->update.process = NULL;
     it->smooth_scale = priv->view.tile.zoom_weak_smooth_scale;
-    it->pre_render = NULL;
     _ewk_tiled_backing_store_item_move(it, x, y);
     _ewk_tiled_backing_store_item_resize(it, tw, th);
     if (!_ewk_tiled_backing_store_item_fill(priv, it, col, row)) {
@@ -711,11 +651,6 @@ static void _ewk_tiled_backing_store_item_del(Ewk_Tiled_Backing_Store_Data *priv
     }
     if (it->update.process)
         _ewk_tiled_backing_store_item_request_del(priv, it);
-    if (it->pre_render) {
-        _ewk_tiled_backing_store_pre_render_request_del(
-            priv, it->pre_render);
-        it->pre_render = NULL;
-    }
     free(it);
 }
 
@@ -1030,8 +965,6 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
 
     if (priv->view.cols == cols && priv->view.rows == rows)
         return;
-
-    _ewk_tiled_backing_store_pre_render_request_remove_associated(priv);
 
     old_cols = priv->view.cols;
     old_rows = priv->view.rows;
@@ -2055,7 +1988,7 @@ Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object *o, Evas_Coord x
     while (eina_tile_grid_slicer_next(&slicer, &info)) {
         const unsigned long c = info->col;
         const unsigned long r = info->row;
-        if (!_ewk_tiled_backing_store_pre_render_request_add(priv, c, r, zoom, NULL, PRE_RENDER_PRIORITY_LOW))
+        if (!_ewk_tiled_backing_store_pre_render_request_add(priv, c, r, zoom, PRE_RENDER_PRIORITY_LOW))
             break;
     }
 
@@ -2086,7 +2019,7 @@ Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object *o, uns
 
     for (i = start_row; i <= end_row; i++)
         for (j = start_col; j <= end_col; j++)
-            if (!_ewk_tiled_backing_store_pre_render_request_add(priv, j, i, zoom, NULL, PRE_RENDER_PRIORITY_LOW))
+            if (!_ewk_tiled_backing_store_pre_render_request_add(priv, j, i, zoom, PRE_RENDER_PRIORITY_LOW))
                 goto start_processing;
 
 start_processing:
@@ -2107,7 +2040,7 @@ void ewk_tiled_backing_store_pre_render_cancel(Evas_Object *o)
     PRIV_DATA_GET_OR_RETURN(o, priv);
     Ewk_Tile_Unused_Cache *tuc;
 
-    _ewk_tiled_backing_store_pre_render_request_remove_unassociated(priv);
+    _ewk_tiled_backing_store_pre_render_request_clear(priv);
 
     tuc = ewk_tile_matrix_unused_cache_get(priv->model.matrix);
     ewk_tile_unused_cache_unlock_area(tuc);
