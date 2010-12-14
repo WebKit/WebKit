@@ -1,3 +1,20 @@
+2010-12-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Jon Honeycutt (and Brian Weinstein in heart).
+
+        <rdar://problem/8752202> and https://bugs.webkit.org/show_bug.cgi?id=50997
+        Expose "link title" and "link label" to InjectedBundleHitTestResult API
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyLinkLabel):
+        (WKBundleHitTestResultCopyLinkTitle):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::linkLabel):
+        (WebKit::InjectedBundleHitTestResult::linkTitle):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
 2010-12-13  Brian Weinstein  <bweinstein@apple.com>
 
         Windows Build Fix. Add a needed include.

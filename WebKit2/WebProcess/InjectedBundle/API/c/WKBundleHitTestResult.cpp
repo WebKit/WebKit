@@ -76,5 +76,14 @@ WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultR
 bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toImpl(hitTestResultRef)->isSelected();
+}
 
+WKStringRef WKBundleHitTestResultCopyLinkLabel(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedAPI(toImpl(hitTestResultRef)->linkLabel());
+}
+
+WKStringRef WKBundleHitTestResultCopyLinkTitle(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedAPI(toImpl(hitTestResultRef)->linkTitle());
 }

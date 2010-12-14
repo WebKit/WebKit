@@ -47,6 +47,9 @@ WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteMediaURL(WKBundleHitTestResu
 WK_EXPORT WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResult);
 
+WK_EXPORT WKStringRef WKBundleHitTestResultCopyLinkLabel(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKStringRef WKBundleHitTestResultCopyLinkTitle(WKBundleHitTestResultRef hitTestResult);
+
 #ifdef __cplusplus
 }
 #endif

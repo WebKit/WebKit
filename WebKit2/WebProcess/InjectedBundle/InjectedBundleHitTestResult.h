@@ -52,6 +52,9 @@ public:
     String absoluteImageURL() const;
     String absoluteLinkURL() const;
     String absoluteMediaURL() const;
+
+    String linkLabel() const;
+    String linkTitle() const;
     
     WebCore::IntRect imageRect() const;
     

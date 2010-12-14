@@ -89,6 +89,16 @@ String InjectedBundleHitTestResult::absoluteMediaURL() const
     return m_hitTestResult.absoluteMediaURL().string();
 }
 
+String InjectedBundleHitTestResult::linkLabel() const
+{
+    return m_hitTestResult.textContent();
+}
+
+String InjectedBundleHitTestResult::linkTitle() const
+{
+    return m_hitTestResult.titleDisplayString();
+}
+
 WebCore::IntRect InjectedBundleHitTestResult::imageRect() const
 {
     return m_hitTestResult.imageRect();
