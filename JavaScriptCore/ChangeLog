@@ -1,3 +1,13 @@
+2010-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <http://webkit.org/b/51064> Reproducible crash inside WebCore::MediaPlayerPrivateQTKit::createQTMovie when loading <video>
+
+        * wtf/text/WTFString.h: Prevent String from being implicitly convertable to bool.
+        It was previously implicitly convertible to bool on Mac via operator NSString*,
+        but since that always has a non-zero return value it would give unexpected results.
+
 2010-12-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

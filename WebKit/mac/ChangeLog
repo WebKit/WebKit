@@ -1,3 +1,13 @@
+2010-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <http://webkit.org/b/51064> Reproducible crash inside WebCore::MediaPlayerPrivateQTKit::createQTMovie when loading <video>
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem description]): Test whether the string is empty rather than incorrectly
+        always including the target in the output.
+
 2010-12-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

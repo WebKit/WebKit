@@ -219,7 +219,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     ASSERT_MAIN_THREAD();
     HistoryItem* coreItem = core(_private);
     NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], (NSString*)coreItem->urlString()];
-    if (coreItem->target()) {
+    if (!coreItem->target().isEmpty()) {
         NSString *target = coreItem->target();
         [result appendFormat:@" in \"%@\"", target];
     }

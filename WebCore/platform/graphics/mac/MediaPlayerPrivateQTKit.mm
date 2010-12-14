@@ -623,7 +623,7 @@ void MediaPlayerPrivateQTKit::resumeLoad()
 {
     m_delayingLoad = false;
 
-    if (m_movieURL)
+    if (!m_movieURL.isNull())
         loadInternal(m_movieURL);
 }
 
