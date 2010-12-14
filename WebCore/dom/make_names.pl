@@ -35,7 +35,6 @@ use Getopt::Long;
 use File::Path;
 use IO::File;
 use InFilesParser;
-use Switch;
 
 sub readTags($$);
 sub readAttrs($$);
