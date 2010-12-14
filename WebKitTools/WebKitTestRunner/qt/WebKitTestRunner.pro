@@ -31,7 +31,7 @@ INCLUDEPATH += \
 
 DESTDIR = $$OUTPUT_DIR/bin
 
-unix:!mac {
+unix:!mac:!symbian {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }

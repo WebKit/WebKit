@@ -11,7 +11,7 @@ win32-msvc*: CONFIG += exceptions_off stl_off
 isEmpty(OUTPUT_DIR): OUTPUT_DIR= ..
 include($$PWD/../WebKit.pri)
 
-CONFIG += link_pkgconfig
+unix:!mac:!symbian:CONFIG += link_pkgconfig
 
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 

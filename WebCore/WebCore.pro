@@ -3277,7 +3277,7 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathVariableReference.cpp
 }
 
-unix:!mac:CONFIG += link_pkgconfig
+unix:!mac:!symbian:CONFIG += link_pkgconfig
 
 contains(DEFINES, ENABLE_XSLT=1) {
     tobe|!tobe: QT += xmlpatterns

@@ -1,3 +1,16 @@
+2010-12-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] [Symbian] Do not use pkg-config on Symbian as it is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=50231
+
+        No new tests as there is no new functionality.
+
+        Guard CONFIG+=link_pkgconfig with !symbian.
+
+        * WebCore.pro:
+
 2010-12-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74040.
