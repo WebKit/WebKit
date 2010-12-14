@@ -1,3 +1,14 @@
+2010-12-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Flash plugins should be windowless on QGraphicsWebView on Symbian
+        Remove #idef SYMBIAN introduced by r69396.
+        https://bugs.webkit.org/show_bug.cgi?id=50487
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
