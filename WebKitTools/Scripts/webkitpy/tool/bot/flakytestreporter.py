@@ -54,13 +54,28 @@ class FlakyTestReporter(object):
         self._tool.bugs.authenticate()
         return self._tool.bugs.username
 
+    # FIXME: This should move into common.config
+    _bot_emails = set([
+        "commit-queue@webkit.org",  # commit-queue
+        "eseidel@chromium.org",  # old commit-queue
+        "webkit.review.bot@gmail.com",  # style-queue, sheriff-bot, CrLx/Gtk EWS
+        "buildbot@hotmail.com",  # Win EWS
+        # Mac EWS currently uses eric@webkit.org, but that's not normally a bot
+    ])
+
     def _lookup_bug_for_flaky_test(self, flaky_test):
-        bot_email = self._bugzilla_email()
-        bugs = self._tool.bugs.queries.fetch_bugs_matching_search(search_string=flaky_test, author_email=bot_email)
+        bugs = self._tool.bugs.queries.fetch_bugs_matching_search(search_string=flaky_test)
+        if not bugs:
+            return None
+        # Match any bugs which are from known bots or the email this bot is using.
+        allowed_emails = self._bot_emails | set([self._bugzilla_email])
+        bugs = filter(lambda bug: bug.reporter_email() in allowed_emails, bugs)
         if not bugs:
             return None
         if len(bugs) > 1:
-            _log.warn("Found %s %s matching '%s' from the %s (%s), using the first." % (pluralize('bug', len(bugs)), bugs, flaky_test, self._bot_name, bot_email))
+            # FIXME: There are probably heuristics we could use for finding
+            # the right bug instead of the first, like open vs. closed.
+            _log.warn("Found %s %s matching '%s' filed by a bot, using the first." % (pluralize('bug', len(bugs)), [bug.id() for bug in bugs], flaky_test))
         return bugs[0]
 
     def _view_source_url_for_test(self, test_path):

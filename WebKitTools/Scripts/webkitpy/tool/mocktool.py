@@ -145,6 +145,9 @@ _patch7 = { # Valid review, patch is marked obsolete.
 
 # This matches one of Bug.unassigned_emails
 _unassigned_email = "webkit-unassigned@lists.webkit.org"
+# This is needed for the FlakyTestReporter to believe the bug
+# was filed by one of the webkitpy bots.
+_commit_queue_email = "commit-queue@webkit.org"
 
 
 # FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
@@ -154,6 +157,7 @@ _bug1 = {
     "id": 42,
     "title": "Bug with two r+'d and cq+'d patches, one of which has an "
              "invalid commit-queue setter.",
+    "reporter_email": "foo@foo.com",
     "assigned_to_email": _unassigned_email,
     "attachments": [_patch1, _patch2],
     "bug_status": "UNCONFIRMED",
@@ -163,6 +167,7 @@ _bug1 = {
 _bug2 = {
     "id": 75,
     "title": "Bug with a patch needing review.",
+    "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
     "attachments": [_patch3],
     "bug_status": "ASSIGNED",
@@ -172,6 +177,7 @@ _bug2 = {
 _bug3 = {
     "id": 76,
     "title": "The third bug",
+    "reporter_email": "foo@foo.com",
     "assigned_to_email": _unassigned_email,
     "attachments": [_patch7],
     "bug_status": "NEW",
@@ -181,6 +187,7 @@ _bug3 = {
 _bug4 = {
     "id": 77,
     "title": "The fourth bug",
+    "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
     "attachments": [_patch4, _patch5, _patch6],
     "bug_status": "REOPENED",
@@ -190,6 +197,7 @@ _bug4 = {
 _bug5 = {
     "id": 78,
     "title": "The fifth bug",
+    "reporter_email": _commit_queue_email,
     "assigned_to_email": "foo@foo.com",
     "attachments": [],
     "bug_status": "RESOLVED",

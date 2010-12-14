@@ -46,6 +46,9 @@ class Bug(object):
     def title(self):
         return self.bug_dictionary["title"]
 
+    def reporter_email(self):
+        return self.bug_dictionary["reporter_email"]
+
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 

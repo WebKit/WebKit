@@ -148,6 +148,8 @@ class BugzillaQueries(object):
         quicksearch_url = "buglist.cgi?quicksearch=%s" % urllib.quote(search_string)
         return self._fetch_bugs_from_advanced_query(quicksearch_url)
 
+    # Currently this returns all bugs across all components.
+    # In the future we may wish to extend this API to construct more restricted searches.
     def fetch_bugs_matching_search(self, search_string, author_email=None):
         query = "buglist.cgi?query_format=advanced"
         if search_string:

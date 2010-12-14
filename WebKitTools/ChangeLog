@@ -1,3 +1,28 @@
+2010-12-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        FlakyTestReporter doesn't understand bots running from multiple email addresses
+        https://bugs.webkit.org/show_bug.cgi?id=50960
+
+        This explains at least one of the dupes of:
+        https://bugs.webkit.org/show_bug.cgi?id=50863
+        that we saw filed by the commit-queue this morning.
+        I think the other one was explained by my previous fix to result counting code.
+
+        Since this is really hard to test with a unit test, instead I
+        create a new (possibly useful in the future) command
+        which given a layout test path will return you
+        the one bug which our tools would assume it the flaky test bug.
+        If some other script wants to use bug-for-test we'll
+        need to extend it with some options like --create-if-missing or similar.
+
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/bugfortest.py: Added.
+
 2010-12-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.
