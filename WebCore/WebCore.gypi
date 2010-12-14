@@ -1989,6 +1989,8 @@
             'html/parser/TextDocumentParser.h',
             'html/parser/TextViewSourceParser.cpp',
             'html/parser/TextViewSourceParser.h',
+            'html/shadow/SliderThumbElement.cpp',
+            'html/shadow/SliderThumbElement.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',
             'inspector/InjectedScript.cpp',

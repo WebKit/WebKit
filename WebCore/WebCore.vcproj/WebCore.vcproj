@@ -55321,6 +55321,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="shadow"
+				>
+				<File
+					RelativePath="..\html\shadow\SliderThumbElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\SliderThumbElement.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="bindings"

@@ -24,6 +24,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/html \
 	-I$(srcdir)/WebCore/html/canvas \
 	-I$(srcdir)/WebCore/html/parser \
+	-I$(srcdir)/WebCore/html/shadow \
 	-I$(srcdir)/WebCore/inspector \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \

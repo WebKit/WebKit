@@ -36,6 +36,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "ShadowElement.h"
+#include "SliderThumbElement.h"
 #include "StepRange.h"
 #include <wtf/MathExtras.h>
 
@@ -50,98 +51,6 @@ static double sliderPosition(HTMLInputElement* element)
 {
     StepRange range(element);
     return range.proportionFromValue(range.valueFromElement(element));
-}
-
-class SliderThumbElement : public ShadowBlockElement {
-public:
-    static PassRefPtr<SliderThumbElement> create(HTMLElement* shadowParent);
-
-    bool inDragMode() const { return m_inDragMode; }
-
-    virtual void defaultEventHandler(Event*);
-    virtual void detach();
-
-private:        
-    SliderThumbElement(HTMLElement* shadowParent);
-
-    FloatPoint m_offsetToThumb;
-    bool m_inDragMode;
-};
-
-inline SliderThumbElement::SliderThumbElement(HTMLElement* shadowParent)
-    : ShadowBlockElement(shadowParent)
-    , m_inDragMode(false)
-{
-}
-
-inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(HTMLElement* shadowParent)
-{
-    return adoptRef(new SliderThumbElement(shadowParent));
-}
-
-void SliderThumbElement::defaultEventHandler(Event* event)
-{
-    if (!event->isMouseEvent()) {
-        ShadowBlockElement::defaultEventHandler(event);
-        return;
-    }
-
-    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    bool isLeftButton = mouseEvent->button() == LeftButton;
-    const AtomicString& eventType = event->type();
-
-    if (eventType == eventNames().mousedownEvent && isLeftButton) {
-        if (document()->frame() && renderer()) {
-            RenderSlider* slider = toRenderSlider(renderer()->parent());
-            if (slider) {
-                if (slider->mouseEventIsInThumb(mouseEvent)) {
-                    // We selected the thumb, we want the cursor to always stay at
-                    // the same position relative to the thumb.
-                    m_offsetToThumb = slider->mouseEventOffsetToThumb(mouseEvent);
-                } else {
-                    // We are outside the thumb, move the thumb to the point were
-                    // we clicked. We'll be exactly at the center of the thumb.
-                    m_offsetToThumb.setX(0);
-                    m_offsetToThumb.setY(0);
-                }
-
-                m_inDragMode = true;
-                document()->frame()->eventHandler()->setCapturingMouseEventsNode(shadowHost());
-                event->setDefaultHandled();
-                return;
-            }
-        }
-    } else if (eventType == eventNames().mouseupEvent && isLeftButton) {
-        if (m_inDragMode) {
-            if (Frame* frame = document()->frame())
-                frame->eventHandler()->setCapturingMouseEventsNode(0);      
-            m_inDragMode = false;
-            event->setDefaultHandled();
-            return;
-        }
-    } else if (eventType == eventNames().mousemoveEvent) {
-        if (m_inDragMode && renderer() && renderer()->parent()) {
-            RenderSlider* slider = toRenderSlider(renderer()->parent());
-            if (slider) {
-                FloatPoint curPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
-                IntPoint eventOffset(curPoint.x() + m_offsetToThumb.x(), curPoint.y() + m_offsetToThumb.y());
-                slider->setValueForPosition(slider->positionForOffset(eventOffset));
-                event->setDefaultHandled();
-                return;
-            }
-        }
-    }
-
-    ShadowBlockElement::defaultEventHandler(event);
-}
-
-void SliderThumbElement::detach()
-{
-    if (m_inDragMode) {
-        if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);      
-    }
-    ShadowBlockElement::detach();
 }
 
 RenderSlider::RenderSlider(HTMLInputElement* element)

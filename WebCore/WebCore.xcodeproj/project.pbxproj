@@ -919,6 +919,8 @@
 		4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */; };
 		4138D3351244054800323D33 /* EventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4138D3331244054800323D33 /* EventContext.h */; };
 		4138D3361244054800323D33 /* EventContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4138D3341244054800323D33 /* EventContext.cpp */; };
+		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
+		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
 		4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */; };
 		4162A451101145AE00DFF3ED /* DedicatedWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A44E101145AE00DFF3ED /* DedicatedWorkerContext.h */; };
 		4162A454101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */; };
@@ -7220,6 +7222,8 @@
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
 		4138D3331244054800323D33 /* EventContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventContext.h; sourceTree = "<group>"; };
 		4138D3341244054800323D33 /* EventContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventContext.cpp; sourceTree = "<group>"; };
+		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
+		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
 		4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerContext.cpp; path = workers/DedicatedWorkerContext.cpp; sourceTree = "<group>"; };
 		4162A44E101145AE00DFF3ED /* DedicatedWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DedicatedWorkerContext.h; path = workers/DedicatedWorkerContext.h; sourceTree = "<group>"; };
 		4162A44F101145AE00DFF3ED /* DedicatedWorkerContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DedicatedWorkerContext.idl; path = workers/DedicatedWorkerContext.idl; sourceTree = "<group>"; };
@@ -13022,6 +13026,15 @@
 			name = Notifications;
 			sourceTree = "<group>";
 		};
+		4150F9ED12B6E0990008C860 /* shadow */ = {
+			isa = PBXGroup;
+			children = (
+				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
+				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
+			);
+			path = shadow;
+			sourceTree = "<group>";
+		};
 		449195900FBE175B00D9F824 /* Exports */ = {
 			isa = PBXGroup;
 			children = (
@@ -15181,6 +15194,7 @@
 			children = (
 				49484FAE102CF01E00187DD3 /* canvas */,
 				97C1F5511228558800EDE616 /* parser */,
+				4150F9ED12B6E0990008C860 /* shadow */,
 				B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */,
 				B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */,
 				379E61C5126CA5C300B63E8D /* BaseButtonInputType.cpp */,
@@ -21568,6 +21582,7 @@
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
+				4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
 				E4AFD00C0DAF335400F5F55C /* SMILTime.h in Headers */,
 				E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */,
@@ -24339,6 +24354,7 @@
 				B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */,
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
+				4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */,
 				4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
 				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,

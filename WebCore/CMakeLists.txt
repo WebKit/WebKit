@@ -18,6 +18,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
     "${WEBCORE_DIR}/html/parser"
+    "${WEBCORE_DIR}/html/shadow"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"
@@ -1141,6 +1142,8 @@ SET(WebCore_SOURCES
     html/parser/HTMLViewSourceParser.cpp
     html/parser/TextDocumentParser.cpp
     html/parser/TextViewSourceParser.cpp
+
+    html/shadow/SliderThumbElement.cpp
 
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp

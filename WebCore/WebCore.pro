@@ -227,6 +227,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/html \
     $$PWD/html/canvas \
     $$PWD/html/parser \
+    $$PWD/html/shadow \
     $$PWD/inspector \
     $$PWD/loader \
     $$PWD/loader/appcache \
@@ -1020,6 +1021,7 @@ SOURCES += \
     html/parser/HTMLViewSourceParser.cpp \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
+    html/shadow/SliderThumbElement.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \

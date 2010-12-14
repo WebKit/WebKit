@@ -1,3 +1,24 @@
+2010-12-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        Move SliderThumbElement into its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=50973
+
+        No change in behavior, so no tests.
+
+        * Android.mk: Added SliderThumbElement.
+        * CMakeLists.txt: Ditto.
+        * WebCore.gyp/WebCore.gyp: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto,
+        * html/shadow/SliderThumbElement.cpp: Added.
+        * html/shadow/SliderThumbElement.h: Added.
+        * rendering/RenderSlider.cpp: Removed code that was moved into
+            SliderThumbElement.
+
 2010-12-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

@@ -133,6 +133,7 @@
       '../html',
       '../html/canvas',
       '../html/parser',
+      '../html/shadow',
       '../inspector',
       '../loader',
       '../loader/appcache',
