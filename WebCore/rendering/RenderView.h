@@ -132,12 +132,12 @@ public:
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
-    unsigned pageHeight() const { return m_pageHeight; }
-    void setPageHeight(unsigned height)
+    unsigned pageLogicalHeight() const { return m_pageLogicalHeight; }
+    void setPageLogicalHeight(unsigned height)
     {
-        if (m_pageHeight != height) {
-            m_pageHeight = height;
-            m_pageHeightChanged = true;
+        if (m_pageLogicalHeight != height) {
+            m_pageLogicalHeight = height;
+            m_pageLogicalHeightChanged = true;
         }
     }
 
@@ -233,8 +233,8 @@ protected:
     RenderWidgetSet m_widgets;
     
 private:
-    unsigned m_pageHeight;
-    bool m_pageHeightChanged;
+    unsigned m_pageLogicalHeight;
+    bool m_pageLogicalHeightChanged;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)

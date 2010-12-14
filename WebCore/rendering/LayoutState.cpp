@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& offset, int pageHeight, bool pageHeightChanged, ColumnInfo* columnInfo)
+LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& offset, int pageLogicalHeight, bool pageLogicalHeightChanged, ColumnInfo* columnInfo)
     : m_columnInfo(columnInfo)
     , m_next(prev)
 #ifndef NDEBUG
@@ -82,20 +82,20 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& 
 
     // If we establish a new page height, then cache the offset to the top of the first page.
     // We can compare this later on to figure out what part of the page we're actually on,
-    if (pageHeight || m_columnInfo) {
-        m_pageHeight = pageHeight;
+    if (pageLogicalHeight || m_columnInfo) {
+        m_pageLogicalHeight = pageLogicalHeight;
         m_pageOffset = IntSize(m_layoutOffset.width() + renderer->borderLeft() + renderer->paddingLeft(),
                                m_layoutOffset.height() + renderer->borderTop() + renderer->paddingTop());
-        m_pageHeightChanged = pageHeightChanged;
+        m_pageLogicalHeightChanged = pageLogicalHeightChanged;
     } else {
         // If we don't establish a new page height, then propagate the old page height and offset down.
-        m_pageHeight = m_next->m_pageHeight;
-        m_pageHeightChanged = m_next->m_pageHeightChanged;
+        m_pageLogicalHeight = m_next->m_pageLogicalHeight;
+        m_pageLogicalHeightChanged = m_next->m_pageLogicalHeightChanged;
         m_pageOffset = m_next->m_pageOffset;
         
         // Disable pagination for objects we don't support.  For now this includes overflow:scroll/auto and inline blocks.
         if (renderer->isReplaced() || renderer->scrollsOverflow())
-            m_pageHeight = 0;
+            m_pageLogicalHeight = 0;
     }
     
     if (!m_columnInfo)
@@ -108,8 +108,8 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& 
 
 LayoutState::LayoutState(RenderObject* root)
     : m_clipped(false)
-    , m_pageHeight(0)
-    , m_pageHeightChanged(false)
+    , m_pageLogicalHeight(0)
+    , m_pageLogicalHeightChanged(false)
     , m_columnInfo(0)
     , m_next(0)
 #ifndef NDEBUG
@@ -157,7 +157,7 @@ void LayoutState::operator delete(void* ptr, size_t sz)
 
 void LayoutState::clearPaginationInformation()
 {
-    m_pageHeight = m_next->m_pageHeight;
+    m_pageLogicalHeight = m_next->m_pageLogicalHeight;
     m_pageOffset = m_next->m_pageOffset;
     m_columnInfo = m_next->m_columnInfo;
 }

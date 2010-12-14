@@ -1,3 +1,50 @@
+2010-12-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46422
+
+        Rename pageHeight variables and members in WebCore to pageLogicalHeight in preparation for
+        making printing and pagination work with vertical writing modes.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::clearPaginationInformation):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::isPaginated):
+        (WebCore::LayoutState::pageLogicalHeight):
+        (WebCore::LayoutState::pageLogicalHeightChanged):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::nextPageTop):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pageLogicalHeight):
+        (WebCore::RenderView::setPageLogicalHeight):
+
 2010-12-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix GTK build by adding source files that were accidentally skipped in

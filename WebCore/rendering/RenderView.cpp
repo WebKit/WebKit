@@ -49,8 +49,8 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_selectionStartPos(-1)
     , m_selectionEndPos(-1)
     , m_maximalOutlineSize(0)
-    , m_pageHeight(0)
-    , m_pageHeightChanged(false)
+    , m_pageLogicalHeight(0)
+    , m_pageLogicalHeightChanged(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
 {
@@ -102,7 +102,7 @@ bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
 void RenderView::layout()
 {
     if (!document()->paginated())
-        setPageHeight(0);
+        setPageLogicalHeight(0);
 
     if (printing())
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width();
@@ -121,9 +121,9 @@ void RenderView::layout()
     LayoutState state;
     // FIXME: May be better to push a clip and avoid issuing offscreen repaints.
     state.m_clipped = false;
-    state.m_pageHeight = m_pageHeight;
-    state.m_pageHeightChanged = m_pageHeightChanged;
-    m_pageHeightChanged = false;
+    state.m_pageLogicalHeight = m_pageLogicalHeight;
+    state.m_pageLogicalHeightChanged = m_pageLogicalHeightChanged;
+    m_pageLogicalHeightChanged = false;
     m_layoutState = &state;
 
     if (needsLayout())

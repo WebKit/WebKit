@@ -614,13 +614,13 @@ int RenderTableSection::layoutRows(int toAdd)
             if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
                 cell->setNeedsLayout(true, false);
 
-            if (!cell->needsLayout() && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(cell->y()) != cell->pageY())
+            if (!cell->needsLayout() && view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageY(cell->y()) != cell->pageY())
                 cell->setChildNeedsLayout(true, false);
 
             cell->layoutIfNeeded();
 
             // FIXME: Make pagination work with vertical tables.
-            if (style()->isHorizontalWritingMode() && view()->layoutState()->m_pageHeight && cell->height() != rHeight)
+            if (style()->isHorizontalWritingMode() && view()->layoutState()->pageLogicalHeight() && cell->height() != rHeight)
                 cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
 
             IntSize childOffset(cell->x() - oldCellRect.x(), cell->y() - oldCellRect.y());

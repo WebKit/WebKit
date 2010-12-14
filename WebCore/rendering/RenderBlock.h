@@ -71,7 +71,7 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
-    virtual void layoutBlock(bool relayoutChildren, int pageHeight = 0);
+    virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight = 0);
 
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
@@ -567,7 +567,7 @@ private:
     void offsetForContents(int& tx, int& ty) const;
 
     void calcColumnWidth();
-    bool layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, LayoutStateMaintainer&);
+    bool layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogicalHeight, LayoutStateMaintainer&);
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;

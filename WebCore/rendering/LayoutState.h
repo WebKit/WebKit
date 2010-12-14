@@ -41,8 +41,8 @@ class LayoutState : public Noncopyable {
 public:
     LayoutState()
         : m_clipped(false)
-        , m_pageHeight(0)
-        , m_pageHeightChanged(false)
+        , m_pageLogicalHeight(0)
+        , m_pageLogicalHeightChanged(false)
         , m_columnInfo(0)
         , m_next(0)
 #ifndef NDEBUG
@@ -64,12 +64,12 @@ public:
 
     void clearPaginationInformation();
     bool isPaginatingColumns() const { return m_columnInfo; }
-    bool isPaginated() const { return m_pageHeight || m_columnInfo; }
+    bool isPaginated() const { return m_pageLogicalHeight || m_columnInfo; }
     int pageY(int childY) const;
     void addForcedColumnBreak(int childY);
     
-    bool pageHeight() const { return m_pageHeight; }
-    bool pageHeightChanged() const { return m_pageHeightChanged; }
+    bool pageLogicalHeight() const { return m_pageLogicalHeight; }
+    bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
 private:
     // The normal operator new is disallowed.
@@ -84,8 +84,8 @@ public:
                            // used to ensure that repaints happen in the correct place.
                            // This is a total delta accumulated from the root.
 
-    int m_pageHeight; // The current page height for the pagination model that encloses us.
-    bool m_pageHeightChanged; // If our page height has changed, this will force all blocks to relayout.
+    int m_pageLogicalHeight; // The current page height for the pagination model that encloses us.
+    bool m_pageLogicalHeightChanged; // If our page height has changed, this will force all blocks to relayout.
     IntSize m_pageOffset; // The offset of the start of the first page in the nearest enclosing pagination model.
     ColumnInfo* m_columnInfo; // If the enclosing pagination model is a column model, then this will store column information for easy retrieval/manipulation.
 

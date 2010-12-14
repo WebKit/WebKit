@@ -390,7 +390,7 @@ void RenderTable::layout()
 
     statePusher.pop();
 
-    if (view()->layoutState()->m_pageHeight)
+    if (view()->layoutState()->pageLogicalHeight())
         setPageY(view()->layoutState()->pageY(y()));
 
     bool didFullRepaint = repainter.repaintAfterLayout();

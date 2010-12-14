@@ -2231,7 +2231,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
     if (root) {
         int pageW = ceilf(pageSize.width());
         root->setWidth(pageW);
-        root->setPageHeight(pageSize.height());
+        root->setPageLogicalHeight(pageSize.height());
         root->setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
 
@@ -2243,7 +2243,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         if (docWidth > pageSize.width()) {
             pageW = std::min<int>(docWidth, ceilf(pageSize.width() * maximumShrinkFactor));
             if (pageSize.height())
-                root->setPageHeight(pageW / pageSize.width() * pageSize.height());
+                root->setPageLogicalHeight(pageW / pageSize.width() * pageSize.height());
             root->setWidth(pageW);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();

@@ -278,7 +278,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
 
     updateLayerTransform();
 
-    if (view()->layoutState()->m_pageHeight)
+    if (view()->layoutState()->pageLogicalHeight())
         setPageY(view()->layoutState()->pageY(y()));
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if

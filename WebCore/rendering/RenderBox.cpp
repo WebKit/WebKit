@@ -1752,7 +1752,7 @@ void RenderBox::computeLogicalHeight()
         int margins = collapsedMarginBefore() + collapsedMarginAfter();
         int visHeight;
         if (document()->printing())
-            visHeight = static_cast<int>(view()->pageHeight());
+            visHeight = static_cast<int>(view()->pageLogicalHeight());
         else  {
             if (style()->isHorizontalWritingMode())
                 visHeight = view()->viewHeight();

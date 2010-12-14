@@ -1109,7 +1109,7 @@ void RenderBlock::layout()
         clearLayoutOverflow();
 }
 
-void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
+void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
 {
     ASSERT(needsLayout());
 
@@ -1136,31 +1136,31 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
 
     int previousHeight = logicalHeight();
     setLogicalHeight(0);
-    bool hasSpecifiedPageHeight = false;
-    bool pageHeightChanged = false;
+    bool hasSpecifiedPageLogicalHeight = false;
+    bool pageLogicalHeightChanged = false;
     ColumnInfo* colInfo = columnInfo();
     if (hasColumns()) {
-        if (!pageHeight) {
+        if (!pageLogicalHeight) {
             // We need to go ahead and set our explicit page height if one exists, so that we can
             // avoid doing two layout passes.
             computeLogicalHeight();
             int columnHeight = contentLogicalHeight();
             if (columnHeight > 0) {
-                pageHeight = columnHeight;
-                hasSpecifiedPageHeight = true;
+                pageLogicalHeight = columnHeight;
+                hasSpecifiedPageLogicalHeight = true;
             }
             setLogicalHeight(0);
         }
-        if (colInfo->columnHeight() != pageHeight && m_everHadLayout) {
-            colInfo->setColumnHeight(pageHeight);
-            pageHeightChanged = true;
+        if (colInfo->columnHeight() != pageLogicalHeight && m_everHadLayout) {
+            colInfo->setColumnHeight(pageLogicalHeight);
+            pageLogicalHeightChanged = true;
         }
         
-        if (!hasSpecifiedPageHeight && !pageHeight)
+        if (!hasSpecifiedPageLogicalHeight && !pageLogicalHeight)
             colInfo->clearForcedBreaks();
     }
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageHeight, pageHeightChanged, colInfo);
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -1212,7 +1212,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
     if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && expandsToEncloseOverhangingFloats())
         setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
     
-    if (layoutColumns(hasSpecifiedPageHeight, pageHeight, statePusher))
+    if (layoutColumns(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher))
         return;
  
     // Calculate our new height.
@@ -1243,7 +1243,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
     
     statePusher.pop();
 
-    if (view()->layoutState()->m_pageHeight)
+    if (view()->layoutState()->m_pageLogicalHeight)
         setPageY(view()->layoutState()->pageY(y()));
 
     updateLayerTransform();
@@ -2136,7 +2136,7 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
     if (needsLayout())
         return;
 
-    if (view()->layoutState()->pageHeightChanged() || (view()->layoutState()->pageHeight() && view()->layoutState()->pageY(y()) != pageY()))
+    if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageY(y()) != pageY()))
         setChildNeedsLayout(true, false);
 }
 
@@ -3032,10 +3032,10 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
     bool isChildRenderBlock = o->isRenderBlock();
-    if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageHeightChanged())
+    if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
         o->setChildNeedsLayout(true, false);
         
-    bool affectedByPagination = isChildRenderBlock && view()->layoutState()->m_pageHeight;
+    bool affectedByPagination = isChildRenderBlock && view()->layoutState()->m_pageLogicalHeight;
     if (!affectedByPagination || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
         o->layoutIfNeeded();
     else {
@@ -4221,7 +4221,7 @@ IntRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
     return IntRect(colLeft, colTop, colWidth, colHeight);
 }
 
-bool RenderBlock::layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, LayoutStateMaintainer& statePusher)
+bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogicalHeight, LayoutStateMaintainer& statePusher)
 {
     if (!hasColumns())
         return false;
@@ -4230,23 +4230,23 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, Lay
     // the distance between forced page breaks is so that we can avoid making the minimum column height too tall.
     ColumnInfo* colInfo = columnInfo();
     int desiredColumnCount = colInfo->desiredColumnCount();
-    if (!hasSpecifiedPageHeight) {
-        int columnHeight = pageHeight;
+    if (!hasSpecifiedPageLogicalHeight) {
+        int columnHeight = pageLogicalHeight;
         int minColumnCount = colInfo->forcedBreaks() + 1;
         if (minColumnCount >= desiredColumnCount) {
             // The forced page breaks are in control of the balancing.  Just set the column height to the
             // maximum page break distance.
-            if (!pageHeight) {
+            if (!pageLogicalHeight) {
                 int distanceBetweenBreaks = max(colInfo->maximumDistanceBetweenForcedBreaks(),
                                                 view()->layoutState()->pageY(borderTop() + paddingTop() + contentHeight()) - colInfo->forcedBreakOffset());
                 columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
             }
-        } else if (contentHeight() > pageHeight * desiredColumnCount) {
+        } else if (contentHeight() > pageLogicalHeight * desiredColumnCount) {
             // Now that we know the intrinsic height of the columns, we have to rebalance them.
             columnHeight = max(colInfo->minimumColumnHeight(), (int)ceilf((float)contentHeight() / desiredColumnCount));
         }
         
-        if (columnHeight && columnHeight != pageHeight) {
+        if (columnHeight && columnHeight != pageLogicalHeight) {
             statePusher.pop();
             m_everHadLayout = true;
             layoutBlock(false, columnHeight);
@@ -4254,8 +4254,8 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, Lay
         }
     } 
     
-    if (pageHeight) // FIXME: Should we use lowestPosition (excluding our positioned objects) instead of contentHeight()?
-        colInfo->setColumnCountAndHeight(ceilf((float)contentHeight() / pageHeight), pageHeight);
+    if (pageLogicalHeight)
+        colInfo->setColumnCountAndHeight(ceilf((float)contentHeight() / pageLogicalHeight), pageLogicalHeight);
 
     if (columnCount(colInfo)) {
         setLogicalHeight(borderTop() + paddingTop() + colInfo->columnHeight() + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
@@ -5727,12 +5727,12 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
 int RenderBlock::nextPageTop(int yPos) const
 {
     LayoutState* layoutState = view()->layoutState();
-    if (!layoutState->m_pageHeight)
+    if (!layoutState->m_pageLogicalHeight)
         return yPos;
     
     // The yPos is in our coordinate space.  We can add in our pushed offset.
-    int pageHeight = layoutState->m_pageHeight;
-    int remainingHeight = (pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight) % pageHeight;
+    int pageLogicalHeight = layoutState->m_pageLogicalHeight;
+    int remainingHeight = (pageLogicalHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageLogicalHeight) % pageLogicalHeight;
     return yPos + remainingHeight;
 }
 
@@ -5754,7 +5754,7 @@ int RenderBlock::applyBeforeBreak(RenderBox* child, int yPos)
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
-    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageHeight; // FIXME: Once columns can print we have to check this.
+    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkBeforeAlways = (checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS);
     if (checkBeforeAlways && inNormalFlow(child)) {
         if (checkColumnBreaks)
@@ -5768,7 +5768,7 @@ int RenderBlock::applyAfterBreak(RenderBox* child, int yPos, MarginInfo& marginI
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
-    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageHeight; // FIXME: Once columns can print we have to check this.
+    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkAfterAlways = (checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS);
     if (checkAfterAlways && inNormalFlow(child)) {
         marginInfo.setMarginAfterQuirk(true); // Cause margins to be discarded for any following content.
@@ -5788,10 +5788,10 @@ int RenderBlock::adjustForUnsplittableChild(RenderBox* child, int yPos, bool inc
     LayoutState* layoutState = view()->layoutState();
     if (layoutState->m_columnInfo)
         layoutState->m_columnInfo->updateMinimumColumnHeight(childHeight);
-    int pageHeight = layoutState->m_pageHeight;
-    if (!pageHeight || childHeight > pageHeight)
+    int pageLogicalHeight = layoutState->m_pageLogicalHeight;
+    if (!pageLogicalHeight || childHeight > pageLogicalHeight)
         return yPos;
-    int remainingHeight = (pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight) % pageHeight;
+    int remainingHeight = (pageLogicalHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageLogicalHeight) % pageLogicalHeight;
     if (remainingHeight < childHeight)
         return yPos + remainingHeight;
     return yPos;
@@ -5816,19 +5816,19 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
     // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
     // line and all following lines.
     LayoutState* layoutState = view()->layoutState();
-    int pageHeight = layoutState->m_pageHeight;
+    int pageLogicalHeight = layoutState->m_pageLogicalHeight;
     int yPos = lineBox->topVisualOverflow();
     int lineHeight = lineBox->bottomVisualOverflow() - yPos;
     if (layoutState->m_columnInfo)
         layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
     yPos += delta;
     lineBox->setPaginationStrut(0);
-    if (!pageHeight || lineHeight > pageHeight)
+    if (!pageLogicalHeight || lineHeight > pageLogicalHeight)
         return;
-    int remainingHeight = pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight;
+    int remainingHeight = pageLogicalHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageLogicalHeight;
     if (remainingHeight < lineHeight) {
         int totalHeight = lineHeight + max(0, yPos);
-        if (lineBox == firstRootBox() && totalHeight < pageHeight && !isPositioned() && !isTableCell())
+        if (lineBox == firstRootBox() && totalHeight < pageLogicalHeight && !isPositioned() && !isTableCell())
             setPaginationStrut(remainingHeight + max(0, yPos));
         else {
             delta += remainingHeight;
