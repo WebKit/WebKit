@@ -4956,6 +4956,9 @@ http/tests/media/video-play-suspend.html
 # Need to add functionality to DumpRenderTree to handle scrollbar police changes
 fast/overflow/scrollbar-restored-and-then-locked.html
 
+# This test is crashing in the GTK 32-bit Release bot. See https://bugs.webkit.org/show_bug.cgi?id=51038
+fast/history/history_reload.html
+
 # See https://bugs.webkit.org/show_bug.cgi?id=37526
 fast/history/multiple-classes-visited.html
 
