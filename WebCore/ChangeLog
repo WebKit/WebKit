@@ -1,3 +1,17 @@
+2010-12-13  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Change SelectionController::setFocusedNodeIfNeeded to traverse the DOM
+        tree instead of the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=50989
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setFocusedNodeIfNeeded):
+        Walk up DOM/hosted tree rather than render tree and remove FIXME comment
+        that does't apply (SelectionController and EventHandler needs different
+        checks).
+
 2010-12-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

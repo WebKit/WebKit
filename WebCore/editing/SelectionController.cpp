@@ -1551,12 +1551,8 @@ void SelectionController::setFocusedNodeIfNeeded()
     }
 
     if (Node* target = rootEditableElement()) {
-        RenderObject* renderer = target->renderer();
-
-        // Walk up the render tree to search for a node to focus.
-        // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
-        // FIXME: Combine with the same traversal code in EventHandle::dispatchMouseEvent.
-        while (renderer) {
+        // Walk up the DOM tree to search for a node to focus. 
+        while (target) {
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
@@ -1564,9 +1560,7 @@ void SelectionController::setFocusedNodeIfNeeded()
                 m_frame->page()->focusController()->setFocusedNode(target, m_frame);
                 return;
             }
-            renderer = renderer->parent();
-            if (renderer)
-                target = renderer->node();
+            target = target->parentOrHostNode(); 
         }
         m_frame->document()->setFocusedNode(0);
     }
