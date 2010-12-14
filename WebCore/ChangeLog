@@ -1,5 +1,14 @@
 2010-12-14  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, fixing qt (hopefully for real this time).
+
+        Remove a couple more references to loader.h.
+
+        * xml/XSLStyleSheetQt.cpp:
+        * xml/XSLTProcessorQt.cpp:
+
+2010-12-14  Nate Chapin  <japhet@chromium.org>
+
         Unreviewed, fix mac and qt builds.
 
         Missed a couple of references to loader.h and

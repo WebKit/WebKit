@@ -29,7 +29,6 @@
 #include "Node.h"
 #include "NotImplemented.h"
 #include "XSLTProcessor.h"
-#include "loader.h"
 
 namespace WebCore {
 

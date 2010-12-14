@@ -29,7 +29,6 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "TransformSource.h"
-#include "loader.h"
 #include "markup.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
