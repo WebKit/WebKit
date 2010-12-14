@@ -3314,3 +3314,11 @@ BUGPFELDMAN MAC : fast/text/international/hindi-whitespace.html = IMAGE
 BUGPFELDMAN MAC : fast/text/international/plane2.html = IMAGE
 BUGPFELDMAN MAC : fast/text/international/rtl-caret.html = IMAGE
 BUGPFELDMAN MAC : fast/text/international/wrap-CJK-001.html = IMAGE
+
+BUGPFELDMAN MAC : fast/text/complex-text-opacity.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/bidi-CS-after-AN.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/bidi-neutral-directionality-paragraph-start.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
+BUGPFELDMAN MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT

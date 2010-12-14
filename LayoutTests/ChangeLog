@@ -1,3 +1,9 @@
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Updated chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
