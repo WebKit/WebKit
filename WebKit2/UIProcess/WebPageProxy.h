@@ -195,11 +195,15 @@ public:
 
     const String& pageTitle() const { return m_pageTitle; }
     const String& toolTip() const { return m_toolTip; }
+
+    void setUserAgent(const String&);
+    const String& userAgent() const { return m_userAgent; }
+    void setApplicationNameForUserAgent(const String&);
+    const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
+    void setCustomUserAgent(const String&);
     const String& customUserAgent() const { return m_customUserAgent; }
 
     double estimatedProgress() const { return m_estimatedProgress; }
-
-    void setCustomUserAgent(const String&);
 
     void terminateProcess();
 
@@ -397,6 +401,8 @@ private:
     void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
 #endif
 
+    static String standardUserAgent(const String& applicationName = String());
+
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
@@ -412,6 +418,8 @@ private:
     RefPtr<WebFrameProxy> m_focusedFrame;
     String m_pageTitle;
 
+    String m_userAgent;
+    String m_applicationNameForUserAgent;
     String m_customUserAgent;
 
 #if ENABLE(INSPECTOR)

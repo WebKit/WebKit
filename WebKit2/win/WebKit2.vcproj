@@ -2466,6 +2466,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\UIProcess\win\WebPageProxyWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\win\WebPopupMenuProxyWin.cpp"
 					>
 				</File>

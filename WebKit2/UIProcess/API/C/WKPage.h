@@ -251,6 +251,11 @@ WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 WK_EXPORT WKInspectorRef WKPageGetInspector(WKPageRef page);
 #endif
 
+WK_EXPORT WKStringRef WKPageCopyUserAgent(WKPageRef page);
+
+WK_EXPORT WKStringRef WKPageCopyApplicationNameForUserAgent(WKPageRef page);
+WK_EXPORT void WKPageSetApplicationNameForUserAgent(WKPageRef page, WKStringRef applicationName);
+
 WK_EXPORT WKStringRef WKPageCopyCustomUserAgent(WKPageRef page);
 WK_EXPORT void WKPageSetCustomUserAgent(WKPageRef page, WKStringRef userAgent);
 

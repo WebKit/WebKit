@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageCreationParameters_h
-#define WebPageCreationParameters_h
-
-#include "DrawingAreaInfo.h"
-#include "WebPageGroupData.h"
-#include "WebPreferencesStore.h"
-#include <WebCore/IntSize.h>
-#include <wtf/text/WTFString.h>
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
-}
+#include "WebPageProxy.h"
 
 namespace WebKit {
 
-struct WebPageCreationParameters {
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebPageCreationParameters&);
-
-    WebCore::IntSize viewSize;
-    WebPreferencesStore store;
-    DrawingAreaInfo drawingAreaInfo;
-    WebPageGroupData pageGroupData;
-
-    bool drawsBackground;
-    bool drawsTransparentBackground;
-
-    String userAgent;
-
-#if PLATFORM(WIN)
-    HWND nativeWindow;
-#endif
-};
+String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
+{
+    // FIXME: This should not be hard coded.
+    return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6; en-us) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
+}
 
 } // namespace WebKit
-
-#endif // WebPageCreationParameters_h

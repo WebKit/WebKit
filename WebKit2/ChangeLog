@@ -1,3 +1,72 @@
+2010-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Need to be able to set the application name for the user agent for a WKPage
+        https://bugs.webkit.org/show_bug.cgi?id=51011
+
+        Fixes:
+            WebKit2: Need to be able to set the application name for the user agent for a WKPage
+            <rdar://problem/8564532>
+            WebKit2: Need to be able to get the computed user agent for a WKPage
+            <rdar://problem/8637285>
+
+        Moves user agent computation to the UIProcess and just passes it to the WebProcess
+        when it has changed.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Add a user agent to the creation parameters.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyUserAgent):
+        (WKPageCopyApplicationNameForUserAgent):
+        (WKPageSetApplicationNameForUserAgent):
+        (WKPageSetCustomUserAgent):
+        * UIProcess/API/C/WKPage.h:
+        Add new API to set the application name and access the computed user agent.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::setUserAgent):
+        (WebKit::WebPageProxy::setApplicationNameForUserAgent):
+        (WebKit::WebPageProxy::setCustomUserAgent):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::userAgent):
+        (WebKit::WebPageProxy::applicationNameForUserAgent):
+        * UIProcess/mac/WebPageProxyMac.mm: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setUserAgent):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userAgent):
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe through user agent.
+
+        (WebKit::callGestalt):
+        (WebKit::macOSXVersionString):
+        (WebKit::userVisibleWebKitVersionString):
+        (WebKit::WebPageProxy::standardUserAgent):
+        * UIProcess/win/WebPageProxyWin.cpp: Added.
+        (WebKit::windowsVersion):
+        (WebKit::userVisibleWebKitVersionString):
+        (WebKit::WebPageProxy::standardUserAgent):
+        Port standardUserAgent computation from WebKit1.
+
+        * UIProcess/qt/WebPageProxyQt.cpp: Added.
+        (WebKit::WebPageProxy::standardUserAgent):
+        Stub out the user agent so there is no change in behavior.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new file.
+
 2010-12-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt (and Brian Weinstein in heart).

@@ -126,7 +126,7 @@ public:
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
 #endif
     void show();
-    String userAgent() const;
+    String userAgent() const { return m_userAgent; }
     WebCore::IntRect windowResizerRect() const;
     bool tabsToLinks() const { return m_tabToLinks; }
 
@@ -301,7 +301,7 @@ private:
     void updatePreferences(const WebPreferencesStore&);
 
     void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID);
-    void setCustomUserAgent(const String&);
+    void setUserAgent(const String&);
 
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool windowIsVisible);
@@ -332,7 +332,7 @@ private:
 
     RefPtr<WebPageGroupProxy> m_pageGroup;
 
-    String m_customUserAgent;
+    String m_userAgent;
 
     WebCore::IntSize m_viewSize;
     RefPtr<DrawingArea> m_drawingArea;

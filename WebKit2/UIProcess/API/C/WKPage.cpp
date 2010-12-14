@@ -164,6 +164,21 @@ double WKPageGetEstimatedProgress(WKPageRef pageRef)
     return toImpl(pageRef)->estimatedProgress();
 }
 
+WKStringRef WKPageCopyUserAgent(WKPageRef pageRef)
+{
+    return toCopiedAPI(toImpl(pageRef)->userAgent());
+}
+
+WKStringRef WKPageCopyApplicationNameForUserAgent(WKPageRef pageRef)
+{
+    return toCopiedAPI(toImpl(pageRef)->applicationNameForUserAgent());
+}
+
+void WKPageSetApplicationNameForUserAgent(WKPageRef pageRef, WKStringRef applicationNameRef)
+{
+    toImpl(pageRef)->setApplicationNameForUserAgent(toWTFString(applicationNameRef));
+}
+
 WKStringRef WKPageCopyCustomUserAgent(WKPageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->customUserAgent());
@@ -171,7 +186,7 @@ WKStringRef WKPageCopyCustomUserAgent(WKPageRef pageRef)
 
 void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
 {
-    toImpl(pageRef)->setCustomUserAgent(toImpl(userAgentRef)->string());
+    toImpl(pageRef)->setCustomUserAgent(toWTFString(userAgentRef));
 }
 
 void WKPageTerminate(WKPageRef pageRef)

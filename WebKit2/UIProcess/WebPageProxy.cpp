@@ -90,6 +90,7 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_context(context)
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
+    , m_userAgent(standardUserAgent())
     , m_estimatedProgress(0.0)
     , m_isInWindow(false)
     , m_backForwardList(WebBackForwardList::create(this))
@@ -222,8 +223,6 @@ void WebPageProxy::close()
 
     process()->disconnectFramesFromPage(this);
     m_mainFrame = 0;
-
-    m_customUserAgent = String();
 
 #if ENABLE(INSPECTOR)
     if (m_inspector) {
@@ -603,16 +602,42 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
 }
 
-void WebPageProxy::setCustomUserAgent(const String& userAgent)
+void WebPageProxy::setUserAgent(const String& userAgent)
 {
+    if (m_userAgent == userAgent)
+        return;
+    m_userAgent = userAgent;
+
     if (!isValid())
         return;
+    process()->send(Messages::WebPage::SetUserAgent(m_userAgent), m_pageID);
+}
 
-    if (m_customUserAgent == userAgent || (m_customUserAgent.isEmpty() && userAgent.isEmpty()))
+void WebPageProxy::setApplicationNameForUserAgent(const String& applicationName)
+{
+    if (m_applicationNameForUserAgent == applicationName)
         return;
 
-    m_customUserAgent = userAgent;
-    process()->send(Messages::WebPage::SetCustomUserAgent(userAgent), m_pageID);
+    m_applicationNameForUserAgent = applicationName;
+    if (!m_customUserAgent.isEmpty())
+        return;
+
+    setUserAgent(standardUserAgent(m_applicationNameForUserAgent));
+}
+
+void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
+{
+    if (m_customUserAgent == customUserAgent)
+        return;
+
+    m_customUserAgent = customUserAgent;
+
+    if (m_customUserAgent.isEmpty()) {
+        setUserAgent(standardUserAgent(m_applicationNameForUserAgent));
+        return;
+    }
+
+    setUserAgent(m_customUserAgent);
 }
 
 void WebPageProxy::terminateProcess()
@@ -1582,7 +1607,6 @@ void WebPageProxy::processDidCrash()
     }
 #endif
 
-    m_customUserAgent = String();
     m_pageTitle = String();
     m_toolTip = String();
 
@@ -1615,6 +1639,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) 
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
+    parameters.userAgent = userAgent();
 
 #if PLATFORM(WIN)
     parameters.nativeWindow = m_pageClient->nativeWindow();

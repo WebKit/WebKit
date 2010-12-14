@@ -545,6 +545,7 @@ SOURCES += \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
+    UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \

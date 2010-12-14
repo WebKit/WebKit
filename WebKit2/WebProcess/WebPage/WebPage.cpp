@@ -159,6 +159,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setDrawsBackground(parameters.drawsBackground);
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
+    m_userAgent = parameters.userAgent;
+
 #ifndef NDEBUG
     webPageCounter.increment();
 #endif
@@ -860,18 +862,9 @@ void WebPage::show()
     send(Messages::WebPageProxy::ShowPage());
 }
 
-void WebPage::setCustomUserAgent(const String& customUserAgent)
+void WebPage::setUserAgent(const String& userAgent)
 {
-    m_customUserAgent = customUserAgent;
-}
-
-String WebPage::userAgent() const
-{
-    if (!m_customUserAgent.isEmpty())
-        return m_customUserAgent;
-
-    // FIXME: This should be based on an application name.
-    return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6; en-us) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
+    m_userAgent = userAgent;
 }
 
 IntRect WebPage::windowResizerRect() const
