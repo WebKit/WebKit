@@ -37,6 +37,14 @@ static QWKPage* toQWKPage(const void* clientInfo)
     return 0;
 }
 
+static void loadFinished(WKFrameRef frame, const void* clientInfo, bool ok)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+    emit toQWKPage(clientInfo)->loadFinished(ok);
+    QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
+}
+
 void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
@@ -51,6 +59,7 @@ void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WK
 
 void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
+    loadFinished(frame, clientInfo, false);
 }
 
 void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -71,18 +80,12 @@ void qt_wk_didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTyp
 
 void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    emit toQWKPage(clientInfo)->loadFinished(true);
-    QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
+    loadFinished(frame, clientInfo, true);
 }
 
 void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    emit toQWKPage(clientInfo)->loadFinished(false);
-    QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
+    loadFinished(frame, clientInfo, false);
 }
 
 void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)

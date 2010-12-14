@@ -1,3 +1,19 @@
+2010-12-14  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add loadFinished() for provisional load error
+        This fixes the hanging UI state, when provisional load error occurs due to
+        the async nature of policy check.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48724
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (loadFinished):
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didFinishLoadForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+
 2010-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
