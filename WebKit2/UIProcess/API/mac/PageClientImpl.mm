@@ -274,6 +274,11 @@ void PageClientImpl::pageDidLeaveAcceleratedCompositing()
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+void PageClientImpl::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+{
+    [m_wkView _setComplexTextInputEnabled:complexTextInputEnabled pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
+}
+
 void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
     [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];

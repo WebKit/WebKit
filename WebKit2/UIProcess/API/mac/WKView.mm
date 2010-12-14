@@ -107,6 +107,9 @@ struct EditCommandState {
     NSEvent *_keyDownEventBeingResent;
     Vector<KeypressCommand> _commandsList;
 
+    // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
+    uint64_t _pluginComplexTextInputIdentifier;
+
     BOOL _isSelectionNone;
     BOOL _isSelectionEditable;
     BOOL _isSelectionInPasswordField;
@@ -1148,6 +1151,30 @@ static bool isViewVisible(NSView *view)
     [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::ChunkedUpdate];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
+
+- (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
+{
+    BOOL inputSourceChanged = _data->_pluginComplexTextInputIdentifier;
+
+    if (complexTextInputEnabled) {
+        // Check if we're already allowing text input for this plug-in.
+        if (pluginComplexTextInputIdentifier == _data->_pluginComplexTextInputIdentifier)
+            return;
+
+        _data->_pluginComplexTextInputIdentifier = pluginComplexTextInputIdentifier;
+
+    } else {
+        // Check if we got a request to disable complex text input for a plug-in that is not the current plug-in.
+        if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier)
+            return;
+
+        _data->_pluginComplexTextInputIdentifier = 0;
+    }
+
+    if (inputSourceChanged) {
+        // Inform the out of line window that the input source changed.
+    }
+}
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
 {

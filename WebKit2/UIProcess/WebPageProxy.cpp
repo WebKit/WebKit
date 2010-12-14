@@ -1697,7 +1697,7 @@ void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::Da
 #if PLATFORM(MAC)
 void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
 {
-    // FIXME: Call the page client.
+    m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
 }
 #endif
 

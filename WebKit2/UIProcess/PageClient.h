@@ -93,6 +93,10 @@ public:
     virtual HWND nativeWindow() = 0;
 #endif
 
+#if PLATFORM(MAC)
+    virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled) = 0;
+#endif
+
     // Custom representations.
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&) = 0;
