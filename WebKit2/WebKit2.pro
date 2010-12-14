@@ -124,6 +124,7 @@ INCLUDEPATH = \
     Shared \
     Shared/API/c \
     Shared/CoreIPCSupport \
+    Shared/Plugins/Netscape \
     Shared/qt \
     UIProcess \
     UIProcess/API/C \
@@ -267,6 +268,7 @@ HEADERS += \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
+    Shared/Plugins/Netscape/NetscapePluginModule.h \
     Shared/qt/CrashHandler.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
@@ -379,7 +381,6 @@ HEADERS += \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.h \
-    WebProcess/Plugins/Netscape/NetscapePluginModule.h \
     WebProcess/Plugins/Netscape/NetscapePluginStream.h \
     WebProcess/Plugins/Plugin.h \
     WebProcess/Plugins/PluginController.h \
@@ -439,6 +440,7 @@ SOURCES += \
     Shared/API/c/WKURLRequest.cpp \
     Shared/API/c/WKURLResponse.cpp \
     Shared/API/c/WKUserContentURLPattern.cpp \
+    Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/BackingStore.cpp \
     Shared/ChildProcess.cpp \
     Shared/ImmutableArray.cpp \
@@ -583,7 +585,6 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
-    WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
     WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
     WebProcess/Plugins/Plugin.cpp \

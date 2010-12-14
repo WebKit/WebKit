@@ -842,6 +842,22 @@
 					>
 				</File>
 				<Filter
+				    Name="Plugins"
+				    >
+				    <Filter
+				        Name="Netscape"
+				        >
+				        <File
+						    RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.cpp"
+						    >
+					    </File>
+					    <File
+						    RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.h"
+						    >
+					    </File>
+					</Filter>
+				</Filter>
+				<Filter
 					Name="cf"
 					>
 					<File
@@ -1774,14 +1790,6 @@
 					</File>
 					<File
 						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePlugin.h"
-						>
-					</File>
-					<File
-						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePluginModule.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePluginModule.h"
 						>
 					</File>
 					<File
