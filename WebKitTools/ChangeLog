@@ -1,3 +1,30 @@
+2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Implement STATE_FOCUSED, STATE_FOCUSABLE, and corresponding events for text objects
+        https://bugs.webkit.org/show_bug.cgi?id=27048
+
+        Add support in DRT for checking whether an accessibility UI
+        element is focusable and/or focused. Implemented for GTK.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsFocusedCallback): New.
+        (getIsFocusableCallback): New.
+        (AccessibilityUIElement::getJSClass): Add the new available
+        callbacks for isFocused and isFocusable.
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isFocused): New, implemented by checking
+        whether the related AtkState value is in the object's state set.
+        (AccessibilityUIElement::isFocusable): Ditto.
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isFocused): New, dummy implementation.
+        (AccessibilityUIElement::isFocusable): Ditto.
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isFocused): Ditto.
+        (AccessibilityUIElement::isFocusable): Ditto.
+
 2010-12-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.

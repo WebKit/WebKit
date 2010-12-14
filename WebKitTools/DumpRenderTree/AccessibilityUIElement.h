@@ -131,6 +131,8 @@ public:
     bool isEnabled();
     bool isRequired() const;
     
+    bool isFocused() const;
+    bool isFocusable() const;
     bool isSelected() const;
     bool isSelectable() const;
     bool isMultiSelectable() const;

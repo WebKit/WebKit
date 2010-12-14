@@ -664,6 +664,16 @@ static JSValueRef getIsRequiredCallback(JSContextRef context, JSObjectRef thisOb
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isRequired());
 }
 
+static JSValueRef getIsFocusedCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isFocused());
+}
+
+static JSValueRef getIsFocusableCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isFocusable());
+}
+
 static JSValueRef getIsSelectedCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isSelected());
@@ -875,6 +885,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isRequired", getIsRequiredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isFocused", getIsFocusedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isFocusable", getIsFocusableCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSelected", getIsSelectedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSelectable", getIsSelectableCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isMultiSelectable", getIsMultiSelectableCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

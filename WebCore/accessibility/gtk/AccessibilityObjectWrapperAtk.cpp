@@ -59,6 +59,7 @@
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "SelectElement.h"
+#include "Settings.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
@@ -477,6 +478,61 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
     return atkRole(axObject->roleValue());
 }
 
+static bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection& selection)
+{
+    if (!coreObject || !coreObject->isAccessibilityRenderObject())
+        return false;
+
+    if (selection.isNone())
+        return false;
+
+    RefPtr<Range> range = selection.toNormalizedRange();
+    if (!range)
+        return false;
+
+    // We want to check that both the selection intersects the node
+    // AND that the selection is not just "touching" one of the
+    // boundaries for the selected node. We want to check whether the
+    // node is actually inside the region, at least partially.
+    Node* node = coreObject->node();
+    Node* lastDescendant = node->lastDescendant();
+    ExceptionCode ec = 0;
+    return (range->intersectsNode(node, ec)
+            && (range->endContainer() != node || range->endOffset())
+            && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
+}
+
+static bool isTextWithCaret(AccessibilityObject* coreObject)
+{
+    if (!coreObject || !coreObject->isAccessibilityRenderObject())
+        return false;
+
+    Document* document = coreObject->document();
+    if (!document)
+        return false;
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return false;
+
+    Settings* settings = frame->settings();
+    if (!settings || !settings->caretBrowsingEnabled())
+        return false;
+
+    // Check text objects and paragraphs only.
+    AtkObject* axObject = coreObject->wrapper();
+    AtkRole role = axObject ? atk_object_get_role(axObject) : ATK_ROLE_INVALID;
+    if (role != ATK_ROLE_TEXT && role != ATK_ROLE_PARAGRAPH)
+        return false;
+
+    // Finally, check whether the caret is set in the current object.
+    VisibleSelection selection = coreObject->selection();
+    if (!selection.isCaret())
+        return false;
+
+    return selectionBelongsToObject(coreObject, selection);
+}
+
 static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkStateSet* stateSet)
 {
     AccessibilityObject* parent = coreObject->parentObject();
@@ -510,7 +566,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->canSetFocusAttribute())
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
 
-    if (coreObject->isFocused())
+    if (coreObject->isFocused() || isTextWithCaret(coreObject))
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
 
     // TODO: ATK_STATE_HORIZONTAL
@@ -579,8 +635,12 @@ static AtkStateSet* webkit_accessible_ref_state_set(AtkObject* object)
         return stateSet;
     }
 
-    setAtkStateSetFromCoreObject(coreObject, stateSet);
+    // Text objects must be focusable.
+    AtkRole role = atk_object_get_role(object);
+    if (role == ATK_ROLE_TEXT || role == ATK_ROLE_PARAGRAPH)
+        atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
 
+    setAtkStateSetFromCoreObject(coreObject, stateSet);
     return stateSet;
 }
 
@@ -1485,27 +1545,6 @@ static gint webkit_accessible_text_get_offset_at_point(AtkText* text, gint x, gi
     return range.start;
 }
 
-static bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection& selection)
-{
-    if (!coreObject->isAccessibilityRenderObject())
-        return false;
-
-    RefPtr<Range> range = selection.toNormalizedRange();
-    if (!range)
-        return false;
-
-    // We want to check that both the selection intersects the node
-    // AND that the selection is not just "touching" one of the
-    // boundaries for the selected node. We want to check whether the
-    // node is actually inside the region, at least partially
-    Node* node = coreObject->node();
-    Node* lastDescendant = node->lastDescendant();
-    ExceptionCode ec = 0;
-    return (range->intersectsNode(node, ec)
-            && (range->endContainer() != node || range->endOffset())
-            && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
-}
-
 static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, VisibleSelection& selection, gint& startOffset, gint& endOffset)
 {
     if (!coreObject->isAccessibilityRenderObject())
@@ -1569,7 +1608,7 @@ static gint webkit_accessible_text_get_n_selections(AtkText* text)
     // belong to the currently selected object. We have to check since
     // there's no way to get the selection for a given object, only
     // the global one (the API is a bit confusing)
-    return !selectionBelongsToObject(coreObject, selection) || selection.isNone() ? 0 : 1;
+    return selectionBelongsToObject(coreObject, selection) ? 1 : 0;
 }
 
 static gchar* webkit_accessible_text_get_selection(AtkText* text, gint selectionNum, gint* startOffset, gint* endOffset)

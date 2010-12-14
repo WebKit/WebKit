@@ -1,3 +1,16 @@
+2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Implement STATE_FOCUSED, STATE_FOCUSABLE, and corresponding events for text objects
+        https://bugs.webkit.org/show_bug.cgi?id=27048
+
+        Added a new GTK-specific test to check focus{able|ed} states are
+        properly set when moving the caret across text objects.
+
+        * platform/gtk/accessibility/caret-browsing-text-focus-expected.txt: Added.
+        * platform/gtk/accessibility/caret-browsing-text-focus.html: Added.
+
 2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviwed. Chromium expectations updated.

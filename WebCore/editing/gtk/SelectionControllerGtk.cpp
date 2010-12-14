@@ -23,34 +23,83 @@
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AXObjectCache.h"
 #include "Frame.h"
+#include "RefPtr.h"
 
 #include <gtk/gtk.h>
 
 namespace WebCore {
 
-void SelectionController::notifyAccessibilityForSelectionChange()
+static void emitTextSelectionChange(AccessibilityObject* object, VisibleSelection selection, int offset)
 {
-    if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
-        RenderObject* focusedNode = m_selection.end().node()->renderer();
-        AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->getOrCreate(focusedNode);
+    AtkObject* axObject = object->wrapper();
+    if (!axObject || !ATK_IS_TEXT(axObject))
+        return;
 
-        // need to check this as getOrCreate could return 0
-        if (!accessibilityObject)
-            return;
+    g_signal_emit_by_name(axObject, "text-caret-moved", offset);
+    if (selection.isRange())
+        g_signal_emit_by_name(axObject, "text-selection-changed");
+}
 
-        int offset;
-        // Always report the events w.r.t. the non-linked unignored parent. (i.e. ignoreLinks == true)
-        AccessibilityObject* object = objectAndOffsetUnignored(accessibilityObject, offset, true);
-        if (!object)
-            return;
+static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
+{
+    // This static variable is needed to keep track of the old object
+    // as per previous calls to this function, in order to properly
+    // decide whether to emit some signals or not.
+    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldObject, ());
 
-        AtkObject* wrapper = object->wrapper();
-        if (ATK_IS_TEXT(wrapper)) {
-            g_signal_emit_by_name(wrapper, "text-caret-moved", offset);
-            if (m_selection.isRange())
-                g_signal_emit_by_name(wrapper, "text-selection-changed");
+    RefPtr<AccessibilityObject> object = prpObject;
+
+    // Ensure the oldObject belongs to the same document that the
+    // current object so further comparisons make sense. Otherwise,
+    // just reset oldObject to 0 so it won't be taken into account in
+    // the immediately following call to this function.
+    if (object && oldObject && oldObject->document() != object->document())
+        oldObject = 0;
+
+    AtkObject* axObject = object ? object->wrapper() : 0;
+    AtkObject* oldAxObject = oldObject ? oldObject->wrapper() : 0;
+
+    if (axObject != oldAxObject) {
+        if (oldAxObject && ATK_IS_TEXT(oldAxObject)) {
+            g_signal_emit_by_name(oldAxObject, "focus-event", false);
+            g_signal_emit_by_name(oldAxObject, "state-change", "focused", false);
+        }
+        if (axObject && ATK_IS_TEXT(axObject)) {
+            g_signal_emit_by_name(axObject, "focus-event", true);
+            g_signal_emit_by_name(axObject, "state-change", "focused", true);
         }
     }
+
+    // Update pointer to last focused object.
+    oldObject = object;
+}
+
+
+void SelectionController::notifyAccessibilityForSelectionChange()
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    // Reset lastFocuseNode and return for no valid selections.
+    if (!m_selection.start().isNotNull() || !m_selection.end().isNotNull())
+        return;
+
+    RenderObject* focusedNode = m_selection.end().node()->renderer();
+    AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->getOrCreate(focusedNode);
+
+    // Need to check this as getOrCreate could return 0,
+    if (!accessibilityObject)
+        return;
+
+    int offset;
+    // Always report the events w.r.t. the non-linked unignored parent. (i.e. ignoreLinks == true).
+    RefPtr<AccessibilityObject> object = objectAndOffsetUnignored(accessibilityObject, offset, true);
+    if (!object)
+        return;
+
+    // Emit relatedsignals.
+    emitTextSelectionChange(object.get(), m_selection, offset);
+    maybeEmitTextFocusChange(object.release());
 }
 
 } // namespace WebCore

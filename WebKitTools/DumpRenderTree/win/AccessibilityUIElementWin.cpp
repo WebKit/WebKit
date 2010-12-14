@@ -329,6 +329,12 @@ static DWORD accessibilityState(COMPtr<IAccessible> element)
     return result;
 }
 
+bool AccessibilityUIElement::isFocused() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isSelected() const
 {
     DWORD state = accessibilityState(m_element);
@@ -603,6 +609,12 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
 void AccessibilityUIElement::removeNotificationListener()
 {
     // FIXME: implement
+}
+
+bool AccessibilityUIElement::isFocusable() const
+{
+    // FIXME: implement
+    return false;
 }
 
 bool AccessibilityUIElement::isSelectable() const

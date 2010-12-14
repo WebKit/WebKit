@@ -1,3 +1,50 @@
+2010-12-14  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Implement STATE_FOCUSED, STATE_FOCUSABLE, and corresponding events for text objects
+        https://bugs.webkit.org/show_bug.cgi?id=27048
+
+        Handle focus change for text objects based in caret changes.
+
+        As text objects (such as paragraphs) seem not to accept focus in
+        WebCore in the same way other objects (text controls) do, a
+        Gtk-specific workaround is needed to expose this states and the
+        related events to ATK-based assistive technologies.
+
+        Test: platform/gtk/accessibility/caret-browsing-text-focus.html
+
+        Ensure that text objects are exposed with the ATK_STATE_FOCUSABLE
+        state, and that the ATK_STATE_FOCUSED state is added to those
+        text objects containing the currently active caret selection.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (selectionBelongsToObject): Moved upwards to use it from
+        the new isTextWithCaret() function.
+        (isTextWithCaret): New, checks whether an accessibility object
+        represents a text object with the current caret selection on it.
+        (setAtkStateSetFromCoreObject): Add the ATK_STATE_FOCUSED state
+        when also when isTextWithCaret(coreObject) returns true.
+        (webkit_accessible_ref_state_set): Add the ATK_STATE_FOCUSABLE
+        state to text objects and those with the ATK_ROLE_PARAGRAPH role.
+        (webkit_accessible_text_get_n_selections): Optimize return expression.
+
+        Make sure the proper events associated to a change of focus are
+        emitted, based on caret changes across different accessibility
+        objects. Also, refactored the code in more manageable and
+        understandable helper functions.
+
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::emitTextSelectionChange): New, includes the specific
+        code formerly placed in notifyAccessibilityForSelectionChange() to
+        emit the 'text-caret-moved' and 'text-selection-change' signals.
+        (WebCore::maybeEmitTextFocusChange): New, takes care of emitting
+        the 'focus-event' and 'state-changed::focused' signals when
+        needed, that is, when a change in the selection happens across
+        different accessible objects.
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        Refactored some code here, by using the new helper functions.
+
 2010-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -761,6 +761,12 @@ bool AccessibilityUIElement::isRequired() const
     return false;
 }
 
+bool AccessibilityUIElement::isFocused() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isSelected() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1179,6 +1185,12 @@ void AccessibilityUIElement::removeNotificationListener()
 
     [m_notificationHandler release];
     m_notificationHandler = nil;
+}
+
+bool AccessibilityUIElement::isFocusable() const
+{
+    // FIXME: implement
+    return false;
 }
 
 bool AccessibilityUIElement::isSelectable() const
