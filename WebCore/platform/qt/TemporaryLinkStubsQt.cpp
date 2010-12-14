@@ -62,7 +62,6 @@
 #include "SystemTime.h"
 #include "TextBoundaries.h"
 #include "Widget.h"
-#include "loader.h"
 
 #include <float.h>
 #include <stdio.h>

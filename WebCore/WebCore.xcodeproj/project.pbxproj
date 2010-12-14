@@ -5346,7 +5346,7 @@
 		D0CE58F8125E4CC200F3F199 /* ResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */; };
 		D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */; };
-		D0D141B312B2BF5200E39620 /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */; };
+		D0D141B312B2BF5200E39620 /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0FF2A5D11F8C45A007E74E0 /* PingLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };

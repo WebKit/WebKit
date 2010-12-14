@@ -75,7 +75,6 @@
 #include "ScrollbarTheme.h"
 #include "SmartReplace.h"
 #include "Widget.h"
-#include "loader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/text/CString.h>

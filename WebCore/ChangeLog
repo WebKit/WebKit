@@ -1,5 +1,17 @@
 2010-12-14  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, fix mac and qt builds.
+
+        Missed a couple of references to loader.h and
+        improperly added CachedResourceRequest.h to
+        WebCore.xcodeproj.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/android/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubsQt.cpp:
+
+2010-12-14  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Adam Barth.
 
         Rename Loader to CachedResourceRequest.
