@@ -1,3 +1,20 @@
+2010-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50953
+        DNS Prefetch should be an opt-in feature
+
+        Pass the preference through WebKit2.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDNSPrefetchingEnabled):
+        (WKPreferencesGetDNSPrefetchingEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2010-12-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

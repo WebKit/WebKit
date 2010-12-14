@@ -238,6 +238,7 @@ namespace WebCore {
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
 
+        void dnsPrefetchingStateChanged();
         void privateBrowsingStateChanged();
 
         void didStartPlugin(HaltablePlugin*);

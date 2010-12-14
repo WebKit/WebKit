@@ -57,6 +57,7 @@ namespace WebKit {
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     macro(TabsToLinks, tabsToLinks, Bool, bool, false) \
+    macro(DNSPrefetchingEnabled, dnsPrefetchingEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \

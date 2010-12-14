@@ -1,3 +1,23 @@
+2010-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50953
+        DNS Prefetch should be an opt-in feature
+
+        No new tests, can't test DNS.
+
+        * dom/Document.h: Made initDNSPrefetch public, since Page now calls it.
+
+        * page/Page.cpp: (WebCore::Page::dnsPrefetchingStateChanged):
+        * page/Page.h:
+        Documents cache the value of this setting, so they need to be notified of changes. In particular,
+        the first document in a page is created before settings are applied.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Changed default to false.
+        (WebCore::Settings::setDNSPrefetchingEnabled): Notify the page about the change.
+
 2010-12-14  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

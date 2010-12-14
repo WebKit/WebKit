@@ -134,6 +134,10 @@ WK_EXPORT bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preference
 WK_EXPORT void WKPreferencesSetTabsToLinks(WKPreferencesRef preferences, bool tabsToLinks);
 WK_EXPORT bool WKPreferencesGetTabsToLinks(WKPreferencesRef preferences);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetDNSPrefetchingEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

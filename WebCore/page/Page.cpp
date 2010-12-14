@@ -865,6 +865,12 @@ SpeechInput* Page::speechInput()
 }
 #endif
 
+void Page::dnsPrefetchingStateChanged()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->initDNSPrefetch();
+}
+
 void Page::privateBrowsingStateChanged()
 {
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();

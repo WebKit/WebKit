@@ -369,3 +369,13 @@ bool WKPreferencesGetTabsToLinks(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->tabsToLinks();
 }
+
+void WKPreferencesSetDNSPrefetchingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setDNSPrefetchingEnabled(enabled);
+}
+
+bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->dnsPrefetchingEnabled();
+}
