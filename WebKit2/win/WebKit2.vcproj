@@ -2063,14 +2063,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\WebPageNamespace.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebPageNamespace.h"
-				>
-			</File>
-			<File
 				RelativePath="..\UIProcess\WebPageProxy.cpp"
 				>
 			</File>

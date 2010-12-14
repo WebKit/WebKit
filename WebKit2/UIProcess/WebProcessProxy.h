@@ -49,7 +49,6 @@ namespace WebKit {
 class WebBackForwardListItem;
 class WebContext;
 class WebPageGroup;
-class WebPageNamespace;
 struct WebNavigationDataStore;
 
 class WebProcessProxy : public RefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client, ThreadLauncher::Client {
@@ -79,7 +78,7 @@ public:
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
     WebPageProxy* webPage(uint64_t pageID) const;
-    WebPageProxy* createWebPage(WebPageNamespace*, WebPageGroup*);
+    WebPageProxy* createWebPage(WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
 
@@ -144,10 +143,7 @@ private:
 
     WebContext* m_context;
 
-    // NOTE: This map is for WebPageProxies in all WebPageNamespaces that use this process.
     WebPageProxyMap m_pageMap;
-
-    // NOTE: This map is for WebBackForwardListItems in all WebPageNamespaces and WebPageProxies that use this process.
     WebBackForwardListItemMap m_backForwardListItemMap;
 
     HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;

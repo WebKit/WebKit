@@ -64,7 +64,7 @@ typedef void (*WKPageDidStartProgressCallback)(WKPageRef page, const void *clien
 typedef void (*WKPageDidChangeProgressCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidFinishProgressCallback)(WKPageRef page, const void *clientInfo);
 
-// WebPageNamespace Client
+// WebProcess Client
 // FIXME: These three functions should not be part of this client.
 typedef void (*WKPageProcessDidBecomeUnresponsiveCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageProcessDidBecomeResponsiveCallback)(WKPageRef page, const void *clientInfo);

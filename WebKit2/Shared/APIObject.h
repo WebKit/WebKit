@@ -71,7 +71,6 @@ public:
         TypeNavigationData,
         TypePage,
         TypePageGroup,
-        TypePageNamespace,
         TypePreferences,
 
         // Bundle types

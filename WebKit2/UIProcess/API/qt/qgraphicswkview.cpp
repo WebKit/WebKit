@@ -26,7 +26,6 @@
 #include "TiledDrawingAreaProxy.h"
 #include "UpdateChunk.h"
 #include "WKAPICast.h"
-#include "WebPageNamespace.h"
 #include "qwkpage.h"
 #include "qwkpage_p.h"
 #include <QCursor>

@@ -24,7 +24,6 @@
 #include "DrawingAreaProxy.h"
 #include "PageClient.h"
 #include "qwkpage.h"
-#include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>

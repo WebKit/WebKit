@@ -35,7 +35,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebPageGroup.h"
-#include "WebPageNamespace.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
@@ -79,7 +78,6 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
-    , m_sharedNamespace(0)
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
@@ -100,11 +98,10 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
 WebContext::~WebContext()
 {
-    ASSERT(m_pageNamespaces.isEmpty());
     removeLanguageChangeObserver(this);
 
     WebProcessManager::shared().contextWasDestroyed(this);
-    
+
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
@@ -214,42 +211,19 @@ void WebContext::processDidClose(WebProcessProxy* process)
     m_process = 0;
 }
 
-WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup)
+WebPageProxy* WebContext::createWebPage(WebPageGroup* pageGroup)
 {
     ensureWebProcess();
 
     if (!pageGroup)
         pageGroup = m_defaultPageGroup.get();
 
-    return m_process->createWebPage(pageNamespace, pageGroup);
+    return m_process->createWebPage(this, pageGroup);
 }
 
 void WebContext::relaunchProcessIfNecessary()
 {
     ensureWebProcess();
-}
-
-WebPageNamespace* WebContext::sharedPageNamespace()
-{
-    if (!m_sharedNamespace)
-        m_sharedNamespace = createPageNamespace();
-    return m_sharedNamespace.get();
-}
-
-PassRefPtr<WebPageNamespace> WebContext::createPageNamespace()
-{
-    RefPtr<WebPageNamespace> pageNamespace = WebPageNamespace::create(this);
-    m_pageNamespaces.add(pageNamespace.get());
-    return pageNamespace.release();
-}
-
-void WebContext::pageNamespaceWasDestroyed(WebPageNamespace* pageNamespace)
-{
-    if (pageNamespace == m_sharedNamespace)
-        m_sharedNamespace = 0;
-
-    ASSERT(m_pageNamespaces.contains(pageNamespace));
-    m_pageNamespaces.remove(pageNamespace);
 }
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)

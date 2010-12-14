@@ -60,7 +60,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     , createNewPageFn(0)
 {
     memset(actions, 0, sizeof(actions));
-    page = context->d->pageNamespace->createWebPage(0);
+    page = context->d->context->createWebPage(0);
     page->setPageClient(this);
     history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }

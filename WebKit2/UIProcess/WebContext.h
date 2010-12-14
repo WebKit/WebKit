@@ -47,7 +47,6 @@ namespace WebKit {
 class DownloadProxy;
 class WebDatabaseManagerProxy;
 class WebPageGroup;
-class WebPageNamespace;
 class WebPageProxy;
 struct WebProcessCreationParameters;
 
@@ -71,13 +70,9 @@ public:
     void processDidFinishLaunching(WebProcessProxy*);
     void processDidClose(WebProcessProxy*);
 
-    WebPageProxy* createWebPage(WebPageNamespace*, WebPageGroup* = 0);
+    WebPageProxy* createWebPage(WebPageGroup* = 0);
 
     void relaunchProcessIfNecessary();
-
-    WebPageNamespace* sharedPageNamespace();
-    PassRefPtr<WebPageNamespace> createPageNamespace();
-    void pageNamespaceWasDestroyed(WebPageNamespace*);
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 
@@ -162,9 +157,6 @@ private:
     
     // FIXME: In the future, this should be one or more WebProcessProxies.
     RefPtr<WebProcessProxy> m_process;
-
-    RefPtr<WebPageNamespace> m_sharedNamespace;
-    HashSet<WebPageNamespace*> m_pageNamespaces;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 

@@ -343,7 +343,6 @@ HEADERS += \
     UIProcess/WebNavigationData.h \
     UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebPageGroup.h \
-    UIProcess/WebPageNamespace.h \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
     UIProcess/WebPreferences.h \
@@ -534,7 +533,6 @@ SOURCES += \
     UIProcess/WebNavigationData.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageGroup.cpp \
-    UIProcess/WebPageNamespace.cpp \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \
     UIProcess/WebPreferences.cpp \

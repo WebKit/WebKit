@@ -86,7 +86,6 @@ class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageGroup;
-class WebPageNamespace;
 class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
@@ -104,7 +103,7 @@ class WebPageProxy : public APIObject {
 public:
     static const Type APIType = TypePage;
 
-    static PassRefPtr<WebPageProxy> create(WebPageNamespace*, WebPageGroup*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(WebContext*, WebPageGroup*, uint64_t pageID);
 
     virtual ~WebPageProxy();
 
@@ -249,8 +248,7 @@ public:
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
 
     WebProcessProxy* process() const;
-    WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }
-    WebContext* context() const;
+    WebContext* context() const { return m_context.get(); }
 
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
@@ -274,7 +272,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(WebPageNamespace*, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(WebContext*, WebPageGroup*, uint64_t pageID);
 
     virtual Type type() const { return APIType; }
 
@@ -408,7 +406,7 @@ private:
     WebPageContextMenuClient m_contextMenuClient;
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;
-    RefPtr<WebPageNamespace> m_pageNamespace;
+    RefPtr<WebContext> m_context;
     RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;

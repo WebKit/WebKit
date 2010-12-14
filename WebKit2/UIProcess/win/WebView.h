@@ -37,7 +37,6 @@
 namespace WebKit {
 
 class DrawingAreaProxy;
-class WebPageNamespace;
 
 class WebView : public APIObject, public PageClient, WebCore::WindowMessageListener {
 public:
@@ -59,8 +58,6 @@ public:
 
 private:
     WebView(RECT, WebContext*, WebPageGroup*, HWND parentWindow);
-
-    void initialize(WebPageNamespace*, WebPageGroup*, HWND parentWindow);
 
     virtual Type type() const { return TypeView; }
 

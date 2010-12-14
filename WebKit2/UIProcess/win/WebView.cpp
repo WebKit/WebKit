@@ -33,7 +33,6 @@
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
-#include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
 #include <Commctrl.h>
@@ -192,14 +191,9 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
 {
-    initialize(context->sharedPageNamespace(), pageGroup, parentWindow);
-}
-
-void WebView::initialize(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup, HWND parentWindow)
-{
     registerWebViewWindowClass();
 
-    m_page = pageNamespace->createWebPage(pageGroup);
+    m_page = context->createWebPage(pageGroup);
     m_page->setPageClient(this);
     m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this));
 

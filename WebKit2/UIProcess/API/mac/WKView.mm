@@ -41,7 +41,6 @@
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebPage.h"
-#import "WebPageNamespace.h"
 #import "WebPageProxy.h"
 #import "WebProcessManager.h"
 #import "WebProcessProxy.h"
@@ -158,7 +157,7 @@ struct EditCommandState {
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toImpl(contextRef)->sharedPageNamespace()->createWebPage(toImpl(pageGroupRef));
+    _data->_page = toImpl(contextRef)->createWebPage(toImpl(pageGroupRef));
     _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->initializeWebPage(IntSize(frame.size));

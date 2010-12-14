@@ -22,7 +22,6 @@
 #define qwkcontext_p_h
 
 #include "WebContext.h"
-#include "WebPageNamespace.h"
 #include <wtf/RefPtr.h>
 
 class QWKContextPrivate {
@@ -33,7 +32,6 @@ public:
     QWKContext* q;
 
     RefPtr<WebKit::WebContext> context;
-    RefPtr<WebKit::WebPageNamespace> pageNamespace;
 };
 
 #endif /* qkcontext_p_h */

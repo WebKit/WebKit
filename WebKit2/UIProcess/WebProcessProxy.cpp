@@ -30,7 +30,6 @@
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
-#include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
@@ -136,12 +135,12 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
     return m_pageMap.get(pageID).get();
 }
 
-WebPageProxy* WebProcessProxy::createWebPage(WebPageNamespace* pageNamespace, WebPageGroup* pageGroup)
+WebPageProxy* WebProcessProxy::createWebPage(WebContext* context, WebPageGroup* pageGroup)
 {
-    ASSERT(pageNamespace->process() == this);
+    ASSERT(context->process() == this);
 
     unsigned pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageNamespace, pageGroup, pageID);
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(context, pageGroup, pageID);
     m_pageMap.set(pageID, webPage);
     return webPage.get();
 }
