@@ -1,3 +1,263 @@
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Move chromium-mac expectations to chromium-mac-leopard.
+
+        * platform/chromium-mac-leopard/css2.1/t0805-c5518-brdr-t-01-e-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5518-brdr-t-01-e-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5519-brdr-r-00-a-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5519-brdr-r-00-a-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5520-brdr-b-01-e-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5520-brdr-b-01-e-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-brdr-l-00-a-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-brdr-l-00-a-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-brdr-l-01-e-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-brdr-l-01-e-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-ibrdr-l-00-a-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-02-c-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-02-c-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-03-c-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-03-c-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-04-c-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-04-c-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-fit-01-d-g-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-fit-01-d-g-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltblck-01-d-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltblck-01-d-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltwidth-03-c-g-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t090501-c414-flt-01-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t090501-c414-flt-01-b-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t090501-c5525-flt-l-00-b-g-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t090501-c5525-flt-r-00-b-g-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-03-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-03-b-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-04-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-04-b-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-09-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1202-counter-09-b-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t1202-counters-03-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1202-counters-03-b-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t1202-counters-04-b-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1202-counters-04-b-expected.png:
+        * platform/chromium-mac-leopard/fast/css/beforeSelectorOnCodeElement-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/beforeSelectorOnCodeElement-expected.png:
+        * platform/chromium-mac-leopard/fast/css/font-face-opentype-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/font-face-opentype-expected.png:
+        * platform/chromium-mac-leopard/fast/css/rtl-ordering-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac-leopard/fast/css/text-overflow-ellipsis-bidi-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/text-overflow-ellipsis-bidi-expected.png:
+        * platform/chromium-mac-leopard/fast/css/text-security-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/text-security-expected.png:
+        * platform/chromium-mac-leopard/fast/encoding/denormalised-voiced-japanese-chars-expected.checksum:
+        * platform/chromium-mac-leopard/fast/encoding/denormalised-voiced-japanese-chars-expected.png:
+        * platform/chromium-mac-leopard/fast/encoding/invalid-UTF-8-expected.checksum:
+        * platform/chromium-mac-leopard/fast/encoding/invalid-UTF-8-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/select-visual-hebrew-expected.checksum:
+        * platform/chromium-mac-leopard/fast/forms/select-visual-hebrew-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/visual-hebrew-text-field-expected.checksum:
+        * platform/chromium-mac-leopard/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/chromium-mac-leopard/fast/text/bidi-embedding-pop-and-push-same-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/bidi-embedding-pop-and-push-same-expected.png:
+        * platform/chromium-mac-leopard/fast/text/cg-fallback-bolding-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/cg-fallback-bolding-expected.png:
+        * platform/chromium-mac-leopard/fast/text/in-rendered-text-rtl-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/in-rendered-text-rtl-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/001-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/001-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-AN-after-L-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-CS-after-AN-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-L2-run-reordering-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-L2-run-reordering-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-CSS-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-HTML-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-european-terminators-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-european-terminators-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-ignored-for-first-child-inline-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-innertext-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-innertext-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-001-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-001-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-002-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-002-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-003-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-linebreak-003-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-atsui-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-atsui-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-override-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-override-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/danda-space-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/danda-space-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/hebrew-vowels-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/hebrew-vowels-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/hindi-spacing-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/hindi-whitespace-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/hindi-whitespace-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/plane2-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/plane2-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/rtl-caret-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/rtl-caret-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/thai-baht-space-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/thai-baht-space-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/thai-baht-space-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/international/wrap-CJK-001-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/wrap-CJK-001-expected.png:
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5519-brdr-r-00-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5519-brdr-r-00-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5520-brdr-b-01-e-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5520-brdr-b-01-e-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-00-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-00-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-01-e-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-brdr-l-01-e-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-02-c-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-02-c-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-03-c-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-03-c-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-04-c-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-04-c-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-fit-01-d-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-fit-01-d-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltblck-01-d-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltblck-01-d-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-03-c-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t090501-c414-flt-01-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t090501-c414-flt-01-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-l-00-b-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t090501-c5525-flt-r-00-b-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-09-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-09-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.png: Removed.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.png: Removed.
+        * platform/chromium-mac/fast/css/font-face-opentype-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/font-face-opentype-expected.png: Removed.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-security-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-security-expected.png: Removed.
+        * platform/chromium-mac/fast/encoding/denormalised-voiced-japanese-chars-expected.checksum: Removed.
+        * platform/chromium-mac/fast/encoding/denormalised-voiced-japanese-chars-expected.png: Removed.
+        * platform/chromium-mac/fast/encoding/invalid-UTF-8-expected.checksum: Removed.
+        * platform/chromium-mac/fast/encoding/invalid-UTF-8-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.png: Removed.
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.png: Removed.
+        * platform/chromium-mac/fast/text/cg-fallback-bolding-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/cg-fallback-bolding-expected.png: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.png: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/001-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/001-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/danda-space-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/danda-space-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-whitespace-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-whitespace-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/plane2-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/plane2-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/thai-baht-space-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/wrap-CJK-001-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/wrap-CJK-001-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.
