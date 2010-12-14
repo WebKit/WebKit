@@ -781,14 +781,16 @@ PassRefPtr<HTMLCollection> HTMLElement::children()
 
 bool HTMLElement::rendererIsNeeded(RenderStyle *style)
 {
-#if !ENABLE(XHTMLMP)
     if (hasLocalName(noscriptTag)) {
         Frame* frame = document()->frame();
+#if ENABLE(XHTMLMP)
+        if (!document()->shouldProcessNoscriptElement())
+            return false;
+#else
         if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
             return false;
-    } else
-#endif
-    if (hasLocalName(noembedTag)) {
+#endif        
+    } else if (hasLocalName(noembedTag)) {
         Frame* frame = document()->frame();
         if (frame && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
             return false;
