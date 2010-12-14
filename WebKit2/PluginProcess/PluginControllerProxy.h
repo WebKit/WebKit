@@ -124,7 +124,9 @@ private:
     void windowFocusChanged(bool);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void windowVisibilityChanged(bool);
+    void sendComplexTextInput(const String& textInput);
 #endif
+
     void privateBrowsingStateChanged(bool);
 
     void platformInitialize();

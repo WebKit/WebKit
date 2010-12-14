@@ -62,6 +62,7 @@ public:
     void setWindowIsVisible(bool);
     void setWindowIsFocused(bool);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
+    bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 #endif
 
 private:

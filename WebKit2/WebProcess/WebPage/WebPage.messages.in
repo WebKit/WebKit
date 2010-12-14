@@ -94,6 +94,9 @@ messages -> WebPage {
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
 #if PLATFORM(MAC)
+    # Complex text input support for plug-ins.
+    SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
+
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates)
     GetMarkedRange() -> (uint64_t location, uint64_t length)

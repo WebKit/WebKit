@@ -153,6 +153,9 @@ public:
 
     // Get the per complex text input identifier.
     virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
+
+    // Send the complex text input to the plug-in.
+    virtual void sendComplexTextInput(const String& textInput) = 0;
 #endif
 
     // Called when the private browsing state for this plug-in changes.

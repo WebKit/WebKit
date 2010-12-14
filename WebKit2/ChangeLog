@@ -1,3 +1,62 @@
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Handle complex text input for plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=51047
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::sendComplexTextInput):
+        Pass along the text input to the plug-in.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add SendComplexTextInput message.
+
+        * UIProcess/API/mac/WKTextInputWindowController.h: Added.
+        * UIProcess/API/mac/WKTextInputWindowController.mm: Added.
+        Add text input window controller, mostly copied from WebKit1.
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyDown:]):
+        If needed, pass along the event to the text input window controller.
+
+        (-[WKView inputContext]):
+        Return the input context of the text input window controller.
+
+        (-[WKView _setComplexTextInputEnabled:pluginComplexTextInputIdentifier:]):
+        Notify the input window controller that the input source changed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendComplexTextInputToPlugin):
+        Send the complex text input to the web process.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertStringToKeyCodes):
+        Convert a string to a vector of key codes in the current encoding.
+
+        (WebKit::NetscapePlugin::sendComplexTextInput):
+        In the Cocoa event model, create and dispatch an NPCocoaEventTextInput event.
+        In the Carbon event model, convert the string to individual key codes and send them
+        as key down events.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::sendComplexTextInput):
+        Send the text to the plug-in controller proxy.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::sendComplexTextInput):
+        If the plug-in has a matching text input identifier, call Plugin::sendComplexTextInput.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add SendComplexTextInputToPlugin message.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::sendComplexTextInputToPlugin):
+        Iterate over all known plug-in views and try to find one to send the text input to.
+
 2010-12-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

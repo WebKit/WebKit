@@ -25,6 +25,7 @@
 
 #include "WebPage.h"
 
+#include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
@@ -151,7 +152,15 @@ void WebPage::convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range 
     ASSERT(testRange->startContainer() == scope);
     length = TextIterator::rangeLength(testRange.get()) - location;
 }
-    
+
+void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
+{
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it) {
+        if ((*it)->sendComplexTextInput(pluginComplexTextInputIdentifier, textInput))
+            break;
+    }
+}
+
 void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
 {
     location = NSNotFound;

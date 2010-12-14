@@ -323,6 +323,11 @@ uint64_t PluginProxy::pluginComplexTextInputIdentifier() const
     return m_pluginInstanceID;
 }
 
+void PluginProxy::sendComplexTextInput(const String& textInput)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::SendComplexTextInput(textInput), m_pluginInstanceID);
+}
+
 #endif
 
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)

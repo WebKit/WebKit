@@ -163,6 +163,7 @@ private:
     virtual void windowVisibilityChanged(bool);
 
     virtual uint64_t pluginComplexTextInputIdentifier() const;
+    virtual void sendComplexTextInput(const String& textInput);
 #endif
 
     virtual void privateBrowsingStateChanged(bool);

@@ -416,6 +416,12 @@ void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
 {
     m_plugin->windowVisibilityChanged(isVisible);
 }
+
+void PluginControllerProxy::sendComplexTextInput(const String& textInput)
+{
+    m_plugin->sendComplexTextInput(textInput);
+}
+
 #endif
 
 void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)

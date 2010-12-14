@@ -178,6 +178,9 @@ public:
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
     void didSelectionChange(bool, bool, bool, bool, uint64_t, uint64_t);
+
+    void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
+
 #else
     void didSelectionChange(bool, bool, bool, bool);
 #endif

@@ -362,6 +362,18 @@ void PluginView::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCo
     m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 }
 
+bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
+{
+    if (!m_plugin)
+        return false;
+
+    if (m_plugin->pluginComplexTextInputIdentifier() != pluginComplexTextInputIdentifier)
+        return false;
+
+    m_plugin->sendComplexTextInput(textInput);
+    return true;
+}
+
 #endif
 
 void PluginView::initializePlugin()

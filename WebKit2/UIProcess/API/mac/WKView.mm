@@ -38,6 +38,7 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
+#import "WKTextInputWindowController.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebPage.h"
@@ -523,6 +524,16 @@ MOUSE_EVENT_HANDLER(mouseUp)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    if (_data->_pluginComplexTextInputIdentifier) {
+        // Try feeding the keyboard event directly to the plug-in.
+        NSString *string = nil;
+        if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:theEvent string:&string]) {
+            if (string)
+                _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
+            return;
+        }
+    }
+
     _data->_underlines.clear();
     _data->_selectionStart = 0;
     _data->_selectionEnd = 0;
@@ -537,6 +548,13 @@ MOUSE_EVENT_HANDLER(mouseUp)
         return;
     }
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
+
+- (NSTextInputContext *)inputContext {
+    if (_data->_pluginComplexTextInputIdentifier)
+        return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+
+    return [super inputContext];
 }
 
 - (NSRange)selectedRange
@@ -1173,6 +1191,7 @@ static bool isViewVisible(NSView *view)
 
     if (inputSourceChanged) {
         // Inform the out of line window that the input source changed.
+        [[WKTextInputWindowController sharedTextInputWindowController] keyboardInputSourceChanged];
     }
 }
 

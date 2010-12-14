@@ -28,6 +28,8 @@
 #include "PluginController.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
+#include <Carbon/Carbon.h>
+#include <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -715,6 +717,79 @@ uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
     // This is never called for NetscapePlugin.
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+
+#ifndef NP_NO_CARBON
+static bool convertStringToKeyCodes(const String& string, ScriptCode scriptCode, Vector<UInt8>& keyCodes)
+{
+    // Create the mapping.
+    UnicodeMapping mapping;
+
+    if (GetTextEncodingFromScriptInfo(scriptCode, kTextLanguageDontCare, kTextRegionDontCare, &mapping.otherEncoding) != noErr)
+        return false;
+
+    mapping.unicodeEncoding = CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kTextEncodingDefaultFormat);
+    mapping.mappingVersion = kUnicodeUseLatestMapping;
+    
+    // Create the converter
+    UnicodeToTextInfo textInfo;
+    
+    if (CreateUnicodeToTextInfo(&mapping, &textInfo) != noErr)
+        return false;
+    
+    ByteCount inputLength = string.length() * sizeof(UniChar);
+    ByteCount inputRead;
+    ByteCount outputLength;
+    ByteCount maxOutputLength = string.length() * sizeof(UniChar);
+
+    Vector<UInt8> outputData(maxOutputLength);
+    OSStatus status = ConvertFromUnicodeToText(textInfo, inputLength, string.characters(), kNilOptions, 0, 0, 0, 0, maxOutputLength, &inputRead, &outputLength, outputData.data());
+    
+    DisposeUnicodeToTextInfo(&textInfo);
+    
+    if (status != noErr)
+        return false;
+
+    outputData.swap(keyCodes);
+    return true;
+}
+#endif
+
+void NetscapePlugin::sendComplexTextInput(const String& textInput)
+{
+    switch (m_eventModel) {
+    case NPEventModelCocoa: {
+        NPCocoaEvent event = initializeEvent(NPCocoaEventTextInput);
+        event.data.text.text = reinterpret_cast<NPNSString*>(static_cast<NSString*>(textInput));
+        NPP_HandleEvent(&event);
+        break;
+    }
+#ifndef NP_NO_CARBON
+    case NPEventModelCarbon: {
+        ScriptCode scriptCode = WKGetScriptCodeFromCurrentKeyboardInputSource();
+        Vector<UInt8> keyCodes;
+
+        if (!convertStringToKeyCodes(textInput, scriptCode, keyCodes))
+            return;
+
+        // Set the script code as the keyboard script. Normally Carbon does this whenever the input source changes.
+        // However, this is only done for the process that has the keyboard focus. We cheat and do it here instead.
+        SetScriptManagerVariable(smKeyScript, scriptCode);
+        
+        EventRecord event = initializeEventRecord(keyDown);
+        event.modifiers = 0;
+
+        for (size_t i = 0; i < keyCodes.size(); i++) {
+            event.message = keyCodes[i];
+            NPP_HandleEvent(&event);
+        }
+        break;
+    }
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 PlatformLayer* NetscapePlugin::pluginLayer()
