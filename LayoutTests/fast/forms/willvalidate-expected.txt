@@ -30,7 +30,7 @@ PASS input.willValidate is false
 Input types
 PASS input.willValidate is true
 PASS input.type = "button"; input.willValidate is false
-PASS input.type = "submit"; input.willValidate is false
+PASS input.type = "submit"; input.willValidate is true
 PASS input.type = "hidden"; input.willValidate is false
 PASS input.type = "reset"; input.willValidate is false
 

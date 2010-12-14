@@ -35,6 +35,7 @@ PASS "2009-9" is a correct invalid month string.
 PASS "2009-009" is a correct invalid month string.
 PASS "2009-xx" is a correct invalid month string.
 PASS "2009" is a correct invalid month string.
+PASS "invalid" is a correct valid month string when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -56,7 +56,7 @@ bool SubmitInputType::appendFormData(FormDataList& encoding, bool) const
     return true;
 }
 
-bool SubmitInputType::supportsValidation() const
+bool SubmitInputType::supportsRequired() const
 {
     return false;
 }

@@ -42,6 +42,7 @@ PASS http://www .google.com is a correct invalid url.
 PASS http://www.&#10;google.&#13;com is a correct invalid url.
 PASS http://host+ is a correct invalid url.
 PASS http://myurl! is a correct invalid url.
+PASS invalid is a correct valid url when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

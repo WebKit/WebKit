@@ -20,6 +20,7 @@ PASS "a" is a correct invalid datetime-local string.
 PASS "-1-09-07T16:49" is a correct invalid datetime-local string.
 PASS "0000-12-31T23:59:59.999" is a correct invalid datetime-local string.
 PASS "275760-09-13T00:00:00.001" is a correct invalid datetime-local string.
+PASS "invalid" is a correct valid datetime-local string when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

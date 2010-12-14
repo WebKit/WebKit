@@ -29,6 +29,8 @@ PASS stepMismatchFor("2010-02-10", "-1", "2010-02-09") is false
 PASS stepMismatchFor("2010-02-10", "foo", "2010-02-09") is false
 Special step value
 PASS stepMismatchFor("2010-02-10", "any", "2010-02-09") is false
+Disabled
+PASS stepMismatchFor("2010-02-10", "2", "2010-02-09", true) is false
 
 Datetime type
 Empty values
@@ -59,6 +61,8 @@ PASS stepMismatchFor("2010-02-10T12:34Z", "-1", "2010-02-09T12:34Z") is false
 PASS stepMismatchFor("2010-02-10T12:34Z", "foo", "2010-02-09T12:34Z") is false
 Special step value
 PASS stepMismatchFor("2010-02-09T12:34Z", "any", "2010-02-09T12:34Z") is false
+Disabled
+PASS stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z", true) is false
 
 Datetime-local type
 Empty values
@@ -89,6 +93,8 @@ PASS stepMismatchFor("2010-02-10T12:34", "-1", "2010-02-09T12:34") is false
 PASS stepMismatchFor("2010-02-10T12:34", "foo", "2010-02-09T12:34") is false
 Special step value
 PASS stepMismatchFor("2010-02-09T12:34", "any", "2010-02-09T12:34") is false
+Disabled
+PASS stepMismatchFor("2010-02-09T12:34:55.001", "1", "2010-02-09T12:34:56", true) is false
 
 Month type
 Empty values
@@ -116,6 +122,8 @@ PASS stepMismatchFor("2010-03", "-1", "2010-02") is false
 PASS stepMismatchFor("2010-03", "foo", "2010-02") is false
 Special step value
 PASS stepMismatchFor("2010-03", "any", "2010-02") is false
+Disabled
+PASS stepMismatchFor("2010-03", "2", "2010-02", true) is false
 
 Number type
 Empty values
@@ -144,6 +152,8 @@ PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
 PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
 Rounding
 PASS stepMismatchFor("5.005", "0.005", "4") is false
+Disabled
+PASS stepMismatchFor("1", "2", "0", true) is false
 
 Range type
 Empty values
@@ -170,6 +180,8 @@ PASS stepMismatchFor("0.9", "0.1", "") is false
 PASS stepMismatchFor("0.9", "0.1000001", "") is false
 PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
 PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
+Disabled
+PASS stepMismatchFor("1", "2", "0", true) is false
 
 Time type
 Empty values
@@ -198,6 +210,8 @@ PASS stepMismatchFor("12:34", "-1", "12:34") is false
 PASS stepMismatchFor("12:34", "foo", "12:34") is false
 Special step value
 PASS stepMismatchFor("12:35", "any", "12:34") is false
+Disabled
+PASS stepMismatchFor("12:34:55.001", "1", "12:34:56", true) is false
 
 Week type
 Empty values
@@ -227,6 +241,8 @@ PASS stepMismatchFor("2010-W03", "-1", "2010-W02") is false
 PASS stepMismatchFor("2010-W03", "foo", "2010-W02") is false
 Special step value
 PASS stepMismatchFor("2010-W03", "any", "2010-W02") is false
+Disabled
+PASS stepMismatchFor("2010-W03", "2", "2010-W02", true) is false
 
 Unsupported types
 PASS input.type = "text"; input.step = "3"; input.min = ""; input.value = "2"; input.validity.stepMismatch is false

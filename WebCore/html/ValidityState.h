@@ -50,7 +50,7 @@ public:
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
     bool stepMismatch() const;
-    bool customError() const { return !m_customErrorMessage.isEmpty(); }
+    bool customError() const;
     bool valid() const;
 
 private:

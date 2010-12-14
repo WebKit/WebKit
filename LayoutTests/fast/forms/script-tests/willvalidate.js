@@ -54,7 +54,7 @@ parent.innerHTML = '<form><input name="test"></form>';
 input = document.getElementsByTagName("input")[0];
 shouldBeTrue('input.willValidate');
 shouldBeFalse('input.type = "button"; input.willValidate');
-shouldBeFalse('input.type = "submit"; input.willValidate');
+shouldBeTrue('input.type = "submit"; input.willValidate');
 shouldBeFalse('input.type = "hidden"; input.willValidate');
 shouldBeFalse('input.type = "reset"; input.willValidate');
 

@@ -2,28 +2,30 @@ description('This test aims to check for rangeUnderflow flag with input fields')
 
 var input = document.createElement('input');
 
-function checkUnderflow(value, min)
+function checkUnderflow(value, min, disabled)
 {
     input.value = value;
     input.min = min;
+    input.disabled = !!disabled;
     var underflow = input.validity.rangeUnderflow;
     var resultText = 'The value "' + input.value + '" ' +
         (underflow ? 'undeflows' : 'doesn\'t underflow') +
-        ' the minimum value "' + input.min + '".';
+        ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
     if (underflow)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function checkNotUnderflow(value, min)
+function checkNotUnderflow(value, min, disabled)
 {
     input.value = value;
     input.min = min;
+    input.disabled = !!disabled;
     var underflow = input.validity.rangeUnderflow;
     var resultText = 'The value "' + input.value + '" ' +
         (underflow ? 'underflows' : 'doesn\'t underflow') +
-        ' the minimum value "' + input.min + '".';
+        ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
     if (underflow)
         testFailed(resultText);
     else
@@ -58,6 +60,9 @@ checkUnderflow('9999-01-01', '10000-12-31');
 input.max = '2010-01-01';  // value < min && value > max
 checkUnderflow('2010-01-27', '2010-02-01');
 
+// Disabled
+checkNotUnderflow('9999-01-01', '10000-12-31', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=datetime');
@@ -80,6 +85,9 @@ checkUnderflow('2010-01-27T12:34Z', '2010-01-27T13:00Z');
 checkUnderflow('9999-01-01T12:00Z', '10000-12-31T12:00Z');
 input.max = '2010-01-01T12:00Z';  // value < min && value > max
 checkUnderflow('2010-01-27T12:00Z', '2010-02-01T12:00Z');
+
+// Disabled
+checkNotUnderflow('9999-01-01T12:00Z', '10000-12-31T12:00Z', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -104,6 +112,9 @@ checkUnderflow('9999-01-01T12:00', '10000-12-31T12:00');
 input.max = '2010-01-01T12:00';  // value < min && value > max
 checkUnderflow('2010-01-27T12:00', '2010-02-01T12:00');
 
+// Disabled
+checkNotUnderflow('9999-01-01T12:00', '10000-12-31T12:00', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=month');
@@ -126,6 +137,9 @@ checkUnderflow('2010-01', '2010-02');
 checkUnderflow('9999-01', '10000-12');
 input.max = '2009-12';  // value < min && value > max
 checkUnderflow('2010-01', '2010-02');
+
+// Disabled
+checkNotUnderflow('9999-01', '10000-12', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -152,6 +166,9 @@ checkUnderflow('99', '1E+2');
 input.max = '100';  // value < min && value > max
 checkUnderflow('101', '200');
 
+// Disabled
+checkNotUnderflow('99', '1E+2', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=time');
@@ -172,6 +189,9 @@ checkUnderflow('13:16', '13:17');
 checkUnderflow('23:59', '23:59:30');
 input.max = '11:00';  // value < min && value > max
 checkUnderflow('13:16', '14:00');
+
+// Disabled
+checkNotUnderflow('23:59', '23:59:30', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -195,5 +215,8 @@ checkUnderflow('2010-W01', '2010-W02');
 checkUnderflow('9999-W01', '10000-W12');
 input.max = '2009-W52';  // value < min && value > max
 checkUnderflow('2010-W01', '2010-W02');
+
+// Disabled
+checkNotUnderflow('9999-W01', '10000-W12', true);
 
 var successfullyParsed = true;

@@ -3,11 +3,12 @@ description('This test aims to check for typeMismatch flag with type=number inpu
 var i = document.createElement('input');
 i.type = 'number';
 
-function check(value)
+function check(value, disabled)
 {
     i.value = value;
+    i.disabled = !!disabled;
     var mismatch = i.validity.typeMismatch;
-    var resultText = '"' + value + '" is ' + (mismatch ? 'an invalid' : 'a valid') + ' number.';
+    var resultText = '"' + value + '" is ' + (mismatch ? 'an invalid' : 'a valid') + ' number' + (disabled ? ' when disabled.' : '.');
     if (!mismatch)
         testPassed(resultText);
     else
@@ -64,5 +65,8 @@ checkSanitization('1.2E65535', '');
 // The spec doesn't allow, but our implementation does.
 check('1.');
 check('1.2e10');
+
+// Disabled
+check('invalid', true);
 
 var successfullyParsed = true;

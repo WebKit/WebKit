@@ -2,28 +2,30 @@ description('This test aims to check for rangeOverflow flag with input fields');
 
 var input = document.createElement('input');
 
-function checkOverflow(value, max)
+function checkOverflow(value, max, disabled)
 {
     input.value = value;
     input.max = max;
+    input.disabled = !!disabled;
     var overflow = input.validity.rangeOverflow;
     var resultText = 'The value "' + input.value + '" ' +
         (overflow ? 'overflows' : 'doesn\'t overflow') +
-        ' the maximum value "' + input.max + '".';
+        ' the maximum value "' + input.max + '"' + (disabled ? ' when disabled.' : '.');
     if (overflow)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function checkNotOverflow(value, max)
+function checkNotOverflow(value, max, disabled)
 {
     input.value = value;
     input.max = max;
+    input.disabled = !!disabled;
     var overflow = input.validity.rangeOverflow;
     var resultText = 'The value "' + input.value + '" ' +
         (overflow ? 'overflows' : 'doesn\'t overflow') +
-        ' the maximum value "' + input.max + '".';
+        ' the maximum value "' + input.max + '"' + (disabled ? ' when disabled.' : '.');
     if (overflow)
         testFailed(resultText);
     else
@@ -56,6 +58,9 @@ checkOverflow('9999-01-01', '2010-12-31');
 input.min = '2010-01-28';  // value < min && value > max
 checkOverflow('2010-01-27', '2010-01-26');
 
+// Disabled
+checkNotOverflow('9999-01-01', '2010-12-31', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=datetime');
@@ -76,6 +81,9 @@ checkOverflow('2010-01-27T12:34Z', '2010-01-26T12:33:59.999Z');
 checkOverflow('9999-01-01T23:59Z', '2010-12-31T00:00Z');
 input.min = '2010-01-28T12:00Z';  // value < min && value > max
 checkOverflow('2010-01-27T12:34Z', '2010-01-26T12:34Z');
+
+// Disabled
+checkNotOverflow('9999-01-01T23:59Z', '2010-12-31T00:00Z', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -98,6 +106,9 @@ checkOverflow('9999-01-01T23:59', '2010-12-31T00:00');
 input.min = '2010-01-28T12:00';  // value < min && value > max
 checkOverflow('2010-01-27T12:34', '2010-01-26T12:34');
 
+// Disabled
+checkNotOverflow('9999-01-01T23:59', '2010-12-31T00:00', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=month');
@@ -118,6 +129,9 @@ checkOverflow('2010-01', '2009-12');
 checkOverflow('9999-01', '2010-12');
 input.min = '2010-02';  // value < min && value > max
 checkOverflow('2010-01', '2009-12');
+
+// Disabled
+checkNotOverflow('9999-01', '2010-12', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -142,6 +156,9 @@ checkOverflow('101', '1E+2');
 input.min = '200';  // value < min && value > max
 checkOverflow('101', '100');
 
+// Disabled
+checkNotOverflow('101', '1E+2', true);
+
 // ----------------------------------------------------------------
 debug('');
 debug('Type=time');
@@ -161,6 +178,9 @@ checkOverflow('13:16', '13:15');
 checkOverflow('23:59:59.999', '13:16');
 input.min = '14:00';  // value < min && value > max
 checkOverflow('13:16', '12:00');
+
+// Disabled
+checkNotOverflow('23:59:59.999', '13:16', true);
 
 // ----------------------------------------------------------------
 debug('');
@@ -183,5 +203,8 @@ checkOverflow('2010-W01', '2009-W12');
 checkOverflow('9999-W01', '2010-W12');
 input.min = '2010-W02';  // value < min && value > max
 checkOverflow('2010-W01', '2009-W50');
+
+// Disabled
+checkNotOverflow('9999-W01', '2010-W12', true);
 
 var successfullyParsed = true;

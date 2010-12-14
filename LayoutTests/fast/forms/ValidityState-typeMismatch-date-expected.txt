@@ -56,6 +56,7 @@ PASS "2009-09-001" is a correct invalid date string.
 PASS "2009-09-xx" is a correct invalid date string.
 PASS "2009-09" is a correct invalid date string.
 PASS "2009" is a correct invalid date string.
+PASS "2009-09" is a correct valid date string when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

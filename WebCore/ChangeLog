@@ -1,3 +1,32 @@
+2010-12-13  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        ValidityState's exposed functions should check if willValidate() is true before all
+        https://bugs.webkit.org/show_bug.cgi?id=50617
+
+        Added checking willValidate() to exposed functions. And modified willValidate() behavior
+        for <button type="submit"> and <input type="submit"> to return true if not disabled and
+        not readonly.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute): Added calling setNeedsWillValidateCheck() to refresh willValidate() after changing its type.
+        (WebCore::HTMLButtonElement::recalcWillValidate): Added to return true if not disabled and not readonly when type="submit". It's to be compliant to the spec.
+        * html/HTMLButtonElement.h:
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::supportsValidation): Removed it to enable willValidate() for <input> when type="submit". It's to be compliant to the spec.
+        (WebCore::SubmitInputType::supportsRequired): Added it to reject required attributes though validation is available.
+        * html/SubmitInputType.h:
+        * html/ValidityState.cpp: Added checking willValidate().
+        (WebCore::ValidityState::typeMismatch):
+        (WebCore::ValidityState::patternMismatch):
+        (WebCore::ValidityState::tooLong):
+        (WebCore::ValidityState::rangeUnderflow):
+        (WebCore::ValidityState::rangeOverflow):
+        (WebCore::ValidityState::stepMismatch):
+        (WebCore::ValidityState::customError):
+        * html/ValidityState.h:
+
 2010-12-13  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by David Levin.

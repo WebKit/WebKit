@@ -39,6 +39,12 @@ input.value = 'abcde';
 shouldBeTrue('input.validity.tooLong');
 
 debug('');
+debug('Disabled');
+input.disabled = true;
+shouldBeFalse('input.validity.tooLong');
+input.disabled = false;
+
+debug('');
 debug('Grapheme length is not greater than maxLength though character length is greater');
 // fancyX should be treated as 1 grapheme.
 // U+0305 COMBINING OVERLINE

@@ -31,6 +31,7 @@ PASS "2009/09" is a correct invalid week string.
 PASS "200909" is a correct invalid week string.
 PASS "2009-Wxx" is a correct invalid week string.
 PASS "2009" is a correct invalid week string.
+PASS "invalid" is a correct valid week string when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

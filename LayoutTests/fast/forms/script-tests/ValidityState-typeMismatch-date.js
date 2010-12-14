@@ -2,21 +2,22 @@ description('This test aims to check for typeMismatch flag with type=date input 
 var i = document.createElement('input');
 i.type = 'date';
 
-function check(value, mismatchExpected)
+function check(value, mismatchExpected, disabled)
 {
     i.value = value;
+    i.disabled = !!disabled;
     var actual = i.validity.typeMismatch;
     var didPass = actual == mismatchExpected;
-    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' date string.';
+    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' date string' + (disabled ? ' when disabled.' : '.');
     if (didPass)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function shouldBeValid(value)
+function shouldBeValid(value, disabled)
 {
-    check(value, false);
+    check(value, false, disabled);
 }
 
 function shouldBeInvalid(value)
@@ -80,5 +81,8 @@ shouldBeInvalid('2009-09-001');
 shouldBeInvalid('2009-09-xx');
 shouldBeInvalid('2009-09');
 shouldBeInvalid('2009');
+
+// Disabled
+shouldBeValid('2009-09', true);
 
 var successfullyParsed = true;

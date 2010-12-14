@@ -3,10 +3,11 @@ description('Check stepMismatch results for type=date, datetime, datetime-local,
 var input = document.createElement('input');
 document.body.appendChild(input);
 
-function stepMismatchFor(value, step, min) {
+function stepMismatchFor(value, step, min, disabled) {
     input.min = min;
     input.step = step;
     input.value = value;
+    input.disabled = !!disabled;
     return input.validity.stepMismatch;
 }
 
@@ -37,6 +38,8 @@ shouldBeFalse('stepMismatchFor("2010-02-10", "-1", "2010-02-09")');
 shouldBeFalse('stepMismatchFor("2010-02-10", "foo", "2010-02-09")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-02-10", "any", "2010-02-09")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("2010-02-10", "2", "2010-02-09", true)');
 
 debug('');
 debug('Datetime type');
@@ -69,6 +72,8 @@ shouldBeFalse('stepMismatchFor("2010-02-10T12:34Z", "-1", "2010-02-09T12:34Z")')
 shouldBeFalse('stepMismatchFor("2010-02-10T12:34Z", "foo", "2010-02-09T12:34Z")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34Z", "any", "2010-02-09T12:34Z")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z", true)');
 
 debug('');
 debug('Datetime-local type');
@@ -101,6 +106,8 @@ shouldBeFalse('stepMismatchFor("2010-02-10T12:34", "-1", "2010-02-09T12:34")');
 shouldBeFalse('stepMismatchFor("2010-02-10T12:34", "foo", "2010-02-09T12:34")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34", "any", "2010-02-09T12:34")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001", "1", "2010-02-09T12:34:56", true)');
 
 debug('');
 debug('Month type');
@@ -130,6 +137,8 @@ shouldBeFalse('stepMismatchFor("2010-03", "-1", "2010-02")');
 shouldBeFalse('stepMismatchFor("2010-03", "foo", "2010-02")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-03", "any", "2010-02")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("2010-03", "2", "2010-02", true)');
 
 debug('');
 debug('Number type');
@@ -161,6 +170,8 @@ shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
 shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
 debug('Rounding');
 shouldBe('stepMismatchFor("5.005", "0.005", "4")', 'false');
+debug('Disabled');
+shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
 
 debug('');
 debug('Range type');
@@ -192,6 +203,8 @@ shouldBe('stepMismatchFor("0.9", "0.1", "")', 'false');
 shouldBe('stepMismatchFor("0.9", "0.1000001", "")', 'false');
 shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
 shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
+debug('Disabled');
+shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
 
 debug('');
 debug('Time type');
@@ -222,6 +235,8 @@ shouldBeFalse('stepMismatchFor("12:34", "-1", "12:34")');
 shouldBeFalse('stepMismatchFor("12:34", "foo", "12:34")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("12:35", "any", "12:34")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("12:34:55.001", "1", "12:34:56", true)');
 
 debug('');
 debug('Week type');
@@ -253,6 +268,8 @@ shouldBeFalse('stepMismatchFor("2010-W03", "-1", "2010-W02")');
 shouldBeFalse('stepMismatchFor("2010-W03", "foo", "2010-W02")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-W03", "any", "2010-W02")');
+debug('Disabled');
+shouldBeFalse('stepMismatchFor("2010-W03", "2", "2010-W02", true)');
 
 debug('');
 debug('Unsupported types');

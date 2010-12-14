@@ -43,7 +43,7 @@ private:
     SubmitInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual bool appendFormData(FormDataList&, bool) const;
-    virtual bool supportsValidation() const;
+    virtual bool supportsRequired() const;
     virtual bool handleDOMActivateEvent(Event*);
 };
 

@@ -31,6 +31,7 @@ PASS "" is a valid number.
 PASS "1.2E65535" was sanitized to "".
 PASS "1." is a valid number.
 PASS "1.2e10" is a valid number.
+PASS "invalid" is a valid number when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

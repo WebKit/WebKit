@@ -34,6 +34,7 @@ PASS "2009-09-07T16:49-23:60" is a correct invalid datetime string.
 PASS "0000-12-31T23:59:59Z" is a correct invalid datetime string.
 PASS "2147483647-12-31T23:59-00:01" is a correct invalid datetime string.
 PASS "2147483648-01-01T00:00:00Z" is a correct invalid datetime string.
+PASS "invalid" is a correct valid datetime string when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

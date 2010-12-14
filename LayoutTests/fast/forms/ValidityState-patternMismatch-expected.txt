@@ -50,7 +50,7 @@ PASS patternMismatchFor("mismatch-18") is true
 PASS patternMismatchFor("mismatch-19") is true
 PASS patternMismatchFor("mismatch-20") is true
 PASS patternMismatchFor("empty-pattern") is false
-PASS patternMismatchFor("disabled") is true
+PASS patternMismatchFor("disabled") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

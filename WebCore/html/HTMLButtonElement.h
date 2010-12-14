@@ -59,7 +59,7 @@ private:
     virtual bool canStartSelection() const { return false; }
 
     virtual bool isOptionalFormControl() const { return true; }
-    virtual bool recalcWillValidate() const { return false; }
+    virtual bool recalcWillValidate() const;
 
     Type m_type;
     bool m_activeSubmit;

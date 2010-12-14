@@ -2,21 +2,22 @@ description('This test aims to check for typeMismatch flag with type=week input 
 var i = document.createElement('input');
 i.type = 'week';
 
-function check(value, mismatchExpected)
+function check(value, mismatchExpected, disabled)
 {
     i.value = value;
+    i.disabled = !!disabled;
     var actual = i.validity.typeMismatch;
     var didPass = actual == mismatchExpected;
-    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' week string.';
+    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' week string' + (disabled ? ' when disabled.' : '.');
     if (didPass)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function shouldBeValid(value)
+function shouldBeValid(value, disabled)
 {
-    check(value, false);
+    check(value, false, disabled);
 }
 
 function shouldBeInvalid(value)
@@ -55,5 +56,8 @@ shouldBeInvalid('2009/09');
 shouldBeInvalid('200909');
 shouldBeInvalid('2009-Wxx');
 shouldBeInvalid('2009');
+
+// Disabled
+shouldBeValid('invalid', true);
 
 var successfullyParsed = true;

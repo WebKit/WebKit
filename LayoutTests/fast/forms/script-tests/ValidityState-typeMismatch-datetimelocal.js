@@ -2,21 +2,22 @@ description('This test aims to check for typeMismatch flag with type=datetime-lo
 var i = document.createElement('input');
 i.type = 'datetime-local';
 
-function check(value, mismatchExpected)
+function check(value, mismatchExpected, disabled)
 {
     i.value = value;
+    i.disabled = !!disabled;
     var actual = i.validity.typeMismatch;
     var didPass = actual == mismatchExpected;
-    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' datetime-local string.';
+    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' datetime-local string' + (disabled ? ' when disabled.' : '.');
     if (didPass)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function shouldBeValid(value)
+function shouldBeValid(value, disabled)
 {
-    check(value, false);
+    check(value, false, disabled);
 }
 
 function shouldBeInvalid(value)
@@ -44,5 +45,8 @@ shouldBeInvalid('a');
 shouldBeInvalid('-1-09-07T16:49');
 shouldBeInvalid('0000-12-31T23:59:59.999');
 shouldBeInvalid('275760-09-13T00:00:00.001');
+
+// Disabled
+shouldBeValid('invalid', true);
 
 var successfullyParsed = true;

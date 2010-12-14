@@ -4,10 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Set some value for customError.
-PASS customErrorFor("fieldset-set") is true
+PASS customErrorFor("fieldset-set") is false
 PASS customErrorFor("button-set") is true
-PASS customErrorFor("button-button-set") is true
-PASS customErrorFor("button-reset-set") is true
+PASS customErrorFor("button-button-set") is false
+PASS customErrorFor("button-reset-set") is false
 PASS customErrorFor("select-set") is true
 PASS customErrorFor("textarea-set") is true
 PASS customErrorFor("input-set") is true
@@ -44,10 +44,10 @@ PASS customErrorFor("textarea-many-changes") is false
 PASS customErrorFor("input-many-changes") is false
 PASS customErrorFor("input-submit-many-changes") is false
 Set with three arguments.
-PASS customErrorFor("fieldset-many-changes") is true
+PASS customErrorFor("fieldset-many-changes") is false
 PASS customErrorFor("button-many-changes") is true
-PASS customErrorFor("button-button-many-changes") is true
-PASS customErrorFor("button-reset-many-changes") is true
+PASS customErrorFor("button-button-many-changes") is false
+PASS customErrorFor("button-reset-many-changes") is false
 PASS customErrorFor("select-many-changes") is true
 PASS customErrorFor("textarea-many-changes") is true
 PASS customErrorFor("input-many-changes") is true

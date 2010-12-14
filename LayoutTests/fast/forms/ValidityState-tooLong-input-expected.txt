@@ -20,6 +20,9 @@ PASS input.validity.tooLong is false
 Sets a value via DOM property
 PASS input.validity.tooLong is true
 
+Disabled
+PASS input.validity.tooLong is false
+
 Grapheme length is not greater than maxLength though character length is greater
 PASS input.validity.tooLong is false
 

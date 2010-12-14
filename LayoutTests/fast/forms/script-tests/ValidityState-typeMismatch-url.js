@@ -1,18 +1,19 @@
 description("Input type=url validation test");
 
-function check(value, mismatchExpected) {
+function check(value, mismatchExpected, disabled) {
     i.value = value;
+    i.disabled = !!disabled;
     var actual = i.validity.typeMismatch;
     var didPass = actual == mismatchExpected;
-    var resultText = value + ' is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' url.';
+    var resultText = value + ' is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' url' + (disabled ? ' when disabled.' : '.');
     if (didPass)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
-function expectValid(value) {
-    check(value, false);
+function expectValid(value, disabled) {
+    check(value, false, disabled);
 }
 
 function expectInvalid(value) {
@@ -76,5 +77,8 @@ if (strictHost) {
     expectValid('http://host+');
     expectValid('http://myurl!');
 }
+
+// Disabled
+expectValid('invalid', true);
 
 var successfullyParsed = true;

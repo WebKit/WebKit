@@ -88,6 +88,7 @@ void HTMLButtonElement::parseMappedAttribute(Attribute* attr)
             m_type = BUTTON;
         else
             m_type = SUBMIT;
+        setNeedsWillValidateCheck();
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
         // See http://bugs.webkit.org/show_bug.cgi?id=12071
@@ -178,6 +179,11 @@ bool HTMLButtonElement::isURLAttribute(Attribute* attr) const
 String HTMLButtonElement::value() const
 {
     return getAttribute(valueAttr);
+}
+
+bool HTMLButtonElement::recalcWillValidate() const
+{
+    return m_type == SUBMIT && HTMLFormControlElement::recalcWillValidate();
 }
 
 } // namespace

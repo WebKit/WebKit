@@ -27,6 +27,7 @@ PASS "#00112233" is a correct invalid color.
 PASS "rgb(0,0,0)" is a correct invalid color.
 PASS "xxx-non-existent-color-name" is a correct invalid color.
 PASS "transparent" is a correct invalid color.
+PASS "invalid" is a correct valid color when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE
