@@ -1098,3 +1098,7 @@ fast/frames/meta-refresh-user-gesture.html
 # These require DRT setSerializeHTTPLoads implementation to be reliable.
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50994
+fast/loader/user-stylesheet-fast-path.html
+

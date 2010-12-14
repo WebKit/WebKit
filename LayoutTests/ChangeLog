@@ -1,3 +1,12 @@
+2010-12-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a failing test to the Windows skipped list.
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * platform/win/Skipped:
+        Added fast/loader/user-stylesheet-fast-path.html.
+
 2010-12-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
