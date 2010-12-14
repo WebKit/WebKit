@@ -357,6 +357,8 @@ public:
 
     void removeFloatingOrPositionedChildFromBlockLists();
     
+    RenderLayer* enclosingFloatPaintingLayer() const;
+    
     virtual int firstLineBoxBaseline() const { return -1; }
     virtual int lastLineBoxBaseline() const { return -1; }
 

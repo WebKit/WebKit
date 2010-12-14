@@ -1,3 +1,27 @@
+2010-12-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50970
+        
+        It's arguably a bug, but we don't let inline flow layers paint floating
+        descendants.  The containing block of the inline flow paints them instead.
+        However our shouldPaint logic has always been flawed and has turned off propagation
+        of painting when an inline flow layer is enclosing the float.
+        
+        Change enclosingSelfPaintingLayer to enclosingFloatPaintingLayer to be more precise
+        and for now limit it to RenderBoxes. 
+        
+        Added fast/block/float/floatstack.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverhangingFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::enclosingFloatPaintingLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
 2010-12-14  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
