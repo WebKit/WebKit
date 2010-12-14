@@ -28,9 +28,9 @@
 
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
+#include "CachedResourceRequest.h"
 #include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
-#include "loader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -90,7 +90,7 @@ public:
 
     void load(CachedResource*, bool incremental = false, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
     void loadFinishing() { m_loadFinishing = true; }
-    void loadDone(Loader*);
+    void loadDone(CachedResourceRequest*);
     void cancelRequests();
     
     void setAllowStaleResources(bool allowStaleResources) { m_allowStaleResources = allowStaleResources; }
@@ -118,7 +118,7 @@ private:
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
 
-    typedef HashSet<RefPtr<Loader> > RequestSet;
+    typedef HashSet<RefPtr<CachedResourceRequest> > RequestSet;
     RequestSet m_requests;
     
     int m_requestCount;

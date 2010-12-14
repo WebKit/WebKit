@@ -19,8 +19,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef loader_h
-#define loader_h
+#ifndef CachedResourceRequest_h
+#define CachedResourceRequest_h
 
 #include "FrameLoaderTypes.h"
 #include "SubresourceLoader.h"
@@ -35,16 +35,16 @@ namespace WebCore {
     class CachedResourceLoader;
     class Request;
 
-    class Loader : public RefCounted<Loader>, private SubresourceLoaderClient {
+    class CachedResourceRequest : public RefCounted<CachedResourceRequest>, private SubresourceLoaderClient {
     public:
-        static PassRefPtr<Loader> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);\
-        ~Loader();
+        static PassRefPtr<CachedResourceRequest> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+        ~CachedResourceRequest();
         void didFail(bool cancelled = false);
 
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }
 
     private:
-        Loader(CachedResourceLoader*, CachedResource*, bool incremental);
+        CachedResourceRequest(CachedResourceLoader*, CachedResource*, bool incremental);
         virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
         virtual void didReceiveData(SubresourceLoader*, const char*, int);

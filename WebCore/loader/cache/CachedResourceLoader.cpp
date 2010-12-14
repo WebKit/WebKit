@@ -43,7 +43,6 @@
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "loader.h"
 #include <wtf/text/StringConcatenate.h>
 
 #define PRELOAD_DEBUG 0
@@ -336,15 +335,15 @@ void CachedResourceLoader::load(CachedResource* resource, bool incremental, Secu
 {
     incrementRequestCount(resource);
 
-    RefPtr<Loader> request = Loader::load(this, resource, incremental, securityCheck, sendResourceLoadCallbacks);
+    RefPtr<CachedResourceRequest> request = CachedResourceRequest::load(this, resource, incremental, securityCheck, sendResourceLoadCallbacks);
     if (request)
         m_requests.add(request);
 }
 
-void CachedResourceLoader::loadDone(Loader* request)
+void CachedResourceLoader::loadDone(CachedResourceRequest* request)
 {
     m_loadFinishing = false;
-    RefPtr<Loader> protect(request);
+    RefPtr<CachedResourceRequest> protect(request);
     if (request)
         m_requests.remove(request);
     if (frame())
@@ -355,7 +354,7 @@ void CachedResourceLoader::loadDone(Loader* request)
 void CachedResourceLoader::cancelRequests()
 {
     clearPendingPreloads();
-    Vector<Loader*, 256> requestsToCancel;
+    Vector<CachedResourceRequest*, 256> requestsToCancel;
     RequestSet::iterator end = m_requests.end();
     for (RequestSet::iterator i = m_requests.begin(); i != end; ++i)
         requestsToCancel.append((*i).get());

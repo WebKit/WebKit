@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#include "loader.h"
+#include "CachedResourceRequest.h"
 
 #include "MemoryCache.h"
 #include "CachedImage.h"
@@ -65,7 +65,7 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     return ResourceRequest::TargetIsSubresource;
 }
 
-Loader::Loader(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental)
+CachedResourceRequest::CachedResourceRequest(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental)
     : m_cachedResourceLoader(cachedResourceLoader)
     , m_resource(resource)
     , m_incremental(incremental)
@@ -75,14 +75,14 @@ Loader::Loader(CachedResourceLoader* cachedResourceLoader, CachedResource* resou
     m_resource->setRequest(this);
 }
 
-Loader::~Loader()
+CachedResourceRequest::~CachedResourceRequest()
 {
     m_resource->setRequest(0);
 }
 
-PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
-    RefPtr<Loader> request = adoptRef(new Loader(cachedResourceLoader, resource, incremental));
+    RefPtr<CachedResourceRequest> request = adoptRef(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
     ResourceRequest resourceRequest(resource->url());
     resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
@@ -111,7 +111,7 @@ PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, Cach
     if (resource->type() == CachedResource::LinkPrefetch)
         resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
-    
+
     ResourceLoadPriority priority = resource->loadPriority();
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
@@ -131,12 +131,12 @@ PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, Cach
     return request.release();
 }
 
-void Loader::willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&)
+void CachedResourceRequest::willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&)
 {
     m_resource->setRequestedFromNetworkingLayer();
 }
 
-void Loader::didFinishLoading(SubresourceLoader* loader)
+void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader)
 {
     if (m_finishing)
         return;
@@ -163,14 +163,14 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
     m_cachedResourceLoader->loadDone(this);
 }
 
-void Loader::didFail(SubresourceLoader*, const ResourceError&)
+void CachedResourceRequest::didFail(SubresourceLoader*, const ResourceError&)
 {
     if (!m_loader)
         return;
     didFail();
 }
 
-void Loader::didFail(bool cancelled)
+void CachedResourceRequest::didFail(bool cancelled)
 {
     if (m_finishing)
         return;
@@ -199,7 +199,7 @@ void Loader::didFail(bool cancelled)
     m_cachedResourceLoader->loadDone(this);
 }
 
-void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
+void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
     ASSERT(loader == m_loader.get());
     if (m_resource->isCacheValidator()) {
@@ -247,7 +247,7 @@ void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceRespons
     }
 }
 
-void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int size)
+void CachedResourceRequest::didReceiveData(SubresourceLoader* loader, const char* data, int size)
 {
     ASSERT(loader == m_loader.get());
     ASSERT(!m_resource->isCacheValidator());
@@ -271,7 +271,7 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
         m_resource->data(loader->resourceData(), false);
 }
 
-void Loader::didReceiveCachedMetadata(SubresourceLoader*, const char* data, int size)
+void CachedResourceRequest::didReceiveCachedMetadata(SubresourceLoader*, const char* data, int size)
 {
     ASSERT(!m_resource->isCacheValidator());
     m_resource->setSerializedCachedMetadata(data, size);

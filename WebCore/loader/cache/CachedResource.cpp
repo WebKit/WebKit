@@ -30,6 +30,7 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceHandle.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
@@ -37,7 +38,6 @@
 #include "PurgeableBuffer.h"
 #include "ResourceHandle.h"
 #include "SharedBuffer.h"
-#include "loader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -225,7 +225,7 @@ CachedMetadata* CachedResource::cachedMetadata(unsigned dataTypeID) const
     return m_cachedMetadata.get();
 }
 
-void CachedResource::setRequest(Loader* request)
+void CachedResource::setRequest(CachedResourceRequest* request)
 {
     if (request && !m_request)
         m_status = Pending;

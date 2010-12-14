@@ -1059,6 +1059,7 @@ SOURCES += \
     loader/cache/CachedImage.cpp \
     loader/cache/CachedResourceClientWalker.cpp \
     loader/cache/CachedResourceHandle.cpp \
+    loader/cache/CachedResourceRequest.cpp \
     loader/cache/CachedResource.cpp \
     loader/cache/CachedScript.cpp \
     loader/cache/CachedXSLStyleSheet.cpp \
@@ -1076,7 +1077,6 @@ SOURCES += \
     loader/FTPDirectoryParser.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageLoader.cpp \
-    loader/loader.cpp \
     loader/MainResourceLoader.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \

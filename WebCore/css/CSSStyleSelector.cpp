@@ -90,7 +90,6 @@
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
 #include "XMLNames.h"
-#include "loader.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 

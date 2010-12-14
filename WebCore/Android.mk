@@ -357,6 +357,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/CrossOriginAccessControl.cpp \
 	loader/CrossOriginPreflightResultCache.cpp \
 	loader/cache/CachedResourceLoader.cpp \
+	loader/cache/CachedResourceRequest.cpp \
 	loader/DocumentLoader.cpp \
 	loader/DocumentThreadableLoader.cpp \
 	loader/DocumentWriter.cpp \
@@ -397,8 +398,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/icon/IconLoader.cpp \
 	loader/icon/IconRecord.cpp \
 	loader/icon/PageURLRecord.cpp \
-	\
-	loader/loader.cpp \
 	\
 	page/BarInfo.cpp \
 	page/Chrome.cpp \

@@ -24850,14 +24850,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\loader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\loader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\MainResourceLoader.cpp"
 				>
 			</File>
@@ -25242,6 +25234,14 @@
 				</File>
 				<File
 					RelativePath="..\loader\cache\CachedResourceLoader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceRequest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedResourceRequest.h"
 					>
 				</File>
 				<File

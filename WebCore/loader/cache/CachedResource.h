@@ -42,9 +42,9 @@ class CachedMetadata;
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
+class CachedResourceRequest;
 class Frame;
 class InspectorResource;
-class Loader;
 class PurgeableBuffer;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
@@ -153,7 +153,7 @@ public:
     void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
     bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
     
-    void setRequest(Loader*);
+    void setRequest(CachedResourceRequest*);
 
     SharedBuffer* data() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
@@ -219,7 +219,7 @@ protected:
 
     String m_url;
     String m_accept;
-    Loader* m_request;
+    CachedResourceRequest* m_request;
     ResourceLoadPriority m_loadPriority;
 
     ResourceResponse m_response;

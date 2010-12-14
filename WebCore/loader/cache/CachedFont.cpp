@@ -38,7 +38,6 @@
 #include "MemoryCache.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
-#include "loader.h"
 #include <wtf/Vector.h>
 
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA

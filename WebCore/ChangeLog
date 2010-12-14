@@ -1,3 +1,38 @@
+2010-12-14  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rename Loader to CachedResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=50848
+
+        No new tests, rename only.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setRequest):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::load):
+        (WebCore::CachedResourceLoader::loadDone):
+        (WebCore::CachedResourceLoader::cancelRequests):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp: Copied from WebCore/loader/loader.cpp.
+        * loader/cache/CachedResourceRequest.h: Copied from WebCore/loader/loader.h.
+        * loader/loader.cpp: Removed.
+        * loader/loader.h: Removed.
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+
 2010-12-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Tim Hatcher.

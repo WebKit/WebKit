@@ -37,7 +37,6 @@
 #include "Page.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
-#include "loader.h"
 #include "markup.h"
 
 #include <wtf/Assertions.h>

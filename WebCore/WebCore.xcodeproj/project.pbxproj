@@ -5071,8 +5071,6 @@
 		BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */; };
 		BCB16C290979C3BD00467741 /* CachedResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C100979C3BD00467741 /* CachedResourceLoader.cpp */; };
 		BCB16C2A0979C3BD00467741 /* CachedResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* CachedResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
-		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB773610C17853D00132BA4 /* JSNodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */; };
 		BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */; };
 		BCB773630C17853D00132BA4 /* JSNodeFilterCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */; };
@@ -5347,6 +5345,8 @@
 		D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */; };
 		D0CE58F8125E4CC200F3F199 /* ResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */; };
 		D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */; };
+		D0D141B312B2BF5200E39620 /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */; };
 		D0FF2A5D11F8C45A007E74E0 /* PingLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
@@ -11329,8 +11329,6 @@
 		BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedXSLStyleSheet.h; sourceTree = "<group>"; };
 		BCB16C100979C3BD00467741 /* CachedResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceLoader.cpp; sourceTree = "<group>"; };
 		BCB16C110979C3BD00467741 /* CachedResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceLoader.h; sourceTree = "<group>"; };
-		BCB16C130979C3BD00467741 /* loader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = loader.cpp; sourceTree = "<group>"; };
-		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCondition.cpp; sourceTree = "<group>"; };
 		BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilterCondition.h; sourceTree = "<group>"; };
 		BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
@@ -11632,6 +11630,8 @@
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
 		D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadScheduler.cpp; sourceTree = "<group>"; };
 		D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadScheduler.h; sourceTree = "<group>"; };
+		D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequest.cpp; sourceTree = "<group>"; };
+		D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequest.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
 		D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoader.h; sourceTree = "<group>"; };
 		D23CA5480AB0E983005108A5 /* RangeException.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = RangeException.idl; sourceTree = "<group>"; };
@@ -16597,6 +16597,8 @@
 				E47B4BE60E71241600038854 /* CachedResourceHandle.h */,
 				BCB16C100979C3BD00467741 /* CachedResourceLoader.cpp */,
 				BCB16C110979C3BD00467741 /* CachedResourceLoader.h */,
+				D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */,
+				D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */,
 				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
 				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
@@ -17859,8 +17861,6 @@
 				97DCE20010807C750057D394 /* HistoryController.h */,
 				089582530E857A7E00F82C83 /* ImageLoader.cpp */,
 				089582540E857A7E00F82C83 /* ImageLoader.h */,
-				BCB16C130979C3BD00467741 /* loader.cpp */,
-				BCB16C140979C3BD00467741 /* loader.h */,
 				93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */,
 				656D37290ADBA5DE00A4554D /* MainResourceLoader.h */,
 				93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */,
@@ -21180,7 +21180,6 @@
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
 				89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
-				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				89878568122CA064003AABDA /* LocalFileSystem.h in Headers */,
@@ -22209,6 +22208,7 @@
 				FDA15ECA12B03F50003A583A /* JSRealtimeAnalyserNode.h in Headers */,
 				FDA15ECE12B03F61003A583A /* JSJavaScriptAudioNode.h in Headers */,
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
+				D0D141B312B2BF5200E39620 /* CachedResourceRequest.h in Headers */,
 				6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */,
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
 				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
@@ -24006,7 +24006,6 @@
 				84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
-				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
 				89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */,
@@ -24881,6 +24880,7 @@
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,
 				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
 				BC51156E12B1749C00C96754 /* ScrollAnimatorMac.mm in Sources */,
+				D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */,
 				6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */,
 				6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */,
 				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,

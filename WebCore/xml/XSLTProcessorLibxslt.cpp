@@ -39,7 +39,6 @@
 #include "XSLStyleSheet.h"
 #include "XSLTExtensions.h"
 #include "XSLTUnicodeSort.h"
-#include "loader.h"
 #include "markup.h"
 #include <libxslt/imports.h>
 #include <libxslt/variables.h>

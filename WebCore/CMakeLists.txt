@@ -1204,7 +1204,6 @@ SET(WebCore_SOURCES
     loader/TextResourceDecoder.cpp
     loader/ThreadableLoader.cpp
     loader/WorkerThreadableLoader.cpp
-    loader/loader.cpp
 
     loader/appcache/ApplicationCache.cpp
     loader/appcache/ApplicationCacheGroup.cpp
@@ -1225,6 +1224,7 @@ SET(WebCore_SOURCES
     loader/cache/CachedResourceClientWalker.cpp
     loader/cache/CachedResourceHandle.cpp
     loader/cache/CachedResourceLoader.cpp
+    loader/cache/CachedResourceRequest.cpp
     loader/cache/CachedScript.cpp
     loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp

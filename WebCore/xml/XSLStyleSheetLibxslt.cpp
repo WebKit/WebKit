@@ -35,7 +35,6 @@
 #include "XMLDocumentParserScope.h"
 #include "XSLImportRule.h"
 #include "XSLTProcessor.h"
-#include "loader.h"
 #include <wtf/text/CString.h>
 
 #include <libxml/uri.h>

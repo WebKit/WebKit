@@ -2029,6 +2029,8 @@ webcore_sources += \
 	WebCore/loader/cache/CachedResourceHandle.h \
 	WebCore/loader/cache/CachedResourceLoader.cpp \
 	WebCore/loader/cache/CachedResourceLoader.h \
+	WebCore/loader/cache/CachedResourceRequest.cpp \
+	WebCore/loader/cache/CachedResourceRequest.h \
 	WebCore/loader/cache/CachedScript.cpp \
 	WebCore/loader/cache/CachedScript.h \
 	WebCore/loader/cache/CachedXSLStyleSheet.cpp \
@@ -2075,8 +2077,6 @@ webcore_sources += \
 	WebCore/loader/icon/PageURLRecord.h \
 	WebCore/loader/ImageLoader.cpp \
 	WebCore/loader/ImageLoader.h \
-	WebCore/loader/loader.cpp \
-	WebCore/loader/loader.h \
 	WebCore/loader/MainResourceLoader.cpp \
 	WebCore/loader/MainResourceLoader.h \
 	WebCore/loader/NavigationAction.cpp \
