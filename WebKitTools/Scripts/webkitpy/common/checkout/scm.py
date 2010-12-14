@@ -575,6 +575,38 @@ class SVN(SCM):
 class Git(SCM):
     def __init__(self, cwd):
         SCM.__init__(self, cwd)
+        self._check_git_architecture()
+
+    def _machine_is_64bit(self):
+        import platform
+        # This only is tested on Mac.
+        if not platform.mac_ver()[0]:
+            return False
+
+        # platform.architecture()[0] can be '64bit' even if the machine is 32bit:
+        # http://mail.python.org/pipermail/pythonmac-sig/2009-September/021648.html
+        # Use the sysctl command to find out what the processor actually supports.
+        return self.run(['sysctl', '-n', 'hw.cpu64bit_capable']).rstrip() == '1'
+
+    def _executable_is_64bit(self, path):
+        # Again, platform.architecture() fails us.  On my machine
+        # git_bits = platform.architecture(executable=git_path, bits='default')[0]
+        # git_bits is just 'default', meaning the call failed.
+        file_output = self.run(['file', path])
+        return re.search('x86_64', file_output)
+
+    def _check_git_architecture(self):
+        if not self._machine_is_64bit():
+            return
+
+        # We could path-search entirely in python or with
+        # which.py (http://code.google.com/p/which), but this is easier:
+        git_path = self.run(['which', 'git']).rstrip()
+        if self._executable_is_64bit(git_path):
+            return
+
+        webkit_dev_thead_url = "https://lists.webkit.org/pipermail/webkit-dev/2010-December/015249.html"
+        log("Warning: This machine is 64-bit, but the git binary (%s) does not support 64-bit.\nInstall a 64-bit git for better performance, see:\n%s\n" % (git_path, webkit_dev_thead_url))
 
     @classmethod
     def in_working_directory(cls, path):

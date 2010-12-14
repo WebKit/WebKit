@@ -1,3 +1,29 @@
+2010-12-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        webkit-patch should warn users when they're using a 32-bit git on a 64-bit system
+        https://bugs.webkit.org/show_bug.cgi?id=50715
+
+        This patch makes webkit-patch print the following:
+
+        Warning: This machine is 64-bit, but the git binary (/usr/local/git/bin/git) does not support 64-bit.
+        Install a 64-bit git for better performance, see:
+        https://lists.webkit.org/pipermail/webkit-dev/2010-December/015249.html
+
+        I wrote this mostly because I have approximately 8 machines that I use
+        and making sure each one is using a good Git install seemed folly.
+        webkit-patch makes a lot of git calls, so using a fast git can shave
+        several seconds in every invocation.  See the webkit-dev thread for more info.
+
+        This message will print twice during 'webkit-patch upload',
+        once from webkit-patch and once from check-webkit-style.
+
+        Unfortunately there is no good way to test this due to how machine-dependent
+        the code is.  I considered writing a test for the log message, but it seemed not worth it.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-12-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
