@@ -1,3 +1,15 @@
+2010-12-14  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove stale include of Document.h in V8DOMWrapper.h
+        https://bugs.webkit.org/show_bug.cgi?id=50607
+
+        We no longer need to include Document.h or V8DOMMap.h in
+        V8DOMWrapper.  Removing them to avoid dependencies.
+
+        * bindings/v8/V8DOMWrapper.h:
+
 2010-12-14  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Darin Adler.

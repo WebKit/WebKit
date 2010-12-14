@@ -31,14 +31,12 @@
 #ifndef V8DOMWrapper_h
 #define V8DOMWrapper_h
 
-#include "Document.h"
 #include "Event.h"
 #include "IsolatedWorld.h"
 #include "Node.h"
 #include "NodeFilter.h"
 #include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
-#include "V8DOMMap.h"
 #include "V8Event.h"
 #include "V8Utilities.h"
 #include "V8XPathNSResolver.h"
