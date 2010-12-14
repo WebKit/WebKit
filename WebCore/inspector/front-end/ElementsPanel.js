@@ -88,6 +88,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles.addEventListener("style edited", this._stylesPaneEdited, this);
     this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
+    WebInspector.cssModel.addEventListener("stylesheet changed", this._styleSheetChanged, this);
 
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
@@ -445,16 +446,21 @@ WebInspector.ElementsPanel.prototype = {
             this.updateBreadcrumb(true);
     },
 
-    _stylesPaneEdited: function()
+    _metricsPaneEdited: function()
     {
         this.sidebarPanes.metrics.needsUpdate = true;
         this.updateMetrics();
     },
 
-    _metricsPaneEdited: function()
+    _stylesPaneEdited: function()
     {
         this.sidebarPanes.styles.needsUpdate = true;
         this.updateStyles(true);
+    },
+
+    _styleSheetChanged: function()
+    {
+        this._stylesPaneEdited();
     },
 
     _mouseMovedInCrumbs: function(event)

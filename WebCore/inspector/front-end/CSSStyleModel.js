@@ -174,10 +174,13 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(success)
         {
             this._styleSheetChanged(styleSheetId, true);
+            this.dispatchEventToListeners("stylesheet changed");
         }
         InspectorBackend.setStyleSheetText2(styleSheetId, contentToRevertTo, callback.bind(this));
     }
 }
+
+WebInspector.CSSStyleModel.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.CSSStyleDeclaration = function(payload)
 {
