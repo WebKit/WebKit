@@ -1,3 +1,132 @@
+2010-12-13  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        Update iexploder from 1.3.2 to 1.7.2
+        Move 1.3.2 into its own subdir
+        Add 1.7.2 into its own subdir
+        update scripts to point to new 1.3.2 location (avoid breaking existing scripts)
+
+        * Scripts/run-iexploder-tests:
+        * Scripts/update-iexploder-cssproperties:
+        * iExploder/CHANGELOG.txt: Removed.
+        * iExploder/LICENSE.txt: Removed.
+        * iExploder/README.txt: Removed.
+        * iExploder/htdocs: Removed.
+        * iExploder/iexploder-1.3.2: Added.
+        * iExploder/iexploder-1.3.2/CHANGELOG.txt: Copied from iExploder/CHANGELOG.txt.
+        * iExploder/iexploder-1.3.2/LICENSE.txt: Copied from iExploder/LICENSE.txt.
+        * iExploder/iexploder-1.3.2/README.txt: Copied from iExploder/README.txt.
+        * iExploder/iexploder-1.3.2/htdocs: Added.
+        * iExploder/iexploder-1.3.2/htdocs/config.rb: Copied from iExploder/htdocs/config.rb.
+        * iExploder/iexploder-1.3.2/htdocs/cssproperties.in: Copied from iExploder/htdocs/cssproperties.in.
+        * iExploder/iexploder-1.3.2/htdocs/cssvalues.in: Copied from iExploder/htdocs/cssvalues.in.
+        * iExploder/iexploder-1.3.2/htdocs/htmlattrs.in: Copied from iExploder/htdocs/htmlattrs.in.
+        * iExploder/iexploder-1.3.2/htdocs/htmltags.in: Copied from iExploder/htdocs/htmltags.in.
+        * iExploder/iexploder-1.3.2/htdocs/htmlvalues.in: Copied from iExploder/htdocs/htmlvalues.in.
+        * iExploder/iexploder-1.3.2/htdocs/iexploder.cgi: Copied from iExploder/htdocs/iexploder.cgi.
+        * iExploder/iexploder-1.3.2/htdocs/iexploder.rb: Copied from iExploder/htdocs/iexploder.rb.
+        * iExploder/iexploder-1.3.2/htdocs/index.html: Copied from iExploder/htdocs/index.html.
+        * iExploder/iexploder-1.3.2/htdocs/webserver.rb: Copied from iExploder/htdocs/webserver.rb.
+        * iExploder/iexploder-1.3.2/tools: Added.
+        * iExploder/iexploder-1.3.2/tools/lasthit.rb: Copied from iExploder/tools/lasthit.rb.
+        * iExploder/iexploder-1.3.2/tools/osx_last_crash.rb: Copied from iExploder/tools/osx_last_crash.rb.
+        * iExploder/iexploder-1.3.2/tools/showtest.rb: Copied from iExploder/tools/showtest.rb.
+        * iExploder/iexploder-1.7.2: Added.
+        * iExploder/iexploder-1.7.2/ChangeLog.txt: Added.
+        * iExploder/iexploder-1.7.2/LICENSE.txt: Added.
+        * iExploder/iexploder-1.7.2/README.txt: Added.
+        * iExploder/iexploder-1.7.2/output: Added.
+        * iExploder/iexploder-1.7.2/src: Added.
+        * iExploder/iexploder-1.7.2/src/browser_harness.rb: Added.
+        * iExploder/iexploder-1.7.2/src/config.yaml: Added.
+        * iExploder/iexploder-1.7.2/src/css-atrules: Added.
+        * iExploder/iexploder-1.7.2/src/css-atrules/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/css-atrules/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties/internet_explorer6: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/css-properties/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/css-pseudo: Added.
+        * iExploder/iexploder-1.7.2/src/css-pseudo/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/css-pseudo/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/css-values: Added.
+        * iExploder/iexploder-1.7.2/src/css-values/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/css-values/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/css-values/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/css-values/other: Added.
+        * iExploder/iexploder-1.7.2/src/css-values/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/headers: Added.
+        * iExploder/iexploder-1.7.2/src/headers/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/headers/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/headers/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/headers/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/internet_explorer6: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/other: Added.
+        * iExploder/iexploder-1.7.2/src/html-attrs/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags/other: Added.
+        * iExploder/iexploder-1.7.2/src/html-tags/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/html-values: Added.
+        * iExploder/iexploder-1.7.2/src/html-values/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/html-values/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/html-values/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/html-values/other: Added.
+        * iExploder/iexploder-1.7.2/src/html-values/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/iexploder.cgi: Added.
+        * iExploder/iexploder-1.7.2/src/iexploder.rb: Added.
+        * iExploder/iexploder-1.7.2/src/index.html: Added.
+        * iExploder/iexploder-1.7.2/src/media: Added.
+        * iExploder/iexploder-1.7.2/src/media/blank.ogg: Added.
+        * iExploder/iexploder-1.7.2/src/media/blank.snd: Added.
+        * iExploder/iexploder-1.7.2/src/media/blank.wav: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.bmp: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.gif: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.ico: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.jng: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.jpg: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.png: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.svg: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.tiff: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.xbm: Added.
+        * iExploder/iexploder-1.7.2/src/media/bug.xpm: Added.
+        * iExploder/iexploder-1.7.2/src/mime-types: Added.
+        * iExploder/iexploder-1.7.2/src/mime-types/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/mime-types/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/mime-types/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/protocols: Added.
+        * iExploder/iexploder-1.7.2/src/protocols/dillo: Added.
+        * iExploder/iexploder-1.7.2/src/protocols/gtkhtml: Added.
+        * iExploder/iexploder-1.7.2/src/protocols/mozilla: Added.
+        * iExploder/iexploder-1.7.2/src/protocols/webkit: Added.
+        * iExploder/iexploder-1.7.2/src/scanner.rb: Added.
+        * iExploder/iexploder-1.7.2/src/version.rb: Added.
+        * iExploder/iexploder-1.7.2/src/webserver.rb: Added.
+        * iExploder/iexploder-1.7.2/testcases: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-Linux_x86_64_rv2.0b6pre_Gecko-20100904_Firefox-4.0b6pre-TEST-8375-1_59.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-Opera-9.80_Linux_x86_64_en_Presto-2.6.30_Version-10.61-16704-3_108,3.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Intel_Mac_OS_X_10_6_4_en-US_AppleWebKit-534.8_Chrome-7.0.529.0-TEST-611-3_36,9.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Intel_Mac_OS_X_10_6_4_en-US_AppleWebKit-534.8_hrome-7.0.529.0-TEST-55313622206-3_6,0.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Linux_x86_64_en-US_AppleWebKit-534.6_Chrome-7.0.503.1-TEST-120813-8_72,56,24,8,0.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Linux_x86_64_en-US_AppleWebKit-534.6_Chrome-7.0.503.1-TEST-121240-3_81,3.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Linux_x86_64_en-US_AppleWebKit-534.7_Chrome-7.0.513.0-4800-5_80,65,15.html: Added.
+        * iExploder/iexploder-1.7.2/testcases/testcase-U_Linux_x86_64_en-US_AppleWebKit-534.7_Chrome-7.0.513.0-TEST-23583190347-3_15,12.html: Added.
+        * iExploder/iexploder-1.7.2/tools: Added.
+        * iExploder/iexploder-1.7.2/tools/lasthit.rb: Added.
+        * iExploder/iexploder-1.7.2/tools/osx_last_crash.rb: Added.
+        * iExploder/iexploder-1.7.2/tools/release_src.sh: Added.
+        * iExploder/iexploder-1.7.2/tools/update_html_tags_from_sources.sh: Added.
+        * iExploder/tools: Removed.
+
 2010-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
