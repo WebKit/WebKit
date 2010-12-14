@@ -1,3 +1,14 @@
+2010-12-13  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Update chromium DEPS to pull in latest Skia
+        https://bugs.webkit.org/show_bug.cgi?id=50984
+
+        Roll to revision that pulled in Skia r632 (http://src.chromium.org/viewvc/chrome?view=rev&revision=68558) 
+
+        * DEPS:
+
 2010-12-13  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Eric Seidel.
