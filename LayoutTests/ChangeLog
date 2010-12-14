@@ -1,3 +1,19 @@
+2010-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Updated Leopard-specific results after r73993.
+
+        * platform/mac-leopard/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac-leopard/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac-leopard/fast/text/international/thai-baht-space-expected.txt:
+        * platform/mac-leopard/platform/mac/editing/input/devanagari-ligature-expected.txt:
+
 2010-12-13  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.
