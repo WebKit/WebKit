@@ -4129,7 +4129,7 @@ void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
 }
 
 /**
- * webkit_web_view_cut_clipboard:
+ * webkit_web_view_can_cut_clipboard:
  * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to cut to the clipboard.
@@ -4145,7 +4145,7 @@ gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
 }
 
 /**
- * webkit_web_view_copy_clipboard:
+ * webkit_web_view_can_copy_clipboard:
  * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to copy to the clipboard.
@@ -4161,7 +4161,7 @@ gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
 }
 
 /**
- * webkit_web_view_paste_clipboard:
+ * webkit_web_view_can_paste_clipboard:
  * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to paste from the clipboard.

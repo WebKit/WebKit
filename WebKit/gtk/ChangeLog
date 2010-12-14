@@ -1,3 +1,12 @@
+2010-12-14  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [gtk] misnamed gtk-doc strings for webkit_web_view_can_{c|c|p}_clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=50571
+
+        * webkit/webkitwebview.cpp:
+
 2010-12-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
