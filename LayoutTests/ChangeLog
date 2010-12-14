@@ -1,3 +1,9 @@
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviwed. Chromium expectations updated.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
