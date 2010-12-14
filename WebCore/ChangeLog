@@ -1,3 +1,10 @@
+2010-12-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix GTK build by adding source files that were accidentally skipped in
+        r74044. Sorry!
+
+        * GNUmakefile.am: Added SliderThumbElement.
+
 2010-12-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

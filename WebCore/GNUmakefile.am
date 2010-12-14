@@ -1865,6 +1865,8 @@ webcore_sources += \
 	WebCore/html/parser/TextDocumentParser.h \
 	WebCore/html/parser/TextViewSourceParser.cpp \
 	WebCore/html/parser/TextViewSourceParser.h \
+	WebCore/html/shadow/SliderThumbElement.cpp \
+	WebCore/html/shadow/SliderThumbElement.h \
 	WebCore/html/PasswordInputType.cpp \
 	WebCore/html/PasswordInputType.h \
 	WebCore/html/PluginDocument.cpp \
