@@ -3023,9 +3023,6 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
 
-// Was introduced by ap http://trac.webkit.org/changeset/72590
-BUG_LOISLO : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
-
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 

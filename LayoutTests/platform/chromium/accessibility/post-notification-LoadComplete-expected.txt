@@ -1,2 +1,0 @@
-AccessibilityNotification - LoadComplete
-This tests that chromium correctly recieves the LoadComplete notification.

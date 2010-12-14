@@ -1,5 +1,42 @@
 2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Removed obsolete chromium expectations.
+
+        * platform/chromium/accessibility/post-notification-ActiveDescendantChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-ActiveDescendantChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-CheckedStateChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-CheckedStateChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-ChildrenChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-ChildrenChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-LayoutComplete-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-LayoutComplete.html: Removed.
+        * platform/chromium/accessibility/post-notification-LiveRegionChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-LiveRegionChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-LoadComplete-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-LoadComplete.html: Removed.
+        * platform/chromium/accessibility/post-notification-MenuListValueChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-MenuListValueChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-RowCollapsed-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-RowCollapsed.html: Removed.
+        * platform/chromium/accessibility/post-notification-RowCountChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-RowCountChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-RowExpanded-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-RowExpanded.html: Removed.
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor.html: Removed.
+        * platform/chromium/accessibility/post-notification-SelectedChildrenChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-SelectedChildrenChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification-ValueChanged-expected.txt: Removed.
+        * platform/chromium/accessibility/post-notification-ValueChanged.html: Removed.
+        * platform/chromium/accessibility/post-notification.js: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2010-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. More chromium rebaselines.
 
         * platform/chromium-mac/fast/text/complex-text-opacity-expected.checksum: Added.
