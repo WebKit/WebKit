@@ -1,3 +1,13 @@
+2010-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8763862>
+        r72017 used incorrect compiler conditional.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+
 2010-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
