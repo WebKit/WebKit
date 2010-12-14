@@ -109,7 +109,7 @@ PassRefPtr<Loader> Loader::load(CachedResourceLoader* cachedResourceLoader, Cach
     
 #if ENABLE(LINK_PREFETCH)
     if (resource->type() == CachedResource::LinkPrefetch)
-        resourceRequest.setHTTPHeaderField("X-Purpose", "prefetch");
+        resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
     
     ResourceLoadPriority priority = resource->loadPriority();

@@ -1,4 +1,4 @@
-<?php setcookie("Purpose", $_SERVER["HTTP_X_PURPOSE"]);
+<?php setcookie("Purpose", $_SERVER["HTTP_PURPOSE"]);
 
 if (isset($_COOKIE['Purpose'])) {
     setcookie("Purpose", "", time() - 3600);
