@@ -1,3 +1,17 @@
+2010-12-13  Antonio Gomes  <agomes@rim.com>
+
+        Rubber stamped by Daniel Bates.
+
+        Spatial Navigation: code clean up (part V)
+        https://bugs.webkit.org/show_bug.cgi?id=50666
+
+        No new tests needed.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::distanceDataForNode): Made 'FocusCandidate current' const since it is not
+        supposed to change within this function.
+        * page/SpatialNavigation.h: Ditto.
+
 2010-12-13  takano takumi  <takano@apple.com>
 
         Reviewed by Dan Bernstein.

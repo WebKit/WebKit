@@ -141,7 +141,7 @@ bool scrollInDirection(Node* container, FocusDirection);
 bool canScrollInDirection(FocusDirection, const Node* container);
 bool canScrollInDirection(FocusDirection, const Frame*);
 bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
-void distanceDataForNode(FocusDirection, FocusCandidate& current, FocusCandidate& candidate);
+void distanceDataForNode(FocusDirection, const FocusCandidate& current, FocusCandidate& candidate);
 Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, Node*);
 IntRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
 IntRect frameRectInAbsoluteCoordinates(Frame*);

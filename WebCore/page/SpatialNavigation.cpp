@@ -592,7 +592,7 @@ void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& sta
     }
 }
 
-void distanceDataForNode(FocusDirection direction, FocusCandidate& current, FocusCandidate& candidate)
+void distanceDataForNode(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate)
 {
     if (candidate.isNull())
         return;
