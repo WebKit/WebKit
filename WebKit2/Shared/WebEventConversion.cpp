@@ -179,6 +179,9 @@ public:
         case WebPlatformTouchPoint::TouchStationary:
             m_state = PlatformTouchPoint::TouchStationary;
             break;
+        case WebPlatformTouchPoint::TouchCancelled:
+            m_state = PlatformTouchPoint::TouchCancelled;
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
@@ -201,6 +204,9 @@ public:
             break;
         case WebEvent::TouchEnd: 
             m_type = WebCore::TouchEnd; 
+            break;
+        case WebEvent::TouchCancel:
+            m_type = WebCore::TouchCancel;
             break;
         default:
             ASSERT_NOT_REACHED();

@@ -1,3 +1,22 @@
+2010-12-14  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKit 2 does not send touch cancel events correctly between processes
+        https://bugs.webkit.org/show_bug.cgi?id=50235
+
+        The classes WebKit2PlatformTouchPoint and WebKit2PlatformTouchEvent
+        misses the conversion of TouchCancel events and points.
+
+        This patch add the missing enums when converting from a WebTouchEvent
+        to a PlatformTouchEvent.
+
+        Testing is already covered by fast/events/touch/send-oncancel-event.html
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchPoint::WebKit2PlatformTouchPoint):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+
 2010-12-14  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
