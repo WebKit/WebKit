@@ -225,7 +225,7 @@ static bool getStringListResource(ResID resourceID, Vector<String>& stringList) 
     Size stringListSize = GetHandleSize(stringListHandle);
     if (stringListSize < static_cast<Size>(sizeof(UInt16)))
         return false;
-  
+
     CFStringEncoding stringEncoding = stringEncodingForResource(stringListHandle);
 
     unsigned char* ptr = reinterpret_cast<unsigned char*>(*stringListHandle);
@@ -234,7 +234,7 @@ static bool getStringListResource(ResID resourceID, Vector<String>& stringList) 
     // Get the number of strings in the string list.
     UInt16 numStrings = *reinterpret_cast<UInt16*>(ptr);
     ptr += sizeof(UInt16);
-                  
+
     for (UInt16 i = 0; i < numStrings; ++i) {
         // We're past the end of the string, bail.
         if (ptr >= end)
@@ -267,9 +267,9 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
     if (!resourceMap.isValid())
         return false;
 
-    // Get the name and description string list.
-    Vector<String> nameAndDescription;
-    if (!getStringListResource(PluginNameOrDescriptionStringNumber, nameAndDescription))
+    // Get the description and name string list.
+    Vector<String> descriptionAndName;
+    if (!getStringListResource(PluginNameOrDescriptionStringNumber, descriptionAndName))
         return false;
 
     // Get the MIME types and extensions string list. This list needs to be a multiple of two.
@@ -309,11 +309,11 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
         pluginInfo.mimes.append(mimeClassInfo);
     }
 
-    // Set the name and description if they exist.
-    if (nameAndDescription.size() > 0)
-        pluginInfo.name = nameAndDescription[0];
-    if (nameAndDescription.size() > 1)
-        pluginInfo.desc = nameAndDescription[1];
+    // Set the description and name if they exist.
+    if (descriptionAndName.size() > 0)
+        pluginInfo.desc = descriptionAndName[0];
+    if (descriptionAndName.size() > 1)
+        pluginInfo.name = descriptionAndName[1];
 
     return true;
 }
