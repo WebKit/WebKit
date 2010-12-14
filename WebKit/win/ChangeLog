@@ -1,3 +1,24 @@
+2010-12-14  Adam Roben  <aroben@apple.com>
+
+        Always record the last-set cursor, even when the UI delegate is
+        setting the cursor for us
+
+        Prior to r63339, the last-set cursor was recorded in Widget::setCursor.
+        r63339 moved that code up to WebChromeClient, but failed to call it
+        when the UI delegate was the one setting the cursor.
+
+        Fixes <http://webkit.org/b/45692> <rdar://problem/8423464> REGRESSION
+        (r63339): Mouse cursor disappears when holding mouse button down on
+        page
+
+        Reviewed by Ada Chan.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::setCursor): After the cursor is set, regardless of
+        whether the UI delegate sets it or we set it, record the cursor that
+        was just set. That way we'll be able to use the cursor later when
+        responding to the WM_SETCURSOR message.
+
 2010-12-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

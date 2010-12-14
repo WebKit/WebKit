@@ -797,17 +797,19 @@ void WebChromeClient::setCursor(const Cursor& cursor)
     if (!platformCursor)
         return;
 
+    bool shouldSetCursor = true;
     if (COMPtr<IWebUIDelegate> delegate = uiDelegate()) {
         COMPtr<IWebUIDelegatePrivate> delegatePrivate(Query, delegate);
         if (delegatePrivate) {
             if (SUCCEEDED(delegatePrivate->webViewSetCursor(m_webView, reinterpret_cast<OLE_HANDLE>(platformCursor))))
-                return;
+                shouldSetCursor = false;
         }
     }
 
-    m_webView->setLastCursor(platformCursor);
-    ::SetCursor(platformCursor);
-    return;
+    if (shouldSetCursor)
+        ::SetCursor(platformCursor);
+
+    setLastSetCursorToCurrentCursor();
 }
 
 void WebChromeClient::setLastSetCursorToCurrentCursor()
