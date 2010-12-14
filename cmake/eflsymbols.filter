@@ -1,0 +1,6 @@
+{
+        global:
+                ewk_*;
+        local:
+                *;
+};

@@ -1,3 +1,18 @@
+2010-12-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add linker script to export less symbols
+        https://bugs.webkit.org/show_bug.cgi?id=44609
+
+        Filter the exported symbols by using a linker script. Only symbols
+        starting with "ewk_" are exported.
+
+        * cmake/OptionsEfl.cmake: Pass linker option to use a version script
+        when linking webkit.
+        * cmake/eflsymbols.filter: Added. Export only symbols starting with
+        "ewk_" (C linkage).
+
 2010-12-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix for EFL.
