@@ -1,3 +1,13 @@
+2010-12-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Reverted stylesheet breaks style data
+        https://bugs.webkit.org/show_bug.cgi?id=51030
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::reparseStyleSheet):
+
 2010-12-14  Mads Ager  <ager@chromium.org>
 
         Reviewed by Pavel Feldman.

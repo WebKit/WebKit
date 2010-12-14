@@ -55,6 +55,11 @@ body.mainpage: []
 ['text-decoration':'none'] @[5-27] active
 ['badproperty':'1badvalue1' non-parsed] @[107-131] active
 
+rule
+body.mainpage: []
+['prop1':'val1' non-parsed] @[5-17] active
+['prop2':'val2' non-parsed] @[22-34] active
+
 === Pseudo rules for body ===
 PseudoId=4
 
@@ -188,12 +193,22 @@ body.mainpage {
     badproperty: 1badvalue1;
 }
 
+body.mainpage {
+    prop1: val1;
+    prop2: val2;
+}
+
 '
 
 rule
 body.mainpage: []
 ['text-decoration':'none'] @[5-27] active
 ['badproperty':'1badvalue1' non-parsed] @[107-131] active
+
+rule
+body.mainpage: []
+['prop1':'val1' non-parsed] @[5-17] active
+['prop2':'val2' non-parsed] @[22-34] active
 
 === Last stylesheet patched ===
 
