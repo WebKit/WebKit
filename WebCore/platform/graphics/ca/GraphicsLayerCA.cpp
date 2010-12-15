@@ -1149,10 +1149,21 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     FloatPoint point(m_size.width() / 2.0f, m_size.height() / 2.0f);
+    FloatPoint3D anchorPoint(0.5f, 0.5f, 0);
     m_layer->setPosition(point);
-    m_layer->setAnchorPoint(FloatPoint3D(0.5f, 0.5f, 0));
+    m_layer->setAnchorPoint(anchorPoint);
     m_layer->setTransform(TransformationMatrix());
     m_layer->setOpacity(1);
+    if (m_layerClones) {
+        LayerMap::const_iterator end = m_layerClones->end();
+        for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it) {
+            PlatformCALayer* currLayer = it->second.get();
+            currLayer->setPosition(point);
+            currLayer->setAnchorPoint(anchorPoint);
+            currLayer->setTransform(TransformationMatrix());
+            currLayer->setOpacity(1);
+        }
+    }
 
     // Move this layer to be a child of the transform layer.
     m_layer->superlayer()->replaceSublayer(m_layer.get(), m_structuralLayer.get());

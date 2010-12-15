@@ -1,3 +1,21 @@
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Reflection does not render properly when -webkit-transform is toggled, untoggled, and retoggled
+        https://bugs.webkit.org/show_bug.cgi?id=50967
+        
+        If a reflection on a compositied, transformed element is toggled on, off and on,
+        then we pick up a cached layer clone that has the wrong transform set on it.
+        
+        The fix is to reset those properties on the layer clones that get changed
+        when the GraphicsLayer gains a structural layer (for reflection flattening).
+
+        Test: compositing/reflections/remove-add-reflection.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+
 2010-12-15  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

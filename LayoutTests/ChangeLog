@@ -1,3 +1,17 @@
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Reflection does not render properly when -webkit-transform is toggled, untoggled, and retoggled
+        https://bugs.webkit.org/show_bug.cgi?id=50967
+
+        Testcase for toggled reflection on transformed element.
+        
+        * compositing/reflections/remove-add-reflection-expected.checksum: Added.
+        * compositing/reflections/remove-add-reflection-expected.png: Added.
+        * compositing/reflections/remove-add-reflection-expected.txt: Added.
+        * compositing/reflections/remove-add-reflection.html: Added.
+
 2010-12-15  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.
