@@ -143,7 +143,7 @@ public:
     void didMoveOnscreen();
     void willMoveOffscreen();
     
-    void didStartAcceleratedAnimation();
+    void didStartAcceleratedAnimation(CSSPropertyID);
     
 #if ENABLE(VIDEO)
     // Use by RenderVideo to ask if it should try to use accelerated compositing.

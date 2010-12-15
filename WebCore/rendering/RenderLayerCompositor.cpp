@@ -1063,12 +1063,13 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
 }
 
-void RenderLayerCompositor::didStartAcceleratedAnimation()
+void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)
 {
     // If an accelerated animation or transition runs, we have to turn off overlap checking because
     // we don't do layout for every frame, but we have to ensure that the layering is
     // correct between the animating object and other objects on the page.
-    setCompositingConsultsOverlap(false);
+    if (property == CSSPropertyWebkitTransform)
+        setCompositingConsultsOverlap(false);
 }
 
 bool RenderLayerCompositor::has3DContent() const

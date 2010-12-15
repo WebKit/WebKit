@@ -1140,20 +1140,20 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
             opacityVector.insert(new FloatAnimationValue(key, keyframeStyle->opacity(), tf));
     }
 
-    bool didAnimateTransform = !hasTransform;
-    bool didAnimateOpacity = !hasOpacity;
+    bool didAnimateTransform = false;
+    bool didAnimateOpacity = false;
     
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), anim, keyframes.animationName(), timeOffset)) {
         didAnimateTransform = true;
+        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitTransform);
+    }
 
-    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
+    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset)) {
         didAnimateOpacity = true;
-    
-    bool runningAcceleratedAnimation = didAnimateTransform && didAnimateOpacity;
-    if (runningAcceleratedAnimation)
-        compositor()->didStartAcceleratedAnimation();
+        compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
+    }
 
-    return runningAcceleratedAnimation;
+    return didAnimateTransform || didAnimateOpacity;
 }
 
 void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
@@ -1168,7 +1168,8 @@ void RenderLayerBacking::animationFinished(const String& animationName)
 
 bool RenderLayerBacking::startTransition(double timeOffset, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
 {
-    bool didAnimate = false;
+    bool didAnimateOpacity = false;
+    bool didAnimateTransform = false;
     ASSERT(property != cAnimateAll);
 
     if (property == (int)CSSPropertyOpacity) {
@@ -1181,7 +1182,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
             if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
                 // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
                 updateLayerOpacity(toStyle);
-                didAnimate = true;
+                didAnimateOpacity = true;
             }
         }
     }
@@ -1195,15 +1196,18 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
             if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final opacity.
                 updateLayerTransform(toStyle);
-                didAnimate = true;
+                didAnimateTransform = true;
             }
         }
     }
 
-    if (didAnimate)
-        compositor()->didStartAcceleratedAnimation();
+    if (didAnimateOpacity)
+        compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
+
+    if (didAnimateTransform)
+        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitTransform);
     
-    return didAnimate;
+    return didAnimateOpacity || didAnimateTransform;
 }
 
 void RenderLayerBacking::transitionPaused(double timeOffset, int property)
