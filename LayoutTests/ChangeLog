@@ -1,3 +1,9 @@
+2010-12-15  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed.  Adjusting v8-dependent test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
