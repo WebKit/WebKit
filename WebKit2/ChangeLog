@@ -1,5 +1,11 @@
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * win/WebKit2Common.vsprops:
+
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
         Fix Qt build.
 
         * WebKit2.pro:
