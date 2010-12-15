@@ -2236,12 +2236,9 @@ BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html =
 
 // might have been flaky
 BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
-BUGJAMESR WIN RELEASE : svg/filters/filter-source-position.svg = IMAGE
+BUGJAMESR WIN : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR MAC LINUX : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUGCR30048 BUGCR29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
-
-// Text difference started at the roll r73456:r73487.
-BUG_YUTAK WIN DEBUG : svg/filters/filter-source-position.svg = IMAGE+TEXT
 
 // New layoutTestController function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
