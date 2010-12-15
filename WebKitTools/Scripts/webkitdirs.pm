@@ -1352,8 +1352,6 @@ sub buildAutotoolsProject($@)
             $makeArgs = $makeArgs . " " . $1;
         } elsif ($opt =~ /^--prefix=(.*)/i ) {
             $prefix = $1;
-        } elsif ($opt =~ /^--webkit2/i ) {
-            push @buildArgs, "--enable-webkit2";
         } else {
             push @buildArgs, $opt;
         }

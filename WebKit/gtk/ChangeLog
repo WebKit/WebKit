@@ -1,3 +1,14 @@
+2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74117.
+        http://trac.webkit.org/changeset/74117
+        https://bugs.webkit.org/show_bug.cgi?id=51113
+
+        This broke the GTK1 build. (Requested by mrobinson on
+        #webkit).
+
+        * GNUmakefile.am:
+
 2010-12-15  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Reviewed by Martin Robinson.

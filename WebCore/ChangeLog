@@ -1,3 +1,15 @@
+2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74117.
+        http://trac.webkit.org/changeset/74117
+        https://bugs.webkit.org/show_bug.cgi?id=51113
+
+        This broke the GTK1 build. (Requested by mrobinson on
+        #webkit).
+
+        * GNUmakefile.am:
+        * platform/network/soup/cache/webkit/soup-cache.h:
+
 2010-12-15  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Fixed a clang compiling error by making the forward
