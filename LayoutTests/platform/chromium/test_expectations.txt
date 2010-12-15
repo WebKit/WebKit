@@ -786,8 +786,8 @@ BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-seekable-stall.html = TIMEOU
 BUGCR13907 BUGCR60355 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
 BUGCR13907 BUGCR60355 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
 BUGCR13907 BUGCR60355 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
-// KNOWNISSUE : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
-BUGCR59635 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
+// UNIMPLEMENTED : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
+BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 
 // video.buffered multiple TimeRanges support.
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
@@ -841,8 +841,8 @@ BUGCR13907 BUGCR25375 : media/video-controls-transformed.html = FAIL
 
 // We haven't implemented the WebKit fullscreen extension.
 // UNIMPLEMENTED
-BUGCR16735 : media/media-fullscreen-inline.html = TIMEOUT
-BUGCR16735 : media/media-fullscreen-not-in-document.html = TIMEOUT
+BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
+BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
@@ -850,12 +850,12 @@ BUGCR28301 : media/media-captions.html = TIMEOUT
 
 // We haven't implemented reverse audio/video playback.
 // UNIMPLEMENTED BUGCR33099 Implement reverse audio/video playback
-BUGCR33099 : media/video-reverse-play-duration.html = TIMEOUT
-BUGCR33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
+BUGCR33099 SKIP : media/video-reverse-play-duration.html = TIMEOUT
+BUGCR33099 SKIP : media/video-timeupdate-reverse-play.html = TIMEOUT
 
 // We haven't implemented video preloading and it passing is a false positive.
 // UNIMPLEMENTED
-BUGWK16482 : media/video-preload.html = PASS FAIL
+BUGWK16482 SKIP : media/video-preload.html = PASS FAIL
 
 // Does not display courier for the letters, as the test requests.
 BUGCR10278 LINUX : fast/css/font-face-implicit-local-font.html = FAIL
@@ -3126,7 +3126,7 @@ BUGCR59665 MAC : media/video-pause-immediately.html = CRASH PASS
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
-BUGCR59665 BUGWK45021 : media/context-menu-actions.html = CRASH TIMEOUT PASS
+BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-timeupdate-during-playback.html = CRASH TIMEOUT PASS
 
 // Also fails on the mac port; see http://webkit.org/b/34331
