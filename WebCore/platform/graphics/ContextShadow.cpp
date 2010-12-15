@@ -41,6 +41,7 @@ ContextShadow::ContextShadow()
     : m_type(NoShadow)
     , m_blurDistance(0)
     , m_layerContext(0)
+    , m_shadowsIgnoreTransforms(false)
 {
 }
 
@@ -49,6 +50,7 @@ ContextShadow::ContextShadow(const Color& color, float radius, const FloatSize& 
     , m_blurDistance(round(radius))
     , m_offset(offset)
     , m_layerContext(0)
+    , m_shadowsIgnoreTransforms(false)
 {
     // See comments in http://webkit.org/b/40793, it seems sensible
     // to follow Skia's limit of 128 pixels of blur radius
@@ -149,6 +151,67 @@ void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size
     }
 }
 
+#if PLATFORM(QT)
+IntRect ContextShadow::calculateLayerBoundingRect(const PlatformContext p, const FloatRect& layerArea, const IntRect& clipRect)
+{
+    // Calculate the destination of the blurred and/or transformed layer.
+    FloatRect layerFloatRect;
+    float inflation = 0;
+
+    const QTransform transform = p->transform();
+    if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
+        QPolygonF transformedPolygon = transform.map(QPolygonF(layerArea));
+        transformedPolygon.translate(offset());
+        layerFloatRect = transform.inverted().map(transformedPolygon).boundingRect();
+    } else {
+        layerFloatRect = layerArea;
+        layerFloatRect.move(m_offset);
+    }
+
+    // We expand the area by the blur radius to give extra space for the blur transition.
+    if (m_type == BlurShadow) {
+        layerFloatRect.inflate(m_blurDistance);
+        inflation += m_blurDistance;
+    }
+
+    FloatRect unclippedLayerRect = layerFloatRect;
+
+    if (!clipRect.contains(enclosingIntRect(layerFloatRect))) {
+        // No need to have the buffer larger than the clip.
+        layerFloatRect.intersect(clipRect);
+
+        // If we are totally outside the clip region, we aren't painting at all.
+        if (layerFloatRect.isEmpty())
+            return IntRect(0, 0, 0, 0);
+
+        // We adjust again because the pixels at the borders are still
+        // potentially affected by the pixels outside the buffer.
+        if (m_type == BlurShadow) {
+            layerFloatRect.inflate(m_blurDistance);
+            unclippedLayerRect.inflate(m_blurDistance);
+            inflation += m_blurDistance;
+        }
+    }
+
+    const int frameSize = inflation * 2;
+    m_sourceRect = IntRect(0, 0, layerArea.width() + frameSize, layerArea.height() + frameSize);
+
+    m_layerOrigin = FloatPoint(layerFloatRect.x(), layerFloatRect.y());
+
+    const FloatPoint m_unclippedLayerOrigin = FloatPoint(unclippedLayerRect.x(), unclippedLayerRect.y());
+    const FloatSize clippedOut = m_unclippedLayerOrigin - m_layerOrigin;
+
+    // Set the origin as the top left corner of the scratch image, or, in case there's a clipped
+    // out region, set the origin accordingly to the full bounding rect's top-left corner.
+    const float translationX = -layerArea.x() + inflation - fabsf(clippedOut.width());
+    const float translationY = -layerArea.y() + inflation - fabsf(clippedOut.height());
+    m_layerContextTranslation = FloatPoint(translationX, translationY);
+
+    return enclosingIntRect(layerFloatRect);
+}
+#endif
+
+#if PLATFORM(CAIRO)
 void ContextShadow::calculateLayerBoundingRect(const FloatRect& layerArea, const IntRect& clipRect)
 {
     // Calculate the destination of the blurred layer.
@@ -173,5 +236,6 @@ void ContextShadow::calculateLayerBoundingRect(const FloatRect& layerArea, const
             m_layerRect.inflate(m_type == BlurShadow ? m_blurDistance : 0);
     }
 }
+#endif
 
 } // namespace WebCore

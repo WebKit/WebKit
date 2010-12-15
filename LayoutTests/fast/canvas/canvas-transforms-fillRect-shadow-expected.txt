@@ -1,4 +1,4 @@
-Ensure correct behavior of canvas with path stroke + shadow after scaling. A blue and red checkered pattern should be displayed.
+Ensure correct behavior of canvas with fillRect+shadow after translation+rotation+scaling. A blue and red checkered pattern should be displayed.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -18,39 +18,39 @@ PASS d[3] is 255
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 76
+PASS d[3] is around 127
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 76
+PASS d[3] is around 127
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 76
+PASS d[3] is around 127
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 149
+PASS d[3] is around 106
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 116
+PASS d[3] is around 106
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 115
+PASS d[3] is around 83
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 70
+PASS d[3] is around 36
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 70
+PASS d[3] is around 36
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-PASS d[3] is around 69
+PASS d[3] is around 36
 PASS successfullyParsed is true
 
 TEST COMPLETE

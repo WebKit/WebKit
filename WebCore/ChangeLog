@@ -1,3 +1,41 @@
+2010-12-15  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Canvas shadow offset should not be affected by any transformation
+        https://bugs.webkit.org/show_bug.cgi?id=50422
+
+        On a canvas context, shadows are currently affected by all
+        transformations except scaling. According to the spec:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#shadows
+
+        "The shadowOffsetX and shadowOffsetY attributes specify the distance
+        that the shadow will be offset in the positive horizontal and positive
+        vertical distance respectively. Their values are in coordinate space
+        units. They are not affected by the current transformation matrix."
+
+        NOTE: this applies only to canvas, not to box shadows.
+
+        Test: fast/canvas/canvas-transforms-fillRect-shadow.html
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::ContextShadow):
+        (WebCore::ContextShadow::calculateLayerBoundingRect):
+        * platform/graphics/ContextShadow.h:
+        (WebCore::ContextShadow::setShadowsIgnoreTransforms):
+        (WebCore::ContextShadow::shadowsIgnoreTransforms):
+        (WebCore::ContextShadow::offset):
+        * platform/graphics/qt/ContextShadowQt.cpp:
+        (WebCore::ContextShadow::beginShadowLayer):
+        (WebCore::ContextShadow::endShadowLayer):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::mustUseContextShadow):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2010-12-15  Timothy Hatcher  <timothy@apple.com>
 
         Fix a regression where the Web Inspector console would be empty
