@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Note: this file is only for UNIX. On other platforms we can reuse the native implementation.
-
-#include "PluginInfoStore.h"
-
 #include "NetscapePluginModule.h"
+
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
@@ -35,37 +32,35 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Vector<String> PluginInfoStore::pluginsDirectories()
+bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin& plugin)
 {
-    return PluginDatabase::defaultPluginDirectories();
-}
+    // We are loading the plugin here since it does not seem to be a standardized way to
+    // get the needed informations from a UNIX plugin without loading it.
 
-Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
-{
-    Vector<String> result;
-    Vector<String> pluginPaths = listDirectory(directory, String("*.so"));
-    Vector<String>::const_iterator end = pluginPaths.end();
-    for (Vector<String>::const_iterator it = pluginPaths.begin(); it != end; ++it) {
-        if (fileExists(*it))
-            result.append(*it);
+    RefPtr<PluginPackage> package = PluginPackage::createPackage(pluginPath, 0 /*lastModified*/);
+    if (!package)
+        return false;
+
+    plugin.path = pluginPath;
+    plugin.info.desc = package->description();
+    plugin.info.file = package->fileName();
+
+    const MIMEToDescriptionsMap& descriptions = package->mimeToDescriptions();
+    const MIMEToExtensionsMap& extensions = package->mimeToExtensions();
+    MIMEToDescriptionsMap::const_iterator descEnd = descriptions.end();
+    plugin.info.mimes.reserveCapacity(descriptions.size());
+    unsigned i = 0;
+    for (MIMEToDescriptionsMap::const_iterator it = descriptions.begin(); it != descEnd; ++it) {
+        plugin.info.mimes.uncheckedAppend(MimeClassInfo());
+        MimeClassInfo& mime = plugin.info.mimes[i++];
+        mime.type = it->first;
+        mime.desc = it->second;
+        MIMEToExtensionsMap::const_iterator extensionIt = extensions.find(it->first);
+        ASSERT(extensionIt != extensions.end());
+        mime.extensions = extensionIt->second;
     }
 
-    return result;
-}
-
-Vector<String> PluginInfoStore::individualPluginPaths()
-{
-    return Vector<String>();
-}
-
-bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
-{
-    return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
-}
-
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
-{
-    // We do not do any black-listing presently.
+    package->unload();
     return true;
 }
 

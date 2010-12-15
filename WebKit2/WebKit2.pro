@@ -441,6 +441,7 @@ SOURCES += \
     Shared/API/c/WKURLResponse.cpp \
     Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
+    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/BackingStore.cpp \
     Shared/ChildProcess.cpp \
     Shared/ImmutableArray.cpp \

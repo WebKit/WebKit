@@ -1,5 +1,18 @@
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add a NetscapePluginModuleX11 and move the Qt implementation of PluginInfoStore::getPluginInfo there
+        https://bugs.webkit.org/show_bug.cgi?id=51066
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp: Copied from WebKit2/UIProcess/Plugins/qt/PluginInfoStoreQt.cpp.
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * WebKit2.pro:
+
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Move Windows version of getPluginInfo to NetscapePluginModule
