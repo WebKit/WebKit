@@ -2,6 +2,7 @@
 *.pbxuser
 *.perspective*
 *.pyc
+.DS_Store
 build/
 /WebKitBuild/
 autoinstall.cache.d
