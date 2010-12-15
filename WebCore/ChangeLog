@@ -1,3 +1,18 @@
+2010-12-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a regression where the Web Inspector console would be empty
+        if the Inspector is localized.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51145
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createFilterElement): Add a label argument so the UI string
+        is separate from the classname. Code clean up.
+        (WebInspector.ConsoleView.prototype.filter): Remove toLowerCase and use string compare.
+        (WebInspector.ConsoleView): Pass separate classnames and labels to createFilterElement.
+
 2010-12-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.

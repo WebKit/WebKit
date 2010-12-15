@@ -68,24 +68,23 @@ WebInspector.ConsoleView = function(drawer)
     }
 
     var updateFilterHandler = this._updateFilter.bind(this);
-    function createFilterElement(category) {
+    function createFilterElement(category, label) {
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
-        categoryElement.addStyleClass(categoryElement.category);
+        categoryElement.className = category;
         categoryElement.addEventListener("click", updateFilterHandler, false);
-
-        var label = category.toString();
-        categoryElement.appendChild(document.createTextNode(label));
+        categoryElement.textContent = label;
 
         this.filterBarElement.appendChild(categoryElement);
+
         return categoryElement;
     }
 
-    this.allElement = createFilterElement.call(this, WebInspector.UIString("All"));
+    this.allElement = createFilterElement.call(this, "all", WebInspector.UIString("All"));
     createDividerElement.call(this);
-    this.errorElement = createFilterElement.call(this, WebInspector.UIString("Errors"));
-    this.warningElement = createFilterElement.call(this, WebInspector.UIString("Warnings"));
-    this.logElement = createFilterElement.call(this, WebInspector.UIString("Logs"));
+    this.errorElement = createFilterElement.call(this, "errors", WebInspector.UIString("Errors"));
+    this.warningElement = createFilterElement.call(this, "warnings", WebInspector.UIString("Warnings"));
+    this.logElement = createFilterElement.call(this, "logs", WebInspector.UIString("Logs"));
 
     this.filter(this.allElement, false);
     this._registerShortcuts();
@@ -128,9 +127,9 @@ WebInspector.ConsoleView.prototype = {
             this.messagesElement.removeStyleClass("filter-logs");
         }
 
-        var targetFilterClass = "filter-" + target.category.toLowerCase();
+        var targetFilterClass = "filter-" + target.category;
 
-        if (target.category == "All") {
+        if (target.category === "all") {
             if (target.hasStyleClass("selected")) {
                 // We can't unselect all, so we break early here
                 return;
