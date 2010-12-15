@@ -141,6 +141,15 @@
 
         Reviewed by Adam Barth.
 
+        make status-bubble white-space:nowrap so we can measure it's width without wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=51149
+
+        * QueueStatusServer/templates/statusbubble.html:
+
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         have the statusbubble postMessage it's metrics so that embedders can properly size the iframe
         https://bugs.webkit.org/show_bug.cgi?id=51125
 
