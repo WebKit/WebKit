@@ -131,6 +131,8 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
+    InlineBox* next() const { return m_next; }
+
     // Overloaded new operator.
     void* operator new(size_t, RenderArena*) throw();
 
@@ -176,12 +178,7 @@ public:
     }
 
     bool isConstructed() { return m_constructed; }
-    virtual void setConstructed()
-    {
-        m_constructed = true;
-        if (m_next)
-            m_next->setConstructed();
-    }
+    virtual void setConstructed() { m_constructed = true; }
 
     void setExtracted(bool b = true) { m_extracted = b; }
     

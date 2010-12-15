@@ -76,8 +76,8 @@ public:
     virtual void setConstructed()
     {
         InlineBox::setConstructed();
-        if (firstChild())
-            firstChild()->setConstructed();
+        for (InlineBox* child = firstChild(); child; child = child->next())
+            child->setConstructed();
     }
 
     void addToLine(InlineBox* child);
