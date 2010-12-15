@@ -33,6 +33,7 @@
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
 #include <string>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
@@ -47,10 +48,6 @@
 
 #include <sys/resource.h>
 #include <unistd.h>
-#if defined Q_OS_UNIX
-#include <sys/prctl.h>
-#include <signal.h>
-#endif
 
 using namespace WebCore;
 
@@ -71,23 +68,41 @@ private:
     Q_SLOT void newConnection();
 };
 
+Q_GLOBAL_STATIC(WTF::HashSet<QProcess*>, processes);
+
+static void cleanupProcesses()
+{
+    WTF::HashSet<QProcess*>::const_iterator it = processes()->begin();
+    while (it != processes()->end()) {
+        (*it)->kill();
+        ++it;
+    }
+}
+
 class QtWebProcess : public QProcess
 {
     Q_OBJECT
 public:
     QtWebProcess(QObject* parent = 0)
         : QProcess(parent)
-    {}
+    {
+        connect(this, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(processStateChanged(QProcess::ProcessState)));
+    }
 
-protected:
-    virtual void setupChildProcess();
+private slots:
+    void processStateChanged(QProcess::ProcessState state);
 };
 
-void QtWebProcess::setupChildProcess()
+void QtWebProcess::processStateChanged(QProcess::ProcessState state)
 {
-#if defined Q_OS_UNIX
-    prctl(PR_SET_PDEATHSIG, SIGINT);
-#endif
+    QProcess* process = qobject_cast<QProcess*>(sender());
+    if (!process)
+        return;
+
+    if (state == QProcess::Running)
+        processes()->add(process);
+    else if (state == QProcess::NotRunning)
+        processes()->remove(process);
 }
 
 void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
@@ -145,7 +160,15 @@ ProcessLauncherHelper::ProcessLauncherHelper()
 
 ProcessLauncherHelper* ProcessLauncherHelper::instance()
 {
-    static ProcessLauncherHelper* result = new ProcessLauncherHelper();
+    static ProcessLauncherHelper* result = 0;
+    if (!result) {
+        result = new ProcessLauncherHelper();
+
+        // The purpose of the following line is to ensure that our static is initialized before the exit handler is installed.
+        processes()->clear();
+
+        atexit(cleanupProcesses);
+    }
     return result;
 }
 

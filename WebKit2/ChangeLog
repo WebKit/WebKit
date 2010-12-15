@@ -1,3 +1,19 @@
+2010-12-15  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] webkit2 does not compile on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=50128
+
+        prctl(2) is only available on Linux, so use an atexit handler for killing
+        all the child processes when the process is exiting.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::cleanupProcesses):
+        (WebKit::QtWebProcess::QtWebProcess):
+        (WebKit::QtWebProcess::processStateChanged):
+        (WebKit::ProcessLauncherHelper::instance):
+
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
