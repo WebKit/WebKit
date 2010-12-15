@@ -1955,6 +1955,7 @@ HEADERS += \
     loader/cache/CachedResourceClientWalker.h \
     loader/cache/CachedResource.h \
     loader/cache/CachedResourceHandle.h \
+    loader/cache/CachedResourceRequest.h \
     loader/cache/CachedScript.h \
     loader/cache/CachedXSLStyleSheet.h \
     loader/cache/MemoryCache.h \
@@ -1972,7 +1973,6 @@ HEADERS += \
     loader/icon/IconRecord.h \
     loader/icon/PageURLRecord.h \
     loader/ImageLoader.h \
-    loader/loader.h \
     loader/MainResourceLoader.h \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
