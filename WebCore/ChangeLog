@@ -1,3 +1,19 @@
+2010-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Additional RenderStyle support for the text-emphasis CSS property
+        Part of <rdar://problem/7720300> Support the CSS3 text-emphasis property
+        https://bugs.webkit.org/show_bug.cgi?id=48539
+
+        No test possible, since this is just adding a function to be used by upcoming patches.
+
+        * platform/text/CharacterNames.h: Added characters used as emphasis marks.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::textEmphasisMarkString): Added. Returns a string containing the
+        emphasis mark, or the null AtomicString if there is none.
+        * rendering/style/RenderStyle.h:
+
 2010-12-14  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Darin Adler.

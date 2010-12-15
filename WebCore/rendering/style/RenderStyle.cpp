@@ -847,6 +847,47 @@ const AtomicString& RenderStyle::hyphenString() const
     return hyphenMinusString;
 }
 
+const AtomicString& RenderStyle::textEmphasisMarkString() const
+{
+    switch (textEmphasisMark()) {
+    case TextEmphasisMarkNone:
+        return nullAtom;
+    case TextEmphasisMarkCustom:
+        return textEmphasisCustomMark();
+    case TextEmphasisMarkDot: {
+        DEFINE_STATIC_LOCAL(AtomicString, filledDotString, (&bullet, 1));
+        DEFINE_STATIC_LOCAL(AtomicString, openDotString, (&whiteBullet, 1));
+        return textEmphasisFill() == TextEmphasisFillFilled ? filledDotString : openDotString;
+    }
+    case TextEmphasisMarkCircle: {
+        DEFINE_STATIC_LOCAL(AtomicString, filledCircleString, (&blackCircle, 1));
+        DEFINE_STATIC_LOCAL(AtomicString, openCircleString, (&whiteCircle, 1));
+        return textEmphasisFill() == TextEmphasisFillFilled ? filledCircleString : openCircleString;
+    }
+    case TextEmphasisMarkDoubleCircle: {
+        DEFINE_STATIC_LOCAL(AtomicString, filledDoubleCircleString, (&fisheye, 1));
+        DEFINE_STATIC_LOCAL(AtomicString, openDoubleCircleString, (&bullseye, 1));
+        return textEmphasisFill() == TextEmphasisFillFilled ? filledDoubleCircleString : openDoubleCircleString;
+    }
+    case TextEmphasisMarkTriangle: {
+        DEFINE_STATIC_LOCAL(AtomicString, filledTriangleString, (&blackUpPointingTriangle, 1));
+        DEFINE_STATIC_LOCAL(AtomicString, openTriangleString, (&whiteUpPointingTriangle, 1));
+        return textEmphasisFill() == TextEmphasisFillFilled ? filledTriangleString : openTriangleString;
+    }
+    case TextEmphasisMarkSesame: {
+        DEFINE_STATIC_LOCAL(AtomicString, filledSesameString, (&sesameDot, 1));
+        DEFINE_STATIC_LOCAL(AtomicString, openSesameString, (&whiteSesameDot, 1));
+        return textEmphasisFill() == TextEmphasisFillFilled ? filledSesameString : openSesameString;
+    }
+    case TextEmphasisMarkAuto:
+        ASSERT_NOT_REACHED();
+        return nullAtom;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullAtom;
+}
+
 #if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 {

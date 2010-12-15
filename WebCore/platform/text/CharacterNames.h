@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,14 @@ namespace WebCore {
 // Note, these are UChar constants, not UChar32, which makes them
 // more convenient for WebCore code that mostly uses UTF-16.
 
+const UChar blackCircle = 0x25CF;
 const UChar blackSquare = 0x25A0;
+const UChar blackUpPointingTriangle = 0x25B2;
 const UChar bullet = 0x2022;
+const UChar bullseye = 0x25CE;
 const UChar carriageReturn = 0x000D;
 const UChar ethiopicPrefaceColon = 0x1366;
+const UChar fisheye = 0x25C9;
 const UChar hebrewPunctuationGeresh = 0x05F3;
 const UChar hebrewPunctuationGershayim = 0x05F4;
 const UChar horizontalEllipsis = 0x2026;
@@ -63,9 +67,13 @@ const UChar rightSingleQuotationMark = 0x2019;
 const UChar rightToLeftEmbed = 0x202B;
 const UChar rightToLeftMark = 0x200F;
 const UChar rightToLeftOverride = 0x202E;
+const UChar sesameDot = 0xFE45;
 const UChar softHyphen = 0x00AD;
 const UChar space = 0x0020;
 const UChar whiteBullet = 0x25E6;
+const UChar whiteCircle = 0x25CB;
+const UChar whiteSesameDot = 0xFE46;
+const UChar whiteUpPointingTriangle = 0x25B3;
 const UChar yenSign = 0x00A5;
 const UChar zeroWidthJoiner = 0x200D;
 const UChar zeroWidthNonJoiner = 0x200C;
