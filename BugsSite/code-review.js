@@ -213,7 +213,7 @@
 
   function addFlagsForAttachment(details) {
     var flag_control = "<select><option></option><option>?</option><option>+</option><option>-</option></select>";
-    $('#toolbar .actions').append(
+    $('#flagContainer').append(
       $('<span class="review"> r: ' + flag_control + '</span>')).append(
       $('<span class="commitQueue"> cq: ' + flag_control + '</span>'));
 
@@ -247,7 +247,7 @@
 
       var details = $(data);
       addFlagsForAttachment(details);
-      $('#toolbar .actions').append($('<iframe class="statusBubble" src="https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id + '" scrolling="no"></iframe>'));
+      $('#statusBubbleContainer').append($('<iframe style="margin-top:2px;" class="statusBubble" src="https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id + '" scrolling="no"></iframe>'));
       $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });
   }
@@ -260,13 +260,33 @@
     });
   }
 
+  function openOverallComments(e) {
+    $('.overallComments textarea').addClass('open');
+    $('#statusBubbleContainer').addClass('wrap');
+  }
+
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message"><div class="help">Select line numbers to add a comment.</div><div class="commentStatus"></div></div>');
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="preview_comments">Preview</button><button id="post_comments">Publish</button></div><div class="links"><span class="bugLink"></span></div>');
+    $(document.body).prepend('<div id="toolbar">' +
+        '<div class="overallComments">' +
+            '<textarea placeholder="Overall comments"></textarea>' +
+        '</div>' +
+        '<div>' +
+          '<span id="statusBubbleContainer"></span>' +
+          '<span class="actions">' +
+              '<span class="links"><span class="bugLink"></span></span>' +
+              '<span id="flagContainer"></span>' +
+              '<button id="preview_comments">Preview</button>' +
+              '<button id="post_comments">Publish</button> ' +
+          '</span></div>' +
+        '</div>' +
+        '</div>');
+
+    $('.overallComments textarea').bind('click', openOverallComments);
+
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
-    $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
 
   function discardComment() {

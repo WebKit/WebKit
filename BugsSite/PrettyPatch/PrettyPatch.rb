@@ -197,8 +197,18 @@ h1 :hover {
 }
 
 .comment textarea, .overallComments textarea {
+  display: block;
   width: 100%;
-  height: 6em;
+  height: 2em;
+}
+
+.overallComments .open {
+  -webkit-transition: height .2s;
+  height: 4em;
+}
+
+#statusBubbleContainer.wrap {
+  display: block;
 }
 
 body {
@@ -206,8 +216,10 @@ body {
 }
 
 #toolbar {
+  display: -webkit-box;
+  display: -moz-box;
   position: fixed;
-  padding: 5px;
+  padding: 3px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -217,10 +229,6 @@ body {
 }
 
 #toolbar .actions {
-  float: left;
-}
-
-#toolbar .links {
   float: right;
 }
 
@@ -277,16 +285,14 @@ body {
   font-style: italic;
 }
 
-.description {
-  font-style: italic;
-}
-
-.comment, .overallComments, .previousComment, .frozenComment {
+.comment, .previousComment, .frozenComment {
   background-color: #ffd;
 }
 
 .overallComments {
-  padding: 5px;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  margin-right: 3px;
 }
 
 .previousComment, .frozenComment {
@@ -304,8 +310,9 @@ body {
 }
 
 .statusBubble {
-  margin-left: 5px;
-  width: 450px;
+  margin-top: 2px;
+  /* FIXME: Size the statusBubble via postMessage so it sizes to it's content. */
+  width: 300px;
   height: 20px;
   border: none;
   vertical-align: middle;

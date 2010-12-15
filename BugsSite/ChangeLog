@@ -1,3 +1,13 @@
+2010-12-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [reviewtool] should always show overall comments text box
+        https://bugs.webkit.org/show_bug.cgi?id=45870
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-12-04  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.
