@@ -30,8 +30,19 @@
 
 WebInspector.DebuggerModel = function()
 {
-    this._breakpoints = {};
     InspectorBackend.registerDomainDispatcher("Debugger", this);
+
+    this._breakpoints = {};
+    this._scripts = {};
+}
+
+WebInspector.DebuggerModel.Events = {
+    DebuggerPaused: "debugger-paused",
+    DebuggerResumed: "debugger-resumed",
+    ParsedScriptSource: "parsed-script-source",
+    FailedToParseScriptSource: "failed-to-parse-script-source",
+    BreakpointAdded: "breakpoint-added",
+    BreakpointHit: "breakpoint-hit"
 }
 
 WebInspector.DebuggerModel.prototype = {
@@ -55,16 +66,12 @@ WebInspector.DebuggerModel.prototype = {
         }
     },
 
-    setBreakpoint: function(sourceID, url, line, enabled, condition)
+    setBreakpoint: function(sourceID, line, enabled, condition)
     {
+        var url = this._scripts[sourceID].sourceURL;
         var breakpoint = this._setBreakpoint(sourceID, url, line, enabled, condition);
         if (breakpoint)
             this._setBreakpointOnBackend(breakpoint);
-    },
-
-    breakpointRestored: function(sourceID, url, line, enabled, condition)
-    {
-        this._setBreakpoint(sourceID, url, line, enabled, condition);
     },
 
     queryBreakpoints: function(filter)
@@ -88,6 +95,7 @@ WebInspector.DebuggerModel.prototype = {
     {
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
+        this._scripts = {};
     },
 
     _setBreakpoint: function(sourceID, url, line, enabled, condition)
@@ -99,7 +107,7 @@ WebInspector.DebuggerModel.prototype = {
             delete this._oneTimeBreakpoint;
         this._breakpoints[breakpoint.id] = breakpoint;
         breakpoint.addEventListener("removed", this._breakpointRemoved, this);
-        this.dispatchEventToListeners("breakpoint-added", breakpoint);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
         return breakpoint;
     },
 
@@ -128,16 +136,40 @@ WebInspector.DebuggerModel.prototype = {
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     },
 
+    scriptForSourceID: function(sourceID)
+    {
+        return this._scripts[sourceID];
+    },
+
+    scriptsForURL: function(url)
+    {
+        return this.queryScripts(function(s) { return s.sourceURL === url; });
+    },
+
+    queryScripts: function(filter)
+    {
+        var scripts = [];
+        for (var sourceID in this._scripts) {
+            var script = this._scripts[sourceID];
+            if (filter(script))
+                scripts.push(script);
+        }
+        return scripts;
+    },
+
+    // All the methods below are InspectorBackend notification handlers.
+
+    breakpointRestored: function(sourceID, url, line, enabled, condition)
+    {
+        this._setBreakpoint(sourceID, url, line, enabled, condition);
+    },
+
     pausedScript: function(details)
     {
-        this.dispatchEventToListeners("debugger-paused", details.callFrames);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
 
-        if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause)
+        if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause || details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
             return;
-        if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            this.dispatchEventToListeners("native-breakpoint-hit", details.eventData);
-            return;
-        }
 
         var breakpointId = WebInspector.Breakpoint.jsBreakpointId(details.callFrames[0].sourceID, details.callFrames[0].line);
         var breakpoint = this._breakpoints[breakpointId];
@@ -145,12 +177,12 @@ WebInspector.DebuggerModel.prototype = {
             return;
         breakpoint.hit = true;
         this._lastHitBreakpoint = breakpoint;
-        this.dispatchEventToListeners("script-breakpoint-hit", breakpoint);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointHit, breakpoint);
     },
 
     resumedScript: function()
     {
-        this.dispatchEventToListeners("debugger-resumed");
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
 
         if (!this._lastHitBreakpoint)
             return;
@@ -175,12 +207,15 @@ WebInspector.DebuggerModel.prototype = {
 
     parsedScriptSource: function(sourceID, sourceURL, source, startingLine, scriptWorldType)
     {
-        WebInspector.panels.scripts.addScript(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
+        var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
+        this._scripts[sourceID] = script;
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, sourceID);
     },
 
     failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
     {
-        WebInspector.panels.scripts.addScript(null, sourceURL, source, startingLine, errorLine, errorMessage);
+        var script = new WebInspector.Script(null, sourceURL, source, startingLine, errorLine, errorMessage, undefined);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, script);
     },
 
     didCreateWorker: function()

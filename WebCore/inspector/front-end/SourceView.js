@@ -32,8 +32,9 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
+    var scripts = WebInspector.debuggerModel.scriptsForURL(resource.url);
     var canEditScripts = WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, resource.scripts, canEditScripts);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, scripts, canEditScripts);
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }

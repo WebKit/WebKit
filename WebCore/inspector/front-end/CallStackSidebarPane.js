@@ -27,11 +27,11 @@ WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
     WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.NativeBreakpointHit, this._nativeBreakpointHit, this);
-    WebInspector.debuggerModel.addEventListener("script-breakpoint-hit", this._scriptBreakpointHit, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointHit, this._scriptBreakpointHit, this);
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    update: function(callFrames, sourceIDMap)
+    update: function(callFrames)
     {
         this.bodyElement.removeChildren();
 
@@ -48,7 +48,7 @@ WebInspector.CallStackSidebarPane.prototype = {
 
         var title;
         var subtitle;
-        var scriptOrResource;
+        var script;
 
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
@@ -61,9 +61,9 @@ WebInspector.CallStackSidebarPane.prototype = {
                 break;
             }
 
-            scriptOrResource = sourceIDMap[callFrame.sourceID];
-            if (scriptOrResource)
-                subtitle = WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+            script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+            if (script)
+                subtitle = WebInspector.displayNameForURL(script.sourceURL);
             else
                 subtitle = WebInspector.UIString("(internal script)");
 

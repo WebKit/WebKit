@@ -497,48 +497,6 @@ WebInspector.Resource.prototype = {
         }
     },
 
-    get scripts()
-    {
-        if (!("_scripts" in this))
-            this._scripts = [];
-        return this._scripts;
-    },
-
-    addScript: function(script)
-    {
-        if (!script)
-            return;
-        this.scripts.unshift(script);
-        script.resource = this;
-    },
-
-    removeAllScripts: function()
-    {
-        if (!this._scripts)
-            return;
-
-        for (var i = 0; i < this._scripts.length; ++i) {
-            if (this._scripts[i].resource === this)
-                delete this._scripts[i].resource;
-        }
-
-        delete this._scripts;
-    },
-
-    removeScript: function(script)
-    {
-        if (!script)
-            return;
-
-        if (script.resource === this)
-            delete script.resource;
-
-        if (!this._scripts)
-            return;
-
-        this._scripts.remove(script);
-    },
-
     get errors()
     {
         return this._errors || 0;

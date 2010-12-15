@@ -177,8 +177,10 @@ WebInspector.ScriptsPanel = function()
 
     this.reset();
 
-    WebInspector.debuggerModel.addEventListener("debugger-paused", this._debuggerPaused, this);
-    WebInspector.debuggerModel.addEventListener("debugger-resumed", this._debuggerResumed, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -235,17 +237,25 @@ WebInspector.ScriptsPanel.prototype = {
         return this.toggleBreakpointsButton.toggled;
     },
 
-    addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, scriptWorldType)
+    _parsedScriptSource: function(event)
     {
-        var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, scriptWorldType);
-        this._sourceIDMap[sourceID] = script;
+        var sourceID = event.data;
+        var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
+        this._addScript(script);
+    },
 
-        var resource = WebInspector.resourceForURL(sourceURL);
+    _failedToParseScriptSource: function(event)
+    {
+        this._addScript(event.data);
+    },
+
+    _addScript: function(script)
+    {
+        var resource = WebInspector.resourceForURL(script.sourceURL);
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
-                resource.addScript(script);
-                this._sourceIDMap[sourceID] = resource;
+                script.resource = resource;
             } else {
                 // Resource is not finished, bind the script later.
                 if (!resource._scriptsPendingResourceLoad) {
@@ -271,8 +281,7 @@ WebInspector.ScriptsPanel.prototype = {
         for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
             // Bind script to resource.
             var script = resource._scriptsPendingResourceLoad[i];
-            resource.addScript(script);
-            this._sourceIDMap[script.sourceID] = resource;
+            script.resource = resource;
 
             // Remove script from the files list.
             script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
@@ -302,7 +311,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (success) {
                 commitEditingCallback(newBodyOrErrorMessage);
                 if (callFrames && callFrames.length)
-                    this._debuggerPaused({ data: callFrames });
+                    this._debuggerPaused({ data: { callFrames: callFrames } });
             } else {
                 if (cancelEditingCallback)
                     cancelEditingCallback();
@@ -313,7 +322,7 @@ WebInspector.ScriptsPanel.prototype = {
                 var newLine = breakpoint.line;
                 if (success && breakpoint.line >= editData.line)
                     newLine += editData.linesCountToShift;
-                WebInspector.debuggerModel.setBreakpoint(editData.sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
+                WebInspector.debuggerModel.setBreakpoint(editData.sourceID, newLine, breakpoint.enabled, breakpoint.condition);
             }
         };
         InspectorBackend.editScriptSource(editData.sourceID, editData.content, mycallback.bind(this));
@@ -358,7 +367,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerPaused: function(event)
     {
-        var callFrames = event.data;
+        var callFrames = event.data.callFrames;
 
         WebInspector.debuggerModel.removeOneTimeBreakpoint();
         this._paused = true;
@@ -369,7 +378,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         WebInspector.currentPanel = this;
 
-        this.sidebarPanes.callstack.update(callFrames, this._sourceIDMap);
+        this.sidebarPanes.callstack.update(callFrames);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
         window.focus();
@@ -430,17 +439,9 @@ WebInspector.ScriptsPanel.prototype = {
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
 
-        if (this._sourceIDMap) {
-            for (var sourceID in this._sourceIDMap) {
-                var object = this._sourceIDMap[sourceID];
-                if (object instanceof WebInspector.Resource) {
-                    object.removeAllScripts();
-                    delete object._resourcesView;
-                }
-            }
-        }
-
-        this._sourceIDMap = {};
+        var scripts = WebInspector.debuggerModel.queryScripts(function(s) { return !!s.resource; });
+        for (var i = 0; i < scripts.length; ++i)
+            delete scripts[i].resource._resourcesView;
 
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems)
@@ -487,22 +488,15 @@ WebInspector.ScriptsPanel.prototype = {
 
     _scriptOrResourceForURLAndLine: function(url, line)
     {
-        var scriptWithMatchingUrl = null;
-        for (var sourceID in this._sourceIDMap) {
-            var scriptOrResource = this._sourceIDMap[sourceID];
-            if (scriptOrResource instanceof WebInspector.Script) {
-                if (scriptOrResource.sourceURL !== url)
-                    continue;
-                scriptWithMatchingUrl = scriptOrResource;
-                if (scriptWithMatchingUrl.startingLine <= line && scriptWithMatchingUrl.startingLine + scriptWithMatchingUrl.linesCount > line)
-                    return scriptWithMatchingUrl;
-            } else {
-                var resource = scriptOrResource;
-                if (resource.url === url)
-                    return resource;
-            }
+        var scripts = WebInspector.debuggerModel.scriptsForURL(url);
+        for (var i = 0; i < scripts.length; ++i) {
+            var script = scripts[i];
+            if (script.resource)
+                return script.resource;
+            if (script.startingLine <= line && script.startingLine + script.linesCount > line)
+                return script;
         }
-        return scriptWithMatchingUrl;
+        return null;
     },
 
     showView: function(view)
@@ -721,7 +715,8 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.scopechain.update(currentFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
 
-        var scriptOrResource = this._sourceIDMap[currentFrame.sourceID];
+        var script = WebInspector.debuggerModel.scriptForSourceID(currentFrame.sourceID);
+        var scriptOrResource = script.resource || script;
         this._showScriptOrResource(scriptOrResource, {line: currentFrame.line});
 
         this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);

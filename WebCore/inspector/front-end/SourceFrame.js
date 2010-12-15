@@ -220,7 +220,7 @@ WebInspector.SourceFrame.prototype = {
         var breakpoints = this._breakpoints();
         for (var i = 0; i < breakpoints.length; ++i)
             this._addBreakpoint(breakpoints[i]);
-        WebInspector.debuggerModel.addEventListener("breakpoint-added", this._breakpointAdded, this);
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, this._breakpointAdded, this);
 
         this._textViewer.endUpdates();
 
@@ -819,7 +819,7 @@ WebInspector.SourceFrame.prototype = {
     _setBreakpoint: function(lineNumber)
     {
         var sourceID = this._sourceIDForLine(lineNumber);
-        WebInspector.debuggerModel.setBreakpoint(sourceID, this._url, lineNumber, true, "");
+        WebInspector.debuggerModel.setBreakpoint(sourceID, lineNumber, true, "");
         if (!WebInspector.panels.scripts.breakpointsActivated)
             WebInspector.panels.scripts.toggleBreakpointsClicked();
     },

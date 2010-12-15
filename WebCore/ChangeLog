@@ -1,3 +1,41 @@
+2010-12-13  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move scripts storage from ScriptsPanel to DebuggerModel.
+        https://bugs.webkit.org/show_bug.cgi?id=50908
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._debuggerPaused):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype._setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.scriptForSourceID):
+        (WebInspector.DebuggerModel.prototype.scriptsForURL):
+        (WebInspector.DebuggerModel.prototype.queryScripts):
+        (WebInspector.DebuggerModel.prototype.parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype.failedToParseScriptSource):
+        (WebInspector.DebuggerModel.prototype.breakpointRestored):
+        (WebInspector.DebuggerModel.prototype.debuggerPaused):
+        (WebInspector.DebuggerModel.prototype.debuggerResumed):
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): eliminate sourceIDMap
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype._setBreakpoint):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        * inspector/front-end/inspector.js:
+        (WebInspector.createJSBreakpointsSidebarPane):
+        (WebInspector.parsedScriptSource):
+        (WebInspector.failedToParseScriptSource):
+
 2010-12-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

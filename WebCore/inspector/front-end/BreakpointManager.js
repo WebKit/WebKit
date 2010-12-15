@@ -40,8 +40,8 @@ WebInspector.BreakpointManager = function()
     this._domBreakpointsRestored = false;
 
     WebInspector.settings.addEventListener(WebInspector.Settings.Events.ProjectChanged, this._projectChanged, this);
-    WebInspector.debuggerModel.addEventListener("native-breakpoint-hit", this._nativeBreakpointHit, this);
-    WebInspector.debuggerModel.addEventListener("debugger-resumed", this._debuggerResumed, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
 }
 
 WebInspector.BreakpointManager.NativeBreakpointTypes = {
@@ -152,9 +152,13 @@ WebInspector.BreakpointManager.prototype = {
         this._saveBreakpoints();
     },
 
-    _nativeBreakpointHit: function(event)
+    _debuggerPaused: function(event)
     {
-        var eventData = event.data;
+        var eventType = event.data.eventType;
+        var eventData = event.data.eventData;
+
+        if (eventType !== WebInspector.DebuggerEventTypes.NativeBreakpoint)
+            return;
 
         var breakpointId;
         if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.DOM)

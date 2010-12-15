@@ -192,7 +192,7 @@ var WebInspector = {
         {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
-        WebInspector.debuggerModel.addEventListener("breakpoint-added", breakpointAdded);
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpointAdded);
         return pane;
     },
 
