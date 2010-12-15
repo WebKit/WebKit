@@ -1,3 +1,9 @@
+2010-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows Build Fix. A .h file was added to the vcproj twice, but not its corresponding cpp file.
+
+        * win/WebKit2.vcproj:
+
 2010-12-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

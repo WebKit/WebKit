@@ -571,7 +571,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebOpenPanelParameters.h"
+				RelativePath="..\Shared\WebOpenPanelParameters.cpp"
 				>
 			</File>
 			<File
