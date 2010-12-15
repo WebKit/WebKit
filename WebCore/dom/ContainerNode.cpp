@@ -379,10 +379,14 @@ static void willRemoveChildren(ContainerNode* container)
     container->document()->nodeChildrenWillBeRemoved(container);
     container->document()->incDOMTreeVersion();
 
-    // FIXME: Adding new children from event handlers can cause an infinite loop here.
-    for (RefPtr<Node> child = container->firstChild(); child; child = child->nextSibling()) {
+    NodeVector children;
+    for (Node* n = container->firstChild(); n; n = n->nextSibling())
+        children.append(n);
+
+    for (NodeVector::const_iterator it = children.begin(); it != children.end(); it++) {
+        Node* child = it->get();
         // fire removed from document mutation events.
-        dispatchChildRemovalEvents(child.get());
+        dispatchChildRemovalEvents(child);
         child->willRemove();
     }
 }

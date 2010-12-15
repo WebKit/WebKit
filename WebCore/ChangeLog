@@ -1,3 +1,16 @@
+2010-12-15  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Change ContainerNode::willRemoveChildren to not fire mutation events for children
+        added as a result of a mutation event, thereby avoiding an infinite loop.
+        https://bugs.webkit.org/show_bug.cgi?id=51079
+
+        Test: fast/dom/containerNode.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChildren): Don't fire mutation events for children added during a mutation event.
+
 2010-12-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
