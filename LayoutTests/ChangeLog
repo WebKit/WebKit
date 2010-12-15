@@ -1,3 +1,12 @@
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-mac/storage/private-browsing-noread-nowrite-expected.txt: Removed.
+        * platform/chromium-win/storage/private-browsing-noread-nowrite-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt: test private-browsing-readonly.html was renamed
+        into private-browsing-noread-nowrite.html in r74093, changing expecations accrodingly.
+
 2010-12-15  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Andreas Kling.

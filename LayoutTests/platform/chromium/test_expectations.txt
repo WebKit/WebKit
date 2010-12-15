@@ -452,7 +452,7 @@ WONTFIX BUGCR37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = 
 WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
 
 // We do not use Safari's private browsing
-WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
+WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
 
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
 BUGCR16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
@@ -3250,4 +3250,6 @@ BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = TEXT TIMEOUT PASS
 BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS
 
+BUGCR66923 MAC : fast/css/focus-ring-detached.html = IMAGE
+BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS
