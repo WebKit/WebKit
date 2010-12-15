@@ -330,7 +330,7 @@ void NetscapePluginModule::determineQuirks()
         return;
 
     if (plugin.bundleIdentifier == "com.macromedia.Flash Player.plugin") {
-        // Flash requires that the return value of getprocname() be "WebKitPluginHost".
+        // Flash requires that the return value of getprogname() be "WebKitPluginHost".
         m_pluginQuirks.add(PluginQuirks::PrognameShouldBeWebKitPluginHost);
     }
 }

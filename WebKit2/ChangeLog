@@ -1,5 +1,14 @@
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by TYPO FIX.
+
+        Fix a typo.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Cannot type into plugin edit field
@@ -11,7 +20,7 @@
 
         * PluginProcess/PluginProcess.cpp:
         (WebKit::PluginProcess::netscapePluginModule):
-        If the plug-in module has the PrognameShouldBeWebKitPluginHost quirk, call setprocname("WebKitPluginHost").
+        If the plug-in module has the PrognameShouldBeWebKitPluginHost quirk, call setprogname("WebKitPluginHost").
         
         * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
         (WebKit::NetscapePluginModule::load):
