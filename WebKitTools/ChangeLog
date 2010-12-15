@@ -1,3 +1,11 @@
+2010-12-14  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Add a new Leopard Debug Test WK2 Bot
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-12-14  Ojan Vafai  <ojan@chromium.org>
 
         Fix python unittests after http://trac.webkit.org/changeset/74070.
