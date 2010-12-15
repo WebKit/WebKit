@@ -1,3 +1,21 @@
+2010-12-14  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Mark 2 new focus-ring-* tests as failed in chromium.
+
+        * platform/chromium-mac-leopard/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-detached-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-multiline-expected.txt: Added.
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.txt: Added.
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.
