@@ -93,8 +93,6 @@ typedef struct _GtkThemeParts {
     GtkWidget* radiobuttonWidget;
     GtkWidget* horizScrollbarWidget;
     GtkWidget* vertScrollbarWidget;
-    GtkWidget* hScaleWidget;
-    GtkWidget* vScaleWidget;
     GtkWidget* entryWidget;
     GtkWidget* comboBoxWidget;
     GtkWidget* comboBoxButtonWidget;
@@ -147,12 +145,6 @@ typedef enum {
   MOZ_GTK_SCROLLBAR_THUMB_VERTICAL,
   /* Paints the background of a scrolled window */
   MOZ_GTK_SCROLLED_WINDOW,
-  /* Paints a GtkScale. */
-  MOZ_GTK_SCALE_HORIZONTAL,
-  MOZ_GTK_SCALE_VERTICAL,
-  /* Paints a GtkScale thumb. */
-  MOZ_GTK_SCALE_THUMB_HORIZONTAL,
-  MOZ_GTK_SCALE_THUMB_VERTICAL,
   MOZ_GTK_ENTRY,
   /* Paints a GtkOptionMenu. */
   MOZ_GTK_DROPDOWN,
@@ -275,17 +267,6 @@ moz_gtk_radio_get_metrics(gint* indicator_size, gint* indicator_spacing);
 gint
 moz_gtk_widget_get_focus(GtkWidget* widget, gboolean* interior_focus,
                          gint* focus_width, gint* focus_pad);
-
-/**
- * Get the desired size of a GtkScale thumb
- * orient:           [IN] the scale orientation
- * thumb_length:     [OUT] the length of the thumb
- * thumb_height:     [OUT] the height of the thumb
- *
- * returns:    MOZ_GTK_SUCCESS if there was no error, an error code otherwise
- */
-gint
-moz_gtk_get_scalethumb_metrics(GtkOrientation orient, gint* thumb_length, gint* thumb_height);
 
 /**
  * Get the desired metrics for a GtkScrollbar

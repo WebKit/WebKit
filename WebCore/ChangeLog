@@ -1,3 +1,59 @@
+2010-10-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Move input type=range rendering to RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=47836
+
+        Begin moving widget rendering out of the old Mozilla theme drawing code,
+        which should remove many lines of code when completed. WidgetRenderingContext
+        now hides the GTK+ 2 vs. 3 API differences, so that RenderThemeGtk can stay
+        version agnostic.
+
+        No new tests as this patch does not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk): gtkContainer() now returns a
+        GtkWidget, so update the cast here.
+        (WebCore::RenderThemeGtk::getGtkStateType): Added this helper which
+        converts a RenderObject state into a GtkStateType.
+        (WebCore::RenderThemeGtk::paintRenderObject): Removed work-arounds for
+        scale painting, as it's not handled by this method any longer.
+        (WebCore::RenderThemeGtk::paintSliderTrack): Updated to use
+        WidgetRenderingContext.
+        (WebCore::RenderThemeGtk::paintSliderThumb): Ditto.
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize): Get the size
+        properties directly from the widget now instead of asking the Mozilla code.
+        (WebCore::RenderThemeGtk::setupWidgetAndAddToContainer): Added this
+        helper which reduces the amount of code quite a bit.
+        (WebCore::RenderThemeGtk::gtkContainer): Updated to use helper.
+        (WebCore::RenderThemeGtk::gtkButton): Ditto.
+        (WebCore::RenderThemeGtk::gtkEntry): Ditto.
+        (WebCore::RenderThemeGtk::gtkTreeView): Ditto.
+        (WebCore::RenderThemeGtk::gtkVScale): Added.
+        (WebCore::RenderThemeGtk::gtkHScale): Added.
+        (WebCore::RenderThemeGtk::platformColorsDidChange): Removed
+        GTK_CONTAINER cast.
+        * platform/gtk/RenderThemeGtk.h: Updated to add new GtkHScale and
+         GtkVScale members.
+        * platform/gtk/WidgetRenderingContext.h: Aded new methods to proxy
+        gtk_paint_box, gtk_paint_focus and gtk_paint_slider.
+        * platform/gtk/WidgetRenderingContextGtk2.cpp:
+        (WebCore::WidgetRenderingContext::gtkPaintBox): Added.
+        (WebCore::WidgetRenderingContext::gtkPaintFocus): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintSlider): Ditto.
+        * platform/gtk/WidgetRenderingContextGtk3.cpp:
+        (WebCore::WidgetRenderingContext::gtkPaintBox): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintFocus): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintSlider): Ditto.
+        * platform/gtk/gtk2drawing.c: Removed defunct code!
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtk3drawing.c: Ditto.
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtkdrawing.h:
+
 2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74117.

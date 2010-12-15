@@ -217,6 +217,17 @@ static bool supportsFocus(ControlPart appearance)
     }
 }
 
+GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
+{
+    if (!isEnabled(object) || isReadOnlyControl(object))
+        return GTK_STATE_INSENSITIVE;
+    if (isPressed(object))
+        return GTK_STATE_ACTIVE;
+    if (isHovered(object))
+        return GTK_STATE_PRELIGHT;
+    return GTK_STATE_NORMAL;
+}
+
 bool RenderThemeGtk::supportsFocusRing(const RenderStyle* style) const
 {
     return supportsFocus(style->appearance());
@@ -287,14 +298,6 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
     widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
     widgetState.isDefault = false;
     widgetState.canDefault = false;
-
-    // FIXME: The depressed value should probably apply for other theme parts too.
-    // It must be used for range thumbs, because otherwise when the thumb is pressed,
-    // the rendering is incorrect.
-    if (type == MOZ_GTK_SCALE_THUMB_HORIZONTAL || type == MOZ_GTK_SCALE_THUMB_VERTICAL)
-        widgetState.depressed = isPressed(renderObject);
-    else
-        widgetState.depressed = false;
 
     WidgetRenderingContext widgetContext(context, rect);
     return !widgetContext.paintMozillaWidget(type, &widgetState, flags, gtkTextDirection(renderObject->style()->direction()));
@@ -531,14 +534,30 @@ bool RenderThemeGtk::paintSearchField(RenderObject* o, const PaintInfo& i, const
 
 bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
+    if (info.context->paintingDisabled())
+        return false;
+
     ControlPart part = object->style()->appearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
-    GtkThemeWidgetType gtkPart = MOZ_GTK_SCALE_HORIZONTAL;
-    if (part == SliderVerticalPart)
-        gtkPart = MOZ_GTK_SCALE_VERTICAL;
+    // We shrink the trough rect slightly to make room for the focus indicator.
+    IntRect troughRect(IntPoint(), rect.size()); // This is relative to rect.
+    GtkWidget* widget = 0;
+    if (part == SliderVerticalPart) {
+        widget = gtkVScale();
+        troughRect.inflateY(-gtk_widget_get_style(widget)->ythickness);
+    } else {
+        widget = gtkHScale();
+        troughRect.inflateX(-gtk_widget_get_style(widget)->xthickness);
+    }
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
-    return paintRenderObject(gtkPart, object, info.context, rect);
+    WidgetRenderingContext widgetContext(info.context, rect);
+    widgetContext.gtkPaintBox(troughRect, widget, GTK_STATE_ACTIVE, GTK_SHADOW_OUT, "trough");
+    if (isFocused(object))
+        widgetContext.gtkPaintFocus(IntRect(IntPoint(), rect.size()), widget, getGtkStateType(object), "trough");
+
+    return false;
 }
 
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -548,14 +567,34 @@ void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* styl
 
 bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
+    if (info.context->paintingDisabled())
+        return false;
+
     ControlPart part = object->style()->appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart);
 
-    GtkThemeWidgetType gtkPart = MOZ_GTK_SCALE_THUMB_HORIZONTAL;
-    if (part == SliderThumbVerticalPart)
-        gtkPart = MOZ_GTK_SCALE_THUMB_VERTICAL;
+    GtkWidget* widget = 0;
+    const char* detail = 0;
+    GtkOrientation orientation;
+    if (part == SliderThumbVerticalPart) {
+        widget = gtkVScale();
+        detail = "vscale";
+        orientation = GTK_ORIENTATION_VERTICAL;
+    } else {
+        widget = gtkHScale();
+        detail = "hscale";
+        orientation = GTK_ORIENTATION_HORIZONTAL;
+    }
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
-    return paintRenderObject(gtkPart, object, info.context, rect);
+    // Only some themes have slider thumbs respond to clicks and some don't. This information is
+    // gathered via the 'activate-slider' property, but it's deprecated in GTK+ 2.22 and removed in
+    // GTK+ 3.x. The drawback of not honoring it is that slider thumbs change color when you click
+    // on them. 
+    IntRect thumbRect(IntPoint(), rect.size());
+    WidgetRenderingContext widgetContext(info.context, rect);
+    widgetContext.gtkPaintSlider(thumbRect, widget, getGtkStateType(object), GTK_SHADOW_OUT, detail, orientation);
+    return false;
 }
 
 void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -570,14 +609,27 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
     if (part == MediaSliderThumbPart) {
         o->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
         o->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
-    } else
-#endif
-    if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
-        gint width, height;
-        moz_gtk_get_scalethumb_metrics(part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, &width, &height);
-        o->style()->setWidth(Length(width, Fixed));
-        o->style()->setHeight(Length(height, Fixed));
+        return;
     }
+    if (part == MediaVolumeSliderThumbPart)
+        return;
+#endif
+
+    GtkWidget* widget = part == SliderThumbHorizontalPart ? gtkHScale() : gtkVScale();
+    int length = 0, width = 0;
+    gtk_widget_style_get(widget,
+                         "slider_length", &length,
+                         "slider_width", &width,
+                         NULL);
+
+    if (part == SliderThumbHorizontalPart) {
+        o->style()->setWidth(Length(length, Fixed));
+        o->style()->setHeight(Length(width, Fixed));
+        return;
+    }
+    ASSERT(part == SliderThumbVerticalPart);
+    o->style()->setWidth(Length(width, Fixed));
+    o->style()->setHeight(Length(length, Fixed));
 }
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
@@ -703,17 +755,30 @@ static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderThe
     renderTheme->platformColorsDidChange();
 }
 
-GtkContainer* RenderThemeGtk::gtkContainer() const
+void RenderThemeGtk::setupWidgetAndAddToContainer(GtkWidget* widget, GtkWidget* window) const
+{
+    gtk_container_add(GTK_CONTAINER(window), widget);
+    gtk_widget_realize(widget);
+    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
+
+    // FIXME: Perhaps this should only be called for the containing window or parent container.
+    g_signal_connect(widget, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
+}
+
+GtkWidget* RenderThemeGtk::gtkContainer() const
 {
     if (m_gtkContainer)
         return m_gtkContainer;
 
     m_gtkWindow = gtk_window_new(GTK_WINDOW_POPUP);
-    m_gtkContainer = GTK_CONTAINER(gtk_fixed_new());
-    g_signal_connect(m_gtkWindow, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
-    gtk_container_add(GTK_CONTAINER(m_gtkWindow), GTK_WIDGET(m_gtkContainer));
+#if GTK_API_VERSION_2
+    gtk_widget_set_colormap(m_gtkWindow, m_themeParts.colormap);
+#endif
     gtk_widget_realize(m_gtkWindow);
+    gtk_widget_set_name(m_gtkWindow, "MozillaGtkWidget");
 
+    m_gtkContainer = gtk_fixed_new();
+    setupWidgetAndAddToContainer(m_gtkContainer, m_gtkWindow);
     return m_gtkContainer;
 }
 
@@ -721,12 +786,8 @@ GtkWidget* RenderThemeGtk::gtkButton() const
 {
     if (m_gtkButton)
         return m_gtkButton;
-
     m_gtkButton = gtk_button_new();
-    g_signal_connect(m_gtkButton, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
-    gtk_container_add(gtkContainer(), m_gtkButton);
-    gtk_widget_realize(m_gtkButton);
-
+    setupWidgetAndAddToContainer(m_gtkButton, gtkContainer());
     return m_gtkButton;
 }
 
@@ -734,12 +795,8 @@ GtkWidget* RenderThemeGtk::gtkEntry() const
 {
     if (m_gtkEntry)
         return m_gtkEntry;
-
     m_gtkEntry = gtk_entry_new();
-    g_signal_connect(m_gtkEntry, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
-    gtk_container_add(gtkContainer(), m_gtkEntry);
-    gtk_widget_realize(m_gtkEntry);
-
+    setupWidgetAndAddToContainer(m_gtkEntry, gtkContainer());
     return m_gtkEntry;
 }
 
@@ -747,13 +804,27 @@ GtkWidget* RenderThemeGtk::gtkTreeView() const
 {
     if (m_gtkTreeView)
         return m_gtkTreeView;
-
     m_gtkTreeView = gtk_tree_view_new();
-    g_signal_connect(m_gtkTreeView, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
-    gtk_container_add(gtkContainer(), m_gtkTreeView);
-    gtk_widget_realize(m_gtkTreeView);
-
+    setupWidgetAndAddToContainer(m_gtkTreeView, gtkContainer());
     return m_gtkTreeView;
+}
+
+GtkWidget* RenderThemeGtk::gtkVScale() const
+{
+    if (m_gtkVScale)
+        return m_gtkVScale;
+    m_gtkVScale = gtk_vscale_new(0);
+    setupWidgetAndAddToContainer(m_gtkVScale, gtkContainer());
+    return m_gtkVScale;
+}
+
+GtkWidget* RenderThemeGtk::gtkHScale() const
+{
+    if (m_gtkHScale)
+        return m_gtkHScale;
+    m_gtkHScale = gtk_hscale_new(0);
+    setupWidgetAndAddToContainer(m_gtkHScale, gtkContainer());
+    return m_gtkHScale;
 }
 
 GtkWidget* RenderThemeGtk::gtkScrollbar()

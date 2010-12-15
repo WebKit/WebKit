@@ -34,7 +34,11 @@ class WidgetRenderingContext {
 public:
     WidgetRenderingContext(GraphicsContext*, const IntRect&);
     ~WidgetRenderingContext();
+
     bool paintMozillaWidget(GtkThemeWidgetType, GtkWidgetState*, int flags, GtkTextDirection = GTK_TEXT_DIR_NONE);
+    void gtkPaintBox(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
+    void gtkPaintFocus(const IntRect&, GtkWidget*, GtkStateType, const gchar*);
+    void gtkPaintSlider(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*, GtkOrientation);
 
 private:
     GraphicsContext* m_graphicsContext;

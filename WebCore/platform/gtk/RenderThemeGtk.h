@@ -157,19 +157,15 @@ protected:
 #endif
 
 private:
-    /*
-     * hold the state
-     */
     GtkWidget* gtkButton() const;
     GtkWidget* gtkEntry() const;
     GtkWidget* gtkTreeView() const;
+    GtkWidget* gtkVScale() const;
+    GtkWidget* gtkHScale() const;
+    GtkWidget* gtkContainer() const;
 
-    /*
-     * unmapped GdkWindow having a container. This is holding all
-     * our fake widgets
-     */
-    GtkContainer* gtkContainer() const;
-
+    void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;
+    GtkStateType getGtkStateType(RenderObject* object);
     bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect& rect, int flags = 0);
 #if ENABLE(VIDEO)
     bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
@@ -177,10 +173,12 @@ private:
     GtkStateType gtkIconState(RenderObject*);
 
     mutable GtkWidget* m_gtkWindow;
-    mutable GtkContainer* m_gtkContainer;
+    mutable GtkWidget* m_gtkContainer;
     mutable GtkWidget* m_gtkButton;
     mutable GtkWidget* m_gtkEntry;
     mutable GtkWidget* m_gtkTreeView;
+    mutable GtkWidget* m_gtkVScale;
+    mutable GtkWidget* m_gtkHScale;
 
     mutable Color m_panelColor;
     mutable Color m_sliderColor;

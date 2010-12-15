@@ -47,6 +47,25 @@ bool WidgetRenderingContext::paintMozillaWidget(GtkThemeWidgetType type, GtkWidg
     return !m_hadError;
 }
 
+void WidgetRenderingContext::gtkPaintBox(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, widget,
+                  detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
+void WidgetRenderingContext::gtkPaintFocus(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_focus(gtk_widget_get_style(widget), m_target, stateType, widget,
+                    detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
+void WidgetRenderingContext::gtkPaintSlider(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail, GtkOrientation orientation)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_slider(gtk_widget_get_style(widget), m_target, stateType, shadowType, widget,
+                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height, orientation);
 }
 
 #endif // !GTK_API_VERSION_2
