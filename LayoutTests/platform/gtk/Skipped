@@ -2784,6 +2784,9 @@ http/tests/xmlhttprequest/xml-encoding.html
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 http/tests/xmlhttprequest/workers/methods-async.html
 http/tests/xmlhttprequest/workers/methods.html
+# Tests crashing - https://bugs.webkit.org/show_bug.cgi?id=51104
+http/tests/cache/subresource-fragment-identifier.html
+http/tests/misc/authentication-sent-to-redirect.html
 
 #   Tests crashing
 http/tests/security/cross-origin-xsl-BLOCKED.html
