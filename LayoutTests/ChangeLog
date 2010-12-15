@@ -1,5 +1,11 @@
 2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Mark one more compositing test as timing out on chromium-gpu.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Rebaseline Chromium test expectations.
 
         * platform/chromium-linux/fast/blockflow/box-shadow-horizontal-bt-expected.checksum:

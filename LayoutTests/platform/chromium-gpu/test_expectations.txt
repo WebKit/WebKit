@@ -237,6 +237,7 @@ BUGWK47923 SKIP : compositing/repaint/composited-document-element.html = TIMEOUT
 BUGWK47923 SKIP : compositing/shadows/shadow-drawing.html = TIMEOUT
 BUGWK47923 SKIP : compositing/tiling/constrained-layer-size.html = TIMEOUT
 BUGWK47923 SKIP : compositing/z-order/negative-z-index.html = TIMEOUT
+BUGWK47923 SKIP : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // The following test is flaky; it occasionally times out, but not always.
 BUGWK47924 WIN LINUX : compositing/iframes/composited-iframe-alignment.html = TIMEOUT PASS
