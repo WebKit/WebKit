@@ -1,3 +1,22 @@
+2010-12-14  takano takumi  <takano@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        text-combine value names have been changed in the css3 proposal.
+        https://bugs.webkit.org/show_bug.cgi?id=51089
+
+        Changed text-combine's value names from "none|cluster|upright" to "none|horizontal".
+
+        * css/CSSParser.cpp: Changed value name.
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h: Changed value name.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextCombine):
+        * css/CSSValueKeywords.in: No more text-combine specific values needed since
+        "horizontal" is already there.
+        * rendering/style/RenderStyleConstants.h: Changed value name.
+        * rendering/style/StyleRareNonInheritedData.h: Changed textCombine field size.
+
 2010-12-14  Koan-Sin Tan  <koansin.tan@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -134,7 +134,7 @@ enum WritingMode {
 };
 
 enum TextCombine {
-    TextCombineNone, TextCombineCluster, TextCombineUpright
+    TextCombineNone, TextCombineHorizontal
 };
 
 enum EFillAttachment {

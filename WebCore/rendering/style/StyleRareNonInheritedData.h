@@ -103,7 +103,7 @@ public:
     unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
     unsigned m_appearance : 6; // EAppearance
     unsigned m_borderFit : 1; // EBorderFit
-    unsigned m_textCombine : 2; // CSS3 text-combine properties
+    unsigned m_textCombine : 1; // CSS3 text-combine properties
     
     short m_counterIncrement;
     short m_counterReset;

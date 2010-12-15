@@ -2054,11 +2054,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextCombine e)
     case TextCombineNone:
         m_value.ident = CSSValueNone;
         break;
-    case TextCombineCluster:
-        m_value.ident = CSSValueCluster;
-        break;
-    case TextCombineUpright:
-        m_value.ident = CSSValueUpright;
+    case TextCombineHorizontal:
+        m_value.ident = CSSValueHorizontal;
         break;
     }
 }
@@ -2068,10 +2065,8 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
     switch (m_value.ident) {
     case CSSValueNone:
         return TextCombineNone;
-    case CSSValueCluster:
-        return TextCombineCluster;
-    case CSSValueUpright:
-        return TextCombineUpright;
+    case CSSValueHorizontal:
+        return TextCombineHorizontal;
     default:
         ASSERT_NOT_REACHED();
         return TextCombineNone;

@@ -14,7 +14,7 @@ function test()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var textCombineValues = ["none", "cluster", "upright"];
+    var textCombineValues = ["none", "horizontal"];
     var pElems = document.getElementsByTagName("div");
     for ( i = 0 ; i < pElems.length ; ++i )
     {
@@ -28,8 +28,7 @@ function test()
 <body onload="test()">
 <p>text-combine parser test</p>
 <div>-webkit-text-combine:none</div>
-<div>-webkit-text-combine:cluster</div>
-<div>-webkit-text-combine:upright</div>
+<div>-webkit-text-combine:horizontal</div>
 <p>Okay if -webkit-text-combine values above and below are the same.</p>
 <hr>
 <p><ol id=console></ol></p>

@@ -1779,7 +1779,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyWebkitTextCombine:
-        if (id == CSSValueNone || id == CSSValueCluster || id == CSSValueUpright)
+        if (id == CSSValueNone || id == CSSValueHorizontal)
             validPrimitive = true;
         break;
 
