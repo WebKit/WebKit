@@ -3250,7 +3250,4 @@ BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = TEXT TIMEOUT PASS
 BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS
 
-BUGCR66923 : fast/css/focus-ring-detached.html = IMAGE+TEXT
-BUGCR66923 : fast/css/focus-ring-multiline.html = IMAGE+TEXT
-
 BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS

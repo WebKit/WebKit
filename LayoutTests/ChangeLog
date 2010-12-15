@@ -1,5 +1,28 @@
 2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Rebaseline Chromium tests.
+
+        * platform/chromium-linux/fast/blockflow/japanese-rl-text-with-broken-font-expected.txt: Added.
+        * platform/chromium-linux/fast/box-shadow/inset-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/chromium-linux/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/chromium-mac/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/chromium-mac/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.checksum:
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.png:
+        * platform/chromium-win/fast/css/focus-ring-detached-expected.txt:
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.checksum:
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.png:
+        * platform/chromium-win/fast/css/focus-ring-multiline-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Mark fast/dom/global-constructors.html as flaky on Chromium.
 
         * platform/chromium/test_expectations.txt:
