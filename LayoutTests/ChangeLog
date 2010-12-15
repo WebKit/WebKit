@@ -1,5 +1,12 @@
 2010-12-15  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Updated chromium test_expectations to skip a test that
+        causes DRT to crash in dbg mode.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-15  Jian Li  <jianli@chromium.org>
+
         Unreviewed. Mark a failed test in chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
