@@ -47,6 +47,8 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaInfo::Identifier ident
 {
     m_backingLayer = GraphicsLayer::create(this);
     m_backingLayer->setDrawsContent(true);
+    m_backingLayer->setContentsOpaque(webPage->drawsBackground() && !webPage->drawsTransparentBackground());
+
 #ifndef NDEBUG
     m_backingLayer->setName("DrawingArea backing layer");
 #endif
@@ -96,6 +98,11 @@ void LayerBackedDrawingArea::display()
 
     if (m_webPage->drawingArea() != this)
         return;
+}
+
+void LayerBackedDrawingArea::pageBackgroundTransparencyChanged()
+{
+    m_backingLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
 }
 
 void LayerBackedDrawingArea::scheduleDisplay()

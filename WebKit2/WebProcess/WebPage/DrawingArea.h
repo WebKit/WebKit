@@ -56,8 +56,10 @@ public:
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
     virtual void display() = 0;
 
-    virtual void onPageClose() { }
+    virtual void pageBackgroundTransparencyChanged() { }
 
+    virtual void onPageClose() { }
+    
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() = 0;
     virtual void detachCompositingContext() = 0;

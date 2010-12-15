@@ -808,6 +808,7 @@ void WebPage::setDrawsBackground(bool drawsBackground)
             view->setTransparent(!drawsBackground);
     }
 
+    m_drawingArea->pageBackgroundTransparencyChanged();
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
@@ -824,6 +825,7 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
             view->setBaseBackgroundColor(backgroundColor);
     }
 
+    m_drawingArea->pageBackgroundTransparencyChanged();
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 

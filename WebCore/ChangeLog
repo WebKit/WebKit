@@ -1,5 +1,19 @@
 2010-12-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        WebKit2 in compositing mode no longer has font smoothing
+        https://bugs.webkit.org/show_bug.cgi?id=50733
+
+        Only turn off font smoothing for layers whose contents are
+        not opaque. This allows the root GraphicsLayer in WebKit2 to
+        set the opaque flag, and get smoothed text.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Allow disabling of font smoothing in compositing layers to be overridden by style

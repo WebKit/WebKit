@@ -1,3 +1,32 @@
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        WebKit2 in compositing mode no longer has font smoothing
+        https://bugs.webkit.org/show_bug.cgi?id=50733
+        
+        Tell the root GraphicsLayer that its contents are opaque
+        if the WebPage draws its background, and that background
+        is not transparent.
+        
+        The GraphicsLayer then uses the 'contentsOpaque' setting to
+        determine whether to use font smoothing.
+        
+        Add pageBackgroundTransparencyChanged() to DrawingArea
+        so that the WebPage can inform the DrawingArea when the
+        background transparency changes.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::pageBackgroundTransparencyChanged):
+        (WebKit::DrawingArea::onPageClose):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::pageBackgroundTransparencyChanged):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDrawsBackground):
+        (WebKit::WebPage::setDrawsTransparentBackground):
+
 2010-12-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

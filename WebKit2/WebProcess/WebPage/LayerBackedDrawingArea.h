@@ -62,6 +62,8 @@ public:
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void display();
 
+    virtual void pageBackgroundTransparencyChanged();
+
     virtual void attachCompositingContext();
     virtual void detachCompositingContext();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
