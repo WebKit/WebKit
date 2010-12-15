@@ -264,7 +264,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::hasLocalDataForURL(const WebCore::KURL&)
+bool WebPage::platformHasLocalDataForURL(const WebCore::KURL&)
 {
     // FIXME: Implement
     return false;

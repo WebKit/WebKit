@@ -40,6 +40,12 @@
 #endif
 #include <WinUser.h>
 
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLCachePriv.h>
+#include <CFNetwork/CFURLProtocolPriv.h>
+#include <CFNetwork/CFURLRequestPriv.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -236,16 +242,28 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::hasLocalDataForURL(const WebCore::KURL&)
+bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 {
-    // FIXME <rdar://problem/8608754>: Implement
+#if USE(CFNETWORK)
+    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
+    RetainPtr<CFMutableURLRequestRef> request(AdoptCF, CFURLRequestCreateMutable(0, cfURL.get(), kCFURLRequestCachePolicyReloadIgnoringCache, 60, 0));
+    
+    RetainPtr<CFStringRef> userAgent(AdoptCF, userAgent().createCFString());
+    CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
+
+    RetainPtr<CFURLCacheRef> cache(AdoptCF, CFURLCacheCopySharedURLCache());
+
+    RetainPtr<CFCachedURLResponseRef> response(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));    
+    return response;
+#else
     return false;
+#endif
 }
 
-bool WebPage::canHandleRequest(const WebCore::ResourceRequest&)
+bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 {
-    // FIXME <rdar://problem/8608754>: Implement
-    return true;
+    // FIXME: Are there other requests we need to be able to handle? WebKit1's WebView.cpp has a FIXME here as well.
+    return CFURLProtocolCanHandleRequest(request.cfURLRequest());
 }
 
 } // namespace WebKit

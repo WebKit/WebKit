@@ -58,8 +58,10 @@
 #include "WebProcessProxyMessageKinds.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/AbstractDatabase.h>
+#include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -1262,6 +1264,19 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
 
     m_provisionalSandboxExtension->invalidate();
     m_provisionalSandboxExtension = 0;
+}
+
+bool WebPage::hasLocalDataForURL(const KURL& url)
+{
+    if (url.isLocalFile())
+        return true;
+
+    FrameLoader* frameLoader = m_page->mainFrame()->loader();
+    DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
+    if (documentLoader && documentLoader->subresource(url))
+        return true;
+
+    return platformHasLocalDataForURL(url);
 }
 
 } // namespace WebKit

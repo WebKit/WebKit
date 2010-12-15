@@ -1,3 +1,27 @@
+2010-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: WebPageWin needs implementations of hasLocalDataForURL and canHandleRequest
+        https://bugs.webkit.org/show_bug.cgi?id=51090
+        
+        Implement these functions for WebKit2 on Windows.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasLocalDataForURL): Does the cross-platform part of the check for having local
+            data (file URL or subresource), then calls platformHasLocalDataForURL to let the platform do
+            their specific checks.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformHasLocalDataForURL): Moved the cross-platform code from here to WebPage::hasLocalDataForURL.
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL): Renamed from hasLocalDataForURL.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL): Renamed from hasLocalDataForURL and implemented with CFNetwork calls. This is the
+            CFNetwork equivalent of the code in WebPageMac::platformHasLocalDataForURL.
+        (WebKit::WebPage::canHandleRequest): Copied the line of code from WebView::canHandleRequest in WebKit1, with a FIXME saying
+            this might not be enough (although it was in WebKit1 on Windows).
+
 2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74117.

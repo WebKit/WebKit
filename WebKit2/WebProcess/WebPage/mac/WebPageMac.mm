@@ -30,8 +30,6 @@
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/ArchiveResource.h>
-#include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -342,16 +340,8 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::hasLocalDataForURL(const WebCore::KURL& url)
+bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 {
-    if (url.isLocalFile())
-        return true;
-    
-    FrameLoader* frameLoader = m_page->mainFrame()->loader();
-    DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
-    if (documentLoader && documentLoader->subresource(url))
-        return true;
-
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];

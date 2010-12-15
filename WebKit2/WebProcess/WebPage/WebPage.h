@@ -267,6 +267,8 @@ private:
 
     void loadData(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL);
 
+    bool platformHasLocalDataForURL(const WebCore::KURL&);
+
     // Actions
     void tryClose();
     void loadURL(const String&, const SandboxExtension::Handle& sandboxExtensionHandle);
