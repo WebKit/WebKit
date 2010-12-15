@@ -1,3 +1,17 @@
+2010-12-02  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Fix drawing of inset box shadows
+        https://bugs.webkit.org/show_bug.cgi?id=41576
+
+        When clearing outside clipped path, the context contains unexpected transform.
+        Fixed to restore original state before the clear.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+        (WebCore::PlatformContextSkia::applyAntiAliasedClipPaths):
+
 2010-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
