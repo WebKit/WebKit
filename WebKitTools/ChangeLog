@@ -1,3 +1,66 @@
+2010-12-15  Adam Roben  <aroben@apple.com>
+
+        Teach check-webkit-style to check .vcproj and .vsprops files for XML
+        syntax errors
+
+        Fixes <http://webkit.org/b/51103> check-webkit-style should check for
+        XML syntax errors in .vcproj/.vsprops files
+
+        Reviewed by Dave Levin.
+
+        * Scripts/webkitpy/style/checker.py: Added lists of file extensions
+        that should be treated as XML and that should be allowed to contain
+        carriage returns. (These lists happen to be identical currently.)
+        (FileType): Added a new XML type.
+        (CheckerDispatcher.should_check_and_strip_carriage_returns): Added.
+        Just does a simple file extension check.
+        (CheckerDispatcher._file_type): Added a case for XML files.
+        (CheckerDispatcher._create_checker): Ditto. We use XMLChecker for XML
+        files (surprise!).
+        (StyleProcessor.process): Ask the dispatcher whether we should pass the
+        lines through the carriage checker.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherCarriageReturnTest.test_should_check_and_strip_carriage_returns):
+        Added. Checks a few file names to see if carriage returns are allowed
+        or not.
+        (CheckerDispatcherDispatchTest.assert_checker_xml): Added. Similar to
+        other assert_checker_* functions.
+        (CheckerDispatcherDispatchTest.test_xml_paths): Added. Similar to other
+        test_*_paths functions.
+        (CheckerDispatcherDispatchTest.test_xml_paths): Added. Similar to other
+        test_*_paths functions.
+        (CheckerDispatcherDispatchTest.test_none_paths): Removed the vcproj
+        file from this test case, as vcproj files now have a type.
+        (StyleProcessor_CodeCoverageTest.MockDispatcher.should_check_and_strip_carriage_returns):
+        Added. Similar to the other should_* functions.
+        (StyleProcessor_CodeCoverageTest.test_process__carriage_returns_not_stripped):
+        Added. Checks that carriage returns aren't checked for or stripped for
+        allowed files.
+
+        * Scripts/webkitpy/style/checkers/xml.py: Added.
+        (XMLChecker.__init__): Simple init method.
+        (XMLChecker.check): Pass each line through the expat parser, and record
+        a style error for any errors thrown by the parser.
+
+        * Scripts/webkitpy/style/checkers/xml_unittest.py: Added.
+        (XMLCheckerTest.assert_no_error): Checks that the given XML does not
+        produce a style error.
+        (XMLCheckerTest.assert_error): Checks that the given XML produces an
+        error of the given category on the given line.
+        (XMLCheckerTest.mock_handle_style_error): Does nothing. Used for
+        checking that the XMLChecker constructor works properly.
+        (XMLCheckerTest.test_conflict_marker): Tests that conflict markers
+        cause a style error (see, e.g., r73887).
+        (XMLCheckerTest.test_extra_closing_tag): Tests that extra closing tags
+        cause a style error (see, e.g., r73773).
+        (XMLCheckerTest.test_init): Tests that the XMLChecker constructor works
+        properly.
+        (XMLCheckerTest.test_missing_closing_tag): Tests that missing closing
+        tags cause a style error (see, e.g., r72795).
+        (XMLCheckerTest.test_no_error): Tests that valid XML does not cause a
+        style error.
+
 2010-12-15  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.

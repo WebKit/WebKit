@@ -55,6 +55,7 @@ from checker import StyleProcessorConfiguration
 from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
 from checkers.text import TextChecker
+from checkers.xml import XMLChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import validate_filter_rules
 from filter import FilterConfiguration
@@ -343,6 +344,20 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
                                                      expected=False)
 
 
+class CheckerDispatcherCarriageReturnTest(unittest.TestCase):
+    def test_should_check_and_strip_carriage_returns(self):
+        files = {
+            'foo.txt': True,
+            'foo.cpp': True,
+            'foo.vcproj': False,
+            'foo.vsprops': False,
+        }
+
+        dispatcher = CheckerDispatcher()
+        for file_path, expected_result in files.items():
+            self.assertEquals(dispatcher.should_check_and_strip_carriage_returns(file_path), expected_result, 'Checking: %s' % file_path)
+
+
 class CheckerDispatcherDispatchTest(unittest.TestCase):
 
     """Tests dispatch() method of CheckerDispatcher class."""
@@ -385,6 +400,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_text(self, file_path):
         """Assert that the dispatched checker is a TextChecker."""
         self.assert_checker(file_path, TextChecker)
+
+    def assert_checker_xml(self, file_path):
+        """Assert that the dispatched checker is a XMLChecker."""
+        self.assert_checker(file_path, XMLChecker)
 
     def test_cpp_paths(self):
         """Test paths that should be checked as C++."""
@@ -483,6 +502,26 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         self.assertEquals(checker.file_path, file_path)
         self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
 
+    def test_xml_paths(self):
+        """Test paths that should be checked as XML."""
+        paths = [
+           "WebCore/WebCore.vcproj/WebCore.vcproj",
+           "WebKitLibraries/win/tools/vsprops/common.vsprops",
+        ]
+
+        for path in paths:
+            self.assert_checker_xml(path)
+
+        # Check checker attributes on a typical input.
+        file_base = "foo"
+        file_extension = "vcproj"
+        file_path = file_base + "." + file_extension
+        self.assert_checker_xml(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_path, file_path)
+        self.assertEquals(checker.handle_style_error,
+                          self.mock_handle_style_error)
+
     def test_none_paths(self):
         """Test paths that have no file type.."""
         paths = [
@@ -490,7 +529,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.asdf",  # Non-sensical file extension.
            "foo.png",
            "foo.exe",
-           "foo.vcproj",
             ]
 
         for path in paths:
@@ -638,6 +676,9 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         def should_skip_without_warning(self, file_path):
             return file_path.endswith('skip_without_warning.txt')
 
+        def should_check_and_strip_carriage_returns(self, file_path):
+            return not file_path.endswith('carriage_returns_allowed.txt')
+
         def dispatch(self, file_path, style_error_handler, min_confidence):
             if file_path.endswith('do_not_process.txt'):
                 return None
@@ -777,3 +818,15 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         self.assertRaises(AssertionError, self._processor.process,
                           lines=['line1', 'line2'], file_path=path,
                           line_numbers=[100])
+
+    def test_process__carriage_returns_not_stripped(self):
+        """Test that carriage returns aren't stripped from files that are allowed to contain them."""
+        file_path = 'carriage_returns_allowed.txt'
+        lines = ['line1\r', 'line2\r']
+        line_numbers = [100]
+        self._processor.process(lines=lines,
+                                file_path=file_path,
+                                line_numbers=line_numbers)
+        # The carriage return checker should never have been invoked, and so
+        # should not have saved off any lines.
+        self.assertFalse(hasattr(self.carriage_checker, 'lines'))

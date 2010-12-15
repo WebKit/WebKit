@@ -40,6 +40,7 @@ from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
 from checkers.text import TextChecker
+from checkers.xml import XMLChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
@@ -196,9 +197,6 @@ _CPP_FILE_EXTENSIONS = [
 
 _PYTHON_FILE_EXTENSION = 'py'
 
-# FIXME: Include 'vcproj' files as text files after creating a mechanism
-#        for exempting them from the carriage-return checker (since they
-#        are Windows-only files).
 _TEXT_FILE_EXTENSIONS = [
     'ac',
     'cc',
@@ -221,12 +219,15 @@ _TEXT_FILE_EXTENSIONS = [
     'rb',
     'sh',
     'txt',
-#   'vcproj',  # See FIXME above.
     'wm',
     'xhtml',
     'y',
     ]
 
+_XML_FILE_EXTENSIONS = [
+    'vcproj',
+    'vsprops',
+    ]
 
 # Files to skip that are less obvious.
 #
@@ -252,6 +253,11 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests/",
     ]
 
+# Extensions of files which are allowed to contain carriage returns.
+_CARRIAGE_RETURN_ALLOWED_FILE_EXTENSIONS = [
+    'vcproj',
+    'vsprops',
+    ]
 
 # The maximum number of errors to report per file, per category.
 # If a category is not a key, then it has no maximum.
@@ -406,6 +412,7 @@ class FileType:
     CPP = 1
     PYTHON = 2
     TEXT = 3
+    XML = 4
 
 
 class CheckerDispatcher(object):
@@ -445,6 +452,9 @@ class CheckerDispatcher(object):
                 return True
         return False
 
+    def should_check_and_strip_carriage_returns(self, file_path):
+        return self._file_extension(file_path) not in _CARRIAGE_RETURN_ALLOWED_FILE_EXTENSIONS
+
     def _file_type(self, file_path):
         """Return the file type corresponding to the given file."""
         file_extension = self._file_extension(file_path)
@@ -459,6 +469,8 @@ class CheckerDispatcher(object):
             return FileType.CPP
         elif file_extension == _PYTHON_FILE_EXTENSION:
             return FileType.PYTHON
+        elif file_extension in _XML_FILE_EXTENSIONS:
+            return FileType.XML
         elif (os.path.basename(file_path).startswith('ChangeLog') or
               (not file_extension and "WebKitTools/Scripts/" in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS):
@@ -477,6 +489,8 @@ class CheckerDispatcher(object):
                                  handle_style_error, min_confidence)
         elif file_type == FileType.PYTHON:
             checker = PythonChecker(file_path, handle_style_error)
+        elif file_type == FileType.XML:
+            checker = XMLChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
             basename = os.path.basename(file_path)
             if basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
@@ -718,13 +732,9 @@ class StyleProcessor(ProcessorBase):
 
         carriage_checker = self._carriage_checker_class(style_error_handler)
 
-        # FIXME: We should probably use the SVN "eol-style" property
-        #        or a white list to decide whether or not to do
-        #        the carriage-return check. Originally, we did the
-        #        check only if (os.linesep != '\r\n').
-        #
         # Check for and remove trailing carriage returns ("\r").
-        lines = carriage_checker.check(lines)
+        if self._dispatcher.should_check_and_strip_carriage_returns(file_path):
+            lines = carriage_checker.check(lines)
 
         min_confidence = self._configuration.min_confidence
         checker = self._dispatcher.dispatch(file_path,
