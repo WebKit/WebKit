@@ -1,3 +1,15 @@
+2010-12-15  Jarred Nicholls  <jarred@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Implement the File API spec
+        https://bugs.webkit.org/show_bug.cgi?id=49839
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rebaseline Chromium tests.

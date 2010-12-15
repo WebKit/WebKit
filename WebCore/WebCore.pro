@@ -3716,85 +3716,94 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     }
 }
 
-contains(DEFINES, ENABLE_3D_CANVAS=1) {
-tobe|!tobe: QT += opengl
+contains(DEFINES, ENABLE_BLOB=1) | contains(DEFINES, ENABLE_3D_CANVAS=1) {
     !v8 {
         HEADERS += \
             bindings/js/JSArrayBufferViewHelper.h
     }
 
-HEADERS += \
-        html/canvas/CanvasContextAttributes.h \
-        html/canvas/WebGLObject.h \
-        html/canvas/WebGLActiveInfo.h \
+    HEADERS += \
         html/canvas/ArrayBuffer.h \
         html/canvas/ArrayBufferView.h \
         html/canvas/DataView.h \
-        html/canvas/WebGLBuffer.h \
         html/canvas/Int8Array.h \
-        html/canvas/WebGLContextAttributes.h \
         html/canvas/Float32Array.h \
+        html/canvas/Int32Array.h \
+        html/canvas/Int16Array.h \
+        html/canvas/Uint8Array.h \
+        html/canvas/Uint32Array.h \
+        html/canvas/Uint16Array.h
+
+    !v8 {
+        SOURCES += \
+            bindings/js/JSArrayBufferCustom.cpp \
+            bindings/js/JSDataViewCustom.cpp \
+            bindings/js/JSInt8ArrayCustom.cpp \
+            bindings/js/JSFloat32ArrayCustom.cpp \
+            bindings/js/JSInt32ArrayCustom.cpp \
+            bindings/js/JSInt16ArrayCustom.cpp \
+            bindings/js/JSUint8ArrayCustom.cpp \
+            bindings/js/JSUint32ArrayCustom.cpp \
+            bindings/js/JSUint16ArrayCustom.cpp
+    }
+    SOURCES += \
+        html/canvas/ArrayBuffer.cpp \
+        html/canvas/ArrayBufferView.cpp \
+        html/canvas/DataView.cpp \
+        html/canvas/Int8Array.cpp \
+        html/canvas/Float32Array.cpp \
+        html/canvas/Int32Array.cpp \
+        html/canvas/Int16Array.cpp \
+        html/canvas/Uint8Array.cpp \
+        html/canvas/Uint32Array.cpp \
+        html/canvas/Uint16Array.cpp
+    }
+
+contains(DEFINES, ENABLE_3D_CANVAS=1) {
+    tobe|!tobe: QT += opengl
+
+    HEADERS += \
+        html/canvas/CanvasContextAttributes.h \
+        html/canvas/WebGLObject.h \
+        html/canvas/WebGLActiveInfo.h \
+        html/canvas/WebGLBuffer.h \
+        html/canvas/WebGLContextAttributes.h \
         html/canvas/WebGLExtension.h \
         html/canvas/WebGLFramebuffer.h \
         html/canvas/WebGLGetInfo.h \
-        html/canvas/Int32Array.h \
         html/canvas/WebGLProgram.h \
         html/canvas/WebGLRenderbuffer.h \
         html/canvas/WebGLRenderingContext.h \
         html/canvas/WebGLShader.h \
-        html/canvas/Int16Array.h \
         html/canvas/OESTextureFloat.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
-        html/canvas/Uint8Array.h \
-        html/canvas/Uint32Array.h \
-        html/canvas/Uint16Array.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
         platform/graphics/qt/Extensions3DQt.h
 
     !v8 {
         SOURCES += \
-                bindings/js/JSArrayBufferCustom.cpp \
-                bindings/js/JSDataViewCustom.cpp \
-                bindings/js/JSInt8ArrayCustom.cpp \
-                bindings/js/JSFloat32ArrayCustom.cpp \
-                bindings/js/JSInt32ArrayCustom.cpp \
-                bindings/js/JSWebGLRenderingContextCustom.cpp \
-                bindings/js/JSInt16ArrayCustom.cpp \
-                bindings/js/JSUint8ArrayCustom.cpp \
-                bindings/js/JSUint32ArrayCustom.cpp \
-                bindings/js/JSUint16ArrayCustom.cpp
+            bindings/js/JSWebGLRenderingContextCustom.cpp
     }
-SOURCES += \
+    SOURCES += \
         html/canvas/CanvasContextAttributes.cpp \
         html/canvas/WebGLObject.cpp \
-        html/canvas/ArrayBuffer.cpp \
-        html/canvas/ArrayBufferView.cpp \
-        html/canvas/DataView.cpp \
         html/canvas/WebGLBuffer.cpp \
-        html/canvas/Int8Array.cpp \
         html/canvas/WebGLContextAttributes.cpp \
-        html/canvas/Float32Array.cpp \
         html/canvas/WebGLExtension.cpp \
         html/canvas/WebGLFramebuffer.cpp \
         html/canvas/WebGLGetInfo.cpp \
-        html/canvas/Int32Array.cpp \
         html/canvas/WebGLProgram.cpp \
         html/canvas/WebGLRenderbuffer.cpp \
         html/canvas/WebGLRenderingContext.cpp \
         html/canvas/WebGLShader.cpp \
-        html/canvas/Int16Array.cpp \
         html/canvas/OESTextureFloat.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
-        html/canvas/Uint8Array.cpp \
-        html/canvas/Uint32Array.cpp \
-        html/canvas/Uint16Array.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp
-
 }
 
 contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {

@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Apple, Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
+ * Copyright (C) 2010 Sencha, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +95,7 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    return String(QFileInfo(path).absolutePath());
+    return QFileInfo(path).absolutePath();
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)
@@ -128,7 +129,6 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     return CString();
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     QIODevice::OpenMode platformMode;
@@ -153,7 +153,6 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
         return handle->read(data, length);
     return 0;
 }
-#endif
 
 void closeFile(PlatformFileHandle& handle)
 {
@@ -161,6 +160,34 @@ void closeFile(PlatformFileHandle& handle)
         handle->close();
         delete handle;
     }
+}
+
+long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+{
+    if (handle) {
+        long long current = 0;
+
+        switch (origin) {
+        case SeekFromBeginning:
+            break;
+        case SeekFromCurrent:
+            current = handle->pos();
+            break;
+        case SeekFromEnd:
+            current = handle->size();
+            break;
+        }
+
+        // Add the offset to the current position and seek to the new position
+        // Return our new position if the seek is successful
+        current += offset;
+        if (handle->seek(current))
+            return current;
+        else
+            return -1;
+    }
+
+    return -1;
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
