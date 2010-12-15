@@ -93,29 +93,34 @@ class TestExpectationsTestCase(unittest.TestCase):
             ["passes/text.html = CRASH TIMEOUT FAIL PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 MAC : passes/text.html = PASS FAIL"],
+            ["BUGCR1234 MAC : passes/text.html = PASS FAIL"],
             "")
         self.assert_lines_lint(
-            ["SKIP BUG1234 : passes/text.html = TIMEOUT PASS"],
+            ["SKIP BUGCR1234 : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 DEBUG : passes/text.html = TIMEOUT PASS"],
+            ["BUGCR1234 DEBUG : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
+            ["BUGCR1234 DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 MAC DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
+            ["BUGCR1234 MAC DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 DEBUG MAC : passes/text.html = TIMEOUT PASS"],
+            ["BUGCR1234 DEBUG MAC : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["SLOW BUG1234 : passes/text.html = PASS"],
+            ["SLOW BUGCR1234 : passes/text.html = PASS"],
             "")
         self.assert_lines_lint(
             ["WONTFIX SKIP : passes/text.html = TIMEOUT"],
             "")
+
+    def test_modifier_errors(self):
+        self.assert_lines_lint(
+            ["BUG1234 : passes/text.html = FAIL"],
+            'Bug must be either BUGCR, BUGWK, or BUGV8_ for test: bug1234 passes/text.html  [test/expectations] [5]')
 
     def test_valid_modifiers(self):
         self.assert_lines_lint(

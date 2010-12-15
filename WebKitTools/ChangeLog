@@ -1,3 +1,9 @@
+2010-12-14  Ojan Vafai  <ojan@chromium.org>
+
+        Fix python unittests after http://trac.webkit.org/changeset/74070.
+
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+
 2010-12-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Jian Li.
