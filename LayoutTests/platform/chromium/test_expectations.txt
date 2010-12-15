@@ -3010,7 +3010,6 @@ BUGCR61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html 
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 
-BUG_LEVIN : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // New test added with http://trac.webkit.org/changeset/72472
@@ -3028,8 +3027,6 @@ BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 
 BUGCR64672 : fast/js/regexp-ranges-and-escaped-hyphens.html = TEXT
 BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
-
-BUGCR64695 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
