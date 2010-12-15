@@ -163,7 +163,13 @@ void LayerBackedDrawingArea::updateLayoutRunLoopObserverCallback(CFRunLoopObserv
 
 void LayerBackedDrawingArea::updateLayoutRunLoopObserverFired()
 {
+    // Laying out the page can cause the drawing area to change so we keep an extra reference.
+    RefPtr<LayerBackedDrawingArea> protect(this);
+
     m_webPage->layoutIfNeeded();
+
+    if (m_webPage->drawingArea() != this)
+        return;
     
     if (m_attached)
         syncCompositingLayers();

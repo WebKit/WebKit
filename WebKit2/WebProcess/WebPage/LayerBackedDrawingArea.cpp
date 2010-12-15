@@ -88,8 +88,14 @@ void LayerBackedDrawingArea::setNeedsDisplay(const IntRect& rect)
 
 void LayerBackedDrawingArea::display()
 {
+    // Laying out the page can cause the drawing area to change so we keep an extra reference.
+    RefPtr<LayerBackedDrawingArea> protect(this);
+
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
+
+    if (m_webPage->drawingArea() != this)
+        return;
 }
 
 void LayerBackedDrawingArea::scheduleDisplay()
@@ -110,10 +116,8 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
 
-    if (m_webPage->drawingArea() != this) {
-        // The drawing area changed, return early.
+    if (m_webPage->drawingArea() != this)
         return;
-    }
     
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
 }

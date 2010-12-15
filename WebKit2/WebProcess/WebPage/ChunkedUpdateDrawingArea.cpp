@@ -87,9 +87,15 @@ void ChunkedUpdateDrawingArea::display()
     if (m_dirtyRect.isEmpty())
         return;
 
+    // Laying out the page can cause the drawing area to change so we keep an extra reference.
+    RefPtr<ChunkedUpdateDrawingArea> protect(this);
+
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
  
+    if (m_webPage->drawingArea() != this)
+        return;
+    
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
@@ -133,10 +139,8 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
     m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
 
-    if (m_webPage->drawingArea() != this) {
-        // The drawing area changed, return early.
+    if (m_webPage->drawingArea() != this)
         return;
-    }
 
     if (m_paintingIsSuspended) {
         ASSERT(!m_displayTimer.isActive());
