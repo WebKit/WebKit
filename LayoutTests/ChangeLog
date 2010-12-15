@@ -1,3 +1,11 @@
+2010-12-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        * platform/qt/Skipped: Add http/tests/misc/authentication-sent-to-redirect.html
+          because of missing layoutTestController.setHandlesAuthenticationChallenges()
+        * platform/qt/plugins/document-open-expected.txt: Copied from LayoutTests/plugins/document-open-expected.txt.
+
 2010-12-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

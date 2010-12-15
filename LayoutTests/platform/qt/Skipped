@@ -722,6 +722,9 @@ http/tests/plugins/third-party-cookie-accept-policy.html
 # Missing layoutTestController.dumpWillCacheResponse
 http/tests/misc/willCacheResponse-delegate-callback.html
 
+# Missing layoutTestController.setHandlesAuthenticationChallenges()
+http/tests/misc/authentication-sent-to-redirect.html
+
 # ------- missing eventSender.beginDragWithFiles
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/file-drag-to-editable.html
