@@ -207,6 +207,8 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Grap
 
 PlatformCALayer::~PlatformCALayer()
 {
+    [m_layer.get() setValue:nil forKey:platformCALayerPointer];
+
     // Clear the owner, which also clears it in the delegate to prevent attempts 
     // to use the GraphicsLayerCA after it has been destroyed.
     setOwner(0);
