@@ -3244,3 +3244,5 @@ BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PAS
 BUGCR66923 MAC : fast/css/focus-ring-detached.html = IMAGE
 BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS
+
+BUGCR67032 WIN : inspector/dom-breakpoints.html = TEXT
