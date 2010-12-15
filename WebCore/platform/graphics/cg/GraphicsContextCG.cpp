@@ -1188,6 +1188,13 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     CGContextSetShouldAntialias(platformContext(), enable);
 }
 
+void GraphicsContext::setPlatformShouldSmoothFonts(bool enable)
+{
+    if (paintingDisabled())
+        return;
+    CGContextSetShouldSmoothFonts(platformContext(), enable);
+}
+
 #ifndef BUILDING_ON_TIGER // Tiger's setPlatformCompositeOperation() is defined in GraphicsContextMac.mm.
 void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
 {

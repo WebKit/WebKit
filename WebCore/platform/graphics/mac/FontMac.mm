@@ -91,22 +91,27 @@ static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef cont
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     CGContextRef cgContext = context->platformContext();
-    bool newShouldUseFontSmoothing = shouldUseSmoothing();
 
+    bool shouldSmoothFonts = true;
+    bool changeFontSmoothing = false;
+    
     switch(fontDescription().fontSmoothing()) {
     case Antialiased: {
         context->setShouldAntialias(true);
-        newShouldUseFontSmoothing = false;
+        shouldSmoothFonts = false;
+        changeFontSmoothing = true;
         break;
     }
     case SubpixelAntialiased: {
         context->setShouldAntialias(true);
-        newShouldUseFontSmoothing = true;
+        shouldSmoothFonts = true;
+        changeFontSmoothing = true;
         break;
     }
     case NoSmoothing: {
         context->setShouldAntialias(false);
-        newShouldUseFontSmoothing = false;
+        shouldSmoothFonts = false;
+        changeFontSmoothing = true;
         break;
     }
     case AutoSmoothing: {
@@ -116,11 +121,18 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     default: 
         ASSERT_NOT_REACHED();
     }
-
-    bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
-        CGContextSetShouldSmoothFonts(cgContext, newShouldUseFontSmoothing);
     
+    if (!shouldUseSmoothing()) {
+        shouldSmoothFonts = false;
+        changeFontSmoothing = true;
+    }
+
+    bool originalShouldUseFontSmoothing = false;
+    if (changeFontSmoothing) {
+        originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
+        CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
+    }
+
     const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
     if (!isPrinterFont()) {
@@ -186,7 +198,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     if (hasSimpleShadow)
         context->setShadow(shadowOffset, shadowBlur, shadowColor, fillColorSpace);
 
-    if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
+    if (changeFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 }
 

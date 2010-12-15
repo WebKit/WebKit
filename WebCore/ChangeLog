@@ -1,3 +1,36 @@
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow disabling of font smoothing in compositing layers to be overridden by style
+        https://bugs.webkit.org/show_bug.cgi?id=50732
+
+        Add methods to GraphicsContext to get and set font smoothing,
+        and have them be part of the graphics state.
+        
+        Fix Font::drawGlyphs() to allow the font's smoothing mode (from style)
+        to override the current smoothing mode of the context. The global
+        shouldUseSmoothing() still has final say.
+        
+        Turn off smoothing in compositing layers with this, rather than
+        the non-stateful 'allow' method.
+        
+        * manual-tests/compositing/font-smoothing.html: Added.
+        Manual test because DRT disables font smoothing.
+        
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShouldSmoothFonts):
+        (WebCore::GraphicsContext::shouldSmoothFonts):
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2010-12-15  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

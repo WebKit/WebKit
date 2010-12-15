@@ -164,6 +164,7 @@ namespace WebCore {
             , fillColorSpace(ColorSpaceDeviceRGB)
             , compositeOperator(CompositeSourceOver)
             , shouldAntialias(true)
+            , shouldSmoothFonts(true)
             , paintingDisabled(false)
             , shadowsIgnoreTransforms(false)
         {
@@ -197,9 +198,10 @@ namespace WebCore {
 
         CompositeOperator compositeOperator;
 
-        bool shouldAntialias;
-        bool paintingDisabled;
-        bool shadowsIgnoreTransforms;
+        bool shouldAntialias : 1;
+        bool shouldSmoothFonts : 1;
+        bool paintingDisabled : 1;
+        bool shadowsIgnoreTransforms : 1;
     };
 
     class GraphicsContext : public Noncopyable {
@@ -241,6 +243,9 @@ namespace WebCore {
 
         void setShouldAntialias(bool);
         bool shouldAntialias() const;
+
+        void setShouldSmoothFonts(bool);
+        bool shouldSmoothFonts() const;
 
         const GraphicsContextState& state() const;
 
@@ -497,7 +502,8 @@ namespace WebCore {
         void setPlatformFillGradient(Gradient*);
         void setPlatformFillPattern(Pattern*);
 
-        void setPlatformShouldAntialias(bool b);
+        void setPlatformShouldAntialias(bool);
+        void setPlatformShouldSmoothFonts(bool);
 
         void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         void clearPlatformShadow();

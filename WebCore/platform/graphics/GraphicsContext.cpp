@@ -215,6 +215,17 @@ bool GraphicsContext::shouldAntialias() const
     return m_state.shouldAntialias;
 }
 
+void GraphicsContext::setShouldSmoothFonts(bool b)
+{
+    m_state.shouldSmoothFonts = b;
+    setPlatformShouldSmoothFonts(b);
+}
+
+bool GraphicsContext::shouldSmoothFonts() const
+{
+    return m_state.shouldSmoothFonts;
+}
+
 const GraphicsContextState& GraphicsContext::state() const
 {
     return m_state;
@@ -590,6 +601,12 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 
 #if !PLATFORM(QT) && !PLATFORM(CAIRO) && !PLATFORM(SKIA) && !PLATFORM(HAIKU) && !PLATFORM(OPENVG)
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
+{
+}
+#endif
+
+#if !PLATFORM(CG)
+void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 {
 }
 #endif
