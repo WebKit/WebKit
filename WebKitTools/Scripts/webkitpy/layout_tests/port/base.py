@@ -322,7 +322,8 @@ class Port(object):
         return self._filesystem.read_binary_file(path)
 
     def expected_text(self, test):
-        """Returns the text output we expect the test to produce."""
+        """Returns the text output we expect the test to produce.
+        End-of-line characters are normalized to '\n'."""
         # FIXME: DRT output is actually utf-8, but since we don't decode the
         # output from DRT (instead treating it as a binary string), we read the
         # baselines as a binary string, too.
@@ -330,7 +331,7 @@ class Port(object):
         if not self.path_exists(path):
             return ''
         text = self._filesystem.read_binary_file(path)
-        return text.strip("\r\n").replace("\r\n", "\n") + "\n"
+        return text.replace("\r\n", "\n")
 
     def filename_to_uri(self, filename):
         """Convert a test file (which is an absolute path) to a URI."""
