@@ -1,3 +1,13 @@
+2010-12-15  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51117
+        Add a new leopard test bot
+        really really commit to trunk this time.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-12-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
@@ -87,15 +97,6 @@
         #webkit).
 
         * Scripts/webkitdirs.pm:
-
-2010-12-15  Lucas Forschler  <lforschler@apple.com>
-
-        Reviewed by Stephanie Lewis.
-
-        https://bugs.webkit.org/show_bug.cgi?id=51117
-        Add a new leopard WK2 test bot
-
-        * BuildSlaveSupport/build.webkit.org-config/config.json:
 
 2010-12-15  Amruth Raj  <amruthraj@motorola.com> and Ravi Kasibhatla  <ravi.kasibhatla@motorola.com>
 
