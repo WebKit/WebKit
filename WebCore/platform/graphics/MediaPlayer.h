@@ -91,6 +91,7 @@ class GraphicsContext;
 class IntRect;
 class IntSize;
 class MediaPlayer;
+class MediaPlayerFactory;
 class TimeRanges;
 
 class MediaPlayerClient {
@@ -159,7 +160,7 @@ public:
 
     // media engine support
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(ContentType contentType);
+    static MediaPlayer::SupportsType supportsType(const ContentType&);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
 
@@ -181,7 +182,7 @@ public:
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
     
-    void load(const String& url, const ContentType& contentType);
+    void load(const String& url, const ContentType&);
     void cancelLoad();
     
     bool visible() const;
@@ -282,12 +283,18 @@ public:
 
 private:
     MediaPlayer(MediaPlayerClient*);
+    void loadWithNextMediaEngine(MediaPlayerFactory*);
+    void reloadTimerFired(Timer<MediaPlayer>*);
 
     static void initializeMediaEngines();
 
     MediaPlayerClient* m_mediaPlayerClient;
+    Timer<MediaPlayer> m_reloadTimer;
     OwnPtr<MediaPlayerPrivateInterface*> m_private;
-    void* m_currentMediaEngine;
+    MediaPlayerFactory* m_currentMediaEngine;
+    String m_url;
+    String m_contentMIMEType;
+    String m_contentTypeCodecs;
     FrameView* m_frameView;
     IntSize m_size;
     Preload m_preload;

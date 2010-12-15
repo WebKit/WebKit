@@ -161,7 +161,8 @@ struct MediaPlayerFactory : Noncopyable {
 };
 
 static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType);
-static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, const String& codecs);
+static MediaPlayerFactory* bestMediaEngineForTypeAndCodecs(const String& type, const String& codecs, MediaPlayerFactory* current = 0);
+static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
 
 static Vector<MediaPlayerFactory*>& installedMediaEngines() 
 {
@@ -209,10 +210,12 @@ static const AtomicString& codecs()
     return codecs;
 }
 
-static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, const String& codecs)
+static MediaPlayerFactory* bestMediaEngineForTypeAndCodecs(const String& type, const String& codecs, MediaPlayerFactory* current)
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    if (type.isEmpty())
+        return 0;
 
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
     if (engines.isEmpty())
         return 0;
 
@@ -226,9 +229,13 @@ static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, 
     
     MediaPlayerFactory* engine = 0;
     MediaPlayer::SupportsType supported = MediaPlayer::IsNotSupported;
-
     unsigned count = engines.size();
     for (unsigned ndx = 0; ndx < count; ndx++) {
+        if (current) {
+            if (current == engines[ndx])
+                current = 0;
+            continue;
+        }
         MediaPlayer::SupportsType engineSupport = engines[ndx]->supportsTypeAndCodecs(type, codecs);
         if (engineSupport > supported) {
             supported = engineSupport;
@@ -239,10 +246,27 @@ static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, 
     return engine;
 }
 
+static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current)
+{
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    if (engines.isEmpty())
+        return 0;
+
+    if (!current) 
+        return engines.first();
+
+    size_t currentIndex = engines.find(current);
+    if (currentIndex == WTF::notFound || currentIndex == engines.size()) 
+        return 0;
+
+    return engines[currentIndex + 1];
+}
+
 // media player
 
 MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     : m_mediaPlayerClient(client)
+    , m_reloadTimer(this, &MediaPlayer::reloadTimerFired)
     , m_private(createNullMediaPlayer(this))
     , m_currentMediaEngine(0)
     , m_frameView(0)
@@ -289,15 +313,23 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
         }
     }
 
-    MediaPlayerFactory* engine = 0;
-    if (!type.isEmpty())
-        engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
+    m_url = url;
+    m_contentMIMEType = type;
+    m_contentTypeCodecs = typeCodecs;
+    loadWithNextMediaEngine(0);
+}
 
-    // If we didn't find an engine and no MIME type is specified, just use the first engine.
-    if (!engine && type.isEmpty() && !installedMediaEngines().isEmpty())
-        engine = installedMediaEngines()[0];
+void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
+{
+    MediaPlayerFactory* engine;
+
+    // If no MIME type is specified, just use the next engine.
+    if (m_contentMIMEType.isEmpty())
+        engine = nextMediaEngine(current);
+    else
+        engine = bestMediaEngineForTypeAndCodecs(m_contentMIMEType, m_contentTypeCodecs, current);
     
-    // Don't delete and recreate the player unless it comes from a different engine
+    // Don't delete and recreate the player unless it comes from a different engine.
     if (!engine) {
         m_currentMediaEngine = engine;
         m_private.clear();
@@ -315,7 +347,7 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
     }
 
     if (m_private)
-        m_private->load(url);
+        m_private->load(m_url);
     else {
         m_private.set(createNullMediaPlayer(this));
         if (m_mediaPlayerClient)
@@ -561,7 +593,7 @@ void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& 
     m_private->paintCurrentFrameInContext(p, r);
 }
 
-MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
+MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentType)
 {
     String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
@@ -571,7 +603,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
     if (type == applicationOctetStream())
         return IsNotSupported;
 
-    MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
+    MediaPlayerFactory* engine = bestMediaEngineForTypeAndCodecs(type, typeCodecs);
     if (!engine)
         return IsNotSupported;
 
@@ -654,9 +686,25 @@ double MediaPlayer::maximumDurationToCacheMediaTime() const
     return m_private->maximumDurationToCacheMediaTime();
 }
 
+void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>*)
+{
+    m_private->cancelLoad();
+    loadWithNextMediaEngine(m_currentMediaEngine);
+}
+
+
 // Client callbacks.
 void MediaPlayer::networkStateChanged()
 {
+    // If more than one media engine is installed and this one failed before finding metadata,
+    // let the next engine try.
+    if (m_private->networkState() >= FormatError
+        && m_private->readyState() < HaveMetadata 
+        && installedMediaEngines().size() > 1 
+        && bestMediaEngineForTypeAndCodecs(m_contentMIMEType, m_contentTypeCodecs, m_currentMediaEngine)) {
+            m_reloadTimer.startOneShot(0);
+            return;
+    }
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerNetworkStateChanged(this);
 }
