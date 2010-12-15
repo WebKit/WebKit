@@ -25,8 +25,7 @@ function removeElement(elementId)
 
 var test = function()
 {
-    var subtreeModifiedBreakpoint;
-    var attributeModifiedBreakpoint;
+    var rootElement;
     testInsertChild = {};
     testInsertChild.step1 = function()
     {
@@ -35,7 +34,8 @@ var test = function()
     };
     testInsertChild.step2 = function(node)
     {
-        subtreeModifiedBreakpoint = WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
+        rootElement = node;
+        WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
         InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
         InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
         InspectorTest.addResult("Append childElement to rootElement.");
@@ -73,7 +73,7 @@ var test = function()
     testRemoveChild.step2 = function(callFrames)
     {
         dumpStatus(callFrames);
-        subtreeModifiedBreakpoint.remove();
+        rootElement.breakpoints[WebInspector.DOMBreakpointTypes.SubtreeModified].remove();
         InspectorTest.resumeExecution(testModifyAttribute.step1);
     }
 
@@ -81,20 +81,16 @@ var test = function()
     testModifyAttribute.step1 = function()
     {
         InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying attribute.");
-        findDOMNodeById("rootElement", testModifyAttribute.step2);
-    }
-    testModifyAttribute.step2 = function(node)
-    {
-        attributeModifiedBreakpoint = WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.AttributeModified);
+        WebInspector.breakpointManager.createDOMBreakpoint(rootElement.id, WebInspector.DOMBreakpointTypes.AttributeModified);
         InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
         InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
         InspectorTest.addResult("Modify rootElement className.");
-        InspectorTest.waitUntilPaused(testModifyAttribute.step3.bind(null, node));
+        InspectorTest.waitUntilPaused(testModifyAttribute.step2.bind(null));
     }
-    testModifyAttribute.step3 = function(node, callFrames)
+    testModifyAttribute.step2 = function(callFrames)
     {
         dumpStatus(callFrames);
-        attributeModifiedBreakpoint.remove();
+        rootElement.breakpoints[WebInspector.DOMBreakpointTypes.AttributeModified].remove();
         InspectorTest.resumeExecution(testRemoveNode.step1);
     }
 
