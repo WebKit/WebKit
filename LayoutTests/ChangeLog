@@ -1,3 +1,29 @@
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rebaseline Chromium test expectations.
+
+        * platform/chromium-linux/fast/blockflow/box-shadow-horizontal-bt-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-lr-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-rl-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-linux/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum: Added.
+        * platform/chromium-linux/fast/blockflow/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/chromium-mac/http/tests/misc/authentication-sent-to-redirect-expected.txt: Added.
+        * platform/chromium-mac/storage/private-browsing-noread-nowrite-expected.txt: Added.
+        * platform/chromium-win/fast/blockflow/box-shadow-horizontal-bt-expected.checksum:
+        * platform/chromium-win/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-lr-expected.checksum:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-rl-expected.checksum:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-win/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum: Added.
+        * platform/chromium-win/fast/blockflow/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/chromium-win/fast/blockflow/japanese-rl-text-with-broken-font-expected.txt: Added.
+        * platform/chromium-win/http/tests/misc/authentication-sent-to-redirect-expected.txt: Added.
+        * platform/chromium-win/storage/private-browsing-noread-nowrite-expected.txt: Added.
+
 2010-12-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix for r74103.
