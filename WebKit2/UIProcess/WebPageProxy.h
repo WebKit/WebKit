@@ -78,6 +78,7 @@ class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
+class WebOpenPanelResultListenerProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -270,7 +271,12 @@ public:
     void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
 #endif
 
+    // Called by the WebContextMenuProxy.
     void contextMenuItemSelected(const WebContextMenuItemData&);
+
+    // Called by the WebOpenPanelResultListenerProxy.
+    void didChooseFilesForOpenPanel(const Vector<String>&);
+    void didCancelForOpenPanel();
 
     WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
 
@@ -338,6 +344,8 @@ private:
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportData(const WebCore::ViewportArguments&);
     void pageDidScroll();
+    void runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data&);
+
 #if ENABLE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntSize&);
 #endif
@@ -438,6 +446,7 @@ private:
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
+    RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
 
     double m_estimatedProgress;
 

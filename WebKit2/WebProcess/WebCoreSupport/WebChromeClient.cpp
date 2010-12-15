@@ -35,6 +35,8 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include "WebOpenPanelParameters.h"
+#include "WebOpenPanelResultListener.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageProxyMessages.h"
@@ -508,9 +510,26 @@ void WebChromeClient::cancelGeolocationPermissionRequestForFrame(Frame*, Geoloca
     notImplemented();
 }
 
-void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
+void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
-    notImplemented();
+    if (m_page->activeOpenPanelResultListener())
+        return;
+
+    RefPtr<FileChooser> fileChooser = prpFileChooser;
+
+    m_page->setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(m_page, fileChooser.get()));
+    
+    WebOpenPanelParameters::Data parameters;
+    parameters.allowMultipleFiles = fileChooser->allowsMultipleFiles();
+#if ENABLE(DIRECTORY_UPLOAD)
+    parameters.allowsDirectoryUpload = fileChooser->allowsDirectoryUpload();
+#else
+    parameters.allowsDirectoryUpload = false;
+#endif
+    parameters.acceptTypes = fileChooser->acceptTypes();
+    parameters.filenames = fileChooser->filenames();
+
+    m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));
 }
 
 void WebChromeClient::chooseIconForFiles(const Vector<String>&, FileChooser*)

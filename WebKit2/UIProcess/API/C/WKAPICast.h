@@ -53,6 +53,8 @@ class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebInspectorProxy;
 class WebNavigationData;
+class WebOpenPanelParameters;
+class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
@@ -70,6 +72,8 @@ WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
+WK_ADD_API_MAPPING(WKOpenPanelParametersRef, WebOpenPanelParameters)
+WK_ADD_API_MAPPING(WKOpenPanelResultListenerRef, WebOpenPanelResultListenerProxy)
 WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
 WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)

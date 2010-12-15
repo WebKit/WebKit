@@ -23,38 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WebOpenPanelParameters.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "WebCoreArgumentCoders.h"
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+namespace WebKit {
 
-#if !(defined(__APPLE__) && __APPLE__) || (defined(__OBJC__) && __OBJC__)
-#include <WebKit2/WKView.h>
-#endif
+PassRefPtr<WebOpenPanelParameters> WebOpenPanelParameters::create(const Data& data)
+{
+    return adoptRef(new WebOpenPanelParameters(data));
+}
 
-#endif /* WebKit2_h */
+WebOpenPanelParameters::WebOpenPanelParameters(const Data& data)
+    : m_data(data)
+{
+}
+
+WebOpenPanelParameters::~WebOpenPanelParameters()
+{
+}
+
+void WebOpenPanelParameters::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(CoreIPC::In(allowMultipleFiles, allowsDirectoryUpload, acceptTypes, filenames));
+}
+
+bool WebOpenPanelParameters::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& result)
+{
+    return decoder->decode(CoreIPC::Out(result.allowMultipleFiles, result.allowsDirectoryUpload, result.acceptTypes, result.filenames));
+}
+
+} // namespace WebCore

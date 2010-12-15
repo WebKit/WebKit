@@ -136,7 +136,8 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // runBeforeUnloadConfirmPanel
         0, // didDraw
         0, // pageDidScroll
-        0  // exceededDatabaseQuota
+        0, // exceededDatabaseQuota
+        0  // runOpenPanel
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -238,7 +239,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // runBeforeUnloadConfirmPanel
         0, // didDraw
         0, // pageDidScroll
-        0  // exceededDatabaseQuota
+        0, // exceededDatabaseQuota
+        0  // runOpenPanel
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

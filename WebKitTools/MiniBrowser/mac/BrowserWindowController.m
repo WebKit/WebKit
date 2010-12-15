@@ -535,6 +535,34 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     return button == NSAlertFirstButtonReturn;
 }
 
+static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    [openPanel setAllowsMultipleSelection:WKOpenPanelParametersGetAllowsMultipleFiles(parameters)];
+
+    WKRetain(listener);
+
+    [openPanel beginSheetModalForWindow:[(BrowserWindowController *)clientInfo window] completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            WKMutableArrayRef fileURLs = WKMutableArrayCreate();
+
+            NSURL *nsURL;
+            for (nsURL in [openPanel URLs]) {
+                WKURLRef wkURL = WKURLCreateWithCFURL((CFURLRef)nsURL);
+                WKArrayAppendItem(fileURLs, wkURL);
+                WKRelease(wkURL);
+            }
+
+            WKOpenPanelResultListenerChooseFiles(listener, fileURLs);
+
+            WKRelease(fileURLs);
+        } else
+            WKOpenPanelResultListenerCancel(listener);
+        
+        WKRelease(listener);
+    }];
+}
+
 - (void)awakeFromNib
 {
     _webView = [[WKView alloc] initWithFrame:[containerView frame] contextRef:_context];
@@ -607,7 +635,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         runBeforeUnloadConfirmPanel,
         0,          /* didDraw */
         0,          /* pageDidScroll */
-        0           /* exceededDatabaseQuota */
+        0,          /* exceededDatabaseQuota */
+        runOpenPanel
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

@@ -249,8 +249,8 @@ def message_to_struct_declaration(message):
 
 def struct_or_class(namespace, type):
     structs = frozenset([
-        'WebCore::KeypressCommand',
         'WebCore::CompositionUnderline',
+        'WebCore::KeypressCommand',
         'WebCore::PluginInfo',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
@@ -258,6 +258,7 @@ def struct_or_class(namespace, type):
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginProcessCreationParameters',
         'WebKit::WebNavigationDataStore',
+        'WebKit::WebOpenPanelParameters::Data',
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',
@@ -411,13 +412,13 @@ def headers_for_type(type):
 
     special_cases = {
         'WTF::String': '<wtf/text/WTFString.h>',
+        'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
         'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebCore::PluginInfo': '<WebCore/PluginData.h>',
-        'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
-        'WebKit::WebWheelEvent': '"WebEvent.h"',
         'WebKit::WebTouchEvent': '"WebEvent.h"',
+        'WebKit::WebWheelEvent': '"WebEvent.h"',
     }
     if type in special_cases:
         return [special_cases[type]]

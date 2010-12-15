@@ -1,3 +1,22 @@
+2010-12-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Can't add files to an <input type=file>
+        https://bugs.webkit.org/show_bug.cgi?id=51087
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (runOpenPanel):
+        (-[BrowserWindowController awakeFromNib]):
+        Add simple implementation of runOpenPanel callback.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+        Stub out runOpenPanel callback. 
+
 2010-12-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -571,6 +571,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebOpenPanelParameters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebOpenPanelParameters.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPageCreationParameters.cpp"
 				>
 			</File>
@@ -1362,6 +1370,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebOpenPanelResultListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebOpenPanelResultListener.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebPage.cpp"
 					>
 				</File>
@@ -2063,6 +2079,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebOpenPanelResultListenerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebOpenPanelResultListenerProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebPageContextMenuClient.cpp"
 				>
 			</File>
@@ -2270,6 +2294,22 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKNavigationData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKOpenPanelParameters.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKOpenPanelParameters.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKOpenPanelResultListener.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKOpenPanelResultListener.h"
 						>
 					</File>
 					<File

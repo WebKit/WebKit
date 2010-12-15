@@ -77,6 +77,7 @@ class WebFrame;
 class WebInspector;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
@@ -136,6 +137,9 @@ public:
     bool isInRedo() const { return m_isInRedo; }
 
     void setActivePopupMenu(WebPopupMenu*);
+    
+    WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
+    void setActiveOpenPanelResultListener(PassRefPtr<WebOpenPanelResultListener>);
 
     // -- Called from WebProcess.
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -327,6 +331,9 @@ private:
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
 
+    void didChooseFilesForOpenPanel(const Vector<String>&);
+    void didCancelForOpenPanel();
+
 #if ENABLE(CONTEXT_MENUS)
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
@@ -389,6 +396,7 @@ private:
 #endif
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;
+    RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;

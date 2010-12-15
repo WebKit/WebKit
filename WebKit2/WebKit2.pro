@@ -261,6 +261,7 @@ HEADERS += \
     Shared/WebFindOptions.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
+    Shared/WebOpenPanelParameters.h \
     Shared/WebPageCreationParameters.h \
     Shared/WebPageGroupData.h \
     Shared/WebPopupItem.h \
@@ -288,6 +289,8 @@ HEADERS += \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
     UIProcess/API/C/WKInspector.h \
+    UIProcess/API/C/WKOpenPanelParameters.h \
+    UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageGroup.h \
@@ -345,6 +348,7 @@ HEADERS += \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
     UIProcess/WebPageContextMenuClient.h \
+    UIProcess/WebOpenPanelResultListenerProxy.h \
     UIProcess/WebPageGroup.h \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
@@ -407,6 +411,7 @@ HEADERS += \
     WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebInspector.h \
+    WebProcess/WebPage/WebOpenPanelResultListener.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebProcess.h \
@@ -458,6 +463,7 @@ SOURCES += \
     Shared/WebEventConversion.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebMouseEvent.cpp \
+    Shared/WebOpenPanelParameters.cpp \
     Shared/WebPageCreationParameters.cpp \
     Shared/WebPageGroupData.cpp \
     Shared/WebPlatformTouchPoint.cpp \
@@ -487,6 +493,8 @@ SOURCES += \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
     UIProcess/API/C/WKInspector.cpp \
+    UIProcess/API/C/WKOpenPanelParameters.cpp \
+    UIProcess/API/C/WKOpenPanelResultListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageGroup.cpp \
@@ -536,6 +544,7 @@ SOURCES += \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
+    UIProcess/WebOpenPanelResultListenerProxy.cpp \
     UIProcess/WebPageGroup.cpp \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \
@@ -617,9 +626,10 @@ SOURCES += \
     WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebInspector.cpp \
-    WebProcess/WebPage/qt/WebInspectorQt.cpp \
+    WebProcess/WebPage/WebOpenPanelResultListener.cpp \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/WebPageGroupProxy.cpp \
+    WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \

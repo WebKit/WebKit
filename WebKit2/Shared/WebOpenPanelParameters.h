@@ -23,38 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebOpenPanelParameters_h
+#define WebOpenPanelParameters_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "APIObject.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
-#if !(defined(__APPLE__) && __APPLE__) || (defined(__OBJC__) && __OBJC__)
-#include <WebKit2/WKView.h>
-#endif
+namespace WebKit {
 
-#endif /* WebKit2_h */
+class WebOpenPanelParameters : public APIObject {
+public:
+    static const Type APIType = TypeOpenPanelParameters;
+
+    struct Data {
+        void encode(CoreIPC::ArgumentEncoder*) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, Data&);
+
+        bool allowMultipleFiles;
+        bool allowsDirectoryUpload;
+        String acceptTypes;
+        Vector<String> filenames;
+    };
+
+    static PassRefPtr<WebOpenPanelParameters> create(const Data&);
+    ~WebOpenPanelParameters();
+
+    bool allowMultipleFiles() const { return m_data.allowMultipleFiles; } 
+
+private:
+    explicit WebOpenPanelParameters(const Data&);
+
+    virtual Type type() const { return APIType; }
+
+    Data m_data;
+};
+
+} // namespace WebKit
+
+#endif // WebOpenPanelParameters_h

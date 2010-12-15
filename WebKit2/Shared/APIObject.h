@@ -69,6 +69,8 @@ public:
         TypeFramePolicyListener,
         TypeInspector,
         TypeNavigationData,
+        TypeOpenPanelParameters,
+        TypeOpenPanelResultListener,
         TypePage,
         TypePageGroup,
         TypePreferences,

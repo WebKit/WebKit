@@ -47,6 +47,7 @@
 #include "WebEvent.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
 #include "WebPageGroupData.h"
@@ -230,6 +231,11 @@ void WebPageProxy::close()
         m_inspector = 0;
     }
 #endif
+
+    if (m_openPanelResultListener) {
+        m_openPanelResultListener->invalidate();
+        m_openPanelResultListener = 0;
+    }
 
     m_pageTitle = String();
     m_toolTip = String();
@@ -1251,6 +1257,19 @@ void WebPageProxy::pageDidScroll()
     m_uiClient.pageDidScroll(this);
 }
 
+void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data& data)
+{
+    if (m_openPanelResultListener) {
+        m_openPanelResultListener->invalidate();
+        m_openPanelResultListener = 0;
+    }
+
+    m_openPanelResultListener = WebOpenPanelResultListenerProxy::create(this);
+
+    if (!m_uiClient.runOpenPanel(this, process()->webFrame(frameID), data, m_openPanelResultListener.get()))
+        didCancelForOpenPanel();
+}
+
 #if PLATFORM(QT)
 void WebPageProxy::didChangeContentsSize(const WebCore::IntSize& size)
 {
@@ -1431,6 +1450,29 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
     
     process()->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
+}
+
+void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
+{
+    if (!isValid())
+        return;
+
+    // FIXME: This also needs to send a sandbox extension for these paths.
+    process()->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs), m_pageID);
+
+    m_openPanelResultListener->invalidate();
+    m_openPanelResultListener = 0;
+}
+
+void WebPageProxy::didCancelForOpenPanel()
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::DidCancelForOpenPanel(), m_pageID);
+    
+    m_openPanelResultListener->invalidate();
+    m_openPanelResultListener = 0;
 }
 
 void WebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> commandProxy, UndoOrRedo undoOrRedo)
@@ -1616,6 +1658,11 @@ void WebPageProxy::processDidCrash()
         m_inspector = 0;
     }
 #endif
+
+    if (m_openPanelResultListener) {
+        m_openPanelResultListener->invalidate();
+        m_openPanelResultListener = 0;
+    }
 
     m_pageTitle = String();
     m_toolTip = String();

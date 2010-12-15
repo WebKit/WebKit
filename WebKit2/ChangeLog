@@ -1,3 +1,99 @@
+2010-12-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Can't add files to an <input type=file>
+        https://bugs.webkit.org/show_bug.cgi?id=51087
+
+        * Scripts/webkit2/messages.py:
+        Adds new types.
+
+        * Shared/API/c/WKBase.h:
+        Adds WKOpenPanelParametersRef and WKOpenPanelResultListenerRef.
+
+        * Shared/APIObject.h:
+        Adds TypeOpenPanelParameters and TypeOpenPanelResultListener.
+
+        * Shared/WebOpenPanelParameters.cpp: Added.
+        (WebKit::WebOpenPanelParameters::create):
+        (WebKit::WebOpenPanelParameters::WebOpenPanelParameters):
+        (WebKit::WebOpenPanelParameters::~WebOpenPanelParameters):
+        (WebKit::WebOpenPanelParameters::Data::encode):
+        (WebKit::WebOpenPanelParameters::Data::decode):
+        * Shared/WebOpenPanelParameters.h: Added.
+        (WebKit::WebOpenPanelParameters::allowMultipleFiles):
+        (WebKit::WebOpenPanelParameters::type):
+        Class representing options one can pass to open panel.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Add casts for WebOpenPanelParameters and WebOpenPanelResultListenerProxy.
+
+        * UIProcess/API/C/WKOpenPanelParameters.cpp: Added.
+        (WKOpenPanelParametersGetTypeID):
+        (WKOpenPanelParametersGetAllowsMultipleFiles):
+        * UIProcess/API/C/WKOpenPanelParameters.h: Added.
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp: Added.
+        (WKOpenPanelResultListenerGetTypeID):
+        (WKOpenPanelResultListenerChooseFiles):
+        (WKOpenPanelResultListenerCancel):
+        * UIProcess/API/C/WKOpenPanelResultListener.h: Added.
+        Add API wrappers.
+
+        * UIProcess/API/C/WKPage.h:
+        Add new UI callback, WKPageRunOpenPanelCallback.
+
+        * UIProcess/API/C/WebKit2.h:
+        Add includes for new API headers.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        Stub out the runOpenPanel callback.
+
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp: Added.
+        (WebKit::WebOpenPanelResultListenerProxy::WebOpenPanelResultListenerProxy):
+        (WebKit::WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy):
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        (WebKit::WebOpenPanelResultListenerProxy::cancel):
+        (WebKit::WebOpenPanelResultListenerProxy::invalidate):
+        * UIProcess/WebOpenPanelResultListenerProxy.h: Added.
+        (WebKit::WebOpenPanelResultListenerProxy::create):
+        (WebKit::WebOpenPanelResultListenerProxy::type):
+        Adds the listener used to choose files for <input type=file>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        (WebKit::WebPageProxy::didCancelForOpenPanel):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::runOpenPanel):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel):
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp: Added.
+        (WebKit::WebOpenPanelResultListener::create):
+        (WebKit::WebOpenPanelResultListener::WebOpenPanelResultListener):
+        (WebKit::WebOpenPanelResultListener::~WebOpenPanelResultListener):
+        (WebKit::WebOpenPanelResultListener::didChooseFiles):
+        * WebProcess/WebPage/WebOpenPanelResultListener.h: Added.
+        (WebKit::WebOpenPanelResultListener::disconnectFromPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::setActiveOpenPanelResultListener):
+        (WebKit::WebPage::didChooseFilesForOpenPanel):
+        (WebKit::WebPage::didCancelForOpenPanel):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::activeOpenPanelResultListener):
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe through file choosing.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add new files.
+
 2010-12-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

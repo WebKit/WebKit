@@ -42,6 +42,7 @@
 #include "WebContextMenuClient.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebOpenPanelResultListener.h"
 #include "WebDragClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
@@ -326,6 +327,11 @@ void WebPage::close()
     if (m_activePopupMenu) {
         m_activePopupMenu->disconnectFromPage();
         m_activePopupMenu = 0;
+    }
+
+    if (m_activeOpenPanelResultListener) {
+        m_activeOpenPanelResultListener->disconnectFromPage();
+        m_activeOpenPanelResultListener = 0;
     }
 
     m_sandboxExtensionTracker.invalidate();
@@ -1065,6 +1071,11 @@ void WebPage::setActivePopupMenu(WebPopupMenu* menu)
     m_activePopupMenu = menu;
 }
 
+void WebPage::setActiveOpenPanelResultListener(PassRefPtr<WebOpenPanelResultListener> openPanelResultListener)
+{
+    m_activeOpenPanelResultListener = openPanelResultListener;
+}
+
 bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions options)
 {
     return m_page->findString(target, options);
@@ -1092,6 +1103,20 @@ void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
 
     m_activePopupMenu->didChangeSelectedIndex(newIndex);
     m_activePopupMenu = 0;
+}
+
+void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files)
+{
+    if (!m_activeOpenPanelResultListener)
+        return;
+
+    m_activeOpenPanelResultListener->didChooseFiles(files);
+    m_activeOpenPanelResultListener = 0;
+}
+
+void WebPage::didCancelForOpenPanel()
+{
+    m_activeOpenPanelResultListener = 0;
 }
 
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
