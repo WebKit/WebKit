@@ -398,6 +398,14 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     if (c >= 0x3000 && c <= 0x303F)
         return true;
    
+    // Hiragana 
+    if (c >= 0x3040 && c <= 0x309F)
+        return true;
+
+    // Katakana 
+    if (c >= 0x30A0 && c <= 0x30FF)
+        return true;
+
     // Bopomofo
     if (c >= 0x3100 && c <= 0x312F)
         return true;
@@ -416,6 +424,11 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     
     // CJK Compatibility Forms.
     if (c >= 0xFE30 && c <= 0xFE4F)
+        return true;
+
+    // Halfwidth and Fullwidth Forms
+    // Usually only used in CJK
+    if (c >= 0xFF00 && c <= 0xFFEF)
         return true;
 
     // Emoji.

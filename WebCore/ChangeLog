@@ -1,3 +1,17 @@
+2010-12-14  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Kana should be part of CJK Ideographs in WebCore/platform/graphics/Font.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51012
+
+        Kana should be displayed correctly in vertical text with broken font.
+
+        Test: fast/blockflow/japanese-rl-text-with-broken-font.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::isCJKIdeographOrSymbol): add katakana, hiraganna, and Halfwidth and Fullwidth Forms
+
 2010-12-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

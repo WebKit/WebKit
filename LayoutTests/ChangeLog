@@ -1,3 +1,17 @@
+2010-12-14  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Kana should be part of CJK Ideographs in WebCore/platform/graphics/Font.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51012
+  
+        Test if kana displayed correctly in vertical text with broken font.
+
+        * fast/blockflow/japanese-rl-text-with-broken-font.html: Added.
+        * platform/mac/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum: Added.
+        * platform/mac/fast/blockflow/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/mac/fast/blockflow/japanese-rl-text-with-broken-font-expected.txt: Added.
+
 2010-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
