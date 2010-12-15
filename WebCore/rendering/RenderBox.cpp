@@ -937,6 +937,7 @@ void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const
     paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op, backgroundObject);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
 {
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
@@ -946,6 +947,7 @@ static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
 
     return false;
 }
+#endif
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {

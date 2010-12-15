@@ -1,3 +1,11 @@
+2010-12-15  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, fix compilation warnings after r74066.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::layersUseImage): Place this static function between the
+        same if-def region used in the only place where it's called from.
+
 2010-12-15  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Adam Barth.
