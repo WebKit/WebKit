@@ -350,9 +350,56 @@ void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
         style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-bool RenderThemeGtk::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_BUTTON, o, i.context, rect, GTK_RELIEF_NORMAL);
+    if (info.context->paintingDisabled())
+        return false;
+
+    GtkWidget* widget = gtkButton();
+    IntRect buttonRect(IntPoint(), rect.size());
+    IntRect focusRect(buttonRect);
+
+    GtkStateType state = getGtkStateType(object);
+    gtk_widget_set_state(widget, state);
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+
+    if (isFocused(object)) {
+        if (isEnabled(object)) {
+#if !GTK_CHECK_VERSION(2, 22, 0)
+            GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
+#endif
+            g_object_set(widget, "has-focus", TRUE, NULL);
+        }
+
+        gboolean interiorFocus = 0, focusWidth = 0, focusPadding = 0;
+        gtk_widget_style_get(widget,
+                             "interior-focus", &interiorFocus,
+                             "focus-line-width", &focusWidth,
+                             "focus-padding", &focusPadding, NULL);
+        // If we are using exterior focus, we shrink the button rect down before
+        // drawing. If we are using interior focus we shrink the focus rect. This
+        // approach originates from the Mozilla theme drawing code (gtk2drawing.c).
+        if (interiorFocus) {
+            GtkStyle* style = gtk_widget_get_style(widget);
+            focusRect.inflateX(-style->xthickness - focusPadding);
+            focusRect.inflateY(-style->ythickness - focusPadding);
+        } else {
+            buttonRect.inflateX(-focusWidth - focusPadding);
+            buttonRect.inflateY(-focusPadding - focusPadding);
+        }
+    }
+
+    WidgetRenderingContext widgetContext(info.context, rect);
+    GtkShadowType shadowType = state == GTK_STATE_ACTIVE ? GTK_SHADOW_IN : GTK_SHADOW_OUT;
+    widgetContext.gtkPaintBox(buttonRect, widget, state, shadowType, "button");
+    if (isFocused(object))
+        widgetContext.gtkPaintFocus(focusRect, widget, state, "button");
+
+#if !GTK_CHECK_VERSION(2, 22, 0)
+    GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
+#endif
+    g_object_set(widget, "has-focus", FALSE, NULL);
+    return false;
 }
 
 static void getComboBoxPadding(RenderStyle* style, int& left, int& top, int& right, int& bottom)

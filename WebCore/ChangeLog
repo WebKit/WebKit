@@ -1,3 +1,20 @@
+2010-12-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Move button rendering from gtk{2,3}drawing.cpp to RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=48486
+
+        Implement button rendering in RenderThemeGtk. The implementation
+        from gtk{2,3}drawing.cpp will be removed once menu list button rendering
+        is implemented in RenderThemeGtk as well.
+
+        No new tests, as this should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintButton): Add an implementation of button
+        rendering that uses WidgetRenderingContext.
+
 2010-10-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
