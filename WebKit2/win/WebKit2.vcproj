@@ -842,22 +842,6 @@
 					>
 				</File>
 				<Filter
-				    Name="Plugins"
-				    >
-				    <Filter
-				        Name="Netscape"
-				        >
-				        <File
-						    RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.cpp"
-						    >
-					    </File>
-					    <File
-						    RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.h"
-						    >
-					    </File>
-					</Filter>
-				</Filter>
-				<Filter
 					Name="cf"
 					>
 					<File
@@ -1097,6 +1081,30 @@
 						/>
 					</FileConfiguration>
 				</File>
+			</Filter>
+			<Filter
+				Name="Plugins"
+				>
+				<Filter
+					Name="Netscape"
+					>
+					<File
+						RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\Plugins\Netscape\NetscapePluginModule.h"
+						>
+					</File>
+					<Filter
+						Name="win"
+						>
+						<File
+							RelativePath="..\Shared\Plugins\Netscape\win\NetscapePluginModuleWin.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -2803,6 +2811,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessages.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerMessageReceiver.cpp"
 				>
 			</File>
@@ -2816,14 +2832,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerProxyMessages.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessageReceiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebContextMessages.h"
 				>
 			</File>
 			<File

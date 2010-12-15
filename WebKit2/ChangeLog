@@ -1,3 +1,18 @@
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move Windows version of getPluginInfo to NetscapePluginModule
+        https://bugs.webkit.org/show_bug.cgi?id=51073
+
+        * Shared/Plugins/Netscape/win/NetscapePluginModuleWin.cpp: Added.
+        (WebKit::getVersionInfo):
+        (WebKit::fileVersion):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * win/WebKit2.vcproj:
+
 2010-12-14  Alice Liu  <alice.liu@apple.com>
 
         Fix clang++ build.

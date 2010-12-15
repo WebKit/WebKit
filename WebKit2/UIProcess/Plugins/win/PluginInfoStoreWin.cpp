@@ -25,11 +25,8 @@
 
 #include "PluginInfoStore.h"
 
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
-#include <WebCore/FileSystem.h>
+#include "NetscapePluginModule.h"
 #include <shlwapi.h>
-#include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 
@@ -340,18 +337,6 @@ Vector<String> PluginInfoStore::individualPluginPaths()
     return paths;
 }
 
-static String getVersionInfo(const LPVOID versionInfoData, const String& info)
-{
-    LPVOID buffer;
-    UINT bufferLength;
-    String subInfo = "\\StringfileInfo\\040904E4\\" + info;
-    if (!::VerQueryValueW(versionInfoData, const_cast<UChar*>(subInfo.charactersWithNullTermination()), &buffer, &bufferLength) || !bufferLength)
-        return String();
-
-    // Subtract 1 from the length; we don't want the trailing null character.
-    return String(reinterpret_cast<UChar*>(buffer), bufferLength - 1);
-}
-
 static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
 {
     ULARGE_INTEGER version;
@@ -362,63 +347,7 @@ static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
 {
-    String pathCopy = pluginPath;
-    DWORD versionInfoSize = ::GetFileVersionInfoSizeW(pathCopy.charactersWithNullTermination(), 0);
-    if (!versionInfoSize)
-        return false;
-
-    OwnArrayPtr<char> versionInfoData(new char[versionInfoSize]);
-    if (!::GetFileVersionInfoW(pathCopy.charactersWithNullTermination(), 0, versionInfoSize, versionInfoData.get()))
-        return false;
-
-    String name = getVersionInfo(versionInfoData.get(), "ProductName");
-    String description = getVersionInfo(versionInfoData.get(), "FileDescription");
-    if (name.isNull() || description.isNull())
-        return false;
-
-    VS_FIXEDFILEINFO* info;
-    UINT infoSize;
-    if (!::VerQueryValueW(versionInfoData.get(), L"\\", reinterpret_cast<void**>(&info), &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
-        return false;
-
-    Vector<String> types;
-    getVersionInfo(versionInfoData.get(), "MIMEType").split('|', types);
-    Vector<String> extensionLists;
-    getVersionInfo(versionInfoData.get(), "FileExtents").split('|', extensionLists);
-    Vector<String> descriptions;
-    getVersionInfo(versionInfoData.get(), "FileOpenName").split('|', descriptions);
-
-    Vector<MimeClassInfo> mimes(types.size());
-    for (size_t i = 0; i < types.size(); i++) {
-        String type = types[i].lower();
-        String description = i < descriptions.size() ? descriptions[i] : "";
-        String extensionList = i < extensionLists.size() ? extensionLists[i] : "";
-
-        Vector<String> extensionsVector;
-        extensionList.split(',', extensionsVector);
-
-        // Get rid of the extension list that may be at the end of the description string.
-        int pos = description.find("(*");
-        if (pos != -1) {
-            // There might be a space that we need to get rid of.
-            if (pos > 1 && description[pos - 1] == ' ')
-                pos--;
-            description = description.left(pos);
-        }
-
-        mimes[i].type = type;
-        mimes[i].desc = description;
-        mimes[i].extensions.swap(extensionsVector);
-    }
-
-    plugin.path = pluginPath;
-    plugin.info.desc = description;
-    plugin.info.name = name;
-    plugin.info.file = pathGetFileName(pluginPath);
-    plugin.info.mimes.swap(mimes);
-    plugin.fileVersion = fileVersion(info->dwFileVersionLS, info->dwFileVersionMS);
-
-    return true;
+    return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
 static bool isOldWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
