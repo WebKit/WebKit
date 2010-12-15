@@ -608,6 +608,9 @@ class TestExpectationsFile:
                 modifiers.add(option)
             elif option in self._port.test_platform_names():
                 has_any_platform = True
+            elif re.match(r'bug\d', option) != None:
+                self._add_error(lineno, 'Bug must be either BUGCR, BUGWK, or BUGV8_ for test: %s' %
+                                option, test_and_expectations)
             elif option.startswith('bug'):
                 has_bug_id = True
             elif option not in self.BUILD_TYPES:

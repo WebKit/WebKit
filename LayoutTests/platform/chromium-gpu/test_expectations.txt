@@ -64,20 +64,20 @@ BUGNONE WIN LINUX : canvas/philip = PASS
 
 // START OF DUPLICATED SECTION
 WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
-BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
-BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
+BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
+BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
 // Passes on the GPU, but leaving this here for reference.
-// BUG22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
-BUG10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
-// BUG23498 MAC : fast/canvas/canvas-bg.html = IMAGE
-// BUG23498 MAC : fast/canvas/canvas-text-alignment.html = IMAGE
-// BUG23498 MAC : fast/canvas/image-object-in-canvas.html = IMAGE
-// BUG23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-// BUG23477 MAC : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
-// BUG23477 MAC : fast/canvas/canvas-incremental-repaint.html = IMAGE
-// BUG23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
-BUG22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
-BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
+// BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
+BUGCR10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
+// BUGCR23498 MAC : fast/canvas/canvas-bg.html = IMAGE
+// BUGCR23498 MAC : fast/canvas/canvas-text-alignment.html = IMAGE
+// BUGCR23498 MAC : fast/canvas/image-object-in-canvas.html = IMAGE
+// BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
+// BUGCR23477 MAC : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
+// BUGCR23477 MAC : fast/canvas/canvas-incremental-repaint.html = IMAGE
+// BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
+BUGCR22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
+BUGCR33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
 BUGWK45991 LINUX WIN RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
@@ -193,21 +193,21 @@ BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html 
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
-BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
-BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
-// BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
+BUGCR60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
+BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
+// BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
-BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
+BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 // Update canvas/philip in WK r71481
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
-BUG62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
-BUG62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
+BUGCR62301 MAC LINUX WIN :  canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
+BUGCR62301 LINUX WIN :  canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
 // END OF DUPLICATED SECTION
 
@@ -260,9 +260,9 @@ BUGWK47926 : compositing/geometry/composited-html-size.html = FAIL
 // These tests are missing an entire layer in the layer tree output.
 BUGWK47927 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
 
-BUG60962 WIN : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT PASS
-BUG60962 MAC : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE
-BUG60962 LINUX : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE PASS
+BUGCR60962 WIN : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT PASS
+BUGCR60962 MAC : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE
+BUGCR60962 LINUX : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE PASS
 
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
@@ -353,11 +353,11 @@ BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 
-BUG57431 WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
-BUG57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html = TEXT
-BUG58534 WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
-BUG58536 WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
-BUG60965 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
+BUGCR57431 WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
+BUGCR57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html = TEXT
+BUGCR58534 WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
+BUGCR58536 WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
+BUGCR60965 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 

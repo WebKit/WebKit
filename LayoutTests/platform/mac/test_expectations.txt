@@ -48,7 +48,7 @@
 // DEBUG : fast/js/no-good.js = TIMEOUT PASS
 // DEBUG SKIP : fast/js/no-good.js = TIMEOUT PASS
 // LINUX DEBUG SKIP : fast/js/no-good.js = TIMEOUT PASS
-// BUG1234 DEBUG MAC : fast/js/no-good.js = TIMEOUT PASS
+// BUGCR1234 DEBUG MAC : fast/js/no-good.js = TIMEOUT PASS
 //
 // Notes:
 // -A test cannot be both SLOW and TIMEOUT
@@ -60,4 +60,3 @@
 SLOW BUGXXX : http/tests/cache/subresource-expiration.html = PASS
 SLOW BUGXXX : tables/mozilla/other/slashlogo.html = PASS
 SLOW BUGXXX : http/tests/websocket/tests/frame-lengths.html = PASS
-
