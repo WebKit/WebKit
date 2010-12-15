@@ -124,6 +124,7 @@ INCLUDEPATH = \
     Shared \
     Shared/API/c \
     Shared/CoreIPCSupport \
+    Shared/Plugins \
     Shared/Plugins/Netscape \
     Shared/qt \
     UIProcess \
