@@ -8,3 +8,4 @@ PASS speech button ignored the programmatic click event.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

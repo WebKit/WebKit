@@ -33,3 +33,4 @@ PASS typeof testObj.getter is 'string'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

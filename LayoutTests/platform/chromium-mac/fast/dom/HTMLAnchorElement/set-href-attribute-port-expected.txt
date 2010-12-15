@@ -22,3 +22,4 @@ FAIL a.href should be foo://bar:50/. Was foo://bar/.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

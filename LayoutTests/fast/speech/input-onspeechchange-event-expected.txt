@@ -14,3 +14,4 @@ PASS window.event.results[2].confidence is 0.2
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

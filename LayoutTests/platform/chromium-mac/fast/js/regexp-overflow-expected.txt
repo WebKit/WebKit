@@ -18,3 +18,4 @@ FAIL new RegExp(s); should throw an exception. Was /aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

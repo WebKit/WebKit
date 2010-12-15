@@ -20,3 +20,4 @@ PASS new WebSocket("ws://127.0.0.1/path#fragment") threw exception Error: SYNTAX
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

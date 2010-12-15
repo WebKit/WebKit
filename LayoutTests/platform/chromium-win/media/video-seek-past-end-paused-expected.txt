@@ -15,3 +15,4 @@ EXPECTED (mediaElement.currentTime == 'mediaElement.duration') OK
 EXPECTED (video.ended == 'true') OK
 
 END OF TEST
+

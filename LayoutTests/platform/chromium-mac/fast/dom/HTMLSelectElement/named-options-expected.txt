@@ -22,3 +22,4 @@ PASS select2.options.test[1].value is "Value2"
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

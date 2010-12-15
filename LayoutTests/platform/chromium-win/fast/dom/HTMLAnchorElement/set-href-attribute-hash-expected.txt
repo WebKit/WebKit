@@ -26,3 +26,4 @@ FAIL a.href should be foo:bar#hash. Was foo:bar.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

@@ -13,3 +13,4 @@ FAIL g() += 1 should throw ReferenceError: Left side of assignment is not a refe
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

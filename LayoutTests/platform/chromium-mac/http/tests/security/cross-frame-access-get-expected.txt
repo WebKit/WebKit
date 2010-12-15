@@ -602,3 +602,4 @@ PASS: canGet('targetWindow.scrollbars') should be 'false' and is.
 PASS: canGet('targetWindow.status') should be 'false' and is.
 PASS: canGet('targetWindow.statusbar') should be 'false' and is.
 PASS: canGet('targetWindow.toolbar') should be 'false' and is.
+

@@ -1,3 +1,4 @@
+
 This tests onSelect for textareas. 
 This also makes sure that the correct selection is restored when the element regains focus.
 
@@ -16,3 +17,4 @@ After blur: textarea selection start: 0 end: 8
 
 Calling focus on textarea
 After focus: textarea selection start: 0 end: 8
+

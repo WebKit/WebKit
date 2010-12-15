@@ -233,3 +233,5 @@ After changing the parent's 'display' property back to 'none':
     height: 100px
     margin-left: auto
     width: 50%
+
+

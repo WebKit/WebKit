@@ -34,3 +34,4 @@ FAIL o.__proto__.setYear() should throw TypeError: Type error. Threw exception T
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

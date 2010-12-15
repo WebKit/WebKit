@@ -2,3 +2,4 @@ Test that setting src attribute triggers load
 EVENT(loadstart)
 EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
 END OF TEST
+

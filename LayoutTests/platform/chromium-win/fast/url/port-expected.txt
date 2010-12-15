@@ -11,3 +11,4 @@ PASS canonicalize('foobar://www.example.com:80/') is 'foobar://www.example.com:8
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

@@ -29,3 +29,4 @@ PASS: window.Node should be 1 and is.
 PASS: window.Node should be function Node() { [native code] } and is.
 [Added an iframe named 'Node']
 PASS: window.Node should be function Node() { [native code] } and is.
+

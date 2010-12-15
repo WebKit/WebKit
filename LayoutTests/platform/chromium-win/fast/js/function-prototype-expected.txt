@@ -7,3 +7,4 @@ PASS actual is 'function () { }'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

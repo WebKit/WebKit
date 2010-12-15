@@ -4,3 +4,4 @@ foo
 "fooValue"
 bar1
 ReferenceError: bar1 is not defined
+

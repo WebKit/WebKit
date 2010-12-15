@@ -97,3 +97,4 @@ attr="value"
 console-format.html:60id="x"
 console-format.html:61[id="x"]
 id="x"
+

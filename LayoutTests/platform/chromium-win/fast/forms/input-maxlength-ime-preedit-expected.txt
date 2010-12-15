@@ -7,3 +7,4 @@ PASS document.getSelection().toString() is "abcd"
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

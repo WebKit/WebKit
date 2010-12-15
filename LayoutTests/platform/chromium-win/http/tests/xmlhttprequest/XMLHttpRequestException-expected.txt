@@ -7,3 +7,4 @@ FAIL e.constructor.toString() is not "[object XMLHttpRequestExceptionConstructor
 PASS e.constructor is window.XMLHttpRequestException
 PASS e.NETWORK_ERR is e.constructor.NETWORK_ERR
 PASS e.NETWORK_ERR is 101
+

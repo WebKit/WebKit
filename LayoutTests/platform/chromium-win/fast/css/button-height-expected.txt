@@ -10,3 +10,4 @@ PASS document.getElementById('button4').offsetHeight is 40
 PASS document.getElementById('button5').offsetHeight is correct for this platform.
 
 TEST COMPLETE
+

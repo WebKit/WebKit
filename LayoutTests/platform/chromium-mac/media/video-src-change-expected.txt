@@ -19,3 +19,4 @@ EXPECTED (relativeURL(video.currentSrc) == 'content/counting.ogv') OK
 EXPECTED (isNaN(video.duration) == 'false') OK
 
 END OF TEST
+

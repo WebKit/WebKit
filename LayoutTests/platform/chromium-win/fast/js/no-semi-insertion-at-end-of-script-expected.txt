@@ -8,3 +8,4 @@ PASS eval('if (0)') threw exception SyntaxError: Unexpected end of input.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

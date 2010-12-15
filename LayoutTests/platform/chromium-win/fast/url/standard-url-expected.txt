@@ -33,3 +33,4 @@ PASS canonicalize('wss://foo:815/') is 'wss://foo:815/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

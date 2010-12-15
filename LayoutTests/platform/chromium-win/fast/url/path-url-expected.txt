@@ -8,3 +8,4 @@ PASS canonicalize('JavaScript:Foo') is 'javascript:Foo'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

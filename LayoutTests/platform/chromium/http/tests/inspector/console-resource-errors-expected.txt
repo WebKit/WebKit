@@ -5,3 +5,4 @@ console-resource-errors.html:11GET http://127.0.0.1:8000/inspector/non-existent-
 missing.cssGET http://127.0.0.1:8000/inspector/missing.css 404 (Not Found) console-message console-error-level
 non-existent-iframe.htmlGET http://127.0.0.1:8000/inspector/non-existent-iframe.html 404 (Not Found) console-message console-error-level
 non-existent-script.jsGET http://127.0.0.1:8000/inspector/non-existent-script.js 404 (Not Found) console-message console-error-level
+

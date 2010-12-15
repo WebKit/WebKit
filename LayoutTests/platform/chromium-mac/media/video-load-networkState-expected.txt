@@ -14,3 +14,4 @@ EVENT(canplay)
 EVENT(canplaythrough)
 EXPECTED (video.networkState >= '1') OK
 END OF TEST
+

@@ -13,3 +13,4 @@ RUN(mediaElement.load())
 EXPECTED (mediaElement.getAttribute('preload') == 'auto') OK
 EXPECTED (mediaElement.preload == 'auto') OK
 END OF TEST
+

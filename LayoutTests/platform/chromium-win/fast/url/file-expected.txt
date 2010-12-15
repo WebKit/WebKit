@@ -34,3 +34,4 @@ PASS canonicalize('file://localhost/test') is 'file://localhost/test'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

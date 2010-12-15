@@ -9,3 +9,4 @@ PASS canonicalize('//c:\\foo') is 'http://c/foo'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

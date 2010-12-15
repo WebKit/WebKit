@@ -8,3 +8,4 @@ PASS document.getElementById("speechInput").value is "Pictures of the moon"
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

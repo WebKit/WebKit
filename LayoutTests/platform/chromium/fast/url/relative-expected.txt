@@ -60,3 +60,4 @@ PASS canonicalize('/\\Another\\path') is 'http://another/path'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

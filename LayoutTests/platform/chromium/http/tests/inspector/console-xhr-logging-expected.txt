@@ -21,3 +21,4 @@ console-xhr-logging.html:40sending a GET request to resources/xhr-exists.html
 console-xhr-logging.html:40sending a GET request to resources/xhr-does-not-exist.html
 console-xhr-logging.html:43GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found)
 console-xhr-logging.html:40sending a POST request to resources/post-target.cgi
+

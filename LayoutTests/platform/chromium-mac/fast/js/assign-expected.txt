@@ -19,3 +19,4 @@ PASS x++ = "FAIL"; threw exception ReferenceError: Invalid left-hand side in ass
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

@@ -63,3 +63,4 @@ target : '[object XMLHttpRequest]'
 total : '0'
 totalSize : '0'
 type : 'load'
+

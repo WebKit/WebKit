@@ -1,3 +1,4 @@
+
 EVENT(loadedmetadata)
 EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
 EXPECTED (isNaN(video.duration) == 'false') OK

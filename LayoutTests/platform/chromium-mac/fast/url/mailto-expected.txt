@@ -16,3 +16,4 @@ PASS canonicalize('mailto:í ') == 'mailto:%EF%BF%BD' is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

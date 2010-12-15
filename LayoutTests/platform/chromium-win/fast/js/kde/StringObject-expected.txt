@@ -87,3 +87,4 @@ FAIL bar should be <a href="javascript:foo( 'This ', 'is ', 'a test' )">This is 
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

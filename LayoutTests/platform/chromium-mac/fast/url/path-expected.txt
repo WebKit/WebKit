@@ -38,3 +38,4 @@ PASS canonicalize('http://example.com/﷐zyx') is 'http://example.com/%EF%BF%BDz
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

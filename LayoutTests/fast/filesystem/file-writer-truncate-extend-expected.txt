@@ -7,3 +7,4 @@ PASS Truncate extension verified.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

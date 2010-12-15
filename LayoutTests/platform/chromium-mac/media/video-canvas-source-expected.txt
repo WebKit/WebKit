@@ -8,3 +8,4 @@ PASS !!ctx.getImageData(0, 0, width, height) is true
 RUN(var source = document.createElement('source'); source.src = 'content/counting.ogv'; video.appendChild(source))
 EVENT(canplaythrough)
 END OF TEST
+

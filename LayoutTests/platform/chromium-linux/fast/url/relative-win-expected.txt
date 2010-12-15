@@ -22,3 +22,4 @@ FAIL canonicalize('/\\//somehost/path') should be file://somehost/path. Was file
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

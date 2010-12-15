@@ -26,3 +26,4 @@ PASS re.lastIndex is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

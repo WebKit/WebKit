@@ -31,3 +31,4 @@ PASS canonicalize('http://т(/') is 'http://xn--%28-7ed/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

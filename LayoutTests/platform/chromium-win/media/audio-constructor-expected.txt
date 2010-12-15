@@ -6,3 +6,4 @@ EVENT(loadstart)
 EXPECTED (relativeURL(audio.currentSrc) == 'content/test.oga') OK
 EVENT(canplaythrough)
 END OF TEST
+

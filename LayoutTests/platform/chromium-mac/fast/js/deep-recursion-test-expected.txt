@@ -10,3 +10,4 @@ FAIL msg should be RangeError: Maximum call stack size exceeded.. Was RangeError
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

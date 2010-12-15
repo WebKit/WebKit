@@ -116,3 +116,4 @@ PASS canFind(latinCapitalLetterAWithGrave + katakanaLetterSmallA, decomposedLati
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

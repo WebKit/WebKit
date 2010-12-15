@@ -8,3 +8,4 @@ PASS canonicalize('HTTP://example.com/') is 'http://example.com/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

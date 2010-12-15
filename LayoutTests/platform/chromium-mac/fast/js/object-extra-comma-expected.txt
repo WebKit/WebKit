@@ -11,3 +11,4 @@ PASS var foo = { 'bar' : 'YES',, }; foo.bar threw exception SyntaxError: Unexpec
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

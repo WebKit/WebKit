@@ -1102,3 +1102,4 @@ PASS encodeURIComponent(String.fromCharCode(55296) + String.fromCharCode(65377))
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

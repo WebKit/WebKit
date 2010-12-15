@@ -22,3 +22,4 @@ PASS o8.a.property threw exception TypeError: Cannot read property 'property' of
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

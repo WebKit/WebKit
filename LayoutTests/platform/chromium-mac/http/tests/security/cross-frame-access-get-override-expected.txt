@@ -6,3 +6,4 @@ PASS: canGet('targetWindow.blur') should be 'true' and is.
 PASS: toString('targetWindow.blur') should be 'function () { [native code] }' and is.
 PASS: canGet('targetWindow.close') should be 'true' and is.
 PASS: toString('targetWindow.close') should be 'function () { [native code] }' and is.
+

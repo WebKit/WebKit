@@ -144,3 +144,4 @@ PASS +('1' + ideographicSpace + '1') is NaN
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

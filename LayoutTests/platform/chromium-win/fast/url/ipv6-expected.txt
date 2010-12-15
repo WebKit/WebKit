@@ -55,3 +55,4 @@ PASS canonicalize('http://[::1 hello]/') is 'http://[::1%20hello]/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

@@ -15,3 +15,4 @@ PASS var test = { }; test.i= 0; test.i+= 1; test.i; is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

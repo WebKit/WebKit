@@ -30,3 +30,4 @@ PASS: canGet('targetWindow.history.existingCustomProperty') should be 'false' an
 PASS: canGet('targetWindow.history.__proto__.prototypeCustomProperty') should be 'false' and is.
 PASS: canCall('targetWindow.history.existingCustomFunction') should be 'false' and is.
 PASS: canCall('targetWindow.history.prototypeCustomFunction') should be 'false' and is.
+

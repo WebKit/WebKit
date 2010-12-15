@@ -9,3 +9,4 @@ PASS eval('function(){return false;}')() threw exception SyntaxError: Unexpected
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

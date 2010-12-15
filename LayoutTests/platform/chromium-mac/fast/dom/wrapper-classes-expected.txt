@@ -491,3 +491,4 @@ FAIL tagJSWrapperConstructorClass('wbr') should be HTMLElementConstructor. Was F
 PASS tagJSWrapperClass('xmp') is 'HTMLPreElement'
 FAIL tagJSWrapperPrototypeClass('xmp') should be HTMLPreElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('xmp') should be HTMLPreElementConstructor. Was Function.
+

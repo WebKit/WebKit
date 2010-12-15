@@ -20,3 +20,4 @@ PASS a.href is 'https://www.mydomain.com/path/?'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

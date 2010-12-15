@@ -16,3 +16,4 @@ PASS path.appendItem(null) threw exception TypeError: Object #<an SVGPathElement
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

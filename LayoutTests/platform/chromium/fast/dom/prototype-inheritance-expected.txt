@@ -840,3 +840,4 @@ PASS inner.window.constructor.isInner is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

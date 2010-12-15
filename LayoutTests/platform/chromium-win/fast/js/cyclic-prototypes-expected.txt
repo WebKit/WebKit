@@ -7,3 +7,4 @@ PASS o1.__proto__ = o3 threw exception Error: Cyclic __proto__ value.
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

@@ -24,3 +24,4 @@ PASS a.href is 'tel:+1800-555-1212'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

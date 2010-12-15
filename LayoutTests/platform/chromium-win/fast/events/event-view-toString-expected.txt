@@ -4,3 +4,4 @@ event.view :
 document: [object HTMLDocument]
 proto: [object Object]
 Success getting [object DOMWindow]
+

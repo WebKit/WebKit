@@ -13,3 +13,4 @@ Doing an XHR to a directory.
 ReadyState handler: readyState = 1
 ReadyState handler: readyState = 4
 Error handler: readyState = 4
+

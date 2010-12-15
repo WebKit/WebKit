@@ -7,3 +7,4 @@ PASS testObject.gettingProperty threw exception ReferenceError: NPObject deleted
 PASS testObject.settingProperty = 10 threw exception ReferenceError: NPObject deleted.
 PASS testObject() threw exception ReferenceError: NPObject deleted.
 PASS new testObject(); threw exception ReferenceError: NPObject deleted.
+

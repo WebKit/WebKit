@@ -5,3 +5,4 @@ EVENT(loadstart)
 EVENT(suspend)
 EVENT(timeupdate)
 END OF TEST
+

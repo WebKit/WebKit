@@ -83,3 +83,4 @@ PASS: window.moveTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeBy.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.location.toString.call(targetWindow.location) should be 'undefined' and is.
+
