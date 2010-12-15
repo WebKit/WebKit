@@ -203,7 +203,7 @@ var WebInspector = {
         {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
-        WebInspector.breakpointManager.addEventListener("dom-breakpoint-added", breakpointAdded);
+        WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.DOMBreakpointAdded, breakpointAdded);
         return pane;
     },
 
@@ -214,7 +214,7 @@ var WebInspector = {
         {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
-        WebInspector.breakpointManager.addEventListener("xhr-breakpoint-added", breakpointAdded);
+        WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.XHRBreakpointAdded, breakpointAdded);
         return pane;
     },
 
@@ -1209,7 +1209,6 @@ WebInspector.searchingForNodeWasDisabled = function()
 WebInspector.reset = function()
 {
     this.debuggerModel.reset();
-    this.breakpointManager.reset();
 
     for (var panelName in this.panels) {
         var panel = this.panels[panelName];
@@ -1222,8 +1221,6 @@ WebInspector.reset = function()
 
     this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
-
-    this.breakpointManager.restoreBreakpoints();
 }
 
 WebInspector.bringToFront = function()
@@ -1236,10 +1233,6 @@ WebInspector.inspectedURLChanged = function(url)
     InspectorFrontendHost.inspectedURLChanged(url);
     this.settings.inspectedURLChanged(url);
     this.extensionServer.notifyInspectedURLChanged();
-    if (!this._breakpointsRestored) {
-        this.breakpointManager.restoreBreakpoints();
-        this._breakpointsRestored = true;
-    }
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)

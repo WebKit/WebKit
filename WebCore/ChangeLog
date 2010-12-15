@@ -1,3 +1,55 @@
+2010-12-13  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: push persistent breakpoints into backend state cookie so they hit on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=48858
+
+        BreakpointManager pushes all persistent breakpoints to backend when loaded.
+        InspectorController restores sticky breakpoints from cookie on navigation.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::setStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoint):
+        * inspector/InspectorController.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        (WebCore::InspectorState::getObject):
+        (WebCore::InspectorState::setObject):
+        (WebCore::InspectorState::registerObject):
+        * inspector/InspectorState.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane):
+        (WebInspector.BreakpointsSidebarPane.prototype._removeListElement):
+        (WebInspector.BreakpointsSidebarPane.prototype._projectChanged):
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._createCategory):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointAdded):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._projectChanged):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings.prototype.inspectedURLChanged):
+        (WebInspector.Settings.prototype.get projectId):
+        (WebInspector.Settings.prototype.findSettingForAllProjects):
+        (WebInspector.Settings.prototype._formatProjectKey):
+        * inspector/front-end/inspector.js:
+        (WebInspector.createDOMBreakpointsSidebarPane):
+        (WebInspector.createXHRBreakpointsSidebarPane):
+        (WebInspector.reset):
+        (WebInspector.inspectedURLChanged):
+
 2010-12-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, fix compilation warnings after r74066.

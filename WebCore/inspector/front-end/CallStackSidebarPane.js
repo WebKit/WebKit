@@ -26,7 +26,7 @@
 WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
-    WebInspector.breakpointManager.addEventListener("native-breakpoint-hit", this._nativeBreakpointHit, this);
+    WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.NativeBreakpointHit, this._nativeBreakpointHit, this);
     WebInspector.debuggerModel.addEventListener("script-breakpoint-hit", this._scriptBreakpointHit, this);
 }
 

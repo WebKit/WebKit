@@ -55,6 +55,7 @@ public:
         pauseOnExceptionsState,
         consoleMessagesEnabled,
         userInitiatedProfiling,
+        stickyBreakpoints,
         lastPropertyId
     };
 
@@ -68,10 +69,12 @@ public:
     bool getBoolean(InspectorPropertyId propertyId);
     String getString(InspectorPropertyId propertyId);
     long getLong(InspectorPropertyId propertyId);
+    PassRefPtr<InspectorObject> getObject(InspectorPropertyId id);
 
     void setBoolean(InspectorPropertyId propertyId, bool value) { setValue(propertyId, InspectorBasicValue::create(value), value ? "true" : "false"); }
     void setString(InspectorPropertyId propertyId, const String& value) { setValue(propertyId, InspectorString::create(value), value); }
     void setLong(InspectorPropertyId propertyId, long value) { setValue(propertyId, InspectorBasicValue::create((double)value), String::number(value)); }
+    void setObject(InspectorPropertyId propertyId, PassRefPtr<InspectorObject> value);
 
 private:
     void updateCookie();
@@ -89,6 +92,7 @@ private:
     void registerBoolean(InspectorPropertyId propertyId, bool value, const String& frontendAlias, const String& preferenceName);
     void registerString(InspectorPropertyId propertyId, const String& value, const String& frontendAlias, const String& preferenceName);
     void registerLong(InspectorPropertyId propertyId, long value, const String& frontendAlias, const String& preferenceName);
+    void registerObject(InspectorPropertyId propertyId, const String& frontendAlias, const String& preferenceName);
 
     InspectorClient* m_client;
 };

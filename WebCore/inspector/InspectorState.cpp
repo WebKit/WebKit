@@ -40,15 +40,16 @@ InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
 {
     registerBoolean(monitoringXHR, false, "monitoringXHREnabled", "xhrMonitor");
-    registerBoolean(timelineProfilerEnabled, false, "timelineProfilerEnabled", (const char*)0);
-    registerBoolean(searchingForNode, false, "searchingForNodeEnabled", (const char*)0);
-    registerBoolean(profilerAlwaysEnabled, false, (const char*)0, "profilerEnabled");
-    registerBoolean(debuggerAlwaysEnabled, false, (const char*)0, "debuggerEnabled");
-    registerBoolean(inspectorStartsAttached, true, (const char*)0, "InspectorStartsAttached");
-    registerLong(inspectorAttachedHeight, InspectorController::defaultAttachedHeight, (const char*)0, "inspectorAttachedHeight");
-    registerLong(pauseOnExceptionsState, 0, "pauseOnExceptionsState", (const char*)0);
-    registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled", (const char*)0);
-    registerBoolean(userInitiatedProfiling, false, "userInitiatedProfiling", (const char*)0);
+    registerBoolean(timelineProfilerEnabled, false, "timelineProfilerEnabled", String());
+    registerBoolean(searchingForNode, false, "searchingForNodeEnabled", String());
+    registerBoolean(profilerAlwaysEnabled, false, String(), "profilerEnabled");
+    registerBoolean(debuggerAlwaysEnabled, false, String(), "debuggerEnabled");
+    registerBoolean(inspectorStartsAttached, true, String(), "InspectorStartsAttached");
+    registerLong(inspectorAttachedHeight, InspectorController::defaultAttachedHeight, String(), "inspectorAttachedHeight");
+    registerLong(pauseOnExceptionsState, 0, "pauseOnExceptionsState", String());
+    registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled", String());
+    registerBoolean(userInitiatedProfiling, false, "userInitiatedProfiling", String());
+    registerObject(stickyBreakpoints, String(), String());
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)
@@ -152,6 +153,24 @@ long InspectorState::getLong(InspectorPropertyId id)
     return value;
 }
 
+PassRefPtr<InspectorObject> InspectorState::getObject(InspectorPropertyId id)
+{
+    PropertyMap::iterator i = m_properties.find(id);
+    ASSERT(i != m_properties.end());
+    return i->second.m_value->asObject();
+}
+
+void InspectorState::setObject(InspectorPropertyId id, PassRefPtr<InspectorObject> value)
+{
+    PropertyMap::iterator i = m_properties.find(id);
+    ASSERT(i != m_properties.end());
+    Property& property = i->second;
+    property.m_value = value;
+    if (property.m_preferenceName.length())
+        m_client->storeSetting(property.m_preferenceName, value->toJSONString());
+    updateCookie();
+}
+
 void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value, const String& frontendAlias, const String& preferenceName)
 {
     m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value), frontendAlias, preferenceName));
@@ -165,6 +184,11 @@ void InspectorState::registerString(InspectorPropertyId propertyId, const String
 void InspectorState::registerLong(InspectorPropertyId propertyId, long value, const String& frontendAlias, const String& preferenceName)
 {
     m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value), frontendAlias, preferenceName));
+}
+
+void InspectorState::registerObject(InspectorPropertyId propertyId, const String& frontendAlias, const String& preferenceName)
+{
+    m_properties.set(propertyId, Property::create(InspectorObject::create(), frontendAlias, preferenceName));
 }
 
 InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value, const String& frontendAlias, const String& preferenceName)

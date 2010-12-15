@@ -70,6 +70,10 @@ WebInspector.Settings = function()
     this.installProjectSetting("nativeBreakpoints", []);
 }
 
+WebInspector.Settings.Events = {
+    ProjectChanged: "project-changed"
+}
+
 WebInspector.Settings.prototype = {
     installApplicationSetting: function(key, defaultValue)
     {
@@ -91,7 +95,31 @@ WebInspector.Settings.prototype = {
         var fragmentIndex = url.indexOf("#");
         if (fragmentIndex !== -1)
             url = url.substring(0, fragmentIndex);
-        this._inspectedURL = url;
+        this._projectId = url;
+        this.dispatchEventToListeners(WebInspector.Settings.Events.ProjectChanged);
+    },
+
+    get projectId()
+    {
+        return this._projectId;
+    },
+
+    findSettingForAllProjects: function(key)
+    {
+        var result = {};
+        var regexp = "^" + key + ":(.*)";
+        for (var i = 0; i < window.localStorage.length; ++i) {
+            var fullKey =  window.localStorage.key(i);
+            var match = fullKey.match(regexp);
+            if (!match)
+                continue;
+            try {
+                result[match[1]] = JSON.parse(window.localStorage[fullKey]);
+            } catch(e) {
+                window.localStorage.removeItem(fullKey);
+            }
+        }
+        return result;
     },
 
     _get: function(key, defaultValue)
@@ -123,7 +151,7 @@ WebInspector.Settings.prototype = {
 
     _formatProjectKey: function(key)
     {
-        return key + ":" + this._inspectedURL;
+        return key + ":" + this._projectId;
     }
 }
 

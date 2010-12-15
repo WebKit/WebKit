@@ -255,6 +255,7 @@ public:
     InspectorDebuggerAgent* debuggerAgent() const { return m_debuggerAgent.get(); }
     void resume();
 
+    void setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints);
     void setEventListenerBreakpoint(const String& eventName);
     void removeEventListenerBreakpoint(const String& eventName);
     bool hasEventListenerBreakpoint(const String& eventName);
@@ -309,8 +310,8 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
-
-    void clearNativeBreakpoints();
+    void restoreStickyBreakpoints();
+    void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);
@@ -391,6 +392,7 @@ private:
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_XHRBreakpoints;
     bool m_hasXHRBreakpointWithEmptyURL;
+    bool m_stickyBreakpointsRestored;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif

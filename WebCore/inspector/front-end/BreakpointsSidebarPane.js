@@ -35,18 +35,11 @@ WebInspector.BreakpointsSidebarPane = function(title)
     this.emptyElement.textContent = WebInspector.UIString("No Breakpoints");
 
     this.bodyElement.appendChild(this.emptyElement);
+
+    WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.ProjectChanged, this._projectChanged, this);
 }
 
 WebInspector.BreakpointsSidebarPane.prototype = {
-    reset: function()
-    {
-        this.listElement.removeChildren();
-        if (this.listElement.parentElement) {
-            this.bodyElement.removeChild(this.listElement);
-            this.bodyElement.appendChild(this.emptyElement);
-        }
-    },
-
     addBreakpointItem: function(breakpointItem)
     {
         var element = breakpointItem.element;
@@ -94,6 +87,15 @@ WebInspector.BreakpointsSidebarPane.prototype = {
     {
         this.listElement.removeChild(element);
         if (!this.listElement.firstChild) {
+            this.bodyElement.removeChild(this.listElement);
+            this.bodyElement.appendChild(this.emptyElement);
+        }
+    },
+
+    _projectChanged: function()
+    {
+        this.listElement.removeChildren();
+        if (this.listElement.parentElement) {
             this.bodyElement.removeChild(this.listElement);
             this.bodyElement.appendChild(this.emptyElement);
         }
@@ -259,7 +261,8 @@ WebInspector.EventListenerBreakpointsSidebarPane = function()
     this.categoriesTreeOutline = new TreeOutline(this.categoriesElement);
     this.bodyElement.appendChild(this.categoriesElement);
 
-    WebInspector.breakpointManager.addEventListener("event-listener-breakpoint-added", this._breakpointAdded, this);
+    WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.ProjectChanged, this._projectChanged, this);
+    WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.EventListenerBreakpointAdded, this._breakpointAdded, this);
 
     this._breakpointItems = {};
     this._createCategory("Keyboard", "listener", ["keydown", "keyup", "keypress", "textInput"]);
@@ -292,7 +295,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             var eventName = type + ":" + eventNames[i];
 
             var breakpointItem = {};
-            var title = WebInspector.EventListenerBreakpoint.eventNameForUI(eventName);
+            var title = WebInspector.EventListenerBreakpointView.eventNameForUI(eventName);
             breakpointItem.element = new TreeElement(title);
             categoryItem.element.appendChild(breakpointItem.element);
             var hitMarker = document.createElement("div");
@@ -342,10 +345,9 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
 
     _breakpointAdded: function(event)
     {
-        var breakpoint = event.data.breakpoint;
-        var eventName = event.data.eventName;
+        var breakpoint = event.data;
 
-        var breakpointItem = this._breakpointItems[eventName];
+        var breakpointItem = this._breakpointItems[breakpoint.eventName];
         breakpointItem.breakpoint = breakpoint;
         breakpoint.addEventListener("hit-state-changed", this._breakpointHitStateChanged.bind(this, breakpointItem));
         breakpoint.addEventListener("removed", this._breakpointRemoved.bind(this, breakpointItem));
@@ -386,7 +388,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         categoryItem.checkbox.indeterminate = hasEnabled && hasDisabled;
     },
 
-    reset: function()
+    _projectChanged: function()
     {
         for (var eventName in this._breakpointItems) {
             var breakpointItem = this._breakpointItems[eventName];

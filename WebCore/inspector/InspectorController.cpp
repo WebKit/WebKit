@@ -149,6 +149,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
     , m_hasXHRBreakpointWithEmptyURL(false)
+    , m_stickyBreakpointsRestored(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -560,7 +561,6 @@ void InspectorController::disconnectFrontend()
     bool debuggerWasEnabled = debuggerEnabled();
     disableDebugger();
     m_attachDebuggerWhenShown = debuggerWasEnabled;
-    clearNativeBreakpoints();
 #endif
     setSearchingForNode(false);
     unbindAllResources();
@@ -717,10 +717,10 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_counts.clear();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        if (m_debuggerAgent)
+        if (m_debuggerAgent) {
             m_debuggerAgent->clearForPageNavigation();
-
-        clearNativeBreakpoints();
+            restoreStickyBreakpoints();
+        }
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
@@ -1382,6 +1382,59 @@ void InspectorController::resume()
         m_debuggerAgent->resume();
 }
 
+void InspectorController::setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints)
+{
+    m_state->setObject(InspectorState::stickyBreakpoints, breakpoints);
+    if (!m_stickyBreakpointsRestored) {
+        restoreStickyBreakpoints();
+        m_stickyBreakpointsRestored = true;
+    }
+}
+
+void InspectorController::restoreStickyBreakpoints()
+{
+    m_eventListenerBreakpoints.clear();
+    m_XHRBreakpoints.clear();
+    m_hasXHRBreakpointWithEmptyURL = false;
+
+    RefPtr<InspectorObject> allBreakpoints = m_state->getObject(InspectorState::stickyBreakpoints);
+    KURL url = m_inspectedPage->mainFrame()->loader()->url();
+    url.removeFragmentIdentifier();
+    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(url);
+    if (!breakpoints)
+        return;
+    for (unsigned i = 0; i < breakpoints->length(); ++i)
+        restoreStickyBreakpoint(breakpoints->get(i)->asObject());
+}
+
+void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint)
+{
+    DEFINE_STATIC_LOCAL(String, eventListenerNativeBreakpointType, ("EventListener"));
+    DEFINE_STATIC_LOCAL(String, xhrNativeBreakpointType, ("XHR"));
+
+    if (!breakpoint)
+        return;
+    String type;
+    if (!breakpoint->getString("type", &type))
+        return;
+    bool enabled;
+    if (!breakpoint->getBoolean("enabled", &enabled) || !enabled)
+        return;
+    RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
+    if (!condition)
+        return;
+
+    if (type == eventListenerNativeBreakpointType) {
+        String eventName;
+        if (condition->getString("eventName", &eventName))
+            setEventListenerBreakpoint(eventName);
+    } else if (type == xhrNativeBreakpointType) {
+        String url;
+        if (condition->getString("url", &url))
+            setXHRBreakpoint(url);
+    }
+}
+
 void InspectorController::setEventListenerBreakpoint(const String& eventName)
 {
     m_eventListenerBreakpoints.add(eventName);
@@ -1428,12 +1481,6 @@ bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpoint
     return false;
 }
 
-void InspectorController::clearNativeBreakpoints()
-{
-    m_eventListenerBreakpoints.clear();
-    m_XHRBreakpoints.clear();
-    m_hasXHRBreakpointWithEmptyURL = false;
-}
 #endif
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)

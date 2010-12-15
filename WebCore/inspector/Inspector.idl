@@ -219,6 +219,8 @@ module core {
         [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
         [domain=Debugger] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
 
+        [domain=Inspector] void setStickyBreakpoints(in Object breakpoints); // FIXME: Move to newly introduced BrowserDebugger.
+
         [domain=DOM] void setDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
         [domain=DOM] void removeDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
 
