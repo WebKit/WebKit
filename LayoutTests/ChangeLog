@@ -1,3 +1,16 @@
+2010-12-14  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Test expectation update.
+
+        Rebaseline fast/forms/ValidityState-typeMismatch-url.html
+        http://crbug.com/66818
+
+        Chromium has different expectations because it doesn't use KURL.
+
+        * platform/chromium-mac/fast/forms/ValidityState-typeMismatch-url-expected.txt:
+        * platform/chromium-win/fast/forms/ValidityState-typeMismatch-url-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-14  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed update of the pixel expectations for the Mac port.

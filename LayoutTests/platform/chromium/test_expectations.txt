@@ -3249,5 +3249,3 @@ BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = TEXT TIMEOUT PASS
 BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS
-
-BUGCR66818 : fast/forms/ValidityState-typeMismatch-url.html = TEXT
