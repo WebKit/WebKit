@@ -1,3 +1,25 @@
+2010-12-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Focus rings are ugly, rects should be united instead of drawn individually
+        https://bugs.webkit.org/show_bug.cgi?id=49953
+
+        * fast/css/focus-ring-detached.html: Added.
+        * fast/css/focus-ring-multiline.html: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-detached-expected.txt: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/mac-snowleopard/fast/css/focus-ring-multiline-expected.txt: Added.
+        * platform/qt/fast/css/focus-ring-detached-expected.checksum: Added.
+        * platform/qt/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/qt/fast/css/focus-ring-detached-expected.txt: Added.
+        * platform/qt/fast/css/focus-ring-multiline-expected.checksum: Added.
+        * platform/qt/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/qt/fast/css/focus-ring-multiline-expected.txt: Added.
+
 2010-12-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

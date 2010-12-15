@@ -818,16 +818,10 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     p->setClipPath(platformPath, Qt::IntersectClip);
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
+void drawFocusRingForPath(QPainter* p, const QPainterPath& path, int width, const Color& color, bool antiAliasing)
 {
-    // FIXME: Use 'width' and 'offset' for something? http://webkit.org/b/49909
-
-    if (paintingDisabled() || !color.isValid())
-        return;
-
-    QPainter* p = m_data->p();
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
-    p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
+    p->setRenderHint(QPainter::Antialiasing, antiAliasing);
 
     const QPen oldPen = p->pen();
     const QBrush oldBrush = p->brush();
@@ -838,11 +832,21 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, con
     p->setBrush(Qt::NoBrush);
     nPen.setStyle(Qt::SolidLine);
 
-    p->strokePath(path.platformPath(), nPen);
+    p->strokePath(path, nPen);
     p->setBrush(oldBrush);
     p->setPen(oldPen);
 
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
+}
+
+void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
+{
+    // FIXME: Use 'offset' for something? http://webkit.org/b/49909
+
+    if (paintingDisabled() || !color.isValid())
+        return;
+
+    drawFocusRingForPath(m_data->p(), path.platformPath(), width, color, m_data->antiAliasingForRectsAndLines);
 }
 
 /**
@@ -860,40 +864,18 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     if (!rects.size())
         return;
 
-    QPainter* p = m_data->p();
-    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
-    p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
-
-    const QPen oldPen = p->pen();
-    const QBrush oldBrush = p->brush();
-
-    QPen nPen = p->pen();
     int radius = (width - 1) / 2;
-
-    nPen.setColor(QColor(color.red(), color.green(), color.blue(), 127));
-    nPen.setWidth(width);
-
-    p->setBrush(Qt::NoBrush);
-    nPen.setStyle(Qt::SolidLine);
-    p->setPen(nPen);
-#if 0
-    // FIXME How do we do a bounding outline with Qt?
     QPainterPath path;
-    for (int i = 0; i < rectCount; ++i)
-        path.addRect(QRectF(rects[i]));
-    QPainterPathStroker stroker;
-    QPainterPath newPath = stroker.createStroke(path);
-    p->strokePath(newPath, nPen);
-#else
     for (unsigned i = 0; i < rectCount; ++i) {
         QRect rect = QRect((rects[i])).adjusted(-offset - radius, -offset - radius, offset + radius, offset + radius);
-        p->drawRoundedRect(rect, radius, radius);
+        // This is not the most efficient way to add a rect to a path, but if we don't create the tmpPath,
+        // we will end up with ugly lines in between rows of text on anchors with multiple lines.
+        QPainterPath tmpPath;
+        tmpPath.addRoundedRect(rect, radius, radius);
+        path = path.united(tmpPath);
     }
-#endif
-    p->setPen(oldPen);
-    p->setBrush(oldBrush);
 
-    p->setRenderHint(QPainter::Antialiasing, antiAlias);
+    drawFocusRingForPath(m_data->p(), path, width, color, m_data->antiAliasingForRectsAndLines);
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool)

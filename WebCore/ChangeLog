@@ -1,3 +1,20 @@
+2010-12-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Focus rings are ugly, rects should be united instead of drawn individually
+        https://bugs.webkit.org/show_bug.cgi?id=49953
+
+        Create a QPainterPath and add to it the focus rects, one at a time.
+        Combine the 2 drawFocusRing functions into one function drawFocusRingForPath.
+
+        Tests: fast/css/focus-ring-detached.html
+               fast/css/focus-ring-multiline.html
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawFocusRingForPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2010-12-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the Qt build.
