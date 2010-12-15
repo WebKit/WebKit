@@ -1,3 +1,47 @@
+2010-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        compositing/masks/simple-composited-mask.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=49746
+
+        Geometry of composited layers with a mask depends on the loading
+        of the mask image, since maskClipRect() is used for the layer bounds.
+        
+        So when RenderBox::imageChanged() is called for an image used by
+        a mask on a layer with a composited mask, call the newly-renamed
+        layer->contentsChanged() method. This percolates down into RenderLayerBacking,
+        ending in a layer geometry update.
+        
+        Renamed RenderLayer::rendereContentsChanged() to contentsChanged() and added
+        an enum to say what changed, for somewhat more efficient updating.
+        
+        Also, when the mask layer gets resized, make sure we mark it as needing
+        display.
+        
+        Tested by pixel result of compositing/masks/simple-composited-mask.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+        (WebCore::WebGLRenderingContext::reshape):
+        * rendering/RenderBox.cpp:
+        (WebCore::layersUseImage):
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged):
+        (WebCore::RenderImage::notifyFinished):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::contentChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::contentChanged):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+
 2010-12-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

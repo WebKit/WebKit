@@ -937,6 +937,16 @@ void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const
     paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op, backgroundObject);
 }
 
+static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
+{
+    for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
+        if (curLayer->image() && image == curLayer->image()->data())
+            return true;
+    }
+
+    return false;
+}
+
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     if (!parent())
@@ -951,6 +961,12 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool didFullRepaint = repaintLayerRectsForImage(image, style()->backgroundLayers(), true);
     if (!didFullRepaint)
         repaintLayerRectsForImage(image, style()->maskLayers(), false);
+
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (hasLayer() && layer()->hasCompositedMask() && layersUseImage(image, style()->maskLayers()))
+        layer()->contentChanged(RenderLayer::MaskImageChanged);
+#endif
 }
 
 bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground)

@@ -211,7 +211,7 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
 #if USE(ACCELERATED_COMPOSITING)
         if (hasLayer()) {
             // Tell any potential compositing layers that the image needs updating.
-            layer()->rendererContentChanged();
+            layer()->contentChanged(RenderLayer::ImageChanged);
         }
 #endif
     }
@@ -229,7 +229,7 @@ void RenderImage::notifyFinished(CachedResource* newImage)
     if (newImage == m_imageResource->cachedImage() && hasLayer()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
-        layer()->rendererContentChanged();
+        layer()->contentChanged(RenderLayer::ImageChanged);
     }
 #else
     UNUSED_PARAM(newImage);

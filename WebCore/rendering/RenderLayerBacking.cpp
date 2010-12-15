@@ -374,7 +374,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
     
     if (m_maskLayer) {
-        m_maskLayer->setSize(m_graphicsLayer->size());
+        if (m_maskLayer->size() != m_graphicsLayer->size()) {
+            m_maskLayer->setSize(m_graphicsLayer->size());
+            m_maskLayer->setNeedsDisplay();
+        }
         m_maskLayer->setPosition(FloatPoint());
     }
     
@@ -794,15 +797,22 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     return false;
 }
 
-void RenderLayerBacking::rendererContentChanged()
+void RenderLayerBacking::contentChanged(RenderLayer::ContentChangeType changeType)
 {
-    if (isDirectlyCompositedImage()) {
+    if ((changeType == RenderLayer::ImageChanged) && isDirectlyCompositedImage()) {
         updateImageContents();
         return;
     }
+    
+    if ((changeType == RenderLayer::MaskImageChanged) && m_maskLayer) {
+        // The composited layer bounds relies on box->maskClipRect(), which changes
+        // when the mask image becomes available.
+        bool isUpdateRoot = true;
+        updateAfterLayout(CompositingChildren, isUpdateRoot);
+    }
 
 #if ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
-    if (isAcceleratedCanvas(renderer())) {
+    if ((changeType == RenderLayer::CanvasChanged) && isAcceleratedCanvas(renderer())) {
         m_graphicsLayer->setContentsNeedsDisplay();
         return;
     }

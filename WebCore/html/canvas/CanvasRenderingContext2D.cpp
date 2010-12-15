@@ -1500,10 +1500,10 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         drawingContext()->markDirtyRect(enclosingIntRect(dirtyRect));
 #endif
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
-    // If we are drawing to hardware and we have a composited layer, just call rendererContentChanged().
+    // If we are drawing to hardware and we have a composited layer, just call contentChanged().
     RenderBox* renderBox = canvas()->renderBox();
     if (isAccelerated() && renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-        renderBox->layer()->rendererContentChanged();
+        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
     else
 #endif
         canvas()->didDraw(dirtyRect);

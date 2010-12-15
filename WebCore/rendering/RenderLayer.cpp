@@ -229,14 +229,14 @@ RenderLayerCompositor* RenderLayer::compositor() const
     return renderer()->view()->compositor();
 }
 
-void RenderLayer::rendererContentChanged()
+void RenderLayer::contentChanged(ContentChangeType changeType)
 {
     // This can get called when video becomes accelerated, so the layers may change.
-    if (compositor()->updateLayerCompositingState(this))
+    if ((changeType == CanvasChanged || changeType == VideoChanged) && compositor()->updateLayerCompositingState(this))
         compositor()->setCompositingLayersNeedRebuild();
 
     if (m_backing)
-        m_backing->rendererContentChanged();
+        m_backing->contentChanged(changeType);
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

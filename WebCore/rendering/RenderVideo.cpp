@@ -237,7 +237,7 @@ void RenderVideo::updatePlayer()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    layer()->rendererContentChanged();
+    layer()->contentChanged(RenderLayer::VideoChanged);
 #endif
     
     IntRect videoBounds = videoBox(); 

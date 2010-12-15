@@ -209,7 +209,7 @@ void WebGLRenderingContext::markContextChanged()
 #if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-        renderBox->layer()->rendererContentChanged();
+        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
     else {
 #endif
         if (!m_markedCanvasDirty)
@@ -240,7 +240,7 @@ void WebGLRenderingContext::reshape(int width, int height)
 #if USE(ACCELERATED_COMPOSITING)
         RenderBox* renderBox = canvas()->renderBox();
         if (renderBox && renderBox->hasLayer())
-            renderBox->layer()->rendererContentChanged();
+            renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
 #endif
         m_needsUpdate = false;
     }
