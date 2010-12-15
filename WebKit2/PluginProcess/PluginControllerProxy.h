@@ -155,6 +155,9 @@ private:
     // backing store into the web process backing store.
     bool m_waitingForDidUpdate;
 
+    // Whether the plug-in has canceled the manual stream load.
+    bool m_pluginCanceledManualStreamLoad;
+
 #if PLATFORM(MAC)
     // Whether complex text input is enabled for this plug-in.
     bool m_isComplexTextInputEnabled;

@@ -1,3 +1,21 @@
+2010-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix assertion in plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html test
+        https://bugs.webkit.org/show_bug.cgi?id=51136
+
+        Ensure that a plug-in that has explicitly cancelled the manual stream won't get any more callbacks.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::cancelManualStreamLoad):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveResponse):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveData):
+        (WebKit::PluginControllerProxy::manualStreamDidFinishLoading):
+        (WebKit::PluginControllerProxy::manualStreamDidFail):
+        * PluginProcess/PluginControllerProxy.h:
+
 2010-12-15  Brian Weinstein  <bweinstein@apple.com>
 
         Windows Build Fix. A .h file was added to the vcproj twice, but not its corresponding cpp file.

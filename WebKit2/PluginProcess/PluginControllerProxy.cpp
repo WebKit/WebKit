@@ -57,6 +57,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
     , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_waitingForDidUpdate(false)
+    , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
     , m_isComplexTextInputEnabled(false)
 #endif
@@ -169,6 +170,8 @@ void PluginControllerProxy::cancelStreamLoad(uint64_t streamID)
 
 void PluginControllerProxy::cancelManualStreamLoad()
 {
+    m_pluginCanceledManualStreamLoad = true;
+
     m_connection->connection()->send(Messages::PluginProxy::CancelManualStreamLoad(), m_pluginInstanceID);
 }
 
@@ -329,21 +332,33 @@ void PluginControllerProxy::streamDidFail(uint64_t streamID, bool wasCancelled)
 
 void PluginControllerProxy::manualStreamDidReceiveResponse(const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
+    if (m_pluginCanceledManualStreamLoad)
+        return;
+
     m_plugin->manualStreamDidReceiveResponse(KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers);
 }
 
 void PluginControllerProxy::manualStreamDidReceiveData(const CoreIPC::DataReference& data)
 {
+    if (m_pluginCanceledManualStreamLoad)
+        return;
+
     m_plugin->manualStreamDidReceiveData(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
 void PluginControllerProxy::manualStreamDidFinishLoading()
 {
+    if (m_pluginCanceledManualStreamLoad)
+        return;
+    
     m_plugin->manualStreamDidFinishLoading();
 }
 
 void PluginControllerProxy::manualStreamDidFail(bool wasCancelled)
 {
+    if (m_pluginCanceledManualStreamLoad)
+        return;
+    
     m_plugin->manualStreamDidFail(wasCancelled);
 }
     
