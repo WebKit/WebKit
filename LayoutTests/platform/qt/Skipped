@@ -3485,14 +3485,12 @@ fast/overflow/table-overflow-float.html
 fast/parser/001.html
 fast/parser/bad-xml-slash.html
 fast/parser/broken-comments-vs-parsing-mode.html
-fast/parser/comment-in-style.html
 fast/parser/comments.html
 fast/parser/document-write-option.html
 fast/parser/entity-comment-in-style.html
 fast/parser/fonts.html
 fast/parser/nofoo-tags-inside-paragraph.html
 fast/parser/open-comment-in-style.html
-fast/parser/parseCommentsInTitles.html
 fast/parser/remove-block-in-residual-style.html
 fast/parser/style-script-head-test.html
 fast/parser/tabs-in-scripts.html
@@ -3959,8 +3957,6 @@ fast/tokenizer/002.html
 fast/tokenizer/003.html
 fast/tokenizer/external-script-document-write.html
 fast/tokenizer/external-script-document-write_2.html
-fast/tokenizer/missing-title-end-tag-1.html
-fast/tokenizer/missing-title-end-tag-2.html
 fast/tokenizer/script_extra_close.html
 fast/transforms/diamond.html
 fast/transforms/identity-matrix.html

@@ -1,3 +1,65 @@
+2010-12-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove pixel tests that are obsoleted by the HTML5 parser suite
+        https://bugs.webkit.org/show_bug.cgi?id=51077
+        
+        Remove tests which had stale Mac pixel baselines (were not updated for
+        the HTML5 parser change or for Snow Leopard) which are obsoleted by
+        the HTML5 parser test suite (i.e. the same behavior is tested there):
+        - fast/parser/parseCommentsInTitles.html is tested by tests16.dat
+          (line 956)
+        - fast/parser/comment-in-style.html is tested by tests16.dat (line 904)
+        - fast/tokenizer/missing-title-end-tag-1.html is tested by tests16.dat
+          (line 980)
+        - fast/tokenizer/missing-title-end-tag-2.html is tested by tests2.dat
+          (line 550)        
+
+        * fast/parser/comment-in-style.html: Removed.
+        * fast/parser/parseCommentsInTitles.html: Removed.
+        * fast/tokenizer/missing-title-end-tag-1.html: Removed.
+        * fast/tokenizer/missing-title-end-tag-2.html: Removed.
+        * platform/chromium-linux/fast/parser/comment-in-style-expected.checksum: Removed.
+        * platform/chromium-linux/fast/parser/comment-in-style-expected.png: Removed.
+        * platform/chromium-linux/fast/parser/parseCommentsInTitles-expected.checksum: Removed.
+        * platform/chromium-linux/fast/parser/parseCommentsInTitles-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/comment-in-style-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/comment-in-style-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/parseCommentsInTitles-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/parseCommentsInTitles-expected.png: Removed.
+        * platform/chromium-mac/fast/tokenizer/missing-title-end-tag-1-expected.checksum: Removed.
+        * platform/chromium-mac/fast/tokenizer/missing-title-end-tag-1-expected.png: Removed.
+        * platform/chromium-mac/fast/tokenizer/missing-title-end-tag-2-expected.checksum: Removed.
+        * platform/chromium-mac/fast/tokenizer/missing-title-end-tag-2-expected.png: Removed.
+        * platform/chromium-win/fast/parser/comment-in-style-expected.checksum: Removed.
+        * platform/chromium-win/fast/parser/comment-in-style-expected.png: Removed.
+        * platform/chromium-win/fast/parser/comment-in-style-expected.txt: Removed.
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.checksum: Removed.
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.png: Removed.
+        * platform/chromium-win/fast/parser/parseCommentsInTitles-expected.txt: Removed.
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-1-expected.checksum: Removed.
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-1-expected.png: Removed.
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-2-expected.checksum: Removed.
+        * platform/chromium-win/fast/tokenizer/missing-title-end-tag-2-expected.png: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/parser/comment-in-style-expected.checksum: Removed.
+        * platform/mac/fast/parser/comment-in-style-expected.png: Removed.
+        * platform/mac/fast/parser/comment-in-style-expected.txt: Removed.
+        * platform/mac/fast/parser/parseCommentsInTitles-expected.checksum: Removed.
+        * platform/mac/fast/parser/parseCommentsInTitles-expected.png: Removed.
+        * platform/mac/fast/parser/parseCommentsInTitles-expected.txt: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-1-expected.checksum: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-1-expected.png: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-1-expected.txt: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-2-expected.checksum: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-2-expected.png: Removed.
+        * platform/mac/fast/tokenizer/missing-title-end-tag-2-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/fast/parser/parseCommentsInTitles-expected.txt: Removed.
+        * platform/qt/fast/tokenizer/missing-title-end-tag-1-expected.txt: Removed.
+        * platform/qt/fast/tokenizer/missing-title-end-tag-2-expected.txt: Removed.
+
 2010-12-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
