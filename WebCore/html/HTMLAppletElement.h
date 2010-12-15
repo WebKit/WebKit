@@ -39,7 +39,9 @@ private:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void finishParsingChildren();
-    
+
+    virtual void defaultEventHandler(Event*);
+
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
     void setupApplet() const;
