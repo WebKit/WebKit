@@ -33,8 +33,9 @@ from webkitpy.common.config.committers import CommitterList, Reviewer
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.thirdparty.mock import Mock
 
 
 def _id_to_object_dictionary(*objects):
@@ -292,6 +293,7 @@ class MockBugzilla(Mock):
             log("cc: %s" % cc)
         if blocked:
             log("blocked: %s" % blocked)
+        return 78
 
     def quips(self):
         return ["Good artists copy. Great artists steal. - Pablo Picasso"]
@@ -641,6 +643,9 @@ class MockPort(Mock):
     def name(self):
         return "MockPort"
 
+    def layout_tests_results_path(self):
+        return "/mock/results.html"
+
 class MockTestPort1(object):
 
     def skips_layout_test(self, test_name):
@@ -671,6 +676,7 @@ class MockTool(object):
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = MockExecutive(should_log=log_executive)
+        self.filesystem = MockFileSystem()
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()

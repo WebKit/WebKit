@@ -28,6 +28,7 @@
 
 import unittest
 import datetime
+import StringIO
 
 from .bugzilla import Bugzilla, BugzillaQueries, parse_bug_id
 
@@ -277,6 +278,24 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         self._assert_reopen(item_names=["UNCONFIRMED", "RESOLVED", "CLOSED"], selected_index=1)
         extra_stderr = "Did not reopen bug 42, it appears to already be open with status ['NEW'].\n"
         self._assert_reopen(item_names=["NEW", "RESOLVED"], selected_index=0, extra_stderr=extra_stderr)
+
+    def test_file_object_for_upload(self):
+        bugzilla = Bugzilla()
+        file_object = StringIO.StringIO()
+        unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
+        utf8_tor = unicode_tor.encode("utf-8")
+        self.assertEqual(bugzilla._file_object_for_upload(file_object), file_object)
+        self.assertEqual(bugzilla._file_object_for_upload(utf8_tor).read(), utf8_tor)
+        self.assertEqual(bugzilla._file_object_for_upload(unicode_tor).read(), utf8_tor)
+
+    def test_filename_for_upload(self):
+        bugzilla = Bugzilla()
+        mock_file = Mock()
+        mock_file.name = "foo"
+        self.assertEqual(bugzilla._filename_for_upload(mock_file, 1234), 'foo')
+        mock_timestamp = lambda: "now"
+        filename = bugzilla._filename_for_upload(StringIO.StringIO(), 1234, extension="patch", timestamp=mock_timestamp)
+        self.assertEqual(filename, "bug-1234-now.patch")
 
 
 class BugzillaQueriesTest(unittest.TestCase):

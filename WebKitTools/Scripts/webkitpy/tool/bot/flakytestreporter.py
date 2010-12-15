@@ -26,8 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import codecs
 import logging
 import platform
+import os.path
 
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.config import urls
@@ -48,7 +50,7 @@ class FlakyTestReporter(object):
         return set([commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()])
 
     def _bugzilla_email(self):
-        # This is kinda a funny way to get the bugzilla email,
+        # FIXME: This is kinda a funny way to get the bugzilla email,
         # we could also just create a Credentials object directly
         # but some of the Credentials logic is in bugzilla.py too...
         self._tool.bugs.authenticate()
@@ -126,6 +128,16 @@ If you would like to track this test fix with another bug, please close this bug
         flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
         return "%s\n%s" % (flake_message, self._bot_information())
 
+    def _results_diff_path_for_test(self, flaky_test):
+        # FIXME: This is a big hack.  We should get this path from results.json
+        # except that old-run-webkit-tests doesn't produce a results.json
+        # so we just guess at the file path.
+        results_path = self._tool.port().layout_tests_results_path()
+        results_directory = os.path.dirname(results_path)
+        test_path = os.path.join(results_directory, flaky_test)
+        (test_path_root, _) = os.path.splitext(test_path)
+        return "%s-diffs.txt" % test_path_root
+
     def _follow_duplicate_chain(self, bug):
         while bug.is_closed() and bug.duplicate_of():
             bug = self._tool.bugs.fetch_bug(bug.duplicate_of())
@@ -145,12 +157,23 @@ If you would like to track this test fix with another bug, please close this bug
             latest_flake_message = self._latest_flake_message(flaky_test, patch)
             author_emails = self._author_emails_for_test(flaky_test)
             if not bug:
+                _log.info("Bug does not already exist for %s, creating." % flaky_test)
                 flake_bug_id = self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
             else:
                 bug = self._follow_duplicate_chain(bug)
                 self._update_bug_for_flaky_test(bug, latest_flake_message)
                 flake_bug_id = bug.id()
-
+            # FIXME: Ideally we'd only make one comment per flake, not two.  But that's not possible
+            # in all cases (e.g. when reopening), so for now we do the attachment in a second step.
+            results_diff_path = self._results_diff_path_for_test(flaky_test)
+            # Check to make sure that the path makes sense.
+            # Since we're not actually getting this path from the results.html
+            # there is a high probaility it's totally wrong.
+            if self._tool.filesystem.exists(results_diff_path):
+                results_diff = self._tool.filesystem.read_binary_file(results_diff_path)
+                self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, "Failure diff from bot", filename="failure.diff")
+            else:
+                _log.error("%s does not exist as expected, not uploading." % results_diff_path)
             message += "%s bug %s%s\n" % (flaky_test, flake_bug_id, self._optional_author_string(author_emails))
 
         message += "The %s is continuing to process your patch." % self._bot_name

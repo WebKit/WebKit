@@ -29,6 +29,7 @@
 import unittest
 
 from webkitpy.common.config.committers import Committer
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool, MockStatusServer
@@ -76,6 +77,9 @@ The bots will update this with information from each new failure.
 
 If you would like to track this test fix with another bug, please close this bug as a duplicate.
 
+component: Tools / Tests
+cc: test@test.com
+blocked: 50856
 """
         OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_stderr=expected_stderr)
 
@@ -91,8 +95,9 @@ If you would like to track this test fix with another bug, please close this bug
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         self.assertEqual(reporter._bot_information(), "Bot: MockBotId  Port: MockPort  Platform: MockPlatform 1.0")
 
-    def test_create_bug_for_flaky_test(self):
+    def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
+        tool.filesystem = MockFileSystem({"/mock/foo/bar.diff": "mock"})
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
         patch = tool.bugs.fetch_attachment(197)
@@ -118,7 +123,7 @@ MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
 The dummy-queue encountered the following flaky tests while processing attachment 197:
 
-foo/bar.html bug None (author: abarth@webkit.org)
+foo/bar.html bug 78 (author: abarth@webkit.org)
 The dummy-queue is continuing to process your patch.
 --- End comment ---
 
@@ -130,5 +135,9 @@ The dummy-queue is continuing to process your patch.
         self.assertEqual(reporter._optional_author_string([]), "")
         self.assertEqual(reporter._optional_author_string(["foo@bar.com"]), " (author: foo@bar.com)")
         self.assertEqual(reporter._optional_author_string(["a@b.com", "b@b.com"]), " (authors: a@b.com and b@b.com)")
+
+    def test_results_diff_path_for_test(self):
+        reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
+        self.assertEqual(reporter._results_diff_path_for_test("test.html"), "/mock/test-diffs.txt")
 
     # report_flaky_tests is also tested by queues_unittest

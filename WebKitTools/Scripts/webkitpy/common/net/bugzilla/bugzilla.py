@@ -221,14 +221,15 @@ class Bugzilla(object):
         if not bug_id:
             return None
         content_type = "&ctype=xml" if xml else ""
-        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url,
-                                           bug_id,
-                                           content_type)
+        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url, bug_id, content_type)
 
     def short_bug_url_for_bug_id(self, bug_id):
         if not bug_id:
             return None
         return "http://webkit.org/b/%s" % bug_id
+
+    def add_attachment_url(self, bug_id):
+        return "%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id)
 
     def attachment_url_for_id(self, attachment_id, action="view"):
         if not attachment_id:
@@ -415,72 +416,104 @@ class Bugzilla(object):
                 self.authenticated = True
                 self.username = username
 
+    def _commit_queue_flag(self, mark_for_landing, mark_for_commit_queue):
+        if mark_for_landing:
+            return '+'
+        elif mark_for_commit_queue:
+            return '?'
+        return 'X'
+
+    # FIXME: mark_for_commit_queue and mark_for_landing should be joined into a single commit_flag argument.
     def _fill_attachment_form(self,
                               description,
-                              patch_file_object,
-                              comment_text=None,
+                              file_object,
                               mark_for_review=False,
                               mark_for_commit_queue=False,
                               mark_for_landing=False,
-                              bug_id=None):
+                              is_patch=False,
+                              filename=None,
+                              mimetype=None):
         self.browser['description'] = description
-        self.browser['ispatch'] = ("1",)
+        if is_patch:
+            self.browser['ispatch'] = ("1",)
+        # FIXME: Should this use self._find_select_element_for_flag?
         self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
+        self.browser['flag_type-3'] = (self._commit_queue_flag(mark_for_landing, mark_for_commit_queue),)
 
-        if mark_for_landing:
-            self.browser['flag_type-3'] = ('+',)
-        elif mark_for_commit_queue:
-            self.browser['flag_type-3'] = ('?',)
-        else:
-            self.browser['flag_type-3'] = ('X',)
+        filename = filename or "%s.patch" % timestamp()
+        mimetype = mimetype or "text/plain"
+        self.browser.add_file(file_object, mimetype, filename, 'data')
 
-        if bug_id:
-            patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
-        else:
-            patch_name ="%s.patch" % timestamp()
+    def _file_object_for_upload(self, file_or_string):
+        if hasattr(file_or_string, 'read'):
+            return file_or_string
+        # Only if file_or_string is not already encoded do we want to encode it.
+        if isinstance(file_or_string, unicode):
+            file_or_string = file_or_string.encode('utf-8')
+        return StringIO.StringIO(file_or_string)
 
-        self.browser.add_file(patch_file_object,
-                              "text/plain",
-                              patch_name,
-                              'data')
+    # timestamp argument is just for unittests.
+    def _filename_for_upload(self, file_object, bug_id, extension="txt", timestamp=timestamp):
+        if hasattr(file_object, "name"):
+            return file_object.name
+        return "bug-%s-%s.%s" % (bug_id, timestamp(), extension)
 
+    def add_attachment_to_bug(self,
+                              bug_id,
+                              file_or_string,
+                              description,
+                              filename=None,
+                              comment_text=None):
+        self.authenticate()
+        log('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
+        if self.dryrun:
+            log(comment_text)
+            return
+
+        self.browser.open(self.add_attachment_url(bug_id))
+        self.browser.select_form(name="entryform")
+        file_object = self._file_object_for_upload(file_or_string)
+        filename = filename or self._filename_for_upload(file_object, bug_id)
+        self._fill_attachment_form(description, file_object, filename=filename)
+        if comment_text:
+            log(comment_text)
+            self.browser['comment'] = comment_text
+        self.browser.submit()
+
+    # FIXME: The arguments to this function should be simplified and then
+    # this should be merged into add_attachment_to_bug
     def add_patch_to_bug(self,
                          bug_id,
-                         diff,
+                         file_or_string,
                          description,
                          comment_text=None,
                          mark_for_review=False,
                          mark_for_commit_queue=False,
                          mark_for_landing=False):
         self.authenticate()
-
-        log('Adding patch "%s" to %sshow_bug.cgi?id=%s' % (description,
-                                                           self.bug_server_url,
-                                                           bug_id))
+        log('Adding patch "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
 
         if self.dryrun:
             log(comment_text)
             return
 
-        self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (
-                          self.bug_server_url, bug_id))
+        self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
-
-        # _fill_attachment_form expects a file-like object
-        # Patch files are already binary, so no encoding needed.
-        assert(isinstance(diff, str))
-        patch_file_object = StringIO.StringIO(diff)
+        file_object = self._file_object_for_upload(file_or_string)
+        filename = self._filename_for_upload(file_object, bug_id, extension="patch")
         self._fill_attachment_form(description,
-                                   patch_file_object,
+                                   file_object,
                                    mark_for_review=mark_for_review,
                                    mark_for_commit_queue=mark_for_commit_queue,
                                    mark_for_landing=mark_for_landing,
-                                   bug_id=bug_id)
+                                   is_patch=True,
+                                   filename=filename)
         if comment_text:
             log(comment_text)
             self.browser['comment'] = comment_text
         self.browser.submit()
 
+    # FIXME: There has to be a more concise way to write this method.
     def _check_create_bug_response(self, response_html):
         match = re.search("<title>Bug (?P<bug_id>\d+) Submitted</title>",
                           response_html)
@@ -516,6 +549,7 @@ class Bugzilla(object):
         log('Creating bug with title "%s"' % bug_title)
         if self.dryrun:
             log(bug_description)
+            # FIXME: This will make some paths fail, as they assume this returns an id.
             return
 
         self.browser.open(self.bug_server_url + "enter_bug.cgi?product=WebKit")
@@ -531,7 +565,7 @@ class Bugzilla(object):
             self.browser["cc"] = cc
         if blocked:
             self.browser["blocked"] = unicode(blocked)
-        if assignee == None:
+        if not assignee:
             assignee = self.username
         if assignee and not self.browser.find_control("assigned_to").disabled:
             self.browser["assigned_to"] = assignee
@@ -547,7 +581,8 @@ class Bugzilla(object):
                     patch_description,
                     patch_file_object,
                     mark_for_review=mark_for_review,
-                    mark_for_commit_queue=mark_for_commit_queue)
+                    mark_for_commit_queue=mark_for_commit_queue,
+                    is_patch=True)
 
         response = self.browser.submit()
 

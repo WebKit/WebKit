@@ -185,7 +185,7 @@ component: MOCK component
 cc: MOCK cc
 blocked: 42
 Running prepare-ChangeLog
-MOCK add_patch_to_bug: bug_id=None, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=78, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
 Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
 

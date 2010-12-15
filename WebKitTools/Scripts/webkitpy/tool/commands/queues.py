@@ -293,7 +293,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         return self._update_status(message, patch=patch, results_file=failure_log)
 
     # FIXME: This exists for mocking, but should instead be mocked via
-    # some sort of tool.filesystem() object.
+    # tool.filesystem.read_text_file.  They have different error handling at the moment.
     def _read_file_contents(self, path):
         try:
             with codecs.open(path, "r", "utf-8") as open_file:

@@ -85,6 +85,8 @@ class LayoutTestResults(object):
     def parsed_results(self):
         return self._parsed_results
 
+    def results_matching_keys(self, result_keys):
+        return sorted(sum([tests for key, tests in self._parsed_results.items() if key in result_keys], []))
+
     def failing_tests(self):
-        failing_keys = [self.fail_key, self.crash_key, self.timeout_key]
-        return sorted(sum([tests for key, tests in self._parsed_results.items() if key in failing_keys], []))
+        return self.results_matching_keys([self.fail_key, self.crash_key, self.timeout_key])

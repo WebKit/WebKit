@@ -88,10 +88,7 @@ class Rebaseline(AbstractDeclarativeCommand):
         shutil.move(downloaded_file, local_file)
 
     def _tests_to_update(self, build):
-        parsed_results = build.layout_test_results().parsed_results()
-        # FIXME: This probably belongs as API on LayoutTestResults
-        # but .failing_tests() already means something else.
-        failing_tests = parsed_results[LayoutTestResults.fail_key]
+        failing_tests = build.layout_test_results().results_matching_keys([LayoutTestResults.fail_key])
         return self._tool.user.prompt_with_list("Which test(s) to rebaseline:", failing_tests, can_choose_multiple=True)
 
     def _results_url_for_test(self, build, test):
