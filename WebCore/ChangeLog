@@ -1,3 +1,14 @@
+2010-12-15  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        IOSurface bounds checks on bytesPerRow and allocSize are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=51137
+
+        No new tests added. For those using this new functionality, many current canvas layout tests will now pass.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+
 2010-12-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

@@ -63,11 +63,11 @@ static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
     int height = size.height();
 
     unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, size.width() * bytesPerElement);
-    if (!bytesPerRow || bytesPerRow != (size.width() * bytesPerElement))
+    if (!bytesPerRow)
         return 0;
 
     unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, size.height() * bytesPerRow);
-    if (!allocSize || allocSize != (size.height() * bytesPerRow))
+    if (!allocSize)
         return 0;
 
     const void *keys[6];
