@@ -624,8 +624,6 @@ WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
 
 void WebViewHost::didInvalidateRect(const WebRect& rect)
 {
-    if (m_isPainting)
-        LOG_ERROR("unexpected invalidation while painting");
     updatePaintRect(rect);
 }
 

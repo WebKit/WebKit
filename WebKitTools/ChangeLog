@@ -1,3 +1,13 @@
+2010-12-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [DRT/Chromium] Remove another unnecessary error message
+        https://bugs.webkit.org/show_bug.cgi?id=51083
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didInvalidateRect):
+
 2010-12-14  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.
