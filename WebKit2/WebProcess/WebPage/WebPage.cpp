@@ -981,7 +981,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(DATABASE)
     AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 #endif
-    
+
+    settings->setUsesPageCache(true);
+
     platformPreferencesDidChange(store);
 }
 

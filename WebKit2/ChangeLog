@@ -1,3 +1,18 @@
+2010-12-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Loading webkit.org over and over is slower in WebKit2 than WebKit1, looks like page is not cached
+        <rdar://problem/8774683>
+        https://bugs.webkit.org/show_bug.cgi?id=51143
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::canCachePage): Return true as long as we
+        are not a custom representation (eg. a PDF).
+        (WebKit::WebFrameLoaderClient::shouldCacheResponse): Always return true.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Enable the page cache.
+
 2010-12-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.

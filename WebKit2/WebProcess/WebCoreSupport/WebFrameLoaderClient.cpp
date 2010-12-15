@@ -1066,8 +1066,9 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)
 
 bool WebFrameLoaderClient::canCachePage() const
 {
-    notImplemented();
-    return false;
+    // We cannot cache frames that have custom representations because they are
+    // rendered in the UIProcess. 
+    return !m_frameHasCustomRepresentation;
 }
 
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
@@ -1222,8 +1223,7 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
 #if USE(CFNETWORK)
 bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 #endif
