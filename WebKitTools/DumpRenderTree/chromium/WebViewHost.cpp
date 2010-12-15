@@ -1490,8 +1490,6 @@ void WebViewHost::paintInvalidatedRegion()
         WebRect rect(m_paintRect);
         m_paintRect = WebRect();
         paintRect(rect);
-        if (i >= 1)
-            LOG_ERROR("painting caused additional invalidations");
     }
     ASSERT(m_paintRect.isEmpty());
 }

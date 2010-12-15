@@ -1,3 +1,13 @@
+2010-12-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [DRT/Chromium] Remove a unnecessary error message
+        https://bugs.webkit.org/show_bug.cgi?id=51069
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintInvalidatedRegion):
+
 2010-12-14  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.
