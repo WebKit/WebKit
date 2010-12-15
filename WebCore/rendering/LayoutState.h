@@ -65,7 +65,11 @@ public:
     void clearPaginationInformation();
     bool isPaginatingColumns() const { return m_columnInfo; }
     bool isPaginated() const { return m_pageLogicalHeight || m_columnInfo; }
-    int pageY(int childY) const;
+    
+    // The page logical offset is the object's offset from the top of the page in the page progression
+    // direction (so an x-offset in vertical text and a y-offset for horizontal text).
+    int pageLogicalOffset(int childLogicalOffset) const;
+
     void addForcedColumnBreak(int childY);
     
     bool pageLogicalHeight() const { return m_pageLogicalHeight; }

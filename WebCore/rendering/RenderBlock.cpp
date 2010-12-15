@@ -1244,7 +1244,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
     statePusher.pop();
 
     if (view()->layoutState()->m_pageLogicalHeight)
-        setPageY(view()->layoutState()->pageY(y()));
+        setPageLogicalOffset(view()->layoutState()->pageLogicalOffset(y()));
 
     updateLayerTransform();
 
@@ -2136,7 +2136,7 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
     if (needsLayout())
         return;
 
-    if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageY(y()) != pageY()))
+    if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(y()) != pageLogicalOffset()))
         setChildNeedsLayout(true, false);
 }
 
@@ -4238,7 +4238,7 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogi
             // maximum page break distance.
             if (!pageLogicalHeight) {
                 int distanceBetweenBreaks = max(colInfo->maximumDistanceBetweenForcedBreaks(),
-                                                view()->layoutState()->pageY(borderTop() + paddingTop() + contentHeight()) - colInfo->forcedBreakOffset());
+                                                view()->layoutState()->pageLogicalOffset(borderTop() + paddingTop() + contentHeight()) - colInfo->forcedBreakOffset());
                 columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
             }
         } else if (contentHeight() > pageLogicalHeight * desiredColumnCount) {
@@ -5450,14 +5450,14 @@ void RenderBlock::setPaginationStrut(int strut)
     m_rareData->m_paginationStrut = strut;
 }
 
-void RenderBlock::setPageY(int y)
+void RenderBlock::setPageLogicalOffset(int logicalOffset)
 {
     if (!m_rareData) {
-        if (!y)
+        if (!logicalOffset)
             return;
         m_rareData = new RenderBlockRareData(this);
     }
-    m_rareData->m_pageY = y;
+    m_rareData->m_pageLogicalOffset = logicalOffset;
 }
 
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)

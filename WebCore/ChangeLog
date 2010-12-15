@@ -1,3 +1,31 @@
+2010-12-15  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename pageY to pageLogicalOffset, since for vertical writing modes it is an x-position rather than a
+        y-position.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::pageLogicalOffset):
+        (WebCore::LayoutState::addForcedColumnBreak):
+        * rendering/LayoutState.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::setPageLogicalOffset):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::pageLogicalOffset):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2010-12-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

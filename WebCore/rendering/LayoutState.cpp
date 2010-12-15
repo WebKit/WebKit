@@ -162,16 +162,16 @@ void LayoutState::clearPaginationInformation()
     m_columnInfo = m_next->m_columnInfo;
 }
 
-int LayoutState::pageY(int childY) const
+int LayoutState::pageLogicalOffset(int childLogicalOffset) const
 {
-    return m_layoutOffset.height() + childY - m_pageOffset.height();
+    return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
 }
 
 void LayoutState::addForcedColumnBreak(int childY)
 {
     if (!m_columnInfo || m_columnInfo->columnHeight())
         return;
-    m_columnInfo->addForcedBreak(pageY(childY));
+    m_columnInfo->addForcedBreak(pageLogicalOffset(childY));
 }
 
 } // namespace WebCore

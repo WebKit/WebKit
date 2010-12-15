@@ -153,9 +153,12 @@ public:
     IntRect columnRectAt(ColumnInfo*, unsigned) const;
 
     int paginationStrut() const { return m_rareData ? m_rareData->m_paginationStrut : 0; }
-    int pageY() const { return m_rareData ? m_rareData->m_pageY : 0; }
-    void setPaginationStrut(int strut);
-    void setPageY(int y);
+    void setPaginationStrut(int);
+    
+    // The page logical offset is the object's offset from the top of the page in the page progression
+    // direction (so an x-offset in vertical text and a y-offset for horizontal text).
+    int pageLogicalOffset() const { return m_rareData ? m_rareData->m_pageLogicalOffset : 0; }
+    void setPageLogicalOffset(int);
 
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
@@ -682,7 +685,7 @@ private:
         RenderBlockRareData(const RenderBlock* block) 
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_paginationStrut(0)
-            , m_pageY(0)
+            , m_pageLogicalOffset(0)
         { 
         }
 
@@ -706,7 +709,7 @@ private:
         
         MarginValues m_margins;
         int m_paginationStrut;
-        int m_pageY;
+        int m_pageLogicalOffset;
      };
 
     OwnPtr<RenderBlockRareData> m_rareData;

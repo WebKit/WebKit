@@ -391,7 +391,7 @@ void RenderTable::layout()
     statePusher.pop();
 
     if (view()->layoutState()->pageLogicalHeight())
-        setPageY(view()->layoutState()->pageY(y()));
+        setPageLogicalOffset(view()->layoutState()->pageLogicalOffset(y()));
 
     bool didFullRepaint = repainter.repaintAfterLayout();
     // Repaint with our new bounds if they are different from our old bounds.
