@@ -207,10 +207,17 @@ h1 :hover {
   position: relative;
 }
 
+.comment textarea {
+  height: 6em;
+}
+
+.overallComments textarea {
+  height: 2em;
+}
+
 .comment textarea, .overallComments textarea {
   display: block;
   width: 100%;
-  height: 2em;
 }
 
 .overallComments .open {
@@ -351,7 +358,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=14"></script> 
+<script src="code-review.js?version=15"></script> 
 EOF
 
     def self.revisionOrDescription(string)

@@ -1,3 +1,16 @@
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix goofups from r74142 and r74130
+        https://bugs.webkit.org/show_bug.cgi?id=51146
+
+        Accidentally shrank the inline comment boxes and made
+        the toolbar not show up when there were image diffs.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-12-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

@@ -287,13 +287,18 @@
       return;
 
     var file_diff = files[file_name];
-    $('.context', file_diff).detach();
-
-    var expand_bar_index = 0;
 
     // Don't show the links to expand upwards/downwards if the patch starts/ends without context
     // lines, i.e. starts/ends with add/remove lines.
     var first_line = file_diff.querySelector('.Line');
+
+    // If there is no element with a "Line" class, then this is an image diff.
+    if (!first_line)
+      return;
+
+    $('.context', file_diff).detach();
+
+    var expand_bar_index = 0;
     if (!$(first_line).hasClass('add') && !$(first_line).hasClass('remove'))
       $('h1', file_diff).after(expandBarHtml(file_name, BELOW))
 
