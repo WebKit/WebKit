@@ -146,7 +146,7 @@ inline double copysign(double x, double y) { return _copysign(x, y); }
 inline int isfinite(double x) { return _finite(x); }
 
 // MSVC's math.h does not currently supply log2.
-inline bool log2(double num)
+inline double log2(double num)
 {
     // This constant is roughly M_LN2, which is not provided by default on Windows.
     return log(num) / 0.693147180559945309417232121458176568;

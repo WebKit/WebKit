@@ -826,6 +826,13 @@
             'include_dirs+++': ['../dom'],
           },
         }],
+        # FIXME: (kbr) ideally this target should just depend on webcore_prerequisites
+        # to pick up this include directory, but I'm nervous about making that change.
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
+          'include_dirs': [
+            '<(chromium_src_dir)/third_party/mkl/include',
+          ],
+        }],
       ],
     },
     {
@@ -994,6 +1001,14 @@
           # by a system header on windows.
           'include_dirs++': ['../dom'],
         }],
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
+          # This directory needs to be on the include path for multiple sub-targets of webcore.
+          'direct_dependent_settings': {
+            'include_dirs': [
+              '<(chromium_src_dir)/third_party/mkl/include',
+            ],
+          },
+        }],
       ],
     },
     {
@@ -1056,7 +1071,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # A few things can't be excluded by patterns.  List them individually.
@@ -1222,6 +1237,11 @@
         ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
           'sources/': [
             ['exclude', '/GeolocationService.*$'],
+          ],
+        }],
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
+          'sources/': [
+            ['include', 'platform/audio/mkl/FFTFrameMKL\\.cpp$'],
           ],
         }],
       ],
@@ -1433,6 +1453,29 @@
         ['OS=="win"', {
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
+          },
+        }],
+        ['OS=="win" and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
+          # FIXME: (kbr) figure out how to make these dependencies
+          # work in a cross-platform way. Attempts to use
+          # "link_settings" and "libraries" in conjunction with the
+          # msvs-specific settings didn't work so far.
+          'all_dependent_settings': {
+            'msvs_settings': {
+              'VCLinkerTool': {
+                'AdditionalLibraryDirectories': [
+                  # This is a hack to make this directory correct
+                  # relative to targets like chrome_dll. Should use
+                  # <(chromium_src_dir).
+                  '../third_party/mkl/lib/win/ia32',
+                ],
+                'AdditionalDependencies': [
+                  'mkl_intel_c.lib',
+                  'mkl_sequential.lib',
+                  'mkl_core.lib',
+                ],
+              },
+            },
           },
         }],
         ['enable_svg!=0', {

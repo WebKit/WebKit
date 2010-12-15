@@ -2440,6 +2440,7 @@
             'platform/audio/mac/AudioDestinationMac.cpp',
             'platform/audio/mac/AudioFileReaderMac.cpp',
             'platform/audio/mac/FFTFrameMac.cpp',
+            'platform/audio/mkl/FFTFrameMKL.cpp',
             'platform/animation/Animation.cpp',
             'platform/animation/Animation.h',
             'platform/animation/AnimationList.cpp',
