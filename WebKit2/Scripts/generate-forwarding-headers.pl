@@ -47,8 +47,18 @@ my $outputDirectory = $ARGV[0];
 shift;
 my $platform  = $ARGV[0];
 
+my $network;
+if ($platform =~ "gtk") {
+    shift;
+    $network = $ARGV[0];
+}
+
 foreach my $prefix (@platformPrefixes) {
-    push(@skippedPrefixes, $prefix) unless ($prefix =~ $platform);
+    if ($platform =~ "gtk") {
+        push(@skippedPrefixes, $prefix) unless ($prefix =~ $platform or $prefix =~ $network);
+    } else {
+        push(@skippedPrefixes, $prefix) unless ($prefix =~ $platform);
+    }
 }
 
 foreach (@frameworks) {

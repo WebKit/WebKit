@@ -902,6 +902,23 @@ if test "$enable_video" = "yes"; then
     html_flags=yes
 fi
 
+# WebKit2
+AC_MSG_CHECKING([whether to build Webkit2])
+AC_ARG_ENABLE(webkit2,
+            AC_HELP_STRING([--enable-webkit2],
+                [build webkit2 [default=no]]),
+                [], [enable_webkit2="no"])
+AC_MSG_RESULT([$enable_webkit2])
+if test "$enable_webkit2" = "yes"; then
+    # Turn on this macro by default. It is used in inttypes.h for defining macros used by webkit.
+    # In WebKit, this define is ensured by doing it before including config.h in any source file.
+    # In WebKit2, WebKit2Prefix.h is included as first header file, so we need to define this
+    # macro before actually WebKit2Prefix.h is included in any file.
+    AC_DEFINE([__STDC_FORMAT_MACROS],[1],[Turn on the __STDC_FORMAT_MACROS used in inttypes.h]),
+    WEBKITGTK_PC_NAME=${WEBKITGTK_PC_NAME}2
+    AC_SUBST([WEBKITGTK_PC_NAME])
+fi
+
 GTK_DOC_CHECK([1.10])
 
 # OS conditionals
@@ -976,26 +993,37 @@ AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
+AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
 
-
 AC_CONFIG_FILES([
 GNUmakefile
-WebKit/gtk/webkit/webkitversion.h
-WebKit/gtk/docs/GNUmakefile
-WebKit/gtk/docs/version.xml
-]
-)
+])
+ 
+if test "$enable_webkit2" = "no"; then
+    AC_CONFIG_FILES([
+    WebKit/gtk/webkit/webkitversion.h
+    WebKit/gtk/docs/GNUmakefile
+    WebKit/gtk/docs/version.xml
+    ]
+    )
 
-AC_CONFIG_FILES([
-WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit/gtk/webkit.pc.in
-WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:WebKit/gtk/JSCore.gir.in
-WebKit/gtk/org.webkitgtk-${WEBKITGTK_API_VERSION}.gschema.xml:WebKit/gtk/org.webkitgtk.gschema.xml.in
-]
-,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
-)
+    AC_CONFIG_FILES([
+    WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit/gtk/webkit.pc.in
+    WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:WebKit/gtk/JSCore.gir.in
+    WebKit/gtk/org.webkitgtk-${WEBKITGTK_API_VERSION}.gschema.xml:WebKit/gtk/org.webkitgtk.gschema.xml.in
+    ]
+    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
+    )
+else
+    AC_CONFIG_FILES([
+    WebKit2/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit2/gtk/webkit2.pc.in
+    ]
+    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
+    )
+fi
 
 AC_OUTPUT
 
@@ -1054,6 +1082,7 @@ GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
  Introspection support                                    : $enable_introspection
+ WebKit2 support                                          : $enable_webkit2
 "
 if test "$with_unicode_backend" = "glib"; then
    echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"
