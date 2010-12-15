@@ -7,6 +7,9 @@ body {
     margin: 0px;
     padding: 0px;
 }
+#bubbleContainer {
+    display:inline-block;
+}
 .status {
     display: block;
     float: left;
@@ -47,18 +50,27 @@ body {
 function statusDetail(patch_id) {
   top.location = "/patch/" + patch_id
 }
+window.addEventListener("message", function(e) {
+  if (e.data == 'containerMetrics') {
+    e.source.postMessage({'width': bubbleContainer.offsetWidth, 'height': bubbleContainer.offsetHeight},
+        e.origin);
+  } else
+    console.log("Unknown postMessage: " + e.data);
+}, false);
 </script>
 </head>
 <body>
-{% for bubble in bubbles %}
-<div class="status {{ bubble.state }}"{% if bubble.status %}
-    onclick="statusDetail({{ bubble.attachment_id }})"
-    title="{{ bubble.status.date|timesince }} ago"{% endif %}>
-  {{ bubble.name }}
-  {% if bubble.queue_position %}
-  <span class="queue_position">#{{ bubble.queue_position }}</span>
-  {% endif %}
+<div id="bubbleContainer">
+  {% for bubble in bubbles %}
+  <div class="status {{ bubble.state }}"{% if bubble.status %}
+      onclick="statusDetail({{ bubble.attachment_id }})"
+      title="{{ bubble.status.date|timesince }} ago"{% endif %}>
+    {{ bubble.name }}
+    {% if bubble.queue_position %}
+    <span class="queue_position">#{{ bubble.queue_position }}</span>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
-{% endfor %}
 </body>
 </html>

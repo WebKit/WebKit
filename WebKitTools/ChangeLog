@@ -1,3 +1,12 @@
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        have the statusbubble postMessage it's metrics so that embedders can properly size the iframe
+        https://bugs.webkit.org/show_bug.cgi?id=51125
+
+        * QueueStatusServer/templates/statusbubble.html:
+
 2010-12-15  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitpy/common/net/buildbot: Added property svn:ignore.
