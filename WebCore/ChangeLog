@@ -2,6 +2,22 @@
 
         Reviewed by Chris Marrin.
 
+        Percentage Z values in 3d transform functions and transform-origin should cause the property to be invalid
+        https://bugs.webkit.org/show_bug.cgi?id=51070
+        
+        Treat as inavlid -webkit-transform values that include a percentage value in translateZ()
+        or in the third parameter to translate3d().
+
+        Test: transforms/3d/general/3dtransform-values.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin): Whitespace change.
+
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
         Reflection does not render properly when -webkit-transform is toggled, untoggled, and retoggled
         https://bugs.webkit.org/show_bug.cgi?id=50967
         

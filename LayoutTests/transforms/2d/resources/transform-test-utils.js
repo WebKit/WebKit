@@ -11,26 +11,27 @@ function compareMatrices(a, b)
 {
   if (a == "none" && b == "none")
     return true;
-  else {
-    var matrixRegex = /matrix\((.+)\)/;
 
-    if (!matrixRegex.exec(a) || !matrixRegex.exec(b))
+  var matrixRegex = /matrix(?:3d)?\((.+)\)/;
+
+  var resultA = matrixRegex.exec(a);
+  var resultB = matrixRegex.exec(b);
+  if (!resultA || !resultB)
+    return false;
+
+  var aValues = resultA[1];
+  var bValues = resultB[1];
+
+  var aComps = aValues.split(',');
+  var bComps = bValues.split(',');
+
+  if (aComps.length != bComps.length)
+    return false;
+
+  for (var i = 0; i < aComps.length; ++i)
+  {
+    if (!floatingPointEqual(aComps[i], bComps[i]))
       return false;
-  
-    var aValues = matrixRegex.exec(a)[1];
-    var bValues = matrixRegex.exec(b)[1];
-  
-    var aComps = aValues.split(',');
-    var bComps = bValues.split(',');
-
-    if (aComps.length != bComps.length)
-      return false;
-
-    for (var i = 0; i < aComps.length; ++i)
-    {
-      if (!floatingPointEqual(aComps[i], bComps[i]))
-        return false;
-    }
   }
 
   return true;

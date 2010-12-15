@@ -4995,9 +4995,17 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
         while (a) {
             CSSParser::Units unit = info.unit();
 
-            // 4th param of rotate3d() is an angle rather than a bare number, validate it as such
             if (info.type() == WebKitCSSTransformValue::Rotate3DTransformOperation && argNumber == 3) {
+                // 4th param of rotate3d() is an angle rather than a bare number, validate it as such
                 if (!validUnit(a, FAngle, true))
+                    return 0;
+            } else if (info.type() == WebKitCSSTransformValue::Translate3DTransformOperation && argNumber == 2) {
+                // 3rd param of translate3d() cannot be a percentage
+                if (!validUnit(a, FLength, true))
+                    return 0;
+            } else if (info.type() == WebKitCSSTransformValue::TranslateZTransformOperation && argNumber == 0) {
+                // 1st param of translateZ() cannot be a percentage
+                if (!validUnit(a, FLength, true))
                     return 0;
             } else if (!validUnit(a, unit, true))
                 return 0;
@@ -5052,7 +5060,7 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int
         }
         case CSSPropertyWebkitTransformOriginZ: {
             if (validUnit(m_valueList->current(), FLength, m_strict))
-            value = CSSPrimitiveValue::create(m_valueList->current()->fValue, (CSSPrimitiveValue::UnitTypes)m_valueList->current()->unit);
+                value = CSSPrimitiveValue::create(m_valueList->current()->fValue, (CSSPrimitiveValue::UnitTypes)m_valueList->current()->unit);
             if (value)
                 m_valueList->next();
             break;

@@ -2,6 +2,21 @@
 
         Reviewed by Chris Marrin.
 
+        Percentage Z values in 3d transform functions and transform-origin should cause the property to be invalid
+        https://bugs.webkit.org/show_bug.cgi?id=51070
+        
+        Testcase for various 3d transform values.
+
+        * transforms/2d/resources/transform-test-utils.js:
+        (compareMatrices): Use early return, enhance to deal with matrix3d(),
+        and avoid evaluating the regular expressions twice.
+        * transforms/3d/general/3dtransform-values-expected.txt: Added.
+        * transforms/3d/general/3dtransform-values.html: Added.
+
+2010-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
         Reflection does not render properly when -webkit-transform is toggled, untoggled, and retoggled
         https://bugs.webkit.org/show_bug.cgi?id=50967
 
