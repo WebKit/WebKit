@@ -112,6 +112,10 @@ private
     border-bottom: 1px dotted;
 }
 
+:link {
+    color: #039;
+}
+
 .FileDiff {
     background-color: #f8f8f8;
     border: 1px solid #ddd;
@@ -141,8 +145,7 @@ h1 :hover {
     border-width: 1px 0px;
 }
 
-.lineNumber {
-    background-color: #eed;
+.lineNumber, .expansionLineNumber {
     border-bottom: 1px solid #998;
     border-right: 1px solid #ddd;
     color: #444;
@@ -151,6 +154,14 @@ h1 :hover {
     text-align: right;
     vertical-align: bottom;
     width: 3em;
+}
+
+.lineNumber {
+  background-color: #eed;
+}
+
+.expansionLineNumber {
+  background-color: #eee;
 }
 
 .text {
@@ -269,6 +280,27 @@ body {
   background-color: #69F;
   border-bottom-color: #69F;
   border-right-color: #69F;
+}
+
+.ExpandArea {
+  margin: 0;
+}
+
+.ExpandText {
+  margin-left: 0.67em;
+}
+
+.ExpandLinkContainer a {
+  border: 0;
+}
+
+.ExpandLinkContainer a:after {
+  content: " | ";
+  color: black;
+}
+
+.ExpandLinkContainer a:last-of-type:after {
+  content: "";
 }
 
 .help {

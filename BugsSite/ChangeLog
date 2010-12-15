@@ -1,3 +1,23 @@
+2010-12-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add ability to view for file context to the review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51057
+
+        At the beginning/end of each file diff and between each
+        hunk add links to expand the context. For now it grabs the
+        tip of tree version of the file and tries to apply the diff 
+        to that file. If it can't apply, then it gives up as we
+        wouldn't want to show the wrong lines of context.
+
+        In the future, we can consider adding the upload svn revision
+        to the diff itself, then we could fallback to the file at that
+        revision if tip of tree doesn't apply.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-12-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

@@ -23,6 +23,25 @@
 // DAMAGE.
 
 (function() {
+  /**
+   * Create a new function with some of its arguements
+   * pre-filled.
+   * Taken from goog.partial in the Closure library.
+   * @param {Function} fn A function to partially apply.
+   * @param {...*} var_args Additional arguments that are partially
+   *     applied to fn.
+   * @return {!Function} A partially-applied form of the function.
+   */
+  function partial(fn, var_args) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function() {
+      // Prepend the bound arguments to the current arguments.
+      var newArgs = Array.prototype.slice.call(arguments);
+      newArgs.unshift.apply(newArgs, args);
+      return fn.apply(this, newArgs);
+    };
+  };
+
   function determineAttachmentID() {
     try {
       return /id=(\d+)/.exec(window.location.search)[1]
@@ -41,6 +60,10 @@
     return;
 
   var next_line_id = 0;
+  var files = {};
+  var original_file_contents = {};
+  var patched_file_contents = {};
+  var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
 
   function idForLine(number) {
     return 'line' + number;
@@ -120,8 +143,6 @@
       id = this.id;
     addCommentFor($('#' + id));
   }
-
-  var files = {}
 
   function addPreviousComment(line, author, comment_text) {
     var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previousComment"></div>');
@@ -257,7 +278,296 @@
     $('.FileDiff').each(function() {
       var file_name = $(this).children('h1').text();
       files[file_name] = this;
+      addExpandLinks(file_name);
     });
+  }
+
+  function addExpandLinks(file_name) {
+    if (file_name.indexOf('ChangeLog') != -1)
+      return;
+
+    var file_diff = files[file_name];
+    $('.context', file_diff).detach();
+
+    var expand_bar_index = 0;
+
+    // Don't show the links to expand upwards/downwards if the patch starts/ends without context
+    // lines, i.e. starts/ends with add/remove lines.
+    var first_line = file_diff.querySelector('.Line');
+    if (!$(first_line).hasClass('add') && !$(first_line).hasClass('remove'))
+      $('h1', file_diff).after(expandBarHtml(file_name, BELOW))
+
+    $('br').replaceWith(expandBarHtml(file_name));
+
+    var last_line = file_diff.querySelector('.Line:last-of-type');
+    // Some patches for new files somehow end up with an empty context line at the end
+    // with a from line number of 0. Don't show expand links in that case either.
+    if (!$(last_line).hasClass('add') && !$(last_line).hasClass('remove') && fromLineNumber(last_line) != 0)
+      $(file_diff).append(expandBarHtml(file_name, ABOVE));
+  }
+
+  function expandBarHtml(file_name, opt_direction) {
+    var html = '<div class="ExpandBar">' +
+        '<pre class="ExpandArea Expand' + ABOVE + '"></pre>' +
+        '<div class="ExpandLinkContainer"><span class="ExpandText">expand: </span>';
+
+    // FIXME: If there are <100 line to expand, don't show the expand-100 link.
+    // If there are <20 lines to expand, don't show the expand-20 link.
+    if (!opt_direction || opt_direction == ABOVE) {
+      html += expandLinkHtml(ABOVE, 100) +
+          expandLinkHtml(ABOVE, 20);
+    }
+
+    html += expandLinkHtml(ALL);
+
+    if (!opt_direction || opt_direction == BELOW) {
+      html += expandLinkHtml(BELOW, 20) +
+        expandLinkHtml(BELOW, 100);
+    }
+
+    html += '</div><pre class="ExpandArea Expand' + BELOW + '"></pre></div>';
+    return html;
+  }
+
+  function expandLinkHtml(direction, amount) {
+    return "<a class='ExpandLink' href='javascript:' data-direction='" + direction + "' data-amount='" + amount + "'>" +
+        (amount ? amount + " " : "") + direction + "</a>";
+  }
+
+  $(window).bind('click', function (e) {
+    var target = e.target;
+    if (target.className != 'ExpandLink')
+      return;
+
+    // Can't use $ here because something in the window's scope sets $ to something other than jQuery.
+    var expand_bar = jQuery(target).parents('.ExpandBar');
+    var file_name = expand_bar.parents('.FileDiff').children('h1')[0].textContent;
+    var expand_function = partial(expand, expand_bar[0], file_name, target.getAttribute('data-direction'), Number(target.getAttribute('data-amount')));
+    if (file_name in original_file_contents)
+      expand_function();
+    else
+      getWebKitSourceFile(file_name, expand_function, expand_bar);
+  });
+
+  function getWebKitSourceFile(file_name, onLoad, expand_bar) {
+    function handleLoad(contents) {
+      original_file_contents[file_name] = contents.split('\n');
+      patched_file_contents[file_name] = applyDiff(original_file_contents[file_name], file_name);
+      onLoad();
+    };
+
+    $.ajax({
+      url: WEBKIT_BASE_DIR + file_name,
+      context: document.body,
+      complete: function(xhr, data) {
+              if (xhr.status == 0)
+                  handleLoadError(expand_bar);
+              else
+                  handleLoad(xhr.responseText);
+      }
+    });
+  }
+
+  function replaceExpandLinkContainers(expand_bar, text) {
+    $('.ExpandLinkContainer', $(expand_bar).parents('.FileDiff')).replaceWith('<span class="ExpandText">' + text + '</span>');
+  }
+
+  function handleLoadError(expand_bar) {
+    // FIXME: In this case, try fetching the source file at the revision the patch was created at,
+    // in case the file has bee deleted.
+    // Might need to modify webkit-patch to include that data in the diff.
+    replaceExpandLinkContainers(expand_bar, "Can't expand. Is this a new or deleted file?");
+  }
+
+  var ABOVE = 'above';
+  var BELOW = 'below';
+  var ALL = 'all';
+
+  function expand(expand_bar, file_name, direction, amount) {
+    if (file_name in original_file_contents && !patched_file_contents[file_name]) {
+      // FIXME: In this case, try fetching the source file at the revision the patch was created at.
+      // Might need to modify webkit-patch to include that data in the diff.
+      replaceExpandLinkContainers(expand_bar, "Can't expand. Unable to apply patch to tip of tree.");
+      return;
+    }
+
+    var above_expansion = expand_bar.querySelector('.Expand' + ABOVE)
+    var below_expansion = expand_bar.querySelector('.Expand' + BELOW)
+
+    var above_last_line = above_expansion.querySelector('.ExpansionLine:last-of-type');
+    if (!above_last_line) {
+      var diff_section = expand_bar.previousElementSibling;
+      above_last_line = diff_section.querySelector('.Line:last-of-type');
+    }
+
+    var above_last_line_num, above_last_from_line_num;
+    if (above_last_line) {
+      above_last_line_num = toLineNumber(above_last_line);
+      above_last_from_line_num = fromLineNumber(above_last_line);
+    } else
+      above_last_from_line_num = above_last_line_num = 0;
+
+    var below_first_line = below_expansion.querySelector('.ExpansionLine');
+    if (!below_first_line) {
+      var diff_section = expand_bar.nextElementSibling;
+      if (diff_section)
+        below_first_line = diff_section.querySelector('.Line');
+    }
+
+    var below_first_line_num, below_first_from_line_num;
+    if (below_first_line) {
+      below_first_line_num = toLineNumber(below_first_line) - 1;
+      below_first_from_line_num = fromLineNumber(below_first_line) - 1;
+    } else
+      below_first_from_line_num = below_first_line_num = patched_file_contents[file_name].length - 1;
+
+    var start_line_num, start_from_line_num;
+    var end_line_num;
+
+    if (direction == ABOVE) {
+      start_from_line_num = above_last_from_line_num;
+      start_line_num = above_last_line_num;
+      end_line_num = Math.min(start_line_num + amount, below_first_line_num);
+    } else if (direction == BELOW) {
+      end_line_num = below_first_line_num;
+      start_line_num = Math.max(end_line_num - amount, above_last_line_num)
+      start_from_line_num = Math.max(below_first_from_line_num - amount, above_last_from_line_num)
+    } else { // direction == ALL
+      start_line_num = above_last_line_num;
+      start_from_line_num = above_last_from_line_num;
+      end_line_num = below_first_line_num;
+    }
+
+    var expansion_area;
+    // Filling in all the remaining lines. Overwrite the expand links.
+    if (start_line_num == above_last_line_num && end_line_num == below_first_line_num) {
+      expansion_area = expand_bar.querySelector('.ExpandLinkContainer');
+      expansion_area.innerHTML = '';
+    } else {
+      expansion_area = direction == ABOVE ? above_expansion : below_expansion;
+    }
+
+    insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num);
+  }
+
+  function insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < end_line_num - start_line_num; i++) {
+      var line = document.createElement('div');
+      line.className = 'ExpansionLine';
+      // FIXME: from line numbers are wrong
+      line.innerHTML = '<span class="from expansionlineNumber">' + (start_from_line_num + i + 1) +
+          '</span><span class="to expansionlineNumber">' + (start_line_num + i + 1) +
+          '</span> <span class="text"></span>';
+      line.querySelector('.text').textContent = patched_file_contents[file_name][start_line_num + i];
+      fragment.appendChild(line);
+    }
+
+    if (direction == BELOW)
+      expansion_area.insertBefore(fragment, expansion_area.firstChild);
+    else
+      expansion_area.appendChild(fragment);
+  }
+
+  function hunkStartingLine(patched_file, context, prev_line, hunk_num) {
+    var PATCH_FUZZ = 2;
+    var current_line = -1;
+    var last_context_line = context[context.length - 1];
+    if (patched_file[prev_line] == last_context_line)
+      current_line = prev_line + 1;
+    else {
+      for (var i = prev_line - PATCH_FUZZ; i < prev_line + PATCH_FUZZ; i++) {
+        if (patched_file[i] == last_context_line)
+          current_line = i + 1;
+      }
+
+      if (current_line == -1) {
+        console.log('Hunk #' + hunk_num + ' FAILED.');
+        return -1;
+      }
+    }
+
+    // For paranoia sake, confirm the rest of the context matches;
+    for (var i = 0; i < context.length - 1; i++) {
+      if (patched_file[current_line - context.length + i] != context[i]) {
+        console.log('Hunk #' + hunk_num + ' FAILED. Did not match preceding context.');
+        return -1;
+      }
+    }
+
+    return current_line;
+  }
+
+  function fromLineNumber(line) {
+    return Number(line.querySelector('.from').textContent);
+  }
+
+  function toLineNumber(line) {
+    return Number(line.querySelector('.to').textContent);
+  }
+
+  function lineNumberForFirstNonContextLine(patched_file, line, prev_line, context, hunk_num) {
+    if (context.length) {
+      var prev_line_num = fromLineNumber(prev_line) - 1;
+      return hunkStartingLine(patched_file, context, prev_line_num, hunk_num);
+    }
+
+    if (toLineNumber(line) == 1 || fromLineNumber(line) == 1)
+      return 0;
+
+    console.log('Failed to apply patch. Adds or removes lines before any context lines.');
+    return -1;
+  }
+
+  function applyDiff(original_file, file_name) {
+    var diff_sections = files[file_name].getElementsByClassName('DiffSection');
+    var patched_file = original_file.concat([]);
+
+    // Apply diffs in reverse order to avoid needing to keep track of changing line numbers.
+    for (var i = diff_sections.length - 1; i >= 0; i--) {
+      var section = diff_sections[i];
+      var lines = section.getElementsByClassName('Line');
+      var current_line = -1;
+      var context = [];
+      var hunk_num = i + 1;
+
+      for (var j = 0, lines_len = lines.length; j < lines_len; j++) {
+        var line = lines[j];
+        var line_contents = line.querySelector('.text').textContent;
+        if ($(line).hasClass('add')) {
+          if (current_line == -1) {
+            current_line = lineNumberForFirstNonContextLine(patched_file, line, lines[j-1], context, hunk_num);
+            if (current_line == -1)
+              return null;
+          }
+
+          patched_file.splice(current_line, 0, line_contents);
+          current_line++;
+        } else if ($(line).hasClass('remove')) {
+          if (current_line == -1) {
+            current_line = lineNumberForFirstNonContextLine(patched_file, line, lines[j-1], context, hunk_num);
+            if (current_line == -1)
+              return null;
+          }
+
+          if (patched_file[current_line] != line_contents) {
+            console.log('Hunk #' + hunk_num + ' FAILED.');
+            return null;
+          }
+
+          patched_file.splice(current_line, 1);
+        } else if (current_line == -1) {
+          context.push(line_contents);
+        } else if (line_contents != patched_file[current_line]) {
+          console.log('Hunk #' + hunk_num + ' FAILED. Context at end did not match');
+          return null;
+        } else {
+          current_line++;
+        }
+      }
+    }
+
+    return patched_file;
   }
 
   function openOverallComments(e) {
