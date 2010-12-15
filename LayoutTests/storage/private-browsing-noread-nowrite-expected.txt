@@ -9,5 +9,7 @@ Private browsing statement 3 completed with an error
 not authorized
 Private browsing statement 4 completed with an error
 not authorized
+Private browsing statement 5 completed with an error
+access to PrivateTest1.randomData is prohibited
 Test ended
 

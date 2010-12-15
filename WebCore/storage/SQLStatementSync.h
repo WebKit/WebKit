@@ -46,14 +46,14 @@ class SQLResultSet;
 
 class SQLStatementSync {
 public:
-    SQLStatementSync(const String& statement, const Vector<SQLValue>& arguments, bool readOnly);
+    SQLStatementSync(const String& statement, const Vector<SQLValue>& arguments, int permissions);
 
     PassRefPtr<SQLResultSet> execute(DatabaseSync*, ExceptionCode&);
 
 private:
     String m_statement;
     Vector<SQLValue> m_arguments;
-    bool m_readOnly;
+    int m_permissions;
 };
 
 } // namespace WebCore

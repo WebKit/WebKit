@@ -1006,7 +1006,7 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
 #if ENABLE(DATABASE)
-    virtual bool isDatabaseReadOnly() const;
+    virtual bool allowDatabaseAccess() const;
     virtual void databaseExceededQuota(const String& name);
 #endif
 

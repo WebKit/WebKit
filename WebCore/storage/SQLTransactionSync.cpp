@@ -33,6 +33,7 @@
 
 #if ENABLE(DATABASE)
 
+#include "DatabaseAuthorizer.h"
 #include "DatabaseSync.h"
 #include "PlatformString.h"
 #include "SQLException.h"
@@ -86,8 +87,13 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
     if (sqlStatement.isEmpty())
         return 0;
 
-    bool readOnlyMode = m_readOnly || m_database->scriptExecutionContext()->isDatabaseReadOnly();
-    SQLStatementSync statement(sqlStatement, arguments, readOnlyMode);
+    int permissions = DatabaseAuthorizer::ReadWriteMask;
+    if (!m_database->scriptExecutionContext()->allowDatabaseAccess())
+      permissions |= DatabaseAuthorizer::NoAccessMask;
+    else if (m_readOnly)
+      permissions |= DatabaseAuthorizer::ReadOnlyMask;
+
+    SQLStatementSync statement(sqlStatement, arguments, permissions);
 
     m_database->resetAuthorizer();
     bool retryStatement = true;

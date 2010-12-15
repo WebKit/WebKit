@@ -80,6 +80,7 @@ public:
     void disableAuthorizer();
     void enableAuthorizer();
     void setAuthorizerReadOnly();
+    void setAuthorizerPermissions(int permissions);
     bool lastActionChangedDatabase();
     bool lastActionWasInsert();
     void resetDeletes();

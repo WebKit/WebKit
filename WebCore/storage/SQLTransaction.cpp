@@ -32,6 +32,7 @@
 #if ENABLE(DATABASE)
 
 #include "Database.h"
+#include "DatabaseAuthorizer.h"
 #include "DatabaseThread.h"
 #include "Logging.h"
 #include "PlatformString.h"
@@ -93,13 +94,13 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         return;
     }
 
-    bool readOnlyMode = m_readOnly;
-    if (!readOnlyMode) {
-        if (m_database->scriptExecutionContext()->isDatabaseReadOnly())
-            readOnlyMode = true;
-    }
+    int permissions = DatabaseAuthorizer::ReadWriteMask;
+    if (!m_database->scriptExecutionContext()->allowDatabaseAccess())
+        permissions |= DatabaseAuthorizer::NoAccessMask;
+    else if (m_readOnly)
+        permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement, arguments, callback, callbackError, readOnlyMode);
+    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement, arguments, callback, callbackError, permissions);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();

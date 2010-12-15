@@ -4496,11 +4496,11 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
 
 #if ENABLE(DATABASE)
 
-bool Document::isDatabaseReadOnly() const
+bool Document::allowDatabaseAccess() const
 {
     if (!page() || page()->settings()->privateBrowsingEnabled())
-        return true;
-    return false;
+        return false;
+    return true;
 }
 
 void Document::databaseExceededQuota(const String& name)

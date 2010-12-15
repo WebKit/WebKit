@@ -46,7 +46,7 @@ class SQLTransaction;
 
 class SQLStatement : public ThreadSafeShared<SQLStatement> {
 public:
-    static PassRefPtr<SQLStatement> create(const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, bool readOnly);
+    static PassRefPtr<SQLStatement> create(const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 
     bool execute(Database*);
     bool lastExecutionFailedDueToQuota() const;
@@ -61,7 +61,7 @@ public:
 
     SQLError* sqlError() const { return m_error.get(); }
 private:
-    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, bool readOnly);
+    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
@@ -74,7 +74,7 @@ private:
     RefPtr<SQLError> m_error;
     RefPtr<SQLResultSet> m_resultSet;
 
-    bool m_readOnly;
+    int m_permissions;
 };
 
 } // namespace WebCore

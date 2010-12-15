@@ -42,6 +42,13 @@ extern const int SQLAuthDeny;
 
 class DatabaseAuthorizer : public ThreadSafeShared<DatabaseAuthorizer> {
 public:
+
+    enum Permissions {
+        ReadWriteMask = 0,
+        ReadOnlyMask = 1 << 1,
+        NoAccessMask = 1 << 2
+    };
+
     static PassRefPtr<DatabaseAuthorizer> create(const String& databaseInfoTableName);
 
     int createTable(const String& tableName);
@@ -87,6 +94,7 @@ public:
     void disable();
     void enable();
     void setReadOnly();
+    void setPermissions(int permissions);
 
     void reset();
     void resetDeletes();
@@ -100,11 +108,12 @@ private:
     void addWhitelistedFunctions();
     int denyBasedOnTableName(const String&) const;
     int updateDeletesBasedOnTableName(const String&);
+    bool allowWrite();
 
+    int m_permissions;
     bool m_securityEnabled : 1;
     bool m_lastActionWasInsert : 1;
     bool m_lastActionChangedDatabase : 1;
-    bool m_readOnly : 1;
     bool m_hadDeletes : 1;
 
     const String m_databaseInfoTableName;

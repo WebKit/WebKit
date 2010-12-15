@@ -16,7 +16,8 @@ var privateBrowsingStatements = [
     "CREATE TABLE IF NOT EXISTS PrivateTest2 (randomData)",
     "DELETE FROM PrivateTest1",
     "DROP TABLE PrivateTest1",
-    "INSERT INTO PrivateTest1 VALUES ('somedata')"
+    "INSERT INTO PrivateTest1 VALUES ('somedata')",
+    "SELECT * FROM PrivateTest1"
 ];
 
 var completed = 0;
@@ -88,7 +89,7 @@ function runTest()
         layoutTestController.waitUntilDone();
     }
 
-    var database = openDatabase("PrivateBrowsingReadOnlyTest", "1.0", "Test private browsing read-only safety", 1);
+    var database = openDatabase("PrivateBrowsingNoReadNoWriteTest", "1.0", "Test private browsing no read/write safety", 1);
     database.transaction(runSetup, endTest, endTest);
 }
 

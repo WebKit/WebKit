@@ -70,7 +70,7 @@ namespace WebCore {
         virtual bool isWorkerContext() const { return false; }
 
 #if ENABLE(DATABASE)
-        virtual bool isDatabaseReadOnly() const = 0;
+        virtual bool allowDatabaseAccess() const = 0;
         virtual void databaseExceededQuota(const String& name) = 0;
         DatabaseThread* databaseThread();
         void setHasOpenDatabases() { m_hasOpenDatabases = true; }

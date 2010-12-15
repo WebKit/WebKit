@@ -1,3 +1,79 @@
+2010-12-14  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Do not allow access to existing HTML5 databases in private browsing
+        mode https://bugs.webkit.org/show_bug.cgi?id=49332
+
+        Test: storage/private-browsing-noread-nowrite.html
+
+        Previously, read-only transactions and private browsing mode were
+        represented by the same SQLStatement and DatabaseAuthorizer states.
+        This patch removes the m_readOnly member variable from SQLStatement and
+        DatabaseAuthorizer, and replaces it with m_permissions whose bit fields
+        are initialized by a DatabaseAuthorizer enum Permissions (ReadWrite,
+        ReadOnly, NoAccess). A read-only transaction sets permissions to
+        ReadOnly, and if !m_database->scriptExecutionContext()->allowDatabaseAccess(),
+        then permissions also set to NoAccess.
+
+        * dom/Document.cpp:
+        (WebCore::Document::allowDatabaseAccess): this method was previously
+        called isDatabaseReadOnly. It checks if private browsing preference is
+        set. This method is renamed because it is used to check if private
+        browsing restricts access to databases.
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::setAuthorizerPermissions):
+        * storage/AbstractDatabase.h:
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::reset):
+        (WebCore::DatabaseAuthorizer::createTable):
+        (WebCore::DatabaseAuthorizer::createTempTable):
+        (WebCore::DatabaseAuthorizer::dropTable):
+        (WebCore::DatabaseAuthorizer::dropTempTable):
+        (WebCore::DatabaseAuthorizer::allowAlterTable):
+        (WebCore::DatabaseAuthorizer::createIndex):
+        (WebCore::DatabaseAuthorizer::createTempIndex):
+        (WebCore::DatabaseAuthorizer::dropIndex):
+        (WebCore::DatabaseAuthorizer::dropTempIndex):
+        (WebCore::DatabaseAuthorizer::createTrigger):
+        (WebCore::DatabaseAuthorizer::createTempTrigger):
+        (WebCore::DatabaseAuthorizer::dropTrigger):
+        (WebCore::DatabaseAuthorizer::dropTempTrigger):
+        (WebCore::DatabaseAuthorizer::createView):
+        (WebCore::DatabaseAuthorizer::createTempView):
+        (WebCore::DatabaseAuthorizer::dropView):
+        (WebCore::DatabaseAuthorizer::dropTempView):
+        (WebCore::DatabaseAuthorizer::createVTable):
+        (WebCore::DatabaseAuthorizer::dropVTable):
+        (WebCore::DatabaseAuthorizer::allowDelete):
+        (WebCore::DatabaseAuthorizer::allowInsert):
+        (WebCore::DatabaseAuthorizer::allowUpdate):
+        (WebCore::DatabaseAuthorizer::allowRead):
+        (WebCore::DatabaseAuthorizer::allowReindex):
+        (WebCore::DatabaseAuthorizer::allowWrite): a new private method that
+        checks if DatabaseAuthorizer is enabled and if it is in ReadOnly or
+        NoAccess mode.
+        (WebCore::DatabaseAuthorizer::setReadOnly):
+        (WebCore::DatabaseAuthorizer::setPermissions):
+        * storage/DatabaseAuthorizer.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::create):
+        (WebCore::SQLStatement::SQLStatement):
+        (WebCore::SQLStatement::execute):
+        * storage/SQLStatement.h:
+        * storage/SQLStatementSync.cpp:
+        (WebCore::SQLStatementSync::SQLStatementSync):
+        (WebCore::SQLStatementSync::execute):
+        * storage/SQLStatementSync.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::executeSQL):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::allowDatabaseAccess):
+
 2010-12-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

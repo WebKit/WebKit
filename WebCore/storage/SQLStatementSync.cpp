@@ -43,18 +43,17 @@
 
 namespace WebCore {
 
-SQLStatementSync::SQLStatementSync(const String& statement, const Vector<SQLValue>& arguments, bool readOnly)
+SQLStatementSync::SQLStatementSync(const String& statement, const Vector<SQLValue>& arguments, int permissions)
     : m_statement(statement)
     , m_arguments(arguments)
-    , m_readOnly(readOnly)
+    , m_permissions(permissions)
 {
     ASSERT(!m_statement.isEmpty());
 }
 
 PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCode& ec)
 {
-    if (m_readOnly)
-        db->setAuthorizerReadOnly();
+    db->setAuthorizerPermissions(m_permissions);
 
     SQLiteDatabase* database = &db->sqliteDatabase();
 

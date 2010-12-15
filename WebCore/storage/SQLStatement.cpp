@@ -43,17 +43,17 @@
 
 namespace WebCore {
 
-PassRefPtr<SQLStatement> SQLStatement::create(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, bool readOnly)
+PassRefPtr<SQLStatement> SQLStatement::create(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
 {
-    return adoptRef(new SQLStatement(statement, arguments, callback, errorCallback, readOnly));
+    return adoptRef(new SQLStatement(statement, arguments, callback, errorCallback, permissions));
 }
 
-SQLStatement::SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, bool readOnly)
+SQLStatement::SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
     : m_statement(statement.crossThreadString())
     , m_arguments(arguments)
     , m_statementCallback(callback)
     , m_statementErrorCallback(errorCallback)
-    , m_readOnly(readOnly)
+    , m_permissions(permissions)
 {
 }
 
@@ -69,8 +69,7 @@ bool SQLStatement::execute(Database* db)
     if (m_error)
         return false;
 
-    if (m_readOnly)
-        db->setAuthorizerReadOnly();
+    db->setAuthorizerPermissions(m_permissions);
 
     SQLiteDatabase* database = &db->sqliteDatabase();
 

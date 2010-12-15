@@ -113,7 +113,7 @@ namespace WebCore {
         PassRefPtr<DatabaseSync> openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
 
         // Not implemented yet.
-        virtual bool isDatabaseReadOnly() const { return false; }
+        virtual bool allowDatabaseAccess() const { return true; }
         // Not implemented for real yet.
         virtual void databaseExceededQuota(const String&);
 #endif

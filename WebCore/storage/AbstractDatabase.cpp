@@ -432,6 +432,12 @@ void AbstractDatabase::setAuthorizerReadOnly()
     m_databaseAuthorizer->setReadOnly();
 }
 
+void AbstractDatabase::setAuthorizerPermissions(int permissions)
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->setPermissions(permissions);
+}
+
 bool AbstractDatabase::lastActionChangedDatabase()
 {
     ASSERT(m_databaseAuthorizer);
