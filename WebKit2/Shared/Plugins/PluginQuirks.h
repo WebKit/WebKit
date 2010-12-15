@@ -23,59 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePluginModule_h
-#define NetscapePluginModule_h
-
-#include "Module.h"
-#include "PluginQuirks.h"
-#include <WebCore/npfunctions.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-// FIXME: We should not include PluginInfoStore.h here. Instead,
-// PluginInfoStore::Plugin should be moved out into its own header which we can
-// put in Shared/Plugins.
-#include "PluginInfoStore.h"
+#ifndef PluginQuirks_h
+#define PluginQuirks_h
 
 namespace WebKit {
 
-class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
+class PluginQuirks {
 public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const String& pluginPath);
-    ~NetscapePluginModule();
+    enum PluginQuirk {
+        // Mac specific quirks:
+#if PLATFORM(MAC)
+        // The plug-in wants the call to getprogame() to return "WebKitPluginHost".
+        // Adobe Flash Will not handle key down events otherwise.
+        PrognameShouldBeWebKitPluginHost,
+#endif
 
-    const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
-
-    void pluginCreated();
-    void pluginDestroyed();
-
-    static bool getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin&);
-
-    const PluginQuirks& pluginQuirks() const { return m_pluginQuirks; }
+        NumPluginQuirks
+    };
+    
+    PluginQuirks()
+        : m_quirks(0)
+    {
+        COMPILE_ASSERT(sizeof(m_quirks) * 8 >= NumPluginQuirks, not_enough_room_for_quirks);
+    }
+    
+    void add(PluginQuirk quirk)
+    {
+        ASSERT(quirk >= 0);
+        ASSERT(quirk < NumPluginQuirks);
+        
+        m_quirks |= (1 << quirk);
+    }
+    
+    bool contains(PluginQuirk quirk) const
+    {
+        return m_quirks & (1 << quirk);
+    }
 
 private:
-    explicit NetscapePluginModule(const String& pluginPath);
-
-    void determineQuirks();
-
-    bool tryLoad();
-    bool load();
-    void unload();
-
-    void shutdown();
-
-    String m_pluginPath;
-    bool m_isInitialized;
-    unsigned m_pluginCount;
-
-    PluginQuirks m_pluginQuirks;
-
-    NPP_ShutdownProcPtr m_shutdownProcPtr;
-    NPPluginFuncs m_pluginFuncs;
-
-    OwnPtr<Module> m_module;
+    uint32_t m_quirks;
 };
-    
+
 } // namespace WebKit
 
-#endif // NetscapePluginModule_h
+#endif // PluginQuirkSet_h

@@ -323,4 +323,16 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
     return true;
 }
 
+void NetscapePluginModule::determineQuirks()
+{
+    PluginInfoStore::Plugin plugin;
+    if (!getPluginInfo(m_pluginPath, plugin))
+        return;
+
+    if (plugin.bundleIdentifier == "com.macromedia.Flash Player.plugin") {
+        // Flash requires that the return value of getprocname() be "WebKitPluginHost".
+        m_pluginQuirks.add(PluginQuirks::PrognameShouldBeWebKitPluginHost);
+    }
+}
+
 } // namespace WebKit

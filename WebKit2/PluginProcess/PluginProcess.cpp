@@ -81,6 +81,13 @@ NetscapePluginModule* PluginProcess::netscapePluginModule()
     if (!m_pluginModule) {
         ASSERT(!m_pluginPath.isNull());
         m_pluginModule = NetscapePluginModule::getOrCreate(m_pluginPath);
+
+#if PLATFORM(MAC)
+        if (m_pluginModule) {
+            if (m_pluginModule->pluginQuirks().contains(PluginQuirks::PrognameShouldBeWebKitPluginHost))
+                setprogname("WebKitPluginHost");
+        }
+#endif
     }
 
     return m_pluginModule.get();

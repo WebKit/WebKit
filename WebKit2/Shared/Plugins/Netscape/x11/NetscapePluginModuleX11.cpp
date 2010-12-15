@@ -64,4 +64,8 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
     return true;
 }
 
+void NetscapePluginModule::determineQuirks()
+{
+}
+
 } // namespace WebKit

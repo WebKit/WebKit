@@ -2,6 +2,41 @@
 
         Reviewed by Sam Weinig.
 
+        Cannot type into plugin edit field
+        https://bugs.webkit.org/show_bug.cgi?id=51074
+        <rdar://problem/8483741>
+
+        Add a PrognameShouldBeWebKitPluginHost quirk, since it turns out Flash Player calls getprogname() and checks
+        if the return value is "WebKitPluginHost" in order to determine when to handle NPCocoaEventKeyDown events.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::netscapePluginModule):
+        If the plug-in module has the PrognameShouldBeWebKitPluginHost quirk, call setprocname("WebKitPluginHost").
+        
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::load):
+        Call determineQuirks()
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Add the PrognameShouldBeWebKitPluginHost quirk for Flash.
+        
+        * Shared/Plugins/Netscape/win/NetscapePluginModuleWin.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Add stubs.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add new PluginQuirks file.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PluginQuirks.h
+
+2010-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a NetscapePluginModuleX11 and move the Qt implementation of PluginInfoStore::getPluginInfo there
         https://bugs.webkit.org/show_bug.cgi?id=51066
 

@@ -122,6 +122,8 @@ bool NetscapePluginModule::load()
     ASSERT(initializedNetscapePluginModules().find(this) == notFound);
     initializedNetscapePluginModules().append(this);
 
+    determineQuirks();
+
     return true;
 }
 
