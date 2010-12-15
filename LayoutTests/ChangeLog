@@ -1,3 +1,9 @@
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Mark fast/dom/global-constructors.html as flaky on Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-15  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, skipping failing tests in the bots.
