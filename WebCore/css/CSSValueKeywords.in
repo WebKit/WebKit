@@ -559,9 +559,9 @@ space
 #
 after-white-space
 
-#
-# CSS_PROP__KHTML_APPEARANCE
-#
+# -webkit-appearance
+# The order here should match the order in the ControlPart enum in ThemeTypes.h.
+# All appearance values that should be accepted by the parser should be listed between 'checkbox' and 'textarea':
 checkbox
 radio
 push-button
@@ -611,12 +611,13 @@ searchfield-results-decoration
 searchfield-results-button
 searchfield-cancel-button
 textfield
-caps-lock-indicator
 relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
 rating-level-indicator
 textarea
+# An appearance value that should not be accepted by the parser:
+caps-lock-indicator
 
 #
 # CSS_PROP_BORDER_IMAGE

@@ -1,4 +1,15 @@
+2010-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/8767193> REGRESSION (r60822): caps-lock-indicator is accepted as a -webkit-appearance value
+        https://bugs.webkit.org/show_bug.cgi?id=51096
+
+        * fast/css/appearance-caps-lock-indicator-expected.txt: Added.
+        * fast/css/appearance-caps-lock-indicator.html: Added.
+
 2010-12-14  takano takumi  <takano@apple.com>
+
         Reviewed by Dan Bernstein.
 
         text-combine value names have been changed in the css3 proposal.

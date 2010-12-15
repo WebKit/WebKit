@@ -1,3 +1,16 @@
+2010-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/8767193> REGRESSION (r60822): caps-lock-indicator is accepted as a -webkit-appearance value
+        https://bugs.webkit.org/show_bug.cgi?id=51096
+
+        Test: fast/css/appearance-caps-lock-indicator.html
+
+        * css/CSSValueKeywords.in: Moved caps-lock-indicator outside the range of values that should be
+        accepted by the parser, and added comments about maintaining the list of appearance values.
+        * platform/ThemeTypes.h: Moved CapsLockIndicatorPart to the end of the ControlPart enum.
+
 2010-12-14  takano takumi  <takano@apple.com>
 
         Reviewed by Dan Bernstein.
