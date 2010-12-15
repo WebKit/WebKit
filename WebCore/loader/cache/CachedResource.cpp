@@ -116,7 +116,7 @@ CachedResource::~CachedResource()
     ASSERT(canDelete());
     ASSERT(!inCache());
     ASSERT(!m_deleted);
-    ASSERT(url().isNull() || cache()->resourceForURL(url()) != this);
+    ASSERT(url().isNull() || cache()->resourceForURL(KURL(ParsedURLString, url())) != this);
 #ifndef NDEBUG
     m_deleted = true;
     cachedResourceLeakCounter.decrement();

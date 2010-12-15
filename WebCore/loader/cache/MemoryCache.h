@@ -107,7 +107,9 @@ public:
     // found in the cache.
     CachedResource* requestResource(CachedResourceLoader*, CachedResource::Type, const KURL& url, const String& charset, ResourceLoadPriority, bool isPreload = false, bool forHistory = false);
 
-    CachedCSSStyleSheet* requestUserCSSStyleSheet(CachedResourceLoader*, const String& url, const String& charset);
+    CachedCSSStyleSheet* requestUserCSSStyleSheet(CachedResourceLoader*, const KURL& url, const String& charset);
+    
+    static KURL removeFragmentIdentifierIfNeeded(const KURL& originalURL);
     
     void revalidateResource(CachedResource*, CachedResourceLoader*);
     void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
@@ -144,7 +146,7 @@ public:
     void addCachedResourceLoader(CachedResourceLoader*);
     void removeCachedResourceLoader(CachedResourceLoader*);
 
-    CachedResource* resourceForURL(const String&);
+    CachedResource* resourceForURL(const KURL&);
 
     // Calls to put the cached resource into and out of LRU lists.
     void insertInLRUList(CachedResource*);

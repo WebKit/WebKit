@@ -1,3 +1,13 @@
+2010-12-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49548
+        WebCore cache stores duplicate copies of subresources with URL fragments
+
+        * http/tests/cache/subresource-fragment-identifier-expected.txt: Added.
+        * http/tests/cache/subresource-fragment-identifier.html: Added.
+
 2010-12-15  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Adam Barth.

@@ -95,17 +95,20 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     return 0;
 }
 
-CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, ResourceLoadPriority priority, bool requestIsPreload, bool forHistory)
+CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& requestURL, const String& charset, ResourceLoadPriority priority, bool requestIsPreload, bool forHistory)
 {
-    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', priority=%d, preload=%u, forHistory=%u", url.string().latin1().data(), charset.latin1().data(), priority, requestIsPreload, forHistory);
+    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', priority=%d, preload=%u, forHistory=%u", requestURL.string().latin1().data(), charset.latin1().data(), priority, requestIsPreload, forHistory);
     
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
-    if (url.isEmpty())
+    if (requestURL.isEmpty())
         return 0;
+    
+    // Ensure this is the pure primary resource URL.
+    KURL url = removeFragmentIdentifierIfNeeded(requestURL);
 
     // Look up the resource in our map.
-    CachedResource* resource = resourceForURL(url.string());
+    CachedResource* resource = resourceForURL(url);
 
     // Non https "no-store" resources are left in the cache to be used for back/forward navigation only.
     // If this is not a request forHistory and the resource was served with "no-store" we should evict
@@ -184,8 +187,11 @@ CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourc
     return resource;
 }
     
-CachedCSSStyleSheet* MemoryCache::requestUserCSSStyleSheet(CachedResourceLoader* cachedResourceLoader, const String& url, const String& charset)
+CachedCSSStyleSheet* MemoryCache::requestUserCSSStyleSheet(CachedResourceLoader* cachedResourceLoader, const KURL& requestURL, const String& charset)
 {
+    // Ensure this is the pure primary resource URL.
+    KURL url = removeFragmentIdentifierIfNeeded(requestURL);
+
     CachedCSSStyleSheet* userSheet;
     if (CachedResource* existing = resourceForURL(url)) {
         if (existing->type() != CachedResource::CSSStyleSheet)
@@ -212,7 +218,20 @@ CachedCSSStyleSheet* MemoryCache::requestUserCSSStyleSheet(CachedResourceLoader*
 
     return userSheet;
 }
-    
+
+KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
+{
+    if (!originalURL.hasFragmentIdentifier())
+        return originalURL;
+    // Strip away fragment identifier from HTTP and file urls.
+    // Data urls must be unmodified and it is also safer to keep them for custom protocols.
+    if (!(originalURL.protocolInHTTPFamily() || originalURL.isLocalFile()))
+        return originalURL;
+    KURL url = originalURL;
+    url.removeFragmentIdentifier();
+    return url;
+}
+
 void MemoryCache::revalidateResource(CachedResource* resource, CachedResourceLoader* cachedResourceLoader)
 {
     ASSERT(resource);
@@ -269,8 +288,9 @@ void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
     revalidatingResource->clearResourceToRevalidate();
 }
 
-CachedResource* MemoryCache::resourceForURL(const String& url)
+CachedResource* MemoryCache::resourceForURL(const KURL& resourceURL)
 {
+    KURL url = removeFragmentIdentifierIfNeeded(resourceURL);
     CachedResource* resource = m_resources.get(url);
     bool wasPurgeable = MemoryCache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
     if (resource && !resource->makePurgeable(false)) {

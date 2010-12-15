@@ -73,7 +73,8 @@ public:
     // Logs an access denied message to the console for the specified URL.
     void printAccessDeniedMessage(const KURL& url) const;
 
-    CachedResource* cachedResource(const String& url) const { return m_documentResources.get(url).get(); }
+    CachedResource* cachedResource(const String& url) const;
+    CachedResource* cachedResource(const KURL& url) const;
     
     typedef HashMap<String, CachedResourceHandle<CachedResource> > DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const { return m_documentResources; }

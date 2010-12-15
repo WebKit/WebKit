@@ -73,6 +73,18 @@ CachedResourceLoader::~CachedResourceLoader()
     ASSERT(m_requestCount == 0);
 }
 
+CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const 
+{
+    KURL url = m_document->completeURL(resourceURL);
+    return cachedResource(url); 
+}
+
+CachedResource* CachedResourceLoader::cachedResource(const KURL& resourceURL) const
+{
+    KURL url = MemoryCache::removeFragmentIdentifierIfNeeded(resourceURL);
+    return m_documentResources.get(url).get(); 
+}
+
 Frame* CachedResourceLoader::frame() const
 {
     return m_document->frame();
@@ -89,7 +101,7 @@ void CachedResourceLoader::checkForReload(const KURL& fullURL)
     if (m_reloadedURLs.contains(fullURL.string()))
         return;
     
-    CachedResource* existing = cache()->resourceForURL(fullURL.string());
+    CachedResource* existing = cache()->resourceForURL(fullURL);
     if (!existing || existing->isPreloaded())
         return;
 
@@ -151,7 +163,7 @@ CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(const String& ur
 
 CachedCSSStyleSheet* CachedResourceLoader::requestUserCSSStyleSheet(const String& url, const String& charset)
 {
-    return cache()->requestUserCSSStyleSheet(this, url, charset);
+    return cache()->requestUserCSSStyleSheet(this, KURL(KURL(), url), charset);
 }
 
 CachedScript* CachedResourceLoader::requestScript(const String& url, const String& charset)
@@ -245,6 +257,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, ResourceLoadPriority priority, bool isPreload)
 {
     KURL fullURL = m_document->completeURL(url);
+    
+    // If only the fragment identifiers differ, it is the same resource.
+    fullURL = MemoryCache::removeFragmentIdentifierIfNeeded(fullURL);
 
     if (!fullURL.isValid() || !canRequest(type, fullURL))
         return 0;

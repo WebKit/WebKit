@@ -130,10 +130,9 @@ PassRefPtr<SharedBuffer> InspectorResourceAgent::resourceData(Frame* frame, cons
 
 CachedResource* InspectorResourceAgent::cachedResource(Frame* frame, const KURL& url)
 {
-    const String& urlString = url.string();
-    CachedResource* cachedResource = frame->document()->cachedResourceLoader()->cachedResource(urlString);
+    CachedResource* cachedResource = frame->document()->cachedResourceLoader()->cachedResource(url);
     if (!cachedResource)
-        cachedResource = cache()->resourceForURL(urlString);
+        cachedResource = cache()->resourceForURL(url);
     return cachedResource;
 }
 
