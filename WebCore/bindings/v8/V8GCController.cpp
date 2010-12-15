@@ -46,6 +46,7 @@
 #include "V8CSSImportRule.h"
 #include "V8CSSMediaRule.h"
 #include "V8CSSRuleList.h"
+#include "V8CSSStyleDeclaration.h"
 #include "V8CSSStyleRule.h"
 #include "V8CSSStyleSheet.h"
 #include "V8DOMMap.h"
@@ -376,6 +377,7 @@ public:
         // adding a virtual method to WrapperTypeInfo which would know how to group objects.
         // FIXME: check if there are other StyleBase wrappers we should care of.
         if (V8CSSStyleSheet::info.equals(typeInfo)
+            || V8CSSStyleDeclaration::info.equals(typeInfo)
             || V8CSSCharsetRule::info.equals(typeInfo)
             || V8CSSFontFaceRule::info.equals(typeInfo)
             || V8CSSStyleRule::info.equals(typeInfo)
@@ -396,31 +398,40 @@ public:
             // Group id is an address of the root.
             uintptr_t groupId = reinterpret_cast<uintptr_t>(root);
             m_grouper.append(GrouperItem(groupId, wrapper));
+
+            if (V8CSSStyleDeclaration::info.equals(typeInfo)) {
+                CSSStyleDeclaration* cssStyleDeclaration = static_cast<CSSStyleDeclaration*>(styleBase);
+                if (cssStyleDeclaration->isMutableStyleDeclaration()) {
+                    CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(cssStyleDeclaration);
+                    CSSMutableStyleDeclaration::const_iterator end = cssMutableStyleDeclaration->end();
+                    for (CSSMutableStyleDeclaration::const_iterator it = cssMutableStyleDeclaration->begin(); it != end; ++it) {
+                        wrapper = store->domObjectMap().get(it->value());
+                        if (!wrapper.IsEmpty())
+                            m_grouper.append(GrouperItem(groupId, wrapper));
+                    }
+                }
+            }
         } else if (V8StyleSheetList::info.equals(typeInfo)) {
-            StyleSheetList* styleSheetList = static_cast<StyleSheetList*>(object);
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(styleSheetList);
-            m_grouper.append(GrouperItem(groupId, wrapper));
-            for (unsigned i = 0; i < styleSheetList->length(); i++) {
-                StyleSheet* styleSheet = styleSheetList->item(i);
-                wrapper = store->domObjectMap().get(styleSheet);
-                if (!wrapper.IsEmpty())
-                    m_grouper.append(GrouperItem(groupId, wrapper));
-            }
+            addAllItems(store, static_cast<StyleSheetList*>(object), wrapper);
         } else if (V8CSSRuleList::info.equals(typeInfo)) {
-            CSSRuleList* cssRuleList = static_cast<CSSRuleList*>(object);
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(cssRuleList);
-            m_grouper.append(GrouperItem(groupId, wrapper));
-            for (unsigned i = 0; i < cssRuleList->length(); i++) {
-                CSSRule* cssRule = cssRuleList->item(i);
-                wrapper = store->domObjectMap().get(cssRule);
-                if (!wrapper.IsEmpty())
-                    m_grouper.append(GrouperItem(groupId, wrapper));
-            }
+            addAllItems(store, static_cast<CSSRuleList*>(object), wrapper);
         }
     }
 
 private:
     GrouperList m_grouper;
+
+    template <class C>
+    void addAllItems(DOMDataStore* store, C* collection, v8::Persistent<v8::Object> wrapper)
+    {
+        uintptr_t groupId = reinterpret_cast<uintptr_t>(collection);
+        m_grouper.append(GrouperItem(groupId, wrapper));
+        for (unsigned i = 0; i < collection->length(); i++) {
+            wrapper = store->domObjectMap().get(collection->item(i));
+            if (!wrapper.IsEmpty())
+                m_grouper.append(GrouperItem(groupId, wrapper));
+        }
+    }
 };
 
 // Create object groups for DOM tree nodes.

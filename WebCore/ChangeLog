@@ -1,3 +1,14 @@
+2010-12-15  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by David Levin.
+
+        [v8] Next round of CSS GC story: proper grouping of CSSStyleDeclarations
+        https://bugs.webkit.org/show_bug.cgi?id=50965
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::DOMObjectGrouperVisitor::visitDOMWrapper):
+        (WebCore::DOMObjectGrouperVisitor::addAllItems):
+
 2010-12-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
