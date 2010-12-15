@@ -1,3 +1,13 @@
+2010-12-15  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] screenIsMonochrome() is broken
+        https://bugs.webkit.org/show_bug.cgi?id=49957
+
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenIsMonochrome):
+
 2010-12-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
