@@ -1,3 +1,27 @@
+2010-12-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed update of the pixel expectations for the Mac port.
+        
+        Update expectations for tests whose output changed after the switch to
+        the HTML5 parser. The chromium-mac port did a similar rebaseline in
+        r64728.
+        
+        The new expectations are for Snow Leopard. Current expectations are not
+        moved to mac-leopard, since they're not valid anymore.
+
+        * platform/mac/fast/doctypes/003-expected.checksum:
+        * platform/mac/fast/doctypes/003-expected.png:
+        * platform/mac/fast/dom/isindex-001-expected.checksum:
+        * platform/mac/fast/dom/isindex-001-expected.png:
+        * platform/mac/fast/dom/isindex-002-expected.checksum:
+        * platform/mac/fast/dom/isindex-002-expected.png:
+        * platform/mac/fast/forms/isindex-placeholder-expected.checksum:
+        * platform/mac/fast/forms/isindex-placeholder-expected.png:
+        * platform/mac/fast/forms/text-style-color-expected.checksum:
+        * platform/mac/fast/forms/text-style-color-expected.png:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+
 2010-12-14  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.
