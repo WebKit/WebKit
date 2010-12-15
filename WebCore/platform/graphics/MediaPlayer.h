@@ -91,7 +91,7 @@ class GraphicsContext;
 class IntRect;
 class IntSize;
 class MediaPlayer;
-class MediaPlayerFactory;
+struct MediaPlayerFactory;
 class TimeRanges;
 
 class MediaPlayerClient {

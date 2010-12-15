@@ -1,3 +1,10 @@
+2010-12-15  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Fixed a clang compiling error by making the forward
+        declaration of MediaPlayerFactory be consistent with the definition.
+
+        * platform/graphics/MediaPlayer.h:
+
 2010-12-15  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
