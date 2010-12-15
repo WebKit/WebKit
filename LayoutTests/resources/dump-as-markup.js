@@ -63,13 +63,16 @@ Markup.dump = function(opt_node, opt_description)
 
     // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
     // FIXME: Should we care about framesets?
-    var iframes = node.getElementsByTagName('iframe');
-    for (var i = 0; i < iframes.length; i++) {
-        markup += '\n\nFRAME ' + i + ':\n'
-        try {
-            markup += Markup.get(iframes[i].contentDocument.body.parentElement);
-        } catch (e) {
-            markup += 'FIXME: Add method to layout test controller to get access to cross-origin frames.';
+    // DocumentFragment doesn't have a getElementsByTagName method.
+    if (node.getElementsByTagName) {
+        var iframes = node.getElementsByTagName('iframe');
+        for (var i = 0; i < iframes.length; i++) {
+            markup += '\n\nFRAME ' + i + ':\n'
+            try {
+                markup += Markup.get(iframes[i].contentDocument.body.parentElement);
+            } catch (e) {
+                markup += 'FIXME: Add method to layout test controller to get access to cross-origin frames.';
+            }
         }
     }
 

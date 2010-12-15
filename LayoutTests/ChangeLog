@@ -1,3 +1,19 @@
+2010-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Range::extractContents needs more tests
+        https://bugs.webkit.org/show_bug.cgi?id=51005
+
+        Added a test to ensure Range::extractContents work as expected.
+
+        * fast/dom/Range/range-extract-contents-crash-expected.txt: Renamed from LayoutTests/fast/dom/Range/range-extractContents-expected.txt.
+        * fast/dom/Range/range-extract-contents-crash.html: Renamed from LayoutTests/fast/dom/Range/range-extractContents.html.
+        * fast/dom/Range/range-extract-contents-expected.txt: Added.
+        * fast/dom/Range/range-extract-contents.html: Added.
+        * resources/dump-as-markup.js:
+        (Markup.dump): Don't call node.getElementsByTagName if it doesn't exist.
+
 2010-12-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Mark 2 new focus-ring-* tests as failed in chromium.
