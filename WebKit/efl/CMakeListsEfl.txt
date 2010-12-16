@@ -50,7 +50,6 @@ ENDIF ()
 
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/ChromeClientEfl.cpp
-    efl/WebCoreSupport/ContextMenuClientEfl.cpp
     efl/WebCoreSupport/DragClientEfl.cpp
     efl/WebCoreSupport/EditorClientEfl.cpp
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp

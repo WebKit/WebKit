@@ -25,7 +25,6 @@
 #include "BackForwardListImpl.h"
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
-#include "ContextMenuClientEfl.h"
 #include "ContextMenuController.h"
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
@@ -548,7 +547,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
 
     WebCore::Page::PageClients pageClients;
     pageClients.chromeClient = static_cast<WebCore::ChromeClient*>(new WebCore::ChromeClientEfl(sd->self));
-    pageClients.contextMenuClient = static_cast<WebCore::ContextMenuClient*>(new WebCore::ContextMenuClientEfl(sd->self));
     pageClients.editorClient = static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(sd->self));
     pageClients.dragClient = static_cast<WebCore::DragClient*>(new WebCore::DragClientEfl);
     pageClients.inspectorClient = static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl);

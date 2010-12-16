@@ -1,3 +1,12 @@
+2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        Disable ContextMenu support for now while support for
+        CROSS_PLATFORM_MENUS is written.
+
+        * cmake/OptionsEfl.cmake:
+
 2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74117.

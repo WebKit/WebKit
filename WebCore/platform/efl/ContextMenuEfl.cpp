@@ -22,55 +22,34 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include "ContextMenuClient.h"
-#include "ContextMenuClientEfl.h"
-#include "ContextMenuController.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
+ContextMenu::ContextMenu(void* menu)
+{
+    getContextMenuItems(menu, m_items);
+}
+
 ContextMenu::ContextMenu()
 {
-    m_platformDescription = (PlatformMenuDescription) ewk_context_menu_new(m_view, menu->controller());
+    notImplemented();
 }
 
-ContextMenu::ContextMenu(const PlatformMenuDescription menu)
-    : m_platformDescription(menu)
+void ContextMenu::getContextMenuItems(void* menu, Vector<ContextMenuItem>& items)
 {
+    notImplemented();
 }
 
-ContextMenu::~ContextMenu()
+void* ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& items)
 {
-    if (m_platformDescription)
-        ewk_context_menu_free(static_cast<Ewk_Context_Menu*>(m_platformDescription));
+    notImplemented();
+    return 0;
 }
 
-void ContextMenu::appendItem(ContextMenuItem& item)
+void* ContextMenu::nativeMenu() const
 {
-    ewk_context_menu_item_append(static_cast<Ewk_Context_Menu*>(m_platformDescription), item);
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-    ASSERT(!m_platformDescription);
-
-    m_platformDescription = menu;
-    ewk_context_menu_show(static_cast<Ewk_Context_Menu*>(m_platformDescription));
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    // Ref count remains the same, just pass it and remove our ref, so it
-    // will not be decremented when this object goes away.
-    PlatformMenuDescription description = m_platformDescription;
-    m_platformDescription = 0;
-
-    return description;
+    return createNativeMenuFromItems(m_items);
 }
 
 }

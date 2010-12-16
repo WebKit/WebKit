@@ -236,10 +236,9 @@ void ewk_context_menu_item_append(Ewk_Context_Menu* o, WebCore::ContextMenuItem&
 {
     Ewk_Context_Menu_Item_Type type = static_cast<Ewk_Context_Menu_Item_Type>(core.type());
     Ewk_Context_Menu_Action action = static_cast<Ewk_Context_Menu_Action>(core.action());
-    Ewk_Context_Menu* submenu = static_cast<Ewk_Context_Menu*>(core.platformSubMenu());
 
     Ewk_Context_Menu_Item* menu_item = ewk_context_menu_item_new
-        (type, action, submenu, core.title().utf8().data(), core.checked(),
+        (type, action, 0, core.title().utf8().data(), core.checked(),
          core.enabled());
     EINA_SAFETY_ON_NULL_RETURN(menu_item);
 

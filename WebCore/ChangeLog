@@ -1,3 +1,31 @@
+2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        Disable ContextMenu support for now while support for
+        CROSS_PLATFORM_MENUS is written.
+
+        * CMakeListsEfl.txt:
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::getContextMenuItems):
+        (WebCore::ContextMenu::createNativeMenuFromItems):
+        (WebCore::ContextMenu::nativeMenu):
+        * platform/efl/ContextMenuItemEfl.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::nativeMenuItem):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::checked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::ContextMenuItem::enabled):
+        (WebCore::ContextMenuItem::setSubMenu):
+
 2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

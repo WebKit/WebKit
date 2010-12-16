@@ -40,9 +40,6 @@
 namespace WebCore {
 
     class ContextMenuController;
-#if PLATFORM(EFL)
-    class ContextMenuClientEfl;
-#endif
 
     class ContextMenu : public Noncopyable
     {
@@ -54,6 +51,8 @@ namespace WebCore {
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
 #if PLATFORM(WIN)
         typedef HMENU NativeMenu;
+#elif PLATFORM(EFL)
+        typedef void* NativeMenu;
 #endif
         explicit ContextMenu(NativeMenu);
 
@@ -102,9 +101,6 @@ namespace WebCore {
         QList<ContextMenuItem> m_items;
 #elif PLATFORM(CHROMIUM)
         Vector<ContextMenuItem> m_items;
-#elif PLATFORM(EFL)
-        ContextMenuClientEfl* m_contextMenuClient;
-        PlatformMenuDescription m_platformDescription;
 #else
         PlatformMenuDescription m_platformDescription;
 #if OS(WINCE)

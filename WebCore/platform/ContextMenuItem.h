@@ -216,23 +216,6 @@ namespace WebCore {
         bool checked;
         bool enabled;
     };
-#elif PLATFORM(EFL)
-    struct PlatformMenuItemDescription {
-        PlatformMenuItemDescription()
-            : type(ActionType)
-            , action(ContextMenuItemTagNoAction)
-            , title("")
-            , subMenu(0)
-            , checked(false)
-            , enabled(true) { }
-        ContextMenuItemType type;
-        ContextMenuAction action;
-        String title;
-        ContextMenu* subMenu;
-        bool checked;
-        bool enabled;
-    };
-#else
     typedef void* PlatformMenuItemDescription;
 #endif
 
@@ -260,6 +243,8 @@ namespace WebCore {
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
 #if PLATFORM(WIN)
         typedef MENUITEMINFO NativeItem;
+#elif PLATFORM(EFL)
+        typedef void* NativeItem;
 #endif
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
         explicit ContextMenuItem(const NativeItem&);

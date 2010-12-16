@@ -1,3 +1,18 @@
+2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        Disable ContextMenu support for now while support for
+        CROSS_PLATFORM_MENUS is written.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/ContextMenuClientEfl.cpp: Removed.
+        * WebCoreSupport/ContextMenuClientEfl.h: Removed.
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_item_append):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2010-12-13  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
 
         Reviewed by Andreas Kling.
