@@ -40,13 +40,13 @@ void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("UTF-16LE", "UTF-16LE");
     registrar("UTF-16BE", "UTF-16BE");
 
-    registrar("ISO-10646-UCS-2", "UTF-16LE");
-    registrar("UCS-2", "UTF-16LE");
-    registrar("UTF-16", "UTF-16LE");
-    registrar("Unicode", "UTF-16LE");
-    registrar("csUnicode", "UTF-16LE");
-    registrar("unicodeFEFF", "UTF-16LE");
+    registrar("ISO-10646-UCS-2", "UTF-16BE");
+    registrar("UCS-2", "UTF-16BE");
+    registrar("UTF-16", "UTF-16BE");
+    registrar("Unicode", "UTF-16BE");
+    registrar("csUnicode", "UTF-16BE");
 
+    registrar("unicodeFEFF", "UTF-16LE");
     registrar("unicodeFFFE", "UTF-16BE");
 }
 

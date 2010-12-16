@@ -1,3 +1,15 @@
+2010-12-15  Yong Li  <yoli@rim.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51035
+        Add tests for UTF-16 BE/LE and their variants.
+        Also, check the full decoded text but not only the first one.
+
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/resources/char-decoding-utils.js:
+
 2010-12-15  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.
