@@ -60,22 +60,36 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformDestroy()
 {
-    delete m_smallCapsFontData;
-    m_smallCapsFontData = 0;
+}
+
+SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    FontDescription fontDesc(fontDescription);
+    fontDesc.setComputedSize(lroundf(scaleFactor * fontDesc.computedSize()));
+    fontDesc.setSpecifiedSize(lroundf(scaleFactor * fontDesc.specifiedSize()));
+    fontDesc.setKeywordSize(lroundf(scaleFactor * fontDesc.keywordSize()));
+    FontPlatformData* result = fontCache()->getCachedFontPlatformData(fontDesc, m_platformData.family());
+    return result ? new SimpleFontData(*result) : 0;
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        FontDescription fontDesc(fontDescription);
-        fontDesc.setComputedSize(lroundf(0.70f * fontDesc.computedSize()));
-        fontDesc.setSpecifiedSize(lroundf(0.70f * fontDesc.specifiedSize()));
-        fontDesc.setKeywordSize(lroundf(0.70f * fontDesc.keywordSize()));
-        FontPlatformData* result = fontCache()->getCachedFontPlatformData(fontDesc, m_platformData.family());
-        if (result)
-            m_smallCapsFontData = new SimpleFontData(*result);
-    }
-    return m_smallCapsFontData;
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->smallCaps)
+        m_derivedFontData->smallCaps = scaledFontData(fontDescription, .7);
+
+    return m_derivedFontData->smallCaps.get();
+}
+
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->emphasisMark)
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
+
+    return m_derivedFontData->emphasisMark.get();
 }
 
 DWORD getKnownFontCodePages(const wchar_t* family);

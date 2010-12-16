@@ -79,16 +79,32 @@ void SimpleFontData::platformDestroy()
 {
 }
 
+SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    return new SimpleFontData(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
+        scaleFactor * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()),
+        isCustomFont(), false);
+}
+
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
     // FIXME: I think we want to ask FontConfig for the right font again.
-    if (!m_smallCapsFontData)
-        m_smallCapsFontData = new SimpleFontData(
-            FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
-            0.70f * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()),
-            isCustomFont(), false);
+    if (!m_derivedFontData->smallCaps)
+        m_derivedFontData->smallCaps = scaledFontData(fontDescription, .7);
 
-    return m_smallCapsFontData;
+    return m_derivedFontData->smallCaps.get();
+}
+
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->emphasisMark)
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
+
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

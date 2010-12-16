@@ -33,7 +33,7 @@ class SimpleFontData;
 class TextRun;
 
 struct WidthIterator {
-    WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false);
+    WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     void advance(int to, GlyphBuffer* = 0);
     bool advanceOneCharacter(float& width, GlyphBuffer* = 0);
@@ -63,6 +63,7 @@ private:
     float m_minGlyphBoundingBoxY;
     float m_firstGlyphOverflow;
     float m_lastGlyphOverflow;
+    bool m_forTextEmphasis;
 };
 
 }

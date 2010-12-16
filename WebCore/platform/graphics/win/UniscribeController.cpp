@@ -145,7 +145,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         UChar c = *curr;
 
         bool forceSmallCaps = isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
-        nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps).fontData;
+        nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant).fontData;
         if (m_font.isSmallCaps()) {
             nextIsSmallCaps = forceSmallCaps || (newC = u_toupper(c)) != c;
             if (nextIsSmallCaps)

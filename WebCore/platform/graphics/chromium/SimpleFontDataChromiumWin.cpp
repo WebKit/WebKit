@@ -112,20 +112,34 @@ void SimpleFontData::platformDestroy()
 {
 }
 
+SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    LOGFONT winFont;
+    GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winFont);
+    float scaledSize = scaleFactor * fontDescription.computedSize();
+    winFont.lfHeight = -lroundf(scaledSize);
+    HFONT hfont = CreateFontIndirect(&winFont);
+    return new SimpleFontData(FontPlatformData(hfont, scaledSize), isCustomFont(), false);
+}
+
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        LOGFONT winFont;
-        GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winFont);
-        float smallCapsSize = 0.70f * fontDescription.computedSize();
-        // Unlike WebKit trunk, we don't multiply the size by 32.  That seems
-        // to be some kind of artifact of their CG backend, or something.
-        winFont.lfHeight = -lroundf(smallCapsSize);
-        HFONT hfont = CreateFontIndirect(&winFont);
-        m_smallCapsFontData =
-            new SimpleFontData(FontPlatformData(hfont, smallCapsSize), isCustomFont(), false);
-    }
-    return m_smallCapsFontData;
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->smallCaps)
+        m_derivedFontData->smallCaps = scaledFontData(fontDescription, .7);
+
+    return m_derivedFontData->smallCaps.get();
+}
+
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->emphasisMark)
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
+
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

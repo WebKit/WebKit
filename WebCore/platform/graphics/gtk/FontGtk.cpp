@@ -36,6 +36,7 @@
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
 #include "GraphicsContext.h"
+#include "NotImplemented.h"
 #include "SimpleFontData.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
@@ -317,6 +318,11 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     g_object_unref(layout);
 
     cairo_restore(cr);
+}
+
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
 }
 
 // We should create the layout with our actual context but we can't access it from here.

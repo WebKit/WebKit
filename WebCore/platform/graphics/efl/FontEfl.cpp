@@ -40,6 +40,11 @@ void Font::drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, 
     notImplemented();
 }
 
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
+}
+
 bool Font::canReturnFallbackFontsForComplexText()
 {
     return false;

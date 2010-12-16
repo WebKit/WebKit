@@ -40,7 +40,7 @@ namespace WebCore {
 // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
 static const uint8_t hiraganaKatakanaVoicingMarksCombiningClass = 8;
 
-WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, bool accountForGlyphBounds)
+WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)
     , m_run(run)
     , m_end(run.length())
@@ -53,6 +53,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     , m_minGlyphBoundingBoxY(numeric_limits<float>::max())
     , m_firstGlyphOverflow(0)
     , m_lastGlyphOverflow(0)
+    , m_forTextEmphasis(forTextEmphasis)
 {
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
@@ -198,6 +199,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             if (!currentCharacter)
                 m_firstGlyphOverflow = max<float>(0, -bounds.x());
         }
+
+        if (m_forTextEmphasis && !Font::canReceiveTextEmphasis(c))
+            glyph = 0;
 
         // Advance past the character we just dealt with.
         cp += clusterLength;

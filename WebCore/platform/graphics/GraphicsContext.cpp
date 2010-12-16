@@ -355,6 +355,14 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
 }
 #endif
 
+void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const IntPoint& point, int from, int to)
+{
+    if (paintingDisabled())
+        return;
+
+    font.drawEmphasisMarks(this, run, mark, point, from, to);
+}
+
 void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const FloatPoint& point)
 {
     if (paintingDisabled())

@@ -47,7 +47,7 @@ class TextRun;
 // OS Versions >= 10.6, ATSUI is used otherwise.
 class ComplexTextController {
 public:
-    ComplexTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0);
+    ComplexTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     // Advance and emit glyphs up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0);
@@ -156,6 +156,7 @@ private:
     const Font& m_font;
     const TextRun& m_run;
     bool m_mayUseNaturalWritingDirection;
+    bool m_forTextEmphasis;
 
     Vector<UChar, 256> m_smallCapsBuffer;
 

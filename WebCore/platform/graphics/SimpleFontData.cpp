@@ -57,8 +57,6 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     , m_isCustomFont(isCustomFont)
     , m_isLoading(isLoading)
     , m_isBrokenIdeographFont(false)
-    , m_smallCapsFontData(0)
-    , m_brokenIdeographFontData(0)
 {
     platformInit();
     platformGlyphInit();
@@ -74,8 +72,6 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     , m_isCustomFont(true)
     , m_isLoading(false)
     , m_isBrokenIdeographFont(false)
-    , m_smallCapsFontData(0)
-    , m_brokenIdeographFontData(0)
 {
     SVGFontFaceElement* svgFontFaceElement = m_svgFontData->svgFontFaceElement();
     m_unitsPerEm = svgFontFaceElement->unitsPerEm();
@@ -186,16 +182,6 @@ SimpleFontData::~SimpleFontData()
 
     if (!isCustomFont())
         GlyphPageTreeNode::pruneTreeFontData(this);
-    else {
-        if (m_smallCapsFontData)
-            GlyphPageTreeNode::pruneTreeCustomFontData(m_smallCapsFontData);
-
-        if (m_brokenIdeographFontData)
-            GlyphPageTreeNode::pruneTreeCustomFontData(m_brokenIdeographFontData);
-    }
-
-    delete m_smallCapsFontData;
-    delete m_brokenIdeographFontData;
 }
 
 const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
@@ -210,12 +196,14 @@ bool SimpleFontData::isSegmented() const
 
 SimpleFontData* SimpleFontData::brokenIdeographFontData() const
 {
-    if (!m_brokenIdeographFontData) {
-        m_brokenIdeographFontData = new SimpleFontData(m_platformData, isCustomFont(), false);
-        m_brokenIdeographFontData->m_orientation = Vertical;
-        m_brokenIdeographFontData->m_isBrokenIdeographFont = true;
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->brokenIdeograph) {
+        m_derivedFontData->brokenIdeograph = new SimpleFontData(m_platformData, isCustomFont(), false);
+        m_derivedFontData->brokenIdeograph->m_orientation = Vertical;
+        m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFont = true;
     }
-    return m_brokenIdeographFontData;
+    return m_derivedFontData->brokenIdeograph.get();
 }
 
 #ifndef NDEBUG
@@ -229,5 +217,23 @@ String SimpleFontData::description() const
     return platformData().description();
 }
 #endif
+
+PassOwnPtr<SimpleFontData::DerivedFontData> SimpleFontData::DerivedFontData::create(bool forCustomFont)
+{
+    return adoptPtr(new DerivedFontData(forCustomFont));
+}
+
+SimpleFontData::DerivedFontData::~DerivedFontData()
+{
+    if (!forCustomFont)
+        return;
+
+    if (smallCaps)
+        GlyphPageTreeNode::pruneTreeCustomFontData(smallCaps.get());
+    if (emphasisMark)
+        GlyphPageTreeNode::pruneTreeCustomFontData(emphasisMark.get());
+    if (brokenIdeograph)
+        GlyphPageTreeNode::pruneTreeCustomFontData(brokenIdeograph.get());
+}
 
 } // namespace WebCore

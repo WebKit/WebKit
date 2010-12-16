@@ -357,9 +357,13 @@ void SimpleFontData::platformCharWidthInit()
 
 void SimpleFontData::platformDestroy()
 {
-    if (m_smallCapsFontData && !isCustomFont()) {
-        fontCache()->releaseFontData(m_smallCapsFontData);
-        m_smallCapsFontData = 0;
+    if (!isCustomFont() && m_derivedFontData) {
+        // These come from the cache.
+        if (m_derivedFontData->smallCaps)
+            fontCache()->releaseFontData(m_derivedFontData->smallCaps.leakPtr());
+
+        if (m_derivedFontData->emphasisMark)
+            fontCache()->releaseFontData(m_derivedFontData->emphasisMark.leakPtr());
     }
 
 #ifdef BUILDING_ON_TIGER
@@ -373,41 +377,60 @@ void SimpleFontData::platformDestroy()
 #endif
 }
 
+SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    if (isCustomFont()) {
+        FontPlatformData scaledFontData(m_platformData);
+        scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
+        return new SimpleFontData(scaledFontData, true, false);
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    float size = m_platformData.size() * scaleFactor;
+    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size);
+
+    // AppKit resets the type information (screen/printer) when you convert a font to a different size.
+    // We have to fix up the font that we're handed back.
+    scaledFontData.setFont(fontDescription.usePrinterFont() ? [scaledFontData.font() printerFont] : [scaledFontData.font() screenFont]);
+
+    if (scaledFontData.font()) {
+        NSFontManager *fontManager = [NSFontManager sharedFontManager];
+        NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.font()];
+
+        if (m_platformData.m_syntheticBold)
+            fontTraits |= NSBoldFontMask;
+        if (m_platformData.m_syntheticOblique)
+            fontTraits |= NSItalicFontMask;
+
+        NSFontTraitMask scaledFontTraits = [fontManager traitsOfFont:scaledFontData.font()];
+        scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
+        scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
+
+        return fontCache()->getCachedFontData(&scaledFontData);
+    }
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return 0;
+}
+
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        if (isCustomFont()) {
-            FontPlatformData smallCapsFontData(m_platformData);
-            smallCapsFontData.m_size = smallCapsFontData.m_size * smallCapsFontSizeMultiplier;
-            m_smallCapsFontData = new SimpleFontData(smallCapsFontData, true, false);
-        } else {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
-            float size = m_platformData.size() * smallCapsFontSizeMultiplier;
-            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size);
-            
-            // AppKit resets the type information (screen/printer) when you convert a font to a different size.
-            // We have to fix up the font that we're handed back.
-            smallCapsFont.setFont(fontDescription.usePrinterFont() ? [smallCapsFont.font() printerFont] : [smallCapsFont.font() screenFont]);
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->smallCaps)
+        m_derivedFontData->smallCaps = scaledFontData(fontDescription, smallCapsFontSizeMultiplier);
 
-            if (smallCapsFont.font()) {
-                NSFontManager *fontManager = [NSFontManager sharedFontManager];
-                NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.font()];
+    return m_derivedFontData->smallCaps.get();
+}
 
-                if (m_platformData.m_syntheticBold)
-                    fontTraits |= NSBoldFontMask;
-                if (m_platformData.m_syntheticOblique)
-                    fontTraits |= NSItalicFontMask;
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->emphasisMark)
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
 
-                NSFontTraitMask smallCapsFontTraits = [fontManager traitsOfFont:smallCapsFont.font()];
-                smallCapsFont.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(smallCapsFontTraits & NSBoldFontMask);
-                smallCapsFont.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(smallCapsFontTraits & NSItalicFontMask);
-
-                m_smallCapsFontData = fontCache()->getCachedFontData(&smallCapsFont);
-            }
-            END_BLOCK_OBJC_EXCEPTIONS;
-        }
-    }
-    return m_smallCapsFontData;
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

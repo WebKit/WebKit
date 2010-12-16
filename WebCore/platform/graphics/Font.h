@@ -93,6 +93,7 @@ public:
     void update(PassRefPtr<FontSelector>) const;
 
     void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1) const;
+    void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
     int width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* glyphOverflow = 0) const { return lroundf(floatWidth(run, fallbackFonts, glyphOverflow)); }
     float floatWidth(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* glyphOverflow = 0) const;
@@ -136,10 +137,13 @@ public:
     unsigned unitsPerEm() const { return primaryFont()->unitsPerEm(); }
     int spaceWidth() const { return (int)ceilf(primaryFont()->adjustedSpaceWidth() + m_letterSpacing); }
     float tabWidth(const SimpleFontData& fontData) const { return 8 * ceilf(fontData.adjustedSpaceWidth() + letterSpacing()); }
+    int emphasisMarkAscent(const AtomicString&) const;
+    int emphasisMarkDescent(const AtomicString&) const;
+    int emphasisMarkHeight(const AtomicString&) const;
 
     const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
+    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 
@@ -164,17 +168,29 @@ private:
     int offsetForPositionForTextUsingSVGFont(const TextRun&, float position, bool includePartialGlyphs) const;
 #endif
 
+    enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
+
+    // Returns the initial in-stream advance.
+    float getGlyphsAndAdvancesForSimpleText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
+    void drawEmphasisMarksForSimpleText(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
+    void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const FloatPoint&) const;
+    void drawEmphasisMarks(GraphicsContext* context, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, GlyphBuffer*, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForSimpleText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
 
+    bool getEmphasisMarkGlyphData(const AtomicString&, GlyphData&) const;
+
     static bool canReturnFallbackFontsForComplexText();
 
     CodePath codePath(const TextRun&) const;
+
+    // Returns the initial in-stream advance.
+    float getGlyphsAndAdvancesForComplexText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
+    void drawEmphasisMarksForComplexText(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
     float floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForComplexText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
@@ -196,6 +212,7 @@ public:
     FontSelector* fontSelector() const;
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == noBreakSpace; }
     static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == softHyphen || (c >= 0x200c && c <= 0x200f) || (c >= 0x202a && c <= 0x202e) || c == objectReplacementCharacter; }
+    static bool canReceiveTextEmphasis(UChar32 c);
 
     static inline UChar normalizeSpaces(UChar character)
     {

@@ -156,6 +156,26 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     return drawComplexText(context, run, point, from, to);
 }
 
+void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+{
+    if (m_fontList && m_fontList->loadingCustomFonts())
+        return;
+
+    if (to < 0)
+        to = run.length();
+
+#if ENABLE(SVG_FONTS)
+    // FIXME: Implement for SVG fonts.
+    if (primaryFont()->isSVGFont())
+        return;
+#endif
+
+    if (codePath(run) != Complex)
+        drawEmphasisMarksForSimpleText(context, run, mark, point, from, to);
+    else
+        drawEmphasisMarksForComplexText(context, run, mark, point, from, to);
+}
+
 float Font::floatWidth(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
 #if ENABLE(SVG_FONTS)
@@ -436,6 +456,20 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
         return true;
 
     return isCJKIdeograph(c);
+}
+
+bool Font::canReceiveTextEmphasis(UChar32 c)
+{
+    CharCategory category = Unicode::category(c);
+    if (category & (Separator_Space | Separator_Line | Separator_Paragraph | Other_NotAssigned | Other_Control | Other_Format))
+        return false;
+
+    // Additional word-separator characters listed in CSS Text Level 3 Editor's Draft 3 November 2010.
+    if (c == ethiopicWordspace || c == aegeanWordSeparatorLine || c == aegeanWordSeparatorDot
+        || c == ugariticWordDivider || c == tibetanMarkIntersyllabicTsheg || c == tibetanMarkDelimiterTshegBstar)
+        return false;
+
+    return true;
 }
 
 }

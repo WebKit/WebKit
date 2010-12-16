@@ -48,6 +48,7 @@ namespace WebCore {
 
 // Smallcaps versions of fonts are 70% the size of the normal font.
 static const float smallCapsFraction = 0.7f;
+static const float emphasisMarkFraction = .5;
 // This is the largest VDMX table which we'll try to load and parse.
 static const size_t maxVDMXTableSize = 1024 * 1024;  // 1 MB
 
@@ -141,14 +142,30 @@ void SimpleFontData::platformDestroy()
 {
 }
 
+SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    const float scaledSize = lroundf(fontDescription.computedSize() * scaleFactor);
+    return new SimpleFontData(FontPlatformData(m_platformData, scaledSize), isCustomFont(), false);
+}
+
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        const float smallCapsSize = lroundf(fontDescription.computedSize() * smallCapsFraction);
-        m_smallCapsFontData = new SimpleFontData(FontPlatformData(m_platformData, smallCapsSize), isCustomFont(), false);
-    }
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->smallCaps)
+        m_derivedFontData->smallCaps = scaledFontData(fontDescription, smallCapsFraction);
 
-    return m_smallCapsFontData;
+    return m_derivedFontData->smallCaps.get();
+}
+
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->emphasisMark)
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, emphasisMarkFraction);
+
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

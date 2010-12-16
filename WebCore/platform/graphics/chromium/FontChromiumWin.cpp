@@ -35,6 +35,7 @@
 #include "ChromiumBridge.h"
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
+#include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
 #include "SkiaFontWin.h"
@@ -503,6 +504,11 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
                static_cast<int>(point.y() - ascent()), from, to);
 
     context->canvas()->endPlatformPaint();
+}
+
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const

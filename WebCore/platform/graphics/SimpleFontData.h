@@ -65,6 +65,7 @@ class FontDescription;
 class SharedBuffer;
 class SVGFontData;
 
+enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData : public FontData {
@@ -76,7 +77,24 @@ public:
     virtual ~SimpleFontData();
 
     const FontPlatformData& platformData() const { return m_platformData; }
-    SimpleFontData* smallCapsFontData(const FontDescription& fontDescription) const;
+
+    SimpleFontData* smallCapsFontData(const FontDescription&) const;
+    SimpleFontData* emphasisMarkFontData(const FontDescription&) const;
+
+    SimpleFontData* variantFontData(const FontDescription& description, FontDataVariant variant) const
+    {
+        switch (variant) {
+        case SmallCapsVariant:
+            return smallCapsFontData(description);
+        case EmphasisMarkVariant:
+            return emphasisMarkFontData(description);
+        case AutoVariant:
+        case NormalVariant:
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        return const_cast<SimpleFontData*>(this);
+    }
 
     SimpleFontData* brokenIdeographFontData() const;
     
@@ -183,6 +201,8 @@ private:
 
     void commonInit();
 
+    SimpleFontData* scaledFontData(const FontDescription&, float scaleFactor) const;
+
 #if (PLATFORM(WIN) && !OS(WINCE)) \
     || (OS(WINDOWS) && PLATFORM(WX))
     void initGDIFont();
@@ -226,9 +246,23 @@ private:
 
     GlyphData m_missingGlyphData;
 
-    mutable SimpleFontData* m_smallCapsFontData;
+    struct DerivedFontData {
+        static PassOwnPtr<DerivedFontData> create(bool forCustomFont);
+        ~DerivedFontData();
 
-    mutable SimpleFontData* m_brokenIdeographFontData;
+        bool forCustomFont;
+        OwnPtr<SimpleFontData> smallCaps;
+        OwnPtr<SimpleFontData> emphasisMark;
+        OwnPtr<SimpleFontData> brokenIdeograph;
+
+    private:
+        DerivedFontData(bool custom)
+            : forCustomFont(custom)
+        {
+        }
+    };
+
+    mutable OwnPtr<DerivedFontData> m_derivedFontData;
 
 #if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX)
     float m_syntheticBoldOffset;

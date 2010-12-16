@@ -29,6 +29,7 @@
 #include "FontSelector.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "NotImplemented.h"
 #include "Pattern.h"
 
 #include <QBrush>
@@ -258,6 +259,34 @@ void Font::drawSimpleText(GraphicsContext* ctx, const TextRun& run, const FloatP
 void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     drawTextCommon(ctx, run, point, from, to, font(), /* isComplexText = */true);
+}
+
+int Font::emphasisMarkAscent(const AtomicString&) const
+{
+    notImplemented();
+    return 0;
+}
+
+int Font::emphasisMarkDescent(const AtomicString&) const
+{
+    notImplemented();
+    return 0;
+}
+
+int Font::emphasisMarkHeight(const AtomicString&) const
+{
+    notImplemented();
+    return 0;
+}
+
+void Font::drawEmphasisMarksForSimpleText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
+}
+
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
 }
 
 float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

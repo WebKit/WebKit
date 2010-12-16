@@ -30,6 +30,7 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include "SimpleFontData.h"
 #include "UniscribeController.h"
 #include <wtf/MathExtras.h>
@@ -62,33 +63,57 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
 }
 
+float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+{
+    if (forTextEmphasis) {
+        // FIXME: Add forTextEmphasis paremeter to UniscribeController and use it.
+        LOG_ERROR("Not implemented for text emphasis.");
+        return 0;
+    }
+
+    UniscribeController controller(this, run);
+    controller.advance(from);
+    float beforeWidth = controller.runWidthSoFar();
+    controller.advance(to, &glyphBuffer);
+
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    float afterWidth = controller.runWidthSoFar();
+
+    if (run.rtl()) {
+        controller.advance(run.length());
+        return controller.runWidthSoFar() - afterWidth;
+    }
+    return beforeWidth;
+}
+
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point,
                            int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
 
-    float startX = point.x();
-    UniscribeController controller(this, run);
-    controller.advance(from);
-    float beforeWidth = controller.runWidthSoFar();
-    controller.advance(to, &glyphBuffer);
-    
+    float startX = point.x() + getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer);
+
     // We couldn't generate any glyphs for the run.  Give up.
     if (glyphBuffer.isEmpty())
         return;
-    
-    float afterWidth = controller.runWidthSoFar();
-
-    if (run.rtl()) {
-        controller.advance(run.length());
-        startX += controller.runWidthSoFar() - afterWidth;
-    } else
-        startX += beforeWidth;
 
     // Draw the glyph buffer now at the starting point returned in startX.
     FloatPoint startPoint(startX, point.y());
-    drawGlyphBuffer(context, glyphBuffer, run, startPoint);
+    drawGlyphBuffer(context, glyphBuffer, startPoint);
+}
+
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+{
+    GlyphBuffer glyphBuffer;
+    float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
+
+    if (glyphBuffer.isEmpty())
+        return;
+
+    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

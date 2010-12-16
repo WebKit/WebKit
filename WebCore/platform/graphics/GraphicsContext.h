@@ -320,6 +320,7 @@ namespace WebCore {
         void setTextDrawingMode(TextDrawingModeFlags);
 
         void drawText(const Font&, const TextRun&, const IntPoint&, int from = 0, int to = -1);
+        void drawEmphasisMarks(const Font&, const TextRun& , const AtomicString& mark, const IntPoint&, int from = 0, int to = -1);
         void drawBidiText(const Font&, const TextRun&, const FloatPoint&);
         void drawHighlightForText(const Font&, const TextRun&, const IntPoint&, int h, const Color& backgroundColor, ColorSpace, int from = 0, int to = -1);
 

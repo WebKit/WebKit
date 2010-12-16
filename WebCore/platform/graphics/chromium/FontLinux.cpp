@@ -381,7 +381,7 @@ bool TextRunWalker::nextScriptRun()
         // (and the glyphs in each A, C and T section are backwards too)
         if (!hb_utf16_script_run_prev(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
             return false;
-        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
+        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
     } else {
         if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
             return false;
@@ -393,10 +393,10 @@ bool TextRunWalker::nextScriptRun()
         // in the harfbuzz data structures to e.g. pick the correct script's shaper.
         // So we allow that to run first, then do a second pass over the range it
         // found and take the largest subregion that stays within a single font.
-        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
+        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
         unsigned endOfRun;
         for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-            const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false, false).fontData;
+            const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
             if (nextFontData != m_currentFontData)
                 break;
         }
@@ -422,7 +422,7 @@ float TextRunWalker::widthOfFullRun()
 
 void TextRunWalker::setupFontForScriptRun()
 {
-    const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, false).fontData;
+    const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
     const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
     m_item.face = platformData.harfbuzzFace();
     void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
@@ -688,6 +688,11 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
             canvas->drawPosTextH(walker.glyphs(), walker.length() << 1, walker.xPositions(), point.y(), strokePaint);
         }
     }
+}
+
+void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+{
+    notImplemented();
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const

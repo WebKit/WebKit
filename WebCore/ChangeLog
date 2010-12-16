@@ -1,3 +1,169 @@
+2010-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Font support for the text-emphasis CSS property
+        Part of <rdar://problem/7720300> Support the CSS3 text-emphasis property
+        https://bugs.webkit.org/show_bug.cgi?id=48539
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawEmphasisMarks): Added. Calls through to drawEmphasisMarksFor{Simple,Complex}Text.
+        (WebCore::Font::canReceiveTextEmphasis): Added. For simple text, checks if the character should
+        have an emphasis mark.
+
+        * platform/graphics/Font.h:
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Replaced the forceSmallCaps boolean with a FontDataVariant
+        parameter and made this function work with other variants.
+        (WebCore::Font::getEmphasisMarkGlyphData): Added. Returns glyph data for the first character of
+        the emphasis mark. This function may not work if the emphasis mark uses a complex script, but none
+        of the standard emphasis marks do so.
+        (WebCore::Font::emphasisMarkAscent): Added.
+        (WebCore::Font::emphasisMarkDescent): Added.
+        (WebCore::Font::emphasisMarkHeight): Added.
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText): Moved much of the logic from drawSimpleText()
+        into this new function, which also has a ForTextEmphasis parameter, which is passed along to the
+        WidthIterator.
+        (WebCore::Font::drawSimpleText): Left the drawing part here.
+        (WebCore::Font::drawEmphasisMarksForSimpleText): Added.
+        (WebCore::Font::drawGlyphBuffer): Removed the unused TextRun parameter.
+        (WebCore::offsetToMiddleOfGlyph): Added this helper.
+        (WebCore::offsetToMiddleOfGlyphAtIndex): Added this other helper.
+        (WebCore::Font::drawEmphasisMarks): Added. Draws emphasis marks for a given glyph buffer by placing
+        one mark centered above each glyph. Zero glyphs in the buffer indicate that no mark should be drawn.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawEmphasisMarks): Added. Calls through to Font::drawEmphasisMarks().
+
+        * platform/graphics/GraphicsContext.h:
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData): Removed initialization of deleted members.
+        (WebCore::SimpleFontData::~SimpleFontData): Removed derived font data cleanup, which now happens
+        in ~DerivedFontData.
+        (WebCore::SimpleFontData::brokenIdeographFontData): Changed to use m_derivedFontData.
+        (WebCore::SimpleFontData::DerivedFontData::DerivedFontData): Added. This lazily-allocated struct
+        contains the SimpleFontData for small caps, broken ideograph and emphasis mark.
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData): Added.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::variantFontData): Added. This is used by Font::glyphDataForCharacter().
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Added forTextEmphasis parameter.
+        (WebCore::WidthIterator::advance): When used for text emphasis, replace glyphs with the zero glyph
+        if they should not receive an emphasis mark.
+
+        * platform/graphics/WidthIterator.h:
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::nextScriptRun): Updated for change to Font::glyphDataForCharacter().
+        (WebCore::TextRunWalker::setupFontForScriptRun): Ditto.
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/efl/FontEfl.cpp:
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/haiku/FontHaiku.cpp:
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Added forTextEmphasis parameter.
+        (WebCore::ComplexTextController::collectComplexTextRuns): Updated for change to Font::glyphDataForCharacter().
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): When used for text emphasis, replace glyphs with the zero glyph
+        if they should not receive an emphasis mark.
+
+        * platform/graphics/mac/ComplexTextController.h:
+
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Moved much of the logic from drawComplexText()
+        into this new function, which also has a ForTextEmphasis parameter, which is passed along to the
+        ComplexTextController.
+        (WebCore::Font::drawComplexText): Left the drawing part here.
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformDestroy): Adopted m_derivedFontData.
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/pango/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Removed redundant clearing of derived font.
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::emphasisMarkAscent): Added stub.
+        (WebCore::Font::emphasisMarkDescent): Ditto.
+        (WebCore::Font::emphasisMarkHeight): Ditto.
+        (WebCore::Font::drawEmphasisMarksForSimpleText): Ditto.
+        (WebCore::Font::drawEmphasisMarksForComplexText): Ditto.
+
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Moved much of the logic from drawComplexText()
+        into this new function, which also has a ForTextEmphasis parameter. Currently returns an empty
+        glyph buffer for text emphasis.
+        (WebCore::Font::drawComplexText): Left the drawing part here.
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance): Updated for change to Font::glyphDataForCharacter().
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added stub.
+
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Removed redundant clearing of derived font.
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Added stub.
+        (WebCore::Font::drawComplexText): Updated for removal of unused TextRun parameter to drawGlyphBuffer().
+        (WebCore::Font::drawEmphasisMarksForComplexText): Added.
+
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::scaledFontData): Moved code from smallCapsFontData() here and generalized.
+        (WebCore::SimpleFontData::smallCapsFontData): Adopted m_derivedFontData and scaledFontData().
+        (WebCore::SimpleFontData::emphasisMarkFontData): Added.
+
+        * platform/text/CharacterNames.h: Added characters used in Font::canReceiveTextEmphasis().
+
 2010-12-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
