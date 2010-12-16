@@ -68,4 +68,6 @@ void WidgetRenderingContext::gtkPaintSlider(const IntRect& rect, GtkWidget* widg
                      detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height, orientation);
 }
 
+}
+
 #endif // !GTK_API_VERSION_2

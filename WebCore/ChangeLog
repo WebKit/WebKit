@@ -1,3 +1,9 @@
+2010-12-16  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed. Fix GTK3 compilation after 74129.
+
+        * platform/gtk/WidgetRenderingContextGtk3.cpp:
+
 2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Debug compilation after r74177 
