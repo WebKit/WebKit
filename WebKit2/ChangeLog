@@ -1,3 +1,12 @@
+2010-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam “I blame andersca” Weinig.
+
+        Allow responses to be cached by the NSURLCache.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::willCacheResponse): Changed to return the response instead of 0.
+
 2010-12-14  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adam Roben.
