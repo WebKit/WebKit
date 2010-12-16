@@ -1,3 +1,18 @@
+2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        REGRESSION(r74172): 125 java tests fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=51214
+
+        The regression was caused by an incorrectly adding sizeof(struct fat_header)
+        to a pointer for uint32_t as supposed to uint8_t.
+
+        Fixed the bug by explicitly casting it to uint8_t* before the addition.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+
 2010-12-15  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.
