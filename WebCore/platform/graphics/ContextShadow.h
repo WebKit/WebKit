@@ -106,43 +106,27 @@ public:
     PlatformContext beginShadowLayer(PlatformContext, const FloatRect& layerArea);
     void endShadowLayer(PlatformContext);
     static void purgeScratchBuffer();
-    void setShadowsIgnoreTransforms(bool enable) { m_shadowsIgnoreTransforms = enable; }
-    bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
 #if PLATFORM(CAIRO)
     void drawRectShadow(GraphicsContext* context, const IntRect& rect, const IntSize& topLeftRadius = IntSize(), const IntSize& topRightRadius = IntSize(), const IntSize& bottomLeftRadius = IntSize(), const IntSize& bottomRightRadius = IntSize());
 #endif
+
 #if PLATFORM(QT)
-    QPointF offset() const { return QPointF(m_offset.width(), m_offset.height()); }
+    QPointF offset() { return QPointF(m_offset.width(), m_offset.height()); }
 #endif
 
 
 private:
-    // Buffer to where the temporary shadow will be drawn to.
-    PlatformImage m_layerImage;
-    // Context used to paint the shadow to the layer image.
-    PlatformContext m_layerContext;
-#if PLATFORM(QT)
-    // Sub-rect of m_layerImage that contains the shadow pixels.
-    FloatRect m_sourceRect;
-    // Top-left corner of the (possibly clipped) bounding rect to draw the shadow to.
-    FloatPoint m_layerOrigin;
-    // Translation to apply to m_layerContext for the shadow to be correctly clipped.
-    FloatPoint m_layerContextTranslation;
-#endif
-#if PLATFORM(CAIRO)
-    // Enclosing int rect where shadow needs to be drawn to using the layer context.
     IntRect m_layerRect;
+    PlatformImage m_layerImage;
+    PlatformContext m_layerContext;
+
     // Used for reference when canvas scale(x,y) was called.
     FloatRect m_unscaledLayerRect;
-#endif
-    bool m_shadowsIgnoreTransforms;
 
     void blurLayerImage(unsigned char*, const IntSize& imageSize, int stride);
-#if PLATFORM(CAIRO)
     void calculateLayerBoundingRect(const FloatRect& layerArea, const IntRect& clipRect);
+#if PLATFORM(CAIRO)
     void drawRectShadowWithoutTiling(PlatformContext context, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha);
-#else
-    IntRect calculateLayerBoundingRect(const PlatformContext, const FloatRect& layerArea, const IntRect& clipRect);
 #endif
 };
 

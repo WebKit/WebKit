@@ -114,22 +114,25 @@ PlatformContext ContextShadow::beginShadowLayer(PlatformContext p, const FloatRe
     else
         clipRect = p->transform().inverted().mapRect(p->window());
 
-    // Set m_layerOrigin, m_layerContextTranslation, m_sourceRect.
-    IntRect clip(clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-    IntRect layerRect = calculateLayerBoundingRect(p, layerArea, clip);
+    m_unscaledLayerRect = layerArea;
+    calculateLayerBoundingRect(layerArea, IntRect(clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height()));
 
     // Don't paint if we are totally outside the clip region.
-    if (layerRect.isEmpty())
+    if (m_layerRect.isEmpty())
         return 0;
 
     ShadowBuffer* shadowBuffer = scratchShadowBuffer();
-    QImage* shadowImage = shadowBuffer->scratchImage(layerRect.size());
+    QImage* shadowImage = shadowBuffer->scratchImage(m_layerRect.size());
     m_layerImage = QImage(*shadowImage);
 
     m_layerContext = new QPainter;
     m_layerContext->begin(&m_layerImage);
     m_layerContext->setFont(p->font());
-    m_layerContext->translate(m_layerContextTranslation);
+    m_layerContext->translate(m_offset.width(), m_offset.height());
+
+    // The origin is now the top left corner of the scratch image.
+    m_layerContext->translate(-m_layerRect.x(), -m_layerRect.y());
+
     return m_layerContext;
 }
 
@@ -152,7 +155,13 @@ void ContextShadow::endShadowLayer(PlatformContext p)
         p.end();
     }
 
-    p->drawImage(m_layerOrigin, m_layerImage, m_sourceRect);
+    const QTransform transform = p->transform();
+    if (transform.isScaling()) {
+        qreal x = m_unscaledLayerRect.x() + m_offset.width()  / transform.m11() - m_blurDistance;
+        qreal y = m_unscaledLayerRect.y() + m_offset.height() / transform.m22() - m_blurDistance;
+        p->drawImage(QPointF(x, y), m_layerImage);
+    } else
+        p->drawImage(m_layerRect.topLeft(), m_layerImage);
 
     scratchShadowBuffer()->schedulePurge();
 }
