@@ -27,6 +27,7 @@
 #include "config.h"
 #include "DNS.h"
 
+#include "KURL.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
@@ -35,6 +36,10 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
+#endif
+
+#if defined(BUILDING_ON_LEOPARD)
+#include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
 #ifdef BUILDING_ON_TIGER
@@ -61,6 +66,37 @@ const int maxRequestsToQueue = 64;
 
 // If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
 const double retryResolvingInSeconds = 0.1;
+
+static bool proxyIsEnabledInSystemPreferences()
+{
+    // Don't do DNS prefetch if proxies are involved. For many proxy types, the user agent is never exposed
+    // to the IP address during normal operation. Querying an internal DNS server may not help performance,
+    // as it doesn't necessarily look up the actual external IP. Also, if DNS returns a fake internal address,
+    // local caches may keep it even after re-connecting to another network.
+
+#if !defined(BUILDING_ON_LEOPARD)
+    RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, CFNetworkCopySystemProxySettings());
+#else
+    RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, SCDynamicStoreCopyProxies(0));
+#endif
+    if (!proxySettings)
+        return false;
+
+    static CFURLRef httpCFURL = KURL(ParsedURLString, "http://example.com/").createCFURL();
+    static CFURLRef httpsCFURL = KURL(ParsedURLString, "https://example.com/").createCFURL();
+
+    RetainPtr<CFArrayRef> httpProxyArray(AdoptCF, CFNetworkCopyProxiesForURL(httpCFURL, proxySettings.get()));
+    RetainPtr<CFArrayRef> httpsProxyArray(AdoptCF, CFNetworkCopyProxiesForURL(httpsCFURL, proxySettings.get()));
+
+    CFIndex httpProxyCount = CFArrayGetCount(httpProxyArray.get());
+    CFIndex httpsProxyCount = CFArrayGetCount(httpsProxyArray.get());
+    if (httpProxyCount == 1 && CFEqual(CFDictionaryGetValue(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpProxyArray.get(), 0)), kCFProxyTypeKey), kCFProxyTypeNone))
+        httpProxyCount = 0;
+    if (httpsProxyCount == 1 && CFEqual(CFDictionaryGetValue(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpsProxyArray.get(), 0)), kCFProxyTypeKey), kCFProxyTypeNone))
+        httpsProxyCount = 0;
+
+    return httpProxyCount || httpsProxyCount;
+}
 
 class DNSResolveQueue : public TimerBase {
 public:
@@ -92,6 +128,9 @@ void DNSResolveQueue::add(const String& name)
 {
     // If there are no names queued, and few enough are in flight, resolve immediately (the mouse may be over a link).
     if (!m_names.size()) {
+        if (proxyIsEnabledInSystemPreferences())
+            return;
+
         if (atomicIncrement(&m_requestsInFlight) <= namesToResolveImmediately) {
             resolve(name);
             return;
@@ -115,6 +154,11 @@ void DNSResolveQueue::decrementRequestCount()
 
 void DNSResolveQueue::fired()
 {
+    if (proxyIsEnabledInSystemPreferences()) {
+        m_names.clear();
+        return;
+    }
+
     int requestsAllowed = maxSimultaneousRequests - m_requestsInFlight;
 
     for (; !m_names.isEmpty() && requestsAllowed > 0; --requestsAllowed) {
