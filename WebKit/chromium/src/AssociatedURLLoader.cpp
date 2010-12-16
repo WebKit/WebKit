@@ -42,7 +42,8 @@ namespace WebKit {
 
 AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl)
     : m_frameImpl(frameImpl),
-      m_realLoader(webKitClient()->createURLLoader())
+      m_realLoader(webKitClient()->createURLLoader()),
+      m_realClient(0)
 {
 }
 
@@ -52,6 +53,8 @@ AssociatedURLLoader::~AssociatedURLLoader()
 
 void AssociatedURLLoader::loadSynchronously(const WebURLRequest& request, WebURLResponse& response, WebURLError& error, WebData& data)
 {
+    ASSERT(!m_realClient);
+
     WebURLRequest requestCopy(request);
     prepareRequest(requestCopy);
 
@@ -60,10 +63,13 @@ void AssociatedURLLoader::loadSynchronously(const WebURLRequest& request, WebURL
 
 void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebURLLoaderClient* client)
 {
+    ASSERT(!m_realClient);
+
     WebURLRequest requestCopy(request);
     prepareRequest(requestCopy);
 
-    m_realLoader->loadAsynchronously(requestCopy, client);
+    m_realClient = client;
+    m_realLoader->loadAsynchronously(requestCopy, this);
 }
 
 void AssociatedURLLoader::cancel()
@@ -82,6 +88,46 @@ void AssociatedURLLoader::prepareRequest(WebURLRequest& request)
     if (applicationCacheHost)
         applicationCacheHost->willStartSubResourceRequest(request);
     m_frameImpl->dispatchWillSendRequest(request);
+}
+
+void AssociatedURLLoader::willSendRequest(WebURLLoader*, WebURLRequest& newRequest, const WebURLResponse& redirectResponse)
+{
+    m_realClient->willSendRequest(this, newRequest, redirectResponse);
+}
+
+void AssociatedURLLoader::didSendData(WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    m_realClient->didSendData(this, bytesSent, totalBytesToBeSent);
+}
+
+void AssociatedURLLoader::didReceiveResponse(WebURLLoader*, const WebURLResponse& response)
+{
+    m_realClient->didReceiveResponse(this, response);
+}
+
+void AssociatedURLLoader::didDownloadData(WebURLLoader*, int dataLength)
+{
+    m_realClient->didDownloadData(this, dataLength);
+}
+
+void AssociatedURLLoader::didReceiveData(WebURLLoader*, const char* data, int dataLength)
+{
+    m_realClient->didReceiveData(this, data, dataLength);
+}
+
+void AssociatedURLLoader::didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength)
+{
+    m_realClient->didReceiveCachedMetadata(this, data, dataLength);
+}
+
+void AssociatedURLLoader::didFinishLoading(WebURLLoader*, double finishTime)
+{
+    m_realClient->didFinishLoading(this, finishTime);
+}
+
+void AssociatedURLLoader::didFail(WebURLLoader*, const WebURLError& error)
+{
+    m_realClient->didFail(this, error);
 }
 
 } // namespace WebKit

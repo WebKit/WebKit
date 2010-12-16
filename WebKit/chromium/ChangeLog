@@ -1,3 +1,25 @@
+2010-12-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] AssociatedURLLoader leaks m_realLoader to its WebURLLoaderClient.
+        https://bugs.webkit.org/show_bug.cgi?id=51062
+
+        * src/AssociatedURLLoader.cpp: Intercept WebURLLoaderClient methods and
+        forward |this| as the WebURLLoader parameter.
+        (WebKit::AssociatedURLLoader::AssociatedURLLoader):
+        (WebKit::AssociatedURLLoader::loadSynchronously):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        (WebKit::AssociatedURLLoader::willSendRequest):
+        (WebKit::AssociatedURLLoader::didSendData):
+        (WebKit::AssociatedURLLoader::didReceiveResponse):
+        (WebKit::AssociatedURLLoader::didDownloadData):
+        (WebKit::AssociatedURLLoader::didReceiveData):
+        (WebKit::AssociatedURLLoader::didReceiveCachedMetadata):
+        (WebKit::AssociatedURLLoader::didFinishLoading):
+        (WebKit::AssociatedURLLoader::didFail):
+        * src/AssociatedURLLoader.h:
+
 2010-12-14  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
