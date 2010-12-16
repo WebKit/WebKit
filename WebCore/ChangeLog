@@ -1,3 +1,21 @@
+2010-12-16  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Improve feArithmeticFilter
+        https://bugs.webkit.org/show_bug.cgi?id=51105
+
+        In case of the arithmetic operator on feComposite filter, we could use
+        different result passing modes depend on its type. Furthermore, the
+        number of executed multiplications is reduced if k1 or k4 argument is zero.
+
+        2% speedup on WebCore/manual-tests/svg-filter-animation.svg
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::computeArithmeticPixels):
+        (WebCore::arithmetic):
+        (WebCore::FEComposite::apply):
+
 2010-12-15  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.
