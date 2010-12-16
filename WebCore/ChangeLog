@@ -1,3 +1,23 @@
+2010-12-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=51150 WebView's 
+        _scaleWebView SPI doesn't work on pages with compositing layers
+        -and corresponding-
+        <rdar://problem/8604713>
+
+        paintingGoesToWindow() should return false if the owning layer has 
+        a transform.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+
+        Use docWidth() and docHeight() instead of rightLayoutOverflow() and 
+        bottomLayoutOverflow() since docWidth/Height are now the preferred 
+        way to query physical dimensions of the document.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+
 2010-12-15  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
 
         Reviewed by Eric Seidel.

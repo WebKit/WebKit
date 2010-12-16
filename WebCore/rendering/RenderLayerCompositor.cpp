@@ -1057,10 +1057,10 @@ void RenderLayerCompositor::willMoveOffscreen()
 
 void RenderLayerCompositor::updateRootLayerPosition()
 {
-    // Eventually we will need to account for scrolling here.
-    // https://bugs.webkit.org/show_bug.cgi?id=38518
-    if (m_rootPlatformLayer)
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
+    if (m_rootPlatformLayer) {
+        m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
+        m_rootPlatformLayer->setPosition(FloatPoint(m_renderView->docLeft(), m_renderView->docTop()));
+    }
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)
