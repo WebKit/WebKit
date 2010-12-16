@@ -1,3 +1,13 @@
+2010-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Rebaseline Windows XP results after r73993. Windows 7 results were landed in r73998, but some XP
+        rebaselines were needed as well.
+
+        * platform/win-xp/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt: Added.
+        * platform/win-xp/fast/text/international/bold-bengali-expected.txt:
+        * platform/win-xp/fast/text/international/complex-character-based-fallback-expected.txt:
+        * platform/win-xp/transforms/2d/hindi-rotated-expected.txt:
+
 2010-12-15  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.
