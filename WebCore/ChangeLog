@@ -1,3 +1,12 @@
+2010-12-16  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, build fix.
+
+        Fix a warning on 32-bit Mac.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::emphasisMarkFontData): 0.5 -> 0.5f
+
 2010-12-16  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.

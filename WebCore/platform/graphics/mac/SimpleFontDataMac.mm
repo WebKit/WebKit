@@ -428,7 +428,7 @@ SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& font
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
+        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5f);
 
     return m_derivedFontData->emphasisMark.get();
 }
