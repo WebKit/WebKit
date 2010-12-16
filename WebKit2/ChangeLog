@@ -1,3 +1,34 @@
+2010-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Cannot copy two successive selections using cmd-c
+        <rdar://problem/8680309> 
+        https://bugs.webkit.org/show_bug.cgi?id=51203
+        
+        The previous implementation assumed a call sequence from AppKit that
+        was not always happening.
+        When the user clicks on the pulldown menu, AppKit sends validateUserInterfaceItem
+        calls for each element that needs validation and we used to count the number of
+        validation requests being sent to the web process.
+        All these calls are made before we have the chance to get one reply from the WebProcess.
+        We also delayed the menu update until we had received all the replies to the validation requests.
+        At that point we called update on the menu to trigger the validation one more time with
+        the data retrived from the WebProcess.
+        When the user simply presses cmd-c, only one call to vaidateUserInterfaceItem is made
+        and the menu update triggered the validation of all the menu entries causing the internal
+        state to be out of sync.
+        The new implementation is very simple: for each validation request from AppKit we send
+        a request to the WebProcess and we cache a reference to the menu item being validated.
+        When the WebProcess replies, we retrieve the menu item from our cache and update its state.
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Removed initialization of deleted memebers.
+        (-[WKView validateUserInterfaceItem:]): Request validation to the WebProcess and return YES to 
+        allow AppKit to do the keyBinding processing.
+        (-[WKView _setUserInterfaceItemState:enabled:state:]): Called when the WebProcess replies to the
+        validation request to check/uncheck and enable/disable the menu item.
+
 2010-12-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -67,13 +67,6 @@ extern "C" {
 using namespace WebKit;
 using namespace WebCore;
 
-struct EditCommandState {
-    EditCommandState() : m_isEnabled(false), m_state(0) {};
-    EditCommandState(bool isEnabled, int state) : m_isEnabled(isEnabled), m_state(state) { }
-    bool m_isEnabled;
-    int m_state;
-};
-
 @interface NSWindow (Details)
 - (NSRect)_growBoxRect;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
@@ -93,11 +86,7 @@ struct EditCommandState {
     NSView *_layerHostingView;
 #endif
     // For Menus.
-    int _menuEntriesCount;
-    Vector<RetainPtr<NSMenu> > _menuList;
-    bool _isPerformingUpdate;
-    
-    HashMap<String, EditCommandState> _menuMap;
+    HashMap<String, RetainPtr<NSMenuItem> > _menuItemsMap;
 
     OwnPtr<PDFViewController> _pdfViewController;
 
@@ -166,9 +155,6 @@ struct EditCommandState {
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
-
-    _data->_menuEntriesCount = 0;
-    _data->_isPerformingUpdate = false;
 
     _data->_isSelectionNone = YES;
     _data->_isSelectionEditable = NO;
@@ -330,19 +316,9 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
     if (![menuItem isKindOfClass:[NSMenuItem class]])
         return NO; // FIXME: We need to be able to handle other user interface elements.
     
-    RetainPtr<NSMenu> menu = [menuItem menu];
-    if (!_data->_isPerformingUpdate) {
-        if (_data->_menuList.find(menu) == notFound)
-            _data->_menuList.append(menu);
-        _data->_menuMap.add(commandName, EditCommandState(false, 0));
-        _data->_menuEntriesCount++;
+    if (_data->_menuItemsMap.find(commandName) == _data->_menuItemsMap.end()) {
+        _data->_menuItemsMap.add(commandName, menuItem);
         _data->_page->validateMenuItem(commandName);
-    } else {
-        EditCommandState info = _data->_menuMap.take(commandName);
-        [menuItem setState:info.m_state];
-        if (_data->_menuMap.isEmpty())
-            _data->_isPerformingUpdate = false;
-        return info.m_isEnabled;
     }
 
     return YES;
@@ -918,19 +894,9 @@ static bool isViewVisible(NSView *view)
 
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
 {
-    ASSERT(_data->_menuEntriesCount);
-    _data->_menuMap.set(commandName, EditCommandState(isEnabled, newState));
-    if (--_data->_menuEntriesCount)
-        return;
-    
-    // All the menu entries have been validated.
-    // Calling update will trigger the validation
-    // to be performed with the acquired data.
-    _data->_isPerformingUpdate = true;
-    for (size_t i = 0; i < _data->_menuList.size(); i++)
-        [_data->_menuList[i].get() update];
-    
-    _data->_menuList.clear();
+    NSMenuItem *menuItem = _data->_menuItemsMap.take(commandName).get();
+    [menuItem setState:newState];
+    [menuItem setEnabled:isEnabled];
 }
 
 - (NSRect)_convertToDeviceSpace:(NSRect)rect
