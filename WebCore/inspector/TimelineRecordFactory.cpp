@@ -149,11 +149,13 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponse
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(unsigned long identifier, bool didFail)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(unsigned long identifier, bool didFail, double finishTime)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setNumber("identifier", identifier);
     data->setBoolean("didFail", didFail);
+    if (finishTime)
+        data->setNumber("networkTime", finishTime);
     return data.release();
 }
 

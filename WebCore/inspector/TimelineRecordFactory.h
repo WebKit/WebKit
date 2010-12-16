@@ -73,7 +73,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createReceiveResourceData(unsigned long identifier);
 
-        static PassRefPtr<InspectorObject> createResourceFinishData(unsigned long identifier, bool didFail);
+        static PassRefPtr<InspectorObject> createResourceFinishData(unsigned long identifier, bool didFail, double finishTime);
 
         static PassRefPtr<InspectorObject> createPaintData(const IntRect&);
 
