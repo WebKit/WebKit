@@ -136,7 +136,7 @@ inline void arithmetic(ByteArray* srcPixelArrayA, ByteArray* srcPixelArrayB,
                        float k1, float k2, float k3, float k4)
 {
     int pixelArrayLength = srcPixelArrayA->length();
-    ASSERT(pixelArrayLength == srcPixelArrayB->length());
+    ASSERT(pixelArrayLength == static_cast<int>(srcPixelArrayB->length()));
     unsigned char* source = srcPixelArrayA->data();
     unsigned char* destination = srcPixelArrayB->data();
 
