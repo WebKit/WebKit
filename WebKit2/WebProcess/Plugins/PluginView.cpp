@@ -250,6 +250,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_isBeingDestroyed(false)
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
     , m_npRuntimeObjectMap(this)
+    , m_manualStreamState(StreamStateInitial)
 {
 #if PLATFORM(MAC)
     m_webPage->addPluginView(this);
@@ -296,6 +297,13 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
     if (!m_plugin)
         return;
 
+    if (!m_isInitialized) {
+        ASSERT(m_manualStreamState == StreamStateInitial);
+        m_manualStreamState = StreamStateHasReceivedResponse;
+        m_manualStreamResponse = response;
+        return;
+    }
+
     // Compute the stream related data from the resource response.
     const KURL& responseURL = response.url();
     const String& mimeType = response.mimeType();
@@ -316,6 +324,15 @@ void PluginView::manualLoadDidReceiveData(const char* bytes, int length)
     if (!m_plugin)
         return;
 
+    if (!m_isInitialized) {
+        ASSERT(m_manualStreamState == StreamStateHasReceivedResponse);
+        if (!m_manualStreamData)
+            m_manualStreamData = SharedBuffer::create();
+
+        m_manualStreamData->append(bytes, length);
+        return;
+    }
+
     m_plugin->manualStreamDidReceiveData(bytes, length);
 }
 
@@ -325,6 +342,12 @@ void PluginView::manualLoadDidFinishLoading()
     if (!m_plugin)
         return;
 
+    if (!m_isInitialized) {
+        ASSERT(m_manualStreamState == StreamStateHasReceivedResponse);
+        m_manualStreamState = StreamStateFinished;
+        return;
+    }
+
     m_plugin->manualStreamDidFinishLoading();
 }
 
@@ -333,6 +356,13 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
     // The plug-in can be null here if it failed to initialize.
     if (!m_plugin)
         return;
+
+    if (!m_isInitialized) {
+        m_manualStreamState = StreamStateFinished;
+        m_manualStreamError = error;
+        m_manualStreamData = nullptr;
+        return;
+    }
 
     m_plugin->manualStreamDidFail(error.isCancellation());
 }
@@ -411,6 +441,8 @@ void PluginView::initializePlugin()
     m_isInitialized = true;
 
     viewGeometryDidChange();
+
+    redeliverManualStream();
 
 #if PLATFORM(MAC)
     if (m_plugin->pluginLayer()) {
@@ -718,6 +750,38 @@ void PluginView::cancelAllStreams()
 
     // Cancelling a stream removes it from the m_streams map, so if we cancel all streams the map should be empty.
     ASSERT(m_streams.isEmpty());
+}
+
+void PluginView::redeliverManualStream()
+{
+    if (m_manualStreamState == StreamStateInitial) {
+        // Nothing to do.
+        return;
+    }
+
+    if (m_manualStreamState == StreamStateFailed) {
+        manualLoadDidFail(m_manualStreamError);
+        return;
+    }
+
+    // Deliver the response.
+    manualLoadDidReceiveResponse(m_manualStreamResponse);
+
+    // Deliver the data.
+    if (m_manualStreamData) {
+        const char* data;
+        unsigned position = 0;
+
+        while (unsigned length = m_manualStreamData->getSomeData(data, position)) {
+            manualLoadDidReceiveData(data, length);
+            position += length;
+        }
+
+        m_manualStreamData = nullptr;
+    }
+
+    if (m_manualStreamState == StreamStateFinished)
+        manualLoadDidFinishLoading();
 }
 
 void PluginView::invalidateRect(const IntRect& dirtyRect)

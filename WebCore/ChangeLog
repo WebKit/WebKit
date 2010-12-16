@@ -1,3 +1,14 @@
+2010-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Save the manual plug-in stream data and redeliver it when the plug-in is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=51201
+
+        Export SharedBuffer related symbols.
+
+        * WebCore.exp.in:
+
 2010-12-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
