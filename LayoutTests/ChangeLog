@@ -1,3 +1,80 @@
+2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations to match changes made in r74177.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum:
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+
 2010-12-16  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
