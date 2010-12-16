@@ -506,7 +506,21 @@ WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uin
     IntRect resultRect;
     process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
     return resultRect;
-}    
+}
+#elif PLATFORM(WIN)
+WebCore::IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition)
+{
+    IntRect resultRect;
+    process()->sendSync(Messages::WebPage::FirstRectForCharacterInSelectedRange(characterPosition), Messages::WebPage::FirstRectForCharacterInSelectedRange::Reply(resultRect), m_pageID);
+    return resultRect;
+}
+
+String WebPageProxy::getSelectedText()
+{
+    String text;
+    process()->sendSync(Messages::WebPage::GetSelectedText(), Messages::WebPage::GetSelectedText::Reply(text), m_pageID);
+    return text;
+}
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -1355,9 +1369,26 @@ void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputI
 }
     
 #else    
-void WebPageProxy::didSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
+void WebPageProxy::didChangeSelection(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
 {
     m_pageClient->selectionChanged(isNone, isContentEditable, isPasswordField, hasComposition);
+}
+#endif
+
+#if PLATFORM(WIN)
+void WebPageProxy::didChangeCompositionSelection(bool hasComposition)
+{
+    m_pageClient->compositionSelectionChanged(hasComposition);
+}
+
+void WebPageProxy::confirmComposition(const String& compositionString)
+{
+    process()->send(Messages::WebPage::ConfirmComposition(compositionString), m_pageID);
+}
+
+void WebPageProxy::setComposition(const String& compositionString, Vector<WebCore::CompositionUnderline>& underlines, int cursorPosition)
+{
+    process()->send(Messages::WebPage::SetComposition(compositionString, underlines, cursorPosition), m_pageID);
 }
 #endif
     

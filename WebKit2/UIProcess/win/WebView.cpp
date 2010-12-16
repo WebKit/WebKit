@@ -28,6 +28,7 @@
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "FindIndicator.h"
 #include "LayerBackedDrawingAreaProxy.h"
+#include "Logging.h"
 #include "RunLoop.h"
 #include "NativeWebKeyboardEvent.h"
 #include "WebContext.h"
@@ -40,9 +41,24 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/SoftLinking.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/text/WTFString.h>
+
+namespace Ime {
+    // We need these functions in a separate namespace, because in the global namespace they conflict
+    // with the definitions in imm.h only by the type modifier (the macro defines them as static) and
+    // imm.h is included by windows.h
+    SOFT_LINK_LIBRARY(IMM32)
+    SOFT_LINK(IMM32, ImmGetContext, HIMC, WINAPI, (HWND hwnd), (hwnd))
+    SOFT_LINK(IMM32, ImmReleaseContext, BOOL, WINAPI, (HWND hWnd, HIMC hIMC), (hWnd, hIMC))
+    SOFT_LINK(IMM32, ImmGetCompositionStringW, LONG, WINAPI, (HIMC hIMC, DWORD dwIndex, LPVOID lpBuf, DWORD dwBufLen), (hIMC, dwIndex, lpBuf, dwBufLen))
+    SOFT_LINK(IMM32, ImmSetCandidateWindow, BOOL, WINAPI, (HIMC hIMC, LPCANDIDATEFORM lpCandidate), (hIMC, lpCandidate))
+    SOFT_LINK(IMM32, ImmSetOpenStatus, BOOL, WINAPI, (HIMC hIMC, BOOL fOpen), (hIMC, fOpen))
+    SOFT_LINK(IMM32, ImmNotifyIME, BOOL, WINAPI, (HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue), (hIMC, dwAction, dwIndex, dwValue))
+    SOFT_LINK(IMM32, ImmAssociateContextEx, BOOL, WINAPI, (HWND hWnd, HIMC hIMC, DWORD dwFlags), (hWnd, hIMC, dwFlags))
+};
 
 using namespace WebCore;
 
@@ -146,6 +162,24 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SETCURSOR:
             lResult = onSetCursor(hWnd, message, wParam, lParam, handled);
             break;
+        case WM_IME_STARTCOMPOSITION:
+            handled = onIMEStartComposition();
+            break;
+        case WM_IME_REQUEST:
+            lResult = onIMERequest(wParam, lParam);
+            break;
+        case WM_IME_COMPOSITION:
+            handled = onIMEComposition(lParam);
+            break;
+        case WM_IME_ENDCOMPOSITION:
+            handled = onIMEEndComposition();
+            break;
+        case WM_IME_SELECT:
+            handled = onIMESelect(wParam, lParam);
+            break;
+        case WM_IME_SETCONTEXT:
+            handled = onIMESetContext(wParam, lParam);
+            break;
         default:
             handled = false;
             break;
@@ -191,6 +225,11 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_overrideCursor(0)
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
+    , m_selectionIsNone(true)
+    , m_selectionIsEditable(false)
+    , m_selectionInPasswordField(false)
+    , m_hasMarkedText(false)
+    , m_inIMEComposition(0)
 {
     registerWebViewWindowClass();
 
@@ -615,9 +654,269 @@ FloatRect WebView::convertToUserSpace(const FloatRect& rect)
     return rect;
 }
 
-void WebView::selectionChanged(bool, bool, bool, bool)
+HIMC WebView::getIMMContext() 
 {
-    // FIXME: Implement.
+    return Ime::ImmGetContext(m_window);
+}
+
+void WebView::prepareCandidateWindow(HIMC hInputContext) 
+{
+    IntRect caret = m_page->firstRectForCharacterInSelectedRange(0);
+    CANDIDATEFORM form;
+    form.dwIndex = 0;
+    form.dwStyle = CFS_EXCLUDE;
+    form.ptCurrentPos.x = caret.x();
+    form.ptCurrentPos.y = caret.bottom();
+    form.rcArea.top = caret.y();
+    form.rcArea.bottom = caret.bottom();
+    form.rcArea.left = caret.x();
+    form.rcArea.right = caret.right();
+    Ime::ImmSetCandidateWindow(hInputContext, &form);
+}
+
+void WebView::resetIME()
+{
+    HIMC hInputContext = getIMMContext();
+    if (!hInputContext)
+        return;
+    Ime::ImmNotifyIME(hInputContext, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
+    Ime::ImmReleaseContext(m_window, hInputContext);
+}
+
+void WebView::setInputMethodState(bool enabled)
+{
+    Ime::ImmAssociateContextEx(m_window, 0, enabled ? IACE_DEFAULT : 0);
+}
+
+void WebView::selectionChanged(bool isNone, bool isEditable, bool isPasswordField, bool hasComposition)
+{
+    m_selectionIsNone = isNone;
+    m_selectionIsEditable = isEditable;
+    m_selectionInPasswordField = isPasswordField;
+    m_hasMarkedText = hasComposition;
+}
+
+void WebView::compositionSelectionChanged(bool hasChanged)
+{
+    if (m_hasMarkedText && !hasChanged)
+        resetIME();
+}
+
+bool WebView::onIMEStartComposition()
+{
+    LOG(TextInput, "onIMEStartComposition");
+    m_inIMEComposition++;
+
+    HIMC hInputContext = getIMMContext();
+    if (!hInputContext)
+        return false;
+    prepareCandidateWindow(hInputContext);
+    Ime::ImmReleaseContext(m_window, hInputContext);
+    return true;
+}
+
+static bool getCompositionString(HIMC hInputContext, DWORD type, String& result)
+{
+    LONG compositionLength = Ime::ImmGetCompositionStringW(hInputContext, type, 0, 0);
+    if (compositionLength <= 0)
+        return false;
+    Vector<UChar> compositionBuffer(compositionLength / 2);
+    compositionLength = Ime::ImmGetCompositionStringW(hInputContext, type, compositionBuffer.data(), compositionLength);
+    result = String::adopt(compositionBuffer);
+    return true;
+}
+
+static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<BYTE>& attributes, Vector<CompositionUnderline>& underlines)
+{
+    if (clauses.isEmpty()) {
+        underlines.clear();
+        return;
+    }
+  
+    size_t numBoundaries = clauses.size() - 1;
+    underlines.resize(numBoundaries);
+    for (unsigned i = 0; i < numBoundaries; ++i) {
+        underlines[i].startOffset = clauses[i];
+        underlines[i].endOffset = clauses[i + 1];
+        BYTE attribute = attributes[clauses[i]];
+        underlines[i].thick = attribute == ATTR_TARGET_CONVERTED || attribute == ATTR_TARGET_NOTCONVERTED;
+        underlines[i].color = Color::black;
+    }
+}
+
+#if !LOG_DISABLED
+#define APPEND_ARGUMENT_NAME(name) \
+    if (lparam & name) { \
+        if (needsComma) \
+            result += ", "; \
+            result += #name; \
+        needsComma = true; \
+    }
+
+static String imeCompositionArgumentNames(LPARAM lparam)
+{
+    String result;
+    bool needsComma = false;
+
+    APPEND_ARGUMENT_NAME(GCS_COMPATTR);
+    APPEND_ARGUMENT_NAME(GCS_COMPCLAUSE);
+    APPEND_ARGUMENT_NAME(GCS_COMPREADSTR);
+    APPEND_ARGUMENT_NAME(GCS_COMPREADATTR);
+    APPEND_ARGUMENT_NAME(GCS_COMPREADCLAUSE);
+    APPEND_ARGUMENT_NAME(GCS_COMPSTR);
+    APPEND_ARGUMENT_NAME(GCS_CURSORPOS);
+    APPEND_ARGUMENT_NAME(GCS_DELTASTART);
+    APPEND_ARGUMENT_NAME(GCS_RESULTCLAUSE);
+    APPEND_ARGUMENT_NAME(GCS_RESULTREADCLAUSE);
+    APPEND_ARGUMENT_NAME(GCS_RESULTREADSTR);
+    APPEND_ARGUMENT_NAME(GCS_RESULTSTR);
+    APPEND_ARGUMENT_NAME(CS_INSERTCHAR);
+    APPEND_ARGUMENT_NAME(CS_NOMOVECARET);
+
+    return result;
+}
+
+static String imeRequestName(WPARAM wparam)
+{
+    switch (wparam) {
+    case IMR_CANDIDATEWINDOW:
+        return "IMR_CANDIDATEWINDOW";
+    case IMR_COMPOSITIONFONT:
+        return "IMR_COMPOSITIONFONT";
+    case IMR_COMPOSITIONWINDOW:
+        return "IMR_COMPOSITIONWINDOW";
+    case IMR_CONFIRMRECONVERTSTRING:
+        return "IMR_CONFIRMRECONVERTSTRING";
+    case IMR_DOCUMENTFEED:
+        return "IMR_DOCUMENTFEED";
+    case IMR_QUERYCHARPOSITION:
+        return "IMR_QUERYCHARPOSITION";
+    case IMR_RECONVERTSTRING:
+        return "IMR_RECONVERTSTRING";
+    default:
+        return "Unknown (" + String::number(wparam) + ")";
+    }
+}
+#endif
+
+bool WebView::onIMEComposition(LPARAM lparam)
+{
+    LOG(TextInput, "onIMEComposition %s", imeCompositionArgumentNames(lparam).latin1().data());
+    HIMC hInputContext = getIMMContext();
+    if (!hInputContext)
+        return true;
+
+    if (!m_selectionIsEditable)
+        return true;
+
+    prepareCandidateWindow(hInputContext);
+
+    if (lparam & GCS_RESULTSTR || !lparam) {
+        String compositionString;
+        if (!getCompositionString(hInputContext, GCS_RESULTSTR, compositionString) && lparam)
+            return true;
+        
+        m_page->confirmComposition(compositionString);
+        return true;
+    }
+
+    String compositionString;
+    if (!getCompositionString(hInputContext, GCS_COMPSTR, compositionString))
+        return true;
+    
+    // Composition string attributes
+    int numAttributes = Ime::ImmGetCompositionStringW(hInputContext, GCS_COMPATTR, 0, 0);
+    Vector<BYTE> attributes(numAttributes);
+    Ime::ImmGetCompositionStringW(hInputContext, GCS_COMPATTR, attributes.data(), numAttributes);
+
+    // Get clauses
+    int numBytes = Ime::ImmGetCompositionStringW(hInputContext, GCS_COMPCLAUSE, 0, 0);
+    Vector<DWORD> clauses(numBytes / sizeof(DWORD));
+    Ime::ImmGetCompositionStringW(hInputContext, GCS_COMPCLAUSE, clauses.data(), numBytes);
+
+    Vector<CompositionUnderline> underlines;
+    compositionToUnderlines(clauses, attributes, underlines);
+
+    int cursorPosition = LOWORD(Ime::ImmGetCompositionStringW(hInputContext, GCS_CURSORPOS, 0, 0));
+
+    m_page->setComposition(compositionString, underlines, cursorPosition);
+
+    return true;
+}
+
+bool WebView::onIMEEndComposition()
+{
+    LOG(TextInput, "onIMEEndComposition");
+    // If the composition hasn't been confirmed yet, it needs to be cancelled.
+    // This happens after deleting the last character from inline input hole.
+    if (m_hasMarkedText)
+        m_page->confirmComposition(String());
+
+    if (m_inIMEComposition)
+        m_inIMEComposition--;
+
+    return true;
+}
+
+LRESULT WebView::onIMERequestCharPosition(IMECHARPOSITION* charPos)
+{
+    if (charPos->dwCharPos && !m_hasMarkedText)
+        return 0;
+    IntRect caret = m_page->firstRectForCharacterInSelectedRange(charPos->dwCharPos);
+    charPos->pt.x = caret.x();
+    charPos->pt.y = caret.y();
+    ::ClientToScreen(m_window, &charPos->pt);
+    charPos->cLineHeight = caret.height();
+    ::GetWindowRect(m_window, &charPos->rcDocument);
+    return true;
+}
+
+LRESULT WebView::onIMERequestReconvertString(RECONVERTSTRING* reconvertString)
+{
+    String text = m_page->getSelectedText();
+    unsigned totalSize = sizeof(RECONVERTSTRING) + text.length() * sizeof(UChar);
+    
+    if (!reconvertString)
+        return totalSize;
+
+    if (totalSize > reconvertString->dwSize)
+        return 0;
+    reconvertString->dwCompStrLen = text.length();
+    reconvertString->dwStrLen = text.length();
+    reconvertString->dwTargetStrLen = text.length();
+    reconvertString->dwStrOffset = sizeof(RECONVERTSTRING);
+    memcpy(reconvertString + 1, text.characters(), text.length() * sizeof(UChar));
+    return totalSize;
+}
+
+LRESULT WebView::onIMERequest(WPARAM request, LPARAM data)
+{
+    LOG(TextInput, "onIMERequest %s", imeRequestName(request).latin1().data());
+    if (!m_selectionIsEditable)
+        return 0;
+
+    switch (request) {
+        case IMR_RECONVERTSTRING:
+            return onIMERequestReconvertString(reinterpret_cast<RECONVERTSTRING*>(data));
+
+        case IMR_QUERYCHARPOSITION:
+            return onIMERequestCharPosition(reinterpret_cast<IMECHARPOSITION*>(data));
+    }
+    return 0;
+}
+
+bool WebView::onIMESelect(WPARAM wparam, LPARAM lparam)
+{
+    UNUSED_PARAM(wparam);
+    UNUSED_PARAM(lparam);
+    LOG(TextInput, "onIMESelect locale %ld %s", lparam, wparam ? "select" : "deselect");
+    return false;
+}
+
+bool WebView::onIMESetContext(WPARAM wparam, LPARAM)
+{
+    LOG(TextInput, "onIMESetContext %s", wparam ? "active" : "inactive");
+    return false;
 }
 
 void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)

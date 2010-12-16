@@ -74,6 +74,9 @@ public:
 #else
     virtual void selectionChanged(bool, bool, bool, bool) = 0;
 #endif
+#if PLATFORM(WIN)
+    virtual void compositionSelectionChanged(bool) = 0;
+#endif
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
 

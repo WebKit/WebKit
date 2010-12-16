@@ -77,6 +77,18 @@ private:
     LRESULT onTimerEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onShowWindowEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onSetCursor(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    bool onIMEStartComposition();
+    bool onIMEComposition(LPARAM);
+    bool onIMEEndComposition();
+    LRESULT onIMERequest(WPARAM, LPARAM);
+    bool onIMESelect(WPARAM, LPARAM);
+    bool onIMESetContext(WPARAM, LPARAM);
+    void resetIME();
+    void setInputMethodState(bool);
+    HIMC getIMMContext();
+    void prepareCandidateWindow(HIMC);
+    LRESULT onIMERequestCharPosition(IMECHARPOSITION*);
+    LRESULT onIMERequestReconvertString(RECONVERTSTRING*);
 
     bool isActive();
     void updateActiveState();
@@ -105,6 +117,7 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
     virtual void selectionChanged(bool, bool, bool, bool);
+    virtual void compositionSelectionChanged(bool);
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
@@ -136,6 +149,13 @@ private:
     bool m_isBeingDestroyed;
 
     RefPtr<WebPageProxy> m_page;
+
+    // Text input state values
+    bool m_selectionIsNone;
+    bool m_selectionIsEditable;
+    bool m_selectionInPasswordField;
+    bool m_hasMarkedText;
+    unsigned m_inIMEComposition;
 };
 
 } // namespace WebKit

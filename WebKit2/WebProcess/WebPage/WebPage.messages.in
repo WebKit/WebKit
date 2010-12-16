@@ -96,6 +96,11 @@ messages -> WebPage {
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
+	// This is a dummy message to avoid breaking the build for platforms that don't require
+	// synchronous messages.
+    // FIXME: should be removed when <rdar://problem/8775115> is fixed.
+	Dummy() -> (bool dummyReturn)
+	
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
@@ -106,12 +111,13 @@ messages -> WebPage {
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
 #endif
-
+#if PLATFORM(WIN)
+    ConfirmComposition(WTF::String compositionString)
+    SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
+    FirstRectForCharacterInSelectedRange(uint64_t characterPosition) -> (WebCore::IntRect resultRect)
+    GetSelectedText() -> (WTF::String text)
+#endif
 #if PLATFORM(QT)
     FindZoomableAreaForPoint(WebCore::IntPoint point)
 #endif
-
-    // This is a dummy message to avoid breaking the build for platforms that don't require 
-    // synchronous messages.
-    Dummy() -> (bool dummyReturn)
 }

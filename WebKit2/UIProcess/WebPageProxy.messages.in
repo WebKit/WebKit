@@ -126,9 +126,11 @@ messages -> WebPageProxy {
     DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
 #endif
 #if !PLATFORM(MAC)
-    DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
+    DidChangeSelection(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
 #endif
-
+#if PLATFORM(WIN)
+    DidChangeCompositionSelection(bool hasChanged)
+#endif
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)

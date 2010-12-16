@@ -1,3 +1,49 @@
+2010-12-14  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add IME support to WebKit2 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=51049
+        The implementation is very close to the one in WebKit.
+        The main change is the addition of handlers for WM_IME_STARTCOMPOSITION,
+        WM_IME_REQUEST, WM_IME_COMPOSITION, WM_IME_ENDCOMPOSITION,
+        WM_IME_SELECT, WM_IME_SETCONTEXT and a number of new messages
+        between the UI process and the WebProcess to send/retrieve
+        the data being handled by the messages listed above.
+
+        * UIProcess/PageClient.h: Added compositionSelectionChanged for Windows platform.
+        * UIProcess/WebPageProxy.cpp:
+        The following methods send synchronous messages to the WebProcess.
+        (WebKit::WebPageProxy::firstRectForCharacterInSelectedRange): Retrieves the rectangle to position
+        the cnadidates window.
+        (WebKit::WebPageProxy::getSelectedText): Retrieves the currently selected text.
+        The following methods send asynchronous messages to the WebProcess.
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::didChangeSelection): Name changed.
+        (WebKit::WebPageProxy::didChangeCompositionSelection): Called when there is a change
+        in the composition selection.
+        * UIProcess/WebPageProxy.messages.in: Added messages corresponding to the methods above.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Added handling of messages for IME.
+        The following are the handlers for the window message being sent during composition.
+        (WebKit::WebView::onIMEComposition):
+        (WebKit::WebView::onIMEEndComposition):
+        (WebKit::WebView::onIMERequestCharPosition):
+        (WebKit::WebView::onIMERequestReconvertString):
+        (WebKit::WebView::onIMERequest):
+        (WebKit::WebView::onIMESelect):
+        (WebKit::WebView::onIMESetContext):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection): Added notification
+        of composition selection changed for Windows.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        The following are the WebProcess counterparts of the new messages.
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::firstRectForCharacterInSelectedRange):
+        (WebKit::WebPage::getSelectedText):
+
 2010-12-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

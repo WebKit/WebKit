@@ -1029,7 +1029,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
 #endif
-    
+
 WebEditCommand* WebPage::webEditCommand(uint64_t commandID)
 {
     return m_editCommandMap.get(commandID).get();

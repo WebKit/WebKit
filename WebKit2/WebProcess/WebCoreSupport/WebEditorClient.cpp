@@ -186,7 +186,16 @@ void WebEditorClient::respondToChangedSelection()
     Frame* frame = m_page->corePage()->focusController()->focusedFrame();
     if (!frame)
         return;
-    m_page->send(Messages::WebPageProxy::DidSelectionChange(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition()));
+
+    m_page->send(Messages::WebPageProxy::DidChangeSelection(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition()));
+#if PLATFORM(WIN)
+    if (!frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
+        return;
+
+    unsigned start;
+    unsigned end;
+    m_page->send(Messages::WebPageProxy::DidChangeCompositionSelection(frame->editor()->getCompositionSelection(start, end)));
+#endif
 }
 #endif
     

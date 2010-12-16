@@ -38,6 +38,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "WebEditCommand.h"
+#include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
@@ -251,6 +252,11 @@ public:
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
     static void convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length);
+#elif PLATFORM(WIN)
+    void confirmComposition(const String& compositionString);
+    void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
+    void firstRectForCharacterInSelectedRange(const uint64_t characterPosition, WebCore::IntRect& resultRect);
+    void getSelectedText(WTF::String&);
 #endif
     void dummy(bool&);
 

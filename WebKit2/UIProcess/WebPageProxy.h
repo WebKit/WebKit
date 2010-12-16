@@ -183,9 +183,15 @@ public:
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
 #else
-    void didSelectionChange(bool, bool, bool, bool);
+    void didChangeSelection(bool, bool, bool, bool);
 #endif
-
+#if PLATFORM(WIN)
+    void didChangeCompositionSelection(bool);
+    void confirmComposition(const String&);
+    void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
+    WebCore::IntRect firstRectForCharacterInSelectedRange(int);
+    String getSelectedText();
+#endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);
 #endif
