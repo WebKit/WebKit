@@ -1,5 +1,32 @@
 2010-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Add a bunch of m_isStarted assertions to plug-in code.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::frameDidFinishLoading):
+        (WebKit::NetscapePlugin::frameDidFail):
+        (WebKit::NetscapePlugin::didEvaluateJavaScript):
+        (WebKit::NetscapePlugin::streamDidReceiveResponse):
+        (WebKit::NetscapePlugin::streamDidReceiveData):
+        (WebKit::NetscapePlugin::streamDidFinishLoading):
+        (WebKit::NetscapePlugin::streamDidFail):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveData):
+        (WebKit::NetscapePlugin::manualStreamDidFinishLoading):
+        (WebKit::NetscapePlugin::manualStreamDidFail):
+        (WebKit::NetscapePlugin::handleMouseEvent):
+        (WebKit::NetscapePlugin::handleWheelEvent):
+        (WebKit::NetscapePlugin::handleMouseEnterEvent):
+        (WebKit::NetscapePlugin::handleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::handleKeyboardEvent):
+        (WebKit::NetscapePlugin::setFocus):
+        (WebKit::NetscapePlugin::pluginScriptableNPObject):
+        (WebKit::NetscapePlugin::privateBrowsingStateChanged):
+
+2010-12-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Save the manual plug-in stream data and redeliver it when the plug-in is initialized
