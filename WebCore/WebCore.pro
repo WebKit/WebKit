@@ -2777,13 +2777,18 @@ maemo5 {
     SOURCES += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp
 }
 
-
+contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
     win32-*|wince* {
         HEADERS += platform/ScrollAnimatorWin.h
-        SOURCES += platform/ScrollAnimatorWin.cpp \
-                   platform/win/SystemTimeWin.cpp \
-                   platform/graphics/win/TransformationMatrixWin.cpp
+        SOURCES += platform/ScrollAnimatorWin.cpp
     }
+}
+
+win32-*|wince* {
+    SOURCES += \
+        platform/win/SystemTimeWin.cpp \
+        platform/graphics/win/TransformationMatrixWin.cpp
+}
 
     mac {
         SOURCES += \

@@ -1,3 +1,18 @@
+2010-12-16  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Only include ScrollAnimatorWin.h and compile ScrollAnimatorWin.cpp
+        on Windows if ENABLE_SMOOTH_SCROLLING=1
+        https://bugs.webkit.org/show_bug.cgi?id=51215
+
+        Conditionally include the files ScrollAnimatorWin.h and ScrollAnimatorWin.cpp when building
+        the Qt Windows with smooth scrolling enabled.
+
+        No change in functionality since these files are guarded by ENABLE(SMOOTH_SCROLLING).
+
+        * WebCore.pro:
+
 2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
