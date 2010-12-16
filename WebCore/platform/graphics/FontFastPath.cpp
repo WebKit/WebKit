@@ -276,7 +276,7 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
 {
     float initialAdvance;
 
-    WidthIterator it(this, run, false, forTextEmphasis);
+    WidthIterator it(this, run, 0, false, forTextEmphasis);
     it.advance(from);
     float beforeWidth = it.m_runWidthSoFar;
     it.advance(to, &glyphBuffer);

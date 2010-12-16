@@ -1,3 +1,10 @@
+2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Mac Debug Clang compilation.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText):
+
 2010-12-16  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed. Fix GTK3 compilation after 74129.
