@@ -3247,3 +3247,6 @@ BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS
 
 BUGCR67032 WIN : inspector/dom-breakpoints.html = TEXT
+
+// The test is just too slow and has never passed since on Dbg build.
+BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS

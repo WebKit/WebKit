@@ -1,3 +1,10 @@
+2010-12-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-15  Brian Weinstein  <bweinstein@apple.com>
 
         Rebaseline Windows XP results after r73993. Windows 7 results were landed in r73998, but some XP

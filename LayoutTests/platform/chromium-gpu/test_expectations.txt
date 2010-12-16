@@ -68,6 +68,7 @@ BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
 // Passes on the GPU, but leaving this here for reference.
 // BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
+BUGCR22700 DEBUG WIN SLOW : fast/canvas/canvas-getImageData.html = PASS
 BUGCR10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
 // BUGCR23498 MAC : fast/canvas/canvas-bg.html = IMAGE
 // BUGCR23498 MAC : fast/canvas/canvas-text-alignment.html = IMAGE
