@@ -1,3 +1,10 @@
+2010-12-16  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] fast/dom/gc-11.html fails in 64bit debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=51213
+
+        * platform/gtk/Skipped:
+
 2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
