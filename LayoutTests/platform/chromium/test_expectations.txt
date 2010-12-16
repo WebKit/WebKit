@@ -3178,11 +3178,6 @@ BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_DRT : svg/custom/selectSubString.html = TIMEOUT
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
-// Some (or all) of the accessibility tests tests may pass, but they were
-// skipped so we have no history for them. Will have more specific expectation
-// for them once we let them run for a while.
-BUG_MIHAIP : platform/chromium/accessibility = FAIL
-
 // The test says you should see numbers, but we display letters.
 // It looks like we are missing the WebKit "WeightWatcher" fonts,
 // checked in as part of http://trac.webkit.org/changeset/34771.

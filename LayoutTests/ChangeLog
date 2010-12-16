@@ -1,3 +1,10 @@
+2010-12-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed. Remove Chromium platform/chromium/accessibility
+        expectations, that directory doesn't exist anymore as of r74039.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-16  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Adam Roben.
