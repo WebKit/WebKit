@@ -1,3 +1,16 @@
+2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        execCommand('styleWithCSS') is ignored when selection isn't inside a contenteditable area
+        https://bugs.webkit.org/show_bug.cgi?id=51164
+
+        Added a test to ensure WebKit accepts StyleWithCSS command even if the current selection
+        isn't inside a contenteditable region.
+
+        * editing/style/stylewithcss-without-selection-expected.txt: Added.
+        * editing/style/stylewithcss-without-selection.html: Added.
+
 2010-12-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed.  Updating Chromium media test expectations.
