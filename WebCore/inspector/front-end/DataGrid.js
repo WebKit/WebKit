@@ -495,7 +495,7 @@ WebInspector.DataGrid.prototype = {
 
     isScrolledToLastRow: function()
     {
-        return this._scrollContainer.scrollTop === this._scrollContainer.scrollHeight - this._scrollContainer.offsetHeight;
+        return this._scrollContainer.isScrolledToBottom();
     },
 
     scrollToLastRow: function()

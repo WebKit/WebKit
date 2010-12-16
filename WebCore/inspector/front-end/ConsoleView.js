@@ -206,7 +206,7 @@ WebInspector.ConsoleView.prototype = {
 
         function scrollIntoView()
         {
-            this.promptElement.scrollIntoView(false);
+            this.promptElement.scrollIntoView(true);
             delete this._scrollIntoViewTimer;
         }
         this._scrollIntoViewTimer = setTimeout(scrollIntoView.bind(this), 20);
@@ -214,6 +214,8 @@ WebInspector.ConsoleView.prototype = {
 
     addMessage: function(msg)
     {
+        var shouldScrollToLastMessage = this.messagesElement.isScrolledToBottom();
+
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
             this._incrementErrorWarningCount(msg);
             WebInspector.resourceManager.addConsoleMessage(msg);
@@ -241,7 +243,8 @@ WebInspector.ConsoleView.prototype = {
             this.currentGroup.addMessage(msg);
         }
 
-        this._scheduleScrollIntoView();
+        if (shouldScrollToLastMessage)
+            this._scheduleScrollIntoView();
     },
 
     updateMessageRepeatCount: function(count)

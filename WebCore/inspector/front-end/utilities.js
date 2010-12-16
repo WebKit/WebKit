@@ -216,6 +216,11 @@ Element.prototype.pruneEmptyTextNodes = function()
     }
 }
 
+Element.prototype.isScrolledToBottom = function()
+{
+    return this.scrollTop === this.scrollHeight - this.offsetHeight;
+}
+
 Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = function(nameArray)
 {
     for (var node = this; node && node !== this.ownerDocument; node = node.parentNode)

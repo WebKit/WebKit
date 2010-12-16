@@ -1,3 +1,19 @@
+2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Console always scroll to the bottom on new events
+        https://bugs.webkit.org/show_bug.cgi?id=51189
+
+        When new messages are added to the console it will auto scroll
+        only if it was already scrolled down to the last record.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView.scrollIntoView):
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView):
+        (WebInspector.ConsoleView.prototype._isScrolledToLastMessage):
+        (WebInspector.ConsoleView.prototype.addMessage):
+
 2010-12-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
