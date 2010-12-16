@@ -2262,8 +2262,6 @@ BUGCR42875 SKIP : fast/js/sputnik = TEXT
 BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
-BUGCR42895 : media/media-document-audio-size.html = TIMEOUT
-
 // Failing a few times, flak dashboard seems to agree.
 BUGCR41973 MAC : svg/text/text-text-05-t.svg = IMAGE
 
@@ -2975,9 +2973,6 @@ BUGWK48627 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-default
 // New test, seems V8 differs from JSC here.
 // Added by http://trac.webkit.org/changeset/70910
 BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
-
-// New test, added in http://trac.webkit.org/changeset/70922
-BUGWK61260 : media/media-can-play-wav-audio.html = TEXT
 
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT

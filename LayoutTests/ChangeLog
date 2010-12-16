@@ -1,3 +1,17 @@
+2010-12-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed.  Updating Chromium media test expectations.
+
+        * platform/chromium-mac/media/audio-constructor-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-constructor-preload-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-constructor-src-expected.txt: Removed.
+        * platform/chromium-mac/media/media-load-event-expected.txt: Removed.
+        * platform/chromium-win/media/audio-constructor-expected.txt: Removed.
+        * platform/chromium-win/media/audio-constructor-preload-expected.txt: Removed.
+        * platform/chromium-win/media/audio-constructor-src-expected.txt: Removed.
+        * platform/chromium-win/media/media-load-event-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations for svg/repaint/filter-repaint.svg
