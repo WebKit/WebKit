@@ -1,3 +1,16 @@
+2010-12-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74162.
+        http://trac.webkit.org/changeset/74162
+        https://bugs.webkit.org/show_bug.cgi?id=51185
+
+        More breakage in GTK+ (Requested by xan_ on #webkit).
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/resources/char-decoding-utils.js:
+        (decode):
+
 2010-12-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
