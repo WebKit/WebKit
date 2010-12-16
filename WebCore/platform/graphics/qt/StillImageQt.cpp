@@ -71,10 +71,10 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     FloatRect normalizedSrc = src.normalized();
     FloatRect normalizedDst = dst.normalized();
 
-    QPainter* painter = ctxt->platformContext();
-    QPainter::CompositionMode oldCompositionMode = painter->compositionMode();
-
+    CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(op);
+
+    QPainter* painter = ctxt->platformContext();
 
     ContextShadow* shadow = ctxt->contextShadow();
     if (shadow->m_type != ContextShadow::NoShadow) {
@@ -87,7 +87,7 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     }
 
     painter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
-    painter->setCompositionMode(oldCompositionMode);
+    ctxt->setCompositeOperation(previousOperator);
 }
 
 }
