@@ -20,6 +20,10 @@ When I mouse up after dragging a selection outside of a iframe, the iframe conti
 Autoscrolling should stop when you release the mouse button outside the frame (in the main frame, 
 in another subframe, or just outside the window).</p>
 
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=49209">bug 49209</a>:
+Open another page in a different tab, middle click in the first iframe, scroll up, and select the other tab. The pan scrolling
+cursor should disappear, and you should exit pan scrolling mode.</p>
+
 <IFRAME FRAMEBORDER=1></IFRAME>
 <br>
 <IFRAME FRAMEBORDER=1></IFRAME>

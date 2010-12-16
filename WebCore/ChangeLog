@@ -1,3 +1,19 @@
+2010-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebKit2 should exit auto scrolling mode when losing focus
+        https://bugs.webkit.org/show_bug.cgi?id=49209
+        
+        When a page loses focus, make sure that we stop the autoscroll timer, which exits pan scrolling mode. We
+        don't want to automatically scroll when a page doesn't have focus.
+
+        Updated manual-tests/autoscroll.html with instructions to test this bug.
+
+        * manual-tests/autoscroll.html:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocused):
+
 2010-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
