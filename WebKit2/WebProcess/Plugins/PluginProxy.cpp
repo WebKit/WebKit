@@ -35,6 +35,7 @@
 #include "PluginController.h"
 #include "PluginControllerProxyMessages.h"
 #include "PluginProcessConnection.h"
+#include "PluginProcessConnectionManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebProcessConnectionMessages.h"
@@ -50,13 +51,13 @@ static uint64_t generatePluginInstanceID()
     return ++uniquePluginInstanceID;
 }
 
-PassRefPtr<PluginProxy> PluginProxy::create(PassRefPtr<PluginProcessConnection> connection)
+PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath)
 {
-    return adoptRef(new PluginProxy(connection));
+    return adoptRef(new PluginProxy(pluginPath));
 }
 
-PluginProxy::PluginProxy(PassRefPtr<PluginProcessConnection> connection)
-    : m_connection(connection)
+PluginProxy::PluginProxy(const String& pluginPath)
+    : m_pluginPath(pluginPath)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginController(0)
     , m_pluginBackingStoreContainsValidData(false)
@@ -83,6 +84,12 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
 
     m_pluginController = pluginController;
 
+    ASSERT(!m_connection);
+    m_connection = PluginProcessConnectionManager::shared().getPluginProcessConnection(m_pluginPath);
+    
+    if (!m_connection)
+        return false;
+    
     // Add the plug-in proxy before creating the plug-in; it needs to be in the map because CreatePlugin
     // can call back out to the plug-in proxy.
     m_connection->addPluginProxy(this);

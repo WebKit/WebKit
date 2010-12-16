@@ -32,8 +32,6 @@
 #include "MessageID.h"
 #include "NetscapePlugin.h"
 #include "PageOverlay.h"
-#include "PluginProcessConnection.h"
-#include "PluginProcessConnectionManager.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "WebBackForwardListProxy.h"
@@ -235,12 +233,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
         return 0;
 
 #if ENABLE(PLUGIN_PROCESS)
-    PluginProcessConnection* pluginProcessConnection = PluginProcessConnectionManager::shared().getPluginProcessConnection(pluginPath);
-
-    if (!pluginProcessConnection)
-        return 0;
-
-    return PluginProxy::create(pluginProcessConnection);
+    return PluginProxy::create(pluginPath);
 #else
     return NetscapePlugin::create(NetscapePluginModule::getOrCreate(pluginPath));
 #endif

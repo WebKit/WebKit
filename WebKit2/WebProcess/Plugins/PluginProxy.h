@@ -52,7 +52,7 @@ class PluginProcessConnection;
 
 class PluginProxy : public Plugin {
 public:
-    static PassRefPtr<PluginProxy> create(PassRefPtr<PluginProcessConnection>);
+    static PassRefPtr<PluginProxy> create(const String& pluginPath);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -62,7 +62,7 @@ public:
     CoreIPC::SyncReplyMode didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
 private:
-    explicit PluginProxy(PassRefPtr<PluginProcessConnection>);
+    explicit PluginProxy(const String& pluginPath);
 
     // Plugin
     virtual bool initialize(PluginController*, const Parameters&);
@@ -120,6 +120,8 @@ private:
 #if PLATFORM(MAC)
     void setComplexTextInputEnabled(bool);
 #endif
+
+    String m_pluginPath;
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;

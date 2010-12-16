@@ -1,3 +1,34 @@
+2010-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Defer getting a PluginProcessConnection object until the plug-in is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=51207
+        <rdar://problem/8731306>
+
+        Before this change, we would pass the PluginProcessConnection to the PluginProxy constructor, but not
+        call PluginProcessConnection::addPluginProxy (which associates the plug-in proxy with the connection)
+        until the plug-in is initialized.
+
+        This could lead to a PluginProxy holding a reference to a PluginProcessConnection when the PluginProxyConnection
+        itself did not know anything about the PluginProxy. This would happen when a page with plug-ins is opened in a background
+        tab, with the plug-ins not yet initialized.
+
+        Because of this, we could end up in a weird state, where the PluginProcessConnection would think that there are no
+        more plug-ins alive, and invalidate (and null out) the underlying CoreIPC connection, which would lead to crashes
+        when trying to send messages to the connection during later initialization.
+
+        The fix is to pass the plug-in path to the PluginProxy constructor, and get the connection from PluginProxy::initialize.
+        
+        PluginProcessConnection object 
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::create):
+        (WebKit::PluginProxy::PluginProxy):
+        (WebKit::PluginProxy::initialize):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2010-12-16  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.
