@@ -418,6 +418,7 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     cairo_region_destroy(invalidRegion);
 #endif
 
+    gdk_window_process_updates(window, TRUE);
 }
 
 // FIXME: this does not take into account the WM decorations
