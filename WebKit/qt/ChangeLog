@@ -1,3 +1,16 @@
+2010-12-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix tst_QWebPage::geolocationRequestJS()
+        https://bugs.webkit.org/show_bug.cgi?id=46814
+
+        Change the test case according to the changes introduced by
+        r72603 and enable the test case.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::geolocationRequestJS):
+
 2010-12-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.
