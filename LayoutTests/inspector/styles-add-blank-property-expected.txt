@@ -13,7 +13,7 @@ display: block;
 After append:
 [expanded] element.style { ()
 font-size: 12px;
-text-decoration: none;
+margin-left: 3px;
 
 ======== Matched CSS Rules ========
 [expanded] div { (user agent stylesheet)

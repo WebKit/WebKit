@@ -1,3 +1,18 @@
+2010-12-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Up/Down/PageUp/PageDown on a CSS property numeric value commit the value editor
+        https://bugs.webkit.org/show_bug.cgi?id=51114
+
+        The r74038 regressed the behaviour. This patch additionally ensures that both Metrics and Styles panes
+        are updated once a stylesheet is reverted.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._stylesPaneEdited):
+        (WebInspector.ElementsPanel.prototype._metricsPaneEdited):
+        (WebInspector.ElementsPanel.prototype._styleSheetChanged):
+
 2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Mac Debug Clang compilation.

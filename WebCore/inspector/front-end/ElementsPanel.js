@@ -443,20 +443,23 @@ WebInspector.ElementsPanel.prototype = {
             this.updateBreadcrumb(true);
     },
 
-    _metricsPaneEdited: function()
+    _stylesPaneEdited: function()
     {
+        // Once styles are edited, the Metrics pane should be updated.
         this.sidebarPanes.metrics.needsUpdate = true;
         this.updateMetrics();
     },
 
-    _stylesPaneEdited: function()
+    _metricsPaneEdited: function()
     {
+        // Once metrics are edited, the Styles pane should be updated.
         this.sidebarPanes.styles.needsUpdate = true;
         this.updateStyles(true);
     },
 
     _styleSheetChanged: function()
     {
+        this._metricsPaneEdited();
         this._stylesPaneEdited();
     },
 
