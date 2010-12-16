@@ -30,24 +30,15 @@
 #include "SharedTimer.h"
 
 #include <Ecore.h>
-#include <pthread.h>
-#include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-static pthread_mutex_t timerMutex = PTHREAD_MUTEX_INITIALIZER;
 static Ecore_Timer *_sharedTimer = 0;
-static Ecore_Pipe *_pipe = 0;
 
 static void (*_timerFunction)();
-
-struct timerOp {
-    double time;
-    unsigned char op; // 0 - add a timer; 1 - del a timer;
-};
 
 void setSharedTimerFiredFunction(void (*func)())
 {
@@ -64,58 +55,20 @@ static Eina_Bool timerEvent(void*)
     return ECORE_CALLBACK_CANCEL;
 }
 
-void processTimers(struct timerOp *tOp)
+void stopSharedTimer()
 {
     if (_sharedTimer) {
         ecore_timer_del(_sharedTimer);
         _sharedTimer = 0;
     }
-
-    if (tOp->op == 1)
-        return;
-
-    double interval = tOp->time - currentTime();
-
-    if (interval <= ecore_animator_frametime_get()) {
-        if (_timerFunction)
-            _timerFunction();
-        return;
-    }
-
-    _sharedTimer = ecore_timer_add(interval, timerEvent, 0);
-}
-
-void pipeHandlerCb(void *data, void *buffer, unsigned int nbyte)
-{
-    ASSERT(nbyte == sizeof(struct timerOp));
-
-    struct timerOp *tOp = (struct timerOp *)buffer;
-    processTimers(tOp);
-}
-
-void stopSharedTimer()
-{
-    struct timerOp tOp;
-    pthread_mutex_lock(&timerMutex);
-    if (!_pipe)
-        _pipe = ecore_pipe_add(pipeHandlerCb, 0);
-    pthread_mutex_unlock(&timerMutex);
-
-    tOp.op = 1;
-    ecore_pipe_write(_pipe, &tOp, sizeof(tOp));
 }
 
 void addNewTimer(double fireTime)
 {
-    struct timerOp tOp;
-    pthread_mutex_lock(&timerMutex);
-    if (!_pipe)
-        _pipe = ecore_pipe_add(pipeHandlerCb, 0);
-    pthread_mutex_unlock(&timerMutex);
+    double interval = fireTime - currentTime();
+    stopSharedTimer();
 
-    tOp.time = fireTime;
-    tOp.op = 0;
-    ecore_pipe_write(_pipe, &tOp, sizeof(tOp));
+    _sharedTimer = ecore_timer_loop_add(interval, timerEvent, 0);
 }
 
 void setSharedTimerFireTime(double fireTime)

@@ -1,3 +1,20 @@
+2010-12-15  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Fix timer calling time in SharedTimerEfl
+
+        No new features, so no tests added.
+
+        The usage of ecore_timer_loop_add instead of ecore_timer_add corrects
+        the problem that the timer is not called at the correct time. Since this
+        code runs in a single thread, all multiple thread operations were
+        removed.
+
+        * platform/efl/SharedTimerEfl.cpp:
+        (WebCore::stopSharedTimer):
+        (WebCore::addNewTimer):
+
 2010-12-15  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.
