@@ -255,8 +255,7 @@ public:
 #elif CPU(ARM_THUMB2) && OS(IOS)
     static void cacheFlush(void* code, size_t size)
     {
-        sys_dcache_flush(code, size);
-        sys_icache_invalidate(code, size);
+        sys_cache_control(kCacheFunctionPrepareForExecution, code, size);
     }
 #elif CPU(ARM_THUMB2) && OS(LINUX)
     static void cacheFlush(void* code, size_t size)
