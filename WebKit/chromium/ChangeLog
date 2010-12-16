@@ -1,3 +1,14 @@
+2010-12-15  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Expose AccessibilityObject::url() to Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=51046
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::url):
+
 2010-12-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

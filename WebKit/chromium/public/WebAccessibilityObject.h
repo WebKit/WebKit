@@ -45,6 +45,7 @@ class WebAccessibilityObjectPrivate;
 class WebNode;
 class WebDocument;
 class WebString;
+class WebURL;
 struct WebPoint;
 struct WebRect;
 
@@ -110,6 +111,7 @@ public:
     WEBKIT_API void setFocused(bool) const;
     WEBKIT_API WebString stringValue() const;
     WEBKIT_API WebString title() const;
+    WEBKIT_API WebURL url() const;
 
     WEBKIT_API WebNode node() const;
     WEBKIT_API WebDocument document() const;
