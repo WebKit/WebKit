@@ -1,3 +1,31 @@
+2010-12-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fast/parser/remove-block-in-residual-style.html does not need pixel output
+        https://bugs.webkit.org/show_bug.cgi?id=51120
+        
+        fast/parser/remove-block-in-residual-style.html just checks that we
+        don't crash, it doesn't need pixel output.
+        
+        (noticed while doing Snow Leopard rebaselines)
+
+        * fast/parser/remove-block-in-residual-style-expected.txt: Added.
+        * fast/parser/remove-block-in-residual-style.html:
+        * platform/chromium-linux/fast/parser/remove-block-in-residual-style-expected.checksum: Removed.
+        * platform/chromium-linux/fast/parser/remove-block-in-residual-style-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/remove-block-in-residual-style-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/remove-block-in-residual-style-expected.png: Removed.
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.checksum: Removed.
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.png: Removed.
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.txt: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/parser/remove-block-in-residual-style-expected.checksum: Removed.
+        * platform/mac/fast/parser/remove-block-in-residual-style-expected.png: Removed.
+        * platform/mac/fast/parser/remove-block-in-residual-style-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/fast/parser/remove-block-in-residual-style-expected.txt: Removed.
+
 2010-12-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.

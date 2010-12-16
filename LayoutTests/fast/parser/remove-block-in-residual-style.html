@@ -7,6 +7,8 @@
   <font>
    <p>
     <script>
+     if (window.layoutTestController)
+         layoutTestController.dumpAsText();
      var p = document.getElementsByTagName('p')[0];
      p.parentNode.removeChild(p);
     </script>

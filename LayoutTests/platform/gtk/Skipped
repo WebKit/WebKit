@@ -2092,7 +2092,6 @@ fast/parser/fonts.html
 fast/parser/nofoo-tags-inside-paragraph.html
 fast/parser/open-comment-in-style.html
 fast/parser/open-comment-in-textarea.html
-fast/parser/remove-block-in-residual-style.html
 fast/parser/style-script-head-test.html
 fast/parser/tabs-in-scripts.html
 fast/parser/title-error-test.html
