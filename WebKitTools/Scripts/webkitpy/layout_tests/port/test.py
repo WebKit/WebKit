@@ -90,6 +90,8 @@ class TestPort(base.Port):
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
         tests = TestList(self)
+        tests.add('passes/image.html')
+        tests.add('passes/text.html')
         tests.add('failures/expected/checksum.html',
                   actual_checksum='checksum_fail-checksum')
         tests.add('failures/expected/crash.html', crash=True)
@@ -112,15 +114,6 @@ class TestPort(base.Port):
                   expected_image=None)
         tests.add('failures/expected/missing_text.html',
                   expected_text=None)
-        tests.add('failures/expected/newlines_leading.html',
-                  expected_text="\nfoo\n",
-                  actual_text="foo\n")
-        tests.add('failures/expected/newlines_trailing.html',
-                  expected_text="foo\n\n",
-                  actual_text="foo\n")
-        tests.add('failures/expected/newlines_with_excess_CR.html',
-                  expected_text="foo\r\r\r\n",
-                  actual_text="foo\n")
         tests.add('failures/expected/text.html',
                   actual_text='text_fail-png')
         tests.add('failures/unexpected/text-image-checksum.html',
@@ -131,11 +124,7 @@ class TestPort(base.Port):
         tests.add('passes/error.html', error='stuff going to stderr')
         tests.add('passes/image.html')
         tests.add('passes/platform_image.html')
-        # Text output files contain "\r\n" on Windows.  This may be
-        # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
-        tests.add('passes/text.html',
-                  expected_text='\nfoo\n\n',
-                  actual_text='\nfoo\r\n\r\r\n')
+        tests.add('passes/text.html')
         tests.add('websocket/tests/passes/text.html')
         self._tests = tests
 
@@ -281,9 +270,6 @@ WONTFIX : failures/expected/image_checksum.html = IMAGE
 WONTFIX : failures/expected/missing_check.html = MISSING PASS
 WONTFIX : failures/expected/missing_image.html = MISSING PASS
 WONTFIX : failures/expected/missing_text.html = MISSING PASS
-WONTFIX : failures/expected/newlines_leading.html = TEXT
-WONTFIX : failures/expected/newlines_trailing.html = TEXT
-WONTFIX : failures/expected/newlines_with_excess_CR.html = TEXT
 WONTFIX : failures/expected/text.html = TEXT
 WONTFIX : failures/expected/timeout.html = TIMEOUT
 WONTFIX SKIP : failures/expected/hang.html = TIMEOUT

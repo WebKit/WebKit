@@ -49,13 +49,11 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.text_diff")
 class TestTextDiff(test_type_base.TestTypeBase):
 
     def _get_normalized_output_text(self, output):
-        """Returns the normalized text output, i.e. the output in which
-        the end-of-line characters are normalized to "\n"."""
-        # Running tests on Windows produces "\r\n".  The "\n" part is helpfully
-        # changed to "\r\n" by our system (Python/Cygwin), resulting in
-        # "\r\r\n", when, in fact, we wanted to compare the text output with
-        # the normalized text expectation files.
-        return output.replace("\r\r\n", "\r\n").replace("\r\n", "\n")
+        # Some tests produce "\r\n" explicitly.  Our system (Python/Cygwin)
+        # helpfully changes the "\n" to "\r\n", resulting in "\r\r\n".
+        norm = output.replace("\r\r\n", "\r\n").strip("\r\n").replace(
+             "\r\n", "\n")
+        return norm + "\n"
 
     def compare_output(self, port, filename, test_args, actual_test_output,
                         expected_test_output):
