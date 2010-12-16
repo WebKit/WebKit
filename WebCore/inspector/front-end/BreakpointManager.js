@@ -54,7 +54,6 @@ WebInspector.BreakpointManager.Events = {
     DOMBreakpointAdded: "dom-breakpoint-added",
     EventListenerBreakpointAdded: "event-listener-breakpoint-added",
     XHRBreakpointAdded: "xhr-breakpoint-added",
-    NativeBreakpointHit: "native-breakpoint-hit",
     ProjectChanged: "project-changed"
 }
 
@@ -152,6 +151,20 @@ WebInspector.BreakpointManager.prototype = {
         this._saveBreakpoints();
     },
 
+    breakpointViewForEventData: function(eventData)
+    {
+        var breakpointId;
+        if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.DOM)
+            breakpointId = this._createDOMBreakpointId(eventData.nodeId, eventData.type);
+        else if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.EventListener)
+            breakpointId = this._createEventListenerBreakpointId(eventData.eventName);
+        else if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.XHR)
+            breakpointId = this._createXHRBreakpointId(eventData.breakpointURL);
+        var breakpoint = this._nativeBreakpoints[breakpointId];
+        if (breakpoint)
+            return breakpoint.view;
+    },
+
     _debuggerPaused: function(event)
     {
         var eventType = event.data.eventType;
@@ -160,29 +173,20 @@ WebInspector.BreakpointManager.prototype = {
         if (eventType !== WebInspector.DebuggerEventTypes.NativeBreakpoint)
             return;
 
-        var breakpointId;
-        if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.DOM)
-            breakpointId = this._createDOMBreakpointId(eventData.nodeId, eventData.type);
-        else if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.EventListener)
-            breakpointId = this._createEventListenerBreakpointId(eventData.eventName);
-        else if (eventData.breakpointType === WebInspector.BreakpointManager.NativeBreakpointTypes.XHR)
-            breakpointId = this._createXHRBreakpointId(eventData.breakpointURL);
-
-        var breakpoint = this._nativeBreakpoints[breakpointId];
-        if (!breakpoint)
+        var breakpointView = this.breakpointViewForEventData(eventData);
+        if (!breakpointView)
             return;
 
-        breakpoint.view.hit = true;
-        this._lastHitBreakpoint = breakpoint;
-        this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.NativeBreakpointHit, { breakpoint: breakpoint.view, eventData: eventData });
+        breakpointView.hit = true;
+        this._lastHitBreakpointView = breakpointView;
     },
 
     _debuggerResumed: function(event)
     {
-        if (!this._lastHitBreakpoint)
+        if (!this._lastHitBreakpointView)
             return;
-        this._lastHitBreakpoint.view.hit = false;
-        delete this._lastHitBreakpoint;
+        this._lastHitBreakpointView.hit = false;
+        delete this._lastHitBreakpointView;
     },
 
     _projectChanged: function(event)

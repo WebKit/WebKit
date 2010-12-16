@@ -378,7 +378,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         WebInspector.currentPanel = this;
 
-        this.sidebarPanes.callstack.update(callFrames);
+        this.sidebarPanes.callstack.update(callFrames, event.data.eventType, event.data.eventData);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
         window.focus();

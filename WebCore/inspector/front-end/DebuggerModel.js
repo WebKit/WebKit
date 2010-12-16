@@ -42,7 +42,6 @@ WebInspector.DebuggerModel.Events = {
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
     BreakpointAdded: "breakpoint-added",
-    BreakpointHit: "breakpoint-hit"
 }
 
 WebInspector.DebuggerModel.prototype = {
@@ -171,13 +170,11 @@ WebInspector.DebuggerModel.prototype = {
         if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause || details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
             return;
 
-        var breakpointId = WebInspector.Breakpoint.jsBreakpointId(details.callFrames[0].sourceID, details.callFrames[0].line);
-        var breakpoint = this._breakpoints[breakpointId];
+        var breakpoint = this.findBreakpoint(details.callFrames[0].sourceID, details.callFrames[0].line);
         if (!breakpoint)
             return;
         breakpoint.hit = true;
         this._lastHitBreakpoint = breakpoint;
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointHit, breakpoint);
     },
 
     resumedScript: function()
