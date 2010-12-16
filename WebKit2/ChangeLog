@@ -1,5 +1,18 @@
 2010-12-15  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8731320> WebProcess’s CFNetwork cache is in ~/Library/Caches/com.apple.WebProcess
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Get the location, disk capacity and memory capacity
+        of the UI process’s NSURLCache and pass them to the WebProcess.
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): If an NSURLCache location was passed on the command line, set the
+        shared NSURLCache to that path and use the specified capacities as initial values.
+
+2010-12-15  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam “I blame andersca” Weinig.
 
         Allow responses to be cached by the NSURLCache.

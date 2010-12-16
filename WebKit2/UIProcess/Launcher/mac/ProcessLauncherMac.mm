@@ -27,7 +27,7 @@
 
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include "WebSystemInterface.h"
+#include "WebKitSystemInterface.h"
 #include <crt_externs.h>
 #include <mach-o/dyld.h>
 #include <mach/machine.h>
@@ -37,6 +37,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -224,8 +225,17 @@ void ProcessLauncher::launchProcess()
     // Make a unique, per pid, per process launcher web process service name.
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
+    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    if (!cachePath)
+        cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
+
+    NSURLCache *urlCache = [NSURLCache sharedURLCache];
+    CString cacheMemoryCapacity = String::number([urlCache memoryCapacity]).utf8();
+    CString cacheDiskCapacity = String::number([urlCache diskCapacity]).utf8();
+
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
+    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(),
+        "-cachepath", [(NSString *)cachePath.get() UTF8String], "-cachememorycapacity", cacheMemoryCapacity.data(), "-cachediskcapacity", cacheDiskCapacity.data(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
