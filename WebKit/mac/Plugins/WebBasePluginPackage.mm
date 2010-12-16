@@ -343,31 +343,32 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         equalIgnoringCase(pluginInfo.file, JavaCFMPluginFilename);
 }
 
-static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
+static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 {
-    for (unsigned i = 0; i < length; i += 4) 
-        *(uint32_t*)(bytes + i) = OSSwapInt32(*(uint32_t *)(bytes + i));
+    for (size_t i = 0; i < length; ++i) 
+        rawData[i] = OSSwapInt32(rawData[i]);
 }
 
 - (BOOL)isNativeLibraryData:(NSData *)data
 {
-    Vector<uint8_t, 512> bytes([data length]);
-    memcpy(bytes.data(), [data bytes], bytes.size());
+    NSUInteger sizeInBytes = [data length];
+    Vector<uint32_t, 128> rawData((sizeInBytes - 1) / 4 + 1);
+    memcpy(rawData.data(), [data bytes], sizeInBytes);
     
     unsigned numArchs = 0;
     struct fat_arch singleArch = { 0, 0, 0, 0, 0 };
     struct fat_arch* archs = 0;
        
-    if (bytes.size() >= sizeof(struct mach_header_64)) {
-        uint32_t magic = *reinterpret_cast<uint32_t*>(bytes.data());
+    if (sizeInBytes >= sizeof(struct mach_header_64)) {
+        uint32_t magic = *rawData.data();
         
         if (magic == MH_MAGIC || magic == MH_CIGAM) {
             // We have a 32-bit thin binary
-            struct mach_header* header = (struct mach_header*)bytes.data();
+            struct mach_header* header = (struct mach_header*)rawData.data();
 
             // Check if we need to swap the bytes
             if (magic == MH_CIGAM)
-                swapIntsInHeader(bytes.data(), bytes.size());
+                swapIntsInHeader(rawData.data(), rawData.size());
     
             singleArch.cputype = header->cputype;
             singleArch.cpusubtype = header->cpusubtype;
@@ -376,11 +377,11 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
             numArchs = 1;
         } else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64) {
             // We have a 64-bit thin binary
-            struct mach_header_64* header = (struct mach_header_64*)bytes.data();
+            struct mach_header_64* header = (struct mach_header_64*)rawData.data();
 
             // Check if we need to swap the bytes
             if (magic == MH_CIGAM_64)
-                swapIntsInHeader(bytes.data(), bytes.size());
+                swapIntsInHeader(rawData.data(), rawData.size());
             
             singleArch.cputype = header->cputype;
             singleArch.cpusubtype = header->cpusubtype;
@@ -392,12 +393,12 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
 
             // Check if we need to swap the bytes
             if (magic == FAT_CIGAM)
-                swapIntsInHeader(bytes.data(), bytes.size());
+                swapIntsInHeader(rawData.data(), rawData.size());
             
-            archs = (struct fat_arch*)(bytes.data() + sizeof(struct fat_header));            
-            numArchs = ((struct fat_header *)bytes.data())->nfat_arch;
+            archs = (struct fat_arch*)(rawData.data() + sizeof(struct fat_header));            
+            numArchs = ((struct fat_header *)rawData.data())->nfat_arch;
             
-            unsigned maxArchs = (bytes.size() - sizeof(struct fat_header)) / sizeof(struct fat_arch);
+            unsigned maxArchs = (sizeInBytes - sizeof(struct fat_header)) / sizeof(struct fat_arch);
             if (numArchs > maxArchs)
                 numArchs = maxArchs;
         }            

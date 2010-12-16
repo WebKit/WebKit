@@ -1,3 +1,20 @@
+2010-12-15  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clang -Wcast-align gives an error in WebBasePluginPackage.mm
+        https://bugs.webkit.org/show_bug.cgi?id=51144
+
+        Fix an alignment issue. OSSwapInt32 takes data that is 32-bit aligned on ARM, but
+        we were calling it on a byte array 32 bits at a time. While this is okay in practice,
+        since TCMalloc won't give us a non-32-bit aligned block array of bytes and Vector's
+        inline storage is at the beginning of the Vector, it is still better to fix this
+        and silence the warning.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (swapIntsInHeader):
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+
 2010-12-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
