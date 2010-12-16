@@ -1,3 +1,16 @@
+2010-12-16  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Turn off drawing area updates if the item is not visible
+
+        The updates are controlled by the QGraphicsItem::visible property.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKViewPrivate::updateViewportSize):
+        (QGraphicsWKView::setGeometry):
+        (QGraphicsWKView::itemChange):
+
 2010-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

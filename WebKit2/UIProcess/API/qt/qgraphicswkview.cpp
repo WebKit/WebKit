@@ -47,6 +47,7 @@ struct QGraphicsWKViewPrivate {
     QGraphicsWKViewPrivate(QGraphicsWKView* view);
     WKPageRef pageRef() const { return page->pageRef(); }
 
+    void updateViewportSize();
     void onScaleChanged();
     void commitScale();
 
@@ -55,6 +56,13 @@ struct QGraphicsWKViewPrivate {
     RunLoop::Timer<QGraphicsWKViewPrivate> m_scaleCommitTimer;
     bool m_isChangingScale;
 };
+
+void QGraphicsWKViewPrivate::updateViewportSize()
+{
+    // NOTE: call geometry() as setGeometry ensures that
+    // the geometry is within legal bounds (minimumSize, maximumSize)
+    page->setViewportSize(q->geometry().size().toSize());
+}
 
 QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingStoreType, QGraphicsItem* parent)
     : QGraphicsWidget(parent)
@@ -113,9 +121,12 @@ void QGraphicsWKView::setGeometry(const QRectF& rect)
     if (geometry().size() == oldSize)
         return;
 
-    // NOTE: call geometry() as setGeometry ensures that
-    // the geometry is within legal bounds (minimumSize, maximumSize)
-    page()->setViewportSize(geometry().size().toSize());
+    // Return early if not visible, since setting size on drawing
+    // areas when not visible is not supported.
+    if (!isVisible())
+        return;
+
+    d->updateViewportSize();
 }
 
 void QGraphicsWKView::load(const QUrl& url)
@@ -209,7 +220,19 @@ bool QGraphicsWKView::focusNextPrevChild(bool next)
 */
 QVariant QGraphicsWKView::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-    // Here so that it can be reimplemented without breaking ABI.
+    if (change == ItemVisibleChange) {
+        if (value.canConvert<bool>()) {
+            DrawingAreaProxy* drawingArea = page()->d->page->drawingArea();
+            bool shouldBeVisible = value.toBool();
+            drawingArea->setPageIsVisible(shouldBeVisible);
+
+            // This item might have been resized during being
+            // invisible. Update the size in any case.
+            if (shouldBeVisible)
+                d->updateViewportSize();
+        }
+        return value;
+    }
     return QGraphicsWidget::itemChange(change, value);
 }
 
