@@ -2,6 +2,12 @@
 
         Unreviewed. Update Chromium test expectations.
 
+        * platform/chromium/test_expectations.txt:
+
+2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
         * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
         * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
         * platform/chromium-linux/svg/filters/feComposite-expected.checksum:
