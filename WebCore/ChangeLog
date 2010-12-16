@@ -1,3 +1,24 @@
+2010-12-16  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Fix IDBDatabaseError code offset bug
+        https://bugs.webkit.org/show_bug.cgi?id=51177
+
+        IDBDatabaseError::code() needs to return the error code without
+        offset. But when the IDBDatabaseError is created, the code comes with
+        an offset (it gets passed a IDBDatabaseException::IDBDatabaseExceptionCode).
+
+        However, in Chromium, IDBDatabaseErrors are sometimes also created via
+        WebIDBDatabaseError when they are sent across IPC, and then the error
+        code comes *without* offset. Provide a second create() function for
+        this case.
+
+        * storage/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        (WebCore::IDBDatabaseError::createWithoutOffset):
+        (WebCore::IDBDatabaseError::code):
+
 2010-12-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74162.

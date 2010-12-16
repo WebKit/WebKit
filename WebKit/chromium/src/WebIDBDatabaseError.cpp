@@ -47,7 +47,7 @@ void WebIDBDatabaseError::assign(const WebIDBDatabaseError& value)
 
 void WebIDBDatabaseError::assign(unsigned short code, const WebString& message)
 {
-    m_private = IDBDatabaseError::create(code, message);
+    m_private = IDBDatabaseError::createWithoutOffset(code, message);
 }
 
 void WebIDBDatabaseError::reset()

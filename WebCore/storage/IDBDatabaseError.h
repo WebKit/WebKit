@@ -39,11 +39,20 @@ class IDBDatabaseError : public RefCounted<IDBDatabaseError> {
 public:
     static PassRefPtr<IDBDatabaseError> create(unsigned short code, const String& message)
     {
+        ASSERT(code >= IDBDatabaseException::IDBDatabaseExceptionOffset);
+        ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionMax);
+        return adoptRef(new IDBDatabaseError(code - IDBDatabaseException::IDBDatabaseExceptionOffset, message));
+    }
+
+    static PassRefPtr<IDBDatabaseError> createWithoutOffset(unsigned short code, const String& message)
+    {
+        ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionOffset);
         return adoptRef(new IDBDatabaseError(code, message));
     }
+
     ~IDBDatabaseError() { }
 
-    unsigned short code() const { return m_code - IDBDatabaseException::IDBDatabaseExceptionOffset; }
+    unsigned short code() const { return m_code; }
     void setCode(unsigned short value) { m_code = value; }
     const String& message() const { return m_message; }
     void setMessage(const String& value) { m_message = value; }
