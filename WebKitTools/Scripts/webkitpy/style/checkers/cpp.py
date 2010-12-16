@@ -47,6 +47,8 @@ import string
 import sys
 import unicodedata
 
+# The key to use to provide a class to fake loading a header file.
+INCLUDE_IO_INJECTION_KEY = 'include_header_io'
 
 # Headers that we consider STL headers.
 _STL_HEADERS = frozenset([
@@ -116,6 +118,12 @@ _CONFIG_HEADER = 0
 _PRIMARY_HEADER = 1
 _OTHER_HEADER = 2
 _MOC_HEADER = 3
+
+
+# A dictionary of items customize behavior for unit test. For example,
+# INCLUDE_IO_INJECTION_KEY allows providing a custom io class which allows
+# for faking a header file.
+_unit_test_config = {}
 
 
 # The regexp compilation caching is inlined in all regexp functions for
@@ -2824,6 +2832,7 @@ def update_include_state(filename, include_state, io=codecs):
     Returns:
       True if a header was succesfully added. False otherwise.
     """
+    io = _unit_test_config.get(INCLUDE_IO_INJECTION_KEY, codecs)
     header_file = None
     try:
         header_file = io.open(filename, 'r', 'utf8', 'replace')
@@ -2842,8 +2851,7 @@ def update_include_state(filename, include_state, io=codecs):
     return True
 
 
-def check_for_include_what_you_use(filename, clean_lines, include_state, error,
-                                   io=codecs):
+def check_for_include_what_you_use(filename, clean_lines, include_state, error):
     """Reports for missing stl includes.
 
     This function will output warnings to make sure you are including the headers
@@ -2857,8 +2865,6 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
       clean_lines: A CleansedLines instance containing the file.
       include_state: An _IncludeState instance.
       error: The function to call with any errors found.
-      io: The IO factory to use to read the header file. Provided for unittest
-          injection.
     """
     required = {}  # A map of header name to line_number and the template entity.
         # Example of required: { '<functional>': (1219, 'less<>') }
@@ -2909,7 +2915,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
     for header in include_state.keys():  #NOLINT
         (same_module, common_path) = files_belong_to_same_module(abs_filename, header)
         fullpath = common_path + header
-        if same_module and update_include_state(fullpath, include_state, io):
+        if same_module and update_include_state(fullpath, include_state):
             header_found = True
 
     # If we can't find the header file for a .cpp, assume it's because we don't
@@ -3121,6 +3127,9 @@ class CppChecker(object):
 
 
 # FIXME: Remove this function (requires refactoring unit tests).
-def process_file_data(filename, file_extension, lines, error, min_confidence):
+def process_file_data(filename, file_extension, lines, error, min_confidence, unit_test_config):
+    global _unit_test_config
+    _unit_test_config = unit_test_config
     checker = CppChecker(filename, file_extension, error, min_confidence)
     checker.check(lines)
+    _unit_test_config = {}

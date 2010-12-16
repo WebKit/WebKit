@@ -43,6 +43,7 @@ import re
 import unittest
 import cpp as cpp_style
 from cpp import CppChecker
+from ..filter import FilterConfiguration
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
@@ -52,17 +53,22 @@ class ErrorCollector:
     # This is a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
-    def __init__(self, assert_fn):
-        """assert_fn: a function to call when we notice a problem."""
+    def __init__(self, assert_fn, filter=None):
+        """assert_fn: a function to call when we notice a problem.
+           filter: filters the errors that we are concerned about."""
         self._assert_fn = assert_fn
         self._errors = []
+        if not filter:
+            filter = FilterConfiguration()
+        self._filter = filter
 
     def __call__(self, unused_linenum, category, confidence, message):
         self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
                         ' which is not in STYLE_CATEGORIES' % (message, category))
-        self._seen_style_categories[category] = 1
-        self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
+        if self._filter.should_check(category, ""):
+            self._seen_style_categories[category] = 1
+            self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
 
     def results(self):
         if len(self._errors) < 2:
@@ -86,12 +92,6 @@ class ErrorCollector:
             if category not in self._seen_style_categories:
                 import sys
                 sys.exit('FATAL ERROR: There are no tests for category "%s"' % category)
-
-    def remove_if_present(self, substr):
-        for (index, error) in enumerate(self._errors):
-            if error.find(substr) != -1:
-                self._errors = self._errors[0:index] + self._errors[(index + 1):]
-                break
 
 
 # This class is a lame mock of codecs. We do not verify filename, mode, or
@@ -130,121 +130,61 @@ class CppStyleTestBase(unittest.TestCase):
 
     # Helper function to avoid needing to explicitly pass confidence
     # in all the unit test calls to cpp_style.process_file_data().
-    def process_file_data(self, filename, file_extension, lines, error):
+    def process_file_data(self, filename, file_extension, lines, error, unit_test_config={}):
         """Call cpp_style.process_file_data() with the min_confidence."""
         return cpp_style.process_file_data(filename, file_extension, lines,
-                                           error, self.min_confidence)
+                                           error, self.min_confidence, unit_test_config)
+
+    def perform_lint(self, code, filename, basic_error_rules, unit_test_config={}):
+        error_collector = ErrorCollector(self.assert_, FilterConfiguration(basic_error_rules))
+        lines = code.split('\n')
+        extension = filename.split('.')[1]
+        self.process_file_data(filename, extension, lines, error_collector, unit_test_config)
+        return error_collector.results()
 
     # Perform lint on single line of input and return the error message.
-    def perform_single_line_lint(self, code, file_name):
-        error_collector = ErrorCollector(self.assert_)
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        clean_lines = cpp_style.CleansedLines(lines)
-        include_state = cpp_style._IncludeState()
-        function_state = cpp_style._FunctionState(self.min_confidence)
-        ext = file_name[file_name.rfind('.') + 1:]
-        class_state = cpp_style._ClassState()
-        file_state = cpp_style._FileState()
-        cpp_style.process_line(file_name, ext, clean_lines, 0,
-                               include_state, function_state,
-                               class_state, file_state, error_collector)
-        # Single-line lint tests are allowed to fail the 'unlintable function'
-        # check.
-        error_collector.remove_if_present(
-            'Lint failed to find start of function body.')
-        return error_collector.results()
+    def perform_single_line_lint(self, code, filename):
+        basic_error_rules = ('-build/header_guard',
+                             '-legal/copyright',
+                             '-readability/fn_size',
+                             '-whitespace/ending_newline')
+        return self.perform_lint(code, filename, basic_error_rules)
 
     # Perform lint over multiple lines and return the error message.
     def perform_multi_line_lint(self, code, file_extension):
-        error_collector = ErrorCollector(self.assert_)
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        lines = cpp_style.CleansedLines(lines)
-        class_state = cpp_style._ClassState()
-        file_state = cpp_style._FileState()
-        for i in xrange(lines.num_lines()):
-            cpp_style.check_style(lines, i, file_extension, class_state, file_state, error_collector)
-            cpp_style.check_for_non_standard_constructs(lines, i, class_state,
-                                                        error_collector)
-        class_state.check_finished(error_collector)
-        return error_collector.results()
+        basic_error_rules = ('-build/header_guard',
+                             '-legal/copyright',
+                             '-multi_line_filter',
+                             '-whitespace/ending_newline')
+        return self.perform_lint(code, 'test.' + file_extension, basic_error_rules)
 
-    # Similar to perform_multi_line_lint, but calls check_language instead of
-    # check_for_non_standard_constructs
-    def perform_language_rules_check(self, file_name, code):
-        error_collector = ErrorCollector(self.assert_)
-        include_state = cpp_style._IncludeState()
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        lines = cpp_style.CleansedLines(lines)
-        ext = file_name[file_name.rfind('.') + 1:]
-        for i in xrange(lines.num_lines()):
-            cpp_style.check_language(file_name, lines, i, ext, include_state,
-                                     error_collector)
-        return error_collector.results()
+    # Only keep some errors related to includes, namespaces and rtti.
+    def perform_language_rules_check(self, filename, code):
+        basic_error_rules = ('-',
+                             '+build/include',
+                             '+build/include_order',
+                             '+build/namespaces',
+                             '+runtime/rtti')
+        return self.perform_lint(code, filename, basic_error_rules)
 
+    # Only keep function length errors.
     def perform_function_lengths_check(self, code):
-        """Perform Lint function length check on block of code and return warnings.
+        basic_error_rules = ('-',
+                             '+readability/fn_size')
+        return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
-        Builds up an array of lines corresponding to the code and strips comments
-        using cpp_style functions.
-
-        Establishes an error collector and invokes the function length checking
-        function following cpp_style's pattern.
-
-        Args:
-          code: C++ source code expected to generate a warning message.
-
-        Returns:
-          The accumulated errors.
-        """
-        error_collector = ErrorCollector(self.assert_)
-        function_state = cpp_style._FunctionState(self.min_confidence)
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        lines = cpp_style.CleansedLines(lines)
-        for i in xrange(lines.num_lines()):
-            cpp_style.detect_functions(lines, i,
-                                       function_state, error_collector)
-            cpp_style.check_for_function_lengths(lines, i,
-                                                 function_state, error_collector)
-        return error_collector.results()
-
-    # Similar to perform_function_lengths_check, but calls check_pass_ptr_usage
-    # instead of check_for_function_lengths.
+    # Only keep pass ptr errors.
     def perform_pass_ptr_check(self, code):
-        error_collector = ErrorCollector(self.assert_)
-        function_state = cpp_style._FunctionState(self.min_confidence)
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        lines = cpp_style.CleansedLines(lines)
-        for i in xrange(lines.num_lines()):
-            cpp_style.detect_functions(lines, i,
-                                       function_state, error_collector)
-            cpp_style.check_pass_ptr_usage(lines, i,
-                                           function_state, error_collector)
-        return error_collector.results()
+        basic_error_rules = ('-',
+                             '+readability/pass_ptr')
+        return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
+    # Only include what you use errors.
     def perform_include_what_you_use(self, code, filename='foo.h', io=codecs):
-        # First, build up the include state.
-        error_collector = ErrorCollector(self.assert_)
-        include_state = cpp_style._IncludeState()
-        lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(lines, error_collector)
-        lines = cpp_style.CleansedLines(lines)
-        file_extension = filename[filename.rfind('.') + 1:]
-        for i in xrange(lines.num_lines()):
-            cpp_style.check_language(filename, lines, i, file_extension, include_state,
-                                     error_collector)
-        # We could clear the error_collector here, but this should
-        # also be fine, since our IncludeWhatYouUse unittests do not
-        # have language problems.
-
-        # Second, look for missing includes.
-        cpp_style.check_for_include_what_you_use(filename, lines, include_state,
-                                                 error_collector, io)
-        return error_collector.results()
+        basic_error_rules = ('-',
+                             '+build/include_what_you_use')
+        unit_test_config = {cpp_style.INCLUDE_IO_INJECTION_KEY: io}
+        return self.perform_lint(code, filename, basic_error_rules, unit_test_config)
 
     # Perform lint and compare the error message with "expected_message".
     def assert_lint(self, code, expected_message, file_name='foo.cpp'):
@@ -715,11 +655,19 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             r'''/* int a = 0; multi-liner
             static const int b = 0;''',
-      'Could not find end of multi-line comment'
-      '  [readability/multiline_comment] [5]')
+            ['Could not find end of multi-line comment'
+             '  [readability/multiline_comment] [5]',
+             'Complex multi-line /*...*/-style comment found. '
+             'Lint may give bogus warnings.  Consider replacing these with '
+             '//-style comments, with #if 0...#endif, or with more clearly '
+             'structured multi-line comments.  [readability/multiline_comment] [5]'])
         self.assert_multi_line_lint(r'''    /* multi-line comment''',
-                                    'Could not find end of multi-line comment'
-                                    '  [readability/multiline_comment] [5]')
+                                    ['Could not find end of multi-line comment'
+                                     '  [readability/multiline_comment] [5]',
+                                     'Complex multi-line /*...*/-style comment found. '
+                                     'Lint may give bogus warnings.  Consider replacing these with '
+                                     '//-style comments, with #if 0...#endif, or with more clearly '
+                                     'structured multi-line comments.  [readability/multiline_comment] [5]'])
         self.assert_multi_line_lint(r'''    // /* comment, but not multi-line''', '')
 
     def test_multiline_strings(self):
@@ -1325,10 +1273,8 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('a = 1<<20', 'Missing spaces around <<  [whitespace/operators] [3]')
         self.assert_lint('if (a = b == 1)', '')
         self.assert_lint('a = 1 << 20', '')
-        self.assert_multi_line_lint('#include "config.h"\n#include <sys/io.h>\n',
-                                    '')
-        self.assert_multi_line_lint('#include "config.h"\n#import <foo/bar.h>\n',
-                                    '')
+        self.assert_multi_line_lint('#include <sys/io.h>\n', '')
+        self.assert_multi_line_lint('#import <foo/bar.h>\n', '')
 
     def test_operator_methods(self):
         self.assert_lint('String operator+(const String&, const String&);', '')
@@ -1394,7 +1340,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('string EmptyString() { return ""; }', '')
         self.assert_lint('string EmptyString () { return ""; }', '')
         self.assert_lint('string VeryLongNameFunctionSometimesEndsWith(\n'
-                         '    VeryLongNameType very_long_name_variable) {}', '')
+                         '    VeryLongNameType veryLongNameVariable) {}', '')
         self.assert_lint('template<>\n'
                          'string FunctionTemplateSpecialization<SomeType>(\n'
                          '      int x) { return ""; }', '')
@@ -1405,12 +1351,12 @@ class CppStyleTest(CppStyleTestBase):
         # should not catch methods of template classes.
         self.assert_lint('string Class<Type>::Method() const\n'
                          '{\n'
-                         '  return "";\n'
+                         '    return "";\n'
                          '}\n', '')
         self.assert_lint('string Class<Type>::Method(\n'
-                         '   int arg) const\n'
+                         '    int arg) const\n'
                          '{\n'
-                         '  return "";\n'
+                         '    return "";\n'
                          '}\n', '')
 
     def test_no_spaces_in_function_calls(self):
@@ -2182,7 +2128,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '\n'
                                          '#include "foo.h"\n'
                                          '#include "g.h"\n',
-                                         '"foo.h" already included at foo.cpp:1  [build/include] [4]')
+                                         '"foo.h" already included at foo.cpp:2  [build/include] [4]')
 
     def test_check_wtf_includes(self):
         self.assert_language_rules_check('foo.cpp',
@@ -2742,7 +2688,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             ['This { should be at the end of the previous line  '
              '[whitespace/braces] [4]',
              'The class Foo probably needs a virtual destructor due to having '
-             'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
+             'virtual method(s), one declared at line 3.  [runtime/virtual] [4]'])
 
 
 class PassPtrTest(CppStyleTestBase):

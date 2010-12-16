@@ -1,3 +1,42 @@
+2010-12-16  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style unit tests has some duplicate boilerplate code.
+        https://bugs.webkit.org/show_bug.cgi?id=49519
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (update_include_state): Replaced the "io" parameter with the global
+        configuration _unit_test_config. This allowed not calling into
+        functions at a low level and also not plumbing through the injection
+        information through many levels of code.
+        (check_for_include_what_you_use): Ditto.
+        (process_file_data): Added the ability to set up the unit test config
+        to allow for injection.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (ErrorCollector.__init__): Added support for having a filter for errors.
+        (ErrorCollector.__call__): Ditto.
+        (CppStyleTestBase.process_file_data): Added the ability to set unit_test_config.
+        (CppStyleTestBase.perform_lint): Consolidated logic for the perform functions.
+        (CppStyleTestBase.perform_single_line_lint): Replace specific calls to
+        functions in the cpp.py with generic processing and a filter that
+        indicates what errors should be kept.
+        (CppStyleTestBase.perform_multi_line_lint): Ditto.
+        (CppStyleTestBase.perform_language_rules_check): Ditto.
+        (CppStyleTestBase.perform_function_lengths_check): Ditto.
+        (CppStyleTestBase.perform_pass_ptr_check): Ditto.
+        (CppStyleTestBase.perform_include_what_you_use): Ditto.
+        (CppStyleTest.test_multi_line_comments): Added another
+        error message which applies to the test case.
+        (CppStyleTest.test_spacing_for_binary_ops): Fixed test
+        to not have config.h, since it is processed as a header file.
+        (CppStyleTest.test_static_or_global_stlstrings): Fixed variable name
+        style and indentation in checked code.
+        (OrderOfIncludesTest.test_check_preprocessor_in_include_section):
+        Fixed line number.
+        (NoNonVirtualDestructorsTest.test_multi_line_declaration_with_error):
+        Ditto.
+
 2010-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74136.
