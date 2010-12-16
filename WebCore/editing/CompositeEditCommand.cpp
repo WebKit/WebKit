@@ -716,8 +716,13 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
 
     RefPtr<Node> newBlock = insertNewDefaultParagraphElementAt(upstreamStart);
     
+    bool endWasBr = visibleParagraphEnd.deepEquivalent().node()->hasTagName(brTag);
+
     moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(Position(newBlock.get(), 0)));
-    
+
+    if (newBlock->lastChild() && newBlock->lastChild()->hasTagName(brTag) && !endWasBr)
+        removeNode(newBlock->lastChild());
+
     return newBlock.release();
 }
 

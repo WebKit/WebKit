@@ -1,3 +1,16 @@
+2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        execCommand('JustifyCenter') adds extra BR
+        https://bugs.webkit.org/show_bug.cgi?id=51082
+
+        Added a test to ensure WebKit executes Justify* properly. In particular,
+        this test ensures WebKit does not erroneously add a BR at the end of each block.
+
+        * editing/execCommand/justify-expected.txt: Added.
+        * editing/execCommand/justify.html: Added.
+
 2010-12-16  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Updated chromium test expectations.
