@@ -251,6 +251,18 @@
     });
   }
 
+  window.addEventListener('message', function(e) {
+    if (e.origin != 'https://webkit-commit-queue.appspot.com')
+      return;
+
+    $('.statusBubble')[0].style.height = e.data.height;
+    $('.statusBubble')[0].style.width = e.data.width;
+  });
+
+  function handleStatusBubbleLoad(e) {
+    e.target.contentWindow.postMessage('containerMetrics', 'https://webkit-commit-queue.appspot.com');
+  }
+
   function fetchHistory() {
     $.get('attachment.cgi?id=' + attachment_id + '&action=edit', function(data) {
       var bug_id = /Attachment \d+ Details for Bug (\d+)/.exec(data)[1];
@@ -268,7 +280,15 @@
 
       var details = $(data);
       addFlagsForAttachment(details);
-      $('#statusBubbleContainer').append($('<iframe style="margin-top:2px;" class="statusBubble" src="https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id + '" scrolling="no"></iframe>'));
+
+      var statusBubble = document.createElement('iframe');
+      statusBubble.className = 'statusBubble';
+      statusBubble.src  = 'https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id;
+      statusBubble.scrolling = 'no';
+      // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
+      statusBubble.onload = handleStatusBubbleLoad;
+      $('#statusBubbleContainer').append(statusBubble);
+
       $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });
   }

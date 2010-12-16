@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        size status bubble to it's contents on the code review page
+        https://bugs.webkit.org/show_bug.cgi?id=51142
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         fix goofups from r74142 and r74130
         https://bugs.webkit.org/show_bug.cgi?id=51146
 

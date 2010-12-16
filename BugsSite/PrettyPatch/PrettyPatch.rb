@@ -349,16 +349,13 @@ body {
 }
 
 .statusBubble {
-  margin-top: 2px;
-  /* FIXME: Size the statusBubble via postMessage so it sizes to it's content. */
-  width: 300px;
-  height: 20px;
+  margin: 2px 2px 0 0;
   border: none;
   vertical-align: middle;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=15"></script> 
+<script src="code-review.js?version=16"></script>
 EOF
 
     def self.revisionOrDescription(string)
