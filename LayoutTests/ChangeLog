@@ -1,5 +1,23 @@
 2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/chromium-linux/svg/filters/feComposite-expected.checksum:
+        * platform/chromium-linux/svg/filters/feComposite-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feComposite-expected.checksum: Added.
+        * platform/chromium-mac/svg/filters/feComposite-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/chromium-win/svg/filters/feComposite-expected.checksum:
+        * platform/chromium-win/svg/filters/feComposite-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2010-12-16  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Update Chromium test expectations to match changes made in r74177.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum:

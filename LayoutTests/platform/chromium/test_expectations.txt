@@ -3250,3 +3250,4 @@ BUGCR67032 WIN : inspector/dom-breakpoints.html = TEXT
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUGCR67139 WIN MAC DEBUG : storage/close-during-stress-test.html = CRASH
