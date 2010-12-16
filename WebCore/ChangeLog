@@ -1,5 +1,14 @@
 2010-12-16  Daniel Bates  <dbates@rim.com>
 
+        Formatting fix; un-indent one level all lines in [2793, 2808] (with respect to r74217)
+        so as to be consistent with the formatting of the rest of this file.
+
+        Also, add an empty line between the win32* and wince* conditional include blocks.
+
+        * WebCore.pro:
+
+2010-12-16  Daniel Bates  <dbates@rim.com>
+
         Reviewed by Antonio Gomes.
 
         [Qt] Only include ScrollAnimatorWin.h and compile ScrollAnimatorWin.cpp

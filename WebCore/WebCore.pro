@@ -2790,22 +2790,23 @@ win32-*|wince* {
         platform/graphics/win/TransformationMatrixWin.cpp
 }
 
-    mac {
-        SOURCES += \
-            platform/text/cf/StringCF.cpp \
-            platform/text/cf/StringImplCF.cpp
-        LIBS_PRIVATE += -framework Carbon -framework AppKit
-    }
+mac {
+    SOURCES += \
+        platform/text/cf/StringCF.cpp \
+        platform/text/cf/StringImplCF.cpp
+    LIBS_PRIVATE += -framework Carbon -framework AppKit
+}
 
-    win32-* {
-        LIBS += -lgdi32
-        LIBS += -lole32
-        LIBS += -luser32
-    }
-    wince* {
-        LIBS += -lmmtimer
-        LIBS += -lole32
-    }
+win32-* {
+    LIBS += -lgdi32
+    LIBS += -lole32
+    LIBS += -luser32
+}
+
+wince* {
+    LIBS += -lmmtimer
+    LIBS += -lole32
+}
 
 contains (CONFIG, text_breaking_with_icu) {
     SOURCES += platform/text/TextBreakIteratorICU.cpp
