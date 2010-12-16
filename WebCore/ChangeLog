@@ -1,3 +1,9 @@
+2010-12-16  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Fixed chromium build break caused by r74207.
+
+        * platform/ContextMenuItem.h:
+
 2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix.

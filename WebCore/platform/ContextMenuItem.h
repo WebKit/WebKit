@@ -216,6 +216,7 @@ namespace WebCore {
         bool checked;
         bool enabled;
     };
+#else
     typedef void* PlatformMenuItemDescription;
 #endif
 
