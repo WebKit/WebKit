@@ -1,3 +1,17 @@
+2010-12-16  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [JSC] Const correctness in ASTBuilder and SyntaxChecker
+        https://bugs.webkit.org/show_bug.cgi?id=51141
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::getName):
+        (JSC::ASTBuilder::getType):
+        (JSC::ASTBuilder::isResolve):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2010-12-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

@@ -576,10 +576,10 @@ public:
         return result;
     }
     
-    const Identifier& getName(Property property) { return property->name(); }
-    PropertyNode::Type getType(Property property) { return property->type(); }
+    const Identifier& getName(Property property) const { return property->name(); }
+    PropertyNode::Type getType(Property property) const { return property->type(); }
 
-    bool isResolve(ExpressionNode* expr) { return expr->isResolveNode(); }
+    bool isResolve(ExpressionNode* expr) const { return expr->isResolveNode(); }
 
 private:
     struct Scope {
