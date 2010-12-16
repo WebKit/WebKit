@@ -4,3 +4,4 @@ This test uses the execCommand to Outdent the text below. This test that nodes, 
 A
 B
 C
+

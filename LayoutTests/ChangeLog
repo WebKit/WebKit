@@ -1,3 +1,22 @@
+2010-12-16  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        More rebaselining needed for new-run-webkit-tests update
+        https://bugs.webkit.org/show_bug.cgi?id=51147
+
+        Some cases were missed while rebaselining in bug 51018.
+
+        * platform/chromium-mac/editing/execCommand/outdent-blockquote-test2-expected.txt:
+        * platform/chromium-mac/editing/pasteboard/copy-standalone-image-expected.txt:
+        * platform/chromium-mac/http/tests/misc/authentication-sent-to-redirect-expected.txt:
+        * platform/chromium-mac/http/tests/security/cross-frame-access-get-override-expected.txt:
+        * platform/chromium-mac/svg/custom/use-invalid-style-expected.txt:
+        * platform/chromium-win/http/tests/misc/authentication-sent-to-redirect-expected.txt:
+        * platform/chromium-win/platform/win/plugins/get-value-netscape-window-expected.txt:
+        * platform/chromium/plugins/document-open-expected.txt: Added.
+        * plugins/document-open-expected.txt: Rolled out change from r74097.
+
 2010-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
