@@ -378,7 +378,7 @@ void PluginView::setWindowIsVisible(bool windowIsVisible)
 
 void PluginView::setWindowIsFocused(bool windowIsFocused)
 {
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->windowFocusChanged(windowIsFocused);    
@@ -386,7 +386,7 @@ void PluginView::setWindowIsFocused(bool windowIsFocused)
 
 void PluginView::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
@@ -461,8 +461,8 @@ void PluginView::initializePlugin()
 #if PLATFORM(MAC)
 PlatformLayer* PluginView::platformLayer() const
 {
-    // The plug-in can be null here if it failed to initialize or hasn't yet been initialized.
-    if (!m_plugin)
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
         return 0;
         
     return m_plugin->pluginLayer();
@@ -472,9 +472,9 @@ PlatformLayer* PluginView::platformLayer() const
 JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 {
     // The plug-in can be null here if it failed to initialize.
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return 0;
-    
+
     NPObject* scriptableNPObject = m_plugin->pluginScriptableNPObject();
     if (!scriptableNPObject)
         return 0;
@@ -488,7 +488,7 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
 {
     // The plug-in can be null here if it failed to initialize.
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);
@@ -537,7 +537,7 @@ void PluginView::setParent(ScrollView* scrollView)
 
 void PluginView::handleEvent(Event* event)
 {
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return;
 
     const WebEvent* currentEvent = WebPage::currentEvent();
@@ -575,7 +575,7 @@ void PluginView::handleEvent(Event* event)
     
 void PluginView::viewGeometryDidChange()
 {
-    if (!parent() || !m_plugin || !m_isInitialized)
+    if (!m_isInitialized || !m_plugin || !parent())
         return;
 
     // Get the frame rect in window coordinates.
@@ -797,7 +797,10 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
 void PluginView::setFocus(bool hasFocus)
 {
     Widget::setFocus(hasFocus);
-    
+
+    if (!m_isInitialized || !m_plugin)
+        return;
+
     m_plugin->setFocus(hasFocus);
 }
 
