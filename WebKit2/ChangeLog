@@ -70,6 +70,30 @@
 
         Reviewed by Sam Weinig.
 
+        DrawingAreaProxy::setSize shouldn't be a virtual member function
+        https://bugs.webkit.org/show_bug.cgi?id=51275
+
+        Add a pure virtual sizeDidChange member function to DrawingAreaProxy, and only
+        call it if the size changes.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sizeDidChange):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setSize):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::size):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::sizeDidChange):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        * UIProcess/TiledDrawingAreaProxy.h:
+
+2010-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a WebPageProxy parameter to the DrawingAreaProxy constructor
         https://bugs.webkit.org/show_bug.cgi?id=51271
 

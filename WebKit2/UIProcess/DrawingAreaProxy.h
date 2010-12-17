@@ -55,9 +55,7 @@ public:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*) { ASSERT_NOT_REACHED(); }
 
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
-    virtual void setSize(const WebCore::IntSize& size) { m_size = size; }
-    const WebCore::IntSize& size() const { return m_size; }
-
+    virtual void sizeDidChange() = 0;
     virtual void setPageIsVisible(bool isVisible) = 0;
     
 #if USE(ACCELERATED_COMPOSITING)
@@ -66,6 +64,9 @@ public:
 #endif
 
     const DrawingAreaInfo& info() const { return m_info; }
+
+    const WebCore::IntSize& size() const { return m_size; }
+    void setSize(const WebCore::IntSize&);
 
 protected:
     explicit DrawingAreaProxy(DrawingAreaInfo::Type, WebPageProxy*);

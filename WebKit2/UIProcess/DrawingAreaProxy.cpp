@@ -25,6 +25,8 @@
 
 #include "DrawingAreaProxy.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 DrawingAreaProxy::DrawingAreaProxy(DrawingAreaInfo::Type type, WebPageProxy* webPageProxy)
@@ -41,6 +43,15 @@ DrawingAreaInfo::Identifier DrawingAreaProxy::nextIdentifier()
 {
     static DrawingAreaInfo::Identifier nextID = 1;
     return ++nextID;
+}
+
+void DrawingAreaProxy::setSize(const IntSize& size)
+{ 
+    if (m_size == size)
+        return;
+
+    m_size = size;
+    sizeDidChange();
 }
 
 } // namespace WebKit

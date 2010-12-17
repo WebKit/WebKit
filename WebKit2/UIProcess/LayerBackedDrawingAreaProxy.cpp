@@ -61,18 +61,16 @@ void LayerBackedDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCont
 }
 #endif
 
-void LayerBackedDrawingAreaProxy::setSize(const IntSize& viewSize)
+void LayerBackedDrawingAreaProxy::sizeDidChange()
 {
-    DrawingAreaProxy::setSize(viewSize);
-
     WebPageProxy* page = this->page();
     if (!page->isValid())
         return;
 
-    if (viewSize.isEmpty())
+    if (m_size.isEmpty())
         return;
 
-    m_lastSetViewSize = viewSize;
+    m_lastSetViewSize = m_size;
 
     platformSetSize();
 
@@ -82,7 +80,7 @@ void LayerBackedDrawingAreaProxy::setSize(const IntSize& viewSize)
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, viewSize));
+    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)

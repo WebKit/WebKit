@@ -73,25 +73,23 @@ void ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCo
     platformPaint(rect, context);
 }
 
-void ChunkedUpdateDrawingAreaProxy::setSize(const IntSize& viewSize)
+void ChunkedUpdateDrawingAreaProxy::sizeDidChange()
 {
-    DrawingAreaProxy::setSize(viewSize);
-
     WebPageProxy* page = this->page();
     if (!page->isValid())
         return;
 
-    if (viewSize.isEmpty())
+    if (m_size.isEmpty())
         return;
 
-    m_lastSetViewSize = viewSize;
+    m_lastSetViewSize = m_size;
 
     if (m_isWaitingForDidSetFrameNotification)
         return;
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, viewSize));
+    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
 }
 
 void ChunkedUpdateDrawingAreaProxy::setPageIsVisible(bool isVisible)

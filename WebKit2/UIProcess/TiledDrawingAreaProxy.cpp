@@ -65,24 +65,24 @@ TiledDrawingAreaProxy::~TiledDrawingAreaProxy()
 {
 }
 
-void TiledDrawingAreaProxy::setSize(const IntSize& viewSize)
+void TiledDrawingAreaProxy::sizeDidChange()
 {
     WebPageProxy* page = this->page();
     if (!page || !page->isValid())
         return;
 
-    if (viewSize.isEmpty())
+    if (m_size.isEmpty())
         return;
 
-    m_viewSize = viewSize;
-    m_lastSetViewSize = viewSize;
+    m_viewSize = m_size;
+    m_lastSetViewSize = m_size;
 
     if (m_isWaitingForDidSetFrameNotification)
         return;
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
+    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(m_size));
 }
 
 void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)

@@ -68,7 +68,7 @@ private:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
-    virtual void setSize(const WebCore::IntSize&);
+    virtual void sizeDidChange();
     virtual void setPageIsVisible(bool isVisible);
 
     virtual void attachCompositingContext(uint32_t contextID);
