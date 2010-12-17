@@ -40,13 +40,13 @@ namespace WebCore {
 PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
 {
     if (value->IsNull())
-        return IDBKey::create();
+        return IDBKey::createNull();
     if (value->IsNumber())
-        return IDBKey::create(value->NumberValue());
+        return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
-        return IDBKey::create(v8ValueToWebCoreString(value));
+        return IDBKey::createString(v8ValueToWebCoreString(value));
     if (value->IsDate())
-        return 0; // Signals type error. FIXME: Implement dates.
+        return IDBKey::createDate(value->NumberValue());
 
     return 0; // Signals type error.
 }

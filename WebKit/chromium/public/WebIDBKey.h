@@ -44,11 +44,16 @@ public:
     ~WebIDBKey() { reset(); }
 
     WEBKIT_API static WebIDBKey createNull();
+    WEBKIT_API static WebIDBKey createString(const WebString&);
+    WEBKIT_API static WebIDBKey createDate(double);
+    WEBKIT_API static WebIDBKey createNumber(double);
     WEBKIT_API static WebIDBKey createInvalid();
     WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
-    WebIDBKey(const WebString& string) { assign(string); }
-    WebIDBKey(double number) { assign(number); }
+    // FIXME: Remove these two constructors after Chromium side is done.
+    WebIDBKey(const WebString& string) { assignString(string); }
+    WebIDBKey(double number) { assignNumber(number); }
+
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)
     {
@@ -58,14 +63,16 @@ public:
 
     WEBKIT_API void assign(const WebIDBKey&);
     WEBKIT_API void assignNull();
-    WEBKIT_API void assign(const WebString&);
-    WEBKIT_API void assign(double);
+    WEBKIT_API void assignString(const WebString&);
+    WEBKIT_API void assignDate(double);
+    WEBKIT_API void assignNumber(double);
     WEBKIT_API void assignInvalid();
     WEBKIT_API void reset();
 
     enum Type {
         NullType = 0,
         StringType,
+        DateType,
         NumberType,
         // Types not in WebCore::IDBKey:
         InvalidType
@@ -73,7 +80,8 @@ public:
 
     WEBKIT_API Type type() const;
     WEBKIT_API WebString string() const; // Only valid for StringType.
-    WEBKIT_API double number() const; // Only valid for numberType.
+    WEBKIT_API double date() const; // Only valid for DateType.
+    WEBKIT_API double number() const; // Only valid for NumberType.
 
 #if WEBKIT_IMPLEMENTATION
     WebIDBKey(const WTF::PassRefPtr<WebCore::IDBKey>&);

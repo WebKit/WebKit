@@ -38,18 +38,6 @@ IDBKey::IDBKey()
 {
 }
 
-IDBKey::IDBKey(double number)
-    : m_type(NumberType)
-    , m_number(number)
-{
-}
-
-IDBKey::IDBKey(const String& string)
-    : m_type(StringType)
-    , m_string(string.crossThreadString())
-{
-}
-
 IDBKey::~IDBKey()
 {
 }
@@ -57,17 +45,15 @@ IDBKey::~IDBKey()
 PassRefPtr<IDBKey> IDBKey::fromQuery(SQLiteStatement& query, int baseColumn)
 {
     if (!query.isColumnNull(baseColumn))
-        return IDBKey::create(query.getColumnText(baseColumn));
+        return IDBKey::createString(query.getColumnText(baseColumn));
 
-    if (!query.isColumnNull(baseColumn + 1)) {
-        ASSERT_NOT_REACHED(); // FIXME: Implement date.
-        return IDBKey::create();
-    }
+    if (!query.isColumnNull(baseColumn + 1))
+        return IDBKey::createDate(query.getColumnDouble(baseColumn + 1));
 
     if (!query.isColumnNull(baseColumn + 2))
-        return IDBKey::create(query.getColumnDouble(baseColumn + 2));
+        return IDBKey::createNumber(query.getColumnDouble(baseColumn + 2));
 
-    return IDBKey::create(); // Null.
+    return IDBKey::createNull();
 }
 
 bool IDBKey::isEqual(IDBKey* other)
@@ -78,7 +64,8 @@ bool IDBKey::isEqual(IDBKey* other)
     switch (m_type) {
     case StringType:
         return other->m_string == m_string;
-    // FIXME: Implement dates.
+    case DateType:
+        return other->m_date == m_date;
     case NumberType:
         return other->m_number == m_number;
     case NullType:
@@ -96,7 +83,8 @@ String IDBKey::whereSyntax(String qualifiedTableName) const
         return qualifiedTableName + "keyString = ?  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
     case IDBKey::NumberType:
         return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber = ?  ";
-    // FIXME: Implement date.
+    case IDBKey::DateType:
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate = ?  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
     case IDBKey::NullType:
         return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
     }
@@ -110,7 +98,8 @@ String IDBKey::lowerCursorWhereFragment(String comparisonOperator, String qualif
     switch (m_type) {
     case StringType:
         return "? " + comparisonOperator + " " + qualifiedTableName + "keyString  AND  ";
-    // FIXME: Implement date.
+    case DateType:
+        return "(? " + comparisonOperator + " " + qualifiedTableName + "keyDate  OR NOT " + qualifiedTableName + "keyString IS NULL)  AND  ";
     case NumberType:
         return "(? " + comparisonOperator + " " + qualifiedTableName + "keyNumber  OR  NOT " + qualifiedTableName + "keyString IS NULL  OR  NOT " + qualifiedTableName + "keyDate IS NULL)  AND  ";
     case NullType:
@@ -127,7 +116,8 @@ String IDBKey::upperCursorWhereFragment(String comparisonOperator, String qualif
     switch (m_type) {
     case StringType:
         return "(" + qualifiedTableName + "keyString " + comparisonOperator + " ?  OR  " + qualifiedTableName + "keyString IS NULL)  AND  ";
-    // FIXME: Implement date.
+    case DateType:
+        return "(" + qualifiedTableName + "keyDate " + comparisonOperator + " ? OR " + qualifiedTableName + "keyDate IS NULL)  AND  " + qualifiedTableName + "keyString IS NULL  AND  ";
     case NumberType:
         return "(" + qualifiedTableName + "keyNumber " + comparisonOperator + " ? OR " + qualifiedTableName + "keyNumber IS NULL)  AND  " + qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  ";
     case NullType:
@@ -146,6 +136,9 @@ int IDBKey::bind(SQLiteStatement& query, int column) const
     case IDBKey::StringType:
         query.bindText(column, m_string);
         return 1;
+    case IDBKey::DateType:
+        query.bindDouble(column, m_date);
+        return 1;
     case IDBKey::NumberType:
         query.bindDouble(column, m_number);
         return 1;
@@ -163,6 +156,11 @@ void IDBKey::bindWithNulls(SQLiteStatement& query, int baseColumn) const
     case IDBKey::StringType:
         query.bindText(baseColumn + 0, m_string);
         query.bindNull(baseColumn + 1);
+        query.bindNull(baseColumn + 2);
+        break;
+    case IDBKey::DateType:
+        query.bindNull(baseColumn + 0);
+        query.bindDouble(baseColumn + 1, m_date);
         query.bindNull(baseColumn + 2);
         break;
     case IDBKey::NumberType:

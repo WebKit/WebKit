@@ -98,22 +98,13 @@ PASS store.indexNames.item(100) is null
 transaction = db.transaction()
 store = transaction.objectStore('storeName')
 Try to insert data with a Date key:
-store.add({x: 'foo'}, new Date())
-PASS Exception thrown
-PASS code is DOMException.TYPE_MISMATCH_ERR
+store.add({x: 'foo'}, testDate)
 Try to insert a value not handled by structured clone:
 store.add({x: 'bar', y: document.getElementById('console')}, 'bar')
 PASS Exception thrown
 PASS code is DOMException.NOT_SUPPORTED_ERR
 Try to insert data where key path yields a Date key:
-store.add({x: new Date()}, 'foo')
-PASS Adding data where key path yielded Date key resulted in error.
-store.add({x: 'value'}, 'key')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
+store.add({x: new Date(), y: 'value'}, 'key')
 addSuccess():
 Success event fired:
 PASS 'result' in event is true
@@ -127,7 +118,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is "key"
-event.source.add({x: 'value'}, 'zzz')
+event.source.add({x: 'foo'}, 'zzz')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -208,8 +199,22 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-PASS event.result.x is "value"
+PASS event.result.y is "value"
 store = event.source
+store.get(testDate)
+getSuccessDateKey():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result.x is "foo"
 store.delete('key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

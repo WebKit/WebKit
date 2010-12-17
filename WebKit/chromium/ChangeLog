@@ -1,3 +1,28 @@
+2010-12-17  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Support Date objects as keys.
+        https://bugs.webkit.org/show_bug.cgi?id=51193
+
+        Update to match the underlying WebCore IDBKey class:
+        add the DateType, add create() functions for each type,
+        deprecate the public constructors (will be removed once
+        Chromium side is updated).
+
+        * public/WebIDBKey.h:
+        (WebKit::WebIDBKey::WebIDBKey):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::createString):
+        (WebKit::WebIDBKey::createDate):
+        (WebKit::WebIDBKey::createNumber):
+        (WebKit::WebIDBKey::assignNull):
+        (WebKit::WebIDBKey::assignString):
+        (WebKit::WebIDBKey::assignDate):
+        (WebKit::WebIDBKey::assignNumber):
+        (WebKit::WebIDBKey::date):
+
 2010-12-17  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.

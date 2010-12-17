@@ -48,7 +48,8 @@ v8::Handle<v8::Value> toV8(IDBKey* key)
         return v8::Number::New(key->number());
     case IDBKey::StringType:
         return v8String(key->string());
-    // FIXME: Implement dates.
+    case IDBKey::DateType:
+        return v8::Date::New(key->date());
     }
 
     ASSERT_NOT_REACHED();

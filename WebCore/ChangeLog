@@ -1,3 +1,36 @@
+2010-12-17  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Support Date objects as keys.
+        https://bugs.webkit.org/show_bug.cgi?id=51193
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        Use the new IDBKey factory functions, and support Date objects.
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        Create Date objects from DateType keys.
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::fromQuery):
+        (WebCore::IDBKey::isEqual):
+        (WebCore::IDBKey::whereSyntax):
+        (WebCore::IDBKey::lowerCursorWhereFragment):
+        (WebCore::IDBKey::upperCursorWhereFragment):
+        (WebCore::IDBKey::bind):
+        (WebCore::IDBKey::bindWithNulls):
+        Update all SQL related functions to handle Date keys.
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::createNull):
+        (WebCore::IDBKey::createNumber):
+        (WebCore::IDBKey::createString):
+        (WebCore::IDBKey::createDate):
+        Rename the create factories; since both number and date is just a
+        double, function overloading can't be used to discriminate between
+        the factories.
+        (WebCore::IDBKey::date):
+        Add getter for the date value.
+
 2010-12-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

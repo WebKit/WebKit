@@ -136,6 +136,7 @@ function checkMetadata()
     addData();
 }
 
+var testDate = new Date("August 25, 1991 20:57:08");
 
 function addData()
 {
@@ -144,17 +145,13 @@ function addData()
     window.store = evalAndLog("store = transaction.objectStore('storeName')");
 
     debug("Try to insert data with a Date key:");
-    // FIXME: This should work in the future.
-    try {
-        debug("store.add({x: 'foo'}, new Date())");
-        store.add({x: 'foo'}, new Date());
-        testFailed("Passing a Date as key argument should have thrown.");
-    } catch (err) {
-        testPassed("Exception thrown");
-        code = err.code;
-        shouldBe("code", "DOMException.TYPE_MISMATCH_ERR");
-    }
+    result = evalAndLog("store.add({x: 'foo'}, testDate)");
+    result.onsuccess = addDateSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function addDateSuccess()
+{
     debug("Try to insert a value not handled by structured clone:");
     try {
         debug("store.add({x: 'bar', y: document.getElementById('console')}, 'bar')");
@@ -166,19 +163,8 @@ function addData()
         shouldBe("code", "DOMException.NOT_SUPPORTED_ERR");
     }
 
-    // FIXME: This should work in the future.
     debug("Try to insert data where key path yields a Date key:");
-    result = evalAndLog("store.add({x: new Date()}, 'foo')");
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = addKeyPathYieldingDateFailure;
-}
-
-function addKeyPathYieldingDateFailure()
-{
-    testPassed("Adding data where key path yielded Date key resulted in error.");
-
-    result = evalAndLog("store.add({x: 'value'}, 'key')");
-    verifyResult(result);
+    result = evalAndLog("store.add({x: new Date(), y: 'value'}, 'key')");
     result.onsuccess = addSuccess;
     result.onerror = unexpectedErrorCallback;
 }
@@ -189,7 +175,7 @@ function addSuccess()
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "key");
 
-    result = evalAndLog("event.source.add({x: 'value'}, 'zzz')");
+    result = evalAndLog("event.source.add({x: 'foo'}, 'zzz')");
     verifyResult(result);
     result.onsuccess = unexpectedSuccessCallback;
     result.onerror = addAgainFailure;
@@ -248,8 +234,19 @@ function getSuccess()
 {
     debug("getSuccess():");
     verifySuccessEvent(event);
-    shouldBeEqualToString("event.result.x", "value");
+    shouldBeEqualToString("event.result.y", "value");
+
     var store = evalAndLog("store = event.source");
+    result = evalAndLog("store.get(testDate)");
+    result.onsuccess = getSuccessDateKey;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getSuccessDateKey()
+{
+    debug("getSuccessDateKey():");
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result.x", "foo");
 
     result = evalAndLog("store.delete('key')");
     verifyResult(result);

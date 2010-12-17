@@ -36,27 +36,46 @@ namespace WebCore {
 
 class SQLiteStatement;
 
-// FIXME: Add dates.
 class IDBKey : public ThreadSafeShared<IDBKey> {
 public:
-    static PassRefPtr<IDBKey> create()
+    static PassRefPtr<IDBKey> createNull()
     {
-        return adoptRef(new IDBKey());
+        RefPtr<IDBKey> idbKey(new IDBKey());
+        idbKey->m_type = NullType;
+        return idbKey.release();
     }
-    static PassRefPtr<IDBKey> create(double number)
+
+    static PassRefPtr<IDBKey> createNumber(double number)
     {
-        return adoptRef(new IDBKey(number));
+        RefPtr<IDBKey> idbKey(new IDBKey());
+        idbKey->m_type = NumberType;
+        idbKey->m_number = number;
+        return idbKey.release();
     }
-    static PassRefPtr<IDBKey> create(const String& string)
+
+    static PassRefPtr<IDBKey> createString(const String& string)
     {
-        return adoptRef(new IDBKey(string));
+        RefPtr<IDBKey> idbKey(new IDBKey());
+        idbKey->m_type = StringType;
+        idbKey->m_string = string;
+        return idbKey.release();
     }
+
+    static PassRefPtr<IDBKey> createDate(double date)
+    {
+        RefPtr<IDBKey> idbKey(new IDBKey());
+        idbKey->m_type = DateType;
+        idbKey->m_date = date;
+        return idbKey.release();
+    }
+
     ~IDBKey();
 
     // In order of the least to the highest precedent in terms of sort order.
     enum Type {
         NullType = 0, // FIXME: Phase out support for null keys.
         StringType,
+        DateType,
         NumberType
     };
 
@@ -66,6 +85,12 @@ public:
     {
         ASSERT(m_type == StringType);
         return m_string;
+    }
+
+    double date() const
+    {
+        ASSERT(m_type == DateType);
+        return m_date;
     }
 
     double number() const
@@ -88,11 +113,10 @@ public:
 
 private:
     IDBKey();
-    explicit IDBKey(double);
-    explicit IDBKey(const String&);
 
     Type m_type;
     String m_string;
+    double m_date;
     double m_number;
 };
 
