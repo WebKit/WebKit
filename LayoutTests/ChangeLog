@@ -1,3 +1,12 @@
+2010-12-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Web Timing related bugs
+        https://bugs.webkit.org/show_bug.cgi?id=51245
+
+        * platform/qt/Skipped: http/tests/misc/webtiming-ssl.php added until fix.
+
 2010-12-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
