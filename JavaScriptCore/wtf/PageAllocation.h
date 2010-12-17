@@ -86,9 +86,6 @@ public:
     PageAllocation()
         : m_base(0)
         , m_size(0)
-#if OS(SYMBIAN)
-        , m_chunk(0)
-#endif
     {
     }
 
@@ -134,20 +131,11 @@ public:
 #endif
 
 protected:
-#if OS(SYMBIAN)
-    PageAllocation(void* base, size_t size, RChunk* chunk)
-        : m_base(base)
-        , m_size(size)
-        , m_chunk(chunk)
-    {
-    }
-#else
     PageAllocation(void* base, size_t size)
         : m_base(base)
         , m_size(size)
     {
     }
-#endif
 
 #if HAVE(PAGE_ALLOCATE_ALIGNED)
     static PageAllocation systemAllocateAligned(size_t, OSAllocator::Usage);
@@ -156,9 +144,6 @@ protected:
 
     void* m_base;
     size_t m_size;
-#if OS(SYMBIAN)
-    RChunk* m_chunk;
-#endif
 
     static JS_EXPORTDATA size_t s_pageSize;
 };

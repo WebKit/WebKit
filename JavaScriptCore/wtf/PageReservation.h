@@ -100,13 +100,8 @@ public:
     }
 
 private:
-#if OS(SYMBIAN)
-    PageReservation(void* base, size_t size, RChunk* chunk)
-        : PageAllocation(base, size, chunk)
-#else
     PageReservation(void* base, size_t size, bool writable, bool executable)
         : PageAllocation(base, size)
-#endif
 #ifndef NDEBUG
         , m_committed(0)
 #endif
