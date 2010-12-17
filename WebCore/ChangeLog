@@ -1,3 +1,17 @@
+2010-12-17  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Default image interpolation should reset the render hint
+        https://bugs.webkit.org/show_bug.cgi?id=51233
+
+        Save initial SmoothPixmapTransform render hint so that it can be used
+        with default image interpolation quality to reset back the render hints.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+
 2010-12-17  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

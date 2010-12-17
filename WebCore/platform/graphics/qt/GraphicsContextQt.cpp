@@ -198,6 +198,7 @@ public:
     QBrush solidColor;
 
     InterpolationQuality imageInterpolationQuality;
+    bool initialSmoothPixmapTransformHint;
 
     ContextShadow shadow;
     QStack<ContextShadow> shadowStack;
@@ -228,6 +229,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
     , layerCount(0)
     , solidColor(initialSolidColor)
     , imageInterpolationQuality(InterpolationDefault)
+    , initialSmoothPixmapTransformHint(false)
     , painter(p)
     , platformContextIsOwned(false)
 {
@@ -236,6 +238,9 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
 
     // Use the default the QPainter was constructed with.
     antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
+
+    // Used for default image interpolation quality.
+    initialSmoothPixmapTransformHint = painter->testRenderHint(QPainter::SmoothPixmapTransform);
 
     painter->setRenderHint(QPainter::Antialiasing, true);
 }
@@ -1392,12 +1397,15 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality quality)
         m_data->p()->setRenderHint(QPainter::SmoothPixmapTransform, false);
         break;
 
-    case InterpolationDefault:
     case InterpolationMedium:
     case InterpolationHigh:
-    default:
         // use the filter
         m_data->p()->setRenderHint(QPainter::SmoothPixmapTransform, true);
+        break;
+
+    case InterpolationDefault:
+    default:
+        m_data->p()->setRenderHint(QPainter::SmoothPixmapTransform, m_data->initialSmoothPixmapTransformHint);
         break;
     };
 }
