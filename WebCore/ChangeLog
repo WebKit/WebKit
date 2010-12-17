@@ -1,3 +1,13 @@
+2010-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Compile warning introduced in r74129
+        https://bugs.webkit.org/show_bug.cgi?id=51181
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::gtkContainer):
+
 2010-12-17  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.

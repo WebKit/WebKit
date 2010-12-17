@@ -818,7 +818,7 @@ GtkWidget* RenderThemeGtk::gtkContainer() const
         return m_gtkContainer;
 
     m_gtkWindow = gtk_window_new(GTK_WINDOW_POPUP);
-#if GTK_API_VERSION_2
+#ifdef GTK_API_VERSION_2
     gtk_widget_set_colormap(m_gtkWindow, m_themeParts.colormap);
 #endif
     gtk_widget_realize(m_gtkWindow);
