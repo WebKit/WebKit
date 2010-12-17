@@ -256,6 +256,9 @@ WebInspector.ScriptsPanel.prototype = {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
                 script.resource = resource;
+                var view = WebInspector.ResourceManager.existingResourceViewForResource(resource);
+                if (view && view.sourceFrame)
+                    view.sourceFrame.addScript(script);
             } else {
                 // Resource is not finished, bind the script later.
                 if (!resource._scriptsPendingResourceLoad) {

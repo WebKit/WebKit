@@ -1,3 +1,15 @@
+2010-12-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add scripts parsed after resource load to SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=51243
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScript):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addScript):
+
 2010-12-17  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Yury Semikhatsky.
