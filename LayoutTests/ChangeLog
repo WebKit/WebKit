@@ -1,3 +1,14 @@
+2010-12-17  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed fix for Windows bots.
+
+        r74270 removed the windows specific result for extend-selection-home-end.html
+        since it was matching the cross platform expectation result. However, when there is
+        not win specific test result but there is a mac one for the same test, the later
+        is picked before the cross platform one.
+
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt: Added.
+
 2010-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.
