@@ -1,3 +1,50 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Layout and rendering of CSS text-emphasis
+        Final part of <rdar://problem/7720300> Support the CSS3 text-emphasis property
+        https://bugs.webkit.org/show_bug.cgi?id=48539
+
+        Tests: fast/text/emphasis-vertical.html
+               fast/text/emphasis.html
+
+        Emphasis marks behave like they are stuck just above the ascender (or just below the
+        descender). They occupy space in the leading and in padding, and only grow the line space
+        if they cannot fit.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection): Renamed the containsRuby parameter to
+        hasAnnotationsBefore, and added hasAnnotationsAfter. Line annotations include ruby and text emphasis
+        marks.
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow): Added overflow from emphasis marks.
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment): Remaned computeBlockDirectionRubyAdjustment()
+        to this and added adjustment for text emphasis marks.
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment): Added. Similar to the previous function,
+        but for annotations under the glyphs. These can only be text emphasis marks.
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows): Paint emphasis marks.
+        (WebCore::InlineTextBox::paint): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Generalized the code that adjusts the last line for
+        ruby in flipped writing mode to also adjust the last line for emphasis marks under the line in non-
+        flipped writing mode.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionColor): Added this helper method which generalizes selectionForegroundColor().
+        (WebCore::RenderObject::selectionForegroundColor): Moved most of the code to selectionColor().
+        (WebCore::RenderObject::selectionEmphasisMarkColor): Added.
+        * rendering/RenderObject.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox): Updated initialization for new members.
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection): Update new members.
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment): Renamed blockDirectionRubyAdjustment() to this
+        and extended to deal with annotations over and under the line and the previous line. If both lines have
+        annotations into the space between the lines, maintain separation so that the annotations do not overlap.
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::hasAnnotationsBefore): Added this accessor.
+        (WebCore::RootInlineBox::hasAnnotationsAfter): Ditto.
+
 2010-12-17  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.

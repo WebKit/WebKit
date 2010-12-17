@@ -161,11 +161,13 @@ public:
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
     void placeBoxesInBlockDirection(int logicalTop, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
-                                    int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& containsRuby, FontBaseline);
+                                    int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline);
     void flipLinesInBlockDirection(int lineTop, int lineBottom);
     bool requiresIdeographicBaseline(const GlyphOverflowAndFallbackFontsMap&) const;
-    int computeBlockDirectionRubyAdjustment(int allowedPosition) const;
-    
+
+    int computeOverAnnotationAdjustment(int allowedPosition) const;
+    int computeUnderAnnotationAdjustment(int allowedPosition) const;
+
     void computeOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     
     void removeChild(InlineBox* child);

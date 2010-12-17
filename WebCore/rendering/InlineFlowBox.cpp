@@ -572,7 +572,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 }
 
 void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
-                                               int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& containsRuby, FontBaseline baselineType)
+                                               int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     if (isRootInlineBox())
         setLogicalTop(top + maxAscent - baselinePosition(baselineType)); // Place our root box.
@@ -586,7 +586,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         bool isInlineFlow = curr->isInlineFlowBox();
         if (isInlineFlow)
             static_cast<InlineFlowBox*>(curr)->placeBoxesInBlockDirection(top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop,
-                                                                          lineTopIncludingMargins, lineBottomIncludingMargins, containsRuby, baselineType);
+                                                                          lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 
         bool childAffectsTopBottomPos = true;
         if (curr->logicalTop() == PositionTop)
@@ -630,7 +630,11 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
                 // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
                 // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
                 // inline-block.
-                containsRuby = true;
+                if (!renderer()->style()->isFlippedLinesWritingMode())
+                    hasAnnotationsBefore = true;
+                else
+                    hasAnnotationsAfter = true;
+
                 RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
                 if (RenderRubyBase* rubyBase = rubyRun->rubyBase()) {
                     int bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0);
@@ -639,7 +643,14 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
             }
-            
+            if (curr->isInlineTextBox() && curr->renderer()->style(m_firstLine)->textEmphasisMark() != TextEmphasisMarkNone) {
+                bool emphasisMarkIsOver = curr->renderer()->style(m_firstLine)->textEmphasisPosition() == TextEmphasisPositionOver;
+                if (emphasisMarkIsOver != curr->renderer()->style(m_firstLine)->isFlippedLinesWritingMode())
+                    hasAnnotationsBefore = true;
+                else
+                    hasAnnotationsAfter = true;
+            }
+
             if (!setLineTop) {
                 setLineTop = true;
                 lineTop = newLogicalTop;
@@ -716,38 +727,47 @@ void InlineFlowBox::addBoxShadowVisualOverflow(IntRect& logicalVisualOverflow)
 
 void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, IntRect& logicalVisualOverflow)
 {
-    int strokeOverflow = static_cast<int>(ceilf(renderer()->style()->textStrokeWidth() / 2.0f));
+    RenderStyle* style = renderer()->style(m_firstLine);
+    int strokeOverflow = static_cast<int>(ceilf(style->textStrokeWidth() / 2.0f));
 
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
 
-    bool isFlippedLine = renderer()->style(m_firstLine)->isFlippedLinesWritingMode();
+    bool isFlippedLine = style->isFlippedLinesWritingMode();
 
     int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;
     int bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0;
     int leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0;
     int rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0;
-    
+
     int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
     int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
     int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
+    if (style->textEmphasisMark() != TextEmphasisMarkNone) {
+        int emphasisMarkHeight = style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+        if (style->textEmphasisPosition() == TextEmphasisPositionOver)
+            topGlyphOverflow = min(topGlyphOverflow, -emphasisMarkHeight);
+        else
+            bottomGlyphOverflow = max(bottomGlyphOverflow, emphasisMarkHeight);
+    }
+
     // If letter-spacing is negative, we should factor that into right layout overflow. (Even in RTL, letter-spacing is
     // applied to the right, so this is not an issue with left overflow.
-    int letterSpacing = min(0, (int)renderer()->style(m_firstLine)->font().letterSpacing());
+    int letterSpacing = min(0, (int)style->font().letterSpacing());
     rightGlyphOverflow -= letterSpacing;
 
     int textShadowLogicalTop;
     int textShadowLogicalBottom;
-    renderer()->style(m_firstLine)->getTextShadowBlockDirectionExtent(textShadowLogicalTop, textShadowLogicalBottom);
+    style->getTextShadowBlockDirectionExtent(textShadowLogicalTop, textShadowLogicalBottom);
     
     int childOverflowLogicalTop = min(textShadowLogicalTop + topGlyphOverflow, topGlyphOverflow);
     int childOverflowLogicalBottom = max(textShadowLogicalBottom + bottomGlyphOverflow, bottomGlyphOverflow);
    
     int textShadowLogicalLeft;
     int textShadowLogicalRight;
-    renderer()->style(m_firstLine)->getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
+    style->getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
    
     int childOverflowLogicalLeft = min(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     int childOverflowLogicalRight = max(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
@@ -1239,7 +1259,7 @@ void InlineFlowBox::clearTruncation()
         box->clearTruncation();
 }
 
-int InlineFlowBox::computeBlockDirectionRubyAdjustment(int allowedPosition) const
+int InlineFlowBox::computeOverAnnotationAdjustment(int allowedPosition) const
 {
     int result = 0;
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
@@ -1247,7 +1267,7 @@ int InlineFlowBox::computeBlockDirectionRubyAdjustment(int allowedPosition) cons
             continue; // Positioned placeholders don't affect calculations.
         
         if (curr->isInlineFlowBox())
-            result = max(result, static_cast<InlineFlowBox*>(curr)->computeBlockDirectionRubyAdjustment(allowedPosition));
+            result = max(result, static_cast<InlineFlowBox*>(curr)->computeOverAnnotationAdjustment(allowedPosition));
         
         if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun()) {
             RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
@@ -1267,6 +1287,45 @@ int InlineFlowBox::computeBlockDirectionRubyAdjustment(int allowedPosition) cons
                     continue;
                 bottomOfLastRubyTextLine += curr->logicalTop();
                 result = max(result, bottomOfLastRubyTextLine - allowedPosition);
+            }
+        }
+
+        if (curr->isInlineTextBox()) {
+            RenderStyle* style = curr->renderer()->style(m_firstLine);
+            if (style->textEmphasisMark() != TextEmphasisMarkNone && style->textEmphasisPosition() == TextEmphasisPositionOver) {
+                if (!style->isFlippedLinesWritingMode()) {
+                    int topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    result = max(result, allowedPosition - topOfEmphasisMark);
+                } else {
+                    int bottomOfEmphasisMark = curr->logicalBottom() + style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    result = max(result, bottomOfEmphasisMark - allowedPosition);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+int InlineFlowBox::computeUnderAnnotationAdjustment(int allowedPosition) const
+{
+    int result = 0;
+    for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->renderer()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+
+        if (curr->isInlineFlowBox())
+            result = max(result, static_cast<InlineFlowBox*>(curr)->computeUnderAnnotationAdjustment(allowedPosition));
+
+        if (curr->isInlineTextBox()) {
+            RenderStyle* style = curr->renderer()->style(m_firstLine);
+            if (style->textEmphasisMark() != TextEmphasisMarkNone && style->textEmphasisPosition() == TextEmphasisPositionUnder) {
+                if (!style->isFlippedLinesWritingMode()) {
+                    int bottomOfEmphasisMark = curr->logicalBottom() + style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    result = max(result, bottomOfEmphasisMark - allowedPosition);
+                } else {
+                    int topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    result = max(result, allowedPosition - topOfEmphasisMark);
+                }
             }
         }
     }

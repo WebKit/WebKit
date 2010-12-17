@@ -913,16 +913,18 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
         }
     }
 
-    // Expand the last line to accommodate Ruby in flipped lines writing modes (the Ruby is on
-    // the after side in this case).
-    int lastLineRubyAdjustment = 0;
-    if (lastRootBox() && style()->isFlippedLinesWritingMode()) {
+    // Expand the last line to accommodate Ruby and emphasis marks.
+    int lastLineAnnotationsAdjustment = 0;
+    if (lastRootBox()) {
         int lowestAllowedPosition = max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
-        lastLineRubyAdjustment = lastRootBox()->computeBlockDirectionRubyAdjustment(lowestAllowedPosition);
+        if (!style()->isFlippedLinesWritingMode())
+            lastLineAnnotationsAdjustment = lastRootBox()->computeUnderAnnotationAdjustment(lowestAllowedPosition);
+        else
+            lastLineAnnotationsAdjustment = lastRootBox()->computeOverAnnotationAdjustment(lowestAllowedPosition);
     }
-    
+
     // Now add in the bottom border/padding.
-    setLogicalHeight(logicalHeight() + lastLineRubyAdjustment + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
+    setLogicalHeight(logicalHeight() + lastLineAnnotationsAdjustment + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
 
     if (!firstLineBox() && hasLineIfEmpty())
         setLogicalHeight(logicalHeight() + lineHeight(true, style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));

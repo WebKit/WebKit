@@ -1593,7 +1593,7 @@ Color RenderObject::selectionBackgroundColor() const
     return color;
 }
 
-Color RenderObject::selectionForegroundColor() const
+Color RenderObject::selectionColor(int colorProperty) const
 {
     Color color;
     // If the element is unselectable, or we are only painting the selection,
@@ -1603,7 +1603,7 @@ Color RenderObject::selectionForegroundColor() const
         return color;
 
     if (RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(SELECTION)) {
-        color = pseudoStyle->visitedDependentColor(CSSPropertyWebkitTextFillColor);
+        color = pseudoStyle->visitedDependentColor(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
     } else
@@ -1612,6 +1612,16 @@ Color RenderObject::selectionForegroundColor() const
                 theme()->inactiveSelectionForegroundColor();
 
     return color;
+}
+
+Color RenderObject::selectionForegroundColor() const
+{
+    return selectionColor(CSSPropertyWebkitTextFillColor);
+}
+
+Color RenderObject::selectionEmphasisMarkColor() const
+{
+    return selectionColor(CSSPropertyWebkitTextEmphasisColor);
 }
 
 #if ENABLE(DRAG_SUPPORT)

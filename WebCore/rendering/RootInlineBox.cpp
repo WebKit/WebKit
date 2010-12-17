@@ -48,7 +48,8 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_paginationStrut(0)
     , m_blockLogicalHeight(0)
     , m_baselineType(AlphabeticBaseline)
-    , m_containsRuby(false)
+    , m_hasAnnotationsBefore(false)
+    , m_hasAnnotationsAfter(false)
 {
     setIsHorizontal(block->style()->isHorizontalWritingMode());
 }
@@ -248,19 +249,20 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     int lineTopIncludingMargins = heightOfBlock;
     int lineBottomIncludingMargins = heightOfBlock;
     bool setLineTop = false;
-    bool containsRuby = false;
+    bool hasAnnotationsBefore = false;
+    bool hasAnnotationsAfter = false;
     placeBoxesInBlockDirection(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom, setLineTop,
-                               lineTopIncludingMargins, lineBottomIncludingMargins, containsRuby, m_baselineType);
+                               lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, m_baselineType);
+    m_hasAnnotationsBefore = hasAnnotationsBefore;
+    m_hasAnnotationsAfter = hasAnnotationsAfter;
     setLineTopBottomPositions(lineTop, lineBottom);
 
-    m_containsRuby = containsRuby;
-    
-    int rubyAdjustment = blockDirectionRubyAdjustment();
-    if (rubyAdjustment) {
+    int annotationsAdjustment = beforeAnnotationsAdjustment();
+    if (annotationsAdjustment) {
         // FIXME: Need to handle pagination here. We might have to move to the next page/column as a result of the
         // ruby expansion.
-        adjustBlockDirectionPosition(rubyAdjustment);
-        heightOfBlock += rubyAdjustment;
+        adjustBlockDirectionPosition(annotationsAdjustment);
+        heightOfBlock += annotationsAdjustment;
     }
 
     // Detect integer overflow.
@@ -270,19 +272,35 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     return heightOfBlock + maxHeight;
 }
 
-int RootInlineBox::blockDirectionRubyAdjustment() const
+int RootInlineBox::beforeAnnotationsAdjustment() const
 {
+    int result = 0;
+
     if (!renderer()->style()->isFlippedLinesWritingMode()) {
-        if (!containsRuby())
-            return 0;
-        int highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) : block()->borderBefore();
-        return computeBlockDirectionRubyAdjustment(highestAllowedPosition);
-    } else if (prevRootBox() && prevRootBox()->containsRuby()) {
-        // We have to compute the Ruby expansion for the previous line to see how much we should move.
-        int lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop());
-        return prevRootBox()->computeBlockDirectionRubyAdjustment(lowestAllowedPosition);
+        // Annotations under the previous line may push us down.
+        if (prevRootBox() && prevRootBox()->hasAnnotationsAfter())
+            result = prevRootBox()->computeUnderAnnotationAdjustment(lineTop());
+
+        if (!hasAnnotationsBefore())
+            return result;
+
+        // Annotations over this line may push us further down.
+        int highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : block()->borderBefore();
+        result =  computeOverAnnotationAdjustment(highestAllowedPosition);
+    } else {
+        // Annotations under this line may push us up.
+        if (hasAnnotationsBefore())
+            result = computeUnderAnnotationAdjustment(prevRootBox() ? prevRootBox()->lineBottom() : block()->borderBefore());
+
+        if (!prevRootBox() || !prevRootBox()->hasAnnotationsAfter())
+            return result;
+
+        // We have to compute the expansion for annotations over the previous line to see how much we should move.
+        int lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop()) + result;
+        result = prevRootBox()->computeOverAnnotationAdjustment(lowestAllowedPosition);
     }
-    return 0;
+
+    return result;
 }
 
 GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock, 

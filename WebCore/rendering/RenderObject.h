@@ -674,6 +674,7 @@ public:
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
+    Color selectionEmphasisMarkColor() const;
 
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
@@ -795,6 +796,8 @@ protected:
 private:
     RenderStyle* firstLineStyleSlowCase() const;
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
+
+    Color selectionColor(int colorProperty) const;
     
     RefPtr<RenderStyle> m_style;
 
