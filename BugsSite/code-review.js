@@ -255,9 +255,11 @@
     if (e.origin != 'https://webkit-commit-queue.appspot.com')
       return;
 
-    $('.statusBubble')[0].style.height = e.data.height;
-    $('.statusBubble')[0].style.width = e.data.width;
-  });
+    if (e.data.height) {
+      $('.statusBubble')[0].style.height = e.data.height;
+      $('.statusBubble')[0].style.width = e.data.width;
+    }
+  }, false);
 
   function handleStatusBubbleLoad(e) {
     e.target.contentWindow.postMessage('containerMetrics', 'https://webkit-commit-queue.appspot.com');
