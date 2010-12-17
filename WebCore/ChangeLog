@@ -1,3 +1,23 @@
+2010-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove unnecessary dependencies from InspectorBackendStub.
+
+        InspectorBackendStub is a transport-only thing but it has dependencies with
+        Callback.js and WebInspector namespace. Callback can be integrated into
+        InspectorBackendStub because it is the only client.
+        Without these dependencies InspectorBackendStub can be used as an API
+        wrapper for Inspector Protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51184
+
+        * WebCore.gypi:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/Callback.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-12-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

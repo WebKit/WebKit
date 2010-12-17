@@ -564,13 +564,33 @@ sub generateBackendStubJS
     my $inspectorBackendStubJS = << "EOF";
 $licenseTemplate
 
-WebInspector.InspectorBackendStub = function()
+InspectorBackendStub = function()
 {
+    this._lastCallbackId = 1;
+    this._callbacks = {};
     this._domainDispatchers = {};
 $JSStubs
 }
 
-WebInspector.InspectorBackendStub.prototype = {
+InspectorBackendStub.prototype = {
+    _wrap: function(callback)
+    {
+        var callbackId = this._lastCallbackId++;
+        this._callbacks[callbackId] = callback || function() {};
+        return callbackId;
+    },
+
+    _processResponse: function(callbackId, args)
+    {
+        var callback = this._callbacks[callbackId];
+        callback.apply(null, args);
+        delete this._callbacks[callbackId];
+    },
+
+    _removeResponseCallbackEntry: function(callbackId)
+    {
+        delete this._callbacks[callbackId];
+    },
 
     _registerDelegate: function(commandInfo)
     {
@@ -601,7 +621,7 @@ WebInspector.InspectorBackendStub.prototype = {
                 console.error("Protocol Error: Optional callback argument for 'InspectorBackend.%s' call should be a function but its type is '%s'.", request.command, typeof args[0]);
                 return;
             }
-            request.seq = WebInspector.Callback.wrap(args[0]);
+            request.seq = this._wrap(args[0]);
         }
 
         if (window.dumpInspectorProtocolMessages)
@@ -630,9 +650,9 @@ WebInspector.InspectorBackendStub.prototype = {
 
         if ("seq" in messageObject) { // just a response for some request
             if (messageObject.success)
-                WebInspector.Callback.processResponse(messageObject.seq, arguments);
+                this._processResponse(messageObject.seq, arguments);
             else {
-                WebInspector.Callback.removeResponseCallbackEntry(messageObject.seq)
+                this._removeResponseCallbackEntry(messageObject.seq)
                 this.reportProtocolError(messageObject);
             }
             return;
@@ -657,11 +677,11 @@ WebInspector.InspectorBackendStub.prototype = {
         console.error("Protocol Error: InspectorBackend request with seq = %d failed.", messageObject.seq);
         for (var i = 0; i < messageObject.errors.length; ++i)
             console.error("    " + messageObject.errors[i]);
-        WebInspector.Callback.removeResponseCallbackEntry(messageObject.seq);
+        this._removeResponseCallbackEntry(messageObject.seq);
     }
 }
 
-InspectorBackend = new WebInspector.InspectorBackendStub();
+InspectorBackend = new InspectorBackendStub();
 
 EOF
     return split("\n", $inspectorBackendStubJS);
