@@ -75,21 +75,7 @@ void ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCo
 
 void ChunkedUpdateDrawingAreaProxy::sizeDidChange()
 {
-    WebPageProxy* page = this->page();
-    if (!page->isValid())
-        return;
-
-    if (m_size.isEmpty())
-        return;
-
-    m_lastSetViewSize = m_size;
-
-    if (m_isWaitingForDidSetFrameNotification)
-        return;
-    m_isWaitingForDidSetFrameNotification = true;
-
-    page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
+    sendSetSize();
 }
 
 void ChunkedUpdateDrawingAreaProxy::setPageIsVisible(bool isVisible)
@@ -121,8 +107,8 @@ void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
 
     IntSize viewSize = updateChunk->rect().size();
 
-    if (viewSize != m_lastSetViewSize)
-        setSize(m_lastSetViewSize);
+    if (viewSize != m_size)
+        sendSetSize();
 
     invalidateBackingStore();
     if (!updateChunk->isEmpty())
@@ -148,6 +134,19 @@ void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
     page->process()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In(info().identifier));
 }
 
+void ChunkedUpdateDrawingAreaProxy::sendSetSize()
+{
+    if (!m_webPageProxy->isValid())
+        return;
+    
+    if (m_isWaitingForDidSetFrameNotification)
+        return;
+    m_isWaitingForDidSetFrameNotification = true;
+    
+    m_webPageProxy->process()->responsivenessTimer()->start();
+    m_webPageProxy->process()->send(DrawingAreaMessage::SetSize, m_webPageProxy->pageID(), CoreIPC::In(info().identifier, m_size));
+}
+    
 void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {

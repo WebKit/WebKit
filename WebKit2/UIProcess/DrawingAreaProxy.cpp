@@ -47,6 +47,9 @@ DrawingAreaInfo::Identifier DrawingAreaProxy::nextIdentifier()
 
 void DrawingAreaProxy::setSize(const IntSize& size)
 { 
+    if (m_size == size)
+        return;
+
     m_size = size;
     sizeDidChange();
 }

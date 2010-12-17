@@ -1,3 +1,27 @@
+2010-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Clean up ChunkedUpdateDrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=51277
+
+        Get rid of m_lastSetViewSize since it was always equal to m_size.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sizeDidChange):
+        Call sendSetSize().
+
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didSetSize):
+        Call sendSetSize if the size differs.
+
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sendSetSize):
+        Move code from sizeDidChange over here.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setSize):
+        Add back the early return if the sizes are equal.
+
 2010-12-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.
