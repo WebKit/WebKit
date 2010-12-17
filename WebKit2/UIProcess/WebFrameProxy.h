@@ -84,6 +84,8 @@ public:
     void setMIMEType(const String& mimeType) { m_MIMEType = mimeType; }
     const String& mimeType() const { return m_MIMEType; }
 
+    const String& title() const { return m_title; }
+
     void setCertificateInfo(PassRefPtr<WebCertificateInfo>);
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
@@ -100,7 +102,7 @@ public:
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(const String&); // eg. anchor navigation, session state change.
-    void didReceiveTitle(const String&);
+    void didChangeTitle(const String&);
 
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID);
     WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
@@ -117,6 +119,7 @@ private:
     String m_provisionalURL;
     String m_unreachableURL;
     String m_MIMEType;
+    String m_title;
     bool m_isFrameSet;
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;

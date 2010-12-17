@@ -49,10 +49,10 @@ WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
 WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
 WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
 WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
-
 WK_EXPORT WKURLRef WKFrameCopyUnreachableURL(WKFrameRef frame);
 
 WK_EXPORT WKStringRef WKFrameCopyMIMEType(WKFrameRef frame);
+WK_EXPORT WKStringRef WKFrameCopyTitle(WKFrameRef frame);
 
 WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
 

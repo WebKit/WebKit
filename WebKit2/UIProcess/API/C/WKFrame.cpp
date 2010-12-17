@@ -76,6 +76,11 @@ WKStringRef WKFrameCopyMIMEType(WKFrameRef frameRef)
     return toCopiedAPI(toImpl(frameRef)->mimeType());
 }
 
+WKStringRef WKFrameCopyTitle(WKFrameRef frameRef)
+{
+    return toCopiedAPI(toImpl(frameRef)->title());
+}
+
 WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->page());

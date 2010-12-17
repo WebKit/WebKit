@@ -201,7 +201,7 @@ public:
     void handleTouchEvent(const WebTouchEvent&);
 #endif
 
-    const String& pageTitle() const { return m_pageTitle; }
+    String pageTitle() const;
     const String& toolTip() const { return m_toolTip; }
 
     void setUserAgent(const String&);
@@ -435,7 +435,6 @@ private:
     RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;
-    String m_pageTitle;
 
     String m_userAgent;
     String m_applicationNameForUserAgent;

@@ -127,10 +127,10 @@ void WebFrameProxy::didFailProvisionalLoad()
 
 void WebFrameProxy::didCommitLoad()
 {
-    // FIXME: Add assertions.
     m_loadState = LoadStateCommitted;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
+    m_title = String();
 }
 
 void WebFrameProxy::didFinishLoad()
@@ -142,6 +142,7 @@ void WebFrameProxy::didFinishLoad()
 void WebFrameProxy::didFailLoad()
 {
     m_loadState = LoadStateFinished;
+    m_title = String();
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const String& url)
@@ -149,8 +150,9 @@ void WebFrameProxy::didSameDocumentNavigation(const String& url)
     m_url = url;
 }
 
-void WebFrameProxy::didReceiveTitle(const String&)
+void WebFrameProxy::didChangeTitle(const String& title)
 {
+    m_title = title;
 }
 
 void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_t listenerID)

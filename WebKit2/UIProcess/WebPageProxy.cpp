@@ -238,7 +238,6 @@ void WebPageProxy::close()
         m_openPanelResultListener = 0;
     }
 
-    m_pageTitle = String();
     m_toolTip = String();
 
     invalidateCallbackMap(m_contentsAsStringCallbacks);
@@ -621,6 +620,16 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     }
 
     process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
+}
+
+String WebPageProxy::pageTitle() const
+{
+    // Return the null string if there is no main frame (e.g. nothing has been loaded in the page yet, WebProcess has
+    // crashed, page has been closed).
+    if (!m_mainFrame)
+        return String();
+
+    return m_mainFrame->title();
 }
 
 void WebPageProxy::setUserAgent(const String& userAgent)
@@ -1014,13 +1023,8 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
         return;
 
     WebFrameProxy* frame = process()->webFrame(frameID);
-
-    frame->didReceiveTitle(title);
-
-    // Cache the title for the main frame in the page.
-    if (frame == m_mainFrame)
-        m_pageTitle = title;
-
+    frame->didChangeTitle(title);
+    
     m_loaderClient.didReceiveTitleForFrame(this, title, frame, userData.get());
 }
 
@@ -1714,7 +1718,6 @@ void WebPageProxy::processDidCrash()
         m_openPanelResultListener = 0;
     }
 
-    m_pageTitle = String();
     m_toolTip = String();
 
     invalidateCallbackMap(m_contentsAsStringCallbacks);
