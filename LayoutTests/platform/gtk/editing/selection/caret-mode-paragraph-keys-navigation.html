@@ -5,10 +5,10 @@
 <script>
 var successfullyParsed = false;
 </script>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="target">This tests that arrow keys navigate through a paragraph as expected when in caret browsing mode, also with shift and ctrl modifiers.</p>
+<p id="target">This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.</p>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -41,7 +41,7 @@ if (window.layoutTestController) {
 
   // check left/right arrows + Ctrl
   eventSender.keyDown("rightArrow", ["ctrlKey"]);
-  shouldBe("getSelection().baseOffset", "21");
+  shouldBe("getSelection().baseOffset", "20");
   eventSender.keyDown("leftArrow", ["ctrlKey"]);
   shouldBe("getSelection().baseOffset", "16");
 
@@ -49,13 +49,24 @@ if (window.layoutTestController) {
   eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
   eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
   shouldBe("getSelection().baseOffset", "16");
-  shouldBe("getSelection().extentOffset", "26");
+  shouldBe("getSelection().extentOffset", "31");
   eventSender.keyDown("leftArrow", ["ctrlKey"]);
-  shouldBe("getSelection().baseOffset", "22");
+  shouldBe("getSelection().baseOffset", "21");
+
+  // check home/end keys both for caret and range selections
+  eventSender.keyDown("home");
+  shouldBe("getSelection().baseOffset", "0");
+  shouldBe("getSelection().extentOffset", "0");
+  eventSender.keyDown("end");
+  shouldBe("getSelection().baseOffset", "124");
+  shouldBe("getSelection().extentOffset", "124");
+  eventSender.keyDown("home", ["shiftKey"]);
+  shouldBe("getSelection().baseOffset", "124");
+  shouldBe("getSelection().extentOffset", "0");
 }
 
 successfullyParsed = true;
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

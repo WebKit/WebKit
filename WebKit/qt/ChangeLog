@@ -1,3 +1,14 @@
+2010-12-17  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r74229.
+        http://trac.webkit.org/changeset/74229
+        https://bugs.webkit.org/show_bug.cgi?id=50536
+
+        Broken on Snow Leopard and possibly other platforms
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2010-12-05  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ariya Hidayat.

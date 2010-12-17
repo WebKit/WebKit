@@ -1,3 +1,16 @@
+2010-12-17  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r74229.
+        http://trac.webkit.org/changeset/74229
+        https://bugs.webkit.org/show_bug.cgi?id=50536
+
+        Broken on Snow Leopard and possibly other platforms
+
+        * platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation-expected.txt: Renamed from LayoutTests/editing/selection/caret-mode-paragraph-keys-navigation-expected.txt.
+        * platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation.html: Renamed from LayoutTests/editing/selection/caret-mode-paragraph-keys-navigation.html.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-12-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
