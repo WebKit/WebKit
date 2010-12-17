@@ -54,11 +54,10 @@ public:
     AnimationControllerPrivate(Frame*);
     ~AnimationControllerPrivate();
 
+    void updateAnimationTimer(bool callSetChanged = false);
+
     PassRefPtr<CompositeAnimation> accessCompositeAnimation(RenderObject*);
     bool clear(RenderObject*);
-
-    void animationTimerFired(Timer<AnimationControllerPrivate>*);
-    void updateAnimationTimer(bool callSetChanged = false);
 
     void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
     void startUpdateStyleIfNeededDispatcher();
@@ -92,11 +91,13 @@ public:
     
     void addToStartTimeResponseWaitList(AnimationBase*, bool willGetResponse);
     void removeFromStartTimeResponseWaitList(AnimationBase*);    
-    void startTimeResponse(double t);
     
 private:
+    void animationTimerFired(Timer<AnimationControllerPrivate>*);
+
     void styleAvailable();
     void fireEventsAndUpdateStyle();
+    void startTimeResponse(double t);
 
     typedef HashMap<RenderObject*, RefPtr<CompositeAnimation> > RenderObjectAnimationMap;
 
@@ -120,9 +121,9 @@ private:
     AnimationBase* m_styleAvailableWaiters;
     AnimationBase* m_lastStyleAvailableWaiter;
     
-    AnimationBase* m_responseWaiters;
-    AnimationBase* m_lastResponseWaiter;
-    bool m_waitingForResponse;
+    AnimationBase* m_startTimeResponseWaiters;
+    AnimationBase* m_lastStartTimeResponseWaiter;
+    bool m_waitingForStartTimeResponse;
 };
 
 } // namespace WebCore

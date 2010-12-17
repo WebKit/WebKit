@@ -1,3 +1,27 @@
+2010-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Interrupted accelerated animation can break later transitions
+        https://bugs.webkit.org/show_bug.cgi?id=51264
+
+        Step 1: code cleanup.
+        Rename "responseWait" variables to "startTimeResponseWait", to make it clear
+        the kind of response that is being waited for.
+        
+        Make a couple of methods private.
+        
+        No behavioral changes, so no tests.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::addToStartTimeResponseWaitList):
+        (WebCore::AnimationControllerPrivate::removeFromStartTimeResponseWaitList):
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        * page/animation/AnimationControllerPrivate.h:
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
