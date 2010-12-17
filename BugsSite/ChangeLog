@@ -1,5 +1,11 @@
 2010-12-17  Ojan Vafai  <ojan@chromium.org>
 
+        Increment psuedo-version number to avoid pulling cached version.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-17  Ojan Vafai  <ojan@chromium.org>
+
         Speculative fix for the code review tool in Firefox.
         Fixes a JS error and makes the status bubble mostly work
         if postMessage is not supported.
