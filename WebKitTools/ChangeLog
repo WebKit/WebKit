@@ -1,3 +1,15 @@
+2010-12-16  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        test-webkitpy: unittest for the xml.py checker displays a decprecation warning.
+        https://bugs.webkit.org/show_bug.cgi?id=51210
+
+        The error only shows up when using python 2.6 or later.
+
+        * Scripts/webkitpy/style/checkers/xml.py: Replace the usage of
+        the decprecated field error,message with something equivalent.
+
 2010-12-16  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.
