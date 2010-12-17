@@ -55,7 +55,8 @@ void GeolocationClientProxy::setController(WebCore::GeolocationController* contr
 
 void GeolocationClientProxy::geolocationDestroyed()
 {
-    m_client->geolocationDestroyed();
+    if (m_client)
+        m_client->geolocationDestroyed();
 }
 
 void GeolocationClientProxy::startUpdating()
