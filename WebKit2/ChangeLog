@@ -1,5 +1,29 @@
 2010-12-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Add svn:eol-style native to the message.in files as a favor to Darin Adler.
+
+        * PluginProcess/PluginControllerProxy.messages.in: Added property svn:eol-style.
+        * PluginProcess/PluginProcess.messages.in: Added property svn:eol-style.
+        * PluginProcess/WebProcessConnection.messages.in: Added property svn:eol-style.
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in: Added property svn:eol-style.
+        * UIProcess/Downloads/DownloadProxy.messages.in: Added property svn:eol-style.
+        * UIProcess/Plugins/PluginProcessProxy.messages.in: Added property svn:eol-style.
+        * UIProcess/WebContext.messages.in: Added property svn:eol-style.
+        * UIProcess/WebDatabaseManagerProxy.messages.in: Added property svn:eol-style.
+        * UIProcess/WebInspectorProxy.messages.in: Added property svn:eol-style.
+        * UIProcess/WebPageProxy.messages.in: Added property svn:eol-style.
+        * UIProcess/WebProcessProxy.messages.in: Added property svn:eol-style.
+        * WebProcess/Authentication/AuthenticationManager.messages.in: Added property svn:eol-style.
+        * WebProcess/Plugins/PluginProxy.messages.in: Added property svn:eol-style.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in: Added property svn:eol-style.
+        * WebProcess/WebPage/WebInspector.messages.in: Added property svn:eol-style.
+        * WebProcess/WebPage/WebPage.messages.in: Added property svn:eol-style.
+        * WebProcess/WebProcess.messages.in: Added property svn:eol-style.
+
+2010-12-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Move NSURLCache initialization from the ProcessLauncherMac to the centralized
