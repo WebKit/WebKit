@@ -398,8 +398,8 @@ private:
     bool m_stickyBreakpointsRestored;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
-    OwnPtr<HTTPHeaderMap> m_extraHeaders;
 #endif
+    OwnPtr<HTTPHeaderMap> m_extraHeaders;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
 
