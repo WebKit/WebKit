@@ -1,3 +1,15 @@
+2010-12-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74201.
+        http://trac.webkit.org/changeset/74201
+        https://bugs.webkit.org/show_bug.cgi?id=51248
+
+        It broke ~6000 layout tests (Requested by Ossy_ on #webkit).
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::setGeometry):
+        (QGraphicsWKView::itemChange):
+
 2010-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
