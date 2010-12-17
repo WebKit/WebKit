@@ -2768,6 +2768,7 @@ http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/basic-auth.html
+http/tests/xmlhttprequest/logout.html
 #We don't seem to support neither of these for now
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
@@ -4652,11 +4653,6 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 
 # Canvas security issues https://bugs.webkit.org/show_bug.cgi?id=30580
 http/tests/security/canvas-remote-read-data-url-svg-image.html
-
-# xmlhttprequest https://bugs.webkit.org/show_bug.cgi?id=30582
-http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/re-login.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30577
 editing/selection/move-left-right.html

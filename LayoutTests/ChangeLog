@@ -1,3 +1,14 @@
+2010-12-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, tests were skipped due to a bug in libsoup
+        https://bugzilla.gnome.org/show_bug.cgi?id=631679. Now that it was
+        fixed we can safely unskip them again.
+
+        [GTK] Failing http/tests/xmlhttprequest tests
+        https://bugs.webkit.org/show_bug.cgi?id=30582
+
+        * platform/gtk/Skipped:
+
 2010-12-17  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
