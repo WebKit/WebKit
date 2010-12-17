@@ -521,4 +521,9 @@ void Chrome::showContextMenu()
 }
 #endif
 
+bool Chrome::requiresFullscreenForVideoPlayback()
+{
+    return m_client->requiresFullscreenForVideoPlayback();
+}
+
 } // namespace WebCore

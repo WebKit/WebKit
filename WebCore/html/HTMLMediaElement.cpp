@@ -2109,6 +2109,9 @@ void HTMLMediaElement::updatePlayState()
         invalidateCachedTime();
 
         if (playerPaused) {
+            if (document() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback() && !m_isFullscreen)
+                enterFullscreen();
+
             // Set rate before calling play in case the rate was set before the media engine was setup.
             // The media engine should just stash the rate since it isn't already playing.
             m_player->setRate(m_playbackRate);
@@ -2424,6 +2427,8 @@ void HTMLMediaElement::exitFullscreen()
     ASSERT(m_isFullscreen);
     m_isFullscreen = false;
     if (document() && document()->page()) {
+        if (document()->page()->chrome()->requiresFullscreenForVideoPlayback())
+            pauseInternal();
         document()->page()->chrome()->client()->exitFullscreenForNode(this);
         scheduleEvent(eventNames().webkitendfullscreenEvent);
     }

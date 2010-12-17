@@ -149,6 +149,8 @@ namespace WebCore {
 
         void dispatchViewportDataDidChange(const ViewportArguments&) const;
 
+        bool requiresFullscreenForVideoPlayback();
+
 #if PLATFORM(MAC)
         void focusNSView(NSView*);
 #endif

@@ -256,6 +256,7 @@ namespace WebCore {
         virtual bool supportsFullscreenForNode(const Node*) { return false; }
         virtual void enterFullscreenForNode(Node*) { }
         virtual void exitFullscreenForNode(Node*) { }
+        virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)
         virtual bool supportsFullScreenForElement(const Element*) { return false; }

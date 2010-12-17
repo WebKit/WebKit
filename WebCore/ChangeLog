@@ -1,3 +1,26 @@
+2010-12-16  Yi Shen  <yi.4.shen@nokia.com>, Tor Arne Vestbo <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Provide an interface to require using fullscreen mediaplayer
+        https://bugs.webkit.org/show_bug.cgi?id=51133
+
+        Add ChromeClient::requiresFullscreenForVideoPlayback to require webkit
+        to launch fullscreen video player for playing the html5 video. The 
+        idea is that a browser vendor can specify this behavior through the
+        platform plugin or something else by using this interface.
+
+        No new tests because no client implements requiresFullscreenForVideoPlayback yet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::requiresFullscreenForVideoPlayback):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::requiresFullscreenForVideoPlayback):
+
 2010-12-16  Steve Block  <steveblock@google.com>
 
         Reviewed by Steve Block.
