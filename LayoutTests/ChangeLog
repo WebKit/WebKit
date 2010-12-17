@@ -1,3 +1,10 @@
+2010-12-16  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Updated chromium test expectations to mark
+        http/tests/appcache/fail-on-update-2.html as flaky with TIMEOUT.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-16  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] fast/dom/gc-11.html fails in 64bit debug bot
