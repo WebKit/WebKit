@@ -1,3 +1,9 @@
+2010-12-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix typo in Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-17  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.
