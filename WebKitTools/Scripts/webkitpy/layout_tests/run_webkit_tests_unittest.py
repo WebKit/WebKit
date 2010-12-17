@@ -332,10 +332,62 @@ class MainTest(unittest.TestCase):
         # Run tests including the unexpected failures.
         self._url_opened = None
         res, out, err, user = logging_run(tests_included=True)
-        self.assertEqual(res, 1)
+        self.assertEqual(res, 3)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
         self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
+
+    def test_exit_after_n_failures(self):
+        # Unexpected failures should result in tests stopping.
+        tests_run = get_tests_run([
+                'failures/unexpected/text-image-checksum.html',
+                'passes/text.html',
+                '--exit-after-n-failures', '1',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/unexpected/text-image-checksum.html'], tests_run)
+
+        # But we'll keep going for expected ones.
+        tests_run = get_tests_run([
+                'failures/expected/text.html',
+                'passes/text.html',
+                '--exit-after-n-failures', '1',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/expected/text.html', 'passes/text.html'], tests_run)
+
+    def test_exit_after_n_crashes(self):
+        # Unexpected crashes should result in tests stopping.
+        tests_run = get_tests_run([
+                'failures/unexpected/crash.html',
+                'passes/text.html',
+                '--exit-after-n-crashes-or-timeouts', '1',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/unexpected/crash.html'], tests_run)
+
+        # Same with timeouts.
+        tests_run = get_tests_run([
+                'failures/unexpected/timeout.html',
+                'passes/text.html',
+                '--exit-after-n-crashes-or-timeouts', '1',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/unexpected/timeout.html'], tests_run)
+
+        # But we'll keep going for expected ones.
+        tests_run = get_tests_run([
+                'failures/expected/crash.html',
+                'passes/text.html',
+                '--exit-after-n-crashes-or-timeouts', '1',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/expected/crash.html', 'passes/text.html'], tests_run)
 
     def test_results_directory_absolute(self):
         # We run a configuration that should fail, to generate output, then

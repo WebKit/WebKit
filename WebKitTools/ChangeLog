@@ -1,3 +1,18 @@
+2010-12-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add --exit-after-n-failures/crashes to NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=51160
+        
+        Abort test run (in a similar way to how control-C is handled) when
+        --exit-after-n-failures/crashes-or-timeouts are passed and we've reached
+        that number of unexpected failures/crashes/timeouts.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-12-16  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

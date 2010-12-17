@@ -107,6 +107,12 @@ class TestInput:
         self.image_hash = None
 
 
+class TestRunInterruptedException(Exception):
+    """Raised when a test run should be stopped immediately."""
+    def __init__(self, reason):
+        self.reason = reason
+
+
 class ResultSummary(object):
     """A class for partitioning the test results we get into buckets.
 
@@ -119,6 +125,8 @@ class ResultSummary(object):
         self.expectations = expectations
         self.expected = 0
         self.unexpected = 0
+        self.unexpected_failures = 0
+        self.unexpected_crashes_or_timeouts = 0
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
         self.results = {}
@@ -149,6 +157,10 @@ class ResultSummary(object):
         else:
             self.unexpected_results[result.filename] = result.type
             self.unexpected += 1
+            if len(result.failures):
+                self.unexpected_failures += 1
+            if result.type == test_expectations.CRASH or result.type == test_expectations.TIMEOUT:
+                self.unexpected_crashes_or_timeouts += 1
 
 
 def summarize_unexpected_results(port_obj, expectations, result_summary,
@@ -581,9 +593,11 @@ class TestRunner:
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
 
-        Return: A tuple (keyboard_interrupted, thread_timings, test_timings,
-            individual_test_timings)
-            keyboard_interrupted is whether someone typed Ctrl^C
+        Return: A tuple (interrupted, keyboard_interrupted, thread_timings,
+            test_timings, individual_test_timings)
+            interrupted is whether the run was interrupted
+            keyboard_interrupted is whether the interruption was because someone
+              typed Ctrl^C
             thread_timings is a list of dicts with the total runtime
               of each thread with 'name', 'num_tests', 'total_time' properties
             test_timings is a list of timings for each sharded subdirectory
@@ -614,6 +628,7 @@ class TestRunner:
 
         self._printer.print_update("Starting testing ...")
         keyboard_interrupted = False
+        interrupted = False
         if not self._options.dry_run:
             try:
                 message_broker.run_message_loop()
@@ -621,6 +636,11 @@ class TestRunner:
                 _log.info("Interrupted, exiting")
                 message_broker.cancel_workers()
                 keyboard_interrupted = True
+                interrupted = True
+            except TestRunInterruptedException, e:
+                _log.info(e.reason)
+                message_broker.cancel_workers()
+                interrupted = True
             except:
                 # Unexpected exception; don't try to clean up workers.
                 _log.info("Exception raised, exiting")
@@ -629,7 +649,7 @@ class TestRunner:
         thread_timings, test_timings, individual_test_timings = \
             self._collect_timing_info(threads)
 
-        return (keyboard_interrupted, thread_timings, test_timings,
+        return (interrupted, keyboard_interrupted, thread_timings, test_timings,
                 individual_test_timings)
 
     def update(self):
@@ -710,7 +730,7 @@ class TestRunner:
 
         start_time = time.time()
 
-        keyboard_interrupted, thread_timings, test_timings, \
+        interrupted, keyboard_interrupted, thread_timings, test_timings, \
             individual_test_timings = (
             self._run_tests(self._test_files_list, result_summary))
 
@@ -719,7 +739,7 @@ class TestRunner:
         failures = self._get_failures(result_summary, include_crashes=False)
         retry_summary = result_summary
         while (len(failures) and self._options.retry_failures and
-            not self._retrying and not keyboard_interrupted):
+            not self._retrying and not interrupted):
             _log.info('')
             _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')
@@ -750,7 +770,7 @@ class TestRunner:
         self._printer.print_unexpected_results(unexpected_results)
 
         if (self._options.record_results and not self._options.dry_run and
-            not keyboard_interrupted):
+            not interrupted):
             # Write the same data to log files and upload generated JSON files
             # to appengine server.
             self._upload_json_files(unexpected_results, result_summary,
@@ -798,6 +818,20 @@ class TestRunner:
             self._printer.print_test_result(result, expected, exp_str, got_str)
             self._printer.print_progress(result_summary, self._retrying,
                                          self._test_files_list)
+
+            def interrupt_if_at_failure_limit(limit, count, message):
+                if limit and count >= limit:
+                    raise TestRunInterruptedException(message % count)
+
+            interrupt_if_at_failure_limit(
+                self._options.exit_after_n_failures,
+                result_summary.unexpected_failures,
+                "Aborting run since %d failures were reached")
+            interrupt_if_at_failure_limit(
+                self._options.exit_after_n_crashes_or_timeouts,
+                result_summary.unexpected_crashes_or_timeouts,
+                "Aborting run since %d crashes or timeouts were reached")
+
 
     def _clobber_old_results(self):
         # Just clobber the actual test results directories since the other
@@ -1469,9 +1503,6 @@ def parse_args(args=None):
         _compat_shim_option("--no-sample-on-timeout"),
         # FIXME: NRWT needs to support remote links eventually.
         _compat_shim_option("--use-remote-links-to-tests"),
-        # FIXME: NRWT doesn't need this option as much since failures are
-        # designed to be cheap.  We eventually plan to add this support.
-        _compat_shim_option("--exit-after-n-failures", nargs=1, type="int"),
     ]
 
     results_options = [
@@ -1582,10 +1613,12 @@ def parse_args(args=None):
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),
-        # FIXME: Need --exit-after-n-failures N
-        #      Exit after the first N failures instead of running all tests
-        # FIXME: Need --exit-after-n-crashes N
-        #      Exit after the first N crashes instead of running all tests
+        optparse.make_option("--exit-after-n-failures", type="int", nargs=1,
+            help="Exit after the first N failures instead of running all "
+            "tests"),
+        optparse.make_option("--exit-after-n-crashes-or-timeouts", type="int",
+            nargs=1, help="Exit after the first N crashes instead of running "
+            "all tests"),
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
         optparse.make_option("--print-last-failures", action="store_true",

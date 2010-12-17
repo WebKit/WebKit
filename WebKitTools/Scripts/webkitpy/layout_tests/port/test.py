@@ -116,9 +116,11 @@ class TestPort(base.Port):
                   expected_text=None)
         tests.add('failures/expected/text.html',
                   actual_text='text_fail-png')
+        tests.add('failures/unexpected/crash.html', crash=True)
         tests.add('failures/unexpected/text-image-checksum.html',
                   actual_text='text-image-checksum_fail-txt',
                   actual_checksum='text-image-checksum_fail-checksum')
+        tests.add('failures/unexpected/timeout.html', timeout=True)
         tests.add('http/tests/passes/text.html')
         tests.add('http/tests/ssl/text.html')
         tests.add('passes/error.html', error='stuff going to stderr')
