@@ -1,3 +1,17 @@
+2010-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Interrupted accelerated animation can break later transitions
+        https://bugs.webkit.org/show_bug.cgi?id=51264
+        
+        Testcase that starts an accelerated transition, then navigates to a new
+        page that tries to run an opacity transition.
+
+        * transitions/interrupted-accelerated-transition-expected.txt: Added.
+        * transitions/interrupted-accelerated-transition.html: Added.
+        * transitions/resources/interrupted-accelerated-transition-final.html: Added.
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

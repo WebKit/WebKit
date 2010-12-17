@@ -3,6 +3,26 @@
         Reviewed by Chris Marrin.
 
         Interrupted accelerated animation can break later transitions
+        <rdar://problem/8767714>
+        https://bugs.webkit.org/show_bug.cgi?id=51264
+        
+        If we're still waiting for the 'animationDidStart' callback when renderers
+        get destroyed, then the m_waitingForStartTimeResponse flag could be left
+        set to 'true', which causes later transitions to never start.
+        
+        Fix by clearing the m_waitingForStartTimeResponse flag when the m_startTimeResponseWaiters
+        becomes empty.
+
+        Test: transitions/interrupted-accelerated-transition.html
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::removeFromStartTimeResponseWaitList):
+
+2010-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Interrupted accelerated animation can break later transitions
         https://bugs.webkit.org/show_bug.cgi?id=51264
 
         Step 1: code cleanup.
