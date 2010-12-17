@@ -79,22 +79,22 @@ void tst_QWebView::renderHints()
 {
     QWebView webView;
 
-    // default is only text antialiasing
+    // default is only text antialiasing + smooth pixmap transform
     QVERIFY(!(webView.renderHints() & QPainter::Antialiasing));
     QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
-    QVERIFY(!(webView.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
     QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
 
     webView.setRenderHint(QPainter::Antialiasing, true);
     QVERIFY(webView.renderHints() & QPainter::Antialiasing);
     QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
-    QVERIFY(!(webView.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
     QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
 
     webView.setRenderHint(QPainter::Antialiasing, false);
     QVERIFY(!(webView.renderHints() & QPainter::Antialiasing));
     QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
-    QVERIFY(!(webView.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
     QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
 
     webView.setRenderHint(QPainter::SmoothPixmapTransform, true);

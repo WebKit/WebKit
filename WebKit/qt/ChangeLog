@@ -1,3 +1,15 @@
+2010-12-17  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] GraphicsContext should respect QWebView render hints
+        https://bugs.webkit.org/show_bug.cgi?id=51208
+
+        Adjust the test since SmoothPixmapTransform is set by default.
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::renderHints):
+
 2010-12-05  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ariya Hidayat.
