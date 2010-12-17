@@ -1741,6 +1741,35 @@ class CppStyleTest(CppStyleTestBase):
                 '  [build/header_guard] [5]' % expected_guard),
             error_collector.result_list())
 
+        # Allow the WTF_ prefix for files in that directory.
+        header_guard_filter = FilterConfiguration(('-', '+build/header_guard'))
+        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+                               ['#ifndef WTF_TestName_h', '#define WTF_TestName_h'],
+                               error_collector)
+        self.assertEquals(0, len(error_collector.result_list()),
+                          error_collector.result_list())
+
+        # Also allow the non WTF_ prefix for files in that directory.
+        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+                               ['#ifndef TestName_h', '#define TestName_h'],
+                               error_collector)
+        self.assertEquals(0, len(error_collector.result_list()),
+                          error_collector.result_list())
+
+        # Verify that we suggest the WTF prefix version.
+        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+                               ['#ifndef BAD_TestName_h', '#define BAD_TestName_h'],
+                               error_collector)
+        self.assertEquals(
+            1,
+            error_collector.result_list().count(
+                '#ifndef header guard has wrong style, please use: WTF_TestName_h'
+                '  [build/header_guard] [5]'),
+            error_collector.result_list())
+
     def test_build_printf_format(self):
         self.assert_lint(
             r'printf("\%%d", value);',

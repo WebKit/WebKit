@@ -1,3 +1,19 @@
+2010-12-17  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style should understand WTF #include guards
+        https://bugs.webkit.org/show_bug.cgi?id=44911
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (get_header_guard_cpp_variable): modify to suggest the WTF style
+        of header guard when appropriate.
+        (check_for_header_guard): handle multiple return values from
+        get_header_guard_cpp_variable
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_build_header_guard): Added tests for the WTF
+        header style.
+
 2010-12-16  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
