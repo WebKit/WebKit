@@ -73,18 +73,20 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src)
     , m_textSize(src.m_textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
+    , m_orientation(src.m_orientation)
     , m_style(src.m_style)
     , m_harfbuzzFace(src.m_harfbuzzFace)
 {
     SkSafeRef(m_typeface);
 }
 
-FontPlatformData::FontPlatformData(SkTypeface* tf, const char* family, float textSize, bool fakeBold, bool fakeItalic)
+FontPlatformData::FontPlatformData(SkTypeface* tf, const char* family, float textSize, bool fakeBold, bool fakeItalic, FontOrientation orientation)
     : m_typeface(tf)
     , m_family(family)
     , m_textSize(textSize)
     , m_fakeBold(fakeBold)
     , m_fakeItalic(fakeItalic)
+    , m_orientation(orientation)
 {
     SkSafeRef(m_typeface);
     querySystemForRenderStyle();
@@ -116,6 +118,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
     m_fakeBold = src.m_fakeBold;
     m_fakeItalic = src.m_fakeItalic;
     m_harfbuzzFace = src.m_harfbuzzFace;
+    m_orientation = src.m_orientation;
     m_style = src.m_style;
 
     return *this;
@@ -179,13 +182,14 @@ bool FontPlatformData::operator==(const FontPlatformData& a) const
         && m_textSize == a.m_textSize
         && m_fakeBold == a.m_fakeBold
         && m_fakeItalic == a.m_fakeItalic
+        && m_orientation == a.m_orientation
         && m_style == a.m_style;
 }
 
 unsigned FontPlatformData::hash() const
 {
     unsigned h = SkTypeface::UniqueID(m_typeface);
-    h ^= 0x01010101 * ((static_cast<int>(m_fakeBold) << 1) | static_cast<int>(m_fakeItalic));
+    h ^= 0x01010101 * ((static_cast<int>(m_orientation) << 2) | (static_cast<int>(m_fakeBold) << 1) | static_cast<int>(m_fakeItalic));
 
     // This memcpy is to avoid a reinterpret_cast that breaks strict-aliasing
     // rules. Memcpy is generally optimized enough so that performance doesn't

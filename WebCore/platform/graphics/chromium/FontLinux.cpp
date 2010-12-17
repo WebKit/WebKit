@@ -91,12 +91,20 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     // patches may be upstreamed to WebKit so we always use the slower path
     // here.
     const GlyphBufferAdvance* adv = glyphBuffer.advances(from);
-    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs);
+    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs), storage2(numGlyphs), storage3(numGlyphs);
     SkPoint* pos = storage.get();
+    SkPoint* vPosBegin = storage2.get();
+    SkPoint* vPosEnd = storage3.get();
 
+    bool isVertical = font->orientation() == Vertical;
     for (int i = 0; i < numGlyphs; i++) {
+        SkScalar myWidth = SkFloatToScalar(adv[i].width());
         pos[i].set(x, y);
-        x += SkFloatToScalar(adv[i].width());
+        if (isVertical) {
+            vPosBegin[i].set(x + myWidth, y);
+            vPosEnd[i].set(x + myWidth, y - myWidth);
+        }
+        x += myWidth;
         y += SkFloatToScalar(adv[i].height());
     }
 
@@ -113,7 +121,17 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         adjustTextRenderMode(&paint, gc->platformContext());
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->fillColor().rgb());
-        canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+
+        if (isVertical) {
+            SkPath path;
+            for (int i = 0; i < numGlyphs; ++i) {
+                path.reset();
+                path.moveTo(vPosBegin[i]);
+                path.lineTo(vPosEnd[i]);
+                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+            }
+        } else
+            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 
     if ((textMode & TextModeStroke)
@@ -133,7 +151,16 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
             SkSafeUnref(paint.setLooper(0));
         }
 
-        canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+        if (isVertical) {
+            SkPath path;
+            for (int i = 0; i < numGlyphs; ++i) {
+                path.reset();
+                path.moveTo(vPosBegin[i]);
+                path.lineTo(vPosEnd[i]);
+                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+            }
+        } else
+            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 }
 

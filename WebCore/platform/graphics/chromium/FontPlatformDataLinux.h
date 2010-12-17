@@ -72,6 +72,7 @@ public:
         , m_textSize(0)
         , m_fakeBold(false)
         , m_fakeItalic(false)
+        , m_orientation(Horizontal)
         { }
 
     FontPlatformData(float textSize, bool fakeBold, bool fakeItalic)
@@ -79,10 +80,11 @@ public:
         , m_textSize(textSize)
         , m_fakeBold(fakeBold)
         , m_fakeItalic(fakeItalic)
+        , m_orientation(Horizontal)
         { }
 
     FontPlatformData(const FontPlatformData&);
-    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic);
+    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation orientation = Horizontal);
     FontPlatformData(const FontPlatformData& src, float textSize);
     ~FontPlatformData();
 
@@ -106,7 +108,7 @@ public:
     unsigned hash() const;
     float size() const { return m_textSize; }
 
-    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    FontOrientation orientation() const { return m_orientation; }
 
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);
@@ -153,6 +155,7 @@ private:
     float m_textSize;
     bool m_fakeBold;
     bool m_fakeItalic;
+    FontOrientation m_orientation;
     FontRenderStyle m_style;
     mutable RefPtr<RefCountedHarfbuzzFace> m_harfbuzzFace;
 

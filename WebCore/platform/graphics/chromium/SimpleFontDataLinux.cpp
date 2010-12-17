@@ -109,6 +109,15 @@ void SimpleFontData::platformInit()
     m_lineGap = SkScalarRound(metrics.fLeading);
     m_lineSpacing = m_ascent + m_descent + m_lineGap;
 
+    if (m_orientation == Vertical) {
+        static const uint32_t vheaTag = SkSetFourByteTag('v', 'h', 'e', 'a');
+        static const uint32_t vorgTag = SkSetFourByteTag('V', 'O', 'R', 'G');
+        size_t vheaSize = SkFontHost::GetTableSize(fontID, vheaTag);
+        size_t vorgSize = SkFontHost::GetTableSize(fontID, vorgTag);
+        if ((vheaSize <= 0) && (vorgSize <= 0))
+            m_orientation = Horizontal;
+    }
+
     // In WebKit/WebCore/platform/graphics/SimpleFontData.cpp, m_spaceWidth is
     // calculated for us, but we need to calculate m_maxCharWidth and
     // m_avgCharWidth in order for text entry widgets to be sized correctly.
