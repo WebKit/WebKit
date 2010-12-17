@@ -1,3 +1,21 @@
+2010-12-17  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QWebPage sends out a RequestSoftwareInputPanel event 
+        incorrectly in particular case
+        https://bugs.webkit.org/show_bug.cgi?id=50419
+
+        Add HitTestResult check before firing RequestSoftwareInputPanel event.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::handleSoftwareInputPanel):
+        * Api/qwebpage_p.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (clickOnPage):
+        (tst_QWebPage::inputMethods):
+
 2010-12-17  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r74229.

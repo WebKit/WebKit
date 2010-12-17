@@ -759,10 +759,10 @@ void QWebPagePrivate::mouseReleaseEvent(T *ev)
     ev->setAccepted(accepted);
 
     handleClipboard(ev, ev->button());
-    handleSoftwareInputPanel(ev->button());
+    handleSoftwareInputPanel(ev->button(), QPointF(ev->pos()).toPoint());
 }
 
-void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
+void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button, const QPoint& pos)
 {
     Frame* frame = page->focusController()->focusedFrame();
     if (!frame)
@@ -774,8 +774,11 @@ void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
             client->ownerWidget()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
         if (!clickCausedFocus || behavior == QStyle::RSIP_OnMouseClick) {
-            QEvent event(QEvent::RequestSoftwareInputPanel);
-            QApplication::sendEvent(client->ownerWidget(), &event);
+            HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos), false);
+            if (result.isContentEditable()) {
+                QEvent event(QEvent::RequestSoftwareInputPanel);
+                QApplication::sendEvent(client->ownerWidget(), &event);
+            }
         }
     }
 
