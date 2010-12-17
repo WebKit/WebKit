@@ -965,7 +965,8 @@ void GraphicsContext::clearPlatformShadow()
 
 void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask)
 {
-   m_data->layers.push(new TransparencyLayer(m_data->p(), m_data->p()->transform().mapRect(rect), 1.0, alphaMask));
+    QPainter* p = m_data->p();
+    m_data->layers.push(new TransparencyLayer(p, p->transform().mapRect(rect), 1.0, alphaMask));
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
@@ -988,7 +989,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     h = int(qBound(qreal(0), deviceClip.height(), (qreal)h) + 2);
 
     QPixmap emptyAlphaMask;
-    m_data->layers.push(new TransparencyLayer(m_data->p(), QRect(x, y, w, h), opacity, emptyAlphaMask));
+    m_data->layers.push(new TransparencyLayer(p, QRect(x, y, w, h), opacity, emptyAlphaMask));
     ++m_data->layerCount;
 }
 
