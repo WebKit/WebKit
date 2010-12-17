@@ -43,17 +43,17 @@ class WebPageProxy;
 
 class WebPopupMenuProxyMac : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyMac> create(WKView* webView)
+    static PassRefPtr<WebPopupMenuProxyMac> create(WKView* webView, WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuProxyMac(webView));
+        return adoptRef(new WebPopupMenuProxyMac(webView, client));
     }
     ~WebPopupMenuProxyMac();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
     virtual void hidePopupMenu();
 
 private:
-    WebPopupMenuProxyMac(WKView*);
+    WebPopupMenuProxyMac(WKView*, WebPopupMenuProxy::Client* client);
 
     void populate(const Vector<WebPopupItem>&);
 

@@ -35,8 +35,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView* webView)
-    : m_webView(webView)
+WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView* webView, WebPopupMenuProxy::Client* client)
+    : WebPopupMenuProxy(client)
+    , m_webView(webView)
 {
 }
 
@@ -70,7 +71,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items)
     }
 }
 
-void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex)
+void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
     populate(items);
 
@@ -96,7 +97,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPo
     [m_popup.get() dismissPopUp];
     [dummyView.get() removeFromSuperview];
 
-    newSelectedIndex = [m_popup.get() indexOfSelectedItem];
+    m_client->valueChangedForPopupMenu(this, [m_popup.get() indexOfSelectedItem]);
 }
 
 void WebPopupMenuProxyMac::hidePopupMenu()

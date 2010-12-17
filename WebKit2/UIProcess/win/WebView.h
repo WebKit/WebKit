@@ -118,7 +118,7 @@ private:
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
     virtual void selectionChanged(bool, bool, bool, bool);
     virtual void compositionSelectionChanged(bool);
-    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
+    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
 

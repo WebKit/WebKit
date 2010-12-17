@@ -337,6 +337,7 @@ private:
 #endif
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
+    void setTextForActivePopupMenu(int32_t index);
 
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();

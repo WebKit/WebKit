@@ -247,9 +247,9 @@ void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
     }
 }
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy()
+PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuProxyMac::create(m_wkView);
+    return WebPopupMenuProxyMac::create(m_wkView, page);
 }
 
 PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)

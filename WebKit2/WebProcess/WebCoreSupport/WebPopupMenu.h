@@ -45,6 +45,7 @@ public:
 
     void disconnectFromPage() { m_page = 0; }
     void didChangeSelectedIndex(int newIndex);
+    void setTextForIndex(int newIndex);
 
     virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index);
     virtual void hide();

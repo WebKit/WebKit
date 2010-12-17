@@ -40,18 +40,32 @@ struct PlatformPopupMenuData;
 struct WebPopupItem;
 
 class WebPopupMenuProxy : public RefCounted<WebPopupMenuProxy> {
-public:    
+public:
+    class Client {
+    protected:
+        virtual ~Client()
+        {
+        }
+
+    public:
+        virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) = 0;
+        virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) = 0;
+    };
+
     virtual ~WebPopupMenuProxy()
     {
     }
 
-    virtual void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex) = 0;
+    virtual void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) = 0;
     virtual void hidePopupMenu() = 0;
 
 protected:
-    WebPopupMenuProxy()
+    WebPopupMenuProxy(Client* client)
+        : m_client(client)
     {
     }
+
+    Client* m_client;
 };
 
 } // namespace WebKit

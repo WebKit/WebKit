@@ -42,19 +42,19 @@ class WebView;
 
 class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollbarClient  {
 public:
-    static PassRefPtr<WebPopupMenuProxyWin> create(WebView* webView)
+    static PassRefPtr<WebPopupMenuProxyWin> create(WebView* webView, WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuProxyWin(webView));
+        return adoptRef(new WebPopupMenuProxyWin(webView, client));
     }
     ~WebPopupMenuProxyWin();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex, int32_t& newSelectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
     virtual void hidePopupMenu();
 
     void hide() { hidePopupMenu(); }
 
 private:
-    WebPopupMenuProxyWin(WebView*);
+    WebPopupMenuProxyWin(WebView*, WebPopupMenuProxy::Client*);
 
     WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 

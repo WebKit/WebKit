@@ -42,6 +42,7 @@
 #include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
 #include "WebPolicyClient.h"
+#include "WebPopupMenuProxy.h"
 #include "WebUIClient.h"
 #include <WebCore/EditAction.h>
 #include <WebCore/Editor.h>
@@ -100,7 +101,7 @@ typedef GenericCallback<WKStringRef, StringImpl*> RenderTreeExternalRepresentati
 typedef GenericCallback<WKStringRef, StringImpl*> ScriptReturnValueCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> ContentsAsStringCallback;
 
-class WebPageProxy : public APIObject {
+class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
 public:
     static const Type APIType = TypePage;
 
@@ -296,6 +297,10 @@ private:
     WebPageProxy(WebContext*, WebPageGroup*, uint64_t pageID);
 
     virtual Type type() const { return APIType; }
+
+    // WebPopupMenuProxy::Client
+    virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex);
+    virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index);
 
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveWebPageProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

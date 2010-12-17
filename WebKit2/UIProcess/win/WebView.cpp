@@ -926,9 +926,9 @@ void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
     ::DefWindowProcW(event.nativeEvent()->hwnd, event.nativeEvent()->message, event.nativeEvent()->wParam, event.nativeEvent()->lParam);
 }
 
-PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
+PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuProxyWin::create(this);
+    return WebPopupMenuProxyWin::create(this, page);
 }
 
 PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* page)

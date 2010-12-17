@@ -1116,6 +1116,14 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
+void WebPage::setTextForActivePopupMenu(int32_t index)
+{
+    if (!m_activePopupMenu)
+        return;
+
+    m_activePopupMenu->setTextForIndex(index);
+}
+
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     ASSERT(m_contextMenu);

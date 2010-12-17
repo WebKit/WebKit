@@ -1,3 +1,65 @@
+2010-12-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Text area does not update when you arrow through a <select> in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51269
+        <rdar://problem/8612853>
+        
+        Patch by Sam Weinig.
+        
+        Insteaed of keeping track of the selected index of a <select> just in the UI process, we
+        need to pass this information along to the web process so that the web process can draw
+        the correct text in the text field at the top of the select, when the selection changes (via
+        the arrows or other typing while the select is opened).
+        
+        When the selected item in a popup changes, the UI process sends a message to the web process, telling
+        it about the new selected index. The web process gets this message, and then sets the text that
+        is visible in the select element.
+
+        * UIProcess/API/mac/PageClientImpl.h: CreatePopupMenuProxy now takes a WebPageProxy.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPopupMenuProxy): Pass the WebPageProxy to create.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createPopupMenuProxy):
+        * UIProcess/API/qt/qwkpage_p.h: CreatePopupMenuProxy now takes a WebPageProxy.
+        * UIProcess/PageClient.h: CreatePopupMenuProxy now takes a WebPageProxy.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::valueChangedForPopupMenu): Send that the selected index changed to the 
+            web process.selected
+        (WebKit::WebPageProxy::setTextFromItemForPopupMenu): Send that we should update the text for the
+            active popup menu (with the index of the item to show).
+        (WebKit::WebPageProxy::showPopupMenu): Pass the WebPageProxy to createPopupMenuProxy.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPopupMenuProxy.h: Add a client who has virtual functions for the state changing of the
+            popup menu. ShowPopupMenu doesn't take a new selected index anymore, that is handled by the client,
+            and calling down to the web process.
+        (WebKit::WebPopupMenuProxy::Client::~Client):
+        (WebKit::WebPopupMenuProxy::WebPopupMenuProxy): Initialize the client.
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        (WebKit::WebPopupMenuProxyMac::create): Takes a WebPopupMenuProxy::Client, and passes it to the constructor.
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::WebPopupMenuProxyMac): Update what's initialized by the constructor.
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu): Call through to the web process that the value changed.
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::WebPopupMenuProxyQt::WebPopupMenuProxyQt): Update what's initialized by the constructor.
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::WebPopupMenuProxyWin): Ditto.
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu): Call through to the web process that the value changed.
+        (WebKit::WebPopupMenuProxyWin::setFocusedIndex): Resolve a FIXME to set the text of the popup menu.
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        (WebKit::WebPopupMenuProxyWin::create): Take in a WebPopupMenuProxy::client, and pass it to the constructor.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy): Pass the WebPageProxy to create.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::setTextForIndex): Call through to setTextFromItem to set the select text.
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        * WebProcess/WebPage/WebPage.cpp: Call through to setTextForIndex on the active popup menu.
+        (WebKit::WebPage::setTextForActivePopupMenu):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add a new message.
+
 2010-12-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
