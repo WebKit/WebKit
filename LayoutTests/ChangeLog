@@ -1,3 +1,17 @@
+2010-12-17  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Add Windows-specific expected results for the the tests added in
+        http://trac.webkit.org/changeset/74281.
+
+        * platform/win/fast/text/emphasis-expected.checksum: Added.
+        * platform/win/fast/text/emphasis-expected.png: Added.
+        * platform/win/fast/text/emphasis-expected.txt: Added.
+        * platform/win/fast/text/emphasis-vertical-expected.checksum: Added.
+        * platform/win/fast/text/emphasis-vertical-expected.png: Added.
+        * platform/win/fast/text/emphasis-vertical-expected.txt: Added.
+
 2010-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.
