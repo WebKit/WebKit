@@ -1301,4 +1301,9 @@ bool WebPage::hasLocalDataForURL(const KURL& url)
     return platformHasLocalDataForURL(url);
 }
 
+void WebPage::setCustomTextEncodingName(const String& encoding)
+{
+    m_page->mainFrame()->loader()->reloadWithOverrideEncoding(encoding);
+}
+
 } // namespace WebKit

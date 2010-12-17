@@ -189,6 +189,21 @@ void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
     toImpl(pageRef)->setCustomUserAgent(toWTFString(userAgentRef));
 }
 
+bool WKPageSupportsTextEncoding(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->supportsTextEncoding();
+}
+
+WKStringRef WKPageCopyCustomTextEncodingName(WKPageRef pageRef)
+{
+    return toCopiedAPI(toImpl(pageRef)->customTextEncodingName());
+}
+
+void WKPageSetCustomTextEncodingName(WKPageRef pageRef, WKStringRef encodingNameRef)
+{
+    toImpl(pageRef)->setCustomTextEncodingName(toWTFString(encodingNameRef));
+}
+
 void WKPageTerminate(WKPageRef pageRef)
 {
     toImpl(pageRef)->terminateProcess();

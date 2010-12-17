@@ -57,6 +57,7 @@ messages -> WebPage {
     PreferencesDidChange(WebKit::WebPreferencesStore store)
 
     SetUserAgent(WTF::String userAgent)
+    SetCustomTextEncodingName(WTF::String encodingName)
 
 #if ENABLE(TILED_BACKING_STORE)
     SetActualVisibleContentRect(WebCore::IntRect rect)
@@ -96,11 +97,10 @@ messages -> WebPage {
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
-	// This is a dummy message to avoid breaking the build for platforms that don't require
-	// synchronous messages.
-    // FIXME: should be removed when <rdar://problem/8775115> is fixed.
-	Dummy() -> (bool dummyReturn)
-	
+    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
+    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
+    Dummy() -> (bool dummyReturn)
+
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)

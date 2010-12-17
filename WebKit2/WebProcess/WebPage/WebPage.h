@@ -317,6 +317,7 @@ private:
 
     void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID);
     void setUserAgent(const String&);
+    void setCustomTextEncodingName(const String&);
 
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool windowIsVisible);

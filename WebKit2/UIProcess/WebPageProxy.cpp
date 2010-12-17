@@ -108,6 +108,7 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_syncMimeTypePolicyDownloadID(0)
     , m_processingWheelEvent(false)
     , m_pageID(pageID)
+    , m_mainFrameHasCustomRepresentation(false)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -660,6 +661,22 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
     setUserAgent(m_customUserAgent);
 }
 
+bool WebPageProxy::supportsTextEncoding() const
+{
+    return !m_mainFrameHasCustomRepresentation && m_mainFrame && !m_mainFrame->isDisplayingStandaloneImageDocument();
+}
+
+void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
+{
+    if (m_customTextEncodingName == encodingName)
+        return;
+    m_customTextEncodingName = encodingName;
+
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetCustomTextEncodingName(encodingName), m_pageID);
+}
+
 void WebPageProxy::terminateProcess()
 {
     if (!isValid())
@@ -930,8 +947,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
     frame->didCommitLoad();
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
+        m_mainFrameHasCustomRepresentation = frameHasCustomRepresentation;
         m_pageClient->didCommitLoadForMainFrame(frameHasCustomRepresentation);
+    }
 
     m_loaderClient.didCommitLoadForFrame(this, frame, userData.get());
 }

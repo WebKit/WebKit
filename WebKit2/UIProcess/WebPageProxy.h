@@ -179,9 +179,7 @@ public:
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
     void didSelectionChange(bool, bool, bool, bool, uint64_t, uint64_t);
-
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
-
 #else
     void didChangeSelection(bool, bool, bool, bool);
 #endif
@@ -212,6 +210,10 @@ public:
     const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
     void setCustomUserAgent(const String&);
     const String& customUserAgent() const { return m_customUserAgent; }
+
+    bool supportsTextEncoding() const;
+    void setCustomTextEncodingName(const String&);
+    String customTextEncodingName() const { return m_customTextEncodingName; }
 
     double estimatedProgress() const { return m_estimatedProgress; }
 
@@ -438,6 +440,7 @@ private:
     String m_userAgent;
     String m_applicationNameForUserAgent;
     String m_customUserAgent;
+    String m_customTextEncodingName;
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspectorProxy> m_inspector;
@@ -491,6 +494,8 @@ private:
     OwnPtr<WebWheelEvent> m_nextWheelEvent;
 
     uint64_t m_pageID;
+
+    bool m_mainFrameHasCustomRepresentation;
 };
 
 } // namespace WebKit

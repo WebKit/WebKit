@@ -260,6 +260,10 @@ WK_EXPORT void WKPageSetApplicationNameForUserAgent(WKPageRef page, WKStringRef 
 WK_EXPORT WKStringRef WKPageCopyCustomUserAgent(WKPageRef page);
 WK_EXPORT void WKPageSetCustomUserAgent(WKPageRef page, WKStringRef userAgent);
 
+WK_EXPORT bool WKPageSupportsTextEncoding(WKPageRef page);
+WK_EXPORT WKStringRef WKPageCopyCustomTextEncodingName(WKPageRef page);
+WK_EXPORT void WKPageSetCustomTextEncodingName(WKPageRef page, WKStringRef encodingName);
+
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);

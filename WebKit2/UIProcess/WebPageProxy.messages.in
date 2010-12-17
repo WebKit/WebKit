@@ -131,6 +131,7 @@ messages -> WebPageProxy {
 #if PLATFORM(WIN)
     DidChangeCompositionSelection(bool hasChanged)
 #endif
+
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)

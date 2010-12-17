@@ -1,3 +1,39 @@
+2010-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add text encoding menu API for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51226
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSupportsTextEncoding): Added.
+        (WKPageCopyCustomTextEncodingName): Added.
+        (WKPageSetCustomTextEncodingName): Added.
+        * UIProcess/API/C/WKPage.h: Added the functions above.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize
+        m_mainFrameHasCustomRepresentation to false.
+        (WebKit::WebPageProxy::supportsTextEncoding): Added.
+        (WebKit::WebPageProxy::setCustomTextEncodingName): Added.
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Set
+        m_mainFrameHasCustomRepresentation.
+
+        * UIProcess/WebPageProxy.h: Added supportsTextEncoding,
+        setCustomTextEncodingName, customTextEncodingName, and
+        m_mainFrameHasCustomRepresentation.
+
+        * UIProcess/WebPageProxy.messages.in: Tweaked formatting
+        (added a blank line).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setCustomTextEncodingName): Added.
+        * WebProcess/WebPage/WebPage.h: Added setCustomTextEncodingName.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added the
+        SetCustomTextEncodingName message. Tweaked formatting of the
+        dummy message.
+
 2010-12-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74201.
