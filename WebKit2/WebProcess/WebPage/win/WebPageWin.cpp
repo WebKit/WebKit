@@ -263,8 +263,12 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 {
-    // FIXME: Are there other requests we need to be able to handle? WebKit1's WebView.cpp has a FIXME here as well.
+#if USE(CFNETWORK)
+     // FIXME: Are there other requests we need to be able to handle? WebKit1's WebView.cpp has a FIXME here as well.
     return CFURLProtocolCanHandleRequest(request.cfURLRequest());
+#else
+    return true;
+#endif
 }
 
 void WebPage::confirmComposition(const String& compositionString)
