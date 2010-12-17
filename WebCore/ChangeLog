@@ -1,3 +1,19 @@
+2010-12-17  Shimeng (Simon) Wang  <swang@google.com>
+
+        Reviewed by Steve Block.
+
+        Fix V8 JNI binding.
+        https://bugs.webkit.org/show_bug.cgi?id=51156
+
+        There're LayoutTests in:
+        http://trac.webkit.org/browser/trunk/LayoutTests/java/lc3/JSNumber
+        to exercise these code paths.
+        Though Chromium don't run them.
+        Tested on Android fast/events/touch tests.
+
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertNPVariantToJValue):
+
 2010-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.

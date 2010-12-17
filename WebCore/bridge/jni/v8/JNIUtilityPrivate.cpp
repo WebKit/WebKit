@@ -87,7 +87,9 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
     case byte_type:
         {
             if (type == NPVariantType_Int32)
-                result.b = static_cast<char>(NPVARIANT_TO_INT32(value));
+                result.b = static_cast<jbyte>(NPVARIANT_TO_INT32(value));
+            else if (type == NPVariantType_Double)
+                result.b = static_cast<jbyte>(NPVARIANT_TO_DOUBLE(value));
             else
                 memset(&result, 0, sizeof(jvalue));
         }
@@ -106,6 +108,8 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
         {
             if (type == NPVariantType_Int32)
                 result.s = static_cast<jshort>(NPVARIANT_TO_INT32(value));
+            else if (type == NPVariantType_Double)
+                result.s = static_cast<jshort>(NPVARIANT_TO_DOUBLE(value));
             else
                 memset(&result, 0, sizeof(jvalue));
         }
@@ -115,6 +119,8 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
         {
             if (type == NPVariantType_Int32)
                 result.i = static_cast<jint>(NPVARIANT_TO_INT32(value));
+            else if (type == NPVariantType_Double)
+                result.i = static_cast<jint>(NPVARIANT_TO_DOUBLE(value));
             else
                 memset(&result, 0, sizeof(jvalue));
         }
