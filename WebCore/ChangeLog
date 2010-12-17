@@ -1,3 +1,33 @@
+2010-12-17  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        A corrupted counter tree is created when renderers are added to the
+        tree bypassing RenderObject::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=51270
+
+        This patch replaces the hack introduced for fixing bug 43812
+        with code that addresses the underlying problem for that bug.
+        No new layout tests provided as there is no identified scenario when
+        visible behavior would be different, the internal datastructures
+        are maintained properly through this fix so the previous hack
+        introduced for bug 43812 is now removed. The fact that the 
+        layout test introduced for 43812 continues to pass is proof that the
+        code works.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+          Removed hack.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+          Moved call to counter nodes updater to lower level
+          functions to avoid bypass.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+          Changed to update the values of the counters that
+          may be inserted in the tree.
+
 2010-12-17  Shimeng (Simon) Wang  <swang@google.com>
 
         Reviewed by Steve Block.
