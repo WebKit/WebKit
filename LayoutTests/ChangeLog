@@ -1,3 +1,16 @@
+2010-12-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Incorrect encoding of some constants in ARMv7 JIT
+        https://bugs.webkit.org/show_bug.cgi?id=51273
+
+        Add a few tests for different byte patterns in immediates.
+
+        * fast/js/constant-encoding-expected.txt: Added.
+        * fast/js/constant-encoding.html: Added.
+        * fast/js/script-tests/constant-encoding.js: Added.
+
 2010-12-17  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Dan Bernstein.

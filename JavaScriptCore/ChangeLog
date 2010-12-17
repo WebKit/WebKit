@@ -1,3 +1,17 @@
+2010-12-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Incorrect encoding of some constants in ARMv7 JIT
+        https://bugs.webkit.org/show_bug.cgi?id=51273
+        <rdar://problem/8650210>
+
+        When using immediate encoding 3 we need to write the byte
+        that holds a duplicated value.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMThumbImmediate::makeEncodedImm):
+
 2010-12-16  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Fisher.
