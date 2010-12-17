@@ -483,7 +483,7 @@ namespace WebCore {
         void platformInit(PlatformGraphicsContext*);
         void platformDestroy();
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !OS(WINCE)
         void platformInit(HDC, bool hasAlpha = false);
 #endif
 
