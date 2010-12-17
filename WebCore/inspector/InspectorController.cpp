@@ -576,6 +576,7 @@ void InspectorController::disconnectFrontend()
 
     releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
+    m_extraHeaders.clear();
 }
 
 void InspectorController::releaseFrontendLifetimeAgents()
@@ -825,19 +826,20 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
         return;
 
     request.setReportLoadTiming(true);
-    // Only enable raw headers if front-end is attached, as otherwise we may lack
-    // permissions to fetch the headers.
-    if (m_frontend)
+
+    if (m_frontend) {
+        // Only enable raw headers if front-end is attached, as otherwise we may lack
+        // permissions to fetch the headers.
         request.setReportRawHeaders(true);
 
-    if (m_extraHeaders) {
-        HTTPHeaderMap::const_iterator end = m_extraHeaders->end();
-        for (HTTPHeaderMap::const_iterator it = m_extraHeaders->begin(); it != end; ++it)
-            request.setHTTPHeaderField(it->first, it->second);
+        if (m_extraHeaders) {
+            HTTPHeaderMap::const_iterator end = m_extraHeaders->end();
+            for (HTTPHeaderMap::const_iterator it = m_extraHeaders->begin(); it != end; ++it)
+                request.setHTTPHeaderField(it->first, it->second);
+        }
     }
 
     bool isMainResource = m_mainResourceIdentifier == identifier;
-
     if (m_timelineAgent)
         m_timelineAgent->willSendResourceRequest(identifier, isMainResource, request);
 
