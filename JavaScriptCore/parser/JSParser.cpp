@@ -1404,7 +1404,7 @@ end:
     if (hadAssignment)
         m_nonLHSCount++;
 
-    if (!ASTBuilder::CreatesAST)
+    if (!TreeBuilder::CreatesAST)
         return lhs;
 
     while (assignmentStack)
