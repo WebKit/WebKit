@@ -125,18 +125,6 @@ int WebProcessMain(const CommandLine& commandLine)
         WKSetVisibleApplicationName((CFStringRef)applicationName);
     }
 
-    String cachePath = commandLine["cachepath"];
-    if (!cachePath.isNull()) {
-        NSUInteger cacheMemoryCapacity = commandLine["cachememorycapacity"].toUInt();
-        NSUInteger cacheDiskCapacity = commandLine["cachediskcapacity"].toUInt();
-
-        CString utf8CachePath = cachePath.utf8();
-        NSString *nsCachePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:utf8CachePath.data() length:utf8CachePath.length()];
-
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:nsCachePath]);
-        [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
-    }
-
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
 

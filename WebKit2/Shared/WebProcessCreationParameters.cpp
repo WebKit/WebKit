@@ -31,7 +31,10 @@ namespace WebKit {
 
 WebProcessCreationParameters::WebProcessCreationParameters()
     : shouldTrackVisitedLinks(false)
-#if PLATFORM(WIN)
+#if PLATFORM(MAC)
+    , nsURLCacheMemoryCapacity(0)
+    , nsURLCacheDiskCapacity(0)
+#elif PLATFORM(WIN)
     , shouldPaintNativeControls(false)
 #endif
 {
@@ -41,17 +44,18 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 {
     encoder->encode(injectedBundlePath);
     encoder->encode(injectedBundlePathExtensionHandle);
-
     encoder->encode(applicationCacheDirectory);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
     encoder->encode(mimeTypesWithCustomRepresentation);
-    encoder->encode(static_cast<uint32_t>(cacheModel));
+    encoder->encodeEnum(cacheModel);
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(languageCode);
-
 #if PLATFORM(MAC)
+    encoder->encode(nsURLCachePath);
+    encoder->encode(nsURLCacheMemoryCapacity);
+    encoder->encode(nsURLCacheDiskCapacity);
     encoder->encode(acceleratedCompositingPort);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
@@ -64,7 +68,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.injectedBundlePathExtensionHandle))
         return false;
-
     if (!decoder->decode(parameters.applicationCacheDirectory))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
@@ -75,18 +78,19 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.mimeTypesWithCustomRepresentation))
         return false;
-
-    uint32_t cacheModel;
-    if (!decoder->decode(cacheModel))
+    if (!decoder->decodeEnum(parameters.cacheModel))
         return false;
-    parameters.cacheModel = static_cast<CacheModel>(cacheModel);
-
     if (!decoder->decode(parameters.shouldTrackVisitedLinks))
         return false;
     if (!decoder->decode(parameters.languageCode))
         return false;
-
 #if PLATFORM(MAC)
+    if (!decoder->decode(parameters.nsURLCachePath))
+        return false;
+    if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))
+        return false;
+    if (!decoder->decode(parameters.nsURLCacheDiskCapacity))
+        return false;
     if (!decoder->decode(parameters.acceleratedCompositingPort))
         return false;
 #elif PLATFORM(WIN)

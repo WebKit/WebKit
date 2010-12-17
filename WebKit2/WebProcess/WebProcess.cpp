@@ -132,6 +132,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 {
     ASSERT(m_pageMap.isEmpty());
 
+    platformInitializeWebProcess(parameters, arguments);
+
     RefPtr<APIObject> injectedBundleInitializationUserData;
     InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);
     if (!arguments->decode(messageDecoder))
@@ -174,15 +176,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         clearResourceCaches();
     if (parameters.clearApplicationCache)
         clearApplicationCache();
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-#endif
-#if PLATFORM(WIN)
-    setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
-#endif
-
-    platformInitializeWebProcess(parameters, arguments);
 }
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -401,15 +394,6 @@ void WebProcess::calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize,
         ASSERT_NOT_REACHED();
     };
 }
-
-#if PLATFORM(WIN)
-void WebProcess::setShouldPaintNativeControls(bool shouldPaintNativeControls)
-{
-#if USE(SAFARI_THEME)
-    Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
-#endif
-}
-#endif
 
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {

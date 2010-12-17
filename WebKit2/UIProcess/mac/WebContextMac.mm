@@ -68,6 +68,15 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     HashSet<String, CaseFoldingHash> mimeType = pdfAndPostScriptMIMETypes();
     parameters.mimeTypesWithCustomRepresentation.appendRange(mimeType.begin(), mimeType.end());
 
+    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    if (!cachePath)
+        cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
+
+    NSURLCache *urlCache = [NSURLCache sharedURLCache];
+    parameters.nsURLCachePath = cachePath.get();
+    parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
+    parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
+
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)
