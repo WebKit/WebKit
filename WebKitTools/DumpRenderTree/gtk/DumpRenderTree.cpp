@@ -415,7 +415,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-java-applet", FALSE,
                  "enable-plugins", TRUE,
                  "enable-hyperlink-auditing", FALSE,
-                 "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC,
+                 "editing-behavior", WEBKIT_EDITING_BEHAVIOR_UNIX,
                  "enable-fullscreen", TRUE,
                  NULL);
     webkit_web_view_set_settings(webView, settings);

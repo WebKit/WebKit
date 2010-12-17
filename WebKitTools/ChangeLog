@@ -1,3 +1,16 @@
+2010-12-16  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Settings::editingBehaviorType() incorrectly returns mac for the gtk build when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=51163
+
+        Since GTK+'s default editing behavior was changed to UNIX in r70975 (see webkitwebsettings.cpp),
+        GTK+'s DRT should also reset to UNIX after each test execution.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2010-12-17  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,19 @@
+2010-12-16  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Settings::editingBehaviorType() incorrectly returns mac for the gtk build when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=51163
+
+        Removed platform specific expected result files for gtk and windows
+        for editing/selection/extend-selection-home-end.html, since they all match
+        the cross platform result file.
+
+        Note: chromium-win and mac still have their own expected file each.
+
+        * platform/gtk/editing/selection/extend-selection-home-end-expected.txt: Removed.
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt: Removed.
+
 2010-12-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Remove custom expectations for fast/js/regexp-ranges-and-escaped-hyphens.html
