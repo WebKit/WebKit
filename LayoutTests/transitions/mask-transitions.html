@@ -37,7 +37,8 @@
 
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
-      [0.5, 'box', '-webkit-mask-position', [10, 10], 4],
+      [0.5, 'box', '-webkit-mask-position-x', 10, 4],
+      [0.5, 'box', '-webkit-mask-position-y', 10, 4],
       [0.5, 'box2', '-webkit-mask-size', [150, 150], 20],
     ];
   
@@ -47,10 +48,7 @@
       document.getElementById('box2').className = 'box final';
     }
   
-    // We can't use the pause API because it only works for individual properties, and
-    // -webkit-mask-position is a compound property.
-    runTransitionTest(expectedValues, setupTest, false);
-    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

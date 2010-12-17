@@ -27,6 +27,14 @@
 
 2010-12-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Change this test to use the pause API by testing the individual properties,
+        rather than the compound property.
+
+        * transitions/mask-transitions-expected.txt: Removed.
+        * transitions/mask-transitions.html:
+
+2010-12-17  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Chris Marrin.
 
         Interrupted accelerated animation can break later transitions
