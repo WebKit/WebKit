@@ -165,6 +165,7 @@ public:
     void setDrawsTransparentBackground(bool);
 
     void setFocused(bool);
+    void setInitialFocus(bool);
     void setActive(bool);
     void setIsInWindow(bool);
     void setWindowResizerSize(const WebCore::IntSize&);

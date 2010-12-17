@@ -433,6 +433,13 @@ void WebPageProxy::setFocused(bool isFocused)
     process()->send(Messages::WebPage::SetFocused(isFocused), m_pageID);
 }
 
+void WebPageProxy::setInitialFocus(bool forward)
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetInitialFocus(forward), m_pageID);
+}
+
 void WebPageProxy::setActive(bool active)
 {
     if (!isValid())

@@ -1,3 +1,26 @@
+2010-12-17  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Implement WKView::setInitialFocus().
+        https://bugs.webkit.org/show_bug.cgi?id=51274
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetInitialFocus):
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setInitialFocus): Send message to the Web Process to set
+        initial focus.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setInitialFocus):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInitialFocus): Set the focused node to null initially.  Then
+        ask FocusController to set the initial focus based on the focus direction.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add a new message for SetInitialFocus.
+
 2010-12-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

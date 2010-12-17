@@ -53,6 +53,7 @@ public:
     void windowAncestryDidChange();
     void setIsInWindow(bool);
     void setOverrideCursor(HCURSOR overrideCursor);
+    void setInitialFocus(bool forward);
 
     WebPageProxy* page() const { return m_page.get(); }
 

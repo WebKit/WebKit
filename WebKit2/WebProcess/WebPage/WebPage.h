@@ -292,6 +292,7 @@ private:
     void goToBackForwardItem(uint64_t);
     void setActive(bool);
     void setFocused(bool);
+    void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
     void mouseEvent(const WebMouseEvent&);

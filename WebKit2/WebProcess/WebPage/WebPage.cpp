@@ -827,6 +827,16 @@ void WebPage::setFocused(bool isFocused)
     m_page->focusController()->setFocused(isFocused);
 }
 
+void WebPage::setInitialFocus(bool forward)
+{
+    if (!m_page || !m_page->focusController())
+        return;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    frame->document()->setFocusedNode(0);
+    m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
+}
+
 void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)
 {
     if (m_windowResizerSize == windowResizerSize)

@@ -23,6 +23,7 @@
 messages -> WebPage {
     SetActive(bool active)
     SetFocused(bool focused)
+    SetInitialFocus(bool forward)
     SetIsInWindow(bool isInWindow)
 
     SetDrawsBackground(bool drawsBackground)

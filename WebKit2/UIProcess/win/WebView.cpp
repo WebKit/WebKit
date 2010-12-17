@@ -628,6 +628,11 @@ void WebView::setOverrideCursor(HCURSOR overrideCursor)
     updateNativeCursor();
 }
 
+void WebView::setInitialFocus(bool forward)
+{
+    m_page->setInitialFocus(forward);
+}
+
 void WebView::setViewportArguments(const WebCore::ViewportArguments&)
 {
 }

@@ -65,3 +65,8 @@ void WKViewSetIsInWindow(WKViewRef viewRef, bool isInWindow)
 {
     toImpl(viewRef)->setIsInWindow(isInWindow);
 }
+
+void WKViewSetInitialFocus(WKViewRef viewRef, bool forward)
+{
+    toImpl(viewRef)->setInitialFocus(forward);
+}
