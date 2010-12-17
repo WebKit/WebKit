@@ -41,13 +41,13 @@ namespace WebKit {
 static const int defaultTileWidth = 1024;
 static const int defaultTileHeight = 1024;
 
-PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView* webView)
+PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView* webView, WebPageProxy* webPageProxy)
 {
-    return adoptPtr(new TiledDrawingAreaProxy(webView));
+    return adoptPtr(new TiledDrawingAreaProxy(webView, webPageProxy));
 }
 
-TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView)
-    : DrawingAreaProxy(DrawingAreaInfo::Tiled)
+TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPageProxy* webPageProxy)
+    : DrawingAreaProxy(DrawingAreaInfo::Tiled, webPageProxy)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)

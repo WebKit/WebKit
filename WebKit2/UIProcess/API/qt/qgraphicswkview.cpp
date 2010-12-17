@@ -65,20 +65,21 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
 
     PassOwnPtr<DrawingAreaProxy> drawingAreaProxy;
 
+    d->page = new QWKPage(context);
+
     switch (backingStoreType) {
 #if ENABLE(TILED_BACKING_STORE)
     case Tiled:
-        drawingAreaProxy = TiledDrawingAreaProxy::create(this);
+        drawingAreaProxy = TiledDrawingAreaProxy::create(this, toImpl(page()->pageRef()));
         connect(this, SIGNAL(scaleChanged()), this, SLOT(onScaleChanged()));
         break;
 #endif
     case Simple:
     default:
-        drawingAreaProxy = ChunkedUpdateDrawingAreaProxy::create(this);
+        drawingAreaProxy = ChunkedUpdateDrawingAreaProxy::create(this, toImpl(page()->pageRef()));
         break;
     }
 
-    d->page = new QWKPage(context);
     d->page->d->init(size().toSize(), drawingAreaProxy);
     connect(d->page, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
     connect(d->page, SIGNAL(loadStarted()), this, SIGNAL(loadStarted()));

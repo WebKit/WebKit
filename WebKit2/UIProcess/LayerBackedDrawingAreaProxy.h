@@ -55,11 +55,11 @@ typedef WebView PlatformWebView;
 
 class LayerBackedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    static PassOwnPtr<LayerBackedDrawingAreaProxy> create(PlatformWebView*);
+    static PassOwnPtr<LayerBackedDrawingAreaProxy> create(PlatformWebView*, WebPageProxy*);
     virtual ~LayerBackedDrawingAreaProxy();
 
 private:
-    LayerBackedDrawingAreaProxy(PlatformWebView*);
+    LayerBackedDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
 
     WebPageProxy* page();
 

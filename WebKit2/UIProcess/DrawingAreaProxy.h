@@ -35,6 +35,8 @@ class QPainter;
 
 namespace WebKit {
 
+class WebPageProxy;
+
 #if PLATFORM(MAC)
 typedef CGContextRef PlatformDrawingContext;
 #elif PLATFORM(WIN)
@@ -66,9 +68,11 @@ public:
     const DrawingAreaInfo& info() const { return m_info; }
 
 protected:
-    explicit DrawingAreaProxy(DrawingAreaInfo::Type);
+    explicit DrawingAreaProxy(DrawingAreaInfo::Type, WebPageProxy*);
 
     DrawingAreaInfo m_info;
+    WebPageProxy* m_webPageProxy;
+
     WebCore::IntSize m_size;
 };
 

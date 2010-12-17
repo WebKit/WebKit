@@ -235,7 +235,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
 
     m_page = context->createWebPage(pageGroup);
     m_page->setPageClient(this);
-    m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this));
+    m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this, m_page.get()));
 
     m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         m_rect.top, m_rect.left, m_rect.right - m_rect.left, m_rect.bottom - m_rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
@@ -977,10 +977,10 @@ void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
         case DrawingAreaInfo::None:
             break;
         case DrawingAreaInfo::ChunkedUpdate:
-            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(this);
+            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
             break;
         case DrawingAreaInfo::LayerBacked:
-            newDrawingArea = LayerBackedDrawingAreaProxy::create(this);
+            newDrawingArea = LayerBackedDrawingAreaProxy::create(this, m_page.get());
             break;
     }
 

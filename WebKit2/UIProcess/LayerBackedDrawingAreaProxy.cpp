@@ -38,13 +38,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<LayerBackedDrawingAreaProxy> LayerBackedDrawingAreaProxy::create(PlatformWebView* webView)
+PassOwnPtr<LayerBackedDrawingAreaProxy> LayerBackedDrawingAreaProxy::create(PlatformWebView* webView, WebPageProxy* webPageProxy)
 {
-    return adoptPtr(new LayerBackedDrawingAreaProxy(webView));
+    return adoptPtr(new LayerBackedDrawingAreaProxy(webView, webPageProxy));
 }
 
-LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy(PlatformWebView* webView)
-    : DrawingAreaProxy(DrawingAreaInfo::LayerBacked)
+LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy(PlatformWebView* webView, WebPageProxy* webPageProxy)
+    : DrawingAreaProxy(DrawingAreaInfo::LayerBacked, webPageProxy)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)

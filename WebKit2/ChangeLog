@@ -1,3 +1,34 @@
+2010-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a WebPageProxy parameter to the DrawingAreaProxy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=51271
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::]):
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::create):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::create):
+        (WebKit::LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::create):
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -65,9 +65,9 @@ typedef QGraphicsWKView PlatformWebView;
 
 class TiledDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    static PassOwnPtr<TiledDrawingAreaProxy> create(PlatformWebView* webView);
+    static PassOwnPtr<TiledDrawingAreaProxy> create(PlatformWebView* webView, WebPageProxy*);
 
-    TiledDrawingAreaProxy(PlatformWebView*);
+    TiledDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
     virtual ~TiledDrawingAreaProxy();
 
     float contentsScale() const { return m_contentsScale; }

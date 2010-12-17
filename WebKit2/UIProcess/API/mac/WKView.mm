@@ -152,7 +152,7 @@ using namespace WebCore;
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(toImpl(pageGroupRef));
     _data->_page->setPageClient(_data->_pageClient.get());
-    _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
+    _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get()));
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
 
@@ -1109,11 +1109,11 @@ static bool isViewVisible(NSView *view)
         case DrawingAreaInfo::None:
             break;
         case DrawingAreaInfo::ChunkedUpdate: {
-            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(self);
+            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get());
             break;
         }
         case DrawingAreaInfo::LayerBacked: {
-            newDrawingArea = LayerBackedDrawingAreaProxy::create(self);
+            newDrawingArea = LayerBackedDrawingAreaProxy::create(self, _data->_page.get());
             break;
         }
     }
