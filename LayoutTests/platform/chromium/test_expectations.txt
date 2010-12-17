@@ -623,7 +623,7 @@ WONTFIX SKIP : inspector/extensions-audits-api.html = FAIL
 WONTFIX SKIP : inspector/extensions-events.html = FAIL
 WONTFIX SKIP : inspector/extensions-eval.html = FAIL
 WONTFIX SKIP : inspector/extensions-resources.html = TIMEOUT CRASH
-WONTFIX SKIP : inspector/extensions-headers.html = FAIL
+WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
 
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?

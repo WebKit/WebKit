@@ -1,3 +1,9 @@
+2010-12-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, skipping a failing test in the bots.
