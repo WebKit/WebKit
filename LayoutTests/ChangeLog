@@ -1,5 +1,12 @@
 2010-12-17  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed test fix: removed real user agent from test expectations.
+
+        * http/tests/inspector/extensions-headers-expected.txt:
+        * http/tests/inspector/extensions-headers.html:
+
+2010-12-17  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Clean up extra headers set in test to avoid side effects on other tests.
 
         * http/tests/inspector/extensions-headers-expected.txt:

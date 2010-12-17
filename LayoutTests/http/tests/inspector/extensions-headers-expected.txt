@@ -2,8 +2,6 @@ Tests WebInspector extension API
 
 HTTP_X_WEBINSPECTOR_EXTENSION: test
 HTTP_USER_AGENT: Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)
-HTTP_X_WEBINSPECTOR_EXTENSION: 
-HTTP_USER_AGENT: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533+ (KHTML, like Gecko)
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAddHeaders

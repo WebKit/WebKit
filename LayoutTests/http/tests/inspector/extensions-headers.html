@@ -16,9 +16,8 @@ function extension_testAddHeaders(nextTest)
             "x-webinspector-extension": null,
             "user-agent": null
         });
-        webInspector.inspectedWindow.eval("doXHR()", nextTest);
     }
-    webInspector.inspectedWindow.eval("doXHR()", cleanUpHeaders);
+    webInspector.inspectedWindow.eval("doXHR()", callbackAndNextTest(cleanUpHeaders, nextTest));
 }
 
 function doXHR()
