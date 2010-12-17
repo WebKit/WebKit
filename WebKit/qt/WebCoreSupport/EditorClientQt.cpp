@@ -349,7 +349,7 @@ void EditorClientQt::toggleGrammarChecking()
 void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 {
     Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
-    if (!frame || !frame->document()->focusedNode())
+    if (!frame)
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
@@ -374,6 +374,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                 }
             }
         }
+
 #ifndef QT_NO_SHORTCUT
         QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
         if (action != QWebPage::NoWebAction && !doSpatialNavigation) {
@@ -466,6 +467,62 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                 return;
         }
     } else {
+        if (m_page->handle()->page->settings()->caretBrowsingEnabled()) {
+            switch (kevent->windowsVirtualKeyCode()) {
+            case VK_LEFT:
+                if (kevent->shiftKey() && kevent->ctrlKey())
+                    frame->editor()->command("MoveWordBackwardAndModifySelection").execute();
+                else if (kevent->shiftKey())
+                    frame->editor()->command("MoveLeftAndModifySelection").execute();
+                else if (kevent->ctrlKey())
+                    frame->editor()->command("MoveWordBackward").execute();
+                else
+                    frame->editor()->command("MoveLeft").execute();
+                break;
+            case VK_RIGHT:
+                if (kevent->shiftKey() && kevent->ctrlKey())
+                    frame->editor()->command("MoveWordForwardAndModifySelection").execute();
+                else if (kevent->shiftKey())
+                    frame->editor()->command("MoveRightAndModifySelection").execute();
+                else if (kevent->ctrlKey())
+                    frame->editor()->command("MoveWordForward").execute();
+                else
+                    frame->editor()->command("MoveRight").execute();
+                break;
+            case VK_UP:
+                if (kevent->shiftKey())
+                    frame->editor()->command("MoveUpAndModifySelection").execute();
+                else
+                    frame->editor()->command("MoveUp").execute();
+                break;
+            case VK_DOWN:
+                if (kevent->shiftKey())
+                    frame->editor()->command("MoveDownAndModifySelection").execute();
+                else
+                    frame->editor()->command("MoveDown").execute();
+                break;
+            case VK_PRIOR: // PageUp
+                frame->editor()->command("MovePageUp").execute();
+                break;
+            case VK_NEXT: // PageDown
+                frame->editor()->command("MovePageDown").execute();
+                break;
+            case VK_HOME:
+                if (kevent->shiftKey())
+                    frame->editor()->command("MoveToBeginningOfLineAndModifySelection").execute();
+                else
+                    frame->editor()->command("MoveToBeginningOfLine").execute();
+                break;
+            case VK_END:
+                if (kevent->shiftKey())
+                    frame->editor()->command("MoveToEndOfLineAndModifySelection").execute();
+                else
+                    frame->editor()->command("MoveToEndOfLine").execute();
+                break;
+            default:
+                break;
+            }
+        }
 #ifndef QT_NO_SHORTCUT
         if (kevent->qtEvent() == QKeySequence::Copy)
             m_page->triggerAction(QWebPage::Copy);

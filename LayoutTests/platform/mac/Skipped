@@ -277,3 +277,6 @@ plugins/evaluate-js-after-removing-plugin-element.html
 
 # Very flaky: https://bugs.webkit.org/show_bug.cgi?id=49182
 animations/stop-animation-on-suspend.html
+
+# DRT does not support toggling caret browsing on / off
+LayoutTests/editing/selection/caret-mode-paragraph-keys-navigation.html

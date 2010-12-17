@@ -1,3 +1,18 @@
+2010-12-05  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Fix caret browsing navigation mode
+        https://bugs.webkit.org/show_bug.cgi?id=50536
+
+        /platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation.html
+        is one of the few tests actually tests the caret browsing feature.
+        Patch makes the test not Gtk+ specific, and Qt now passes on it.
+
+        * editing/selection/caret-mode-paragraph-keys-navigation-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation-expected.txt.
+        * editing/selection/caret-mode-paragraph-keys-navigation.html: Renamed from LayoutTests/platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation.html.
+        * fast/events/multiline-link-arrow-navigation.html:
+
 2010-12-16  Yong Li  <yoli@rim.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,3 +1,20 @@
+2010-12-05  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Fix caret browsing navigation mode
+        https://bugs.webkit.org/show_bug.cgi?id=50536
+
+        Caret browsing can consume editing commands even when the start
+        of current selection is not a editable content. r69582 missed this
+        case because caret browsing feature testing is very poor today.
+
+        This commit reintroduces part of the removed code in r69582 but
+        guarded by a isCaretBrowsingEnabled() check. No regression found.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2010-12-16  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Andreas Kling.
