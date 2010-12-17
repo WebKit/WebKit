@@ -508,8 +508,11 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
             fillResponseFromMessage(soupMsg, &d->m_response);
             client->didReceiveResponse(handle.get(), d->m_response);
 
-            // WebCore might have cancelled the job in the while
-            if (!d->m_cancelled && soupMsg->response_body->data)
+            // WebCore might have cancelled the job in the while. We
+            // must check for response_body->length and not
+            // response_body->data as libsoup always creates the
+            // SoupBuffer for the body even if the length is 0
+            if (!d->m_cancelled && soupMsg->response_body->length)
                 client->didReceiveData(handle.get(), soupMsg->response_body->data, soupMsg->response_body->length, true);
         }
 

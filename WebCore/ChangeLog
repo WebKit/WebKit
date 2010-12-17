@@ -1,3 +1,18 @@
+2010-12-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Wrong check in ResourceHandleSoup in error cases
+        https://bugs.webkit.org/show_bug.cgi?id=51171
+
+        Calling didReceiveData with no data causes a crash in debug
+        builds. Checking for soupMsg->response_body->data is not correct as libsoup
+        always creates a buffer for that. Instead we should check for
+        soupMsg->response_body->length
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback):
+
 2010-12-17  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
