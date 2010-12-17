@@ -1,5 +1,11 @@
 2010-12-17  Brian Weinstein  <bweinstein@apple.com>
 
+        Qt build fix.
+
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+
+2010-12-17  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Text area does not update when you arrow through a <select> in WebKit2
