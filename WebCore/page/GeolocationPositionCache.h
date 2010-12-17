@@ -26,31 +26,35 @@
 #ifndef GeolocationPositionCache_h
 #define GeolocationPositionCache_h
 
+#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-
 
 namespace WebCore {
 
 class Geoposition;
 
 class GeolocationPositionCache {
-  public:
-    GeolocationPositionCache();
-    ~GeolocationPositionCache();
+public:
+    static GeolocationPositionCache* instance();
 
+    void addUser();
+    void removeUser();
+
+    void setDatabasePath(const String&);
     void setCachedPosition(Geoposition*);
     Geoposition* cachedPosition();
-    static void setDatabasePath(const String&);
 
-  private:
-    static PassRefPtr<Geoposition> readFromDB();
-    static void writeToDB(const Geoposition*);
+private:
+    GeolocationPositionCache();
 
-    static int s_instances;
-    static RefPtr<Geoposition>* s_cachedPosition;
-    static String* s_databaseFile;
+    void readFromDatabase();
+    void writeToDatabase();
+
+    RefPtr<Geoposition> m_cachedPosition;
+    String m_databaseFile;
+    bool m_haveReadFromDatabase;
 };
 
 } // namespace WebCore

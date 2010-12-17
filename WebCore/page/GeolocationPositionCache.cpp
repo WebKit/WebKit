@@ -37,55 +37,66 @@
 
 namespace WebCore {
 
-static const char* databaseName = "CachedGeoposition.db";
+static int numUsers = 0;
 
-int GeolocationPositionCache::s_instances = 0;
-RefPtr<Geoposition>* GeolocationPositionCache::s_cachedPosition;
-String* GeolocationPositionCache::s_databaseFile = 0;
-
-GeolocationPositionCache::GeolocationPositionCache()
+GeolocationPositionCache* GeolocationPositionCache::instance()
 {
-    if (!(s_instances++)) {
-        s_cachedPosition = new RefPtr<Geoposition>;
-        *s_cachedPosition = readFromDB();
-    }
+    DEFINE_STATIC_LOCAL(GeolocationPositionCache*, instance, (0));
+    if (!instance)
+        instance = new GeolocationPositionCache();
+    return instance;
 }
 
-GeolocationPositionCache::~GeolocationPositionCache()
+GeolocationPositionCache::GeolocationPositionCache()
+    : m_haveReadFromDatabase(false)
 {
-    if (!(--s_instances)) {
-        if (*s_cachedPosition)
-            writeToDB(s_cachedPosition->get());
-        delete s_cachedPosition;
+}
+
+void GeolocationPositionCache::addUser()
+{
+    ASSERT(numUsers >= 0);
+    ++numUsers;
+}
+
+void GeolocationPositionCache::removeUser()
+{
+    if (!(--numUsers) && m_cachedPosition)
+        writeToDatabase();
+    ASSERT(numUsers >= 0);
+}
+
+void GeolocationPositionCache::setDatabasePath(const String& path)
+{
+    static const char* databaseName = "CachedGeoposition.db";
+    String newFile = SQLiteFileSystem::appendDatabaseFileNameToPath(path, databaseName);
+    if (m_databaseFile != newFile) {
+        m_databaseFile = newFile;
+        m_haveReadFromDatabase = false;
     }
 }
 
 void GeolocationPositionCache::setCachedPosition(Geoposition* cachedPosition)
 {
-    *s_cachedPosition = cachedPosition;
+    m_cachedPosition = cachedPosition;
 }
 
 Geoposition* GeolocationPositionCache::cachedPosition()
 {
-    return s_cachedPosition->get();
+    if (!m_haveReadFromDatabase && !m_cachedPosition)
+        readFromDatabase();
+    return m_cachedPosition.get();
 }
 
-void GeolocationPositionCache::setDatabasePath(const String& databasePath)
+void GeolocationPositionCache::readFromDatabase()
 {
-    if (!s_databaseFile)
-        s_databaseFile = new String;
-    *s_databaseFile = SQLiteFileSystem::appendDatabaseFileNameToPath(databasePath, databaseName);
-    // If we don't have have a cached position, attempt to read one from the
-    // DB at the new path.
-    if (s_instances && !(*s_cachedPosition))
-        *s_cachedPosition = readFromDB();
-}
+    ASSERT(!m_haveReadFromDatabase);
+    ASSERT(!m_cachedPosition);
 
-PassRefPtr<Geoposition> GeolocationPositionCache::readFromDB()
-{
+    m_haveReadFromDatabase = true;
+
     SQLiteDatabase database;
-    if (!s_databaseFile || !database.open(*s_databaseFile))
-        return 0;
+    if (!database.open(m_databaseFile))
+        return;
 
     // Create the table here, such that even if we've just created the
     // DB, the commands below should succeed.
@@ -98,14 +109,14 @@ PassRefPtr<Geoposition> GeolocationPositionCache::readFromDB()
             "heading REAL, "
             "speed REAL, "
             "timestamp INTEGER NOT NULL)"))
-        return 0;
+        return;
 
     SQLiteStatement statement(database, "SELECT * FROM CachedPosition");
     if (statement.prepare() != SQLResultOk)
-        return 0;
+        return;
 
     if (statement.step() != SQLResultRow)
-        return 0;
+        return;
 
     bool providesAltitude = statement.getColumnValue(2).type() != SQLValue::NullValue;
     bool providesAltitudeAccuracy = statement.getColumnValue(4).type() != SQLValue::NullValue;
@@ -118,15 +129,15 @@ PassRefPtr<Geoposition> GeolocationPositionCache::readFromDB()
                                                           providesAltitudeAccuracy, statement.getColumnDouble(4), // altitudeAccuracy
                                                           providesHeading, statement.getColumnDouble(5), // heading
                                                           providesSpeed, statement.getColumnDouble(6)); // speed
-    return Geoposition::create(coordinates.release(), statement.getColumnInt64(7)); // timestamp
+    m_cachedPosition = Geoposition::create(coordinates.release(), statement.getColumnInt64(7)); // timestamp
 }
 
-void GeolocationPositionCache::writeToDB(const Geoposition* position)
+void GeolocationPositionCache::writeToDatabase()
 {
-    ASSERT(position);
+    ASSERT(m_cachedPosition);
 
     SQLiteDatabase database;
-    if (!s_databaseFile || !database.open(*s_databaseFile))
+    if (!database.open(m_databaseFile))
         return;
 
     SQLiteTransaction transaction(database);
@@ -147,26 +158,26 @@ void GeolocationPositionCache::writeToDB(const Geoposition* position)
     if (statement.prepare() != SQLResultOk)
         return;
 
-    statement.bindDouble(1, position->coords()->latitude());
-    statement.bindDouble(2, position->coords()->longitude());
-    if (position->coords()->canProvideAltitude())
-        statement.bindDouble(3, position->coords()->altitude());
+    statement.bindDouble(1, m_cachedPosition->coords()->latitude());
+    statement.bindDouble(2, m_cachedPosition->coords()->longitude());
+    if (m_cachedPosition->coords()->canProvideAltitude())
+        statement.bindDouble(3, m_cachedPosition->coords()->altitude());
     else
         statement.bindNull(3);
-    statement.bindDouble(4, position->coords()->accuracy());
-    if (position->coords()->canProvideAltitudeAccuracy())
-        statement.bindDouble(5, position->coords()->altitudeAccuracy());
+    statement.bindDouble(4, m_cachedPosition->coords()->accuracy());
+    if (m_cachedPosition->coords()->canProvideAltitudeAccuracy())
+        statement.bindDouble(5, m_cachedPosition->coords()->altitudeAccuracy());
     else
         statement.bindNull(5);
-    if (position->coords()->canProvideHeading())
-        statement.bindDouble(6, position->coords()->heading());
+    if (m_cachedPosition->coords()->canProvideHeading())
+        statement.bindDouble(6, m_cachedPosition->coords()->heading());
     else
         statement.bindNull(6);
-    if (position->coords()->canProvideSpeed())
-        statement.bindDouble(7, position->coords()->speed());
+    if (m_cachedPosition->coords()->canProvideSpeed())
+        statement.bindDouble(7, m_cachedPosition->coords()->speed());
     else
         statement.bindNull(7);
-    statement.bindInt64(8, position->timestamp());
+    statement.bindInt64(8, m_cachedPosition->timestamp());
     if (!statement.executeCommand())
         return;
 

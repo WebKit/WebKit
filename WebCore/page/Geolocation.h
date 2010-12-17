@@ -128,6 +128,23 @@ private:
         NotifierToIdMap m_notifierToIdMap;
     };
 
+    class PositionCacheWrapper {
+    public:
+        PositionCacheWrapper()
+            : m_cache(GeolocationPositionCache::instance())
+        {
+            m_cache->addUser();
+        }
+        ~PositionCacheWrapper()
+        {
+            m_cache->removeUser();
+        }
+        void setCachedPosition(Geoposition* cachedPosition) { m_cache->setCachedPosition(cachedPosition); }
+        Geoposition* cachedPosition() { return m_cache->cachedPosition(); }
+    private:
+        GeolocationPositionCache* m_cache;
+    };
+
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
     void sendError(GeoNotifierVector&, PositionError*);
@@ -189,9 +206,7 @@ private:
         No
     } m_allowGeolocation;
 
-#if ENABLE(GEOLOCATION)
-    OwnPtr<GeolocationPositionCache> m_positionCache;
-#endif
+    PositionCacheWrapper m_positionCache;
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     
