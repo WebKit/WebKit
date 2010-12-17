@@ -1,3 +1,15 @@
+2010-12-16  Yong Li  <yoli@rim.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51199
+        Add decoding tests for UTF-16 LE/BE and their variants.
+        Also, check the full decoded text but not only the first one.
+
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/resources/char-decoding-utils.js:
+
 2010-12-16  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Updated chromium test expectations to mark

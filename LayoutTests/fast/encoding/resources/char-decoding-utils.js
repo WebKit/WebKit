@@ -9,14 +9,26 @@ function hex(number)
     return hex;
 }
 
-function decode(charsetName, characterSequence)
+function decodeText(charsetName, characterSequence)
 {
     var req = new XMLHttpRequest;
     req.open('GET', 'data:text/plain,' + characterSequence, false);
     req.overrideMimeType('text/plain; charset="' + charsetName + '"');
     req.send('');
-    var code = hex(req.responseText.charCodeAt(0));
-    return "U+" + ("0000" + code).substr(code.length, 4);
+    return req.responseText;
+}
+
+function decode(charsetName, characterSequence)
+{
+    var decodedText = decodeText(charsetName, characterSequence);
+    var result = "";
+    for (var i = 0; i < decodedText.length; ++i) {
+        var code = hex(decodedText.charCodeAt(i));
+        if (i)
+            result += "/";
+        result += "U+" + ("0000" + code).substr(code.length, 4);
+    }
+    return result;
 }
 
 function testDecode(charsetName, characterSequence, unicode)

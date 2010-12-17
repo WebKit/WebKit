@@ -89,9 +89,23 @@ batchTestDecode(thai);
 
 // UTF-7 is expressly forbidden, so decoding it should not work correctly.
 // This attempts to decode '<' as UTF-7 (+AD4) but it ends up being decoded
-// as a '+'.
-testDecode('UTF-7', '+AD4', 'U+002B');
-testDecode('utf-7', '+AD4', 'U+002B');
+// as a '+AD4'.
+testDecode('UTF-7', '+AD4', 'U+002B/U+0041/U+0044/U+0034');
+testDecode('utf-7', '+AD4', 'U+002B/U+0041/U+0044/U+0034');
+
+// UTF-16LE and variants.
+testDecode('UTF-16LE', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('unicodeFEFF', '%69%D8%D6%DE', 'U+D869/U+DED6');
+// According to HTML5 and for IE compatibility, UTF-16 is treated as little endian. The following tests fail as of Firefox 3.6.13.
+testDecode('UTF-16', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('ISO-10646-UCS-2', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('UCS-2', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('Unicode', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('csUnicode', '%69%D8%D6%DE', 'U+D869/U+DED6');
+
+// UTF-16BE and variants.
+testDecode('UTF-16BE', '%D8%69%DE%D6', 'U+D869/U+DED6');
+testDecode('unicodeFFFE', '%D8%69%DE%D6', 'U+D869/U+DED6');
 
 successfullyParsed = true;
 
