@@ -1,3 +1,16 @@
+2010-12-17  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [v8] The last portion of CSS GC work: fixing fast/dom/StyleSheet/gc-stylesheet-wrapper.html
+        https://bugs.webkit.org/show_bug.cgi?id=51121
+
+        Properly group style elements of HTML links, style elements and processing instructions.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::NodeGrouperVisitor::visitDOMWrapper):
+        (WebCore::NodeGrouperVisitor::addDOMObjectToGroup):
+
 2010-12-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

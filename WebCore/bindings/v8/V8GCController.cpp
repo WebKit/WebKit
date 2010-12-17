@@ -50,7 +50,10 @@
 #include "V8CSSStyleRule.h"
 #include "V8CSSStyleSheet.h"
 #include "V8DOMMap.h"
+#include "V8HTMLLinkElement.h"
+#include "V8HTMLStyleElement.h"
 #include "V8MessagePort.h"
+#include "V8ProcessingInstruction.h"
 #include "V8Proxy.h"
 #include "V8StyleSheetList.h"
 #include "WrapperTypeInfo.h"
@@ -329,19 +332,29 @@ public:
         // wrapper alive as well, so we add it to the object group.
         if (node->isStyledElement()) {
             StyledElement* element = reinterpret_cast<StyledElement*>(node);
-            CSSStyleDeclaration* style = element->inlineStyleDecl();
-            if (style) {
-                wrapper = store->domObjectMap().get(style);
-                if (!wrapper.IsEmpty())
-                    m_grouper.append(GrouperItem(groupId, wrapper));
-            }
+            addDOMObjectToGroup(store, groupId, element->inlineStyleDecl());
         }
 
         if (node->isDocumentNode()) {
             Document* document = reinterpret_cast<Document*>(node);
-            wrapper = store->domObjectMap().get(document->styleSheets());
-            if (!wrapper.IsEmpty())
-                m_grouper.append(GrouperItem(groupId, wrapper));
+            addDOMObjectToGroup(store, groupId, document->styleSheets());
+        }
+
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
+
+        if (V8HTMLLinkElement::info.equals(typeInfo)) {
+            HTMLLinkElement* htmlLinkElement = static_cast<HTMLLinkElement*>(node);
+            addDOMObjectToGroup(store, groupId, htmlLinkElement->sheet());
+        }
+
+        if (V8HTMLStyleElement::info.equals(typeInfo)) {
+            HTMLStyleElement* htmlStyleElement = static_cast<HTMLStyleElement*>(node);
+            addDOMObjectToGroup(store, groupId, htmlStyleElement->sheet());
+        }
+
+        if (V8ProcessingInstruction::info.equals(typeInfo)) {
+            ProcessingInstruction* processingInstruction = static_cast<ProcessingInstruction*>(node);
+            addDOMObjectToGroup(store, groupId, processingInstruction->sheet());
         }
     }
 
@@ -352,6 +365,15 @@ public:
 
 private:
     GrouperList m_grouper;
+
+    void addDOMObjectToGroup(DOMDataStore* store, uintptr_t groupId, void* object)
+    {
+        if (!object)
+            return;
+        v8::Persistent<v8::Object> wrapper = store->domObjectMap().get(object);
+        if (!wrapper.IsEmpty())
+            m_grouper.append(GrouperItem(groupId, wrapper));
+    }
 };
 
 class DOMObjectGrouperVisitor : public DOMWrapperMap<void>::Visitor {
