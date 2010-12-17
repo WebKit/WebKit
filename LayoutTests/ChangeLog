@@ -1,3 +1,16 @@
+2010-12-16  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Update BUG comment in test expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=51216
+
+        Change the BUG[0-9]+ description to BUG(CR|WK|V8_)[0-9]+ where necessary.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2010-12-05  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ariya Hidayat.

@@ -13,8 +13,9 @@
 //
 // Valid values for METADATA:
 //
-// BUG[0-9]+: See this bug for more information. Every test that isn't marked
-//            WONTFIX should have a BUG annotation.
+// BUG(CR|WK|V8_)[0-9]+: See this chromium/webkit/v8 bug for more information.
+//                       Every test that isn't marked WONTFIX should have the
+//                       appropriate BUG annotation.
 // SKIP: Doesn't run the test.
 // SLOW: The test takes a long time to run, but does not timeout indefinitely.
 // WONTFIX: For tests that we never intend to pass on a given platform.
