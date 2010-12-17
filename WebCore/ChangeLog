@@ -1,3 +1,19 @@
+2010-12-16  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] GraphicsContext should respect QWebView render hints
+        https://bugs.webkit.org/show_bug.cgi?id=51208
+
+        GraphicsContext does not override SmoothPixmapTransform (see also
+        r62762). To keep the same behavior, canvas default image interpolation
+        quality is set to medium and QWebView's render hints by default also
+        include SmoothPixmapTransform.
+
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+
 2010-12-16  Daniel Bates  <dbates@rim.com>
 
         Formatting fix; un-indent one level all lines in [2793, 2808] (with respect to r74217)

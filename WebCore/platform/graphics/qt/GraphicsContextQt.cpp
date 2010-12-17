@@ -237,7 +237,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
     // Use the default the QPainter was constructed with.
     antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
 
-    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+    painter->setRenderHint(QPainter::Antialiasing, true);
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()

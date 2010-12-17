@@ -32,7 +32,7 @@
 #include "HTMLElement.h"
 #include "IntSize.h"
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(QT)
 #define DefaultInterpolationQuality InterpolationMedium
 #elif PLATFORM(CG)
 #define DefaultInterpolationQuality InterpolationLow

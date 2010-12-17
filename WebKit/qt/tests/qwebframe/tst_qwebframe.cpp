@@ -29,6 +29,7 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QComboBox>
+#include <QPaintEngine>
 #include <QPicture>
 #include <QRegExp>
 #include <QNetworkRequest>
@@ -616,6 +617,7 @@ private slots:
     void baseUrl();
     void hasSetFocus();
     void render();
+    void renderHints();
     void scrollPosition();
     void scrollToAnchor();
     void scrollbarsOff();
@@ -2855,6 +2857,139 @@ void tst_QWebFrame::render()
 
     QCOMPARE(size.width(), picture.boundingRect().width());   // width: 100px
     QCOMPARE(size.height(), picture.boundingRect().height()); // height: 100px
+}
+
+
+class DummyPaintEngine: public QPaintEngine {
+public:
+
+    DummyPaintEngine()
+        : QPaintEngine(QPaintEngine::AllFeatures)
+        , renderHints(0)
+    {
+    }
+
+    bool begin(QPaintDevice*)
+    {
+        setActive(true);
+        return true;
+    }
+
+    bool end()
+    {
+        setActive(false);
+        return false;
+    }
+
+    void updateState(const QPaintEngineState& state)
+    {
+        renderHints = state.renderHints();
+    }
+
+    void drawPath(const QPainterPath&) { }
+    void drawPixmap(const QRectF&, const QPixmap&, const QRectF&) { }
+
+    QPaintEngine::Type type() const
+    {
+        return static_cast<QPaintEngine::Type>(QPaintEngine::User + 2);
+    }
+
+    QPainter::RenderHints renderHints;
+};
+
+class DummyPaintDevice: public QPaintDevice {
+public:
+    DummyPaintDevice()
+        : QPaintDevice()
+        , m_engine(new DummyPaintEngine)
+    {
+    }
+
+    ~DummyPaintDevice()
+    {
+        delete m_engine;
+    }
+
+    QPaintEngine* paintEngine() const
+    {
+        return m_engine;
+    }
+
+    QPainter::RenderHints renderHints() const
+    {
+        return m_engine->renderHints;
+    }
+
+protected:
+    int metric(PaintDeviceMetric metric) const;
+
+private:
+    DummyPaintEngine* m_engine;
+    friend class DummyPaintEngine;
+};
+
+
+int DummyPaintDevice::metric(PaintDeviceMetric metric) const
+{
+    switch (metric) {
+    case PdmWidth:
+        return 400;
+        break;
+
+    case PdmHeight:
+        return 200;
+        break;
+
+    case PdmNumColors:
+        return INT_MAX;
+        break;
+
+    case PdmDepth:
+        return 32;
+        break;
+
+    default:
+        break;
+    }
+    return 0;
+}
+
+void tst_QWebFrame::renderHints()
+{
+    QString html("<html><body><p>Hello, world!</p></body></html>");
+
+    QWebPage page;
+    page.mainFrame()->setHtml(html);
+    page.setViewportSize(page.mainFrame()->contentsSize());
+
+    // We will call frame->render and trap the paint engine state changes
+    // to ensure that GraphicsContext does not clobber the render hints.
+    DummyPaintDevice buffer;
+    QPainter painter(&buffer);
+
+    painter.setRenderHint(QPainter::TextAntialiasing, false);
+    page.mainFrame()->render(&painter);
+    QVERIFY(!(buffer.renderHints() & QPainter::TextAntialiasing));
+    QVERIFY(!(buffer.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(!(buffer.renderHints() & QPainter::HighQualityAntialiasing));
+
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    page.mainFrame()->render(&painter);
+    QVERIFY(buffer.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(!(buffer.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(!(buffer.renderHints() & QPainter::HighQualityAntialiasing));
+
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    page.mainFrame()->render(&painter);
+    QVERIFY(buffer.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(buffer.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(!(buffer.renderHints() & QPainter::HighQualityAntialiasing));
+
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+    page.mainFrame()->render(&painter);
+    QVERIFY(buffer.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(buffer.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(buffer.renderHints() & QPainter::HighQualityAntialiasing);
 }
 
 void tst_QWebFrame::scrollPosition()

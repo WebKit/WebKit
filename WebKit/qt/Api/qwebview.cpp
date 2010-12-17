@@ -39,7 +39,7 @@ public:
     QWebViewPrivate(QWebView *view)
         : view(view)
         , page(0)
-        , renderHints(QPainter::TextAntialiasing)
+        , renderHints(QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform)
     {
         Q_ASSERT(view);
     }
@@ -713,7 +713,7 @@ qreal QWebView::textSizeMultiplier() const
 
     These hints are used to initialize QPainter before painting the Web page.
 
-    QPainter::TextAntialiasing is enabled by default.
+    QPainter::TextAntialiasing and QPainter::SmoothPixmapTransform are enabled by default.
 
     \note This property is not available on Symbian. However, the getter and
     setter functions can still be used directly.
