@@ -125,6 +125,16 @@
           '../',
           '../wtf',
         ],
+        # Some warnings occur in JSC headers, so they must also be disabled
+        # in targets that use JSC.
+        'msvs_disabled_warnings': [
+          # Don't complain about calling specific versions of templatized
+          # functions (e.g. in RefPtrHashMap.h).
+          4344,
+          # Don't complain about using "this" in an initializer list
+          # (e.g. in StringImpl.h).
+          4355,
+        ],
       },
       'export_dependent_settings': [
         'wtf_config',
