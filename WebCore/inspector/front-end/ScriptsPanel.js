@@ -983,7 +983,11 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
 
-        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("g", platformSpecificModifier);
+        var isMac = WebInspector.isMac();
+        if (isMac)
+            shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Meta);
+        else
+            shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("g", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
         this._shortcuts[shortcut1.key] = this.showGoToLineDialog.bind(this);
         section.addAlternateKeys([ shortcut1.name ], WebInspector.UIString("Go to Line"));
         this.sidebarPanes.callstack.registerShortcuts(section);

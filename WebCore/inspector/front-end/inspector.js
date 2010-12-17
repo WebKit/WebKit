@@ -789,11 +789,13 @@ WebInspector._registerShortcuts = function()
     section.addRelatedKeys(keys, WebInspector.UIString("Next/previous panel"));
     section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
-    keys = [
-        shortcut.shortcutToString("g", shortcut.Modifiers.CtrlOrMeta),
-        shortcut.shortcutToString("g", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Shift)
-    ];
-    section.addRelatedKeys(keys, WebInspector.UIString("Find next/previous"));
+    if (WebInspector.isMac()) {
+        keys = [
+            shortcut.shortcutToString("g", shortcut.Modifiers.Meta),
+            shortcut.shortcutToString("g", shortcut.Modifiers.Meta | shortcut.Modifiers.Shift)
+        ];
+        section.addRelatedKeys(keys, WebInspector.UIString("Find next/previous"));
+    }
 }
 
 WebInspector.documentKeyDown = function(event)
@@ -875,12 +877,7 @@ WebInspector.documentKeyDown = function(event)
             break;
 
         case "U+0047": // G key
-            if (isMac)
-                var isFindAgainKey = event.metaKey && !event.ctrlKey && !event.altKey;
-            else
-                var isFindAgainKey = event.ctrlKey && !event.metaKey && !event.altKey;
-
-            if (isFindAgainKey) {
+            if (isMac && event.metaKey && !event.ctrlKey && !event.altKey) {
                 if (event.shiftKey) {
                     if (this.currentPanel.jumpToPreviousSearchResult)
                         this.currentPanel.jumpToPreviousSearchResult();
@@ -888,7 +885,6 @@ WebInspector.documentKeyDown = function(event)
                     this.currentPanel.jumpToNextSearchResult();
                 event.preventDefault();
             }
-
             break;
 
         // Windows and Mac have two different definitions of [, so accept both.
