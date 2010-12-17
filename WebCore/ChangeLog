@@ -1,3 +1,13 @@
+2010-12-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] scripts in scripts panel are not updated on reload.
+        https://bugs.webkit.org/show_bug.cgi?id=51101
+
+        * inspector/front-end/ResourceManager.js:
+        (WebInspector.ResourceTreeModel.prototype.didCommitLoadForFrame):
+
 2010-12-17  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Laszlo Gombos.

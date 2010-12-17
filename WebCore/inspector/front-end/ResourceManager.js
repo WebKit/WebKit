@@ -597,10 +597,8 @@ WebInspector.ResourceTreeModel.prototype = {
         this.addOrUpdateFrame(frame);
 
         var resourcesForFrame = this._resourcesByFrameId[frame.id];
-        for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i) {
-            WebInspector.resourceManager._bindResourceURL(resourcesForFrame[i]);
+        for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i)
             WebInspector.panels.resources.addResourceToFrame(frame.id, resourcesForFrame[i]);
-        }
     },
 
     frameDetachedFromParent: function(frameId)
