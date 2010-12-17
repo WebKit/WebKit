@@ -1,3 +1,12 @@
+2010-12-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, skipping a failing test in the bots.
+
+        [GTK] fast/dom/global-constructors.html failing on bots
+        https://bugs.webkit.org/show_bug.cgi?id=51242
+
+        * platform/gtk/Skipped:
+
 2010-12-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix typo in Chromium test expectations.
