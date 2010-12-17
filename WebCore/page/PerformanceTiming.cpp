@@ -184,7 +184,7 @@ unsigned long long PerformanceTiming::connectStart() const
     if (connectStart < 0 || loader->response().connectionReused())
         return domainLookupEnd();
 
-    // ResourceLoadTiming's connect phase includes DNS and SSL, however Web Timing's
+    // ResourceLoadTiming's connect phase includes DNS, however Navigation Timing's
     // connect phase should not. So if there is DNS time, trim it from the start.
     if (timing->dnsEnd >= 0 && timing->dnsEnd > connectStart)
         connectStart = timing->dnsEnd;
@@ -208,12 +208,24 @@ unsigned long long PerformanceTiming::connectEnd() const
     if (connectEnd < 0 || loader->response().connectionReused())
         return connectStart();
 
-    // ResourceLoadTiming's connect phase includes DNS and SSL, however Web Timing's
-    // connect phase should not. So if there is SSL time, trim it from the end.
-    if (timing->sslStart >= 0 && timing->sslStart < connectEnd)
-        connectEnd = timing->sslStart;
-
     return resourceLoadTimeRelativeToAbsolute(connectEnd);
+}
+
+unsigned long long PerformanceTiming::sslHandshakeStart() const
+{
+    DocumentLoader* loader = documentLoader();
+    if (!loader)
+        return 0;
+
+    ResourceLoadTiming* timing = loader->response().resourceLoadTiming();
+    if (!timing)
+        return 0;
+
+    int sslStart = timing->sslStart;
+    if (sslStart < 0)
+        return 0;
+
+    return resourceLoadTimeRelativeToAbsolute(sslStart);
 }
 
 unsigned long long PerformanceTiming::requestStart() const

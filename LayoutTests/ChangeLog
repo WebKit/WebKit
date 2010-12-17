@@ -2,6 +2,32 @@
 
         Reviewed by Darin Fisher.
 
+        [Web Timing] Add sslHandshakeStart to interface
+
+        https://bugs.webkit.org/show_bug.cgi?id=50400
+
+        * fast/dom/Window/window-properties-performance-expected.txt: Added sslHandshakeStart.
+        * fast/dom/script-tests/webtiming.js: Ditto.
+        (checkTimingBeforeLoad):
+        (checkTimingWhileDeferred):
+        (checkWebTimingOnDOMContentLoaded):
+        (checkWebTimingWhileAsync):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-document-open-expected.txt: Ditto.
+        * fast/dom/webtiming-expected.txt: Ditto.
+        * fast/dom/webtiming-navigate-within-document-expected.txt: Ditto.
+        * http/tests/misc/resources/webtiming-ssl.html: Added.
+        * http/tests/misc/webtiming-ssl-expected.txt: Added.
+        * http/tests/misc/webtiming-ssl.php: Added.
+        * platform/gtk/Skipped: WebTiming disabled here.
+        * platform/mac/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
+2010-12-17  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         [Web Timing] Navigation type enums should begin with TYPE_
         https://bugs.webkit.org/show_bug.cgi?id=51200
 

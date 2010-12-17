@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+</script>
+<link rel="stylesheet" href="../../js-test-resources/js-test-style.css">
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks that Web Timing reports sslHandshakeStart correctly and has reasonable values for connectStart and connectEnd. Note that DumpRenderTree doesn't set sslHandshakeStart.");
+
+var performance = window.webkitPerformance || {};
+var navigation = performance.navigation || {};
+var timing = performance.timing || {};
+
+shouldBeGreaterThanOrEqual("timing.connectStart", "timing.navigationStart");
+shouldBeGreaterThanOrEqual("timing.sslHandshakeStart", "timing.connectStart");
+shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.sslHandshakeStart");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

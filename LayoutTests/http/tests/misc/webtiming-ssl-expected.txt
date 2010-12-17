@@ -1,0 +1,11 @@
+This test checks that Web Timing reports sslHandshakeStart correctly and has reasonable values for connectStart and connectEnd. Note that DumpRenderTree doesn't set sslHandshakeStart.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timing.connectStart is >= timing.navigationStart
+FAIL timing.sslHandshakeStart should be >= timing.connectStart. Was 0 (of type number).
+PASS timing.connectEnd is >= timing.sslHandshakeStart
+PASS successfullyParsed is true
+
+TEST COMPLETE
