@@ -206,7 +206,9 @@ private:
         No
     } m_allowGeolocation;
 
+#if ENABLE(GEOLOCATION)
     PositionCacheWrapper m_positionCache;
+#endif
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     
