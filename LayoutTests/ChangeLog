@@ -1,3 +1,10 @@
+2010-12-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Clean up extra headers set in test to avoid side effects on other tests.
+
+        * http/tests/inspector/extensions-headers-expected.txt:
+        * http/tests/inspector/extensions-headers.html:
+
 2010-12-17  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r74229.

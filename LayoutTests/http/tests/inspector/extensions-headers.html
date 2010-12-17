@@ -10,7 +10,15 @@ function extension_testAddHeaders(nextTest)
         "x-webinspector-extension": "test",
         "user-agent": "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)"
     });
-    webInspector.inspectedWindow.eval("doXHR()", nextTest);
+    function cleanUpHeaders()
+    {
+        webInspector.resources.addRequestHeaders({
+            "x-webinspector-extension": null,
+            "user-agent": null
+        });
+        webInspector.inspectedWindow.eval("doXHR()", nextTest);
+    }
+    webInspector.inspectedWindow.eval("doXHR()", cleanUpHeaders);
 }
 
 function doXHR()
@@ -21,7 +29,7 @@ function doXHR()
     // Can't use output() here due to output order instability: this is invoked by inspectedWindow.eval(),
     // which is not serialized against output from extension, as the latter is posted asynchronously via
     // postMessage to front-end window.
-    document.getElementById("headers").textContent = xhr.responseText;
+    document.getElementById("headers").textContent += xhr.responseText;
 }
 
 </script>
