@@ -1,3 +1,15 @@
+2010-12-17  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed expectation result update.
+
+        editing/execCommand/toggle-compound-styles.html needs new expected results after r74269.
+
+        Default editing behavior of GTK+ DRT was changed from Mac to Unix, and this test is wrongly
+        going through platform specific editing behavior code path without making calls to
+        LayoutTestController::setEditingBehavior. Filed bug 51261 for the proper fix.
+
+        * platform/gtk/editing/execCommand/toggle-compound-styles-expected.txt:
+
 2010-12-05  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ariya Hidayat.
