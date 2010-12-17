@@ -116,6 +116,11 @@ WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->cacheModel());
 }
 
+void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
+{
+    toImpl(contextRef)->setAlwaysUsesComplexTextCodePath(alwaysUseComplexTextCodePath);
+}
+
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
     toImpl(contextRef)->setAdditionalPluginsDirectory(toImpl(pluginsDirectory)->string());

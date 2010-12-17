@@ -81,6 +81,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
+    , m_alwaysUsesComplexTextCodePath(false)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_clearResourceCachesForNewWebProcess(false)
     , m_clearApplicationCacheForNewWebProcess(false)
@@ -170,6 +171,8 @@ void WebContext::ensureWebProcess()
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
+
+    parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
@@ -306,6 +309,16 @@ void WebContext::setAdditionalPluginsDirectory(const String& directory)
     directories.append(directory);
 
     m_pluginInfoStore.setAdditionalPluginsDirectories(directories);
+}
+
+void WebContext::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+{
+    m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
+
+    if (!hasValidProcess())
+        return;
+
+    m_process->send(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText), 0);
 }
 
 void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)

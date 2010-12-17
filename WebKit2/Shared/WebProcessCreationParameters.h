@@ -65,6 +65,8 @@ struct WebProcessCreationParameters {
     bool clearResourceCaches;
     bool clearApplicationCache;
 
+    bool shouldAlwaysUseComplexTextCodePath;
+
     String languageCode;
 
 #if PLATFORM(MAC)

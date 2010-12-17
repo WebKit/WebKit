@@ -91,6 +91,8 @@ public:
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
     String applicationCacheDirectory();
+
+    void setAlwaysUsesComplexTextCodePath(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -172,6 +174,8 @@ private:
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     HashSet<String> m_schemesToRegisterAsSecure;
     HashSet<String> m_schemesToSetDomainRelaxationForbiddenFor;
+
+    bool m_alwaysUsesComplexTextCodePath;
 
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 

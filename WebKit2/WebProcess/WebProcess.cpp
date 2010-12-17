@@ -44,6 +44,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
+#include <WebCore/Font.h>
 #include <WebCore/Language.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -176,6 +177,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         clearResourceCaches();
     if (parameters.clearApplicationCache)
         clearApplicationCache();
+
+    if (parameters.shouldAlwaysUseComplexTextCodePath)
+        setAlwaysUsesComplexTextCodePath(true);
 }
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -196,6 +200,11 @@ void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
 {
     SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
+}
+
+void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+{
+    Font::setCodePath(alwaysUseComplexText ? Font::Complex : Font::Auto);
 }
 
 void WebProcess::languageChanged(const String& language) const

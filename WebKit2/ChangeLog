@@ -1,3 +1,31 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add API for "Always Use the Complex Text Code Path"
+        https://bugs.webkit.org/show_bug.cgi?id=51265
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters): Initialize shouldAlwaysUseComplexTextCodePath.
+        (WebKit::WebProcessCreationParameters::encode): Encode shouldAlwaysUseComplexTextCodePath.
+        (WebKit::WebProcessCreationParameters::decode): Decode shouldAlwaysUseComplexTextCodePath.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp: 
+        (_WKContextSetAlwaysUsesComplexTextCodePath): Added.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize m_alwaysUsesComplexTextCodePath.
+        (WebKit::WebContext::ensureWebProcess): Set shouldAlwaysUseComplexTextCodePath in the creation parameters.
+        (WebKit::WebContext::setAlwaysUsesComplexTextCodePath): Added. Sets m_alwaysUsesComplexTextCodePath and
+        sends a message to the WebProcess.
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Call setAlwaysUsesComplexTextCodePath() based on the creation
+        parameters.
+        (WebKit::WebProcess::setAlwaysUsesComplexTextCodePath): Added.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Added SetAlwaysUsesComplexTextCodePath.
+
 2010-12-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
