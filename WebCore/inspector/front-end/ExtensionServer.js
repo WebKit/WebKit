@@ -33,8 +33,10 @@ WebInspector.ExtensionServer = function()
     this._clientObjects = {};
     this._handlers = {};
     this._subscribers = {};
+    this._extraHeaders = {};
     this._status = new WebInspector.ExtensionStatus();
 
+    this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
     this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
     this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
@@ -142,6 +144,29 @@ WebInspector.ExtensionServer.prototype = {
         subscribers.remove(port);
         if (!subscribers.length)
             delete this._subscribers[message.type];
+    },
+
+    _onAddRequestHeaders: function(message)
+    {
+        var id = message.extensionId;
+        if (typeof id !== "string")
+            return this._status.E_BADARGTYPE("extensionId", typeof id, "string");
+        var extensionHeaders = this._extraHeaders[id];
+        if (!extensionHeaders) {
+            extensionHeaders = {};
+            this._extraHeaders[id] = extensionHeaders;
+        }
+        for (name in message.headers)
+            extensionHeaders[name] = message.headers[name];
+        var allHeaders = {};
+        for (extension in this._extraHeaders) {
+            var headers = this._extraHeaders[extension];
+            for (name in headers) {
+                if (typeof headers[name] === "string")
+                    allHeaders[name] = headers[name];
+            }
+        }
+        InspectorBackend.setExtraHeaders(allHeaders);
     },
 
     _onCreatePanel: function(message, port)

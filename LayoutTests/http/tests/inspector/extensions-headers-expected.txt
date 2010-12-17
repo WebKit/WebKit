@@ -1,0 +1,9 @@
+Tests WebInspector extension API
+
+HTTP_X_WEBINSPECTOR_EXTENSION: test
+HTTP_USER_AGENT: Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)
+Started extension.
+Running tests...
+RUNNING TEST: extension_testAddHeaders
+All tests done.
+

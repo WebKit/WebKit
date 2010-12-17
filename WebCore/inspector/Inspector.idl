@@ -95,6 +95,8 @@ module core {
         [notify, domain=Resources] void didCommitLoadForFrame(out Object frame, out Object loader);
         [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
        
+        [domain=Inspector] void setExtraHeaders(in Object headers);
+
         [domain=Resources] void cachedResources(out Object resources);
         [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
 

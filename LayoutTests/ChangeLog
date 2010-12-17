@@ -1,3 +1,46 @@
+2010-12-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extension API] add support for adding/overriding HTTP request headers
+        Moved extensions test frameworks under http/tests/inspector, so HTTP tests may reuse it.
+        https://bugs.webkit.org/show_bug.cgi?id=50493
+
+        * http/tests/inspector/extensions-headers-expected.txt: Added.
+        * http/tests/inspector/extensions-headers.html: Added.
+        * http/tests/inspector/extensions-test.js: Renamed from LayoutTests/inspector/extensions-test.js.
+        (log):
+        (extensionFunctions):
+        (initialize_ExtensionsTest.InspectorTest.dispatchOnMessage):
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        (initialize_ExtensionsTest.extensionOutput):
+        (initialize_ExtensionsTest.dumpSidebarContent):
+        (initialize_ExtensionsTest.reloadPage):
+        (test):
+        * http/tests/inspector/resources/echo-headers.php: Added.
+        * http/tests/inspector/resources/extension-main.html: Renamed from LayoutTests/inspector/resources/extension-main.html.
+        * http/tests/inspector/resources/extension-main.js: Renamed from LayoutTests/inspector/resources/extension-main.js.
+        (fetchTests.callback):
+        (fetchTests):
+        (runTests):
+        (onTestsDone):
+        (dispatchOnFrontend.callbackWrapper):
+        (dispatchOnFrontend):
+        (callbackAndNextTest.callbackWrapper):
+        (callbackAndNextTest):
+        * http/tests/inspector/resources/extension-panel.html: Renamed from LayoutTests/inspector/resources/extension-panel.html.
+        * http/tests/inspector/resources/extension-sidebar.html: Renamed from LayoutTests/inspector/resources/extension-sidebar.html.
+        * inspector/extensions-api-expected.txt:
+        * inspector/extensions-api.html:
+        * inspector/extensions-audits-api.html:
+        * inspector/extensions-audits.html:
+        * inspector/extensions-eval.html:
+        * inspector/extensions-events.html:
+        * inspector/extensions-resources-expected.txt:
+        * inspector/extensions-resources.html:
+        * inspector/extensions.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-16  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

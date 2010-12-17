@@ -51,6 +51,7 @@ class Document;
 class DocumentLoader;
 class FloatRect;
 class GraphicsContext;
+class HTTPHeaderMap;
 class HitTestResult;
 class InjectedScript;
 class InjectedScriptHost;
@@ -172,6 +173,8 @@ public:
     void didFailLoading(unsigned long identifier, const ResourceError&);
     void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     void scriptImported(unsigned long identifier, const String& sourceString);
+
+    void setExtraHeaders(PassRefPtr<InspectorObject>);
 
     void ensureSettingsLoaded();
 
@@ -395,6 +398,7 @@ private:
     bool m_stickyBreakpointsRestored;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
+    OwnPtr<HTTPHeaderMap> m_extraHeaders;
 #endif
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;

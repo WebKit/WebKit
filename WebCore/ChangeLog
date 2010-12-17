@@ -1,3 +1,24 @@
+2010-12-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extension API] add support for adding/overriding HTTP request headers
+        https://bugs.webkit.org/show_bug.cgi?id=50493
+
+        Test: http/tests/inspector/extensions-headers.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest): Apply extra headers.
+        (WebCore::InspectorController::setExtraHeaders):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.Resources.prototype.getHAR):
+        (WebInspector.injectedExtensionAPI.Resources.prototype.addRequestHeaders):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._onAddRequestHeaders):
+
 2010-12-16  Koan-Sin Tan  <koansin.tan@gmail.com>
 
         Reviewed by Kent Tamura.

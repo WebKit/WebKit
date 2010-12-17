@@ -35,7 +35,11 @@ InspectorTest.dispatchOnMessage = function(messageId, callback, recurring)
 InspectorTest.runExtensionTests = function()
 {
     InjectedScriptAccess.getDefault().evaluate("location.href", "console", function(result) {
-        var extensionURL = result.description.replace(/\/[^/]*$/, "/resources/extension-main.html");
+        var pageURL = result.description;
+        var extensionURL = (/^https?:/.test(pageURL) ?
+            pageURL.replace(/^(https?:\/\/[^/]*\/).*$/,"$1") :
+            pageURL.replace(/\/inspector\/[^/]*$/, "/http/tests")) +
+            "/inspector/resources/extension-main.html";
         WebInspector.addExtensions([{ startPage: extensionURL }]);
     });
 }

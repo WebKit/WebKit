@@ -51,6 +51,7 @@ RUNNING TEST: extension_testAPI
             Other : "other"
         }
         getHAR : <function>
+        addRequestHeaders : <function>
     }
     onReset : {
         addListener : <function>

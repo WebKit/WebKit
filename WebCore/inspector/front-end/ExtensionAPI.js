@@ -126,6 +126,11 @@ Resources.prototype = {
             callback(result);
         }
         return extensionServer.sendRequest({ command: "getHAR" }, callback && callbackWrapper);
+    },
+
+    addRequestHeaders: function(headers)
+    {
+        return extensionServer.sendRequest({ command: "addRequestHeaders", headers: headers, extensionId: location.hostname });
     }
 }
 

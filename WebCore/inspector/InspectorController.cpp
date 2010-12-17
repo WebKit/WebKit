@@ -53,6 +53,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTTPHeaderMap.h"
 #include "HitTestResult.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
@@ -828,6 +829,12 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
     // permissions to fetch the headers.
     if (m_frontend)
         request.setReportRawHeaders(true);
+
+    if (m_extraHeaders) {
+        HTTPHeaderMap::const_iterator end = m_extraHeaders->end();
+        for (HTTPHeaderMap::const_iterator it = m_extraHeaders->begin(); it != end; ++it)
+            request.setHTTPHeaderField(it->first, it->second);
+    }
 
     bool isMainResource = m_mainResourceIdentifier == identifier;
 
@@ -1860,6 +1867,18 @@ void InspectorController::reloadPage()
     // FIXME: Why do we set the user gesture indicator here?
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     m_inspectedPage->mainFrame()->navigationScheduler()->scheduleRefresh();
+}
+
+void InspectorController::setExtraHeaders(PassRefPtr<InspectorObject> headers)
+{
+    m_extraHeaders = adoptPtr(new HTTPHeaderMap());
+    InspectorObject::const_iterator end = headers->end();
+    for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
+        String value;
+        if (!it->second->asString(&value))
+            continue;
+        m_extraHeaders->add(it->first, value);
+    }
 }
 
 } // namespace WebCore
