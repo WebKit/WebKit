@@ -2,6 +2,24 @@
 
         Unreviewed, test expectation update.
 
+        Update Chromium-Linux results changed by r74232.
+        https://bugs.webkit.org/show_bug.cgi?id=50365
+
+        * platform/chromium-linux/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/japanese-rl-text-with-broken-font-expected.png:
+        * platform/chromium-linux/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-linux/fast/blockflow/vertical-align-table-baseline-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium-linux/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/vertical-baseline-alignment-expected.png:
+
+2010-12-16  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         * platform/chromium/test_expectations.txt: Remove SLOW for fail-on-update-2.html.
 
 2010-12-16  Benjamin Kalman  <kalman@chromium.org>
