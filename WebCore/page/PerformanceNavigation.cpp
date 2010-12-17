@@ -57,20 +57,20 @@ void PerformanceNavigation::disconnectFrame()
 unsigned short PerformanceNavigation::type() const
 {
     if (!m_frame)
-        return NAVIGATE;
+        return TYPE_NAVIGATE;
 
     DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
     if (!documentLoader)
-        return NAVIGATE;
+        return TYPE_NAVIGATE;
 
     WebCore::NavigationType navigationType = documentLoader->triggeringAction().type();
     switch (navigationType) {
     case NavigationTypeReload:
-        return RELOAD;
+        return TYPE_RELOAD;
     case NavigationTypeBackForward:
-        return BACK_FORWARD;
+        return TYPE_BACK_FORWARD;
     default:
-        return NAVIGATE;
+        return TYPE_NAVIGATE;
     }
 }
 

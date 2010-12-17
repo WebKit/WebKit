@@ -30,11 +30,12 @@
 
 module window {
 
-    // See: http://dev.w3.org/2006/webapi/WebTiming/
+    // See: http://www.w3.org/TR/navigation-timing/
     interface [Conditional=WEB_TIMING, OmitConstructor] PerformanceNavigation {
-        const unsigned short NAVIGATE = 0;
-        const unsigned short RELOAD = 1;
-        const unsigned short BACK_FORWARD = 2;
+        const unsigned short TYPE_NAVIGATE = 0;
+        const unsigned short TYPE_RELOAD = 1;
+        const unsigned short TYPE_BACK_FORWARD = 2;
+        const unsigned short TYPE_RESERVED = 255;
         readonly attribute unsigned short type;
 
         readonly attribute unsigned short redirectCount;

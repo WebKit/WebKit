@@ -1,3 +1,15 @@
+2010-12-17  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Navigation type enums should begin with TYPE_
+        https://bugs.webkit.org/show_bug.cgi?id=51200
+
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::type): Added TYPE_ to navigation types.
+        * page/PerformanceNavigation.h: Ditto and added TYPE_RESERVED.
+        * page/PerformanceNavigation.idl: Ditto.
+
 2010-12-17  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix.

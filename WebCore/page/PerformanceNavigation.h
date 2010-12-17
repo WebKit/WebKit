@@ -48,9 +48,10 @@ public:
     void disconnectFrame();
 
     enum PerformanceNavigationType {
-        NAVIGATE,
-        RELOAD,
-        BACK_FORWARD
+        TYPE_NAVIGATE,
+        TYPE_RELOAD,
+        TYPE_BACK_FORWARD,
+        TYPE_RESERVED = 255
     };
 
     unsigned short type() const;
