@@ -1,3 +1,13 @@
+2010-12-18  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] TransparencyLayer should inherit its container render hints
+        https://bugs.webkit.org/show_bug.cgi?id=51283
+
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+
 2010-12-18  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Laszlo Gombos.

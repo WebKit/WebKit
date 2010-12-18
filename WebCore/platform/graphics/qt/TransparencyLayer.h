@@ -52,7 +52,7 @@ struct TransparencyLayer : FastAllocBase {
         offset = rect.topLeft();
         pixmap.fill(Qt::transparent);
         painter.begin(&pixmap);
-        painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+        painter.setRenderHints(p->renderHints());
         painter.translate(-offset);
         painter.setPen(p->pen());
         painter.setBrush(p->brush());
