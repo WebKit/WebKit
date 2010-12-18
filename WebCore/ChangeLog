@@ -1,3 +1,15 @@
+2010-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        In flipped writing modes, opposite text emphasis marks from adjacent lines overlap
+        https://bugs.webkit.org/show_bug.cgi?id=51298
+
+        Test: fast/text/emphasis-overlap.html
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment): Changed + to -.
+
 2010-12-18  Helder Correia  <helder@sencha.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ariya Hidayat.

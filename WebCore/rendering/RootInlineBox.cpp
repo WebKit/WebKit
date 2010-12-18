@@ -296,7 +296,7 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
             return result;
 
         // We have to compute the expansion for annotations over the previous line to see how much we should move.
-        int lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop()) + result;
+        int lowestAllowedPosition = max(prevRootBox()->lineBottom(), lineTop()) - result;
         result = prevRootBox()->computeOverAnnotationAdjustment(lowestAllowedPosition);
     }
 
