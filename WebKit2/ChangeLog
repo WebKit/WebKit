@@ -1,3 +1,19 @@
+2010-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Window title for image documents shows corrupted characters instead of multiplication sign when using WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=43505
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Changed UI_STRING macros to return
+        WebCore::String objects instead of C strings.
+        (WebKit::formatLocalizedString): Added. Uses the Core Foundation string formatting function for
+        reasons explained in the comment.
+        (WebKit::WebPlatformStrategies::multipleFileUploadText): Use formatLocalizedString instead of
+        String::format.
+        (WebKit::WebPlatformStrategies::imageTitle): Ditto.
+        (WebKit::WebPlatformStrategies::localizedMediaTimeDescription): Ditto.
+
 2010-12-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

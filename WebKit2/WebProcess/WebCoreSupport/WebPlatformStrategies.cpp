@@ -38,12 +38,30 @@
 #include <wtf/text/CString.h>
 
 // FIXME: Implement localization.
-#define UI_STRING(string, description) string
-#define UI_STRING_KEY(string, key, description) string
+#define UI_STRING(string, description) String::fromUTF8(string, strlen(string))
+#define UI_STRING_KEY(string, key, description) String::fromUTF8(string, strlen(string))
 
 using namespace WebCore;
 
 namespace WebKit {
+
+// We can't use String::format for two reasons:
+//  1) It doesn't handle non-ASCII characters in the format string.
+//  2) It doesn't handle the %2$d syntax.
+static String formatLocalizedString(const String& format, ...)
+{
+#if PLATFORM(CF)
+    va_list arguments;
+    va_start(arguments, format);
+    RetainPtr<CFStringRef> formatCFString(AdoptCF, format.createCFString());
+    RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormatAndArguments(0, 0, formatCFString.get(), arguments));
+    va_end(arguments);
+    return result.get();
+#else
+    notImplemented();
+    return format;
+#endif
+}
 
 void WebPlatformStrategies::initialize()
 {
@@ -679,7 +697,7 @@ String WebPlatformStrategies::crashedPluginText()
 
 String WebPlatformStrategies::multipleFileUploadText(unsigned numberOfFiles)
 {
-    return String::format(UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles);
+    return formatLocalizedString(UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles);
 }
 
 String WebPlatformStrategies::unknownFileSizeText()
@@ -705,7 +723,8 @@ String WebPlatformStrategies::allFilesText()
 
 String WebPlatformStrategies::imageTitle(const String& filename, const IntSize& size)
 {
-    return String::format(UI_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename.utf8().data(), size.width(), size.height());
+    // FIXME: It would be nice to have the filename inside the format string, but it's not easy to do that in a way that works with non-ASCII characters in the filename.
+    return filename + formatLocalizedString(UI_STRING(" %d×%d pixels", "window title suffix for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height());
 }
 
 String WebPlatformStrategies::mediaElementLoadingStateText()
@@ -820,12 +839,12 @@ String WebPlatformStrategies::localizedMediaTimeDescription(float time)
     seconds %= 60;
 
     if (days)
-        return String::format(UI_STRING("%1$d days %2$d hours %3$d minutes %4$d seconds", "accessibility help text for media controller time value >= 1 day"), days, hours, minutes, seconds);
+        return formatLocalizedString(UI_STRING("%1$d days %2$d hours %3$d minutes %4$d seconds", "accessibility help text for media controller time value >= 1 day"), days, hours, minutes, seconds);
     if (hours)
-        return String::format(UI_STRING("%1$d hours %2$d minutes %3$d seconds", "accessibility help text for media controller time value >= 60 minutes"), hours, minutes, seconds);
+        return formatLocalizedString(UI_STRING("%1$d hours %2$d minutes %3$d seconds", "accessibility help text for media controller time value >= 60 minutes"), hours, minutes, seconds);
     if (minutes)
-        return String::format(UI_STRING("%1$d minutes %2$d seconds", "accessibility help text for media controller time value >= 60 seconds"), minutes, seconds);
-    return String::format(UI_STRING("%1$d seconds", "accessibility help text for media controller time value < 60 seconds"), seconds);
+        return formatLocalizedString(UI_STRING("%1$d minutes %2$d seconds", "accessibility help text for media controller time value >= 60 seconds"), minutes, seconds);
+    return formatLocalizedString(UI_STRING("%1$d seconds", "accessibility help text for media controller time value < 60 seconds"), seconds);
 }
 
 String WebPlatformStrategies::validationMessageValueMissingText()
