@@ -53,6 +53,6 @@ contains(QT_CONFIG, opengl) {
 }
 
 # We copy the resource file to the build directory.
-# The copier is defined in WebKitTools/MiniBrowser/DerivedSources.pro.
+# The copier is defined in Tools/MiniBrowser/DerivedSources.pro.
 RESOURCES += \
     $$OUTPUT_DIR/Tools/MiniBrowser/qt/MiniBrowser.qrc
