@@ -3245,3 +3245,7 @@ BUGCR67209 WIN DEBUG : inspector/console-uncaught-exception-in-eval.html = CRASH
 BUGCR67209 WIN DEBUG : inspector/timeline-enum-stability.html = CRASH TIMEOUT PASS
 BUGCR67209 WIN DEBUG : inspector/console-clear.html = CRASH TIMEOUT PASS
 BUGCR67209 WIN DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT PASS
+
+// WebKit roll 74255:74308
+BUGCR67416 : fast/text/emphasis.html = FAIL
+BUGCR67416 : fast/text/emphasis-vertical.html = FAIL

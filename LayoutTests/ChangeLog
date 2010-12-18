@@ -1,5 +1,16 @@
 2010-12-17  Tony Gentilcore  <tonyg@chromium.org>
 
+        Unreviewed.
+
+        [chromium] Mark fast/text/emphasis* failing
+        https://bugs.webkit.org/show_bug.cgi?id=51288
+
+        They have square characters that appear broken.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-17  Tony Gentilcore  <tonyg@chromium.org>
+
         Unreviewed fix.
 
         Fix JS syntax to avoid V8 error message
