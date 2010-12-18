@@ -65,8 +65,8 @@ public:
     static PassRefPtr<HTMLCanvasElement> create(const QualifiedName&, Document*);
     virtual ~HTMLCanvasElement();
 
-    void addObserver(CanvasObserver* observer);
-    void removeObserver(CanvasObserver* observer);
+    void addObserver(CanvasObserver*);
+    void removeObserver(CanvasObserver*);
 
     // Attributes and functions exposed to script
     int width() const { return size().width(); }

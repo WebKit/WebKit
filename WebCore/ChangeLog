@@ -1,3 +1,14 @@
+2010-12-17  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Style fix for r73927
+        https://bugs.webkit.org/show_bug.cgi?id=51194
+
+        No functionality change. No new tests needed.
+
+        * html/HTMLCanvasElement.h:
+
 2010-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
