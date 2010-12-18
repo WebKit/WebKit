@@ -1,3 +1,13 @@
+2010-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Buttons rendering was broken in r74129
+        https://bugs.webkit.org/show_bug.cgi?id=51173
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintRenderObject):
+
 2010-12-17  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.

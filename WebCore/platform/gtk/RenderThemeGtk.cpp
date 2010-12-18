@@ -298,6 +298,7 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
     widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
     widgetState.isDefault = false;
     widgetState.canDefault = false;
+    widgetState.depressed = false;
 
     WidgetRenderingContext widgetContext(context, rect);
     return !widgetContext.paintMozillaWidget(type, &widgetState, flags, gtkTextDirection(renderObject->style()->direction()));
