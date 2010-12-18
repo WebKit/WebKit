@@ -1,5 +1,21 @@
 2010-12-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Resizing a WKView while loading a page can leave the page at a size that doesn't match the window
+        https://bugs.webkit.org/show_bug.cgi?id=51282
+        <rdar://problem/8133142>
+
+        Fix a race condition in waitForMessage. If we time out on the wait condition, we would keep the
+        m_waitForMessageMutex mutex unlocked for a brief period of time before taking the lock again and
+        then removing the messageID/destinationID pair from the hash map. Under some circumstances, the
+        connection queue would update the hash map right before we removed it, leading to a lost message.
+        
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+
+2010-12-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Clean up ChunkedUpdateDrawingAreaProxy

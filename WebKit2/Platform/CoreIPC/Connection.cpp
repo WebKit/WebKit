@@ -140,10 +140,8 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
         m_waitForMessageMap.set(messageAndDestination, 0);
     }
     
-    bool timedOut = false;
-    
     // Now wait for it to be set.
-    while (!timedOut) {
+    while (true) {
         MutexLocker locker(m_waitForMessageMutex);
 
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(messageAndDestination);
@@ -154,14 +152,13 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
             return arguments.release();
         }
         
-        // We didn't find it, keep waiting.
-        timedOut = !m_waitForMessageCondition.timedWait(m_waitForMessageMutex, absoluteTime);
-    }
+        // Now we wait.
+        if (!m_waitForMessageCondition.timedWait(m_waitForMessageMutex, absoluteTime)) {
+            // We timed out, now remove the pending wait.
+            m_waitForMessageMap.remove(messageAndDestination);
 
-    // We timed out, now remove the pending wait.
-    {
-        MutexLocker locker(m_waitForMessageMutex);
-        m_waitForMessageMap.remove(messageAndDestination);
+            break;
+        }
     }
     
     return PassOwnPtr<ArgumentDecoder>();
