@@ -1,3 +1,12 @@
+2010-12-17  Jessie Berlin  <jberlin@apple.com>
+
+        Add expected results for Windows XP to get the bot green for
+        http://trac.webkit.org/changeset/74281.
+        Unreviewed.
+
+        * platform/win-xp/fast/text/emphasis-expected.txt: Added.
+        * platform/win-xp/fast/text/emphasis-vertical-expected.txt: Added.
+
 2010-12-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
