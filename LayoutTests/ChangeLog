@@ -1,3 +1,15 @@
+2010-12-17  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        RegExp Jit'ed expression crashes clicking link on yelp.com
+        https://bugs.webkit.org/show_bug.cgi?id=51284
+
+        New tests to validate changes made in regex JIT.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2010-12-17  Jessie Berlin  <jberlin@apple.com>
 
         Add expected results for Windows XP to get the bot green for

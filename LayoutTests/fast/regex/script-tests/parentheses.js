@@ -140,6 +140,13 @@ shouldBeNull("regexp32.exec('Committer:')");
 var regexp33 = RegExp('^(?:(?:(a)(xyz|[^>"\'\s]*)?)|(/?>)|.[^\w\s>]*)');
 shouldBe("regexp33.exec('> <head>')","['>',undefined,undefined,'>']");
 
+var regexp34 = /(?:^|\b)btn-\S+/;
+shouldBeNull("regexp34.exec('xyz123')");
+shouldBe("regexp34.exec('btn-abc')","['btn-abc']");
+shouldBeNull("regexp34.exec('btn- abc')");
+shouldBeNull("regexp34.exec('XXbtn-abc')");
+shouldBe("regexp34.exec('XX btn-abc')","['btn-abc']");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

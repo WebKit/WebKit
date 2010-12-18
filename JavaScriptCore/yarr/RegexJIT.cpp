@@ -486,10 +486,11 @@ class RegexGenerator : private MacroAssembler {
         {
         }
 
-        void clear()
+        void clear(bool doDataLabelClear = true)
         {
             m_backtrackType = NoBacktrack;
-            clearDataLabel();
+            if (doDataLabelClear)
+                clearDataLabel();
             m_nextBacktrack = 0;
         }
 
@@ -867,7 +868,7 @@ class RegexGenerator : private MacroAssembler {
 
         void clearBacktrack()
         {
-            m_backtrack.clear();
+            m_backtrack.clear(false);
             m_linkedBacktrack = 0;
         }
 

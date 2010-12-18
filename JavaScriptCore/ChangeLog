@@ -1,3 +1,21 @@
+2010-12-17  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        RegExp Jit'ed expression crashes clicking link on yelp.com
+        https://bugs.webkit.org/show_bug.cgi?id=51284
+
+        When transitioning between an non-repeating beginning of line
+        anchored expression and the remaining refactored repeating 
+        expression, we should not clear any residual datalabel in 
+        state's m_backtrack.  It will be resolved and cleared in subsequent
+        code when linkAlternativeBacktracks() is called for the repeating
+        alternative(s).
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::BacktrackDestination::clear):
+        (JSC::Yarr::RegexGenerator::TermGenerationState::clearBacktrack):
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
