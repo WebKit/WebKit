@@ -1,3 +1,12 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Updated for the renaming of WebKitTools to Tools
+
+        * WebCore.vcproj/build-generated-files.sh:
+        * WebCore.vcproj/migrate-scripts.sh:
+
 2010-12-17  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

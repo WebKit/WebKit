@@ -1,3 +1,11 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Updated for the renaming of WebKitTools to Tools
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+
 2010-12-17  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Oliver Hunt.

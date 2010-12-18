@@ -10,7 +10,7 @@ then
     echo "#define U_DISABLE_RENAMING $?" > "${ICUVERSION_H_PATH}"
 fi
 
-NUMCPUS=`../../../WebKitTools/Scripts/num-cpus`
+NUMCPUS=`../../../Tools/Scripts/num-cpus`
 
 XSRCROOT="`pwd`/../.."
 XSRCROOT=`realpath "$XSRCROOT"`
