@@ -71,13 +71,13 @@ private
         PageLoadTests
         PlanetWebKit
         SunSpider
+        Tools
         WebCore
         WebKit
         WebKit2
         WebKitExamplePlugins
         WebKitLibraries
         WebKitSite
-        WebKitTools
         autotools
         cmake
     ]

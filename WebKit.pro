@@ -10,17 +10,17 @@ webkit2 {
 SUBDIRS += WebCore
 
 # If the source exists, built it
-exists($$PWD/WebKitTools/QtTestBrowser): SUBDIRS += WebKitTools/QtTestBrowser
+exists($$PWD/Tools/QtTestBrowser): SUBDIRS += Tools/QtTestBrowser
 contains(QT_CONFIG, declarative) {
     exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
 }
 !v8:exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
-exists($$PWD/WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
-exists($$PWD/WebKitTools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/ImageDiff.pro
+exists($$PWD/Tools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += Tools/DumpRenderTree/qt/DumpRenderTree.pro
+exists($$PWD/Tools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += Tools/DumpRenderTree/qt/ImageDiff.pro
 
 !win32:!symbian {
-    exists($$PWD/WebKitTools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
+    exists($$PWD/Tools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro): SUBDIRS += Tools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }
 
 build-qtscript {
@@ -32,8 +32,8 @@ build-qtscript {
 
 webkit2 {
     exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
-    exists($$PWD/WebKitTools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += WebKitTools/MiniBrowser/qt/MiniBrowser.pro
-    exists($$PWD/WebKitTools/WebKitTestRunner/WebKitTestRunner.pro): SUBDIRS += WebKitTools/WebKitTestRunner/WebKitTestRunner.pro
+    exists($$PWD/Tools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += Tools/MiniBrowser/qt/MiniBrowser.pro
+    exists($$PWD/Tools/WebKitTestRunner/WebKitTestRunner.pro): SUBDIRS += Tools/WebKitTestRunner/WebKitTestRunner.pro
 }
 
 symbian {

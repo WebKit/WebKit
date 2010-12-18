@@ -8,8 +8,8 @@ SUBDIRS += \
 
 webkit2 {
     SUBDIRS += WebKit2/DerivedSources.pro \
-            WebKitTools/WebKitTestRunner/DerivedSources.pro \
-            WebKitTools/MiniBrowser/DerivedSources.pro
+            Tools/WebKitTestRunner/DerivedSources.pro \
+            Tools/MiniBrowser/DerivedSources.pro
 }
 
 for(subpro, SUBDIRS) {

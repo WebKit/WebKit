@@ -1,3 +1,19 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename WebKitTools to Tools
+        https://bugs.webkit.org/show_bug.cgi?id=49861
+
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * MakeFile:
+        * MakeFile.shared:
+        * Tools: Renamed from WebKitTools.
+        * WebKit.pro:
+        * cmake/WebKitPackaging.cmake:
+        * wscript:
+
 2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix.

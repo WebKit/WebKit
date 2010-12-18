@@ -324,4 +324,4 @@ def build(bld):
     bld.add_group()
     
     if build_port == "wx":    
-        bld.add_subdirs(['WebKitTools/DumpRenderTree', 'WebKitTools/wx/browser', 'WebKit/wx/bindings/python'])
+        bld.add_subdirs(['Tools/DumpRenderTree', 'Tools/wx/browser', 'WebKit/wx/bindings/python'])

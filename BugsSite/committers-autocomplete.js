@@ -24,7 +24,7 @@
 // DAMAGE.
 
 WebKitCommitters = (function() {
-    var COMMITTERS_URL = 'http://svn.webkit.org/repository/webkit/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py';
+    var COMMITTERS_URL = 'http://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/committers.py';
     var m_committers;
 
     function getValues(param) {

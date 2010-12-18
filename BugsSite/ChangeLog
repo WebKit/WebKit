@@ -1,3 +1,13 @@
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename WebKitTools to Tools
+        https://bugs.webkit.org/show_bug.cgi?id=49861
+
+        * PrettyPatch/PrettyPatch.rb:
+        * committers-autocomplete.js:
+
 2010-12-17  Ojan Vafai  <ojan@chromium.org>
 
         Increment psuedo-version number to avoid pulling cached version.

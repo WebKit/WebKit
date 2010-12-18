@@ -1,0 +1,192 @@
+noinst_PROGRAMS += \
+	Programs/DumpRenderTree \
+	Programs/GtkLauncher \
+	Programs/ImageDiff
+
+# GtkLauncher
+Programs_GtkLauncher_CPPFLAGS = \
+	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
+	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/DerivedSources \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+Programs_GtkLauncher_SOURCES = \
+	Tools/GtkLauncher/main.c
+
+Programs_GtkLauncher_CFLAGS = \
+	-ansi \
+	-fno-strict-aliasing \
+	$(global_cflags) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+Programs_GtkLauncher_LDADD = \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(WINMM_LIBS)
+
+Programs_GtkLauncher_LDFLAGS = \
+	-no-fast-install \
+	-no-install
+
+# DumpRenderTree
+dumprendertree_cppflags := \
+	-I$(srcdir)/Tools/DumpRenderTree \
+	-I$(srcdir)/Tools/DumpRenderTree/cairo \
+	-I$(srcdir)/Tools/DumpRenderTree/gtk \
+	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
+	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/DerivedSources \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+Programs_DumpRenderTree_CPPFLAGS = $(dumprendertree_cppflags)
+
+Programs_DumpRenderTree_SOURCES = \
+	Tools/DumpRenderTree/DumpRenderTree.h \
+	Tools/DumpRenderTree/DumpRenderTreePrefix.h \
+	Tools/DumpRenderTree/AccessibilityController.cpp \
+	Tools/DumpRenderTree/AccessibilityController.h \
+	Tools/DumpRenderTree/AccessibilityTextMarker.cpp \
+	Tools/DumpRenderTree/AccessibilityTextMarker.h \
+	Tools/DumpRenderTree/AccessibilityUIElement.cpp \
+	Tools/DumpRenderTree/AccessibilityUIElement.h \
+	Tools/DumpRenderTree/GCController.cpp \
+	Tools/DumpRenderTree/GCController.h \
+	Tools/DumpRenderTree/JavaScriptThreading.h \
+	Tools/DumpRenderTree/LayoutTestController.cpp \
+	Tools/DumpRenderTree/LayoutTestController.h \
+	Tools/DumpRenderTree/PixelDumpSupport.cpp \
+	Tools/DumpRenderTree/PixelDumpSupport.h \
+	Tools/DumpRenderTree/WorkQueue.cpp \
+	Tools/DumpRenderTree/WorkQueue.h \
+	Tools/DumpRenderTree/WorkQueueItem.h \
+	Tools/DumpRenderTree/config.h \
+	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp \
+	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.h \
+	Tools/DumpRenderTree/gtk/AccessibilityControllerGtk.cpp \
+	Tools/DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp \
+	Tools/DumpRenderTree/gtk/DumpRenderTree.cpp \
+	Tools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
+	Tools/DumpRenderTree/gtk/EditingCallbacks.h \
+	Tools/DumpRenderTree/gtk/EditingCallbacks.cpp \
+	Tools/DumpRenderTree/gtk/EventSender.h \
+	Tools/DumpRenderTree/gtk/EventSender.cpp \
+	Tools/DumpRenderTree/gtk/GCControllerGtk.cpp \
+	Tools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
+	Tools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
+	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
+	WebCore/platform/gtk/GtkVersioning.c
+
+Programs_DumpRenderTree_CXXFLAGS = \
+	$(global_cxxflags) \
+	$(dumprendertree_cppflags) \
+	$(Programs_DumpRenderTree_CFLAGS)
+
+Programs_DumpRenderTree_CFLAGS = \
+	-fno-strict-aliasing \
+	$(dumprendertree_cppflags) \
+	$(global_cflags) \
+	$(GLOBALDEPS_CFLAGS) \
+	$(CAIRO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+Programs_DumpRenderTree_LDADD = \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GLOBALDEPS_LIBS) \
+	$(CAIRO_LIBS) \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(FREETYPE_LIBS) \
+	$(WINMM_LIBS)
+
+Programs_DumpRenderTree_LDFLAGS = \
+	-no-fast-install \
+	-no-install
+
+# ImageDiff
+Programs_ImageDiff_CPPFLAGS = $(global_cppflags)
+
+Programs_ImageDiff_SOURCES = \
+   Tools/DumpRenderTree/gtk/ImageDiff.cpp
+
+Programs_ImageDiff_CXXFLAGS = \
+   $(global_cxxflags) \
+   $(global_cppflags) \
+   $(Programs_ImageDiff_CFLAGS)
+
+Programs_ImageDiff_CFLAGS = \
+   -fno-strict-aliasing \
+   $(global_cflags) \
+   $(GLOBALDEPS_CFLAGS) \
+   $(GTK_CFLAGS)
+
+Programs_ImageDiff_LDADD = \
+   $(GTK_LIBS)
+
+Programs_ImageDiff_LDFLAGS = \
+   -no-fast-install \
+   -no-install
+
+# clean target
+CLEANFILES += \
+	Programs/DumpRenderTree \
+	Programs/GtkLauncher \
+	Programs/ImageDiff
+
+if TARGET_X11
+
+# Build TestNetscapePlugin only for X11
+# since we don't support plugins for non-X11 builds at the moment.
+noinst_LTLIBRARIES += \
+	TestNetscapePlugin/libtestnetscapeplugin.la
+
+dumprendertree_cppflags += \
+	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
+	-DFONTS_CONF_DIR=\"${shell pwd}/${srcdir}/Tools/DumpRenderTree/gtk/fonts\"
+
+TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
+	-I$(srcdir)/Tools/DumpRenderTree \
+	-I$(srcdir)/Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders \
+	-I$(srcdir)/WebCore \
+	-I$(srcdir)/WebCore/bridge \
+	-I$(srcdir)/WebCore/plugins \
+	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
+	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h \
+	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
+	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
+	Tools/DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/PluginTest.h \
+	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.h \
+	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.h
+
+TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
+
+CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
+endif

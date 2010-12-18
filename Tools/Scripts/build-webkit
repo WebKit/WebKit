@@ -1,0 +1,589 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 moiji-mobile.com All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Build script wrapper for the WebKit Open Source Project.
+
+use strict;
+use File::Basename;
+use File::Find;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+use webkitperl::features;
+use POSIX;
+
+sub formatBuildTime($);
+sub writeCongrats();
+
+my $originalWorkingDirectory = getcwd();
+chdirWebKit();
+
+my $showHelp = 0;
+my $clean = 0;
+my $minimal = 0;
+my $v8 = 0;
+my $installHeaders;
+my $installLibs;
+my $prefixPath;
+my $makeArgs;
+my $noWebKit2 = 0;
+my $startTime = time();
+
+my (
+    $threeDCanvasSupport,
+    $threeDRenderingSupport,
+    $accelerated2dCanvasSupport,
+    $blobSupport,
+    $channelMessagingSupport,
+    $clientBasedGeolocationSupport,
+    $coverageSupport,
+    $databaseSupport,
+    $datagridSupport,
+    $datalistSupport,
+    $deviceOrientationSupport,
+    $directoryUploadSupport,
+    $domStorageSupport,
+    $eventsourceSupport,
+    $fileSystemSupport,
+    $filtersSupport,
+    $fullscreenAPISupport,
+    $geolocationSupport,
+    $iconDatabaseSupport,
+    $imageResizerSupport,
+    $indexedDatabaseSupport,
+    $inputSpeechSupport,
+    $javaScriptDebuggerSupport,
+    $linkPrefetchSupport,
+    $mathmlSupport,
+    $meterTagSupport,
+    $notificationsSupport,
+    $offlineWebApplicationSupport,
+    $progressTagSupport,
+    $sharedWorkersSupport,
+    $svgSupport,
+    $svgAnimationSupport,
+    $svgAsImageSupport,
+    $svgDOMObjCBindingsSupport,
+    $svgFontsSupport,
+    $svgForeignObjectSupport,
+    $svgUseSupport,
+    $systemMallocSupport,
+    $tiledBackingStoreSupport,
+    $videoSupport,
+    $wcssSupport,
+    $webAudioSupport,
+    $webInspectorSupport,
+    $webSocketsSupport,
+    $webTimingSupport,
+    $wmlSupport,
+    $workersSupport,
+    $xhtmlmpSupport,
+    $xpathSupport,
+    $xsltSupport,
+);
+
+my @features = (
+    { option => "3d-canvas", desc => "Toggle 3D canvas support",
+      define => "ENABLE_3D_CANVAS", default => (isAppleMacWebKit() && !isTiger() && !isLeopard()), value => \$threeDCanvasSupport },
+
+    { option => "3d-rendering", desc => "Toggle 3D rendering support",
+      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
+
+    { option => "accelerated-2d-canvas", desc => "Toggle accelerated 2D canvas support",
+      define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },
+
+    { option => "blob", desc => "Toggle Blob support",
+      define => "ENABLE_BLOB", default => (isAppleMacWebKit()), value => \$blobSupport },
+
+    { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
+      define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
+
+    { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
+      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => isAppleWebKit(), value => \$clientBasedGeolocationSupport },
+
+    { option => "coverage", desc => "Toggle code coverage support",
+      define => "", default => 0, value => \$coverageSupport },
+
+    { option => "database", desc => "Toggle Database Support",
+      define => "ENABLE_DATABASE", default => 1, value => \$databaseSupport },
+
+    { option => "datagrid", desc => "Toggle Datagrid Support",
+      define => "ENABLE_DATAGRID", default => 0, value => \$datagridSupport },
+
+    { option => "datalist", desc => "Toggle HTML5 datalist support",
+      define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },
+
+    { option => "device-orientation", desc => "Toggle DeviceOrientation support",
+      define => "ENABLE_DEVICE_ORIENTATION", default => 0, value => \$deviceOrientationSupport },
+
+    { option => "directory-upload", desc => "Toogle Directory upload support",
+      define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
+
+    { option => "dom-storage", desc => "Toggle DOM Storage Support",
+      define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
+
+    { option => "eventsource", desc => "Toggle server-sent events support",
+      define => "ENABLE_EVENTSOURCE", default => 1, value => \$eventsourceSupport },
+
+    { option => "file-system", desc => "Toggle FileSystem support",
+      define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
+
+    { option => "filters", desc => "Toggle Filters support",
+      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
+
+    { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
+      define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },
+
+    { option => "geolocation", desc => "Toggle Geolocation support",
+      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },
+
+    { option => "icon-database", desc => "Toggle Icon database support",
+      define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
+
+    { option => "image-resizer", desc => "Toggle Image Resizer API support",
+      define => "ENABLE_IMAGE_RESIZER", default => 0, value => \$imageResizerSupport },
+
+    { option => "indexed-database", desc => "Toggle Indexed Database API support",
+      define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
+
+    { option => "input-speech", desc => "Speech Input API support",
+      define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
+
+    { option => "inspector", desc => "Toggle Web Inspector support",
+      define => "ENABLE_INSPECTOR", default => 1, value => \$webInspectorSupport },
+
+    { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
+      define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
+
+    { option => "link-prefetch", desc => "Toggle pre fetching support",
+      define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },
+
+    { option => "mathml", desc => "Toggle MathML support",
+      define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
+
+    { option => "meter-tag", desc => "Meter Tag support",
+      define => "ENABLE_METER_TAG", default => !isGtk() && !isAppleWinWebKit(), value => \$meterTagSupport },
+
+    { option => "notifications", desc => "Toggle Desktop Notifications Support",
+      define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
+
+    { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
+      define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
+
+    { option => "progress-tag", desc => "Progress Tag support",
+      define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
+
+    { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
+      define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },
+
+    { option => "shared-workers", desc => "Toggle SharedWorkers support",
+      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },
+
+    { option => "svg", desc => "Toggle SVG support",
+      define => "ENABLE_SVG", default => 1, value => \$svgSupport },
+
+    { option => "svg-animation", desc => "Toggle SVG animation support (implies SVG support)",
+      define => "ENABLE_SVG_ANIMATION", default => 1, value => \$svgAnimationSupport },
+
+    { option => "svg-as-image", desc => "Toggle SVG as Image support (implies SVG support)",
+      define => "ENABLE_SVG_AS_IMAGE", default => 1, value => \$svgAsImageSupport },
+
+    { option => "svg-dom-objc-bindings", desc => "Toggle SVG DOM Objective-C bindings support (implies SVG support)",
+      define => "ENABLE_SVG_DOM_OBJC_BINDINGS", default => isAppleMacWebKit(), value => \$svgDOMObjCBindingsSupport },
+
+    { option => "svg-fonts", desc => "Toggle SVG fonts support (imples SVG support)",
+      define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
+
+    { option => "svg-foreign-object", desc => "Toggle SVG foreign object support (implies SVG support)",
+      define => "ENABLE_SVG_FOREIGN_OBJECT", default => 1, value => \$svgForeignObjectSupport },
+
+    { option => "svg-use", desc => "Toggle SVG use element support (implies SVG support)",
+      define => "ENABLE_SVG_USE", default => 1, value => \$svgUseSupport },
+
+    { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
+      define => "ENABLE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
+
+    { option => "video", desc => "Toggle Video support",
+      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
+
+    { option => "wcss", desc => "Toggle WCSS support",
+      define => "ENABLE_WCSS", default => 0, value => \$wcssSupport },
+
+    { option => "web-audio", desc => "Toggle Web Audio support",
+      define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },
+
+    { option => "web-sockets", desc => "Toggle Web Sockets support",
+      define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
+
+    { option => "web-timing", desc => "Toggle Web Timing support",
+      define => "ENABLE_WEB_TIMING", default => 0, value=> \$webTimingSupport },
+
+    { option => "wml", desc => "Toggle WML support",
+      define => "ENABLE_WML", default => 0, value => \$wmlSupport },
+
+    { option => "workers", desc => "Toggle Web Workers support",
+      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$workersSupport },
+
+    { option => "xhtmlmp", desc => "Toggle XHTML-MP support",
+      define => "ENABLE_XHTMLMP", default => 0, value => \$xhtmlmpSupport },
+
+    { option => "xpath", desc => "Toggle XPath support",
+      define => "ENABLE_XPATH", default => 1, value => \$xpathSupport },
+
+    { option => "xslt", desc => "Toggle XSLT support",
+      define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+);
+
+# Update defaults from Qt's project file
+if (isQt()) {
+    my %qtDefaults = qtFeatureDefaults();
+    foreach (@features) {
+        $_->{default} = $qtDefaults{$_->{define}} || 0;
+    }
+}
+
+# Additional environment parameters
+push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
+
+# Initialize values from defaults
+foreach (@ARGV) {
+    if ($_ eq '--minimal') {
+        $minimal = 1;
+    } elsif ($_ eq '--v8') {
+        $v8 = 1;
+    }
+}
+
+# Initialize values from defaults
+foreach (@features) {
+    ${$_->{value}} = ($_->{default} && !$minimal) || 0;
+}
+
+$svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
+    || $svgDOMObjCBindingsSupport || $svgFontsSupport
+    || $svgForeignObjectSupport || $svgUseSupport;
+
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  --help                            Show this help message
+  --clean                           Cleanup the build directory
+  --debug                           Compile in debug mode
+  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
+  --chromium                        Build the Chromium port on Mac/Win/Linux
+  --gtk                             Build the GTK+ port
+  --qt                              Build the Qt port
+  --efl                             Build the EFL port
+  --inspector-frontend              Copy changes to the inspector front-end files to the build directory
+
+  --install-headers=<path>          Set installation path for the headers (Qt only)
+  --install-libs=<path>             Set installation path for the libraries (Qt only)
+  --v8                              Use V8 as JavaScript engine (Qt only)
+
+  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
+  --makeargs=<arguments>            Optional Makefile flags
+
+  --minimal                         No optional features, unless explicitly enabled.
+
+EOF
+
+my %options = (
+    'help' => \$showHelp,
+    'clean' => \$clean,
+    'install-headers=s' => \$installHeaders,
+    'install-libs=s' => \$installLibs,
+    'prefix=s' => \$prefixPath,
+    'makeargs=s' => \$makeArgs,
+    'minimal' => \$minimal,
+    'v8' => \$v8,
+    'no-webkit2' => \$noWebKit2,
+);
+
+# Build usage text and options list from features
+foreach (@features) {
+    my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
+    $usage .= "$opt $_->{desc} (default: $_->{default})\n";
+    $options{"$_->{option}!"} = $_->{value};
+}
+
+GetOptions(%options);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+checkRequiredSystemConfig();
+setConfiguration();
+
+my $productDir = productDir();
+
+# Remove 0 byte sized files from productDir after slave lost for Qt buildbots.
+File::Find::find(\&unlinkZeroFiles, $productDir) if (isQt() && -e $productDir);
+
+sub unlinkZeroFiles ()
+{
+    my $file = $File::Find::name;
+    if (! -s $file) {
+        unlink $file;
+        print "0 byte sized file removed from build directory: $file\n";
+    }
+}
+
+# Check that all the project directories are there.
+my @projects = ("JavaScriptCore", "WebCore", "WebKit");
+
+my @otherDirs = ("WebKitLibraries");
+for my $dir (@projects, @otherDirs) {
+    if (! -d $dir) {
+        die "Error: No $dir directory found. Please do a fresh checkout.\n";
+    }
+}
+
+my @options = ();
+
+# enable autotool options accordingly
+if (isGtk()) {
+    @options = @ARGV;
+    foreach (@features) {
+        push @options, autotoolsFlag(${$_->{value}}, $_->{option});
+    }
+
+    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+} elsif (isAppleMacWebKit()) {
+    push @options, XcodeOptions();
+
+    sub option($$$)
+    {
+        my ($feature, $isEnabled, $defaultValue) = @_;
+        return "" if $defaultValue == $isEnabled;
+        return $feature . "=" . ($isEnabled ? $feature : " ");
+    }
+
+    foreach (@features) {
+        if ($_->{option} ne "coverage") {
+            my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+            push @options, $option unless $option eq "";
+        }
+    }
+
+    # Apple builds JavaScriptGlue, and only on the Mac.
+    splice @projects, 1, 0, "JavaScriptGlue";
+
+    # ANGLE must come before WebCore
+    splice @projects, 0, 0, "ANGLE";
+
+    # WebKit2 is only supported in SnowLeopard and later at present.
+    push @projects, ("WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
+
+    # Copy library and header from WebKitLibraries to a findable place in the product directory.
+    my @librariesToCopy = (
+        "libWebKitSystemInterfaceTiger.a",
+        "libWebKitSystemInterfaceLeopard.a",
+        "libWebKitSystemInterfaceSnowLeopard.a",
+        "libWebCoreSQLite3.a",
+    );
+    foreach my $libName (@librariesToCopy) {
+        my $srcLib = "WebKitLibraries/" . $libName;
+        my $lib = "$productDir/" . $libName;
+        if (!-e $lib || -M $lib > -M $srcLib) {
+            print "Updating $lib\n";
+            system "ditto", $srcLib, $lib;
+            system "ranlib", $lib;
+        }
+    }
+
+    # FIXME: This code should be abstracted to not be copy/paste.
+    my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
+    my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
+    if (!-e $header || -M $header > -M $srcHeader) {
+        print "Updating $header\n";
+        system "mkdir", "-p", "$productDir/usr/local/include";
+        system "ditto", $srcHeader, $header;
+    }
+
+    my $srcHeaderDir = "WebKitLibraries/WebCoreSQLite3";
+    my $headerDir = "$productDir/WebCoreSQLite3";
+    if (!-e $headerDir || -M $headerDir > -M $srcHeaderDir) {
+        print "Updating $headerDir\n";
+        system "ditto", $srcHeaderDir, $headerDir;
+    }
+} elsif (isAppleWinWebKit()) {
+    # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
+    # Will fail if WebKitSupportLibrary.zip is not in source root.
+    (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
+} elsif (isQt()) {
+    @options = @ARGV;
+    push @options, "--install-headers=" . $installHeaders if defined($installHeaders);
+    push @options, "--install-libs=" . $installLibs if defined($installLibs);
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+
+    foreach (@features) {
+        push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
+    }
+
+    if ($minimal) {
+        push @options, "CONFIG+=minimal";
+    }
+
+    if ($v8) {
+        push @options, "CONFIG+=v8";
+    }
+}
+
+# Force re-link of existing libraries if different than expected
+removeLibraryDependingOnFeature("WebCore", "SVG", $svgSupport);
+
+if (isInspectorFrontend()) {
+    exit exitStatus(copyInspectorFrontendFiles());
+}
+
+if (isWx()) {
+    downloadWafIfNeeded();
+    @options = ();
+    if (defined($makeArgs)) {
+        @options = split(/ /, $makeArgs);
+    }
+    @projects = ();
+    my $result = buildWafProject('.', $clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
+if (isChromium()) {
+    @options = @ARGV;
+    # Chromium doesn't build by project directories.
+    @projects = ();
+    my $result = buildChromium($clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
+if (isEfl()) {
+    @options = ();
+    @projects = ();
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+            push @options, "-D$featureName=$featureEnabled";
+        }
+    }
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
+    my $result = buildCMakeEflProject($clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
+# Build, and abort if the build fails.
+for my $dir (@projects) {
+    chdir $dir or die;
+    my $result = 0;
+
+    # For Gtk and Qt the WebKit project builds all others
+    if ((isGtk() || isQt()) && $dir ne "WebKit") {
+        chdir ".." or die;
+        next;
+    }
+
+    if (isGtk()) {
+        $result = buildGtkProject($dir, $clean,  @options);
+    } elsif (isQt()) {
+        $result = buildQMakeQtProject($dir, $clean, @options);
+    } elsif (isAppleMacWebKit()) {
+        $dir = "MiniBrowser" if $dir eq "Tools/MiniBrowser";
+        my @local_options = @options;
+        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $dir ne "ANGLE";
+        $result = buildXCodeProject($dir, $clean, @local_options, @ARGV);
+    } elsif (isAppleWinWebKit()) {
+        if ($dir eq "WebKit") {
+            $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
+        }
+    }
+    # Various build* calls above may change the CWD.
+    chdirWebKit();
+
+    if (exitStatus($result)) {
+        my $scriptDir = relativeScriptsDir();
+        if (usingVisualStudioExpress()) {
+            # Visual Studio Express is so lame it can't stdout build failures.
+            # So we find its logs and dump them to the console ourselves.
+            system(File::Spec->catfile($scriptDir, "print-vse-failure-logs"));
+        }
+        if (isAppleWinWebKit()) {
+            print "\n\n===== BUILD FAILED ======\n\n";
+            print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
+            my $baseProductDir = baseProductDir();
+            print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
+        }
+        exit exitStatus($result);
+    }
+}
+
+# Don't report the "WebKit is now built" message after a clean operation.
+exit if $clean;
+
+# Write out congratulations message.
+writeCongrats();
+
+exit 0;
+
+sub formatBuildTime($)
+{
+    my ($buildTime) = @_;
+
+    my $buildHours = int($buildTime / 3600);
+    my $buildMins = int(($buildTime - $buildHours * 3600) / 60);
+    my $buildSecs = $buildTime - $buildHours * 3600 - $buildMins * 60;
+
+    if ($buildHours) {
+        return sprintf("%dh:%02dm:%02ds", $buildHours, $buildMins, $buildSecs);
+    }
+    return sprintf("%02dm:%02ds", $buildMins, $buildSecs);
+}
+
+sub writeCongrats()
+{
+    my $launcherPath = launcherPath();
+    my $launcherName = launcherName();
+    my $endTime = time();
+    my $buildTime = formatBuildTime($endTime - $startTime);
+
+    print "\n";
+    print "===========================================================\n";
+    print " WebKit is now built ($buildTime). \n";
+    if (!isChromium()) {
+        print " To run $launcherName with this newly-built code, use the\n";
+        print " \"$launcherPath\" script.\n";
+    }
+    print "===========================================================\n";
+}

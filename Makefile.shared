@@ -1,4 +1,4 @@
-SCRIPTS_PATH ?= ../WebKitTools/Scripts
+SCRIPTS_PATH ?= ../Tools/Scripts
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
 all:
