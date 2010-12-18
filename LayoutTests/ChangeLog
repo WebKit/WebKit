@@ -1,3 +1,12 @@
+2010-12-17  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed fix.
+
+        Fix JS syntax to avoid V8 error message
+        https://bugs.webkit.org/show_bug.cgi?id=51287
+
+        * transitions/interrupted-accelerated-transition.html:
+
 2010-12-17  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
