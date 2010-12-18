@@ -142,19 +142,19 @@ inline void arithmetic(ByteArray* srcPixelArrayA, ByteArray* srcPixelArrayB,
 
     if (!k4) {
         if (!k1) {
-            computeArithmeticPixels<0,1,1,0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+            computeArithmeticPixels<0, 1, 1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
             return;
         }
 
-        computeArithmeticPixels<1,1,1,0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        computeArithmeticPixels<1, 1, 1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
         return;
     }
 
     if (!k1) {
-        computeArithmeticPixels<0,1,1,1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        computeArithmeticPixels<0, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
         return;
     }
-    computeArithmeticPixels<1,1,1,1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+    computeArithmeticPixels<1, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
 }
 
 void FEComposite::determineAbsolutePaintRect()

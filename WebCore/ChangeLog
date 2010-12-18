@@ -1,3 +1,15 @@
+2010-12-17  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Improve 'arithmetic' operator on feComposite
+        https://bugs.webkit.org/show_bug.cgi?id=51105
+
+        Fixing style errors and bug description for r74177.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::arithmetic):
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
