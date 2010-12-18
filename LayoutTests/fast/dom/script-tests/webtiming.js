@@ -42,8 +42,8 @@ function checkTimingBeforeLoad()
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBe("timing.domInteractive", "0");
-    shouldBe("timing.domContentLoadedStart", "0");
-    shouldBe("timing.domContentLoadedEnd", "0");
+    shouldBe("timing.domContentLoadedEventStart", "0");
+    shouldBe("timing.domContentLoadedEventEnd", "0");
     shouldBe("timing.domComplete", "0");
 
     shouldBe("timing.loadEventStart", "0");
@@ -77,8 +77,8 @@ function checkTimingWhileDeferred()
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.domLoading");
-    shouldBe("timing.domContentLoadedStart", "0");
-    shouldBe("timing.domContentLoadedEnd", "0");
+    shouldBe("timing.domContentLoadedEventStart", "0");
+    shouldBe("timing.domContentLoadedEventEnd", "0");
     shouldBe("timing.domComplete", "0");
 
     shouldBe("timing.loadEventStart", "0");
@@ -113,8 +113,8 @@ function checkWebTimingOnDOMContentLoaded() {
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.domLoading");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedStart", "timing.domInteractive");
-    shouldBe("timing.domContentLoadedEnd", "0");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventStart", "timing.domInteractive");
+    shouldBe("timing.domContentLoadedEventEnd", "0");
     shouldBe("timing.domComplete", "0");
 
     shouldBe("timing.loadEventStart", "0");
@@ -155,8 +155,8 @@ function checkWebTimingWhileAsync()
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.responseEnd");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedStart", "timing.domInteractive");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedEnd", "timing.domContentLoadedStart");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventStart", "timing.domInteractive");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventEnd", "timing.domContentLoadedEventStart");
     shouldBe("timing.domComplete", "0");
 
     shouldBe("timing.loadEventStart", "0");
@@ -193,9 +193,9 @@ function checkWebTimingOnLoad()
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.responseEnd");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedStart", "timing.domInteractive");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedEnd", "timing.domContentLoadedStart");
-    shouldBeGreaterThanOrEqual("timing.domComplete", "timing.domContentLoadedEnd");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventStart", "timing.domInteractive");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventEnd", "timing.domContentLoadedEventStart");
+    shouldBeGreaterThanOrEqual("timing.domComplete", "timing.domContentLoadedEventEnd");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBe("timing.loadEventEnd", "0");
@@ -231,9 +231,9 @@ function checkWebTimingAfterLoad()
 
     shouldBeGreaterThanOrEqual("timing.domLoading", "timing.fetchStart");
     shouldBeGreaterThanOrEqual("timing.domInteractive", "timing.responseEnd");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedStart", "timing.domInteractive");
-    shouldBeGreaterThanOrEqual("timing.domContentLoadedEnd", "timing.domContentLoadedStart");
-    shouldBeGreaterThanOrEqual("timing.domComplete", "timing.domContentLoadedEnd");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventStart", "timing.domInteractive");
+    shouldBeGreaterThanOrEqual("timing.domContentLoadedEventEnd", "timing.domContentLoadedEventStart");
+    shouldBeGreaterThanOrEqual("timing.domComplete", "timing.domContentLoadedEventEnd");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
     shouldBeGreaterThanOrEqual("timing.loadEventEnd", "timing.loadEventStart + 50");

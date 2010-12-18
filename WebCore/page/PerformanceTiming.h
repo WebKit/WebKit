@@ -67,8 +67,8 @@ public:
     unsigned long long responseEnd() const;
     unsigned long long domLoading() const;
     unsigned long long domInteractive() const;
-    unsigned long long domContentLoadedStart() const;
-    unsigned long long domContentLoadedEnd() const;
+    unsigned long long domContentLoadedEventStart() const;
+    unsigned long long domContentLoadedEventEnd() const;
     unsigned long long domComplete() const;
     unsigned long long loadEventStart() const;
     unsigned long long loadEventEnd() const;

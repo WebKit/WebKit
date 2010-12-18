@@ -133,6 +133,31 @@ double WebPerformance::responseEnd() const
     return millisecondsToSeconds(m_private->timing()->responseEnd());
 }
 
+double WebPerformance::domLoading() const
+{
+    return millisecondsToSeconds(m_private->timing()->domLoading());
+}
+
+double WebPerformance::domInteractive() const
+{
+    return millisecondsToSeconds(m_private->timing()->domInteractive());
+}
+
+double WebPerformance::domContentLoadedEventStart() const
+{
+    return millisecondsToSeconds(m_private->timing()->domContentLoadedEventStart());
+}
+
+double WebPerformance::domContentLoadedEventEnd() const
+{
+    return millisecondsToSeconds(m_private->timing()->domContentLoadedEventEnd());
+}
+
+double WebPerformance::domComplete() const
+{
+    return millisecondsToSeconds(m_private->timing()->domComplete());
+}
+
 double WebPerformance::loadEventStart() const
 {
     return millisecondsToSeconds(m_private->timing()->loadEventStart());

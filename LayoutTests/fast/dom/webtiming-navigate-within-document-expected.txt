@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS connectEnd is unchanged.
 PASS connectStart is unchanged.
 PASS domComplete is unchanged.
-PASS domContentLoadedEnd is unchanged.
-PASS domContentLoadedStart is unchanged.
+PASS domContentLoadedEventEnd is unchanged.
+PASS domContentLoadedEventStart is unchanged.
 PASS domInteractive is unchanged.
 PASS domLoading is unchanged.
 PASS domainLookupEnd is unchanged.

@@ -4208,11 +4208,11 @@ void Document::finishedParsing()
     ASSERT(!scriptableDocumentParser() || !m_parser->isParsing());
     ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
-    if (!m_documentTiming.domContentLoadedStart)
-        m_documentTiming.domContentLoadedStart = currentTime();
+    if (!m_documentTiming.domContentLoadedEventStart)
+        m_documentTiming.domContentLoadedEventStart = currentTime();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
-    if (!m_documentTiming.domContentLoadedEnd)
-        m_documentTiming.domContentLoadedEnd = currentTime();
+    if (!m_documentTiming.domContentLoadedEventEnd)
+        m_documentTiming.domContentLoadedEventEnd = currentTime();
 
     if (Frame* f = frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all

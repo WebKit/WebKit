@@ -281,22 +281,22 @@ unsigned long long PerformanceTiming::domInteractive() const
     return toIntegerMilliseconds(timing->domInteractive);
 }
 
-unsigned long long PerformanceTiming::domContentLoadedStart() const
+unsigned long long PerformanceTiming::domContentLoadedEventStart() const
 {
     const DocumentTiming* timing = documentTiming();
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->domContentLoadedStart);
+    return toIntegerMilliseconds(timing->domContentLoadedEventStart);
 }
 
-unsigned long long PerformanceTiming::domContentLoadedEnd() const
+unsigned long long PerformanceTiming::domContentLoadedEventEnd() const
 {
     const DocumentTiming* timing = documentTiming();
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->domContentLoadedEnd);
+    return toIntegerMilliseconds(timing->domContentLoadedEventEnd);
 }
 
 unsigned long long PerformanceTiming::domComplete() const

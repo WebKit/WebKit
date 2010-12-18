@@ -73,6 +73,11 @@ public:
     WEBKIT_API double requestStart() const;
     WEBKIT_API double responseStart() const;
     WEBKIT_API double responseEnd() const;
+    WEBKIT_API double domLoading() const;
+    WEBKIT_API double domInteractive() const;
+    WEBKIT_API double domContentLoadedEventStart() const;
+    WEBKIT_API double domContentLoadedEventEnd() const;
+    WEBKIT_API double domComplete() const;
     WEBKIT_API double loadEventStart() const;
     WEBKIT_API double loadEventEnd() const;
 

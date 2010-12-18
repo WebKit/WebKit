@@ -1,3 +1,22 @@
+2010-12-18  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Web Timing] Rename domContentLoaded{Start,End}->domContentLoadedEvent{Start,End}
+        https://bugs.webkit.org/show_bug.cgi?id=50943
+
+        See: http://test.w3.org/webperf/specs/NavigationTiming/#nt-dom-content-event-start
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+        * dom/DocumentTiming.h:
+        (WebCore::DocumentTiming::DocumentTiming):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domContentLoadedEventStart):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd):
+        * page/PerformanceTiming.h:
+        * page/PerformanceTiming.idl:
+
 2010-12-17  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Andreas Kling.

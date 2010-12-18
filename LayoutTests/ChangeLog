@@ -1,3 +1,22 @@
+2010-12-18  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Web Timing] Rename domContentLoaded{Start,End}->domContentLoadedEvent{Start,End}
+        https://bugs.webkit.org/show_bug.cgi?id=50943
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkTimingWhileDeferred):
+        (checkWebTimingOnDOMContentLoaded):
+        (checkWebTimingWhileAsync):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-document-open-expected.txt:
+        * fast/dom/webtiming-expected.txt:
+        * fast/dom/webtiming-navigate-within-document-expected.txt:
+
 2010-12-17  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed.
