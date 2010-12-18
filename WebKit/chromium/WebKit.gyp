@@ -31,7 +31,7 @@
 {
     'includes': [
         '../../WebCore/WebCore.gypi',
-        '../../WebKitTools/DumpRenderTree/DumpRenderTree.gypi',
+        '../../Tools/DumpRenderTree/DumpRenderTree.gypi',
         'WebKit.gypi',
         'features.gypi',
     ],
