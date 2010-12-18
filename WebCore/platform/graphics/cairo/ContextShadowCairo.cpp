@@ -82,19 +82,25 @@ static cairo_surface_t* getScratchBuffer(const IntSize& size)
     return scratchBuffer;
 }
 
+TransformationMatrix ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
+{
+    cairo_matrix_t transform;
+    cairo_get_matrix(context, &transform);
+    return TransformationMatrix(transform.xx, transform.yx, transform.xy,
+                                transform.yy, transform.x0, transform.y0);
+}
+
 PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const FloatRect& layerArea)
 {
-    m_unscaledLayerRect = layerArea;
-
     double x1, x2, y1, y2;
     cairo_clip_extents(context, &x1, &y1, &x2, &y2);
-    calculateLayerBoundingRect(layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));
+    IntRect layerRect = calculateLayerBoundingRect(context, layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));
 
     // Don't paint if we are totally outside the clip region.
-    if (m_layerRect.isEmpty())
+    if (layerRect.isEmpty())
         return 0;
 
-    m_layerImage = getScratchBuffer(m_layerRect.size());
+    m_layerImage = getScratchBuffer(layerRect.size());
     m_layerContext = cairo_create(m_layerImage);
 
     // Always clear the surface first.
@@ -102,8 +108,7 @@ PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const F
     cairo_paint(m_layerContext);
     cairo_set_operator(m_layerContext, CAIRO_OPERATOR_OVER);
 
-    cairo_translate(m_layerContext, m_offset.width(), m_offset.height());
-    cairo_translate(m_layerContext, -m_layerRect.x(), -m_layerRect.y());
+    cairo_translate(m_layerContext, m_layerContextTranslation.x(), m_layerContextTranslation.y());
     return m_layerContext;
 }
 
@@ -122,19 +127,7 @@ void ContextShadow::endShadowLayer(cairo_t* cr)
 
     cairo_save(cr);
     setSourceRGBAFromColor(cr, m_color);
-
-    cairo_matrix_t transform;
-    cairo_get_matrix(cr, &transform);
-    double x = m_layerRect.x();
-    double y = m_layerRect.y();
-
-    double xScale = sqrt(transform.xx * transform.xx + transform.yx * transform.yx);
-    double yScale = sqrt(transform.xy * transform.xy + transform.yy * transform.yy);
-    if (xScale != 1 || yScale != 1) {
-        x = m_unscaledLayerRect.x() + m_offset.width()  / transform.xx - m_blurDistance;
-        y = m_unscaledLayerRect.y() + m_offset.height() / transform.yy - m_blurDistance;
-    }
-    cairo_mask_surface(cr, m_layerImage, x, y);
+    cairo_mask_surface(cr, m_layerImage, m_layerOrigin.x(), m_layerOrigin.y());
     cairo_restore(cr);
 
     // Schedule a purge of the scratch buffer. We do not need to destroy the surface.
@@ -235,9 +228,9 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     // Reduce the size of what we have to draw with the clip area.
     double x1, x2, y1, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
-    calculateLayerBoundingRect(shadowRect, IntRect(x1, y1, x2 - x1, y2 - y1));
+    calculateLayerBoundingRect(cr, shadowRect, IntRect(x1, y1, x2 - x1, y2 - y1));
 
-    if ((shadowTemplateSize.width() * shadowTemplateSize.height() > m_layerRect.width() * m_layerRect.height())) {
+    if ((shadowTemplateSize.width() * shadowTemplateSize.height() > m_sourceRect.width() * m_sourceRect.height())) {
         drawRectShadowWithoutTiling(cr, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
         return;
     }

@@ -871,6 +871,8 @@ void GraphicsContext::setPlatformShadow(FloatSize const& size, float blur, Color
         m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), -size.height()));
     } else
         m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), size.height()));
+
+    m_data->shadow.setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
 }
 
 ContextShadow* GraphicsContext::contextShadow()

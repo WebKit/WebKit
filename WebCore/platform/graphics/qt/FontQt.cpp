@@ -146,7 +146,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 
             if (ctxShadow->m_type != ContextShadow::NoShadow) {
                 ContextShadow* ctxShadow = ctx->contextShadow();
-                if (ctxShadow->m_type != ContextShadow::BlurShadow) {
+                if (!ctxShadow->mustUseContextShadow(p)) {
                     p->save();
                     p->setPen(ctxShadow->m_color);
                     p->translate(ctxShadow->offset());

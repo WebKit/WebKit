@@ -72,7 +72,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
         return;
 
-    if (shadow->m_type == ContextShadow::SolidShadow) {
+    if (!shadow->mustUseContextShadow(context)) {
         // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
         cairo_save(context);
         cairo_translate(context, shadow->m_offset.width(), shadow->m_offset.height());

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ContextShadow.h"
 
+#include "FloatQuad.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 
@@ -41,6 +42,7 @@ ContextShadow::ContextShadow()
     : m_type(NoShadow)
     , m_blurDistance(0)
     , m_layerContext(0)
+    , m_shadowsIgnoreTransforms(false)
 {
 }
 
@@ -49,6 +51,7 @@ ContextShadow::ContextShadow(const Color& color, float radius, const FloatSize& 
     , m_blurDistance(round(radius))
     , m_offset(offset)
     , m_layerContext(0)
+    , m_shadowsIgnoreTransforms(false)
 {
     // See comments in http://webkit.org/b/40793, it seems sensible
     // to follow Skia's limit of 128 pixels of blur radius
@@ -75,6 +78,23 @@ void ContextShadow::clear()
     m_color = Color();
     m_blurDistance = 0;
     m_offset = FloatSize();
+}
+
+bool ContextShadow::mustUseContextShadow(PlatformContext context)
+{
+    // We can't avoid ContextShadow, since the shadow has blur.
+    if (m_type == ContextShadow::BlurShadow)
+        return true;
+    // We can avoid ContextShadow and optimize, since we're not drawing on a
+    // canvas and box shadows are affected by the transformation matrix.
+    if (!shadowsIgnoreTransforms())
+        return false;
+    // We can avoid ContextShadow, since there are no transformations to apply to the canvas.
+    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+    if (transform.isIdentity())
+        return false;
+    // Otherwise, no chance avoiding ContextShadow.
+    return true;
 }
 
 // Instead of integer division, we use 17.15 for fixed-point division.
@@ -149,29 +169,61 @@ void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size
     }
 }
 
-void ContextShadow::calculateLayerBoundingRect(const FloatRect& layerArea, const IntRect& clipRect)
+IntRect ContextShadow::calculateLayerBoundingRect(const PlatformContext context, const FloatRect& layerArea, const IntRect& clipRect)
 {
-    // Calculate the destination of the blurred layer.
-    FloatRect destinationRect(layerArea);
-    destinationRect.move(m_offset);
-    m_layerRect = enclosingIntRect(destinationRect);
+    // Calculate the destination of the blurred and/or transformed layer.
+    FloatRect layerFloatRect;
+    float inflation = 0;
+
+    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+    if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
+        FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(layerArea));
+        transformedPolygon.move(m_offset);
+        layerFloatRect = transform.inverse().mapQuad(transformedPolygon).boundingBox();
+    } else {
+        layerFloatRect = layerArea;
+        layerFloatRect.move(m_offset);
+    }
 
     // We expand the area by the blur radius to give extra space for the blur transition.
-    m_layerRect.inflate(m_type == BlurShadow ? m_blurDistance : 0);
+    if (m_type == BlurShadow) {
+        layerFloatRect.inflate(m_blurDistance);
+        inflation += m_blurDistance;
+    }
 
-    if (!clipRect.contains(m_layerRect)) {
+    FloatRect unclippedLayerRect = layerFloatRect;
+
+    if (!clipRect.contains(enclosingIntRect(layerFloatRect))) {
         // No need to have the buffer larger than the clip.
-        m_layerRect.intersect(clipRect);
+        layerFloatRect.intersect(clipRect);
 
         // If we are totally outside the clip region, we aren't painting at all.
-        if (m_layerRect.isEmpty())
-            return;
+        if (layerFloatRect.isEmpty())
+            return IntRect(0, 0, 0, 0);
 
         // We adjust again because the pixels at the borders are still
         // potentially affected by the pixels outside the buffer.
-        if (m_type == BlurShadow)
-            m_layerRect.inflate(m_type == BlurShadow ? m_blurDistance : 0);
+        if (m_type == BlurShadow) {
+            layerFloatRect.inflate(m_blurDistance);
+            unclippedLayerRect.inflate(m_blurDistance);
+            inflation += m_blurDistance;
+        }
     }
+
+    const int frameSize = inflation * 2;
+    m_sourceRect = IntRect(0, 0, layerArea.width() + frameSize, layerArea.height() + frameSize);
+    m_layerOrigin = FloatPoint(layerFloatRect.x(), layerFloatRect.y());
+
+    const FloatPoint m_unclippedLayerOrigin = FloatPoint(unclippedLayerRect.x(), unclippedLayerRect.y());
+    const FloatSize clippedOut = m_unclippedLayerOrigin - m_layerOrigin;
+
+    // Set the origin as the top left corner of the scratch image, or, in case there's a clipped
+    // out region, set the origin accordingly to the full bounding rect's top-left corner.
+    const float translationX = -layerArea.x() + inflation - fabsf(clippedOut.width());
+    const float translationY = -layerArea.y() + inflation - fabsf(clippedOut.height());
+    m_layerContextTranslation = FloatPoint(translationX, translationY);
+
+    return enclosingIntRect(layerFloatRect);
 }
 
 } // namespace WebCore

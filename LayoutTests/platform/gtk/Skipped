@@ -1025,6 +1025,7 @@ editing/unsupported-content/table-type-before.html
 fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
+fast/canvas/canvas-transforms-fillRect-shadow.html
 fast/canvas/canvas-zoom.html
 fast/css/css1_forward_compatible_parsing.html
 fast/css/invalid-percentage-property.html

@@ -19,7 +19,7 @@ function shouldBeAround(a, b)
         evalA = e;
     }
 
-    if (Math.abs(evalA - b) < 10)
+    if (Math.abs(evalA - b) < 20)
         print("PASS " + a + " is around " + b , "green")
     else
         print("FAIL " + a + " is not around " + b + " (actual: " + evalA + ")", "red");
@@ -35,7 +35,6 @@ ctx.scale(2, 2);
 ctx.shadowOffsetX = 100;
 ctx.shadowOffsetY = 100;
 ctx.fillStyle = 'rgba(0, 0, 255, 1)';
-//ctx.lineWidth = 30;
 
 ctx.shadowColor = 'rgba(255, 0, 0, 1.0)';
 ctx.beginPath();
@@ -73,38 +72,38 @@ ctx.fill();
 var d; // imageData.data
 
 // Verify solid shadow.
-d = ctx.getImageData(200, 205, 1, 1).data;
+d = ctx.getImageData(201, 205, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBe('d[3]', '255');
 
-d = ctx.getImageData(299, 295, 1, 1).data;
+d = ctx.getImageData(298, 295, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBe('d[3]', '255');
 
-d = ctx.getImageData(200, 299, 1, 1).data;
+d = ctx.getImageData(201, 298, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBe('d[3]', '255');
 
 // Verify solid alpha shadow.
-d = ctx.getImageData(200, 405, 1, 1).data;
+d = ctx.getImageData(201, 405, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '76');
 
-d = ctx.getImageData(299, 405, 1, 1).data;
+d = ctx.getImageData(298, 405, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '76');
 
-d = ctx.getImageData(205, 499, 1, 1).data;
+d = ctx.getImageData(205, 498, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
