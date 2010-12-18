@@ -405,6 +405,10 @@ InlineBox* RootInlineBox::lastSelectedBox()
 int RootInlineBox::selectionTop() const
 {
     int selectionTop = m_lineTop;
+
+    if (m_hasAnnotationsBefore)
+        selectionTop -= !renderer()->style()->isFlippedLinesWritingMode() ? computeOverAnnotationAdjustment(m_lineTop) : computeUnderAnnotationAdjustment(m_lineTop);
+
     if (renderer()->style()->isFlippedLinesWritingMode())
         return selectionTop;
 
@@ -427,6 +431,10 @@ int RootInlineBox::selectionTop() const
 int RootInlineBox::selectionBottom() const
 {
     int selectionBottom = m_lineBottom;
+
+    if (m_hasAnnotationsAfter)
+        selectionBottom += !renderer()->style()->isFlippedLinesWritingMode() ? computeUnderAnnotationAdjustment(m_lineBottom) : computeOverAnnotationAdjustment(m_lineBottom);
+
     if (!renderer()->style()->isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
 

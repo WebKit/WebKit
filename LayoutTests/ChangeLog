@@ -2,6 +2,16 @@
 
         Reviewed by Cameron Zwarich.
 
+        Text emphasis marks are not always included in the selection highlight
+        https://bugs.webkit.org/show_bug.cgi?id=51299
+
+        * platform/mac/fast/text/emphasis-expected.checksum:
+        * platform/mac/fast/text/emphasis-expected.png:
+
+2010-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
         In flipped writing modes, opposite text emphasis marks from adjacent lines overlap
         https://bugs.webkit.org/show_bug.cgi?id=51298
 
