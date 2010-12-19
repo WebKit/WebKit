@@ -640,7 +640,7 @@ void InspectorController::populateScriptObjects()
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
         it->second->bind(m_frontend.get());
 #endif
-#if ENABLE(WORKERS)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
         InspectorWorkerResource* worker = it->second.get();
@@ -998,6 +998,7 @@ void InspectorController::postWorkerNotificationToFrontend(const InspectorWorker
 {
     if (!m_frontend)
         return;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     switch (action) {
     case InspectorController::WorkerCreated:
         m_frontend->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
@@ -1006,6 +1007,7 @@ void InspectorController::postWorkerNotificationToFrontend(const InspectorWorker
         m_frontend->didDestroyWorker(worker.id());
         break;
     }
+#endif
 }
 
 void InspectorController::didCreateWorker(intptr_t id, const String& url, bool isSharedWorker)
