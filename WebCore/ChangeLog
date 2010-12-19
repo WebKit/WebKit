@@ -1,3 +1,22 @@
+2010-12-18  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by David Levin.
+
+        [chromium] Simplify the PNG encoder.
+        https://bugs.webkit.org/show_bug.cgi?id=50905
+
+        Remove PNGEncoderState class - it was a proxy for the encoder output, and
+        that is a Vector<>, so just write into it directly using append() to make
+        use of Vector<>'s resize() smarts. Simplify the preMultipliedBGRAtoRGBA()
+        and encode() routines, replace the OwnArrayPtr<> with a Vector<>.
+        
+        canvas.toDataURL("image/png") is covered by existing tests.
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::writeOutput): Use a Vector<>, append() the encoded data to it.
+        (WebCore::preMultipliedBGRAtoRGBA): simplified.
+        (WebCore::PNGImageEncoder::encode): ditto.
+
 2010-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Cameron Zwarich.
