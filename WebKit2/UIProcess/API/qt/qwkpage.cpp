@@ -160,14 +160,10 @@ void QWKPagePrivate::didFinishLoadingDataForCustomRepresentation(const CoreIPC::
 
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
 {
-    painter->save();
-
     if (page->isValid() && page->drawingArea())
         page->drawingArea()->paint(IntRect(area), painter);
     else
         painter->fillRect(area, Qt::white);
-
-    painter->restore();
 }
 
 void QWKPagePrivate::keyPressEvent(QKeyEvent* ev)
