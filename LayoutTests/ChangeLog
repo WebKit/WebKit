@@ -1,3 +1,19 @@
+2010-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Text emphasis marks are not repainted correctly in flipped writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=51307
+
+        * fast/repaint/text-emphasis-h-expected.checksum: Added.
+        * fast/repaint/text-emphasis-h-expected.png: Added.
+        * fast/repaint/text-emphasis-h-expected.txt: Added.
+        * fast/repaint/text-emphasis-h.html: Added.
+        * fast/repaint/text-emphasis-v-expected.checksum: Added.
+        * fast/repaint/text-emphasis-v-expected.png: Added.
+        * fast/repaint/text-emphasis-v-expected.txt: Added.
+        * fast/repaint/text-emphasis-v.html: Added.
+
 2010-12-18  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by David Levin.

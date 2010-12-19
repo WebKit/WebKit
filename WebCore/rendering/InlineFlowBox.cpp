@@ -747,7 +747,7 @@ void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, Glyph
 
     if (style->textEmphasisMark() != TextEmphasisMarkNone) {
         int emphasisMarkHeight = style->font().emphasisMarkHeight(style->textEmphasisMarkString());
-        if (style->textEmphasisPosition() == TextEmphasisPositionOver)
+        if ((style->textEmphasisPosition() == TextEmphasisPositionOver) == (!style->isFlippedLinesWritingMode()))
             topGlyphOverflow = min(topGlyphOverflow, -emphasisMarkHeight);
         else
             bottomGlyphOverflow = max(bottomGlyphOverflow, emphasisMarkHeight);

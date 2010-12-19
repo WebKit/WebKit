@@ -1,3 +1,16 @@
+2010-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Text emphasis marks are not repainted correctly in flipped writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=51307
+
+        Tests: fast/repaint/text-emphasis-h.html
+               fast/repaint/text-emphasis-v.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow): Added flippedness check.
+
 2010-12-19  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Andreas Kling.
