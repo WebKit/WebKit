@@ -162,11 +162,10 @@ void QWKPagePrivate::paint(QPainter* painter, QRect area)
 {
     painter->save();
 
-    painter->setBrush(Qt::white);
-    painter->drawRect(area);
-
     if (page->isValid() && page->drawingArea())
         page->drawingArea()->paint(IntRect(area), painter);
+    else
+        painter->fillRect(area, Qt::white);
 
     painter->restore();
 }
