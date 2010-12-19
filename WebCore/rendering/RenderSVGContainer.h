@@ -39,10 +39,6 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    // <marker> uses these methods to only allow drawing children during a special marker draw time
-    void setDrawsContents(bool drawsContents) { m_drawsContents = drawsContents; }
-    bool drawsContents() const { return m_drawsContents; }
-
     virtual void paint(PaintInfo&, int parentX, int parentY);
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
 
@@ -79,7 +75,6 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
-    bool m_drawsContents : 1;
     bool m_needsBoundariesUpdate : 1;
 };
   

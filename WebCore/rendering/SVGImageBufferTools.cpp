@@ -81,14 +81,6 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
 
     PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0);
 
-    RenderSVGContainer* svgContainer = 0;
-    if (item && item->isSVGContainer() && !item->isSVGViewportContainer())
-        svgContainer = toRenderSVGContainer(item);
-
-    bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;
-    if (svgContainer && !drawsContents)
-        svgContainer->setDrawsContents(true);
-
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;
     contentTransformation.multiply(subtreeContentTransformation);
@@ -97,9 +89,6 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
     item->paint(info, 0, 0);
 
     contentTransformation = savedContentTransformation;
-
-    if (svgContainer && !drawsContents)
-        svgContainer->setDrawsContents(false);
 }
 
 void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer)

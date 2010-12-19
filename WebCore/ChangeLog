@@ -1,3 +1,22 @@
+2010-12-19  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        Remove m_drawsContents from RenderSVGContainer.h
+        https://bugs.webkit.org/show_bug.cgi?id=51305
+
+        Remove m_drawsContents, its getter and setter and the call
+        sites, since it has no effect anymore.
+
+        * WebCore.order:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGResourceContainer.h:
+        * rendering/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::renderSubtreeToImageBuffer):
+
 2010-12-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

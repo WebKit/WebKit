@@ -38,7 +38,6 @@ public:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual bool isSVGResourceContainer() const { return true; }
-    virtual bool drawsContents() { return false; }
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() { return this; }
 
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);

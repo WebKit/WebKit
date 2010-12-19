@@ -38,7 +38,6 @@ namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
     : RenderSVGModelObject(node)
-    , m_drawsContents(true)
     , m_needsBoundariesUpdate(true)
 {
 }
@@ -94,7 +93,7 @@ bool RenderSVGContainer::selfWillPaint()
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
 {
-    if (paintInfo.context->paintingDisabled() || !drawsContents())
+    if (paintInfo.context->paintingDisabled())
         return;
 
     // Spec: groups w/o children still may render filter content.
