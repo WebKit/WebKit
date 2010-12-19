@@ -65,8 +65,6 @@ public:
 
     void updateFromChunk(UpdateChunk* updateChunk, float);
 
-    static void paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&);
-
     int ID() const { return m_ID; }
 
 private:

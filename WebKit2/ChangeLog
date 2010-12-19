@@ -1,3 +1,17 @@
+2010-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Client are expected to render their own background for WebPages
+        https://bugs.webkit.org/show_bug.cgi?id=51296
+
+        Remove the rendering of the checkerboard from the tiled DrawingAreaProxy
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::paint):
+        * UIProcess/TiledDrawingAreaTile.h:
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+
 2010-12-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

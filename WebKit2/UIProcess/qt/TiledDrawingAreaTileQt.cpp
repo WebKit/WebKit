@@ -40,29 +40,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const unsigned checkerSize = 16;
-static const unsigned checkerColor1 = 0xff555555;
-static const unsigned checkerColor2 = 0xffaaaaaa;
-
-static QPixmap& checkeredPixmap()
-{
-    static QPixmap* pixmap;
-    if (!pixmap) {
-        pixmap = new QPixmap(checkerSize, checkerSize);
-        QPainter painter(pixmap);
-        QColor color1(checkerColor1);
-        QColor color2(checkerColor2);
-        for (unsigned y = 0; y < checkerSize; y += checkerSize / 2) {
-            bool alternate = y % checkerSize;
-            for (unsigned x = 0; x < checkerSize; x += checkerSize / 2) {
-                painter.fillRect(x, y, checkerSize / 2, checkerSize / 2, alternate ? color1 : color2);
-                alternate = !alternate;
-            }
-        }
-    }
-    return *pixmap;
-}
-
 TiledDrawingAreaTile::TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, const Coordinate& tileCoordinate)
     : m_proxy(proxy)
     , m_coordinate(tileCoordinate)
@@ -137,31 +114,6 @@ void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
                    target.height());
 
     context->platformContext()->drawPixmap(target, m_buffer, source);
-}
-
-void TiledDrawingAreaTile::paintCheckerPattern(GraphicsContext* context, const FloatRect& target)
-{
-    QPainter* painter = context->platformContext();
-    QTransform worldTransform = painter->worldTransform();
-    qreal scaleX = worldTransform.m11();
-    qreal scaleY = worldTransform.m22();
-
-    QRect targetViewRect = QRectF(target.x() * scaleX,
-                                  target.y() * scaleY,
-                                  target.width() * scaleX,
-                                  target.height() * scaleY).toAlignedRect();
-
-    QTransform adjustedTransform(1., worldTransform.m12(), worldTransform.m13(),
-                                 worldTransform.m21(), 1., worldTransform.m23(),
-                                 worldTransform.m31(), worldTransform.m32(), worldTransform.m33());
-    painter->setWorldTransform(adjustedTransform);
-
-    painter->drawTiledPixmap(targetViewRect,
-                             checkeredPixmap(),
-                             QPoint(targetViewRect.left() % checkerSize,
-                                    targetViewRect.top() % checkerSize));
-
-    painter->setWorldTransform(worldTransform);
 }
 
 void TiledDrawingAreaTile::updateFromChunk(UpdateChunk* updateChunk, float)

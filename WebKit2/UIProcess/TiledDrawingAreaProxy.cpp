@@ -346,13 +346,6 @@ void TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
             RefPtr<TiledDrawingAreaTile> currentTile = tileAt(currentCoordinate);
             if (currentTile && currentTile->isReadyToPaint())
                 currentTile->paint(&gc, dirtyRect);
-            else {
-                IntRect tileRect = tileRectForCoordinate(currentCoordinate);
-                IntRect target = intersection(tileRect, dirtyRect);
-                if (target.isEmpty())
-                    continue;
-                TiledDrawingAreaTile::paintCheckerPattern(&gc, FloatRect(target));
-            }
         }
     }
     gc.restore();
