@@ -1,3 +1,15 @@
+2010-12-18  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51055
+        Fix a null de-reference when an XML file contains a malformed entity
+        of the form "&:;".
+
+        * fast/parser/resources/xml-colon-entity.xml: Added.
+        * fast/parser/xml-colon-entity-expected.txt: Added.
+        * fast/parser/xml-colon-entity.html: Added.
+
 2010-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Cameron Zwarich.

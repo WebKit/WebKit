@@ -114,6 +114,8 @@ void HTMLEntitySearch::advance(UChar nextCharacter)
     if (!m_currentLength) {
         m_first = HTMLEntityTable::firstEntryStartingWith(nextCharacter);
         m_last = HTMLEntityTable::lastEntryStartingWith(nextCharacter);
+        if (!m_first || !m_last)
+            return fail();
     } else {
         m_first = findFirst(nextCharacter);
         m_last = findLast(nextCharacter);

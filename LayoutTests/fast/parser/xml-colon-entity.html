@@ -1,0 +1,15 @@
+<html>
+<body>
+<p>CRASH: malformed entity of &: in xml causes access violation.</p>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.dumpChildFramesAsText();
+}
+</script>
+
+<p>If you don't crash, you pass. A parsing error in the "xml-parser" subframe is expected.</p>
+
+<iframe id="xml-parser" src="resources/xml-colon-entity.xml"></iframe>
+</body>
+</html>
