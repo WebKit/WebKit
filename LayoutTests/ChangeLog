@@ -1,3 +1,9 @@
+2010-12-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-20  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed expectation results update. Added also the tests

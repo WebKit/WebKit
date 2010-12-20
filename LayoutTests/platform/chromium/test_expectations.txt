@@ -2933,6 +2933,9 @@ BUGJAPHET : fast/dom/anchor-getParameter.html = TEXT
 // Added in Webkit r69707 without expected results.
 BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = MISSING
 
+// Added in WebKit r74340
+BUGYURYS : platform/gtk/fast/text/emphasis-overlap.html = MISSING
+
 // Added in WebKit r69824, failed immediately due to KURL/KURLGoogle differences.
 BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html = TEXT
 
@@ -3010,8 +3013,6 @@ BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 BUGCR61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
-
-BUG_LEVIN : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // New test added with http://trac.webkit.org/changeset/72472
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
