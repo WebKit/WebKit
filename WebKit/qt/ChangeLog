@@ -1,3 +1,16 @@
+2010-12-20  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Improve the readability of FrameLoaderClientQt::createPlugin()
+        https://bugs.webkit.org/show_bug.cgi?id=51330
+
+        Redefine the scopes to improve readability. Objects are now created in
+        the scope they are used in.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-12-17  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Antonio Gomes.

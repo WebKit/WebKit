@@ -1466,10 +1466,8 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
     QString urlStr(url.string());
     QUrl qurl = urlStr;
 
-    QObject* object = 0;
-
     if (mimeType == "application/x-qt-plugin" || mimeType == "application/x-qt-styled-widget") {
-        object = m_webFrame->page()->createPlugin(classid, qurl, params, values);
+        QObject* object = m_webFrame->page()->createPlugin(classid, qurl, params, values);
 #ifndef QT_NO_STYLE_STYLESHEET
         QWidget* widget = qobject_cast<QWidget*>(object);
         if (widget && mimeType == "application/x-qt-styled-widget") {
@@ -1490,7 +1488,6 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
             widget->setStyleSheet(styleSheet);
         }
 #endif // QT_NO_STYLE_STYLESHEET
-    }
 
         if (!object) {
             QWebPluginFactory* factory = m_webFrame->page()->pluginFactory();
@@ -1499,8 +1496,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         }
 
         if (object) {
-            QWidget* widget = qobject_cast<QWidget*>(object);
-            if (widget) {
+            if (QWidget* widget = qobject_cast<QWidget*>(object)) {
                 QWidget* parentWidget = 0;
                 if (m_webFrame->page()->d->client)
                     parentWidget = qobject_cast<QWidget*>(m_webFrame->page()->d->client->pluginParent());
@@ -1514,8 +1510,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 return w;
             }
 
-            QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(object);
-            if (graphicsWidget) {
+            if (QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(object)) {
                 QGraphicsObject* parentWidget = 0;
                 if (m_webFrame->page()->d->client)
                     parentWidget = qobject_cast<QGraphicsObject*>(m_webFrame->page()->d->client->pluginParent());
@@ -1530,6 +1525,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
 
             // FIXME: make things work for widgetless plugins as well
             delete object;
+        }
     }
 #if ENABLE(NETSCAPE_PLUGIN_API)
     else { // NPAPI Plugins
