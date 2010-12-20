@@ -1,3 +1,16 @@
+2010-12-19  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        [chromium] editing/selection/extend-selection-home-end.html should have one expected result
+        https://bugs.webkit.org/show_bug.cgi?id=49873
+
+        Change 100px to 5em in editing/selection/extend-selection-home-end.html so that chromium
+        results are the same as the non-chromium results.
+
+        * editing/selection/resources/extend-selection.js: Change 100px to 5em.
+        * platform/chromium-win/editing/selection/extend-selection-home-end-expected.txt: Removed.
+
 2010-12-19  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

@@ -237,8 +237,8 @@ var data = [
 ['home-end', null, 'he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;."'],
 ['home-end', null, '&#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502; \'&#x202a;he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;"&#x202c;\'?'],
 ['home-end', null, '&#1488;&#1489;&#1490; abc &#1491;&#1492;&#1493;<br />edf &#1494;&#1495;&#1496; abrebg'],
-['home-end', 'line-break:before-white-space; width:100px', 'abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg '],
-['home-end', 'line-break:after-white-space; width:100px', 'abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg ']
+['home-end', 'line-break:before-white-space; width:5em', 'abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg '],
+['home-end', 'line-break:after-white-space; width:5em', 'abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg ']
 ];
 
 function createTestNodes(name) {
