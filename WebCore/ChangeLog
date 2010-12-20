@@ -1,3 +1,19 @@
+2010-12-20  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r74278.
+        http://trac.webkit.org/changeset/74278
+        https://bugs.webkit.org/show_bug.cgi?id=50833
+
+        [chromium] Causes many layout tests to crash
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::prepareToDrawLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-12-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
