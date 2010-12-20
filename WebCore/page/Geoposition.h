@@ -33,13 +33,16 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class Geoposition : public RefCounted<Geoposition> {
 public:
     static PassRefPtr<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
     {
         return adoptRef(new Geoposition(coordinates, timestamp));
+    }
+
+    PassRefPtr<Geoposition> threadSafeCopy() const
+    {
+        return Geoposition::create(m_coordinates->threadSafeCopy(), m_timestamp);
     }
 
     DOMTimeStamp timestamp() const { return m_timestamp; }
@@ -50,6 +53,7 @@ private:
         : m_coordinates(coordinates)
         , m_timestamp(timestamp)
     {
+        ASSERT(m_coordinates);
     }
 
     RefPtr<Coordinates> m_coordinates;

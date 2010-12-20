@@ -1,3 +1,35 @@
+2010-12-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        GeolocationPositionCache should do database access on background thread
+        https://bugs.webkit.org/show_bug.cgi?id=50825
+
+        Covered by existing Geolocation tests.
+
+        * page/Coordinates.h:
+        (WebCore::Coordinates::threadSafeCopy):
+        * page/GeolocationPositionCache.cpp:
+        (WebCore::GeolocationPositionCache::GeolocationPositionCache):
+        (WebCore::GeolocationPositionCache::addUser):
+        (WebCore::GeolocationPositionCache::removeUser):
+        (WebCore::GeolocationPositionCache::setDatabasePath):
+        (WebCore::GeolocationPositionCache::setCachedPosition):
+        (WebCore::GeolocationPositionCache::cachedPosition):
+        (WebCore::GeolocationPositionCache::startBackgroundThread):
+        (WebCore::GeolocationPositionCache::threadEntryPoint):
+        (WebCore::GeolocationPositionCache::threadEntryPointImpl):
+        (WebCore::GeolocationPositionCache::triggerReadFromDatabase):
+        (WebCore::GeolocationPositionCache::readFromDatabase):
+        (WebCore::GeolocationPositionCache::readFromDatabaseImpl):
+        (WebCore::GeolocationPositionCache::triggerWriteToDatabase):
+        (WebCore::GeolocationPositionCache::writeToDatabase):
+        (WebCore::GeolocationPositionCache::writeToDatabaseImpl):
+        * page/GeolocationPositionCache.h:
+        * page/Geoposition.h:
+        (WebCore::Geoposition::threadSafeCopy):
+        (WebCore::Geoposition::Geoposition):
+
 2010-12-20  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix.
