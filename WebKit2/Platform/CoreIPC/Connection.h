@@ -261,7 +261,6 @@ private:
 #elif PLATFORM(QT)
     // Called on the connection queue.
     void readyReadHandler();
-    void disconnectHandler();
 
     Vector<uint8_t> m_readBuffer;
     size_t m_currentMessageSize;

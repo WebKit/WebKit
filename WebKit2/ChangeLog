@@ -1,3 +1,15 @@
+2010-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Unreviewed, rolling out r74345.
+        http://trac.webkit.org/changeset/74345
+        https://bugs.webkit.org/show_bug.cgi?id=51115
+
+        Not the correct fix.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::open):
+
 2010-12-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
