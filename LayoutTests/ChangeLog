@@ -1,3 +1,15 @@
+2010-12-20  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Even more rebaselining needed for new-run-webkit-tests update
+        https://bugs.webkit.org/show_bug.cgi?id=51340
+
+        * http/tests/misc/webtiming-ssl-expected.txt:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/transaction-crash-on-abort-expected.txt:
+
 2010-12-20  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Rebased platform-specific test expectations following default expectation change in r74234.
