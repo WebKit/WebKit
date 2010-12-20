@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Improve the fix for <rdar://problem/8769525>.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]): Do not retain the view. Doing so is necessary in
+        -[WebHTMLView performKeyEquivalent:], which this method was based upon, but not here, because
+        there is no way for the web process to cause the WKView to be released while it is handling
+        the event.
+
+2010-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
         <rdar://problem/8769525> WKView leak when performing key equivalents
         https://bugs.webkit.org/show_bug.cgi?id=51315
 

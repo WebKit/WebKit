@@ -441,8 +441,6 @@ MOUSE_EVENT_HANDLER(mouseUp)
     
     BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
 
-    RetainPtr<WKView> retainedSelf = self;
-    
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting key-modified keypresses.
     // But don't do it if we have already handled the event.
