@@ -1,3 +1,57 @@
+2010-12-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Move WebKitExamplePlugins to Examples
+        https://bugs.webkit.org/show_bug.cgi?id=51291
+
+        * Examples: Copied from WebKitExamplePlugins.
+        * WebKitExamplePlugins: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/English.lproj: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/English.lproj/InfoPlist.strings: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/Info.plist: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/MenuHandler.h: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/MenuHandler.m: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/main.m: Removed.
+        * WebKitExamplePlugins/NetscapeCocoaPlugin/test.html: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/English.lproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/English.lproj/InfoPlist.strings: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/Info.plist: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.h: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.m: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/Pause.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/Play.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/SliderTrackCenter.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/SliderTrackLeft.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/SliderTrackRight.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/Thumb.tiff: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/main.m: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationMoviePlugin/test.html: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/Composition.qtz: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/English.lproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/English.lproj/InfoPlist.strings: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/Info.plist: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/main.m: Removed.
+        * WebKitExamplePlugins/NetscapeCoreAnimationPlugin/test.html: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/English.lproj: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/English.lproj/InfoPlist.strings: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/Info.plist: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj/project.pbxproj: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/main.m: Removed.
+        * WebKitExamplePlugins/NetscapeInputMethodPlugin/test.html: Removed.
+        * cmake/WebKitPackaging.cmake:
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

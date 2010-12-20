@@ -65,6 +65,7 @@ private
 
     OPENSOURCE_DIRS = Set.new %w[
         BugsSite
+        Examples
         JavaScriptCore
         JavaScriptGlue
         LayoutTests
@@ -75,7 +76,6 @@ private
         WebCore
         WebKit
         WebKit2
-        WebKitExamplePlugins
         WebKitLibraries
         WebKitSite
         autotools

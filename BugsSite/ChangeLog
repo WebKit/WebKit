@@ -1,3 +1,12 @@
+2010-12-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Move WebKitExamplePlugins to Examples
+        https://bugs.webkit.org/show_bug.cgi?id=51291
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

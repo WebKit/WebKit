@@ -38,7 +38,7 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
     # SVN-only files should be ignored (site, examples...)
     "/PlanetWebKit/"
     "/SunSpider/"
-    "/WebKitExamplePlugins/"
+    "/Examples/"
     "/WebKitSite/"
     "/BugsSite/"
 

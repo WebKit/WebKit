@@ -45,7 +45,7 @@ def _should_file_trigger_build(target_platform, file):
         ("PageLoadTests", []),
         ("PlanetWebKit", []),
         ("WebCore/manual-tests", []),
-        ("WebKitExamplePlugins", []),
+        ("Examples", []),
         ("WebKitSite", []),
         ("android", []),
         ("brew", []),
