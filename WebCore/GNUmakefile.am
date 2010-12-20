@@ -2101,6 +2101,7 @@ webcore_sources += \
 	WebCore/loader/ResourceLoader.h \
 	WebCore/loader/ResourceLoadNotifier.cpp \
 	WebCore/loader/ResourceLoadNotifier.h \
+	WebCore/loader/ResourceLoadPriority.h \
 	WebCore/loader/ResourceLoadScheduler.cpp \
 	WebCore/loader/ResourceLoadScheduler.h \
 	WebCore/loader/SinkDocument.cpp \
@@ -2417,7 +2418,6 @@ webcore_sources += \
 	WebCore/platform/graphics/Gradient.h \
 	WebCore/platform/graphics/GraphicsContext.cpp \
 	WebCore/platform/graphics/GraphicsContext.h \
-	WebCore/platform/graphics/GraphicsContextPrivate.h \
 	WebCore/platform/graphics/GraphicsLayer.h \
 	WebCore/platform/graphics/GraphicsTypes.cpp \
 	WebCore/platform/graphics/GraphicsTypes.h \
@@ -4806,6 +4806,7 @@ EXTRA_DIST += \
 	WebCore/css/CSSGrammar.y \
 	WebCore/css/CSSPropertyNames.in \
 	WebCore/css/CSSValueKeywords.in \
+	WebCore/css/fullscreen.css \
 	WebCore/css/html.css \
 	WebCore/css/make-css-file-arrays.pl \
 	WebCore/css/makegrammar.pl \

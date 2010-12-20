@@ -470,12 +470,14 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Noncopyable.h \
 	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/NullPtr.h \
+	JavaScriptCore/wtf/OSAllocator.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
 	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/OwnArrayPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/PageAllocation.h \
+	JavaScriptCore/wtf/PageBlock.h \
 	JavaScriptCore/wtf/PageReservation.h \
 	JavaScriptCore/wtf/PageBlock.cpp \
 	JavaScriptCore/wtf/PassOwnArrayPtr.h \

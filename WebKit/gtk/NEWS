@@ -1,4 +1,18 @@
 ================
+WebKitGTK+ 1.3.8
+================
+
+What's new in WebKitGTK+ 1.3.8?
+
+  - New WebKitWebPluginDatabase and WebKitWebPlugin classes for plugin
+    management.
+  - The usual fixes for GTK+ 3.x API changes. We are still using the
+    old GtkStyle APIs, that should be gone by the next release.
+  - Add support for Mozilla-style JS fullscreen API.
+  - Add support for the viewport metatag.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.7
 ================
 

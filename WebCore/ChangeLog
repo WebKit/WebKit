@@ -1,3 +1,9 @@
+2010-12-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        * GNUmakefile.am: add missing files.
+
 2010-12-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.
