@@ -1,3 +1,14 @@
+2010-12-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: After a multiline command execution Console does not show the command prompt
+        https://bugs.webkit.org/show_bug.cgi?id=51257
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._moveBackInHistory):
+        (WebInspector.TextPrompt.prototype._moveForwardInHistory):
+
 2010-12-19  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

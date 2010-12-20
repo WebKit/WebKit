@@ -419,7 +419,7 @@ WebInspector.TextPrompt.prototype = {
         ++this.historyOffset;
         this.text = this.history[this.history.length - this.historyOffset];
 
-        this.element.scrollIntoViewIfNeeded();
+        this.element.scrollIntoView(true);
         var firstNewlineIndex = this.text.indexOf("\n");
         if (firstNewlineIndex === -1)
             this.moveCaretToEndOfPrompt();
@@ -451,6 +451,6 @@ WebInspector.TextPrompt.prototype = {
         }
 
         this.text = this.history[this.history.length - this.historyOffset];
-        this.element.scrollIntoViewIfNeeded();
+        this.element.scrollIntoView();
     }
 }
