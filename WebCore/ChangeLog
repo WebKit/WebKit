@@ -1,3 +1,26 @@
+2010-12-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: "Add conditional breakpoint" - create breakpoint only after condition is provided.
+        https://bugs.webkit.org/show_bug.cgi?id=50813
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addBreakpoint):
+        (WebInspector.SourceFrame.prototype._breakpointRemoved):
+        (WebInspector.SourceFrame.prototype._breakpointChanged):
+        (WebInspector.SourceFrame.prototype._setBreakpointDecoration):
+        (WebInspector.SourceFrame.prototype._removeBreakpointDecoration):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.finishEditing):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._continueToLine):
+        (WebInspector.SourceFrame.prototype._setBreakpoint):
+
 2010-12-20  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
