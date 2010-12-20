@@ -1,3 +1,12 @@
+2010-12-20  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tools/vcbin/midl.exe needs to be rebuilt
+        https://bugs.webkit.org/show_bug.cgi?id=51347
+
+        * vcbin/midl.exe: Rebuilt.
+
 2010-12-20  David Levin  <levin@chromium.org>
 
         Reviewed by Ariya Hidayat.
