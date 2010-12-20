@@ -198,7 +198,7 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
 static const char* const gtkMoveCommands[][4] = {
     { "MoveBackward",                                   "MoveForward",
       "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Forward/backward grapheme
-    { "MoveBackward",                                   "MoveForward",
+    { "MoveLeft",                                       "MoveRight",
       "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Left/right grapheme
     { "MoveWordBackward",                               "MoveWordForward",
       "MoveWordBackwardAndModifySelection",             "MoveWordForwardAndModifySelection"         }, // Forward/backward word
@@ -231,13 +231,6 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
     const char* rawCommand = gtkMoveCommands[step][direction];
     if (!rawCommand)
         return;
-
-    if (isSpatialNavigationEnabled(core(client->webView())->focusController()->focusedOrMainFrame()) && step == 1) {
-        if (direction == 1)
-            rawCommand = "MoveRight";
-        else if (!direction)
-            rawCommand = "MoveLeft";
-    }
 
     for (int i = 0; i < abs(count); i++)
         client->addPendingEditorCommand(rawCommand);

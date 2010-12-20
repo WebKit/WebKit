@@ -1,3 +1,31 @@
+2010-12-18  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK+] Simplify spatial navigation handling in EditorClientGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51302
+
+        Patch changes:
+        1) The editor command for LEFT arrow key press without modifier
+           from MoveBackward to MoveLeft;
+        2) And similarly changes the editor command for RIGHT arrow key
+          press without modifier from MoveForward to MoveRight.
+
+        It has no implications since SelectionController::modifyMovingRight()
+        handles "MoveRight" equaly to how SelectionController::modifyMovingForward()
+        handles "MoveForward" when granularity is 'CharacterGranularity'. The former
+        falls back to the later in the case of other editor commands.
+
+        Analogously, the same applies to how SelectionController::modifyMovingLeft() and
+        SelectionController::modifyMovingForward() handle "MoveLeft" and "MoveBackward"
+        editor commands, respectively.
+
+        With this change we can remove the spatial navigation hack from moveCursorCallback(),
+        in EditorClientGtk.cpp.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::moveCursorCallback):
+
 2010-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
