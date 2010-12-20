@@ -162,7 +162,7 @@ LOCAL_SRC_FILES := \
 	wtf/FastMalloc.cpp \
 	wtf/HashTable.cpp \
 	wtf/MainThread.cpp \
-	jit/PageAllocation.cpp\
+	wtf/PageBlock.cpp\
 	wtf/RandomNumber.cpp \
 	wtf/RefCountedLeakCounter.cpp \
 	wtf/TCSystemAlloc.cpp \

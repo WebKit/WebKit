@@ -475,9 +475,9 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/OwnArrayPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtr.h \
-	JavaScriptCore/wtf/PageAllocation.cpp \
 	JavaScriptCore/wtf/PageAllocation.h \
 	JavaScriptCore/wtf/PageReservation.h \
+	JavaScriptCore/wtf/PageBlock.cpp \
 	JavaScriptCore/wtf/PassOwnArrayPtr.h \
 	JavaScriptCore/wtf/PassOwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \

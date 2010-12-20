@@ -1,3 +1,31 @@
+2010-12-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Factored common page set management into a new PageBlock base class
+        https://bugs.webkit.org/show_bug.cgi?id=51285
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::intializePageSize):
+        * wtf/PageAllocation.cpp: Removed.
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::deallocate):
+        (WTF::PageAllocation::PageAllocation):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::deallocate):
+        (WTF::PageReservation::PageReservation):
+        * wtf/wtf.pri:
+
 2010-12-17  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

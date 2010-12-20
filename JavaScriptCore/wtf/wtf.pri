@@ -16,7 +16,7 @@ SOURCES += \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \
     wtf/qt/ThreadingQt.cpp \
-    wtf/PageAllocation.cpp \
+    wtf/PageBlock.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
     wtf/ThreadingNone.cpp \

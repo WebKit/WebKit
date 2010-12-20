@@ -159,8 +159,8 @@ namespace JSC {
         , m_end(0)
         , m_max(0)
     {
-        ASSERT(maxGlobals && PageAllocation::isPageAligned(maxGlobals));
-        ASSERT(capacity && PageAllocation::isPageAligned(capacity));
+        ASSERT(maxGlobals && isPageAligned(maxGlobals));
+        ASSERT(capacity && isPageAligned(capacity));
 
         size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
         m_reservation = PageReservation::reserve(roundUpAllocationSize(bufferLength, commitSize), OSAllocator::JSVMStackPages);

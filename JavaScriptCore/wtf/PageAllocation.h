@@ -28,6 +28,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/OSAllocator.h>
+#include <wtf/PageBlock.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/VMTags.h>
 #include <algorithm>
@@ -81,18 +82,9 @@ namespace WTF {
     with a specified alignment.  PageAllocation::allocateAligned requires that the
     size is a power of two that is >= system page size.
 */
-class PageAllocation {
+
+class PageAllocation : private PageBlock {
 public:
-    PageAllocation()
-        : m_base(0)
-        , m_size(0)
-    {
-    }
-
-    bool operator!() const { return !m_base; }
-    void* base() const { return m_base; }
-    size_t size() const { return m_size; }
-
     static PageAllocation allocate(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
     {
         ASSERT(isPageAligned(size));
@@ -108,49 +100,38 @@ public:
     }
 #endif
 
+    PageAllocation();
+
+    using PageBlock::operator bool;
+    using PageBlock::base;
+    using PageBlock::size;
+
     void deallocate()
     {
-        ASSERT(m_base);
-        void* tmp = 0;
-        std::swap(tmp, m_base);
-        OSAllocator::release(tmp, m_size);
+        ASSERT(*this);
+        PageAllocation tmp;
+        std::swap(tmp, *this);
+        OSAllocator::release(tmp.base(), tmp.size());
     }
 
-    static size_t pageSize()
-    {
-        if (!s_pageSize)
-            s_pageSize = systemPageSize();
-        ASSERT(isPowerOfTwo(s_pageSize));
-        return s_pageSize;
-    }
-
-#ifndef NDEBUG
-    static bool isPageAligned(void* address) { return !(reinterpret_cast<intptr_t>(address) & (pageSize() - 1)); }
-    static bool isPageAligned(size_t size) { return !(size & (pageSize() - 1)); }
-    static bool isPowerOfTwo(size_t size) { return !(size & (size - 1)); }
-#endif
-
-protected:
+private:
     PageAllocation(void* base, size_t size)
-        : m_base(base)
-        , m_size(size)
+        : PageBlock(base, size)
     {
     }
 
 #if HAVE(PAGE_ALLOCATE_ALIGNED)
     static PageAllocation systemAllocateAligned(size_t, OSAllocator::Usage);
 #endif
-    static size_t systemPageSize();
-
-    void* m_base;
-    size_t m_size;
-
-    static JS_EXPORTDATA size_t s_pageSize;
 };
+
+inline PageAllocation::PageAllocation()
+    : PageBlock()
+{
+}
 
 
 #if HAVE(MMAP)
-
 
 inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAllocator::Usage usage)
 {
@@ -195,14 +176,7 @@ inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAlloc
 #endif
 }
 
-inline size_t PageAllocation::systemPageSize()
-{
-    return getpagesize();
-}
-
-
 #elif HAVE(VIRTUALALLOC)
-
 
 #if HAVE(ALIGNED_MALLOC)
 inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAllocator::Usage usage)
@@ -217,29 +191,7 @@ inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAlloc
 }
 #endif
 
-inline size_t PageAllocation::systemPageSize()
-{
-    static size_t size = 0;
-    SYSTEM_INFO system_info;
-    GetSystemInfo(&system_info);
-    size = system_info.dwPageSize;
-    return size;
-}
-
-
-#elif OS(SYMBIAN)
-
-
-inline size_t PageAllocation::systemPageSize()
-{
-    static TInt page_size = 0;
-    UserHal::PageSizeInBytes(page_size);
-    return page_size;
-}
-
-
 #endif
-
 
 }
 

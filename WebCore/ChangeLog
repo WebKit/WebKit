@@ -1,3 +1,12 @@
+2010-12-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Factored common page set management into a new PageBlock base class
+        https://bugs.webkit.org/show_bug.cgi?id=51285
+
+        * ForwardingHeaders/wtf/PageBlock.h: Added.
+
 2010-12-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

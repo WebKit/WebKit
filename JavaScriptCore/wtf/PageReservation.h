@@ -53,19 +53,20 @@ namespace WTF {
     is changed on memory while it is committed it should be returned to the orignal
     protection before decommit is called.
 */
-class PageReservation : private PageAllocation {
+
+class PageReservation : private PageBlock {
 public:
     PageReservation()
     {
     }
-
-    using PageAllocation::operator!;
-    using PageAllocation::base;
-    using PageAllocation::size;
+    
+    using PageBlock::operator bool;
+    using PageBlock::base;
+    using PageBlock::size;
 
     void commit(void* start, size_t size)
     {
-        ASSERT(m_base);
+        ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
 
@@ -77,7 +78,7 @@ public:
 
     void decommit(void* start, size_t size)
     {
-        ASSERT(m_base);
+        ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
 
@@ -96,12 +97,15 @@ public:
     void deallocate()
     {
         ASSERT(!m_committed);
-        PageAllocation::deallocate();
+        ASSERT(*this);
+        PageReservation tmp;
+        std::swap(tmp, *this);
+        OSAllocator::release(tmp.base(), tmp.size());
     }
 
 private:
     PageReservation(void* base, size_t size, bool writable, bool executable)
-        : PageAllocation(base, size)
+        : PageBlock(base, size)
 #ifndef NDEBUG
         , m_committed(0)
 #endif

@@ -697,7 +697,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\PageAllocation.cpp"
+			RelativePath="..\..\wtf\PageBlock.cpp"
 			>
 		</File>
 		<File
