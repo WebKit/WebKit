@@ -326,9 +326,6 @@ SOURCES += \
     bindings/generic/ActiveDOMCallback.cpp
 
 v8 {
-    SOURCES += \
-        bindings/generic/RuntimeEnabledFeatures.cpp
-
     include($$PWD/../JavaScriptCore/pcre/pcre.pri)
     include($$PWD/../JavaScriptCore/wtf/wtf.pri)
 
@@ -343,7 +340,18 @@ v8 {
 
 
     SOURCES += \
+        bindings/v8/custom/V8ArrayBufferCustom.cpp \
         bindings/v8/custom/V8CustomXPathNSResolver.cpp \
+        bindings/v8/custom/V8DataViewCustom.cpp \
+        bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
+        bindings/v8/custom/V8DeviceOrientationEventCustom.cpp \
+        bindings/v8/custom/V8Float32ArrayCustom.cpp \
+        bindings/v8/custom/V8Int8ArrayCustom.cpp \
+        bindings/v8/custom/V8Int16ArrayCustom.cpp \
+        bindings/v8/custom/V8Int32ArrayCustom.cpp \
+        bindings/v8/custom/V8Uint8ArrayCustom.cpp \
+        bindings/v8/custom/V8Uint16ArrayCustom.cpp \
+        bindings/v8/custom/V8Uint32ArrayCustom.cpp \
         \
         bindings/v8/ChildThreadDOMData.cpp \
         bindings/v8/DateExtension.cpp \
@@ -353,7 +361,6 @@ v8 {
         bindings/v8/NPV8Object.cpp \
         bindings/v8/ScheduledAction.cpp \
         bindings/v8/ScopedDOMDataStore.cpp \
-#        bindings/v8/ScriptArray.cpp \
         bindings/v8/ScriptCachedFrameData.cpp \
         bindings/v8/ScriptCallStackFactory.cpp \
         bindings/ScriptControllerBase.cpp \
@@ -417,7 +424,6 @@ v8 {
         bindings/v8/custom/V8DOMFormDataCustom.cpp \
         bindings/v8/custom/V8DOMWindowCustom.cpp \
         bindings/v8/custom/V8DataGridColumnListCustom.cpp \
-#        bindings/v8/custom/V8DatabaseCustom.cpp \
         bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp \
         bindings/v8/custom/V8DocumentCustom.cpp \
         bindings/v8/custom/V8DocumentLocationCustom.cpp \
@@ -441,7 +447,6 @@ v8 {
         bindings/v8/custom/V8HTMLFormElementCustom.cpp \
         bindings/v8/custom/V8HTMLFrameElementCustom.cpp \
         bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp \
-#        bindings/v8/custom/V8HTMLIFrameElementCustom.cpp \
         bindings/v8/custom/V8HTMLImageElementConstructor.cpp \
         bindings/v8/custom/V8HTMLInputElementCustom.cpp \
         bindings/v8/custom/V8HTMLOptionElementConstructor.cpp \
@@ -481,7 +486,6 @@ v8 {
         \
         bindings/v8/custom/V8NotificationCenterCustom.cpp \
         bindings/v8/custom/V8ConsoleCustom.cpp \
-#        bindings/v8/custom/V8DatabaseSyncCustom.cpp \
         bindings/v8/custom/V8SQLTransactionSyncCustom.cpp \
         bindings/v8/V8WorkerContextErrorHandler.cpp
 } else {
@@ -1424,10 +1428,8 @@ v8 {
         bindings/v8/npruntime_priv.h \
         bindings/v8/NPV8Object.h \
         bindings/v8/OwnHandle.h \
-        bindings/generic/RuntimeEnabledFeatures.h \
         bindings/v8/ScheduledAction.h \
         bindings/v8/ScopedDOMDataStore.h \
-#        bindings/v8/ScriptArray.h \
         bindings/v8/ScriptCachedFrameData.h \
         bindings/v8/ScriptController.h \
         bindings/v8/ScriptEventListener.h \
