@@ -1,3 +1,10 @@
+2010-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, added the proper expected result file.
+
+        * platform/gtk/fast/text/emphasis-overlap-expected.txt: Added.
+        * platform/gtk/fast/text/emphasis-overlap.html: Removed.
+
 2010-12-20  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
