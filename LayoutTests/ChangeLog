@@ -1,3 +1,9 @@
+2010-12-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Rebased platform-specific test expectations following default expectation change in r74234.
+
+        * platform/mac-leopard/inspector/extensions-resources-expected.txt:
+
 2010-12-19  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Xan Lopez.
