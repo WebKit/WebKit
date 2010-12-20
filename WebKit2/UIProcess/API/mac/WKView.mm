@@ -440,9 +440,8 @@ MOUSE_EVENT_HANDLER(mouseUp)
     [[event retain] autorelease];
     
     BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
-    BOOL ret = NO;
-    
-    [self retain];
+
+    RetainPtr<WKView> retainedSelf = self;
     
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting key-modified keypresses.
@@ -456,11 +455,7 @@ MOUSE_EVENT_HANDLER(mouseUp)
         return YES;
     }
     
-    ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
-    
-    [self release];
-    
-    return ret;
+    return [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
 }
 
 - (void)_setEventBeingResent:(NSEvent *)event

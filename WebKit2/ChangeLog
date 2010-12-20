@@ -1,3 +1,14 @@
+2010-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8769525> WKView leak when performing key equivalents
+        https://bugs.webkit.org/show_bug.cgi?id=51315
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]): Use a RetainPtr to ensure that the view is released in the
+        early return code path.
+
 2010-12-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
