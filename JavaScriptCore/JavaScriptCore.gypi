@@ -424,6 +424,8 @@
             'wtf/RetainPtr.h',
             'wtf/SegmentedVector.h',
             'wtf/SizeLimits.cpp',
+            'wtf/StackBounds.cpp',
+            'wtf/StackBounds.h',
             'wtf/StaticConstructors.h',
             'wtf/StdLibExtras.h',
             'wtf/StringExtras.h',

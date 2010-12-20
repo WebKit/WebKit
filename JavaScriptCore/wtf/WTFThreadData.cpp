@@ -42,9 +42,8 @@ WTFThreadData::WTFThreadData()
     , m_defaultIdentifierTable(new JSC::IdentifierTable())
     , m_currentIdentifierTable(m_defaultIdentifierTable)
 #endif
+    , m_stackBounds(StackBounds::currentThreadStackBounds())
 {
-    char sample = 0;
-    m_approximatedStackStart = &sample;
 }
 
 WTFThreadData::~WTFThreadData()

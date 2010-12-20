@@ -19,6 +19,7 @@ SOURCES += \
     wtf/PageBlock.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
+    wtf/StackBounds.cpp \
     wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \

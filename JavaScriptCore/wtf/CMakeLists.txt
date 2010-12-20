@@ -9,6 +9,7 @@ SET(WTF_SOURCES
     MD5.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
+    StackBounds.cpp
     StringExtras.cpp
     Threading.cpp
     TypeTraits.cpp

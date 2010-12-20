@@ -1,3 +1,90 @@
+2010-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26276 - Need a mechanism to determine stack extent
+
+        This patch adds a class 'StackBounds', to hold information about the machine stack.
+        The implementation of this class broadly adheres to the current implmentation of
+        stack limit checking, and as such does not solve the problem of determining stack
+        extent, but gives us a common place to do so.
+
+        Currently two mechanism are provided to determine the stack origin (the point the
+        stack is growing away from). currentThreadStackBase() in Collector provides a
+        more accurate determination of the stack origin, so use this to calculate
+        StackBounds::m_origin; WTFThreadData::approximatedStackStart is less accurate, and
+        as such can be removed.  Cache the StackBounds on WTFThreadData such that they
+        need only be determined once per thread, and for non-API contexts cache this
+        information in JSGlobalData, to save a thread-specific access.
+
+        For the time being retain the estimate of stack size used by JSC's parser
+        (128 * sizeof(void*) * 1024), with a view to replacing this with something more
+        accurate in the near future.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::canRecurse):
+        (JSC::JSParser::JSParser):
+            Change to use StackBounds.
+        * runtime/Collector.cpp:
+        (JSC::Heap::registerThread):
+        (JSC::Heap::markCurrentThreadConservativelyInternal):
+            Change to use StackBounds, cached on JSGlobalData.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::stack):
+            Add a cached copy of StackBounds.
+        * wtf/StackBounds.cpp: Copied from JavaScriptCore/runtime/Collector.cpp.
+        (WTF::estimateStackBound):
+        (WTF::StackBounds::initialize):
+        (WTF::getStackMax):
+            Copy code from Collector.cpp to determine stack origin.
+        * wtf/StackBounds.h: Added.
+        (WTF::StackBounds::StackBounds):
+            No argument constructor; returns a null StackBounds.
+        (WTF::StackBounds::currentThreadStackBounds):
+            Returns a StackBounds object representing the stack limits
+            of the current thread.
+        (WTF::StackBounds::origin):
+            Returns to stack origin (the point the stack is growing away
+            from; the highest extent of the stack on machines where the
+            stack grows downwards.
+        (WTF::StackBounds::recursionLimit):
+            Returns a limit value that is 'a comfortable distance from
+            the end of the stack'. Our concept of this is currently 1 page
+            away from the end, however the default value may be tuned in
+            the future, and clients may override passing a larger delta;
+            should only be called on StackBounds object representing the
+            stack of the thread this method is called on (checked by
+            checkConsistency).
+        (WTF::StackBounds::recursionCheck):
+            Checks whether we are currently 'a comfortable distance from
+            the end of the stack'. Our concept of this is currently 1 page
+            away from the end, however the default value may be tuned in
+            the future, and clients may override passing a larger delta
+            to apply when checking, if they wish to do so. This method
+            should only be called on StackBounds object representing the
+            stack of the thread this method is called on (checked by
+            checkConsistency).
+        (WTF::StackBounds::current):
+            Approximate current stack position. On machines where the stack
+            is growing downwards this is the lowest address that might need
+            conservative collection.
+        (WTF::StackBounds::isGrowingDownward):
+            True for all platforms other than WINCE, which has to check.
+        (WTF::StackBounds::checkConsistency):
+            This is called in methods that shoulds only be operating on a
+            valid set of bounds; as such we expect m_origin != m_bounds
+            (i.e. stack size != zero) - we're really testing that this
+            object is not null (the constructor initializes both fields
+            to zero).  Also checks that current() is within the stack's
+            bounds.
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack):
+            Add the StackBounds member variable.
+
 2010-12-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

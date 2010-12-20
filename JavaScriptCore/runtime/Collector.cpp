@@ -389,175 +389,6 @@ void Heap::shrinkBlocks(size_t neededBlocks)
         m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-#if OS(WINCE)
-JS_EXPORTDATA void* g_stackBase = 0;
-
-inline bool isPageWritable(void* page)
-{
-    MEMORY_BASIC_INFORMATION memoryInformation;
-    DWORD result = VirtualQuery(page, &memoryInformation, sizeof(memoryInformation));
-
-    // return false on error, including ptr outside memory
-    if (result != sizeof(memoryInformation))
-        return false;
-
-    DWORD protect = memoryInformation.Protect & ~(PAGE_GUARD | PAGE_NOCACHE);
-    return protect == PAGE_READWRITE
-        || protect == PAGE_WRITECOPY
-        || protect == PAGE_EXECUTE_READWRITE
-        || protect == PAGE_EXECUTE_WRITECOPY;
-}
-
-static void* getStackBase(void* previousFrame)
-{
-    // find the address of this stack frame by taking the address of a local variable
-    bool isGrowingDownward;
-    void* thisFrame = (void*)(&isGrowingDownward);
-
-    isGrowingDownward = previousFrame < &thisFrame;
-    static DWORD pageSize = 0;
-    if (!pageSize) {
-        SYSTEM_INFO systemInfo;
-        GetSystemInfo(&systemInfo);
-        pageSize = systemInfo.dwPageSize;
-    }
-
-    // scan all of memory starting from this frame, and return the last writeable page found
-    register char* currentPage = (char*)((DWORD)thisFrame & ~(pageSize - 1));
-    if (isGrowingDownward) {
-        while (currentPage > 0) {
-            // check for underflow
-            if (currentPage >= (char*)pageSize)
-                currentPage -= pageSize;
-            else
-                currentPage = 0;
-            if (!isPageWritable(currentPage))
-                return currentPage + pageSize;
-        }
-        return 0;
-    } else {
-        while (true) {
-            // guaranteed to complete because isPageWritable returns false at end of memory
-            currentPage += pageSize;
-            if (!isPageWritable(currentPage))
-                return currentPage;
-        }
-    }
-}
-#endif
-
-#if OS(QNX)
-static inline void *currentThreadStackBaseQNX()
-{
-    static void* stackBase = 0;
-    static size_t stackSize = 0;
-    static pthread_t stackThread;
-    pthread_t thread = pthread_self();
-    if (stackBase == 0 || thread != stackThread) {
-        struct _debug_thread_info threadInfo;
-        memset(&threadInfo, 0, sizeof(threadInfo));
-        threadInfo.tid = pthread_self();
-        int fd = open("/proc/self", O_RDONLY);
-        if (fd == -1) {
-            LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
-            return 0;
-        }
-        devctl(fd, DCMD_PROC_TIDSTATUS, &threadInfo, sizeof(threadInfo), 0);
-        close(fd);
-        stackBase = reinterpret_cast<void*>(threadInfo.stkbase);
-        stackSize = threadInfo.stksize;
-        ASSERT(stackBase);
-        stackThread = thread;
-    }
-    return static_cast<char*>(stackBase) + stackSize;
-}
-#endif
-
-static inline void* currentThreadStackBase()
-{
-#if OS(DARWIN)
-    pthread_t thread = pthread_self();
-    return pthread_get_stackaddr_np(thread);
-#elif OS(WINDOWS) && CPU(X86) && COMPILER(MSVC)
-    // offset 0x18 from the FS segment register gives a pointer to
-    // the thread information block for the current thread
-    NT_TIB* pTib;
-    __asm {
-        MOV EAX, FS:[18h]
-        MOV pTib, EAX
-    }
-    return static_cast<void*>(pTib->StackBase);
-#elif OS(WINDOWS) && CPU(X86) && COMPILER(GCC)
-    // offset 0x18 from the FS segment register gives a pointer to
-    // the thread information block for the current thread
-    NT_TIB* pTib;
-    asm ( "movl %%fs:0x18, %0\n"
-          : "=r" (pTib)
-        );
-    return static_cast<void*>(pTib->StackBase);
-#elif OS(WINDOWS) && CPU(X86_64)
-    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
-    return reinterpret_cast<void*>(pTib->StackBase);
-#elif OS(QNX)
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    MutexLocker locker(mutex);
-    return currentThreadStackBaseQNX();
-#elif OS(SOLARIS)
-    stack_t s;
-    thr_stksegment(&s);
-    return s.ss_sp;
-#elif OS(OPENBSD)
-    pthread_t thread = pthread_self();
-    stack_t stack;
-    pthread_stackseg_np(thread, &stack);
-    return stack.ss_sp;
-#elif OS(SYMBIAN)
-    TThreadStackInfo info;
-    RThread thread;
-    thread.StackInfo(info);
-    return (void*)info.iBase;
-#elif OS(HAIKU)
-    thread_info threadInfo;
-    get_thread_info(find_thread(NULL), &threadInfo);
-    return threadInfo.stack_end;
-#elif OS(UNIX)
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    MutexLocker locker(mutex);
-    static void* stackBase = 0;
-    static size_t stackSize = 0;
-    static pthread_t stackThread;
-    pthread_t thread = pthread_self();
-    if (stackBase == 0 || thread != stackThread) {
-        pthread_attr_t sattr;
-        pthread_attr_init(&sattr);
-#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
-        // e.g. on FreeBSD 5.4, neundorf@kde.org
-        pthread_attr_get_np(thread, &sattr);
-#else
-        // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
-        pthread_getattr_np(thread, &sattr);
-#endif
-        int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
-        (void)rc; // FIXME: Deal with error code somehow? Seems fatal.
-        ASSERT(stackBase);
-        pthread_attr_destroy(&sattr);
-        stackThread = thread;
-    }
-    return static_cast<char*>(stackBase) + stackSize;
-#elif OS(WINCE)
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    MutexLocker locker(mutex);
-    if (g_stackBase)
-        return g_stackBase;
-    else {
-        int dummy;
-        return getStackBase(&dummy);
-    }
-#else
-#error Need a way to get the stack base on this platform
-#endif
-}
-
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline PlatformThread getCurrentPlatformThread()
@@ -587,7 +418,7 @@ void Heap::registerThread()
         return;
 
     pthread_setspecific(m_currentThreadRegistrar, this);
-    Heap::Thread* thread = new Heap::Thread(pthread_self(), getCurrentPlatformThread(), currentThreadStackBase());
+    Heap::Thread* thread = new Heap::Thread(pthread_self(), getCurrentPlatformThread(), m_globalData->stack().origin());
 
     MutexLocker lock(m_registeredThreadsMutex);
 
@@ -654,11 +485,15 @@ static inline bool isPossibleCell(void* p)
 
 void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 {
+#if OS(WINCE)
     if (start > end) {
         void* tmp = start;
         start = end;
         end = tmp;
     }
+#else
+    ASSERT(start <= end);
+#endif
 
     ASSERT((static_cast<char*>(end) - static_cast<char*>(start)) < 0x1000000);
     ASSERT(isPointerAligned(start));
@@ -692,10 +527,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 
 void NEVER_INLINE Heap::markCurrentThreadConservativelyInternal(MarkStack& markStack)
 {
-    void* dummy;
-    void* stackPointer = &dummy;
-    void* stackBase = currentThreadStackBase();
-    markConservatively(markStack, stackPointer, stackBase);
+    markConservatively(markStack, m_globalData->stack().current(), m_globalData->stack().origin());
     markStack.drain();
 }
 

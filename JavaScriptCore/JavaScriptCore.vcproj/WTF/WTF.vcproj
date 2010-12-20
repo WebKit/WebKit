@@ -777,6 +777,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\StackBounds.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\StackBounds.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\StaticConstructors.h"
 			>
 		</File>

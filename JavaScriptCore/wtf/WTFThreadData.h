@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StackBounds.h>
 #include <wtf/text/StringHash.h>
 
 // This was ENABLE(WORKERS) in WebCore, but this is not defined when compiling JSC.
@@ -113,9 +114,9 @@ public:
     }
 #endif
 
-    char* approximatedStackStart() const
+    const StackBounds& stack() const
     {
-        return m_approximatedStackStart;
+        return m_stackBounds;
     }
 
 private:
@@ -135,7 +136,7 @@ private:
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
 
-    char* m_approximatedStackStart;
+    StackBounds m_stackBounds;
 };
 
 inline WTFThreadData& wtfThreadData()

@@ -494,6 +494,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/RefPtrHashMap.h \
 	JavaScriptCore/wtf/RetainPtr.h \
 	JavaScriptCore/wtf/SegmentedVector.h \
+    JavaScriptCore/wtf/StackBounds.cpp \
+    JavaScriptCore/wtf/StackBounds.h \
 	JavaScriptCore/wtf/StaticConstructors.h \
 	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \

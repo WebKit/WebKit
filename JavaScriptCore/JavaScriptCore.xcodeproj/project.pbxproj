@@ -252,6 +252,8 @@
 		86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */; };
 		86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C110159D7F002865E7 /* LinkBuffer.h */; };
 		86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C210159D7F002865E7 /* RepatchBuffer.h */; };
+		86D87DAE12BCA7D1008E73A1 /* StackBounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86D87DA512BC4B14008E73A1 /* StackBounds.cpp */; };
+		86D87DDB12BCAF94008E73A1 /* StackBounds.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D87DA612BC4B14008E73A1 /* StackBounds.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
@@ -869,6 +871,8 @@
 		86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM.h; sourceTree = "<group>"; };
 		86D3B3C110159D7F002865E7 /* LinkBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkBuffer.h; sourceTree = "<group>"; };
 		86D3B3C210159D7F002865E7 /* RepatchBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepatchBuffer.h; sourceTree = "<group>"; };
+		86D87DA512BC4B14008E73A1 /* StackBounds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackBounds.cpp; sourceTree = "<group>"; };
+		86D87DA612BC4B14008E73A1 /* StackBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackBounds.h; sourceTree = "<group>"; };
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
@@ -1558,6 +1562,8 @@
 				51F648D60BB4E2CA0033D760 /* RetainPtr.h */,
 				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
 				0BF28A2811A33DC300638F84 /* SizeLimits.cpp */,
+				86D87DA512BC4B14008E73A1 /* StackBounds.cpp */,
+				86D87DA612BC4B14008E73A1 /* StackBounds.h */,
 				868BFA5F117D048200B908B1 /* StaticConstructors.h */,
 				FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */,
 				E11D51750B2E798D0056C188 /* StringExtras.h */,
@@ -2295,6 +2301,7 @@
 				BC18C4640E16F5CD00B34460 /* SourceCode.h in Headers */,
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
+				86D87DDB12BCAF94008E73A1 /* StackBounds.h in Headers */,
 				868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */,
 				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
 				86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */,
@@ -2797,6 +2804,7 @@
 				14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */,
 				0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
+				86D87DAE12BCA7D1008E73A1 /* StackBounds.cpp in Sources */,
 				14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */,
 				868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */,
 				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,

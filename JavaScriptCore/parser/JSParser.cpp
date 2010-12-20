@@ -65,9 +65,6 @@ namespace JSC {
 
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
-// This matches v8
-static const ptrdiff_t kMaxParserStackUsage = 128 * sizeof(void*) * 1024;
-
 class JSParser {
 public:
     JSParser(Lexer*, JSGlobalData*, FunctionParameters*, bool isStrictContext, bool isFunction, SourceProvider*);
@@ -193,9 +190,7 @@ private:
 
     bool canRecurse()
     {
-        char sample = 0;
-        ASSERT(m_endAddress);
-        return &sample > m_endAddress;
+        return m_stack.recursionCheck();
     }
     
     int lastTokenEnd() const
@@ -205,7 +200,7 @@ private:
 
     ParserArena m_arena;
     Lexer* m_lexer;
-    char* m_endAddress;
+    StackBounds m_stack;
     bool m_error;
     JSGlobalData* m_globalData;
     JSToken m_token;
@@ -491,7 +486,7 @@ int jsParse(JSGlobalObject* lexicalGlobalObject, FunctionParameters* parameters,
 
 JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* parameters, bool inStrictContext, bool isFunction, SourceProvider* provider)
     : m_lexer(lexer)
-    , m_endAddress(0)
+    , m_stack(globalData->stack())
     , m_error(false)
     , m_globalData(globalData)
     , m_allowsIn(true)
@@ -505,7 +500,6 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     , m_nonTrivialExpressionCount(0)
     , m_lastIdentifier(0)
 {
-    m_endAddress = wtfThreadData().approximatedStackStart() - kMaxParserStackUsage;
     ScopeRef scope = pushScope();
     if (isFunction)
         scope->setIsFunction();

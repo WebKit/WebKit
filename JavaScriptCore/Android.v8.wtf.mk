@@ -42,6 +42,7 @@ LOCAL_SRC_FILES := \
 	wtf/MainThread.cpp \
 	wtf/RandomNumber.cpp \
 	wtf/RefCountedLeakCounter.cpp \
+    wtf/StackBounds.cpp \
 	wtf/TCSystemAlloc.cpp \
 	wtf/ThreadIdentifierDataPthreads.cpp \
 	wtf/Threading.cpp \

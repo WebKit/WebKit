@@ -153,6 +153,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
+    if (globalDataType == Default)
+        m_stack = wtfThreadData().stack();
+
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
 #endif
