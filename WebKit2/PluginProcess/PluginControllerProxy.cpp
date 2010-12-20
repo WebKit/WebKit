@@ -45,16 +45,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled)
+PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
 {
-    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent, isPrivateBrowsingEnabled));
+    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent, isPrivateBrowsingEnabled, isAcceleratedCompositingEnabled));
 }
 
-PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled)
+PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
     : m_connection(connection)
     , m_pluginInstanceID(pluginInstanceID)
     , m_userAgent(userAgent)
     , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
+    , m_isAcceleratedCompositingEnabled(isAcceleratedCompositingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_waitingForDidUpdate(false)
     , m_pluginCanceledManualStreamLoad(false)
@@ -229,7 +230,7 @@ void PluginControllerProxy::setStatusbarText(const String& statusbarText)
 
 bool PluginControllerProxy::isAcceleratedCompositingEnabled()
 {
-    return PluginProcess::shared().compositingRenderServerPort();
+    return m_isAcceleratedCompositingEnabled;
 }
 
 void PluginControllerProxy::pluginProcessCrashed()

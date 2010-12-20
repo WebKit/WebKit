@@ -1,5 +1,37 @@
 2010-12-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Flash plug-in does not work on YouTube video page when accelerated compositing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=51348
+        <rdar://problem/8787667>
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::create):
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        These now take an additional isAcceleratedCompositingEnabled parameter.
+
+        (WebKit::PluginControllerProxy::isAcceleratedCompositingEnabled):
+        Return m_isAcceleratedCompositingEnabled.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        This now takes an additional isAcceleratedCompositingEnabled parameter.
+
+        * PluginProcess/WebProcessConnection.messages.in:
+        Add isAcceleratedCompositingEnabled parameter to the CreatePlugin message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        Pass isAcceleratedCompositingEnabled when sending the CreatePlugin message.
+
+2010-12-20  Anders Carlsson  <andersca@apple.com>
+
         Unreviewed, rolling out r74345.
         http://trac.webkit.org/changeset/74345
         https://bugs.webkit.org/show_bug.cgi?id=51115

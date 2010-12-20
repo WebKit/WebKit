@@ -54,7 +54,7 @@ class PluginControllerProxy : PluginController {
     WTF_MAKE_NONCOPYABLE(PluginControllerProxy);
 
 public:
-    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled);
+    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
     ~PluginControllerProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -70,7 +70,7 @@ public:
 #endif
 
 private:
-    PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled);
+    PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
 
     void startPaintTimer();
     void paint();
@@ -138,6 +138,7 @@ private:
 
     String m_userAgent;
     bool m_isPrivateBrowsingEnabled;
+    bool m_isAcceleratedCompositingEnabled;
 
     RefPtr<Plugin> m_plugin;
 
