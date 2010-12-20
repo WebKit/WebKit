@@ -152,8 +152,7 @@ void RenderMathMLSubSup::layout()
     RenderBlock::layout();
     
     if (m_kind == SubSup) {
-        RenderObject* base = firstChild();
-        if (base) {
+        if (RenderObject* base = firstChild()) {
             int maxHeight = 0;
             RenderObject* current = base->firstChild();
             while (current) {
@@ -166,9 +165,9 @@ void RenderMathMLSubSup::layout()
             if (heightDiff < 0) 
                 heightDiff = 0;
             base->style()->setPaddingTop(Length(heightDiff, Fixed));
+            base->setNeedsLayout(true);
         }
         setNeedsLayout(true);
-        base->setNeedsLayout(true);
         RenderBlock::layout();
     }    
 }

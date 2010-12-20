@@ -1,3 +1,16 @@
+2010-12-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Ada Chan.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=51355 Crash in 
+        RenderMathMLSubSup::layout() because of null base
+        -and corresponding-
+        <rdar://problem/8712200>
+
+        Only use base inside if(base) block.
+        * mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+
 2010-12-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
