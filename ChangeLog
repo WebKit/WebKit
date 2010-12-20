@@ -1,3 +1,14 @@
+2010-12-20  David Levin  <levin@chromium.org>
+
+        Reviewed by Ariya Hidayat.
+
+        .gitignore and webkit-tools-completion.sh have references to WebKitTools that should be Tools.
+        https://bugs.webkit.org/show_bug.cgi?id=51343
+
+        Follow up from the WebKitTools -> Tools rename.
+
+        * .gitignore:
+
 2010-12-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

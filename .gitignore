@@ -6,7 +6,7 @@
 build/
 /WebKitBuild/
 autoinstall.cache.d
-WebKitTools/Scripts/webkitpy/thirdparty/autoinstalled
+Tools/Scripts/webkitpy/thirdparty/autoinstalled
 
 # Ignore common tool auto-generated files.
 .gdb_history
@@ -31,7 +31,7 @@ WebKit/chromium/*.mk
 WebKit/chromium/*.sln
 WebKit/chromium/*.vcproj*
 WebKit/chromium/WebKit.xcodeproj
-WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
+Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 
 # Ignore status files that manage Chromium dependencies.
 WebKit/chromium/.gclient

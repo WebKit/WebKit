@@ -30,7 +30,7 @@
 #
 # Set-up:
 #   Add a line like this to your .bashrc:
-#     source /path/to/WebKitCode/WebKitTools/Scripts/webkit-tools-completion.sh
+#     source /path/to/WebKitCode/Tools/Scripts/webkit-tools-completion.sh
 
 __webkit-patch_generate_reply()
 {
