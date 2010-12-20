@@ -208,13 +208,9 @@ namespace JSC {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             addLineInfo(n->lineNo());
-
-            if (m_emitNodeDepth >= s_maxEmitNodeDepth)
-                return emitThrowExpressionTooDeepException();
-            ++m_emitNodeDepth;
-            RegisterID* r = n->emitBytecode(*this, dst);
-            --m_emitNodeDepth;
-            return r;
+            return m_stack.recursionCheck()
+                ? n->emitBytecode(*this, dst)
+                : emitThrowExpressionTooDeepException();
         }
 
         RegisterID* emitNode(Node* n)
@@ -225,13 +221,10 @@ namespace JSC {
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue)
         {
             addLineInfo(n->lineNo());
-            if (m_emitNodeDepth >= s_maxEmitNodeDepth) {
+            if (m_stack.recursionCheck())
+                n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
+            else
                 emitThrowExpressionTooDeepException();
-                return;
-            }
-            ++m_emitNodeDepth;
-            n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
-            --m_emitNodeDepth;
         }
 
         void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
@@ -583,13 +576,11 @@ namespace JSC {
         size_t m_lastOpcodePosition;
 #endif
 
-        unsigned m_emitNodeDepth;
+        StackBounds m_stack;
 
         bool m_usesExceptions;
         bool m_regeneratingForExceptionInfo;
         CodeBlock* m_codeBlockBeingRegeneratedFrom;
-
-        static const unsigned s_maxEmitNodeDepth = 5000;
     };
 
 }

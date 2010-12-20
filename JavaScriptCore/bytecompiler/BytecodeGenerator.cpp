@@ -218,7 +218,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const ScopeChain&
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_emitNodeDepth(0)
+    , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
@@ -312,7 +312,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Scope
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_emitNodeDepth(0)
+    , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
@@ -477,7 +477,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const ScopeChain& scope
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_emitNodeDepth(0)
+    , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)

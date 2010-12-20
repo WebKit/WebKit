@@ -1,3 +1,24 @@
+2010-12-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Olver Hunt.
+
+        Bug 51358 - Should check stack depth rather than using recursion limits in byte compilation
+
+        The current implementation of recursion limit checking is not safe on smaller stacks.
+        Switch to using a common mechanism, shared with the parser, to check recursion limits.
+
+        Make bytecompiler use StackBounds. Empirical testing shows emitStrcat to have the largest
+        footprint on the stack, at just under 1k on x86-64.  Given this, the default recursion
+        check (requiring 4k of available space to recurse) seems reasonable.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitStrcat):
+
 2010-12-20  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.
