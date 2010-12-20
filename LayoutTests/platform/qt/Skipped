@@ -700,6 +700,8 @@ http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 # Missing layoutTestController.testRepaint()
 fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html
+fast/repaint/text-emphasis-h.html
+fast/repaint/text-emphasis-v.html
 
 # timeout
 http/tests/misc/redirect-to-external-url.html

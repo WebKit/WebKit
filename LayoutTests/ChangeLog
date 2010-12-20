@@ -1,3 +1,13 @@
+2010-12-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add new tests to the Skipped list, because of missing layoutTestController.testRepaint()
+
+        * platform/qt/Skipped:
+         - fast/repaint/text-emphasis-h.html added
+         - fast/repaint/text-emphasis-v.html added
+
 2010-12-19  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Antonio Gomes.
