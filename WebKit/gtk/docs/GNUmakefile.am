@@ -78,6 +78,7 @@ INCLUDES= \
 	-I$(top_srcdir)/JavaScriptCore/parser \
 	-I$(top_srcdir)/JavaScriptCore/wtf \
 	-I$(top_builddir)/DerivedSources \
+	-I$(top_srcdir)/WebCore/platform/network/soup/cache \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \

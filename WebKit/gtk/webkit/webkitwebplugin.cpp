@@ -24,6 +24,18 @@
 #include "webkitwebpluginprivate.h"
 #include <glib/gi18n-lib.h>
 
+/**
+ * SECTION:webkitwebplugin
+ * @short_description: Represents a plugin, enabling fine-grained control
+ * @see_also: #WebKitWebPluginDatabase
+ *
+ * This object represents a single plugin, found by WebKitGTK+ while
+ * scanning the various usual directories. This object can be used to
+ * get more information about a plugin, and enable/disable it,
+ * allowing fine-grained control of plugins. The list of available
+ * plugins can be obtained from the #WebKitWebPluginDatabase object.
+ */
+
 using namespace WebCore;
 
 enum {

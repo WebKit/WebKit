@@ -1,3 +1,18 @@
+2010-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Add WebPlugin, WebPluginDatabase, and ViewportAttributes to the
+        documentation control files, in preparation for 1.3.8. Also take
+        the opportunity to add descriptions to WebPlugin and
+        WebPluginDatabase.
+
+        * docs/GNUmakefile.am:
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+        * webkit/webkitwebplugin.cpp:
+        * webkit/webkitwebplugindatabase.cpp:
+
 2010-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -24,6 +24,17 @@
 #include "webkitwebplugindatabaseprivate.h"
 #include "webkitwebpluginprivate.h"
 
+/**
+ * SECTION:webkitwebplugindatabase
+ * @short_description: Provides information about the plugins the engine knows about
+ * @see_also: #WebKitWebPlugin
+ *
+ * This object allows you to query information about the plugins found
+ * by the engine while scanning the usual directories. You can then
+ * use the #WebKitWebPlugin objects to get more information or
+ * enable/disable individual plugins.
+ */
+
 using namespace WebKit;
 using namespace WebCore;
 
