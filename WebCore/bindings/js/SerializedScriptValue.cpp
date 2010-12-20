@@ -86,11 +86,17 @@ enum SerializationTag {
     StringTag = 16,
     EmptyStringTag = 17,
     RegExpTag = 18,
+    ObjectReferenceTag = 19,
     ErrorTag = 255
 };
 
-
-static const unsigned int CurrentVersion = 1;
+/* CurrentVersion tracks the serialization version so that persistant stores
+ * are able to correctly bail out in the case of encountering newer formats.
+ *
+ * Initial version was 1.
+ * Version 2. added the ObjectReferenceTag and support for serialization of cyclic graphs.
+ */
+static const unsigned int CurrentVersion = 2;
 static const unsigned int TerminatorTag = 0xFFFFFFFF;
 static const unsigned int StringPoolTag = 0xFFFFFFFE;
 
@@ -98,8 +104,9 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  * Object serialization is performed according to the following grammar, all tags
  * are recorded as a single uint8_t.
  *
- * IndexType (used for StringData's constant pool) is the sized unsigned integer type
- * required to represent the maximum index in the constant pool.
+ * IndexType (used for the object pool and StringData's constant pool) is the
+ * minimum sized unsigned integer type required to represent the maximum index
+ * in the constant pool.
  *
  * SerializedValue :- <CurrentVersion:uint32_t> Value
  * Value :- Array | Object | Terminal
@@ -124,6 +131,7 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    | FileList
  *    | ImageData
  *    | Blob
+ *    | ObjectReferenceTag <opIndex:IndexType>
  *
  * String :-
  *      EmptyStringTag
@@ -237,38 +245,45 @@ private:
         return isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::info);
     }
 
-    bool startObject(JSObject* object)
+    bool startObjectInternal(JSObject* object)
     {
-        // Cycle detection
-        if (!m_cycleDetector.add(object).second) {
-            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
+        // Record object for graph reconstruction
+        pair<ObjectPool::iterator, bool> iter = m_objectPool.add(object, m_objectPool.size());
+        
+        // Handle duplicate references
+        if (!iter.second) {
+            write(ObjectReferenceTag);
+            ASSERT(static_cast<int32_t>(iter.first->second) < m_objectPool.size());
+            writeObjectIndex(iter.first->second);
             return false;
         }
+        
         m_gcBuffer.append(object);
+        return true;
+    }
+
+    bool startObject(JSObject* object)
+    {
+        if (!startObjectInternal(object))
+            return false;
         write(ObjectTag);
         return true;
     }
 
-
     bool startArray(JSArray* array)
     {
-        // Cycle detection
-        if (!m_cycleDetector.add(array).second) {
-            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
+        if (!startObjectInternal(array))
             return false;
-        }
-        m_gcBuffer.append(array);
+
         unsigned length = array->length();
         write(ArrayTag);
         write(length);
         return true;
     }
 
-    void endObject(JSObject* object)
+    void endObject()
     {
         write(TerminatorTag);
-        m_cycleDetector.remove(object);
-        m_gcBuffer.removeLast();
     }
 
     JSValue getSparseIndex(JSArray* array, unsigned propertyName, bool& hasIndex)
@@ -493,9 +508,20 @@ private:
 
     void writeStringIndex(unsigned i)
     {
-        if (m_constantPool.size() <= 0xFF)
+        writeConstantPoolIndex(m_constantPool, i);
+    }
+    
+    void writeObjectIndex(unsigned i)
+    {
+        writeConstantPoolIndex(m_objectPool, i);
+    }
+
+    template <class T> void writeConstantPoolIndex(const T& constantPool, unsigned i)
+    {
+        ASSERT(static_cast<int32_t>(i) < constantPool.size());
+        if (constantPool.size() <= 0xFF)
             write(static_cast<uint8_t>(i));
-        else if (m_constantPool.size() <= 0xFFFF)
+        else if (constantPool.size() <= 0xFFFF)
             write(static_cast<uint16_t>(i));
         else
             write(static_cast<uint32_t>(i));
@@ -504,7 +530,7 @@ private:
     void write(const Identifier& ident)
     {
         UString str = ident.ustring();
-        pair<ConstantPool::iterator, bool> iter = m_constantPool.add(str.impl(), m_constantPool.size());
+        pair<StringConstantPool::iterator, bool> iter = m_constantPool.add(str.impl(), m_constantPool.size());
         if (!iter.second) {
             write(StringPoolTag);
             writeStringIndex(iter.first->second);
@@ -558,9 +584,10 @@ private:
     }
 
     Vector<uint8_t>& m_buffer;
-    HashSet<JSObject*> m_cycleDetector;
-    typedef HashMap<RefPtr<StringImpl>, uint32_t, IdentifierRepHash> ConstantPool;
-    ConstantPool m_constantPool;
+    typedef HashMap<JSObject*, uint32_t> ObjectPool;
+    ObjectPool m_objectPool;
+    typedef HashMap<RefPtr<StringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
+    StringConstantPool m_constantPool;
     Identifier m_emptyIdentifier;
 };
 
@@ -588,7 +615,7 @@ bool CloneSerializer::serialize(JSValue in)
                 JSArray* inArray = asArray(inValue);
                 unsigned length = inArray->length();
                 if (!startArray(inArray))
-                    return false;
+                    break;
                 inputArrayStack.append(inArray);
                 indexStack.append(0);
                 lengthStack.append(length);
@@ -607,7 +634,7 @@ bool CloneSerializer::serialize(JSValue in)
                 JSArray* array = inputArrayStack.last();
                 uint32_t index = indexStack.last();
                 if (index == lengthStack.last()) {
-                    endObject(array);
+                    endObject();
                     inputArrayStack.removeLast();
                     indexStack.removeLast();
                     lengthStack.removeLast();
@@ -645,7 +672,7 @@ bool CloneSerializer::serialize(JSValue in)
                 }
                 JSObject* inObject = asObject(inValue);
                 if (!startObject(inObject))
-                    return false;
+                    break;
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
@@ -666,7 +693,7 @@ bool CloneSerializer::serialize(JSValue in)
                 uint32_t index = indexStack.last();
                 PropertyNameArray& properties = propertyStack.last();
                 if (index == properties.size()) {
-                    endObject(object);
+                    endObject();
                     inputObjectStack.removeLast();
                     indexStack.removeLast();
                     propertyStack.removeLast();
@@ -904,14 +931,19 @@ private:
 
     bool readStringIndex(uint32_t& i)
     {
-        if (m_constantPool.size() <= 0xFF) {
+        return readConstantPoolIndex(m_constantPool, i);
+    }
+
+    template <class T> bool readConstantPoolIndex(const T& constantPool, uint32_t& i)
+    {
+        if (constantPool.size() <= 0xFF) {
             uint8_t i8;
             if (!read(i8))
                 return false;
             i = i8;
             return true;
         }
-        if (m_constantPool.size() <= 0xFFFF) {
+        if (constantPool.size() <= 0xFFFF) {
             uint16_t i16;
             if (!read(i16))
                 return false;
@@ -1142,6 +1174,14 @@ private:
             RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), flags->ustring());
             return new (m_exec) RegExpObject(m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
+        case ObjectReferenceTag: {
+            unsigned index = 0;
+            if (!readConstantPoolIndex(m_gcBuffer, index)) {
+                fail();
+                return JSValue();
+            }
+            return m_gcBuffer.at(index);
+        }
         default:
             m_ptr--; // Push the tag back
             return JSValue();
@@ -1199,7 +1239,6 @@ JSValue CloneDeserializer::deserialize()
             }
             if (index == TerminatorTag) {
                 JSArray* outArray = outputArrayStack.last();
-                m_gcBuffer.removeLast();
                 outValue = outArray;
                 outputArrayStack.removeLast();
                 break;
@@ -1248,7 +1287,6 @@ JSValue CloneDeserializer::deserialize()
                 if (!wasTerminator)
                     goto error;
                 JSObject* outObject = outputObjectStack.last();
-                m_gcBuffer.removeLast();
                 outValue = outObject;
                 outputObjectStack.removeLast();
                 break;

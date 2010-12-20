@@ -80,11 +80,37 @@ function shouldBe(actual, expected)
         console.innerHTML += "FAIL: " + actual + " is " + actualValue + " should be " + expectedValue + " of type " + typeof expectedValue + "<br>";
 }
 
+function shouldBeIdentical(actual, expected)
+{
+    var actualValue = eval(actual);
+    var expectedValue = eval(expected);
+    if (actualValue === expectedValue)
+        console.innerHTML += "PASS: " + actual + " is === to " + expected + "<br>";
+    else
+        console.innerHTML += "FAIL: " + actual + " is not === to " + expected + "<br>";
+}
+
 function onmessage(evt) {
     eventData = evt.data;
     if (evt.data !== evt.data)
         console.innerHTML += "MessageEvent.data does not produce the same value on multiple queries.<br>";
-    shouldBe("eventData", messages.shift());
+    var message = messages.shift();
+    switch (message) {
+    case "cyclicObject":
+        shouldBeIdentical("eventData", "eventData.self");
+        break;
+    case "cyclicArray":
+        shouldBeIdentical("eventData", "eventData[0]");
+        break;
+    case "objectGraph":
+        shouldBeIdentical("eventData.graph1", "eventData.graph2");
+        break;
+    case "arrayGraph":
+        shouldBeIdentical("eventData[0]", "eventData[1]");
+        break;
+    default:
+        shouldBe("eventData", message);
+    }
 
     if (safeToString(evt.data) == 'done' && window.layoutTestController)
         layoutTestController.notifyDone();
@@ -141,10 +167,17 @@ tryPostMessage('new Date(1234567890000)');
 tryPostMessage('new ConstructorWithPrototype("foo")', false, '({field:"foo"})');
 cyclicObject={};
 cyclicObject.self = cyclicObject;
-tryPostMessage('cyclicObject', true);
+tryPostMessage('cyclicObject', false, "cyclicObject");
 cyclicArray=[];
 cyclicArray[0] = cyclicArray;
-tryPostMessage('cyclicArray', true);
+tryPostMessage('cyclicArray', false, "cyclicArray");
+objectGraph = {};
+object = {};
+objectGraph.graph1 = object;
+objectGraph.graph2 = object;
+tryPostMessage('objectGraph', false, "objectGraph");
+arrayGraph = [object, object];
+tryPostMessage('arrayGraph', false, "arrayGraph");
 deepArray=[];
 for (var i = 0; i < 10000; i++)
     deepArray=[deepArray];

@@ -1,3 +1,39 @@
+2010-12-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need to support serialisation of cyclic graphs in the internal structured cloning algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=51353
+
+        The Internal Structured Clone algorithm has been changed to allow (and
+        correctly clone) cyclic graphs.  This patch updates our implementation
+        to provide that functionality.
+
+        I've bumped the serialization version number, and added ObjectReferenceTag
+        to represent references to objects that have already been seen.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::startObjectInternal):
+          Now that we have something a bit more complex than cycle checking
+          I've replaced the duplicate code in startObject and startArray with
+          a shared function that implements that logic to plant an object
+          reference
+        (WebCore::CloneSerializer::startObject):
+        (WebCore::CloneSerializer::startArray):
+          Lift out duplicate code
+        (WebCore::CloneSerializer::endObject):
+          Can't remove objects from the gcbuffer now as they need to remain live
+          so we can identify graphs
+        (WebCore::CloneSerializer::writeStringIndex):
+        (WebCore::CloneSerializer::writeObjectIndex):
+        (WebCore::CloneSerializer::writeConstantPoolIndex):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::readStringIndex):
+        (WebCore::CloneDeserializer::readConstantPoolIndex):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+
 2010-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

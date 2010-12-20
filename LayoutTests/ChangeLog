@@ -1,3 +1,15 @@
+2010-12-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need to support serialisation of cyclic graphs in the internal structured cloning algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=51353
+
+        Update test to cover correct behaviour, and extend to test for actual graph construction.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2010-12-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.

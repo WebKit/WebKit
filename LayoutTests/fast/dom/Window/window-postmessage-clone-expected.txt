@@ -1,6 +1,4 @@
 Tests that we clone object hierarchies
-PASS: 'postMessage(cyclicObject)' threw TypeError: Cannot post cyclic structures.
-PASS: 'postMessage(cyclicArray)' threw TypeError: Cannot post cyclic structures.
 PASS: 'postMessage(reallyDeepArray)' threw RangeError: Maximum call stack size exceeded.
 PASS: 'postMessage(window)' threw TypeError: Type error
 PASS: eventData is null of type object
@@ -25,6 +23,10 @@ PASS: eventData is ,,1 of type object
 PASS: eventData is null of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is [object Object] of type object
+PASS: eventData is === to eventData.self
+PASS: eventData is === to eventData[0]
+PASS: eventData.graph1 is === to eventData.graph2
+PASS: eventData[0] is === to eventData[1]
 PASS: eventData is [object Array](default toString threw RangeError: Maximum call stack size exceeded.) of type object
 PASS: eventData is [object File] of type object
 PASS: eventData is [object FileList] of type object
