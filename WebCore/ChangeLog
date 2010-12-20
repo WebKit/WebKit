@@ -1,3 +1,22 @@
+2010-12-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash at WebCore::SplitElementCommand::SplitElementCommand
+        https://bugs.webkit.org/show_bug.cgi?id=51278
+        <rdar://problem/7347139> 
+
+        Executing outdent command on an inline blockquote that is
+        not the first element in a block causes a crash.
+        The fix consists in chaging the was the start of block is
+        calculated in case of the inline blockquote.
+        
+        Test: editing/execCommand/outdent-inline-blockquote.html
+              editing/execCommand/outdent-inline-list.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+
 2010-12-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

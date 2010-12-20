@@ -135,7 +135,9 @@ void IndentOutdentCommand::outdentParagraph()
     
     // The selection is inside a blockquote i.e. enclosingNode is a blockquote
     VisiblePosition positionInEnclosingBlock = VisiblePosition(Position(enclosingNode, 0));
-    VisiblePosition startOfEnclosingBlock = startOfBlock(positionInEnclosingBlock);
+    // If the blockquote is inline, the start of the enclosing block coincides with
+    // positionInEnclosingBlock.
+    VisiblePosition startOfEnclosingBlock = (enclosingNode->renderer() && enclosingNode->renderer()->isInline()) ? positionInEnclosingBlock : startOfBlock(positionInEnclosingBlock);
     VisiblePosition lastPositionInEnclosingBlock = VisiblePosition(Position(enclosingNode, enclosingNode->childNodeCount()));
     VisiblePosition endOfEnclosingBlock = endOfBlock(lastPositionInEnclosingBlock);
     if (visibleStartOfParagraph == startOfEnclosingBlock &&

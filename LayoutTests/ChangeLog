@@ -1,3 +1,16 @@
+2010-12-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash at WebCore::SplitElementCommand::SplitElementCommand
+        https://bugs.webkit.org/show_bug.cgi?id=51278
+        <rdar://problem/7347139> 
+
+        * editing/execCommand/outdent-inline-blockquote-expected.txt: Added.
+        * editing/execCommand/outdent-inline-blockquote.html: Added.
+        * editing/execCommand/outdent-inline-list-expected.txt: Added.
+        * editing/execCommand/outdent-inline-list.html: Added.
+
 2010-12-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
