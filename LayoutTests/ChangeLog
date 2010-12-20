@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        [Qt] Add platform specific expected result for new test introduced in r74321.
+
+        * platform/qt/fast/parser/xml-colon-entity-expected.txt: Copied from LayoutTests/fast/parser/xml-colon-entity-expected.txt.
+
+2010-12-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         Add new tests to the Skipped list, because of missing layoutTestController.testRepaint()
 
         * platform/qt/Skipped:
