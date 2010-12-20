@@ -2,6 +2,21 @@
 
         Reviewed by Jeremy Orlow.
 
+        IDBTransactionBackedImpl instances can be accidentally deleted during calls to abort/commit.
+        https://bugs.webkit.org/show_bug.cgi?id=51112
+
+        Makes IDBTransactionBackendImpl objects take a self reference while executing commit and abort.
+
+        Test: storage/indexeddb/transaction-crash-on-abort.html
+
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::commit):
+
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         IDBCursor::delete is not implemented.
         https://bugs.webkit.org/show_bug.cgi?id=51110
 

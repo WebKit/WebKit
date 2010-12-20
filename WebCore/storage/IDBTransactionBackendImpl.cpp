@@ -106,6 +106,11 @@ void IDBTransactionBackendImpl::abort()
     if (m_state == Finished)
         return;
 
+    // The last reference to this object may be released while performing the
+    // abort steps below. We therefore take a self reference to keep ourselves
+    // alive while executing this method.
+    RefPtr<IDBTransactionBackendImpl> self(this);
+
     m_state = Finished;
     m_taskTimer.stop();
     m_taskEventTimer.stop();
@@ -155,6 +160,10 @@ void IDBTransactionBackendImpl::start()
 
 void IDBTransactionBackendImpl::commit()
 {
+    // The last reference to this object may be released while performing the
+    // commit steps below. We therefore take a self reference to keep ourselves
+    // alive while executing this method.
+    RefPtr<IDBTransactionBackendImpl> self(this);
     ASSERT(m_state == Running);
 
     m_state = Finished;
