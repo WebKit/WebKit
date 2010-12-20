@@ -342,6 +342,18 @@ class MockBugzilla(Mock):
         log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
             bug_id, cc, comment_text))
 
+    def add_attachment_to_bug(self,
+                              bug_id,
+                              file_or_string,
+                              description,
+                              filename=None,
+                              comment_text=None):
+        log("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s" % (bug_id, description, filename))
+        if comment_text:
+            log("-- Begin comment --")
+            log(comment_text)
+            log("-- End comment --")
+
     def add_patch_to_bug(self,
                          bug_id,
                          diff,
@@ -352,9 +364,10 @@ class MockBugzilla(Mock):
                          mark_for_landing=False):
         log("MOCK add_patch_to_bug: bug_id=%s, description=%s, mark_for_review=%s, mark_for_commit_queue=%s, mark_for_landing=%s" %
             (bug_id, description, mark_for_review, mark_for_commit_queue, mark_for_landing))
-        log("-- Begin comment --")
-        log(comment_text)
-        log("-- End comment --")
+        if comment_text:
+            log("-- Begin comment --")
+            log(comment_text)
+            log("-- End comment --")
 
 
 class MockBuilder(object):

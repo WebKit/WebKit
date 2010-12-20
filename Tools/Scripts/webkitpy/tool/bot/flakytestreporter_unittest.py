@@ -97,7 +97,8 @@ blocked: 50856
 
     def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
-        tool.filesystem = MockFileSystem({"/mock/foo/bar.diff": "mock"})
+        tool.filesystem = MockFileSystem({"/mock/foo/bar-diffs.txt": "mock"})
+        tool.status_server = MockStatusServer(bot_id="mock-bot-id")
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
         patch = tool.bugs.fetch_attachment(197)
@@ -110,7 +111,7 @@ foo/bar.html was authored by abarth@webkit.org.
 http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 The dummy-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
-Port: MockPort  Platform: MockPlatform 1.0
+Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
 
@@ -119,6 +120,7 @@ If you would like to track this test fix with another bug, please close this bug
 component: Tools / Tests
 cc: abarth@webkit.org
 blocked: 50856
+MOCK add_attachment_to_bug: bug_id=78, description=Failure diff from mock-bot-id filename=failure.diff
 MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
 The dummy-queue encountered the following flaky tests while processing attachment 197:

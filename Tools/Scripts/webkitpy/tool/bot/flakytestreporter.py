@@ -171,7 +171,8 @@ If you would like to track this test fix with another bug, please close this bug
             # there is a high probaility it's totally wrong.
             if self._tool.filesystem.exists(results_diff_path):
                 results_diff = self._tool.filesystem.read_binary_file(results_diff_path)
-                self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, "Failure diff from bot", filename="failure.diff")
+                bot_id = self._tool.status_server.bot_id or "bot"
+                self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, "Failure diff from %s" % bot_id, filename="failure.diff")
             else:
                 _log.error("%s does not exist as expected, not uploading." % results_diff_path)
             message += "%s bug %s%s\n" % (flaky_test, flake_bug_id, self._optional_author_string(author_emails))

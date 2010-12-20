@@ -1,3 +1,19 @@
+2010-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should include bot id when attaching failure diffs
+        https://bugs.webkit.org/show_bug.cgi?id=51280
+
+        This is a tiny change to include the bot id in the name of the attachment.
+        Most of this diff is just changing the unit test expectations
+        now that I hid the comment printing when the comment is None.
+
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-12-20  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Dan Bernstein.
