@@ -3249,3 +3249,6 @@ BUGCR67209 WIN DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT
 // WebKit roll 74255:74308
 BUGCR67416 : fast/text/emphasis.html = FAIL
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
+BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
+BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE
+BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
