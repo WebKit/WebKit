@@ -1,3 +1,12 @@
+2010-12-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
+        Include pthread to fix chromium mac build (broken by r74360)
+        https://bugs.webkit.org/show_bug.cgi?id=51356
+
+        * wtf/StackBounds.cpp:
+
 2010-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

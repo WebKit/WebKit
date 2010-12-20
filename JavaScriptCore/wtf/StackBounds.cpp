@@ -25,6 +25,7 @@
 
 #include <mach/task.h>
 #include <mach/thread_act.h>
+#include <pthread.h>
 
 #elif OS(WINDOWS)
 
