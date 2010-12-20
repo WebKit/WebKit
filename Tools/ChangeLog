@@ -1,3 +1,19 @@
+2010-12-20  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by James Robinson.
+
+        new-run-webkit-tests ignores trailing EOL differences in text tests
+        https://bugs.webkit.org/show_bug.cgi?id=36983
+
+        Changed the handling of new-line characters within new-run-webkit-tests
+        to match old-run-webkit-tests.  Differences in leading and trailing empty
+        lines in text expectation files are no longer ignored.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        Added unit tests.  Removed old duplicate unit test entries.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2010-12-20  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
