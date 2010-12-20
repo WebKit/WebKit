@@ -45,6 +45,7 @@ tryPostMessage('4', window, '*');  // Passes because window has a "length" attri
 tryPostMessage('5', null, '*');
 tryPostMessage('6', void 0, '*');
 tryPostMessage('7', [channel.port1, channel.port2], '*');
+tryPostMessage(2147483648, null, '*');
 tryPostMessage('done', '*');
 </script>
 </body>

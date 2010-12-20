@@ -844,7 +844,7 @@ private:
         uint32_t rawValue;
         if (!doReadUint32(&rawValue))
             return false;
-        *value = v8::Integer::New(rawValue);
+        *value = v8::Integer::NewFromUnsigned(rawValue);
         return true;
     }
 

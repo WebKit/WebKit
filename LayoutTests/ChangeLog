@@ -1,3 +1,15 @@
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] v8/SerializedScriptValue::readUint32 treats incoming raw values as signed instead of unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=51338
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/dom/Window/window-postmessage-args.html:
+        * platform/chromium-mac/fast/dom/Window/window-postmessage-args-expected.txt:
+        * platform/chromium-win/fast/dom/Window/window-postmessage-args-expected.txt:
+
 2010-12-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Ada Chan.

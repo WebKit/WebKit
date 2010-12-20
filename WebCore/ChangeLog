@@ -1,3 +1,13 @@
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] v8/SerializedScriptValue::readUint32 treats incoming raw values as signed instead of unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=51338
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Reader::readUint32):
+
 2010-12-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Ada Chan.
