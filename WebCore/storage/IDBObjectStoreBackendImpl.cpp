@@ -286,15 +286,34 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
 
 void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
 {
-    SQLiteStatement query(objectStore->sqliteDatabase(), "DELETE FROM ObjectStoreData " + whereClause(key.get()));
-    bool ok = query.prepare() == SQLResultOk;
+    SQLiteStatement idQuery(objectStore->sqliteDatabase(), "SELECT id FROM ObjectStoreData " + whereClause(key.get()));
+    bool ok = idQuery.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    bindWhereClause(query, objectStore->id(), key.get());
-    if (query.step() != SQLResultDone) {
+    bindWhereClause(idQuery, objectStore->id(), key.get());
+    if (idQuery.step() != SQLResultRow) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the object store."));
         return;
     }
+
+    int64_t id = idQuery.getColumnInt64(0);
+
+    SQLiteStatement osQuery(objectStore->sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE id = ?");
+    ok = osQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    osQuery.bindInt64(1, id);
+
+    ok = osQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok);
+
+    SQLiteStatement indexQuery(objectStore->sqliteDatabase(), "DELETE FROM IndexData WHERE objectStoreDataId = ?");
+    ok = indexQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    indexQuery.bindInt64(1, id);
+
+    ok = indexQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok);
 
     callbacks->onSuccess();
 }
@@ -436,7 +455,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_database.get(), range, direction, query.release(), true, transaction.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_database.get(), range, direction, query.release(), true, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 

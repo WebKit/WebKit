@@ -85,9 +85,9 @@ void IDBCursorBackendProxy::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<
     m_idbCursor->continueFunction(key, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-void IDBCursorBackendProxy::remove(PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
+void IDBCursorBackendProxy::deleteFunction(PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    m_idbCursor->remove(new WebIDBCallbacksImpl(callbacks), ec);
+    m_idbCursor->deleteFunction(new WebIDBCallbacksImpl(callbacks), ec);
 }
 
 } // namespace WebCore

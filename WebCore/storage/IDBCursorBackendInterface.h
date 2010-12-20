@@ -51,7 +51,7 @@ public:
 
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
-    virtual void remove(PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
+    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
 };
 
 } // namespace WebCore

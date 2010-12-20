@@ -42,8 +42,7 @@ module storage {
         //    raises (IDBDatabaseException);
         [ImplementationFunction=continueFunction] void continue(in [Optional] IDBKey key)
             raises (IDBDatabaseException);
-        // FIXME: Implement.
-        //[CallWith=ScriptExecutionContext] IDBRequest remove()
-        //    raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext, ImplementationFunction=deleteFunction] IDBRequest delete()
+            raises (IDBDatabaseException);
     };
 }

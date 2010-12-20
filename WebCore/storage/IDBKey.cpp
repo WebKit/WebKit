@@ -44,6 +44,9 @@ IDBKey::~IDBKey()
 
 PassRefPtr<IDBKey> IDBKey::fromQuery(SQLiteStatement& query, int baseColumn)
 {
+    if (query.columnCount() <= baseColumn)
+        return 0;
+
     if (!query.isColumnNull(baseColumn))
         return IDBKey::createString(query.getColumnText(baseColumn));
 

@@ -70,7 +70,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
 {
     // Several files depend on this order of selects.
     String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
-                 + (objectCursor ? "ObjectStoreData.value " : "ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
+                 + ("ObjectStoreData.value, ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
                  + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id WHERE ";
 
     bool lowerBound = range && range->lower();
@@ -104,7 +104,11 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(index->m_database.get(), range, direction, query.release(), objectCursor, transaction.get());
+    ExceptionCode ec = 0;
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = transaction->objectStore(index->m_storeName, ec);
+    ASSERT(objectStore && !ec);
+
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(index->m_database.get(), range, direction, query.release(), objectCursor, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 

@@ -1,3 +1,15 @@
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBCursor::delete is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=51110
+
+        * storage/indexeddb/cursor-delete-expected.txt: Added.
+        * storage/indexeddb/cursor-delete.html: Added.
+        * storage/indexeddb/cursor-index-delete-expected.txt: Added.
+        * storage/indexeddb/cursor-index-delete.html: Added.
+
 2010-12-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.

@@ -80,9 +80,9 @@ void WebIDBCursorImpl::continueFunction(const WebIDBKey& key, WebIDBCallbacks* c
     m_idbCursorBackend->continueFunction(key, IDBCallbacksProxy::create(callbacks), ec);
 }
 
-void WebIDBCursorImpl::remove(WebIDBCallbacks* callbacks, WebExceptionCode& ec)
+void WebIDBCursorImpl::deleteFunction(WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_idbCursorBackend->remove(IDBCallbacksProxy::create(callbacks), ec);
+    m_idbCursorBackend->deleteFunction(IDBCallbacksProxy::create(callbacks), ec);
 }
 
 } // namespace WebCore

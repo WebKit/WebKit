@@ -1,0 +1,132 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's openCursor.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+test();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    verifySuccessEvent(event);
+    var db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = openCursor;
+
+    deleteAllObjectStores(db, createAndPopulateObjectStore);
+}
+
+function createAndPopulateObjectStore() 
+{
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
+    evalAndLog("objectStore.add('myValue1', 'myKey1')");
+    evalAndLog("objectStore.add('myValue2', 'myKey2')");
+    evalAndLog("objectStore.add('myValue3', 'myKey3')");
+    evalAndLog("objectStore.add('myValue4', 'myKey4')");
+}
+
+function openCursor()
+{
+    debug("openCursor1");
+    evalAndLog("trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)");
+    keyRange = webkitIDBKeyRange.lowerBound("myKey1");
+    result = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
+    verifyResult(result);
+    result.onsuccess = cursorSuccess;
+    result.onerror = unexpectedErrorCallback;
+    counter = 1;
+}
+
+function cursorSuccess()
+{
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        result = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
+        verifyResult(result);
+        result.onsuccess = cursorEmpty;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+    evalAndLog("event.result.delete()");
+    shouldBeEqualToString("event.result.value", "myValue" + counter++);
+    evalAndLog("event.result.continue()");
+}
+
+function cursorEmpty()
+{
+    verifySuccessEvent(event);
+    shouldBeNull(event.result);
+    trans.oncomplete = addObject;
+}
+
+function addObject()
+{
+    evalAndLog("trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)");
+    objectStore = evalAndLog("objectStore = trans.objectStore('test')");
+    result = evalAndLog("objectStore.add('myValue1', 'myKey1')");
+    verifyResult(result);
+    result.onsuccess = openCursor2;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openCursor2()
+{
+    debug("openCursor2");
+    result = evalAndLog("objectStore.openCursor({range: keyRange})");
+    verifyResult(result);
+    result.onsuccess = deleteObject;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function deleteObject()
+{
+    verifySuccessEvent(event);
+    shouldBeNonNull(event.result);
+    evalAndLog("event.result.delete()");
+    result = evalAndLog("objectStore.get('myKey1')");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = verifyObjectDeleted;
+}
+
+function verifyObjectDeleted()
+{
+    verifyErrorEvent(event);
+    done();
+}
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

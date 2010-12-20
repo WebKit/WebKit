@@ -47,7 +47,7 @@ public:
     virtual void value(WebSerializedScriptValue&, WebIDBKey&) const;
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&);
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&);
-    virtual void remove(WebIDBCallbacks*, WebExceptionCode&);
+    virtual void deleteFunction(WebIDBCallbacks*, WebExceptionCode&);
 
  private:
     WTF::RefPtr<WebCore::IDBCursorBackendInterface> m_idbCursorBackend;

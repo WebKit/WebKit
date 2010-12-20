@@ -1,3 +1,35 @@
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBCursor::delete is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=51110
+
+        Implement IDBCursor::delete.
+        See http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#widl-IDBCursor-delete
+
+        Tests: storage/indexeddb/cursor-delete.html
+               storage/indexeddb/cursor-index-delete.html
+
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::deleteFunction):
+        * storage/IDBCursor.h:
+        * storage/IDBCursor.idl:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        (WebCore::IDBCursorBackendImpl::loadCurrentRow):
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::fromQuery):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+
 2010-12-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

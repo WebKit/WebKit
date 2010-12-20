@@ -47,7 +47,7 @@ public:
     virtual PassRefPtr<IDBAny> value() const;
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void remove(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
 
 private:
     IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor>);

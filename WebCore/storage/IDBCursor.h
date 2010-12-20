@@ -67,7 +67,7 @@ public:
     PassRefPtr<IDBAny> value() const;
     PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, ExceptionCode&);
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
-    PassRefPtr<IDBRequest> remove(ScriptExecutionContext*, ExceptionCode&);
+    PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
 private:
     explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransactionBackendInterface*);

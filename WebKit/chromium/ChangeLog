@@ -1,3 +1,20 @@
+2010-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBCursor::delete is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=51110
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::remove):
+        (WebKit::WebIDBCursor::deleteFunction):
+        * src/IDBCursorBackendProxy.cpp:
+        (WebCore::IDBCursorBackendProxy::deleteFunction):
+        * src/IDBCursorBackendProxy.h:
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::deleteFunction):
+        * src/WebIDBCursorImpl.h:
+
 2010-12-18  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Laszlo Gombos.

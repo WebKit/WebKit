@@ -87,10 +87,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         ASSERT_NOT_REACHED();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::remove(ScriptExecutionContext* context, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->remove(request, ec);
+    m_backend->deleteFunction(request, ec);
     if (ec)
         return 0;
     return request.release();

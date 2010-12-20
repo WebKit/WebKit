@@ -45,13 +45,14 @@
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(IDBSQLiteDatabase* database, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction)
+IDBCursorBackendImpl::IDBCursorBackendImpl(IDBSQLiteDatabase* database, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
     : m_database(database)
     , m_keyRange(keyRange)
     , m_direction(direction)
     , m_query(query)
     , m_isSerializedScriptValueCursor(isSerializedScriptValueCursor)
     , m_transaction(transaction)
+    , m_objectStore(objectStore)
 {
     loadCurrentRow();
 }
@@ -158,50 +159,34 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
     callbacks->onSuccess(cursor.get());
 }
 
-void IDBCursorBackendImpl::remove(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
-    RefPtr<IDBCursorBackendImpl> cursor = this;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::removeInternal, cursor, callbacks)))
+    if (!m_query || m_currentId == InvalidId || !m_isSerializedScriptValueCursor) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
-}
-
-void IDBCursorBackendImpl::removeInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> cursor, PassRefPtr<IDBCallbacks> callbacks)
-{
-    // FIXME: This method doesn't update indexes. It's dangerous to call in its current state.
-    callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Not implemented."));
-    return;
-
-    if (!cursor->m_query || cursor->m_currentId == InvalidId) {
-        // FIXME: Use the proper error code when it's specced.
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Operation not possible."));
         return;
     }
 
-    String sql = "DELETE FROM ObjectStoreData WHERE id = ?";
-    SQLiteStatement deleteQuery(cursor->database(), sql);
-    
-    bool ok = deleteQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
-    deleteQuery.bindInt64(1, cursor->m_currentId);
-    ok = deleteQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
-
-    cursor->m_currentId = InvalidId;
-    cursor->m_currentSerializedScriptValue = 0;
-    cursor->m_currentIDBKeyValue = 0;
-    callbacks->onSuccess();
+    // FIXME: Check that the transaction is READ_WRITE
+    // if (m_transaction->mode() == IDBTransaction::READ_ONLY) {
+        // FIXME: We must return READ_ONLY_ERR here. Fix this when we update IDBDatabaseException to match the spec.
+        // ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        // return;
+    // }
+    RefPtr<IDBKey> key = m_currentIDBKeyValue ? m_currentIDBKeyValue : m_currentKey;
+    m_objectStore->deleteFunction(key.release(), prpCallbacks, m_transaction.get(), ec);
 }
+
 
 void IDBCursorBackendImpl::loadCurrentRow()
 {
-    // The column numbers depend on the query in IDBObjectStoreBackendImpl::openCursor.
+    // The column numbers depend on the query in IDBObjectStoreBackendImpl::openCursorInternal or
+    // IDBIndexBackendImpl::openCursorInternal.
     m_currentId = m_query->getColumnInt64(0);
     m_currentKey = IDBKey::fromQuery(*m_query, 1);
     if (m_isSerializedScriptValueCursor)
         m_currentSerializedScriptValue = SerializedScriptValue::createFromWire(m_query->getColumnText(4));
-    else
-        m_currentIDBKeyValue = IDBKey::fromQuery(*m_query, 4);
+
+    m_currentIDBKeyValue = IDBKey::fromQuery(*m_query, 5);
 }
 
 SQLiteDatabase& IDBCursorBackendImpl::database() const
