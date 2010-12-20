@@ -5367,3 +5367,7 @@ fast/loader/user-stylesheet-fast-path.html
 # These require DRT setSerializeHTTPLoads implementation to be reliable.
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
+
+# [Qt] fast/text/emphasis-overlap.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=51324
+fast/text/emphasis-overlap.html
