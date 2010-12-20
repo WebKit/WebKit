@@ -1,3 +1,12 @@
+2010-12-20  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] editing/selection/extend-by-character-003.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=51325
+
+        Skip flakey test.
+
+        * platform/gtk/Skipped:
+
 2010-12-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
