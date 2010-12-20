@@ -1,3 +1,14 @@
+2010-12-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [CMAKE] Rename WEBKITTOOLS_DIR to TOOLS_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=51319
+
+        Change WEBKITTOOLS_DIR variable's name and value to TOOLS_DIR and tools/.
+
+        * CMakeLists.txt:
+
 2010-12-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

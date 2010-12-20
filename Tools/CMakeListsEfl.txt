@@ -1,5 +1,5 @@
 SET(EWebLauncher_SOURCES
-    ${WEBKITTOOLS_DIR}/EWebLauncher/main.c
+    ${TOOLS_DIR}/EWebLauncher/main.c
 )
 
 SET(EWebLauncher_LIBRARIES
