@@ -613,8 +613,13 @@ WebInspector.doLoadedDone = function()
 
     InspectorBackend.setConsoleMessagesEnabled(true);
 
+    function propertyNamesCallback(names)
+    {
+        WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
+    }
+
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
-    InspectorBackend.getSupportedCSSProperties(WebInspector.CSSCompletions._load);
+    InspectorBackend.getSupportedCSSProperties(propertyNamesCallback);
 }
 
 WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)

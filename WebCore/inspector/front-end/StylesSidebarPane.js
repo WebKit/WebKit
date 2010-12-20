@@ -1579,7 +1579,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (character && /[a-z-]/.test(character)) {
             var selection = window.getSelection();
             var prefix = selection.anchorNode.textContent.substring(0, selection.anchorOffset);
-            var property = WebInspector.CSSCompletions.firstStartsWith(prefix + character);
+            var property = WebInspector.cssNameCompletions.firstStartsWith(prefix + character);
 
             if (!selection.isCollapsed)
                 selection.deleteFromDocument();
@@ -1621,17 +1621,18 @@ WebInspector.StylePropertyTreeElement.prototype = {
         const styleValueDelimeters = " \t\n\"':;,/()";
         var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.nameElement);
         var wordString = wordRange.toString();
-        var prefix = selectionRange.startContainer.textContent.substring(0, selectionRange.startOffset);
+        var cursorPosition = selectionRange.startOffset != selectionRange.endOffset ? selectionRange.startOffset : 0;
+        var prefix = selectionRange.startContainer.textContent.substring(0, cursorPosition);
         var property;
 
         if (showNext)
-            property = WebInspector.CSSCompletions.next(wordString, prefix);
+            property = WebInspector.cssNameCompletions.next(wordString, prefix);
         else
-            property = WebInspector.CSSCompletions.previous(wordString, prefix);
+            property = WebInspector.cssNameCompletions.previous(wordString, prefix);
 
         if (property) {
             this.nameElement.textContent = property;
-            this.nameElement.firstChild.select(selectionRange.startOffset);
+            this.nameElement.firstChild.select(cursorPosition);
         }
         event.preventDefault();
     },

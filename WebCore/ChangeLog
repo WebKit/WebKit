@@ -1,3 +1,33 @@
+2010-12-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Make CSSCompletions a real class rather than singleton
+        https://bugs.webkit.org/show_bug.cgi?id=51332
+
+        Drive-by: make use of keywords from re2js in the CSS tokenizer
+        (apparently, various authors have presumed that re2js is processed at build time).
+
+        No new tests, as this is a refactoring.
+
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.prototype.startsWith):
+        (WebInspector.CSSCompletions.prototype.firstStartsWith):
+        (WebInspector.CSSCompletions.prototype._firstIndexOfPrefix):
+        (WebInspector.CSSCompletions.prototype.keySet):
+        (WebInspector.CSSCompletions.prototype.next):
+        (WebInspector.CSSCompletions.prototype.previous):
+        (WebInspector.CSSCompletions.prototype._closest):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone.propertyNamesCallback):
+        (WebInspector.doLoadedDone):
+
 2010-12-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
