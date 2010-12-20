@@ -27,8 +27,8 @@ function shouldBeAround(a, b)
 
 var canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
-canvas.setAttribute('width', '1000');
-canvas.setAttribute('height', '1000');
+canvas.setAttribute('width', '600');
+canvas.setAttribute('height', '600');
 var ctx = canvas.getContext('2d');
 
 ctx.scale(2, 2);
@@ -115,23 +115,23 @@ shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '76');
 
 // Verify blurry shadow.
-d = ctx.getImageData(404, 210, 1, 1).data;
+d = ctx.getImageData(398, 210, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '149');
+shouldBeAround('d[3]', '200');
 
-d = ctx.getImageData(505, 250, 1, 1).data;
+d = ctx.getImageData(508, 250, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '116');
+shouldBeAround('d[3]', '49');
 
-d = ctx.getImageData(450, 205, 1, 1).data;
+d = ctx.getImageData(450, 198, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '115');
+shouldBeAround('d[3]', '199');
 
 // Verify blurry alpha shadow.
 d = ctx.getImageData(505, 450, 1, 1).data;

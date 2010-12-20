@@ -1,3 +1,25 @@
+2010-12-19  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Blur distance should not be affected by transformations
+        https://bugs.webkit.org/show_bug.cgi?id=51161
+
+        From the spec at http://dev.w3.org/html5/2dcontext/#dom-context-2d-shadowblur:
+        "The shadowBlur attribute specifies the level of the blurring effect.
+        (The units do not map to coordinate space units, and are not affected
+        by the current transformation matrix.)"
+
+        Add test to ensure that the blur radius is not affected by the CTM.
+
+        * fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * fast/canvas/canvas-scale-shadowBlur.html: Added.
+        * fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Increase
+          shadowBlur and test tolerance to ease testing and support the
+          different blurring algorithms.
+        * fast/canvas/script-tests/canvas-scale-shadowBlur.js: Added.
+        * fast/canvas/script-tests/canvas-scale-strokePath-shadow.js:
+
 2010-12-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Cameron Zwarich.

@@ -126,6 +126,7 @@ private:
     FloatPoint m_layerContextTranslation; // Translation to apply to m_layerContext for the shadow to be correctly clipped.
     bool m_shadowsIgnoreTransforms;
 
+    void adjustBlurDistance(const PlatformContext);
     void blurLayerImage(unsigned char*, const IntSize& imageSize, int stride);
     IntRect calculateLayerBoundingRect(const PlatformContext, const FloatRect& layerArea, const IntRect& clipRect);
 

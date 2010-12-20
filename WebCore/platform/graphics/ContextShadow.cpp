@@ -30,6 +30,7 @@
 #include "ContextShadow.h"
 
 #include "FloatQuad.h"
+#include <cmath>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 
@@ -167,6 +168,34 @@ void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size
             }
         }
     }
+}
+
+void ContextShadow::adjustBlurDistance(const PlatformContext context)
+{
+    // Adjust blur if we're scaling, since the radius must not be affected by transformations.
+    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+
+    if (transform.isIdentity())
+        return;
+
+    // Calculale transformed unit vectors.
+    const FloatQuad unitQuad(FloatPoint(0, 0), FloatPoint(1, 0),
+                             FloatPoint(0, 1), FloatPoint(1, 1));
+    const FloatQuad transformedUnitQuad = transform.mapQuad(unitQuad);
+
+    // Calculate X axis scale factor.
+    const FloatSize xUnitChange = transformedUnitQuad.p2() - transformedUnitQuad.p1();
+    const float xAxisScale = sqrtf(xUnitChange.width() * xUnitChange.width()
+                                   + xUnitChange.height() * xUnitChange.height());
+
+    // Calculate Y axis scale factor.
+    const FloatSize yUnitChange = transformedUnitQuad.p3() - transformedUnitQuad.p1();
+    const float yAxisScale = sqrtf(yUnitChange.width() * yUnitChange.width()
+                                   + yUnitChange.height() * yUnitChange.height());
+
+    // blurLayerImage() does not support per-axis blurring, so calculate a balanced scaling.
+    const float scale = sqrtf(xAxisScale * yAxisScale);
+    m_blurDistance = roundf(static_cast<float>(m_blurDistance) / scale);
 }
 
 IntRect ContextShadow::calculateLayerBoundingRect(const PlatformContext context, const FloatRect& layerArea, const IntRect& clipRect)

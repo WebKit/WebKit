@@ -92,6 +92,8 @@ TransformationMatrix ContextShadow::getTransformationMatrixFromContext(PlatformC
 
 PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const FloatRect& layerArea)
 {
+    adjustBlurDistance(context);
+
     double x1, x2, y1, y2;
     cairo_clip_extents(context, &x1, &y1, &x2, &y2);
     IntRect layerRect = calculateLayerBoundingRect(context, layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));

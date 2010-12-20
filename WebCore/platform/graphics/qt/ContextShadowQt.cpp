@@ -111,6 +111,9 @@ Q_GLOBAL_STATIC(ShadowBuffer, scratchShadowBuffer)
 
 PlatformContext ContextShadow::beginShadowLayer(PlatformContext p, const FloatRect& layerArea)
 {
+    // Set m_blurDistance.
+    adjustBlurDistance(p);
+
     QRect clipRect;
     if (p->hasClipping())
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
