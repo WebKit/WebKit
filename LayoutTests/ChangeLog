@@ -1,3 +1,14 @@
+2010-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed expectation results update. Added also the tests
+        failing due to the pixman rounding color issue to the same section
+        of the skipped file: bug 49964.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/repaint/text-emphasis-h-expected.txt: Added.
+        * platform/gtk/fast/repaint/text-emphasis-v-expected.txt: Added.
+        * platform/gtk/fast/text/emphasis-overlap.html: Added.
+
 2010-12-20  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] editing/selection/extend-by-character-003.html is flakey
