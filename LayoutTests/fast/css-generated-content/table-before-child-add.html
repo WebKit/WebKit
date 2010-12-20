@@ -1,0 +1,15 @@
+<style type="text/css">
+    #target::before { content:"NOT";}
+</style>
+<p>
+    Should say &ldquo;NOT TEST FAILED&rdquo;
+</p>
+<div id="not-target" style="display: table"> 
+    <div>TEST</div>
+</div> FAILED
+<script>
+    document.getElementById("not-target").id = "target";
+    document.body.offsetTop;
+    document.body.style.color = "red";
+</script>
+

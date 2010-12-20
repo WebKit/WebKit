@@ -1,3 +1,19 @@
+2010-12-20  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Pass the correct beforeChild value when adding a child to an anonymous table part.
+        https://bugs.webkit.org/show_bug.cgi?id=50932
+
+        When a "before" content child was added to an anonymous table part, it was added
+        after the last child. This patch fixes the behavior by adding it properly before
+        the first child.
+
+        Test: fast/css-generated-content/table-before-child-add.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+
 2010-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
