@@ -231,6 +231,54 @@ class CppStyleTestBase(unittest.TestCase):
                 '  [whitespace/blank_line] [3]'))
 
 
+class FunctionDetectionTest(CppStyleTestBase):
+    def perform_function_detection(self, lines, function_information):
+        clean_lines = cpp_style.CleansedLines(lines)
+        function_state = cpp_style._FunctionState(5)
+        error_collector = ErrorCollector(self.assert_)
+        cpp_style.detect_functions(clean_lines, 0, function_state, error_collector)
+        if not function_information:
+            self.assertEquals(function_state.in_a_function, False)
+            return
+        self.assertEquals(function_state.in_a_function, True)
+        self.assertEquals(function_state.current_function, function_information['name'] + '()')
+        self.assertEquals(function_state.body_start_line_number, function_information['body_start_line_number'])
+        self.assertEquals(function_state.ending_line_number, function_information['ending_line_number'])
+        self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
+
+    def test_basic_function_detection(self):
+        self.perform_function_detection(
+            ['void theTestFunctionName(int) {',
+             '}'],
+            {'name': 'theTestFunctionName',
+             'body_start_line_number': 0,
+             'ending_line_number': 1,
+             'is_declaration': False})
+
+    def test_function_declaration_detection(self):
+        self.perform_function_detection(
+            ['void aFunctionName(int);'],
+            {'name': 'aFunctionName',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True})
+
+    def test_non_functions(self):
+        # This case exposed an error because the open brace was in quotes.
+        self.perform_function_detection(
+            ['asm(',
+             '    "stmdb sp!, {r1-r3}" "\n"',
+             ');'],
+            # This isn't a function but it looks like one to our simple
+            # algorithm and that is ok.
+            {'name': 'asm',
+             'body_start_line_number': 2,
+             'ending_line_number': 2,
+             'is_declaration': True})
+
+        # Simple test case with something that is not a function.
+        self.perform_function_detection(['class Stuff;'], None)
+
 class CppStyleTest(CppStyleTestBase):
 
     # Test get line width.
@@ -2770,12 +2818,27 @@ class PassPtrTest(CppStyleTestBase):
             '{\n'
             '}',
             '')
+        self.assert_pass_ptr_check(
+            'PassRefPtr<Type1> myFunction(int)\n'
+            '{\n'
+            '}',
+            '')
+        self.assert_pass_ptr_check(
+            'PassRefPtr<Type1> myFunction();\n',
+            '')
 
     def test_pass_ref_ptr_parameter_value(self):
         self.assert_pass_ptr_check(
             'int myFunction(PassRefPtr<Type1>)\n'
             '{\n'
             '}',
+            '')
+
+    def test_ref_ptr_member_variable(self):
+        self.assert_pass_ptr_check(
+            'class Foo {'
+            '    RefPtr<Type1> m_other;\n'
+            '};\n',
             '')
 
 

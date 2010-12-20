@@ -1,3 +1,33 @@
+2010-12-20  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style should detect function declarations (and trivial functions).
+        https://bugs.webkit.org/show_bug.cgi?id=51303
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.begin): Add is_declaration and changed the line count
+        start to begin at -1 (which will keep the results consistent, since
+        the starting line number passed in is one less in this change).
+        (detect_functions): changed function detection to now catch trivial
+        functions and declarations.
+        (check_pass_ptr_usage): Don't check for Pass*Ptr on the first line
+        of the function as this may look at return values (when processing
+        a declaration).
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (FunctionDetectionTest.perform_function_detection): Basic mechanics
+        of testing the function detection.
+        (FunctionDetectionTest.test_basic_function_detection): Test a simple
+        function.
+        (FunctionDetectionTest.test_function_declaration_detection): Test a
+        declaration.
+        (FunctionDetectionTest.test_non_functions): A test case for a case
+        that caused the code to fail due to the { being in quotes.
+        (PassPtrTest.test_pass_ref_ptr_return_value): Added some more test
+        cases to help catch false alarms for return values.
+        (PassPtrTest.test_pass_ref_ptr_member_variable): Ensure that
+        we don't get false alarms for member variables either.
+
 2010-12-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

@@ -329,18 +329,21 @@ class _FunctionState(object):
         self.body_start_line_number = -1000
         self.ending_line_number = -1000
 
-    def begin(self, function_name, body_start_line_number, ending_line_number):
+    def begin(self, function_name, body_start_line_number, ending_line_number, is_declaration):
         """Start analyzing function body.
 
         Args:
             function_name: The name of the function being tracked.
+            body_start_line_number: The line number of the { or the ; for a protoype.
             ending_line_number: The line number where the function ends.
+            is_declaration: True if this is a prototype.
         """
         self.in_a_function = True
-        self.lines_in_function = 0
+        self.lines_in_function = -1  # Don't count the open brace line.
         self.current_function = function_name
         self.body_start_line_number = body_start_line_number
         self.ending_line_number = ending_line_number
+        self.is_declaration = is_declaration
 
     def count(self, line_number):
         """Count line in current function body."""
@@ -1205,12 +1208,9 @@ def detect_functions(clean_lines, line_number, function_state, error):
 
     joined_line = ''
     for start_line_number in xrange(line_number, clean_lines.num_lines()):
-        start_line = lines[start_line_number]
+        start_line = clean_lines.elided[start_line_number]
         joined_line += ' ' + start_line.lstrip()
-        if search(r'(;|})', start_line):  # Declarations and trivial functions
-            return                              # ... ignore
-
-        if search(r'{', start_line):
+        if search(r'{|;', start_line):
             # Replace template constructs with _ so that no spaces remain in the function name,
             # while keeping the column numbers of other characters the same as "line".
             line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
@@ -1228,9 +1228,13 @@ def detect_functions(clean_lines, line_number, function_state, error):
                     function += parameter_regexp.group(1)
             else:
                 function += '()'
-            open_brace_index = start_line.find('{')
-            ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
-            function_state.begin(function, start_line_number + 1, ending_line_number)
+            is_declaration = bool(search(r'^[^{]*;', start_line))
+            if is_declaration:
+                ending_line_number = start_line_number
+            else:
+                open_brace_index = start_line.find('{')
+                ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
+            function_state.begin(function, start_line_number, ending_line_number, is_declaration)
             return
 
     # No body for the function (or evidence of a non-function) was found.
@@ -1283,7 +1287,7 @@ def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
 
     lines = clean_lines.lines
     line = lines[line_number]
-    if line_number >= function_state.body_start_line_number:
+    if line_number > function_state.body_start_line_number:
         matched_pass_ptr = match(r'^\s*Pass([A-Z][A-Za-z]*)Ptr<', line)
         if matched_pass_ptr:
             type_name = 'Pass%sPtr' % matched_pass_ptr.group(1)
