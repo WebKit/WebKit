@@ -1,3 +1,21 @@
+2010-12-17  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by James Robinson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51240
+        [Chromium][Skia] Border with a color with alpha != 1 breaks webkit gradient on skia.
+
+        Even after a shader was set, old color value had been remaining and passed to Skia.
+        Then Skia refered an alpha component of that color to make pixels transparent.
+        This change invalidates existing color value when a shader is given, 
+        which means the renderer will paint shapes with gradients or patterns.
+        
+        Test: fast/gradients/gradient-after-transparent-border.html
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setStrokeShader):
+        (WebCore::PlatformContextSkia::setFillShader):
+
 2010-12-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

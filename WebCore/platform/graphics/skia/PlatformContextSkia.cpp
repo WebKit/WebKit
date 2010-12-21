@@ -497,6 +497,9 @@ void PlatformContextSkia::setStrokeThickness(float thickness)
 
 void PlatformContextSkia::setStrokeShader(SkShader* strokeShader)
 {
+    if (strokeShader)
+        m_state->m_strokeColor = Color::black;
+
     if (strokeShader != m_state->m_strokeShader) {
         SkSafeUnref(m_state->m_strokeShader);
         m_state->m_strokeShader = strokeShader;
@@ -581,6 +584,9 @@ void PlatformContextSkia::setFillRule(SkPath::FillType fr)
 
 void PlatformContextSkia::setFillShader(SkShader* fillShader)
 {
+    if (fillShader)
+        m_state->m_fillColor = Color::black;
+
     if (fillShader != m_state->m_fillShader) {
         SkSafeUnref(m_state->m_fillShader);
         m_state->m_fillShader = fillShader;
