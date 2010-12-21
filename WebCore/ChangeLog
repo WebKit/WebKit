@@ -1,3 +1,17 @@
+2010-12-21  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtWebKit doesn't build in debug on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=41930
+
+        Disable incremental linking in windows 32bit debug version as webkit is so 
+        big it fails to link incremental. 
+
+        Build fix. No new test cases added. 
+
+        * WebCore.pro:
+
 2010-12-21  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Adam Barth.

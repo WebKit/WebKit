@@ -131,6 +131,14 @@ DEFINES += BUILDING_WEBKIT
 win32-msvc2005|win32-msvc2008|wince*:{
     QMAKE_CFLAGS_RELEASE -= -GL
     QMAKE_CXXFLAGS_RELEASE -= -GL
+
+    # Disable incremental linking for windows 32bit OS debug build as WebKit is so big
+    # that linker failes to link incrementally in debug mode.
+    ARCH = $$(PROCESSOR_ARCHITECTURE)
+    WOW64ARCH = $$(PROCESSOR_ARCHITEW6432)
+    equals(ARCH, x86):{
+        isEmpty(WOW64ARCH): QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
+    }
 }
 
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
