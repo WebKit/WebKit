@@ -2,6 +2,18 @@
 
         Unreviewed build fix.
 
+        [v8] trunk/LayoutTests/fast/js/large-expressions-expected.txt fails since r74402
+        https://bugs.webkit.org/show_bug.cgi?id=51391
+
+        Udpate Chromium layout test expectations temporarily while
+        we look for a fix for the above test.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-21  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed build fix.
+
         [Chromium] media/audio-controls-rendering.html and fast/gradients/gradient-after-transparent-border.html need rebaselining
         https://bugs.webkit.org/show_bug.cgi?id=51388
 
