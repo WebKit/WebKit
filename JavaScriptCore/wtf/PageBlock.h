@@ -44,7 +44,7 @@ public:
 
     operator bool() const { return !!m_base; }
 
-private:
+protected:
     void* m_base;
     size_t m_size;
 };

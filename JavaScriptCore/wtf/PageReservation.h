@@ -98,9 +98,15 @@ public:
     {
         ASSERT(!m_committed);
         ASSERT(*this);
-        PageReservation tmp;
-        std::swap(tmp, *this);
-        OSAllocator::release(tmp.base(), tmp.size());
+
+        // Zero these before calling release; if this is *inside* allocation,
+        // we won't be able to clear then after the call to OSAllocator::release.
+        void* base = m_base;
+        size_t size = m_size;
+        m_base = 0;
+        m_size = 0;
+
+        OSAllocator::release(base, size);
     }
 
 private:
