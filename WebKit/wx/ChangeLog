@@ -1,3 +1,12 @@
+2010-12-20  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Removed a non-utf8 character from this file.
+        Looks like it was accidentally added in:
+        http://trac.webkit.org/changeset/72669
+        Which caused troubles for the contributor working on bug 51382.
+
 2010-10-28  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.
@@ -47,7 +56,7 @@
 
 2010-11-24  Patrick Gansterer  <paroga@webkit.org>
 
-        Reviewed by Csaba Osztrogon·c.
+        Reviewed by Csaba Osztrogon√°c.
 
         Remove Bakefile build system files
         https://bugs.webkit.org/show_bug.cgi?id=49983
