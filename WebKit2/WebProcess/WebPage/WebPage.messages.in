@@ -97,6 +97,10 @@ messages -> WebPage {
     DidChooseFilesForOpenPanel(Vector<WTF::String> fileURLs)
     DidCancelForOpenPanel()
 
+    # Speling and grammer.
+    UnmarkAllMisspellings()
+    UnmarkAllBadGrammar()
+
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require

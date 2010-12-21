@@ -2,6 +2,49 @@
 
         Reviewed by Sam Weinig.
 
+        Add a TextChecker class, hook up spelling and grammar toggling
+        https://bugs.webkit.org/show_bug.cgi?id=51363
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        (-[WKView toggleContinuousSpellChecking:]):
+        (-[WKView toggleGrammarChecking:]):
+        * UIProcess/TextChecker.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unmarkAllMisspellings):
+        (WebKit::WebPageProxy::unmarkAllBadGrammar):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/TextCheckerMac.mm: Added.
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::isContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::isGrammarCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        * UIProcess/qt/TextCheckerQt.cpp: Added.
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::isContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::isGrammarCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        * UIProcess/win/TextCheckerWin.cpp: Added.
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::isContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::isGrammarCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::unmarkAllMisspellings):
+        (WebKit::WebPage::unmarkAllBadGrammar):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * win/WebKit2.vcproj:
+
+2010-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Flash plug-in does not work on YouTube video page when accelerated compositing is disabled
         https://bugs.webkit.org/show_bug.cgi?id=51348
         <rdar://problem/8787667>

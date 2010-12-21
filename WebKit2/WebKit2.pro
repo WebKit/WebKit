@@ -328,6 +328,7 @@ HEADERS += \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
+    UIProcess/TextChecker.h \
     UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
@@ -555,6 +556,7 @@ SOURCES += \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaTileQt.cpp \
+    UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \

@@ -38,6 +38,7 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
+#import "TextChecker.h"
 #import "WKTextInputWindowController.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
@@ -311,17 +312,55 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
-    String commandName = commandNameForSelector([item action]);
     NSMenuItem *menuItem = (NSMenuItem *)item;
     if (![menuItem isKindOfClass:[NSMenuItem class]])
         return NO; // FIXME: We need to be able to handle other user interface elements.
+
+    SEL action = [item action];
+
+    if (action == @selector(toggleContinuousSpellChecking:)) {
+        bool checkMark = false;
+        bool returnValue = false;
+        if (TextChecker::isContinuousSpellCheckingAllowed())
+            checkMark = TextChecker::isContinuousSpellCheckingEnabled();
+        returnValue = true;
+
+        [menuItem setState:checkMark ? NSOnState : NSOffState];
+        return returnValue;
+    }
+
+    if (action == @selector(toggleGrammarChecking:)) {
+        bool checkMark = TextChecker::isGrammarCheckingEnabled();
+        [menuItem setState:checkMark ? NSOnState : NSOffState];
+        return YES;
+    }
     
+    String commandName = commandNameForSelector([item action]);
+
     if (_data->_menuItemsMap.find(commandName) == _data->_menuItemsMap.end()) {
         _data->_menuItemsMap.add(commandName, menuItem);
         _data->_page->validateMenuItem(commandName);
     }
 
     return YES;
+}
+
+- (IBAction)toggleContinuousSpellChecking:(id)sender
+{
+    bool spellCheckingEnabled = !TextChecker::isContinuousSpellCheckingEnabled();
+    TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
+
+    if (!spellCheckingEnabled)
+        _data->_page->unmarkAllMisspellings();
+}
+
+- (void)toggleGrammarChecking:(id)sender
+{
+    bool grammarCheckingEnabled = !TextChecker::isGrammarCheckingEnabled();
+    TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
+
+    if (!grammarCheckingEnabled)
+        _data->_page->unmarkAllBadGrammar();
 }
 
 // Events

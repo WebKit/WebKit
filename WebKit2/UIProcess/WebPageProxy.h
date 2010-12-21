@@ -294,6 +294,9 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
 #endif
 
+    void unmarkAllMisspellings();
+    void unmarkAllBadGrammar();
+
 private:
     WebPageProxy(WebContext*, WebPageGroup*, uint64_t pageID);
 

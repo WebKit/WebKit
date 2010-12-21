@@ -1915,6 +1915,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\TextChecker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\VisitedLinkProvider.cpp"
 				>
 			</File>
@@ -2505,6 +2509,10 @@
 					RelativePath="..\UIProcess\win\LayerBackedDrawingAreaProxyWin.cpp"
 					>
 				</File>
+    			<File
+    				RelativePath="..\UIProcess\win\TextCheckerWin.cpp"
+    				>
+    			</File>
 				<File
 					RelativePath="..\UIProcess\win\WebContextMenuProxyWin.cpp"
 					>

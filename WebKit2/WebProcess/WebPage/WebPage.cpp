@@ -1126,6 +1126,22 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
+void WebPage::unmarkAllMisspellings()
+{
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (Document* document = frame->document())
+            document->markers()->removeMarkers(DocumentMarker::Spelling);
+    }
+}
+
+void WebPage::unmarkAllBadGrammar()
+{
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (Document* document = frame->document())
+            document->markers()->removeMarkers(DocumentMarker::Grammar);
+    }
+}
+
 void WebPage::setTextForActivePopupMenu(int32_t index)
 {
     if (!m_activePopupMenu)
