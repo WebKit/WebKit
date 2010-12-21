@@ -204,6 +204,7 @@ class CommitQueueTest(QueuesTest):
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
@@ -222,6 +223,7 @@ MOCK: release_work_item: commit-queue 197
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
 MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'MOCK script error'
 MOCK: update_status: commit-queue Fail
@@ -233,7 +235,7 @@ MOCK: release_work_item: commit-queue 197
         queue = CommitQueue()
 
         def mock_run_webkit_patch(command):
-            if command == ['clean']:
+            if command == ['clean'] or command == ['update']:
                 # We want cleaning to succeed so we can error out on a step
                 # that causes the commit-queue to reject the patch.
                 return
@@ -251,7 +253,9 @@ MOCK: release_work_item: commit-queue 197
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--non-interactive', 197]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update']
+MOCK: update_status: commit-queue Updated working directory
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 197]
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
@@ -278,7 +282,9 @@ MOCK: release_work_item: commit-queue 197
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--non-interactive', 106]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update']
+MOCK: update_status: commit-queue Updated working directory
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106]
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
@@ -313,6 +319,7 @@ MOCK: release_work_item: commit-queue 106
         queue._options = Mock()
         queue._options.port = None
         expected_stderr = """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests

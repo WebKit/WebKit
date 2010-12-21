@@ -77,7 +77,9 @@ class CommitQueueTaskTest(unittest.TestCase):
         commit_queue = MockCommitQueue([])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
@@ -97,14 +99,29 @@ command_failed: failure_message='Unable to clean working directory' script_error
 """
         self._run_through_task(commit_queue, expected_stderr)
 
+    def test_update_failure(self):
+        commit_queue = MockCommitQueue([
+            None,
+            ScriptError("MOCK update failure"),
+        ])
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='197'
+run_webkit_patch: ['update']
+command_failed: failure_message='Unable to update working directory' script_error='MOCK update failure' patch='197'
+"""
+        self._run_through_task(commit_queue, expected_stderr)
+
     def test_apply_failure(self):
         commit_queue = MockCommitQueue([
+            None,
             None,
             ScriptError("MOCK apply failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_failed: failure_message='Patch does not apply' script_error='MOCK apply failure' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr, ScriptError)
@@ -113,11 +130,14 @@ command_failed: failure_message='Patch does not apply' script_error='MOCK apply 
         commit_queue = MockCommitQueue([
             None,
             None,
+            None,
             ScriptError("MOCK build failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='197'
@@ -130,12 +150,15 @@ command_passed: success_message='Able to build without patch' patch='197'
         commit_queue = MockCommitQueue([
             None,
             None,
+            None,
             ScriptError("MOCK build failure"),
             ScriptError("MOCK clean build failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='197'
@@ -149,11 +172,14 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
             None,
             None,
             None,
+            None,
             ScriptError("MOCK tests failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
@@ -172,12 +198,15 @@ command_passed: success_message='Landed patch' patch='197'
             None,
             None,
             None,
+            None,
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
@@ -195,13 +224,16 @@ command_passed: success_message='Able to pass tests without patch' patch='197'
             None,
             None,
             None,
+            None,
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
@@ -220,11 +252,14 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
             None,
             None,
             None,
+            None,
             ScriptError("MOCK land failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
-run_webkit_patch: ['apply-attachment', '--non-interactive', 197]
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_passed: success_message='Applied patch' patch='197'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'

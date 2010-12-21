@@ -1,3 +1,14 @@
+2010-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue wrongly rejects patches when it can't update itself
+        https://bugs.webkit.org/show_bug.cgi?id=46636
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-12-20  Adam Barth  <abarth@webkit.org>
 
         Move web sites to Websites directory

@@ -87,9 +87,18 @@ class CommitQueueTask(object):
         "Cleaned working directory",
         "Unable to clean working directory")
 
+    def _update(self):
+        # FIXME: Ideally the status server log message should include which revision we updated to.
+        return self._run_command([
+            "update",
+        ],
+        "Updated working directory",
+        "Unable to update working directory")
+
     def _apply(self):
         return self._run_command([
             "apply-attachment",
+            "--no-update",
             "--non-interactive",
             self._patch.id(),
         ],
@@ -186,6 +195,8 @@ class CommitQueueTask(object):
         if not self._validate():
             return False
         if not self._clean():
+            return False
+        if not self._update():
             return False
         if not self._apply():
             raise self._script_error
