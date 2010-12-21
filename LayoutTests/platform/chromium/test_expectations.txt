@@ -3255,5 +3255,3 @@ BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67662 WIN : http/tests/inspector/console-websocket-error.html = TEXT
 
-// May need V8 change?
-BUGWK51391 : fast/js/large-expressions-expected.txt = TEXT
