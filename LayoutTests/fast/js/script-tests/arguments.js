@@ -514,16 +514,16 @@ shouldBeTrue("argumentsFunctionConstructorParam(true)");
 function argumentsVarUndefined()
 {
     var arguments;
-    return arguments;
+    return String(arguments);
 }
-shouldBeUndefined("argumentsVarUndefined()");
+shouldBe("argumentsVarUndefined()", "'[object Arguments]'");
 
 function argumentsConstUndefined()
 {
     const arguments;
-    return arguments;
+    return String(arguments);
 }
-shouldBeUndefined("argumentsConstUndefined()");
+shouldBe("argumentsConstUndefined()", "'[object Arguments]'");
 
 function argumentCalleeInException() {
     try {
@@ -533,5 +533,27 @@ function argumentCalleeInException() {
     }
 }
 shouldBe("argumentCalleeInException()", "argumentCalleeInException")
+
+function shadowedArgumentsApply(arguments) {
+    return function(a){ return a; }.apply(null, arguments);
+}
+
+function shadowedArgumentsLength(arguments) {
+    return arguments.length;
+}
+
+function shadowedArgumentsCallee(arguments) {
+    return arguments.callee;
+}
+
+function shadowedArgumentsIndex(arguments) {
+    return arguments[0]
+}
+
+shouldBeTrue("shadowedArgumentsApply([true])");
+shouldBe("shadowedArgumentsLength([])", '0');
+shouldThrow("shadowedArgumentsLength()");
+shouldBeUndefined("shadowedArgumentsCallee([])");
+shouldBeTrue("shadowedArgumentsIndex([true])");
 
 var successfullyParsed = true;

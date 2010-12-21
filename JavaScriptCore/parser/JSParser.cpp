@@ -171,7 +171,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&);
     template <bool strict, class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&, bool& usesArguments);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd);
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
     enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
@@ -235,6 +235,7 @@ private:
     struct Scope {
         Scope(JSGlobalData* globalData, bool isFunction, bool strictMode)
             : m_globalData(globalData)
+            , m_shadowsArguments(false)
             , m_usesEval(false)
             , m_needsFullActivation(false)
             , m_allowsNewDecls(true)
@@ -301,8 +302,11 @@ private:
 
         bool declareParameter(const Identifier* ident)
         {
-            bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).second && m_globalData->propertyNames->eval != *ident && m_globalData->propertyNames->arguments != *ident;
+            bool isArguments = m_globalData->propertyNames->arguments == *ident;
+            bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).second && m_globalData->propertyNames->eval != *ident && !isArguments;
             m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
+            if (isArguments)
+                m_shadowsArguments = true;
             return isValidStrictMode;
         }
         
@@ -362,9 +366,11 @@ private:
         void setStrictMode() { m_strictMode = true; }
         bool strictMode() const { return m_strictMode; }
         bool isValidStrictMode() const { return m_isValidStrictMode; }
+        bool shadowsArguments() const { return m_shadowsArguments; }
 
     private:
         JSGlobalData* m_globalData;
+        bool m_shadowsArguments : 1;
         bool m_usesEval : 1;
         bool m_needsFullActivation : 1;
         bool m_allowsNewDecls : 1;
@@ -488,7 +494,13 @@ bool JSParser::parseProgram()
         return true;
     IdentifierSet capturedVariables;
     scope->getCapturedVariables(capturedVariables);
-    m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), context.features() | (scope->strictMode() ? StrictModeFeature : 0),
+    CodeFeatures features = context.features();
+    if (scope->strictMode())
+        features |= StrictModeFeature;
+    if (scope->shadowsArguments())
+        features |= ShadowsArgumentsFeature;
+
+    m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
                                            m_lastLine, context.numConstants(), capturedVariables);
     return false;
 }
@@ -1075,10 +1087,9 @@ template <class TreeBuilder> TreeStatement JSParser::parseStatement(TreeBuilder&
     }
 }
 
-template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParameters(TreeBuilder& context, bool& usesArguments)
+template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParameters(TreeBuilder& context)
 {
     matchOrFail(IDENT);
-    usesArguments = m_globalData->propertyNames->arguments == *m_token.m_data.ident;
     failIfFalseIfStrict(declareParameter(m_token.m_data.ident));
     TreeFormalParameterList list = context.createFormalParameterList(*m_token.m_data.ident);
     TreeFormalParameterList tail = list;
@@ -1087,10 +1098,8 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
         next();
         matchOrFail(IDENT);
         const Identifier* ident = m_token.m_data.ident;
-        usesArguments |= m_globalData->propertyNames->arguments == *m_token.m_data.ident;
         failIfFalseIfStrict(declareParameter(ident));
         next();
-        usesArguments = usesArguments || m_globalData->propertyNames->arguments == *ident;
         tail = context.createFormalParameterList(tail, *ident);
     }
     return list;
@@ -1119,9 +1128,8 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     } else if (requirements == FunctionNeedsName)
         return false;
     consumeOrFail(OPENPAREN);
-    bool usesArguments = false;
     if (!match(CLOSEPAREN)) {
-        parameters = parseFormalParameters(context, usesArguments);
+        parameters = parseFormalParameters(context);
         failIfFalse(parameters);
     }
     consumeOrFail(CLOSEPAREN);
@@ -1133,8 +1141,6 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
 
     body = parseFunctionBody(context);
     failIfFalse(body);
-    if (usesArguments)
-        context.setUsesArguments(body);
     if (functionScope->strictMode() && name) {
         failIfTrue(m_globalData->propertyNames->arguments == *name);
         failIfTrue(m_globalData->propertyNames->eval == *name);

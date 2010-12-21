@@ -1,3 +1,33 @@
+2010-12-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        ASSERTION FAILED: base->index() == m_codeBlock->argumentsRegister() while loading taobao.com
+        https://bugs.webkit.org/show_bug.cgi?id=49006
+
+        This problem was caused by having a parameter named 'arguments'.
+        The fix is to treat parameters named 'arguments' as shadowing
+        the actual arguments property, and so logically turn the function
+        into one that doesn't "use" arguments.
+
+        This required a bit of fiddling in the parser to ensure we correctly
+        propagate the 'feature' of shadowing is set correctly.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+          Change assertion to an early return as we may now reference
+          a property named 'arguments' without being in a function that
+          has the ArgumentsFeature
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::declareParameter):
+        (JSC::JSParser::Scope::shadowsArguments):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionInfo):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::usesArguments):
+
 2010-12-21  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel and Darin Adler.

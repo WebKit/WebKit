@@ -58,7 +58,10 @@ namespace JSC {
     const CodeFeatures CatchFeature = 1 << 5;
     const CodeFeatures ThisFeature = 1 << 6;
     const CodeFeatures StrictModeFeature = 1 << 7;
-    const CodeFeatures AllFeatures = EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature;
+    const CodeFeatures ShadowsArgumentsFeature = 1 << 8;
+    
+    
+    const CodeFeatures AllFeatures = EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature;
 
     enum Operator {
         OpEqual,
@@ -1409,7 +1412,7 @@ namespace JSC {
         CodeFeatures features() { return m_features; }
 
         bool usesEval() const { return m_features & EvalFeature; }
-        bool usesArguments() const { return m_features & ArgumentsFeature; }
+        bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }

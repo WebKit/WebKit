@@ -1599,7 +1599,9 @@ void BytecodeGenerator::createArgumentsIfNecessary()
 {
     if (m_codeType != FunctionCode)
         return;
-    ASSERT(m_codeBlock->usesArguments());
+    
+    if (!m_codeBlock->usesArguments())
+        return;
 
     // If we're in strict mode we tear off the arguments on function
     // entry, so there's no need to check if we need to create them
