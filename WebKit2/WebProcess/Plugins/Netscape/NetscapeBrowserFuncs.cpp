@@ -415,6 +415,11 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             break;
         }
 #if PLATFORM(MAC)
+        case NPNVsupportsQuickDrawBool:
+            // We don't support the QuickDraw drawing model.
+            *(NPBool*)value = false;
+            break;
+
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.
             *(NPBool*)value = true;

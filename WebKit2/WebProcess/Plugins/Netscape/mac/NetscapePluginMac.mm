@@ -170,12 +170,13 @@ void NetscapePlugin::platformDestroy()
 {
 #ifndef NP_NO_CARBON
     if (m_eventModel == NPEventModelCarbon) {
-        // Destroy the fake Carbon window.
-        if (m_npCGContext.window)
-            DisposeWindow(static_cast<WindowRef>(m_npCGContext.window));
+        if (WindowRef window = windowRef()) {
+            // Destroy the fake Carbon window.
+            DisposeWindow(window);
 
-        ASSERT(windowMap().contains(windowRef()));
-        windowMap().remove(windowRef());
+            ASSERT(windowMap().contains(window));
+            windowMap().remove(window);
+        }
 
         // Stop the null event timer.
         m_nullEventTimer.stop();
