@@ -184,7 +184,11 @@ class CommitQueueTask(object):
 
         second_failing_tests = self._failing_tests_from_last_run()
         if first_failing_tests != second_failing_tests:
-            self._report_flaky_tests(first_failing_tests + second_failing_tests)
+            # We could report flaky tests here, but since run-webkit-tests
+            # is run with --exit-after-N-failures=1, we would need to
+            # be careful not to report constant failures as flaky due to earlier
+            # flaky test making them not fail (no results) in one of the runs.
+            # See https://bugs.webkit.org/show_bug.cgi?id=51272
             return False
 
         if self._build_and_test_without_patch():
@@ -210,6 +214,7 @@ class CommitQueueTask(object):
         # no one has set commit-queue- since we started working on the patch.)
         if not self._validate():
             return False
+        # FIXME: We should understand why the land failure occured and retry if possible.
         if not self._land():
             raise self._script_error
         return True

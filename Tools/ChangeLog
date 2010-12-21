@@ -1,3 +1,31 @@
+2010-12-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue will report constant failures as flaky if other tests flake
+        https://bugs.webkit.org/show_bug.cgi?id=51272
+
+        This patch just removes functionality and adds testing.
+        Previously we attempted to report flaky tests when we had
+        two different tests fail in a row.  However, since we stop
+        running the tests at the first failure, our code was wrong in
+        trying to determine flakiness from the incomplete runs.
+
+        Originally I posted an alternate patch:
+        https://bug-51272-attachments.webkit.org/attachment.cgi?id=77078
+        which fixed our flaky logic in this case, however it was decided
+        that that patch would be too difficult to maintain, so now
+        I'm just removing the broken logic.
+
+        This will dramatically cut-down on our flaky-test false positives
+        at the (small) cost of the queues being unable to report
+        any flakiness if the tree is very flaky.  (With at least one test
+        flaking on every run, we'll never report failures anymore.)  I think
+        this is a tradeoff worth making.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+
 2010-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
