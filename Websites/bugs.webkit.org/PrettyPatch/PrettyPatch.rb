@@ -64,20 +64,18 @@ private
     OPENSOURCE_TRAC_URL = "http://trac.webkit.org/"
 
     OPENSOURCE_DIRS = Set.new %w[
-        BugsSite
         Examples
         JavaScriptCore
         JavaScriptGlue
         LayoutTests
         PageLoadTests
-        PlanetWebKit
         SunSpider
         Tools
         WebCore
         WebKit
         WebKit2
         WebKitLibraries
-        WebKitSite
+        Websites
         autotools
         cmake
     ]

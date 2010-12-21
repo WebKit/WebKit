@@ -1,3 +1,11 @@
+2010-12-20  Adam Barth  <abarth@webkit.org>
+
+        One more tweak caused by moving the web sites around.  I had this
+        change in my patch originally, but I missed it because I had to use
+        server-side svn move commands to move the bulk of the web site files.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-12-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
