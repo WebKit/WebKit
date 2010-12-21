@@ -109,24 +109,33 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
-    // FIXME: Add assertions.
+    ASSERT(!url.isEmpty());
+    ASSERT(m_loadState == LoadStateFinished);
+    ASSERT(m_provisionalURL.isEmpty());
     m_loadState = LoadStateProvisional;
     m_provisionalURL = url;
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url)
 {
+    ASSERT(!url.isEmpty());
+    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(!m_provisionalURL.isEmpty());
     m_provisionalURL = url;
 }
 
 void WebFrameProxy::didFailProvisionalLoad()
 {
+    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(!m_provisionalURL.isEmpty());
     m_loadState = LoadStateFinished;
     m_provisionalURL = String();
 }
 
 void WebFrameProxy::didCommitLoad()
 {
+    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(!m_provisionalURL.isEmpty());
     m_loadState = LoadStateCommitted;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
@@ -135,12 +144,17 @@ void WebFrameProxy::didCommitLoad()
 
 void WebFrameProxy::didFinishLoad()
 {
-    // FIXME: Add assertions
+    ASSERT(m_loadState == LoadStateCommitted);
+    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(!m_url.isEmpty());
     m_loadState = LoadStateFinished;
 }
 
 void WebFrameProxy::didFailLoad()
 {
+    ASSERT(m_loadState == LoadStateCommitted);
+    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(!m_url.isEmpty());
     m_loadState = LoadStateFinished;
     m_title = String();
 }

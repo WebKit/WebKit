@@ -70,12 +70,12 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
 
 bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
 {
-    return archiveMIMETypes().contains(mimeType);
+    return !mimeType.isEmpty() && archiveMIMETypes().contains(mimeType);
 }
 
 PassRefPtr<Archive> ArchiveFactory::create(SharedBuffer* data, const String& mimeType)
 {
-    RawDataCreationFunction* function = archiveMIMETypes().get(mimeType);
+    RawDataCreationFunction* function = mimeType.isEmpty() ? 0 : archiveMIMETypes().get(mimeType);
     return function ? function(data) : 0;
 }
 

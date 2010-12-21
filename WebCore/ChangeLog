@@ -1,3 +1,26 @@
+2010-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Mac WebKit delivers an extra didCommit when loading web archives
+        https://bugs.webkit.org/show_bug.cgi?id=51419
+
+        Could not find a simple way to test this in WebKit1, but in WebKit2
+        it leads to an immediate failure when loading a web archive. Tested
+        that making the Mac share the same code path with other platforms
+        works fine in WebKit1.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument): Removed special case for
+        the Mac platform. Also removed the call to isArchiveMimeType since we
+        get a 0 from ArchiveFactory::create in that case.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::isArchiveMimeType): Hardened slightly by
+        adding a special case for null and empty strings, since hash tables can't
+        handle null strings.
+        (WebCore::ArchiveFactory::create): Ditto.
+
 2010-12-21  Yong Li  <yoli@rim.com>
 
         Reviewed by Adam Barth.

@@ -2201,30 +2201,16 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 #endif
-    
-    // If loading a webarchive, run through webarchive machinery
-    const String& responseMIMEType = loader->responseMIMEType();
 
-    // FIXME: Mac's FrameLoaderClient::finishedLoading() method does work that is required even with Archive loads
-    // so we still need to call it.  Other platforms should only call finishLoading for non-archive loads
-    // That work should be factored out so this #ifdef can be removed
-#if PLATFORM(MAC)
-    m_client->finishedLoading(loader);
-    if (!ArchiveFactory::isArchiveMimeType(responseMIMEType))
-        return;
-#else
-    if (!ArchiveFactory::isArchiveMimeType(responseMIMEType)) {
+    // Give archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
+    RefPtr<Archive> archive = ArchiveFactory::create(loader->mainResourceData().get(), loader->responseMIMEType());
+    if (!archive) {
         m_client->finishedLoading(loader);
         return;
     }
-#endif
-        
-    RefPtr<Archive> archive(ArchiveFactory::create(loader->mainResourceData().get(), responseMIMEType));
-    if (!archive)
-        return;
 
-    // FIXME: The remainder of this function should be in DocumentLoader.
-    
+    // FIXME: The remainder of this function should be moved to DocumentLoader.
+
     loader->addAllArchiveResources(archive.get());
 
     ArchiveResource* mainResource = archive->mainResource();
