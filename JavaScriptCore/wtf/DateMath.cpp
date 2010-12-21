@@ -1129,7 +1129,7 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.year     =  year - 1900;
     tm.isDST    =  dstOff != 0.0;
     tm.utcOffset = static_cast<long>((dstOff + utcOff) / WTF::msPerSecond);
-    tm.timeZone = NULL;
+    tm.timeZone = nullptr;
 }
 
 double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)

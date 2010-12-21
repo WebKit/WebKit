@@ -1,3 +1,14 @@
+2010-12-21  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel and Darin Adler.
+
+        Deallocate GregorianDateTime.timeZone (if allocated) when copying so that we don't leak memory.
+        https://bugs.webkit.org/show_bug.cgi?id=51367
+
+        Add forwarding header for PassOwnArrayPtr.h.
+
+        * ForwardingHeaders/wtf/PassOwnArrayPtr.h: Added.
+
 2010-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

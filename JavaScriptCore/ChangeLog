@@ -1,3 +1,20 @@
+2010-12-21  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel and Darin Adler.
+
+        Deallocate GregorianDateTime.timeZone (if allocated) when copying so that we don't leak memory.
+        https://bugs.webkit.org/show_bug.cgi?id=51367
+
+        Inspired by a patch by George Staikos.
+
+        * wtf/DateMath.cpp:
+        (JSC::msToGregorianDateTime): Modified to set timeZone to nullptr since timeZone is now
+        of type OwnPtrArray<char>.
+        * wtf/DateMath.h: Change timeZone to type OwnArrayPtr<char>; Removed destructor since it is no longer needed.
+        (JSC::GregorianDateTime::GregorianDateTime): Modified to use OwnPtrArray semantics for timeZone.
+        (JSC::GregorianDateTime::operator tm): Ditto.
+        (JSC::GregorianDateTime::copyFrom): Ditto.
+
 2010-12-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74402.
