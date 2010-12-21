@@ -1263,7 +1263,6 @@ void WebPageProxy::setStatusText(const String& text)
 
 void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::ArgumentDecoder* arguments)
 {
-
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, context());
     if (!arguments->decode(messageDecoder))
@@ -1272,6 +1271,11 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
     m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
+}
+
+void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url)
+{
+    m_uiClient.missingPluginButtonClicked(this, mimeType, url);
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)

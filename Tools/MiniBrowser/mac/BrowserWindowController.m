@@ -621,6 +621,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         runJavaScriptPrompt,
         setStatusText,
         mouseDidMoveOverElement,
+        0,          /* missingPluginButtonClicked */
         0,          /* didNotHandleKeyEvent */
         0,          /* toolbarsAreVisible */
         0,          /* setToolbarsAreVisible */

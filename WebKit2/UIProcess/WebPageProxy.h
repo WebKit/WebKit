@@ -357,6 +357,7 @@ private:
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(uint32_t modifiers, CoreIPC::ArgumentDecoder*);
+    void missingPluginButtonClicked(const String& mimeType, const String& url);
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(bool& toolbarsAreVisible);
     void setMenuBarIsVisible(bool menuBarIsVisible);

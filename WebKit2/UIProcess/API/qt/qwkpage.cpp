@@ -341,6 +341,7 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* runJavaScriptPrompt */
         0,  /* setStatusText */
         0,  /* mouseDidMoveOverElement */
+        0,  /* missingPluginButtonClicked */
         0,  /* didNotHandleKeyEvent */
         0,  /* toolbarsAreVisible */
         0,  /* setToolbarsAreVisible */

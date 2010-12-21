@@ -1,3 +1,32 @@
+2010-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Clicking missing plug-in text does not show a sheet
+        https://bugs.webkit.org/show_bug.cgi?id=51403
+
+        * UIProcess/API/C/WKPage.h:
+        Add missingPluginButtonClicked to WKPageUIClient.
+
+        * UIProcess/WebPageProxy.cpp:        
+        (WebKit::WebPageProxy::missingPluginButtonClicked):
+        Call the WebUIClient member function.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add MissingPluginButtonClicked message.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::missingPluginButtonClicked):
+        Call the WKPageUIClient callback.
+
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldMissingPluginMessageBeButton):
+        Always return true for now.
+
+        (WebKit::WebChromeClient::missingPluginButtonClicked):
+        Send a MissingPluginButtonClicked message.
+
 2010-12-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -159,6 +159,7 @@ typedef bool (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef m
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageSetStatusTextCallback)(WKPageRef page, WKStringRef text, const void *clientInfo);
 typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageMissingPluginButtonClickedCallback)(WKPageRef page, WKStringRef mimeType, WKStringRef url, const void* clientInfo);
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef bool (*WKPageGetToolbarsAreVisibleCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetToolbarsAreVisibleCallback)(WKPageRef page, bool toolbarsVisible, const void *clientInfo);
@@ -187,6 +188,7 @@ struct WKPageUIClient {
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
     WKPageSetStatusTextCallback                                         setStatusText;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
+    WKPageMissingPluginButtonClickedCallback                            missingPluginButtonClicked;
     WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
     WKPageGetToolbarsAreVisibleCallback                                 toolbarsAreVisible;
     WKPageSetToolbarsAreVisibleCallback                                 setToolbarsAreVisible;

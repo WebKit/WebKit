@@ -36,13 +36,13 @@ public:
 
     virtual void updateWidget(bool onlyCreateNonNetscapePlugins) = 0;
 
+    const String& serviceType() const { return m_serviceType; }
+    const String& url() const { return m_url; }
+
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser);
 
     bool isImageType();
-
-    const String& serviceType() const { return m_serviceType; }
-    const String& url() const { return m_url; }
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;

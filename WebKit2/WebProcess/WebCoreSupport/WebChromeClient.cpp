@@ -49,10 +49,13 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 namespace WebKit {
 
@@ -387,6 +390,22 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
 void WebChromeClient::scrollRectIntoView(const IntRect&, const ScrollView*) const
 {
     notImplemented();
+}
+
+bool WebChromeClient::shouldMissingPluginMessageBeButton() const
+{
+    // FIXME: <rdar://problem/8794397> We should only return true when there is a 
+    // missingPluginButtonClicked callback defined on the Page UI client.
+    return true;
+}
+    
+void WebChromeClient::missingPluginButtonClicked(Element* element) const
+{
+    ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag));
+
+    HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
+
+    m_page->send(Messages::WebPageProxy::MissingPluginButtonClicked(pluginElement->serviceType(), pluginElement->url()));
 }
 
 void WebChromeClient::scrollbarsModeDidChange() const
