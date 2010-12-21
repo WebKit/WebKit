@@ -205,7 +205,7 @@ public:
     bool isCommentNode() const { return getFlag(IsCommentFlag); }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
-    bool isShadowNode() const { return getFlag(IsShadowRootFlag); }
+    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     // FIXME: Eliminate all uses, fold into shadowHost.
     ContainerNode* shadowParentNode() const;
     Node* shadowAncestorNode();

@@ -1,3 +1,43 @@
+2010-12-21  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        Rename Node::isShadowNode to isShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=51060
+
+        The method gets whether the node is the root of a shadow tree;
+        renamed to reflect intent.
+
+        A simple rename--no new tests needed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        * dom/Node.cpp:
+        (WebCore::Node::shadowTreeRootNode):
+        (WebCore::Node::isInShadowTree):
+        (WebCore::eventTargetRespectingSVGTargetRules):
+        (WebCore::Node::getEventAncestors):
+        * dom/Node.h:
+        (WebCore::Node::isShadowRoot):
+        * dom/Range.cpp:
+        (WebCore::Range::checkNodeBA):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::attachInnerElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+        * svg/SVGUseElement.cpp:
+        (WebCore::ShadowTreeUpdateBlocker::while):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+
 2010-12-20  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Andreas Kling.

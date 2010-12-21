@@ -148,7 +148,7 @@ void SVGSMILElement::insertedIntoDocument()
 #ifndef NDEBUG
     // Verify we are not in <use> instance tree.
     for (ContainerNode* n = this; n; n = n->parentNode())
-        ASSERT(!n->isShadowNode());
+        ASSERT(!n->isShadowRoot());
 #endif
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
@@ -961,4 +961,3 @@ void SVGSMILElement::beginByLinkActivation()
 }
 
 #endif
-

@@ -1188,7 +1188,7 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
-            if (root->isShadowNode())
+            if (root->isShadowRoot())
                 break;
             ec = RangeException::INVALID_NODE_TYPE_ERR;
             return;

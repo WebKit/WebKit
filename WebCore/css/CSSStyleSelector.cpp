@@ -761,7 +761,7 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
     m_parentNode = e ? e->parentNode() : 0;
 
 #if ENABLE(SVG)
-    if (!m_parentNode && e && e->isSVGElement() && e->isShadowNode())
+    if (!m_parentNode && e && e->isSVGElement() && e->isShadowRoot())
         m_parentNode = e->shadowParentNode();
 #endif
 
@@ -1892,7 +1892,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
     // because its contents are not part of the formal document structure.
-    if (e->isSVGElement() && e->isShadowNode())
+    if (e->isSVGElement() && e->isShadowRoot())
         return SelectorFailsCompletely;
 #endif
 

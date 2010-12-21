@@ -4901,7 +4901,7 @@ bool RenderBlock::hasLineIfEmpty() const
     if (node()->isContentEditable() && node()->rootEditableElement() == node())
         return true;
     
-    if (node()->isShadowNode() && (node()->shadowParentNode()->hasTagName(inputTag)))
+    if (node()->isShadowRoot() && (node()->shadowParentNode()->hasTagName(inputTag)))
         return true;
     
     return false;

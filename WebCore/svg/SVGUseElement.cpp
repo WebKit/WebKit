@@ -493,12 +493,12 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // The will be expanded soon anyway - see expandUseElementsInShadowTree().
     ContainerNode* parent = parentNode();
     while (parent) {
-        if (parent->isShadowNode())
+        if (parent->isShadowRoot())
             return;
 
         parent = parent->parentNodeGuaranteedHostFree();
     }
- 
+
     SVGElement* target = 0;
     if (targetElement && targetElement->isSVGElement())
         target = static_cast<SVGElement*>(targetElement);

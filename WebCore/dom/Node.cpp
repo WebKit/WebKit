@@ -1457,7 +1457,7 @@ Node* Node::shadowTreeRootNode()
 {
     Node* root = this;
     while (root) {
-        if (root->isShadowNode())
+        if (root->isShadowRoot())
             return root;
         root = root->parentNodeGuaranteedHostFree();
     }
@@ -1467,7 +1467,7 @@ Node* Node::shadowTreeRootNode()
 bool Node::isInShadowTree()
 {
     for (Node* n = this; n; n = n->parentNode())
-        if (n->isShadowNode())
+        if (n->isShadowRoot())
             return true;
     return false;
 }
@@ -2522,7 +2522,7 @@ static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
     for (Node* n = referenceNode; n; n = n->parentNode()) {
-        if (!n->isShadowNode() || !n->isSVGElement())
+        if (!n->isShadowRoot() || !n->isSVGElement())
             continue;
 
         ContainerNode* shadowTreeParentElement = n->shadowParentNode();
@@ -2545,7 +2545,7 @@ void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* origi
     Node* ancestor = this;
     bool shouldSkipNextAncestor = false;
     while (true) {
-        if (ancestor->isShadowNode()) {
+        if (ancestor->isShadowRoot()) {
             if (behavior == StayInsideShadowDOM)
                 return;
             ancestor = ancestor->shadowParentNode();
@@ -2559,7 +2559,7 @@ void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* origi
 
 #if ENABLE(SVG)
         // Skip SVGShadowTreeRootElement.
-        shouldSkipNextAncestor = ancestor->isSVGElement() && ancestor->isShadowNode();
+        shouldSkipNextAncestor = ancestor->isSVGElement() && ancestor->isShadowRoot();
         if (shouldSkipNextAncestor)
             continue;
 #endif

@@ -104,7 +104,7 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     setInDocument();
 
     // For elements not yet in shadow DOM, add the node to the DOM normally.
-    if (!isShadowNode()) {
+    if (!isShadowRoot()) {
         // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
         //        We shouldn't be calling parser API methods outside of the parser!
         parent->deprecatedParserAddChild(this);
