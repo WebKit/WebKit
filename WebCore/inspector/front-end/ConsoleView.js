@@ -563,8 +563,12 @@ WebInspector.ConsoleView.prototype = {
     {
         function printNode(nodeId)
         {
-            if (!nodeId)
+            if (!nodeId) {
+                // Sometimes DOM is loaded after the sync message is being formatted, so we get no
+                // nodeId here. So we fall back to object formatting here.
+                this._formatobject(object, elem);
                 return;
+            }
             var treeOutline = new WebInspector.ElementsTreeOutline();
             treeOutline.showInElementsPanelEnabled = true;
             treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
@@ -573,8 +577,7 @@ WebInspector.ConsoleView.prototype = {
                 treeOutline.element.addStyleClass("single-node");
             elem.appendChild(treeOutline.element);
         }
-
-        object.pushNodeToFrontend(printNode);
+        object.pushNodeToFrontend(printNode.bind(this));
     },
 
     _formatarray: function(arr, elem)

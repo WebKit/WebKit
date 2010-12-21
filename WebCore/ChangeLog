@@ -1,5 +1,19 @@
 2010-12-20  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fall back to object formatting in case dom is not yet loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=44273
+
+        Sometimes DOM is loaded after the inline message is being formatted, so we get
+        no nodeId for it. Let us fall back to object formatting in such cases.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatnode):
+        (WebInspector.ConsoleMessage):
+
+2010-12-20  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Joseph Pecoraro.
 
         Web Inspector: cycle through tag name / attributes / new attribute on Tab.
