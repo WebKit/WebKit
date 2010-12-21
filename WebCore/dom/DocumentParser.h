@@ -91,6 +91,10 @@ public:
     void setDocumentWasLoadedAsPartOfNavigation() { m_documentWasLoadedAsPartOfNavigation = true; }
     bool documentWasLoadedAsPartOfNavigation() const { return m_documentWasLoadedAsPartOfNavigation; }
 
+    // FIXME: The names are not very accurate :(
+    virtual void suspendParsing();
+    virtual void resumeParsing();
+
 protected:
     DocumentParser(Document*);
 
