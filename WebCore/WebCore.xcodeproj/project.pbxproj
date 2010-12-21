@@ -5414,7 +5414,6 @@
 		E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
-		E13F01EB1270E10D00DFBA71 /* CookieStorage.h in Resources */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; };
 		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
@@ -22310,7 +22309,6 @@
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
-				E13F01EB1270E10D00DFBA71 /* CookieStorage.h in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
 				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
 				1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */,

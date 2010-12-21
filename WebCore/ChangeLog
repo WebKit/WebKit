@@ -1,3 +1,11 @@
+2010-12-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8757601> Don't install header files in to the Resources directory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-12-20  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
