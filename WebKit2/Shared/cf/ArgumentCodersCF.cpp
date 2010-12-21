@@ -41,6 +41,7 @@ CFTypeRef tokenNullTypeRef()
 enum CFType {
     CFArray,
     CFBoolean,
+    CFData,
     CFDictionary,
     CFNull,
     CFNumber,
@@ -62,6 +63,8 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFArray;
     if (typeID == CFBooleanGetTypeID())
         return CFBoolean;
+    if (typeID == CFDataGetTypeID())
+        return CFData;
     if (typeID == CFDictionaryGetTypeID())
         return CFDictionary;
     if (typeID == CFNullGetTypeID())
@@ -88,6 +91,9 @@ static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
         return;
     case CFBoolean:
         encode(encoder, static_cast<CFBooleanRef>(typeRef));
+        return;
+    case CFData:
+        encode(encoder, static_cast<CFDataRef>(typeRef));
         return;
     case CFDictionary:
         encode(encoder, static_cast<CFDictionaryRef>(typeRef));
@@ -131,6 +137,13 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, boolean))
             return false;
         result.adoptCF(boolean.leakRef());
+        return true;
+    }
+    case CFData: {
+        RetainPtr<CFDictionaryRef> data;
+        if (!decode(decoder, data))
+            return false;
+        result.adoptCF(data.leakRef());
         return true;
     }
     case CFDictionary: {
@@ -222,6 +235,24 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFBooleanRef>& result)
         return false;
 
     result.adoptCF(boolean ? kCFBooleanTrue : kCFBooleanFalse);
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, CFDataRef data)
+{
+    CFIndex length = CFDataGetLength(data);
+    const UInt8* bytePtr = CFDataGetBytePtr(data);
+
+    encoder->encodeBytes(bytePtr, length);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<CFDataRef>& result)
+{
+    CoreIPC::DataReference dataReference;
+    if (!decoder->decode(dataReference))
+        return false;
+
+    result.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
     return true;
 }
 

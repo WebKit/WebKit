@@ -1,5 +1,18 @@
 2010-12-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Add ArgumentCoder support for CFDataRef
+        https://bugs.webkit.org/show_bug.cgi?id=51412
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::typeFromCFTypeRef):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+
+2010-12-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Clicking missing plug-in text does not show a sheet

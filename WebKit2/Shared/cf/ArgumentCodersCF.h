@@ -41,6 +41,10 @@ bool decode(ArgumentDecoder*, RetainPtr<CFArrayRef>& result);
 void encode(ArgumentEncoder*, CFBooleanRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFBooleanRef>& result);
 
+// CFDataRef
+void encode(ArgumentEncoder*, CFDataRef);
+bool decode(ArgumentDecoder*, RetainPtr<CFDataRef>& result);
+
 // CFDictionaryRef
 void encode(ArgumentEncoder*, CFDictionaryRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDictionaryRef>& result);
