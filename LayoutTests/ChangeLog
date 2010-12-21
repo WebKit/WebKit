@@ -2,6 +2,15 @@
 
         Unreviewed build fix.
 
+        Fix line breaks in fast/gradients/gradient-after-transparent-border expectations
+        https://bugs.webkit.org/show_bug.cgi?id=51375
+
+        * fast/gradients/gradient-after-transparent-border-expected.txt:
+
+2010-12-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
         [chromium] Rebaseline inspector/console-dir-global and debugger-expand-scope
         https://bugs.webkit.org/show_bug.cgi?id=51373
 
