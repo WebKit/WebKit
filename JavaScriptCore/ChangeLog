@@ -1,3 +1,51 @@
+2010-12-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough & Oliver Hunt.
+
+        Added PageAllocationAligned, a cross-platform abstraction for memory allocations with arbitrary alignment requirements
+        https://bugs.webkit.org/show_bug.cgi?id=51359
+        
+        I think this patch fixes <rdar://problem/8107952> [5.0.1] WER crash in
+        Heap::allocateBlock (1902752929), and some other leaks and crashes as well.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Updated build files.
+
+        * runtime/AlignedMemoryAllocator.h: Removed. Supplanted by
+        PageAllocationAligned.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::addWeakGCHandle):
+        * runtime/Collector.h: Switched from AlignedMemoryAllocator to
+        PageAllocationAligned.
+
+        * runtime/GCHandle.cpp:
+        * runtime/GCHandle.h: Ditto.
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::PageAllocation): Removed aligned memory allocation
+        functions. Supplanted by PageAllocationAligned.
+
+        * wtf/PageAllocationAligned.cpp: Added.
+        (WTF::PageAllocationAligned::allocate):
+        (WTF::PageAllocationAligned::deallocate):
+        * wtf/PageAllocationAligned.h: Added.
+        (WTF::PageAllocationAligned::PageAllocationAligned): New cross-platform
+        class for doing aligned memory allocation. This class properly matches
+        allocation and deallocation library calls, fixing a long-standing bug
+        in PageAllocation.
+
+        * wtf/Platform.h: Removed some defunction VM platform defines.
+
+        * wtf/wtf.pri: Updated build files.
+
 2010-12-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

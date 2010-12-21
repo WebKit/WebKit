@@ -22,7 +22,6 @@
 #ifndef Collector_h
 #define Collector_h
 
-#include "AlignedMemoryAllocator.h"
 #include "GCHandle.h"
 #include "JSValue.h"
 #include <stddef.h>
@@ -34,6 +33,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PageAllocation.h>
+#include <wtf/PageAllocationAligned.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
@@ -64,13 +64,10 @@ namespace JSC {
     const size_t BLOCK_SIZE = 256 * 1024; // 256k
 #endif
 
-    typedef AlignedMemoryAllocator<BLOCK_SIZE> CollectorBlockAllocator;
-    typedef AlignedMemory<BLOCK_SIZE> AlignedCollectorBlock;
-
     struct CollectorHeap {
         size_t nextBlock;
         size_t nextCell;
-        AlignedCollectorBlock* blocks;
+        PageAllocationAligned* blocks;
         
         void* nextNumber;
 
@@ -191,7 +188,7 @@ namespace JSC {
         CollectorHeap m_heap;
 
         ProtectCountSet m_protectedValues;
-        WTF::Vector<AlignedMemory<WeakGCHandlePool::poolSize> > m_weakGCHandlePools;
+        WTF::Vector<PageAllocationAligned> m_weakGCHandlePools;
         WTF::Vector<WTF::Vector<ValueStringPair>* > m_tempSortingVectors;
 
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
@@ -209,10 +206,6 @@ namespace JSC {
         pthread_key_t m_currentThreadRegistrar;
 #endif
 
-        // Allocates collector blocks with correct alignment
-        CollectorBlockAllocator m_blockallocator; 
-        WeakGCHandlePool::Allocator m_weakGCHandlePoolAllocator; 
-        
         JSGlobalData* m_globalData;
     };
 

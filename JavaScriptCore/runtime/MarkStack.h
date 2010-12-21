@@ -88,7 +88,7 @@ namespace JSC {
         };
 
         static void* allocateStack(size_t size) { return OSAllocator::reserveAndCommit(size); }
-        static void releaseStack(void* addr, size_t size) { OSAllocator::release(addr, size); }
+        static void releaseStack(void* addr, size_t size) { OSAllocator::decommitAndRelease(addr, size); }
 
         static void initializePagesize();
         static size_t pageSize()

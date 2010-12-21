@@ -38,7 +38,7 @@ static inline DWORD protection(bool writable, bool executable)
         (writable ? PAGE_READWRITE : PAGE_READONLY);
 }
 
-void* OSAllocator::reserve(size_t bytes, Usage, bool writable, bool executable)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable)
 {
     void* result = VirtualAlloc(0, bytes, MEM_RESERVE, protection(writable, executable));
     if (!result)
@@ -68,18 +68,12 @@ void OSAllocator::decommit(void* address, size_t bytes)
         CRASH();
 }
 
-void OSAllocator::release(void* address, size_t bytes)
+void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 {
-#if OS(WINCE)
-    decommit(address, bytes);
-#endif
     // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
     // dwSize must be 0 if dwFreeType is MEM_RELEASE.
     bool result = VirtualFree(address, 0, MEM_RELEASE);
-
-    // FIXME: Restore this error checking once aligned allocation is fixed not
-    // to pair malloc with VirtualFree.
-    if (!result && 0)
+    if (!result)
         CRASH();
 }
 

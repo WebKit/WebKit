@@ -216,7 +216,6 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/ProfileNode.h \
 	JavaScriptCore/profiler/Profiler.cpp \
 	JavaScriptCore/profiler/Profiler.h \
-	JavaScriptCore/runtime/AlignedMemoryAllocator.h \
 	JavaScriptCore/runtime/ArgList.cpp \
 	JavaScriptCore/runtime/ArgList.h \
 	JavaScriptCore/runtime/Arguments.cpp \
@@ -477,9 +476,11 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/PageAllocation.h \
-	JavaScriptCore/wtf/PageBlock.h \
+	JavaScriptCore/wtf/PageAllocationAligned.cpp \
+	JavaScriptCore/wtf/PageAllocationAligned.h \
 	JavaScriptCore/wtf/PageReservation.h \
 	JavaScriptCore/wtf/PageBlock.cpp \
+	JavaScriptCore/wtf/PageBlock.h \
 	JavaScriptCore/wtf/PassOwnArrayPtr.h \
 	JavaScriptCore/wtf/PassOwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \

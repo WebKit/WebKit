@@ -171,9 +171,6 @@ void Heap::destroy()
 
     freeBlocks();
 
-    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
-        m_weakGCHandlePools[i].deallocate();
-
 #if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_currentThreadRegistrar) {
         int error = pthread_key_delete(m_currentThreadRegistrar);
@@ -187,13 +184,12 @@ void Heap::destroy()
         t = next;
     }
 #endif
-    m_blockallocator.destroy();
     m_globalData = 0;
 }
 
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
-    AlignedCollectorBlock allocation = m_blockallocator.allocate();
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(BLOCK_SIZE, BLOCK_SIZE, OSAllocator::JSGCHeapPages);
     CollectorBlock* block = static_cast<CollectorBlock*>(allocation.base());
     if (!block)
         CRASH();
@@ -211,12 +207,12 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     size_t numBlocks = m_heap.numBlocks;
     if (m_heap.usedBlocks == numBlocks) {
-        static const size_t maxNumBlocks = ULONG_MAX / sizeof(AlignedCollectorBlock) / GROWTH_FACTOR;
+        static const size_t maxNumBlocks = ULONG_MAX / sizeof(PageAllocationAligned) / GROWTH_FACTOR;
         if (numBlocks > maxNumBlocks)
             CRASH();
         numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
         m_heap.numBlocks = numBlocks;
-        m_heap.blocks = static_cast<AlignedCollectorBlock*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(AlignedCollectorBlock)));
+        m_heap.blocks = static_cast<PageAllocationAligned*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(PageAllocationAligned)));
     }
     m_heap.blocks[m_heap.usedBlocks++] = allocation;
 
@@ -239,7 +235,7 @@ NEVER_INLINE void Heap::freeBlock(size_t block)
 
     if (m_heap.numBlocks > MIN_ARRAY_SIZE && m_heap.usedBlocks < m_heap.numBlocks / LOW_WATER_FACTOR) {
         m_heap.numBlocks = m_heap.numBlocks / GROWTH_FACTOR; 
-        m_heap.blocks = static_cast<AlignedCollectorBlock*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(AlignedCollectorBlock)));
+        m_heap.blocks = static_cast<PageAllocationAligned*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(PageAllocationAligned)));
     }
 }
 
@@ -754,10 +750,10 @@ WeakGCHandle* Heap::addWeakGCHandle(JSCell* ptr)
         if (!weakGCHandlePool(i)->isFull())
             return weakGCHandlePool(i)->allocate(ptr);
 
-    AlignedMemory<WeakGCHandlePool::poolSize> allocation = m_weakGCHandlePoolAllocator.allocate();
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(WeakGCHandlePool::poolSize, WeakGCHandlePool::poolSize, OSAllocator::JSGCHeapPages);
     m_weakGCHandlePools.append(allocation);
 
-    WeakGCHandlePool* pool = new (allocation) WeakGCHandlePool();
+    WeakGCHandlePool* pool = new (allocation.base()) WeakGCHandlePool();
     return pool->allocate(ptr);
 }
 

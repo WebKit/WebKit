@@ -40,14 +40,53 @@ public:
         JSJITCodePages = VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY,
     };
 
-    static void* reserve(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
-    static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    // These methods are symmetric; reserveUncommitted allocates VM in an uncommitted state,
+    // releaseDecommitted should be called on a region of VM allocated by a single reservation,
+    // the memory must all currently be in a decommitted state.
+    static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void releaseDecommitted(void*, size_t);
 
+    // These methods are symmetric; tehy commit or decommit a region of VM (uncommitted VM should
+    // never be accessed, since the OS may not have attached physical memory for these regions).
+    // Clients should only call commit on uncommitted regions and decommit on committed regions.
     static void commit(void*, size_t, bool writable, bool executable);
     static void decommit(void*, size_t);
 
-    static void release(void*, size_t);
+    // These methods are symmetric; reserveAndCommit allocates VM in an committed state,
+    // decommitAndRelease should be called on a region of VM allocated by a single reservation,
+    // the memory must all currently be in a committed state.
+    static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void decommitAndRelease(void* base, size_t size);
+
+    // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than
+    // committing/decommitting the entire region additional parameters allow a subregion to be
+    // specified.
+    static void* reserveAndCommit(size_t reserveSize, size_t commitSize, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void decommitAndRelease(void* releaseBase, size_t releaseSize, void* decommitBase, size_t decommitSize);
 };
+
+inline void* OSAllocator::reserveAndCommit(size_t reserveSize, size_t commitSize, Usage usage, bool writable, bool executable)
+{
+    void* base = reserveUncommitted(reserveSize, usage, writable, executable);
+    commit(base, commitSize, writable, executable);
+    return base;
+}
+
+inline void OSAllocator::decommitAndRelease(void* releaseBase, size_t releaseSize, void* decommitBase, size_t decommitSize)
+{
+    ASSERT(decommitBase >= releaseBase && (static_cast<char*>(decommitBase) + decommitSize) <= (static_cast<char*>(releaseBase) + releaseSize));
+#if OS(WINCE)
+    // On most platforms we can actually skip this final decommit; releasing the VM will
+    // implicitly decommit any physical memory in the region. This is not true on WINCE.
+    decommit(decommitBase, decommitSize);
+#endif
+    releaseDecommitted(releaseBase, releaseSize);
+}
+
+inline void OSAllocator::decommitAndRelease(void* base, size_t size)
+{
+    decommitAndRelease(base, size, base, size);
+}
 
 } // namespace WTF
 

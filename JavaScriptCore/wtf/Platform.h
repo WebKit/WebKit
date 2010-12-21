@@ -821,13 +821,6 @@
 
 #endif
 
-#if HAVE(MMAP) || (HAVE(VIRTUALALLOC) && HAVE(ALIGNED_MALLOC))
-#define HAVE_PAGE_ALLOCATE_ALIGNED 1
-#endif
-#if HAVE(MMAP)
-#define HAVE_PAGE_ALLOCATE_AT 1
-#endif
-
 /* ENABLE macro defaults */
 
 #if PLATFORM(QT)

@@ -33,7 +33,7 @@
 
 namespace WTF {
 
-void* OSAllocator::reserve(size_t bytes, Usage usage, bool writable, bool executable)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable)
 {
     void* result = reserveAndCommit(bytes, usage, writable, executable);
 #if HAVE(MADV_FREE_REUSE)
@@ -111,7 +111,7 @@ void OSAllocator::decommit(void* address, size_t bytes)
 #endif
 }
 
-void OSAllocator::release(void* address, size_t bytes)
+void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 {
     int result = munmap(address, bytes);
     if (result == -1)

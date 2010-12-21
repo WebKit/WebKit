@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-void* OSAllocator::reserve(size_t, Usage, bool, bool)
+void* OSAllocator::reserveUncommitted(size_t, Usage, bool, bool)
 {
     return fastMalloc(bytes);
 }
@@ -48,7 +48,7 @@ void OSAllocator::decommit(void*, size_t)
 {
 }
 
-void OSAllocator::release(void* address, size_t)
+void OSAllocator::releaseDecommitted(void* address, size_t)
 {
     fastFree(address);
 }

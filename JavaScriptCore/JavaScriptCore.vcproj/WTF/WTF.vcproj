@@ -701,7 +701,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\PageBlock.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\PageAllocation.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PageAllocationAligned.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PageAllocationAligned.h"
 			>
 		</File>
 		<File

@@ -171,6 +171,7 @@ SET(JavaScriptCore_SOURCES
     yarr/RegexJIT.cpp
 
     wtf/DateMath.cpp
+    wtf/PageAllocationAligned.cpp
     wtf/PageBlock.cpp
 )
 SET(JavaScriptCore_HEADERS )

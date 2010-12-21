@@ -77,47 +77,35 @@ namespace WTF {
     Callers may also optinally provide a flag indicating the usage (for use by
     system memory usage tracking tools, where implemented), and boolean values
     specifying the required protection (defaulting to writable, non-executable).
-
-    Where HAVE(PAGE_ALLOCATE_ALIGNED) is available memory may also be allocated
-    with a specified alignment.  PageAllocation::allocateAligned requires that the
-    size is a power of two that is >= system page size.
 */
 
 class PageAllocation : private PageBlock {
 public:
+    PageAllocation()
+    {
+    }
+
+    using PageBlock::operator bool;
+    using PageBlock::size;
+    using PageBlock::base;
+
     static PageAllocation allocate(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
     {
         ASSERT(isPageAligned(size));
         return PageAllocation(OSAllocator::reserveAndCommit(size, usage, writable, executable), size);
     }
 
-#if HAVE(PAGE_ALLOCATE_ALIGNED)
-    static PageAllocation allocateAligned(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage)
-    {
-        ASSERT(isPageAligned(size));
-        ASSERT(isPowerOfTwo(size));
-        return systemAllocateAligned(size, usage);
-    }
-#endif
-
-    PageAllocation();
-
-    using PageBlock::operator bool;
-    using PageBlock::base;
-    using PageBlock::size;
-
     void deallocate()
     {
-        ASSERT(*this);
+        // Clear base & size before calling release; if this is *inside* allocation
+        // then we won't be able to clear then after deallocating the memory.
+        PageAllocation tmp;
+        std::swap(tmp, *this);
 
-        // Zero these before calling release; if this is *inside* allocation,
-        // we won't be able to clear then after the call to OSAllocator::release.
-        void* base = m_base;
-        size_t size = m_size;
-        m_base = 0;
-        m_size = 0;
+        ASSERT(tmp);
+        ASSERT(!*this);
 
-        OSAllocator::release(base, size);
+        OSAllocator::decommitAndRelease(tmp.base(), tmp.size());
     }
 
 private:
@@ -125,81 +113,9 @@ private:
         : PageBlock(base, size)
     {
     }
-
-#if HAVE(PAGE_ALLOCATE_ALIGNED)
-    static PageAllocation systemAllocateAligned(size_t, OSAllocator::Usage);
-#endif
 };
 
-inline PageAllocation::PageAllocation()
-    : PageBlock()
-{
-}
-
-
-#if HAVE(MMAP)
-
-inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAllocator::Usage usage)
-{
-#if OS(DARWIN)
-    vm_address_t address = 0;
-    int flags = VM_FLAGS_ANYWHERE;
-    if (usage != -1)
-        flags |= usage;
-    vm_map(current_task(), &address, size, (size - 1), flags, MEMORY_OBJECT_NULL, 0, FALSE, PROT_READ | PROT_WRITE, PROT_READ | PROT_WRITE | PROT_EXEC, VM_INHERIT_DEFAULT);
-    return PageAllocation(reinterpret_cast<void*>(address), size);
-#elif HAVE(POSIX_MEMALIGN)
-    void* address;
-    posix_memalign(&address, size, size);
-    return PageAllocation(address, size);
-#else
-    size_t extra = size - pageSize();
-
-    // Check for overflow.
-    if ((size + extra) < size)
-        return PageAllocation(0, size);
-
-#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
-    int fd = usage;
-#else
-    int fd = -1;
-#endif
-    void* mmapResult = mmap(0, size + extra, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, fd, 0);
-    if (mmapResult == MAP_FAILED)
-        return PageAllocation(0, size);
-    uintptr_t address = reinterpret_cast<uintptr_t>(mmapResult);
-
-    size_t adjust = 0;
-    if ((address & (size - 1)))
-        adjust = size - (address & (size - 1));
-    if (adjust > 0)
-        munmap(reinterpret_cast<char*>(address), adjust);
-    if (adjust < extra)
-        munmap(reinterpret_cast<char*>(address + adjust + size), extra - adjust);
-    address += adjust;
-
-    return PageAllocation(reinterpret_cast<void*>(address), size);
-#endif
-}
-
-#elif HAVE(VIRTUALALLOC)
-
-#if HAVE(ALIGNED_MALLOC)
-inline PageAllocation PageAllocation::systemAllocateAligned(size_t size, OSAllocator::Usage usage)
-{
-#if COMPILER(MINGW) && !COMPILER(MINGW64)
-    void* address = __mingw_aligned_malloc(size, size);
-#else
-    void* address = _aligned_malloc(size, size);
-#endif
-    memset(address, 0, size);
-    return PageAllocation(address, size);
-}
-#endif
-
-#endif
-
-}
+} // namespace WTF
 
 using WTF::PageAllocation;
 

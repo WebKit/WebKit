@@ -83,9 +83,4 @@ void WeakGCHandlePool::free(WeakGCHandle* handle)
     --m_entriesSize;
 }
 
-void* WeakGCHandlePool::operator new(size_t, AlignedMemory<WeakGCHandlePool::poolSize>& allocation)
-{
-    return allocation.base();
-}
-
 }

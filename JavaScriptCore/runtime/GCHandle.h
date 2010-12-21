@@ -26,7 +26,7 @@
 #ifndef GCHandle_h
 #define GCHandle_h
 
-#include "AlignedMemoryAllocator.h"
+#include <wtf/Assertions.h>
 
 namespace JSC {
 
@@ -91,8 +91,6 @@ public:
     static const size_t poolMask = ~(poolSize - 1);
     static const size_t numPoolEntries = (poolSize - sizeof(Heap*) - 3 * sizeof(unsigned)) / sizeof(WeakGCHandle);
 
-    typedef AlignedMemoryAllocator<WeakGCHandlePool::poolSize> Allocator;
-
     WeakGCHandlePool();
 
     WeakGCHandle* allocate(JSCell* cell);
@@ -105,8 +103,6 @@ public:
     }
 
     void update();
-
-    void* operator new(size_t, AlignedMemory<WeakGCHandlePool::poolSize>&);
 
 private:
     Heap* m_heap;

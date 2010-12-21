@@ -57,6 +57,11 @@ namespace WTF {
 class PageReservation : private PageBlock {
 public:
     PageReservation()
+        : m_writable(false)
+        , m_executable(false)
+#ifndef NDEBUG
+        , m_committed(0)
+#endif
     {
     }
     
@@ -69,6 +74,7 @@ public:
         ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
+        ASSERT(contains(start, size));
 
 #ifndef NDEBUG
         m_committed += size;
@@ -81,6 +87,7 @@ public:
         ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
+        ASSERT(contains(start, size));
 
 #ifndef NDEBUG
         m_committed -= size;
@@ -91,40 +98,40 @@ public:
     static PageReservation reserve(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
     {
         ASSERT(isPageAligned(size));
-        return PageReservation(OSAllocator::reserve(size, usage, writable, executable), size, writable, executable);
+        return PageReservation(OSAllocator::reserveUncommitted(size, usage, writable, executable), size, writable, executable);
     }
 
     void deallocate()
     {
         ASSERT(!m_committed);
-        ASSERT(*this);
 
-        // Zero these before calling release; if this is *inside* allocation,
-        // we won't be able to clear then after the call to OSAllocator::release.
-        void* base = m_base;
-        size_t size = m_size;
-        m_base = 0;
-        m_size = 0;
+        // Clear base & size before calling release; if this is *inside* allocation
+        // then we won't be able to clear then after deallocating the memory.
+        PageReservation tmp;
+        std::swap(tmp, *this);
 
-        OSAllocator::release(base, size);
+        ASSERT(tmp);
+        ASSERT(!*this);
+
+        OSAllocator::releaseDecommitted(tmp.base(), tmp.size());
     }
 
 private:
     PageReservation(void* base, size_t size, bool writable, bool executable)
         : PageBlock(base, size)
+        , m_writable(writable)
+        , m_executable(executable)
 #ifndef NDEBUG
         , m_committed(0)
 #endif
-        , m_writable(writable)
-        , m_executable(executable)
     {
     }
 
+    bool m_writable;
+    bool m_executable;
 #ifndef NDEBUG
     size_t m_committed;
 #endif
-    bool m_writable;
-    bool m_executable;
 };
 
 }
