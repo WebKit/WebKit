@@ -477,16 +477,16 @@ public:
         ASSERT(m_alternative->m_parent);
         ASSERT(m_alternative->m_parent->m_parent);
 
-        PatternDisjunction* parenthesisDisjunction = m_alternative->m_parent;
+        PatternDisjunction* parenthesesDisjunction = m_alternative->m_parent;
         m_alternative = m_alternative->m_parent->m_parent;
 
         PatternTerm& lastTerm = m_alternative->lastTerm();
         
-        unsigned numParenAlternatives = parenthesisDisjunction->m_alternatives.size();
+        unsigned numParenAlternatives = parenthesesDisjunction->m_alternatives.size();
         unsigned numBOLAnchoredAlts = 0;
         // Bubble up BOL flags
         for (unsigned i = 0; i < numParenAlternatives; i++) {
-            if (parenthesisDisjunction->m_alternatives[i]->m_startsWithBOL)
+            if (parenthesesDisjunction->m_alternatives[i]->m_startsWithBOL)
                 numBOLAnchoredAlts++;
         }
         
