@@ -2,6 +2,16 @@
 
         Unreviewed build fix.
 
+        Update the test expectations to mark these tests as timing out.
+        [Chromium] inspector/console-dir-global.html and inspector/debugger-expand-scope.html are timing out on OSX
+        https://bugs.webkit.org/show_bug.cgi?id=51398
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-21  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed build fix.
+
         Rebaseline fast/js/large-expressions.html
         [v8] trunk/LayoutTests/fast/js/large-expressions.html fails since r74402
         https://bugs.webkit.org/show_bug.cgi?id=51391

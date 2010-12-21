@@ -3255,3 +3255,5 @@ BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67662 WIN : http/tests/inspector/console-websocket-error.html = TEXT
 
+BUGWK51398 MAC : inspector/console-dir-global.html = TIMEOUT
+BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
