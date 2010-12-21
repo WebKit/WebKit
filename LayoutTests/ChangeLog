@@ -1,3 +1,15 @@
+2010-12-21  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix bug 51366: REGRESSION (r66452): Form data no longer contains
+        'Content-Type' header for files with unrecognized extensions
+        https://bugs.webkit.org/show_bug.cgi?id=51366
+
+        * http/tests/local/formdata/form-data-with-unknown-file-extension-expected.txt: Added.
+        * http/tests/local/formdata/form-data-with-unknown-file-extension.html: Added.
+        * http/tests/local/resources/file.invalid: Added.
+
 2010-12-21  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.

@@ -225,9 +225,13 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                 // We have to include the filename=".." part in the header, even if the filename is empty
                 FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
 
-                // Add the content type if it is available.
-                if (!value.blob()->type().isEmpty())
-                    FormDataBuilder::addContentTypeToMultiPartHeader(header, value.blob()->type().latin1());
+                // Add the content type if available, or "application/octet-stream" otherwise (RFC 1867).
+                String contentType;
+                if (value.blob()->type().isEmpty())
+                    contentType = "application/octet-stream";
+                else
+                    contentType = value.blob()->type();
+                FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.latin1());
             }
 
             FormDataBuilder::finishMultiPartHeader(header);
