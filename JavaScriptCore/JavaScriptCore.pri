@@ -53,7 +53,7 @@ INCLUDEPATH = \
 
 win32-*: DEFINES += _HAS_TR1=0
 
-DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
+DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
 
 # CONFIG += text_breaking_with_icu
 

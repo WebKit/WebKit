@@ -161,8 +161,6 @@ INCLUDEPATH += \
 PREFIX_HEADER = $$PWD/../WebKit2/WebKit2Prefix.h
 QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
-DEFINES += BUILDING_QT__
-
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \

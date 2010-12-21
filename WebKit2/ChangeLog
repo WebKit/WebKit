@@ -1,3 +1,13 @@
+2010-12-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Set BUILDING_QT__ consistently
+        https://bugs.webkit.org/show_bug.cgi?id=51341
+
+        * WebKit2.pro: Remove the definition of BUILDING_QT__ as it
+        is already defined in WebKit.pri.
+
 2010-12-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
