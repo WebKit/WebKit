@@ -1,5 +1,19 @@
 2010-12-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 26276 - Need a mechanism to determine stack extent
+
+        This patch adds accurate stack size calculation for:
+            DARWIN, WINDOWS, QNX, UNIX
+        We still need to fix:
+            SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
+2010-12-20  Gavin Barraclough  <barraclough@apple.com>
+
         PPC build fix; stop using std::swap on PageAllocation/PageReservation,
         this was failing on some compilers since the lack of default construction
         for the m_executable/m_writable fields meant the value being swapped may
