@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /* Chromium default media controls */
@@ -110,6 +110,13 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     font-size: 16px;
     font-weight: bold;
     color: white;
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    text-decoration: none;
 }
 
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
@@ -135,6 +142,13 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     font-size: 16px;
     font-weight: bold;
     color: white;
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    text-decoration: none;
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
