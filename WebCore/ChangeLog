@@ -1,3 +1,16 @@
+2010-12-20  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for Bug 26183 - [@font-face] font-family descriptor with multiple names should be discarded
+        https://bugs.webkit.org/show_bug.cgi?id=26183
+
+        Test: fast/css/font-face-font-family-descriptor.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFontFaceRule): Consider @font-face rule
+        invalid if its font-family descriptor has multiple (or zero) families.
+
 2010-12-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

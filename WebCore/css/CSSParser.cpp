@@ -5574,7 +5574,6 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
 CSSRule* CSSParser::createFontFaceRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
     for (unsigned i = 0; i < m_numParsedProperties; ++i) {
         CSSProperty* property = m_parsedProperties[i];
         int id = property->id();
@@ -5582,8 +5581,14 @@ CSSRule* CSSParser::createFontFaceRule()
             RefPtr<CSSValue> value = property->m_value.release();
             property->m_value = CSSValueList::createCommaSeparated();
             static_cast<CSSValueList*>(property->m_value.get())->append(value.release());
+        } else if (id == CSSPropertyFontFamily && static_cast<CSSValueList*>(property->m_value.get())->length() != 1) {
+            // Unlike font-family property, font-family descriptor in @font-face rule can take only one family name.
+            // See http://dev.w3.org/csswg/css3-fonts/#font-family-desc
+            clearProperties();
+            return 0;
         }
     }
+    RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
     rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
     clearProperties();
     CSSFontFaceRule* result = rule.get();
