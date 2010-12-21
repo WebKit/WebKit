@@ -57,7 +57,7 @@ namespace JSC {
         ParserArena& arena() { return m_arena; }
 
     private:
-        void parse(JSGlobalObject* lexicalGlobalObject, FunctionParameters*, JSParserStrictness strictness, JSParserMode mode, int* errLine, UString* errMsg);
+        void parse(JSGlobalData*, FunctionParameters*, JSParserStrictness strictness, JSParserMode mode, int* errLine, UString* errMsg);
 
         // Used to determine type of error to report.
         bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -85,7 +85,7 @@ namespace JSC {
         m_source = &source;
         if (ParsedNode::scopeIsFunction)
             lexicalGlobalObject->globalData().lexer->setIsReparsing();
-        parse(lexicalGlobalObject, parameters, strictness, ParsedNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, &errLine, &errMsg);
+        parse(&lexicalGlobalObject->globalData(), parameters, strictness, ParsedNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, &errLine, &errMsg);
 
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {

@@ -68,7 +68,7 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 class JSParser {
 public:
     JSParser(Lexer*, JSGlobalData*, FunctionParameters*, bool isStrictContext, bool isFunction, SourceProvider*);
-    bool parseProgram(JSGlobalObject*);
+    bool parseProgram();
 private:
     struct AllowInOverride {
         AllowInOverride(JSParser* parser)
@@ -295,15 +295,7 @@ private:
             ASSERT(m_strictMode);
             m_writtenVariables.add(ident->impl());
         }
-        
-        bool deleteProperty(const Identifier* ident)
-        {
-            if (m_declaredVariables.contains(ident->impl()))
-                return false;
-            m_deletedVariables.add(ident->impl());
-            return true;
-        }
-        
+
         void preventNewDecls() { m_allowsNewDecls = false; }
         bool allowsNewDecls() const { return m_allowsNewDecls; }
 
@@ -342,16 +334,7 @@ private:
                     m_writtenVariables.add(*ptr);
                 }
             }
-            if (nestedScope->m_deletedVariables.size()) {
-                IdentifierSet::iterator end = nestedScope->m_deletedVariables.end();
-                for (IdentifierSet::iterator ptr = nestedScope->m_deletedVariables.begin(); ptr != end; ++ptr) {
-                    if (nestedScope->m_declaredVariables.contains(*ptr))
-                        return false;
-                    if (m_declaredVariables.contains(*ptr))
-                        return false;
-                    m_deletedVariables.add(*ptr);
-                }
-            }
+
             return true;
         }
 
@@ -362,17 +345,6 @@ private:
                 if (!m_declaredVariables.contains(*ptr))
                     writtenVariables.add(*ptr);
             }
-        }
-
-        bool getDeletedVariables(IdentifierSet& deletedVariables)
-        {
-            IdentifierSet::iterator end = m_deletedVariables.end();
-            for (IdentifierSet::iterator ptr = m_deletedVariables.begin(); ptr != end; ++ptr) {
-                if (m_declaredVariables.contains(*ptr))
-                    return false;
-            }
-            deletedVariables.swap(m_deletedVariables);
-            return true;
         }
 
         void getCapturedVariables(IdentifierSet& capturedVariables)
@@ -407,7 +379,6 @@ private:
         IdentifierSet m_usedVariables;
         IdentifierSet m_closedVariables;
         IdentifierSet m_writtenVariables;
-        IdentifierSet m_deletedVariables;
     };
     
     typedef Vector<Scope, 10> ScopeStack;
@@ -468,20 +439,13 @@ private:
             m_scopeStack.last().declareWrite(ident);
     }
 
-    bool deleteProperty(const Identifier* ident)
-    {
-        if (!m_syntaxAlreadyValidated)
-            return m_scopeStack.last().deleteProperty(ident);
-        return true;
-    }
-    
     ScopeStack m_scopeStack;
 };
 
-int jsParse(JSGlobalObject* lexicalGlobalObject, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
+int jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
 {
-    JSParser parser(lexicalGlobalObject->globalData().lexer, &lexicalGlobalObject->globalData(), parameters, strictness == JSParseStrict, parserMode == JSParseFunctionCode, source->provider());
-    return parser.parseProgram(lexicalGlobalObject);
+    JSParser parser(globalData->lexer, globalData, parameters, strictness == JSParseStrict, parserMode == JSParseFunctionCode, source->provider());
+    return parser.parseProgram();
 }
 
 JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* parameters, bool inStrictContext, bool isFunction, SourceProvider* provider)
@@ -513,7 +477,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     m_lexer->setLastLineNumber(tokenLine());
 }
 
-bool JSParser::parseProgram(JSGlobalObject* lexicalGlobalObject)
+bool JSParser::parseProgram()
 {
     ASTBuilder context(m_globalData, m_lexer);
     if (m_lexer->isReparsing())
@@ -522,17 +486,6 @@ bool JSParser::parseProgram(JSGlobalObject* lexicalGlobalObject)
     SourceElements* sourceElements = parseSourceElements<CheckForStrictMode>(context);
     if (!sourceElements || !consume(EOFTOK))
         return true;
-    if (!m_syntaxAlreadyValidated) {
-        IdentifierSet deletedVariables;
-        if (!scope->getDeletedVariables(deletedVariables))
-            return true;
-        IdentifierSet::const_iterator end = deletedVariables.end();
-        SymbolTable& globalEnvRecord = lexicalGlobalObject->symbolTable();
-        for (IdentifierSet::const_iterator ptr = deletedVariables.begin(); ptr != end; ++ptr) {
-            if (!globalEnvRecord.get(*ptr).isNull())
-                return true;
-        }
-    }
     IdentifierSet capturedVariables;
     scope->getCapturedVariables(capturedVariables);
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), context.features() | (scope->strictMode() ? StrictModeFeature : 0),
@@ -1932,8 +1885,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
             expr = context.createVoid(expr);
             break;
         case DELETETOKEN:
-            if (strictMode() && context.isResolve(expr))
-                failIfFalse(deleteProperty(m_lastIdentifier));
+            failIfTrueIfStrict(context.isResolve(expr));
             expr = context.makeDeleteNode(expr, context.unaryTokenStackLastStart(tokenStackDepth), end, end);
             break;
         default:

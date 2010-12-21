@@ -1,3 +1,16 @@
+2010-12-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        |delete name| in strict mode code should be an early error
+        https://bugs.webkit.org/show_bug.cgi?id=50431
+
+        Add a test to ensure that |delete IDENTIFIER| is disallowed, even if
+        IDENTIFIER resolves to a deletable property.
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/script-tests/basic-strict-mode.js:
+
 2010-12-20  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

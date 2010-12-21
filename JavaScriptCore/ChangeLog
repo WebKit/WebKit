@@ -1,3 +1,24 @@
+2010-12-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        |delete name| in strict mode code should be an early error
+        https://bugs.webkit.org/show_bug.cgi?id=50431
+
+        Disallow the |delete IDENTIFIER| production in strict mode, and removed
+        a bunch of now unnecessary code.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::collectFreeVariables):
+        (JSC::jsParse):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseUnaryExpression):
+        * parser/JSParser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+
 2010-12-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Olver Hunt.

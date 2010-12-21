@@ -85,6 +85,9 @@ shouldThrow("'use strict'; '\\007';");
 shouldThrow("'\\007'; 'use strict';");
 
 var someDeclaredGlobal;
+aDeletableProperty = 'test';
+
+shouldThrow("'use strict'; delete aDeletableProperty;");
 shouldThrow("'use strict'; (function (){ delete someDeclaredGlobal;})");
 shouldThrow("(function (){ 'use strict'; delete someDeclaredGlobal;})");
 shouldBeTrue("'use strict'; if (0) { someGlobal = 'Shouldn\\'t be able to assign this.'; }; true;");
