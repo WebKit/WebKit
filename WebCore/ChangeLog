@@ -1,3 +1,13 @@
+2010-12-21  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Fix the build with USE_GSTREAMER=1
+
+        No new tests needed.
+
+        * WebCore.pro: remove nonexisting DataSourceGStreamer sources.
+
 2010-12-21  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Andreas Kling.

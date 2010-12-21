@@ -3222,7 +3222,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
     contains(DEFINES, USE_GSTREAMER=1) {
         HEADERS += \
-            platform/graphics/gstreamer/DataSourceGStreamer.h \
             platform/graphics/gstreamer/GOwnPtrGStreamer.h \
             platform/graphics/gstreamer/GStreamerGWorld.h \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
@@ -3232,7 +3231,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/PlatformVideoWindowPrivate.h \
             platform/graphics/gstreamer/ImageGStreamer.h
         SOURCES += \
-            platform/graphics/gstreamer/DataSourceGStreamer.cpp \
             platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
             platform/graphics/gstreamer/GStreamerGWorld.cpp \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp \
