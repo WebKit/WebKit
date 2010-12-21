@@ -10,3 +10,4 @@ Tests that console dumps global object with properties.
     frames : 1
     window : 1
 }
+
