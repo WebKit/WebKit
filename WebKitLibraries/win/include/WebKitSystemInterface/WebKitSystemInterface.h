@@ -158,6 +158,11 @@ WKCACFUpdateRectEnumerator* wkCACFContextCopyUpdateRectEnumerator(WKCACFContext*
 const CGRect* wkCACFUpdateRectEnumeratorNextRect(WKCACFUpdateRectEnumerator*);
 void wkCACFUpdateRectEnumeratorRelease(WKCACFUpdateRectEnumerator*);
 
+CFDictionaryRef wkCFURLRequestCreateSerializableRepresentation(CFURLRequestRef cfRequest, CFTypeRef tokenNull);
+CFURLRequestRef wkCFURLRequestCreateFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
+CFDictionaryRef wkCFURLResponseCreateSerializableRepresentation(CFURLResponseRef cfResponse, CFTypeRef tokenNull);
+CFURLResponseRef wkCFURLResponseCreateFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
+
 typedef enum {
     WKMediaUIPartFullscreenButton   = 0,
     WKMediaUIPartMuteButton,
