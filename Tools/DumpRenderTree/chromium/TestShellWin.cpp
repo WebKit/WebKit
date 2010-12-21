@@ -31,7 +31,7 @@
 #include "config.h"
 #include "TestShell.h"
 
-#include "WebThemeEngineDRT.h"
+#include "WebThemeEngineDRTWin.h"
 #include "webkit/support/webkit_support.h"
 #include <fcntl.h>
 #include <io.h>
@@ -49,7 +49,7 @@
     SIZEOF_STRUCT_WITH_SPECIFIED_LAST_MEMBER(NONCLIENTMETRICS, lfMessageFont)
 
 // Theme engine
-static WebThemeEngineDRT themeEngine;
+static WebThemeEngineDRTWin themeEngine;
 
 // Thread main to run for the thread which just tests for timeout.
 unsigned int __stdcall watchDogThread(void* arg)

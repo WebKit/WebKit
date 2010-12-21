@@ -44,15 +44,15 @@
 // choose to do so at some point.
 //
 
-#ifndef WebThemeEngineDRT_h
-#define WebThemeEngineDRT_h
+#ifndef WebThemeEngineDRTWin_h
+#define WebThemeEngineDRTWin_h
 
 #include "win/WebThemeEngine.h"
 #include <wtf/Noncopyable.h>
 
-class WebThemeEngineDRT : public WebKit::WebThemeEngine, public Noncopyable {
+class WebThemeEngineDRTWin : public WebKit::WebThemeEngine, public Noncopyable {
 public:
-    WebThemeEngineDRT() {}
+    WebThemeEngineDRTWin() {}
 
     // WebThemeEngine methods:
     virtual void paintButton(
@@ -94,4 +94,4 @@ public:
         bool determinate, double time);
 };
 
-#endif // WebThemeEngineDRT_h
+#endif // WebThemeEngineDRTWin_h

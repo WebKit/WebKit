@@ -28,16 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// WebThemeControlDRT implements the generic rendering of controls
-// needed by WebThemeEngineDRT. See the comments in that class
+// WebThemeControlDRTWin implements the generic rendering of controls
+// needed by WebThemeEngineDRTWin. See the comments in that class
 // header file for why this class is needed and used.
 //
 // This class implements a generic set of widgets using Skia. The widgets
 // are optimized for testability, not a pleasing appearance.
 //
 
-#ifndef WebThemeControlDRT_h
-#define WebThemeControlDRT_h
+#ifndef WebThemeControlDRTWin_h
+#define WebThemeControlDRTWin_h
 
 #include "skia/ext/platform_canvas.h"
 #include "third_party/skia/include/core/SkColor.h"
@@ -46,7 +46,7 @@
 // Skia forward declarations
 struct SkIRect;
 
-class WebThemeControlDRT : public Noncopyable {
+class WebThemeControlDRTWin : public Noncopyable {
 public:
     // This list of states mostly mirrors the list in WebCore/platform/ThemeTypes.h
     // but is maintained separately since that isn't public and also to minimize
@@ -121,11 +121,11 @@ public:
 
     // canvas is the canvas to draw onto, and rect gives the size of the
     // control. ctype and cstate specify the type and state of the control.
-    WebThemeControlDRT(skia::PlatformCanvas* canvas,
-                       const SkIRect& rect,
-                       Type ctype,
-                       State cstate);
-    ~WebThemeControlDRT();
+    WebThemeControlDRTWin(skia::PlatformCanvas* canvas,
+                          const SkIRect& rect,
+                          Type ctype,
+                          State cstate);
+    ~WebThemeControlDRTWin();
 
     // Draws the control.
     void draw();
@@ -200,4 +200,4 @@ private:
     const int m_height;
 };
 
-#endif // WebThemeControlDRT_h
+#endif // WebThemeControlDRTWin_h

@@ -61,10 +61,10 @@
         'conditions': [
             ['OS=="win"', {
                 'drt_files': [
-                    'chromium/WebThemeControlDRT.cpp',
-                    'chromium/WebThemeControlDRT.h',
-                    'chromium/WebThemeEngineDRT.cpp',
-                    'chromium/WebThemeEngineDRT.h',
+                    'chromium/WebThemeControlDRTWin.cpp',
+                    'chromium/WebThemeControlDRTWin.h',
+                    'chromium/WebThemeEngineDRTWin.cpp',
+                    'chromium/WebThemeEngineDRTWin.h',
                 ],
             }],
         ],

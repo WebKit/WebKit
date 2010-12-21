@@ -1,3 +1,20 @@
+2010-12-21  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Rename WebThemeEngine/ControlDRT to WebThemeEngine/ControlDRTWin
+        https://bugs.webkit.org/show_bug.cgi?id=51406 
+        
+        Rename WebThemeControlDRT to WebThemeControlDRTWin and WebThemeEngineDRT
+        to WebThemeEngineDRTWin and update references everywhere.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp: Renamed from Tools/DumpRenderTree/chromium/WebThemeControlDRT.cpp.
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h: Renamed from Tools/DumpRenderTree/chromium/WebThemeControlDRT.h.
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp: Renamed from Tools/DumpRenderTree/chromium/WebThemeEngineDRT.cpp.
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h: Renamed from Tools/DumpRenderTree/chromium/WebThemeEngineDRT.h.
+
 2010-12-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

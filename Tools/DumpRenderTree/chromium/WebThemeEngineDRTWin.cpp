@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "WebThemeEngineDRT.h"
+#include "WebThemeEngineDRTWin.h"
 
 #include "WebRect.h"
-#include "WebThemeControlDRT.h"
+#include "WebThemeControlDRTWin.h"
 #include "third_party/skia/include/core/SkRect.h"
 
 // Although all this code is generic, we include these headers
@@ -57,120 +57,120 @@ static SkIRect webRectToSkIRect(const WebRect& webRect)
 
 static void drawControl(WebCanvas* canvas,
                         const WebRect& rect,
-                        WebThemeControlDRT::Type ctype,
-                        WebThemeControlDRT::State cstate)
+                        WebThemeControlDRTWin::Type ctype,
+                        WebThemeControlDRTWin::State cstate)
 {
-    WebThemeControlDRT control(canvas, webRectToSkIRect(rect), ctype, cstate);
+    WebThemeControlDRTWin control(canvas, webRectToSkIRect(rect), ctype, cstate);
     control.draw();
 }
 
 static void drawTextField(WebCanvas* canvas,
                           const WebRect& rect,
-                          WebThemeControlDRT::Type ctype,
-                          WebThemeControlDRT::State cstate,
+                          WebThemeControlDRTWin::Type ctype,
+                          WebThemeControlDRTWin::State cstate,
                           bool drawEdges,
                           bool fillContentArea,
                           WebColor color)
 {
-    WebThemeControlDRT control(canvas, webRectToSkIRect(rect), ctype, cstate);
+    WebThemeControlDRTWin control(canvas, webRectToSkIRect(rect), ctype, cstate);
     control.drawTextField(drawEdges, fillContentArea, color);
 }
 
 static void drawProgressBar(WebCanvas* canvas,
-                            WebThemeControlDRT::Type ctype,
-                            WebThemeControlDRT::State cstate,
+                            WebThemeControlDRTWin::Type ctype,
+                            WebThemeControlDRTWin::State cstate,
                             const WebRect& barRect,
                             const WebRect& fillRect)
 {
-    WebThemeControlDRT control(canvas, webRectToSkIRect(barRect), ctype, cstate);
+    WebThemeControlDRTWin control(canvas, webRectToSkIRect(barRect), ctype, cstate);
     control.drawProgressBar(webRectToSkIRect(fillRect));
 }
 
-// WebThemeEngineDRT
+// WebThemeEngineDRTWin
 
-void WebThemeEngineDRT::paintButton(WebCanvas* canvas,
-                                    int part,
-                                    int state,
-                                    int classicState,
-                                    const WebRect& rect)
+void WebThemeEngineDRTWin::paintButton(WebCanvas* canvas,
+                                       int part,
+                                       int state,
+                                       int classicState,
+                                       const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     if (part == BP_CHECKBOX) {
         switch (state) {
         case CBS_UNCHECKEDNORMAL:
             ASSERT(classicState == dfcsNormal);
-            ctype = WebThemeControlDRT::UncheckedBoxType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::UncheckedBoxType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case CBS_UNCHECKEDHOT:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_HOT));
-            ctype = WebThemeControlDRT::UncheckedBoxType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::UncheckedBoxType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case CBS_UNCHECKEDPRESSED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::UncheckedBoxType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::UncheckedBoxType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case CBS_UNCHECKEDDISABLED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::UncheckedBoxType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::UncheckedBoxType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         case CBS_CHECKEDNORMAL:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_CHECKED));
-            ctype = WebThemeControlDRT::CheckedBoxType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::CheckedBoxType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case CBS_CHECKEDHOT:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_CHECKED | DFCS_HOT));
-            ctype = WebThemeControlDRT::CheckedBoxType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::CheckedBoxType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case CBS_CHECKEDPRESSED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_CHECKED | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::CheckedBoxType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::CheckedBoxType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case CBS_CHECKEDDISABLED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_CHECKED | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::CheckedBoxType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::CheckedBoxType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         case CBS_MIXEDNORMAL:
             // Classic theme can't represent mixed state checkbox. We assume
             // it's equivalent to unchecked.
             ASSERT(classicState == DFCS_BUTTONCHECK);
-            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case CBS_MIXEDHOT:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_HOT));
-            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case CBS_MIXEDPRESSED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case CBS_MIXEDDISABLED:
             ASSERT(classicState == (DFCS_BUTTONCHECK | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::IndeterminateCheckboxType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::IndeterminateCheckboxType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         default:
@@ -181,50 +181,50 @@ void WebThemeEngineDRT::paintButton(WebCanvas* canvas,
         switch (state) {
         case RBS_UNCHECKEDNORMAL:
             ASSERT(classicState == DFCS_BUTTONRADIO);
-            ctype = WebThemeControlDRT::UncheckedRadioType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::UncheckedRadioType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case RBS_UNCHECKEDHOT:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_HOT));
-            ctype = WebThemeControlDRT::UncheckedRadioType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::UncheckedRadioType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case RBS_UNCHECKEDPRESSED:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::UncheckedRadioType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::UncheckedRadioType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case RBS_UNCHECKEDDISABLED:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::UncheckedRadioType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::UncheckedRadioType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         case RBS_CHECKEDNORMAL:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_CHECKED));
-            ctype = WebThemeControlDRT::CheckedRadioType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::CheckedRadioType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case RBS_CHECKEDHOT:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_CHECKED | DFCS_HOT));
-            ctype = WebThemeControlDRT::CheckedRadioType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::CheckedRadioType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case RBS_CHECKEDPRESSED:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_CHECKED | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::CheckedRadioType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::CheckedRadioType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case RBS_CHECKEDDISABLED:
             ASSERT(classicState == (DFCS_BUTTONRADIO | DFCS_CHECKED | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::CheckedRadioType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::CheckedRadioType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         default:
@@ -235,32 +235,32 @@ void WebThemeEngineDRT::paintButton(WebCanvas* canvas,
         switch (state) {
         case PBS_NORMAL:
             ASSERT(classicState == DFCS_BUTTONPUSH);
-            ctype = WebThemeControlDRT::PushButtonType;
-            cstate = WebThemeControlDRT::NormalState;
+            ctype = WebThemeControlDRTWin::PushButtonType;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case PBS_HOT:
             ASSERT(classicState == (DFCS_BUTTONPUSH | DFCS_HOT));
-            ctype = WebThemeControlDRT::PushButtonType;
-            cstate = WebThemeControlDRT::HotState;
+            ctype = WebThemeControlDRTWin::PushButtonType;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case PBS_PRESSED:
             ASSERT(classicState == (DFCS_BUTTONPUSH | DFCS_PUSHED));
-            ctype = WebThemeControlDRT::PushButtonType;
-            cstate = WebThemeControlDRT::PressedState;
+            ctype = WebThemeControlDRTWin::PushButtonType;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case PBS_DISABLED:
             ASSERT(classicState == (DFCS_BUTTONPUSH | DFCS_INACTIVE));
-            ctype = WebThemeControlDRT::PushButtonType;
-            cstate = WebThemeControlDRT::DisabledState;
+            ctype = WebThemeControlDRTWin::PushButtonType;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         case PBS_DEFAULTED:
             ASSERT(classicState == DFCS_BUTTONPUSH);
-            ctype = WebThemeControlDRT::PushButtonType;
-            cstate = WebThemeControlDRT::FocusedState;
+            ctype = WebThemeControlDRTWin::PushButtonType;
+            cstate = WebThemeControlDRTWin::FocusedState;
             break;
 
         default:
@@ -275,36 +275,36 @@ void WebThemeEngineDRT::paintButton(WebCanvas* canvas,
 }
 
 
-void WebThemeEngineDRT::paintMenuList(WebCanvas* canvas,
-                                      int part,
-                                      int state,
-                                      int classicState,
-                                      const WebRect& rect)
+void WebThemeEngineDRTWin::paintMenuList(WebCanvas* canvas,
+                                         int part,
+                                         int state,
+                                         int classicState,
+                                         const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     if (CP_DROPDOWNBUTTON == part) {
-        ctype = WebThemeControlDRT::DropDownButtonType;
+        ctype = WebThemeControlDRTWin::DropDownButtonType;
         switch (state) {
         case CBXS_NORMAL:
             ASSERT(classicState == DFCS_MENUARROW);
-            cstate = WebThemeControlDRT::NormalState;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case CBXS_HOT:
             ASSERT(classicState == (DFCS_MENUARROW | DFCS_HOT));
-            cstate = WebThemeControlDRT::HoverState;
+            cstate = WebThemeControlDRTWin::HoverState;
             break;
 
         case CBXS_PRESSED:
             ASSERT(classicState == (DFCS_MENUARROW | DFCS_PUSHED));
-            cstate = WebThemeControlDRT::PressedState;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         case CBXS_DISABLED:
             ASSERT(classicState == (DFCS_MENUARROW | DFCS_INACTIVE));
-            cstate = WebThemeControlDRT::DisabledState;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         default:
@@ -318,133 +318,133 @@ void WebThemeEngineDRT::paintMenuList(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
-void WebThemeEngineDRT::paintScrollbarArrow(WebCanvas* canvas,
-                                            int state,
-                                            int classicState,
-                                            const WebRect& rect)
+void WebThemeEngineDRTWin::paintScrollbarArrow(WebCanvas* canvas,
+                                               int state,
+                                               int classicState,
+                                               const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     switch (state) {
     case ABS_UPNORMAL:
         ASSERT(classicState == DFCS_SCROLLUP);
-        ctype = WebThemeControlDRT::UpArrowType;
-        cstate = WebThemeControlDRT::NormalState;
+        ctype = WebThemeControlDRTWin::UpArrowType;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case ABS_DOWNNORMAL:
         ASSERT(classicState == DFCS_SCROLLDOWN);
-        ctype = WebThemeControlDRT::DownArrowType;
-        cstate = WebThemeControlDRT::NormalState;
+        ctype = WebThemeControlDRTWin::DownArrowType;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case ABS_LEFTNORMAL:
         ASSERT(classicState == DFCS_SCROLLLEFT);
-        ctype = WebThemeControlDRT::LeftArrowType;
-        cstate = WebThemeControlDRT::NormalState;
+        ctype = WebThemeControlDRTWin::LeftArrowType;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case ABS_RIGHTNORMAL:
         ASSERT(classicState == DFCS_SCROLLRIGHT);
-        ctype = WebThemeControlDRT::RightArrowType;
-        cstate = WebThemeControlDRT::NormalState;
+        ctype = WebThemeControlDRTWin::RightArrowType;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case ABS_UPHOT:
         ASSERT(classicState == (DFCS_SCROLLUP | DFCS_HOT));
-        ctype = WebThemeControlDRT::UpArrowType;
-        cstate = WebThemeControlDRT::HotState;
+        ctype = WebThemeControlDRTWin::UpArrowType;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case ABS_DOWNHOT:
         ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_HOT));
-        ctype = WebThemeControlDRT::DownArrowType;
-        cstate = WebThemeControlDRT::HotState;
+        ctype = WebThemeControlDRTWin::DownArrowType;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case ABS_LEFTHOT:
         ASSERT(classicState == (DFCS_SCROLLLEFT | DFCS_HOT));
-        ctype = WebThemeControlDRT::LeftArrowType;
-        cstate = WebThemeControlDRT::HotState;
+        ctype = WebThemeControlDRTWin::LeftArrowType;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case ABS_RIGHTHOT:
         ASSERT(classicState == (DFCS_SCROLLRIGHT | DFCS_HOT));
-        ctype = WebThemeControlDRT::RightArrowType;
-        cstate = WebThemeControlDRT::HotState;
+        ctype = WebThemeControlDRTWin::RightArrowType;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case ABS_UPHOVER:
         ASSERT(classicState == DFCS_SCROLLUP);
-        ctype = WebThemeControlDRT::UpArrowType;
-        cstate = WebThemeControlDRT::HoverState;
+        ctype = WebThemeControlDRTWin::UpArrowType;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case ABS_DOWNHOVER:
         ASSERT(classicState == DFCS_SCROLLDOWN);
-        ctype = WebThemeControlDRT::DownArrowType;
-        cstate = WebThemeControlDRT::HoverState;
+        ctype = WebThemeControlDRTWin::DownArrowType;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case ABS_LEFTHOVER:
         ASSERT(classicState == DFCS_SCROLLLEFT);
-        ctype = WebThemeControlDRT::LeftArrowType;
-        cstate = WebThemeControlDRT::HoverState;
+        ctype = WebThemeControlDRTWin::LeftArrowType;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case ABS_RIGHTHOVER:
         ASSERT(classicState == DFCS_SCROLLRIGHT);
-        ctype = WebThemeControlDRT::RightArrowType;
-        cstate = WebThemeControlDRT::HoverState;
+        ctype = WebThemeControlDRTWin::RightArrowType;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case ABS_UPPRESSED:
         ASSERT(classicState == (DFCS_SCROLLUP | DFCS_PUSHED | DFCS_FLAT));
-        ctype = WebThemeControlDRT::UpArrowType;
-        cstate = WebThemeControlDRT::PressedState;
+        ctype = WebThemeControlDRTWin::UpArrowType;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case ABS_DOWNPRESSED:
         ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_PUSHED | DFCS_FLAT));
-        ctype = WebThemeControlDRT::DownArrowType;
-        cstate = WebThemeControlDRT::PressedState;
+        ctype = WebThemeControlDRTWin::DownArrowType;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case ABS_LEFTPRESSED:
         ASSERT(classicState == (DFCS_SCROLLLEFT | DFCS_PUSHED | DFCS_FLAT));
-        ctype = WebThemeControlDRT::LeftArrowType;
-        cstate = WebThemeControlDRT::PressedState;
+        ctype = WebThemeControlDRTWin::LeftArrowType;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case ABS_RIGHTPRESSED:
         ASSERT(classicState == (DFCS_SCROLLRIGHT | DFCS_PUSHED | DFCS_FLAT));
-        ctype = WebThemeControlDRT::RightArrowType;
-        cstate = WebThemeControlDRT::PressedState;
+        ctype = WebThemeControlDRTWin::RightArrowType;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case ABS_UPDISABLED:
         ASSERT(classicState == (DFCS_SCROLLUP | DFCS_INACTIVE));
-        ctype = WebThemeControlDRT::UpArrowType;
-        cstate = WebThemeControlDRT::DisabledState;
+        ctype = WebThemeControlDRTWin::UpArrowType;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     case ABS_DOWNDISABLED:
         ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_INACTIVE));
-        ctype = WebThemeControlDRT::DownArrowType;
-        cstate = WebThemeControlDRT::DisabledState;
+        ctype = WebThemeControlDRTWin::DownArrowType;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     case ABS_LEFTDISABLED:
         ASSERT(classicState == (DFCS_SCROLLLEFT | DFCS_INACTIVE));
-        ctype = WebThemeControlDRT::LeftArrowType;
-        cstate = WebThemeControlDRT::DisabledState;
+        ctype = WebThemeControlDRTWin::LeftArrowType;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     case ABS_RIGHTDISABLED:
         ASSERT(classicState == (DFCS_SCROLLRIGHT | DFCS_INACTIVE));
-        ctype = WebThemeControlDRT::RightArrowType;
-        cstate = WebThemeControlDRT::DisabledState;
+        ctype = WebThemeControlDRTWin::RightArrowType;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     default:
@@ -455,30 +455,30 @@ void WebThemeEngineDRT::paintScrollbarArrow(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
-void WebThemeEngineDRT::paintScrollbarThumb(WebCanvas* canvas,
-                                            int part,
-                                            int state,
-                                            int classicState,
-                                            const WebRect& rect)
+void WebThemeEngineDRTWin::paintScrollbarThumb(WebCanvas* canvas,
+                                               int part,
+                                               int state,
+                                               int classicState,
+                                               const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     switch (part) {
     case SBP_THUMBBTNHORZ:
-        ctype = WebThemeControlDRT::HorizontalScrollThumbType;
+        ctype = WebThemeControlDRTWin::HorizontalScrollThumbType;
         break;
 
     case SBP_THUMBBTNVERT:
-        ctype = WebThemeControlDRT::VerticalScrollThumbType;
+        ctype = WebThemeControlDRTWin::VerticalScrollThumbType;
         break;
 
     case SBP_GRIPPERHORZ:
-        ctype = WebThemeControlDRT::HorizontalScrollGripType;
+        ctype = WebThemeControlDRTWin::HorizontalScrollGripType;
         break;
 
     case SBP_GRIPPERVERT:
-        ctype = WebThemeControlDRT::VerticalScrollGripType;
+        ctype = WebThemeControlDRTWin::VerticalScrollGripType;
         break;
 
     default:
@@ -489,22 +489,22 @@ void WebThemeEngineDRT::paintScrollbarThumb(WebCanvas* canvas,
     switch (state) {
     case SCRBS_NORMAL:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::NormalState;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case SCRBS_HOT:
         ASSERT(classicState == DFCS_HOT);
-        cstate = WebThemeControlDRT::HotState;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case SCRBS_HOVER:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::HoverState;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case SCRBS_PRESSED:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::PressedState;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case SCRBS_DISABLED:
@@ -519,31 +519,31 @@ void WebThemeEngineDRT::paintScrollbarThumb(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
-void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
-                                            int part,
-                                            int state,
-                                            int classicState,
-                                            const WebRect& rect,
-                                            const WebRect& alignRect)
+void WebThemeEngineDRTWin::paintScrollbarTrack(WebCanvas* canvas,
+                                               int part,
+                                               int state,
+                                               int classicState,
+                                               const WebRect& rect,
+                                               const WebRect& alignRect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     switch (part) {
     case SBP_UPPERTRACKHORZ:
-        ctype = WebThemeControlDRT::HorizontalScrollTrackBackType;
+        ctype = WebThemeControlDRTWin::HorizontalScrollTrackBackType;
         break;
 
     case SBP_LOWERTRACKHORZ:
-        ctype = WebThemeControlDRT::HorizontalScrollTrackForwardType;
+        ctype = WebThemeControlDRTWin::HorizontalScrollTrackForwardType;
         break;
 
     case SBP_UPPERTRACKVERT:
-        ctype = WebThemeControlDRT::VerticalScrollTrackBackType;
+        ctype = WebThemeControlDRTWin::VerticalScrollTrackBackType;
         break;
 
     case SBP_LOWERTRACKVERT:
-        ctype = WebThemeControlDRT::VerticalScrollTrackForwardType;
+        ctype = WebThemeControlDRTWin::VerticalScrollTrackForwardType;
         break;
 
     default:
@@ -554,7 +554,7 @@ void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
     switch (state) {
     case SCRBS_NORMAL:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::NormalState;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case SCRBS_HOT:
@@ -563,7 +563,7 @@ void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
 
     case SCRBS_HOVER:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::HoverState;
+        cstate = WebThemeControlDRTWin::HoverState;
         break;
 
     case SCRBS_PRESSED:
@@ -572,7 +572,7 @@ void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
 
     case SCRBS_DISABLED:
         ASSERT(classicState == DFCS_INACTIVE);
-        cstate = WebThemeControlDRT::DisabledState;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     default:
@@ -583,55 +583,55 @@ void WebThemeEngineDRT::paintScrollbarTrack(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
-void WebThemeEngineDRT::paintSpinButton(WebCanvas* canvas,
-                                        int part,
-                                        int state,
-                                        int classicState,
-                                        const WebRect& rect)
+void WebThemeEngineDRTWin::paintSpinButton(WebCanvas* canvas,
+                                           int part,
+                                           int state,
+                                           int classicState,
+                                           const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     if (part == SPNP_UP) {
-        ctype = WebThemeControlDRT::UpArrowType;
+        ctype = WebThemeControlDRTWin::UpArrowType;
         switch (state) {
         case UPS_NORMAL:
             ASSERT(classicState == DFCS_SCROLLUP);
-            cstate = WebThemeControlDRT::NormalState;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
         case UPS_DISABLED:
             ASSERT(classicState == (DFCS_SCROLLUP | DFCS_INACTIVE));
-            cstate = WebThemeControlDRT::DisabledState;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
         case UPS_PRESSED:
             ASSERT(classicState == (DFCS_SCROLLUP | DFCS_PUSHED));
-            cstate = WebThemeControlDRT::PressedState;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
         case UPS_HOT:
             ASSERT(classicState == (DFCS_SCROLLUP | DFCS_HOT));
-            cstate = WebThemeControlDRT::HoverState;
+            cstate = WebThemeControlDRTWin::HoverState;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
     } else if (part == SPNP_DOWN) {
-        ctype = WebThemeControlDRT::DownArrowType;
+        ctype = WebThemeControlDRTWin::DownArrowType;
         switch (state) {
         case DNS_NORMAL:
             ASSERT(classicState == DFCS_SCROLLDOWN);
-            cstate = WebThemeControlDRT::NormalState;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
         case DNS_DISABLED:
             ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_INACTIVE));
-            cstate = WebThemeControlDRT::DisabledState;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
         case DNS_PRESSED:
             ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_PUSHED));
-            cstate = WebThemeControlDRT::PressedState;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
         case DNS_HOT:
             ASSERT(classicState == (DFCS_SCROLLDOWN | DFCS_HOT));
-            cstate = WebThemeControlDRT::HoverState;
+            cstate = WebThemeControlDRTWin::HoverState;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -641,50 +641,50 @@ void WebThemeEngineDRT::paintSpinButton(WebCanvas* canvas,
     drawControl(canvas, rect, ctype, cstate);
 }
 
-void WebThemeEngineDRT::paintTextField(WebCanvas* canvas,
-                                       int part,
-                                       int state,
-                                       int classicState,
-                                       const WebRect& rect,
-                                       WebColor color,
-                                       bool fillContentArea,
-                                       bool drawEdges)
+void WebThemeEngineDRTWin::paintTextField(WebCanvas* canvas,
+                                          int part,
+                                          int state,
+                                          int classicState,
+                                          const WebRect& rect,
+                                          WebColor color,
+                                          bool fillContentArea,
+                                          bool drawEdges)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     ASSERT(EP_EDITTEXT == part);
-    ctype = WebThemeControlDRT::TextFieldType;
+    ctype = WebThemeControlDRTWin::TextFieldType;
 
     switch (state) {
     case ETS_NORMAL:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::NormalState;
+        cstate = WebThemeControlDRTWin::NormalState;
         break;
 
     case ETS_HOT:
         ASSERT(classicState == DFCS_HOT);
-        cstate = WebThemeControlDRT::HotState;
+        cstate = WebThemeControlDRTWin::HotState;
         break;
 
     case ETS_DISABLED:
         ASSERT(classicState == DFCS_INACTIVE);
-        cstate = WebThemeControlDRT::DisabledState;
+        cstate = WebThemeControlDRTWin::DisabledState;
         break;
 
     case ETS_SELECTED:
         ASSERT(classicState == DFCS_PUSHED);
-        cstate = WebThemeControlDRT::PressedState;
+        cstate = WebThemeControlDRTWin::PressedState;
         break;
 
     case ETS_FOCUSED:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::FocusedState;
+        cstate = WebThemeControlDRTWin::FocusedState;
         break;
 
     case ETS_READONLY:
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::ReadOnlyState;
+        cstate = WebThemeControlDRTWin::ReadOnlyState;
         break;
 
     default:
@@ -695,36 +695,36 @@ void WebThemeEngineDRT::paintTextField(WebCanvas* canvas,
     drawTextField(canvas, rect, ctype, cstate, drawEdges, fillContentArea, color);
 }
 
-void WebThemeEngineDRT::paintTrackbar(WebCanvas* canvas,
-                                      int part,
-                                      int state,
-                                      int classicState,
-                                      const WebRect& rect)
+void WebThemeEngineDRTWin::paintTrackbar(WebCanvas* canvas,
+                                         int part,
+                                         int state,
+                                         int classicState,
+                                         const WebRect& rect)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::UnknownType;
-    WebThemeControlDRT::State cstate = WebThemeControlDRT::UnknownState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::UnknownType;
+    WebThemeControlDRTWin::State cstate = WebThemeControlDRTWin::UnknownState;
 
     if (TKP_THUMBBOTTOM == part) {
-        ctype = WebThemeControlDRT::HorizontalSliderThumbType;
+        ctype = WebThemeControlDRTWin::HorizontalSliderThumbType;
         switch (state) {
         case TUS_NORMAL:
             ASSERT(classicState == dfcsNormal);
-            cstate = WebThemeControlDRT::NormalState;
+            cstate = WebThemeControlDRTWin::NormalState;
             break;
 
         case TUS_HOT:
             ASSERT(classicState == DFCS_HOT);
-            cstate = WebThemeControlDRT::HotState;
+            cstate = WebThemeControlDRTWin::HotState;
             break;
 
         case TUS_DISABLED:
             ASSERT(classicState == DFCS_INACTIVE);
-            cstate = WebThemeControlDRT::DisabledState;
+            cstate = WebThemeControlDRTWin::DisabledState;
             break;
 
         case TUS_PRESSED:
             ASSERT(classicState == DFCS_PUSHED);
-            cstate = WebThemeControlDRT::PressedState;
+            cstate = WebThemeControlDRTWin::PressedState;
             break;
 
         default:
@@ -732,10 +732,10 @@ void WebThemeEngineDRT::paintTrackbar(WebCanvas* canvas,
             break;
         }
     } else if (TKP_TRACK == part) {
-        ctype = WebThemeControlDRT::HorizontalSliderTrackType;
+        ctype = WebThemeControlDRTWin::HorizontalSliderTrackType;
         ASSERT(part == TUS_NORMAL);
         ASSERT(classicState == dfcsNormal);
-        cstate = WebThemeControlDRT::NormalState;
+        cstate = WebThemeControlDRTWin::NormalState;
     } else {
         ASSERT_NOT_REACHED();
     }
@@ -744,15 +744,15 @@ void WebThemeEngineDRT::paintTrackbar(WebCanvas* canvas,
 }
 
 
-void WebThemeEngineDRT::paintProgressBar(WebKit::WebCanvas* canvas,
-                                         const WebKit::WebRect& barRect,
-                                         const WebKit::WebRect& valueRect,
-                                         bool determinate,
-                                         double)
+void WebThemeEngineDRTWin::paintProgressBar(WebKit::WebCanvas* canvas,
+                                            const WebKit::WebRect& barRect,
+                                            const WebKit::WebRect& valueRect,
+                                            bool determinate,
+                                            double)
 {
-    WebThemeControlDRT::Type ctype = WebThemeControlDRT::ProgressBarType;
-    WebThemeControlDRT::State cstate = determinate ? WebThemeControlDRT::NormalState 
-                                                   : WebThemeControlDRT::IndeterminateState;
+    WebThemeControlDRTWin::Type ctype = WebThemeControlDRTWin::ProgressBarType;
+    WebThemeControlDRTWin::State cstate = determinate ? WebThemeControlDRTWin::NormalState
+                                                      : WebThemeControlDRTWin::IndeterminateState;
     drawProgressBar(canvas, ctype, cstate, barRect, valueRect);
 }
 

@@ -35,7 +35,7 @@
 //
 
 #include "config.h"
-#include "WebThemeControlDRT.h"
+#include "WebThemeControlDRTWin.h"
 
 #include "skia/ext/platform_canvas.h"
 #include "skia/ext/skia_utils_win.h"
@@ -63,13 +63,13 @@ static const SkColor bgColors[]    = {
     SkColorSetRGB(0xcc, 0xcc, 0xcc)  // Indeterminate
 };
 
-static SkIRect validate(const SkIRect& rect, WebThemeControlDRT::Type ctype)
+static SkIRect validate(const SkIRect& rect, WebThemeControlDRTWin::Type ctype)
 {
     switch (ctype) {
-    case WebThemeControlDRT::UncheckedBoxType:
-    case WebThemeControlDRT::CheckedBoxType:
-    case WebThemeControlDRT::UncheckedRadioType:
-    case WebThemeControlDRT::CheckedRadioType: {
+    case WebThemeControlDRTWin::UncheckedBoxType:
+    case WebThemeControlDRTWin::CheckedBoxType:
+    case WebThemeControlDRTWin::UncheckedRadioType:
+    case WebThemeControlDRTWin::CheckedRadioType: {
         SkIRect retval = rect;
 
         // The maximum width and height is 13.
@@ -91,12 +91,12 @@ static SkIRect validate(const SkIRect& rect, WebThemeControlDRT::Type ctype)
     }
 }
 
-// WebThemeControlDRT
+// WebThemeControlDRTWin
 
-WebThemeControlDRT::WebThemeControlDRT(PlatformCanvas* canvas,
-                                       const SkIRect& irect,
-                                       Type ctype,
-                                       State cstate)
+WebThemeControlDRTWin::WebThemeControlDRTWin(PlatformCanvas* canvas,
+                                             const SkIRect& irect,
+                                             Type ctype,
+                                             State cstate)
     : m_canvas(canvas)
     , m_irect(validate(irect, ctype))
     , m_type(ctype)
@@ -113,11 +113,11 @@ WebThemeControlDRT::WebThemeControlDRT(PlatformCanvas* canvas,
 {
 }
 
-WebThemeControlDRT::~WebThemeControlDRT()
+WebThemeControlDRTWin::~WebThemeControlDRTWin()
 {
 }
 
-void WebThemeControlDRT::box(const SkIRect& rect, SkColor fillColor)
+void WebThemeControlDRTWin::box(const SkIRect& rect, SkColor fillColor)
 {
     SkPaint paint;
 
@@ -130,7 +130,7 @@ void WebThemeControlDRT::box(const SkIRect& rect, SkColor fillColor)
     m_canvas->drawIRect(rect, paint);
 }
 
-void WebThemeControlDRT::line(int x0, int y0, int x1, int y1, SkColor color)
+void WebThemeControlDRTWin::line(int x0, int y0, int x1, int y1, SkColor color)
 {
     SkPaint paint;
     paint.setColor(color);
@@ -139,10 +139,10 @@ void WebThemeControlDRT::line(int x0, int y0, int x1, int y1, SkColor color)
                        paint);
 }
 
-void WebThemeControlDRT::triangle(int x0, int y0,
-                                  int x1, int y1,
-                                  int x2, int y2,
-                                  SkColor color)
+void WebThemeControlDRTWin::triangle(int x0, int y0,
+                                     int x1, int y1,
+                                     int x2, int y2,
+                                     SkColor color)
 {
     SkPath path;
     SkPaint paint;
@@ -161,7 +161,7 @@ void WebThemeControlDRT::triangle(int x0, int y0,
     m_canvas->drawPath(path, paint);
 }
 
-void WebThemeControlDRT::roundRect(SkColor color)
+void WebThemeControlDRTWin::roundRect(SkColor color)
 {
     SkRect rect;
     SkScalar radius = SkIntToScalar(5);
@@ -177,7 +177,7 @@ void WebThemeControlDRT::roundRect(SkColor color)
     m_canvas->drawRoundRect(rect, radius, radius, paint);
 }
 
-void WebThemeControlDRT::oval(SkColor color)
+void WebThemeControlDRTWin::oval(SkColor color)
 {
     SkRect rect;
     SkPaint paint;
@@ -192,7 +192,7 @@ void WebThemeControlDRT::oval(SkColor color)
     m_canvas->drawOval(rect, paint);
 }
 
-void WebThemeControlDRT::circle(SkScalar radius, SkColor color)
+void WebThemeControlDRTWin::circle(SkScalar radius, SkColor color)
 {
     SkScalar cy = SkIntToScalar(m_top  + m_height / 2);
     SkScalar cx = SkIntToScalar(m_left + m_width / 2);
@@ -207,12 +207,12 @@ void WebThemeControlDRT::circle(SkScalar radius, SkColor color)
     m_canvas->drawCircle(cx, cy, radius, paint);
 }
 
-void WebThemeControlDRT::nestedBoxes(int indentLeft,
-                                     int indentTop,
-                                     int indentRight,
-                                     int indentBottom,
-                                     SkColor outerColor,
-                                     SkColor innerColor)
+void WebThemeControlDRTWin::nestedBoxes(int indentLeft,
+                                        int indentTop,
+                                        int indentRight,
+                                        int indentBottom,
+                                        SkColor outerColor,
+                                        SkColor innerColor)
 {
     SkIRect lirect;
     box(m_irect, outerColor);
@@ -223,7 +223,7 @@ void WebThemeControlDRT::nestedBoxes(int indentLeft,
     box(lirect, innerColor);
 }
 
-void WebThemeControlDRT::markState()
+void WebThemeControlDRTWin::markState()
 {
     // The horizontal lines in a read only control are spaced by this amount.
     const int readOnlyLineOffset = 5;
@@ -278,7 +278,7 @@ void WebThemeControlDRT::markState()
     }
 }
 
-void WebThemeControlDRT::draw()
+void WebThemeControlDRTWin::draw()
 {
     int halfWidth = m_width / 2;
     int halfHeight = m_height / 2;
@@ -481,7 +481,7 @@ void WebThemeControlDRT::draw()
 // Because rendering a text field is dependent on input
 // parameters the other controls don't have, we render it directly
 // rather than trying to overcomplicate draw() further.
-void WebThemeControlDRT::drawTextField(bool drawEdges, bool fillContentArea, SkColor color)
+void WebThemeControlDRTWin::drawTextField(bool drawEdges, bool fillContentArea, SkColor color)
 {
     SkPaint paint;
 
@@ -501,7 +501,7 @@ void WebThemeControlDRT::drawTextField(bool drawEdges, bool fillContentArea, SkC
     m_canvas->endPlatformPaint();
 }
 
-void WebThemeControlDRT::drawProgressBar(const SkIRect& fillRect)
+void WebThemeControlDRTWin::drawProgressBar(const SkIRect& fillRect)
 {
     SkPaint paint;
 
