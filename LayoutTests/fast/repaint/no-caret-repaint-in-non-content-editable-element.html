@@ -2,6 +2,8 @@
 <head>
 <script src="resources/repaint.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitEnableCaretBrowsing", false);
 function repaintTest()
 {
     if (!window.eventSender)
