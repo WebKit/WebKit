@@ -1,3 +1,28 @@
+2010-12-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket errors should be logged to console
+        https://bugs.webkit.org/show_bug.cgi?id=40945
+
+        Test: http/tests/inspector/console-websocket-error.html
+
+        * platform/network/SocketStreamErrorBase.cpp:
+        (WebCore::SocketStreamErrorBase::compare):
+        * platform/network/SocketStreamErrorBase.h:
+        (WebCore::SocketStreamErrorBase::failingURL):
+        (WebCore::SocketStreamErrorBase::localizedDescription):
+        (WebCore::SocketStreamErrorBase::SocketStreamErrorBase):
+        * platform/network/cf/SocketStreamError.h:
+        (WebCore::SocketStreamError::SocketStreamError):
+        * platform/network/cf/SocketStreamHandle.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didFail):
+
 2010-12-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by James Robinson.

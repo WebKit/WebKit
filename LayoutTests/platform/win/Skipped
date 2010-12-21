@@ -42,6 +42,7 @@ http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
+http/tests/inspector/console-websocket-error.html
 
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html

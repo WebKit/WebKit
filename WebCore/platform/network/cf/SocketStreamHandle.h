@@ -84,6 +84,10 @@ private:
     void readStreamCallback(CFStreamEventType);
     void writeStreamCallback(CFStreamEventType);
 
+#ifndef BUILDING_ON_TIGER
+    void reportErrorToClient(CFErrorRef);
+#endif
+
     // No authentication for streams per se, but proxy may ask for credentials.
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);

@@ -32,6 +32,8 @@
 #ifndef SocketStreamErrorBase_h
 #define SocketStreamErrorBase_h
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
     class SocketStreamError;
@@ -44,6 +46,8 @@ namespace WebCore {
         bool isNull() const { return m_isNull; }
 
         int errorCode() const { return m_errorCode; }
+        const String& failingURL() const { return m_failingURL; }
+        const String& localizedDescription() const { return m_localizedDescription; }
 
         static bool compare(const SocketStreamError&, const SocketStreamError&);
 
@@ -60,7 +64,17 @@ namespace WebCore {
         {
         }
 
+        SocketStreamErrorBase(int errorCode, const String& failingURL, const String& localizedDescription)
+            : m_errorCode(errorCode)
+            , m_failingURL(failingURL)
+            , m_localizedDescription(localizedDescription)
+            , m_isNull(false)
+        {
+        }
+
         int m_errorCode;
+        String m_failingURL;
+        String m_localizedDescription;
         bool m_isNull;
     };
 

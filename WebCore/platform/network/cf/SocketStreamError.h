@@ -42,7 +42,10 @@ public:
         : SocketStreamErrorBase(errorCode)
     {
     }
-
+    SocketStreamError(int errorCode, const String& failingURL, const String& localizedDescription)
+        : SocketStreamErrorBase(errorCode, failingURL, localizedDescription)
+    {
+    }
 };
 
 }  // namespace WebCore

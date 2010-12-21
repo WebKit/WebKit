@@ -206,10 +206,20 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             break;
 }
 
-void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamError&)
+void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamError& error)
 {
     LOG(Network, "WebSocketChannel %p didFail", this);
     ASSERT(handle == m_handle || !m_handle);
+    if (m_context) {
+        String message;
+        if (error.isNull())
+            message = "WebSocket network error";
+        else if (error.localizedDescription().isNull())
+            message = makeString("WebSocket network error: error code ", String::number(error.errorCode()));
+        else
+            message = makeString("WebSocket network error: ", error.localizedDescription());
+        m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, error.failingURL());
+    }
     m_shouldDiscardReceivedData = true;
     handle->close();
 }

@@ -42,7 +42,22 @@ SocketStreamError SocketStreamErrorBase::copy() const
 
 bool SocketStreamErrorBase::compare(const SocketStreamError& a, const SocketStreamError& b)
 {
-    return a.errorCode() == b.errorCode();
+    if (a.isNull() && b.isNull())
+        return true;
+
+    if (a.isNull() || b.isNull())
+        return false;
+
+    if (a.errorCode() != b.errorCode())
+        return false;
+
+    if (a.failingURL() != b.failingURL())
+        return false;
+
+    if (a.localizedDescription() != b.localizedDescription())
+        return false;
+
+    return true;
 }
 
 }  // namespace WebCore

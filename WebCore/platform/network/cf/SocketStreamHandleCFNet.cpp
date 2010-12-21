@@ -39,6 +39,7 @@
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 #include <SystemConfiguration/SystemConfiguration.h>
@@ -530,8 +531,13 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         ASSERT_NOT_REACHED();
         break;
     case kCFStreamEventErrorOccurred: {
+#ifndef BUILDING_ON_TIGER
+        RetainPtr<CFErrorRef> error(AdoptCF, CFReadStreamCopyError(m_readStream.get()));
+        reportErrorToClient(error.get());
+#else
         CFStreamError error = CFReadStreamGetError(m_readStream.get());
         m_client->didFail(this, SocketStreamError(error.error)); // FIXME: Provide a sensible error.
+#endif
         break;
     }
     case kCFStreamEventEndEncountered:
@@ -574,8 +580,13 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
         break;
     }
     case kCFStreamEventErrorOccurred: {
+#ifndef BUILDING_ON_TIGER
+        RetainPtr<CFErrorRef> error(AdoptCF, CFWriteStreamCopyError(m_writeStream.get()));
+        reportErrorToClient(error.get());
+#else
         CFStreamError error = CFWriteStreamGetError(m_writeStream.get());
         m_client->didFail(this, SocketStreamError(error.error)); // FIXME: Provide a sensible error.
+#endif
         break;
     }
     case kCFStreamEventEndEncountered:
@@ -583,6 +594,29 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
         break;
     }
 }
+
+#ifndef BUILDING_ON_TIGER
+void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
+{
+    CFIndex errorCode = CFErrorGetCode(error);
+    String description;
+
+#if PLATFORM(MAC)
+    if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
+        const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
+        if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
+            description = makeString("OSStatus Error ", String::number(errorCode), ": ", descriptionOSStatus);
+    }
+#endif
+
+    if (description.isNull()) {
+        RetainPtr<CFStringRef> descriptionCF(AdoptCF, CFErrorCopyDescription(error));
+        description = String(descriptionCF.get());
+    }
+
+    m_client->didFail(this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));
+}
+#endif // BUILDING_ON_TIGER
 
 SocketStreamHandle::~SocketStreamHandle()
 {
