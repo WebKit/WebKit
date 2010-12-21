@@ -1,5 +1,16 @@
 2010-12-20  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed.
+
+        Update test expectations of http/tests/inspector/console-websocket-error.html
+        on Mac, and add the test to GTK's Skipped list.
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/http/tests/inspector/console-websocket-error-expected.txt: Copied from LayoutTests/platform/mac/http/tests/inspector/console-websocket-error-expected.txt.
+        * platform/mac/http/tests/inspector/console-websocket-error-expected.txt:
+
+2010-12-20  Yuta Kitamura  <yutak@chromium.org>
+
         Reviewed by Alexey Proskuryakov.
 
         WebSocket errors should be logged to console
