@@ -1,3 +1,15 @@
+2010-12-20  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add lastModifiedDate attribute to File interface per File API spec
+        https://bugs.webkit.org/show_bug.cgi?id=49895
+
+        * http/tests/local/fileapi/file-last-modified-expected.txt: Added.
+        * http/tests/local/fileapi/file-last-modified.html: Added.
+        * http/tests/local/fileapi/script-tests/file-last-modified.js: Added.
+        * http/tests/resources/file-last-modified.php: Added.
+
 2010-12-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

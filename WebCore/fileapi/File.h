@@ -60,6 +60,7 @@ public:
 
     const String& path() const { return m_path; }
     const String& name() const { return m_name; }
+    double lastModifiedDate() const;
 #if ENABLE(DIRECTORY_UPLOAD)
     // Returns the relative path of this file in the context of a directory selection.
     const String& webkitRelativePath() const { return m_relativePath; }
@@ -91,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-#endif // FileList_h
+#endif // File_h

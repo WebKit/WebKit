@@ -28,6 +28,8 @@
 
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -67,6 +69,16 @@ File::File(const String& relativePath, const String& path)
     m_name = pathGetFileName(path);
 }
 #endif
+
+double File::lastModifiedDate() const
+{
+    time_t modificationTime;
+    if (!getFileModificationTime(m_path, modificationTime))
+        return 0;
+
+    // Needs to return epoch time in milliseconds for Date.
+    return modificationTime * 1000.0;
+}
 
 unsigned long long File::size() const
 {
