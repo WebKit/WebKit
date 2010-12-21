@@ -1,3 +1,22 @@
+2010-12-20  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Qt port of geolocation, geoposition objects timestamp was in seconds
+        instead of miliseconds as per HTML5 Geolocation standards.
+        Ref: http://dev.w3.org/geo/api/spec-source.html#position_interface 
+        http://www.w3.org/TR/DOM-Level-3-Core/core.html#Core-DOMTimeStamp 
+
+        Implemented by Asheesh Srivastava.
+
+        [QT] QtWebkit geolocation's position.timestamp is not in miliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=51100
+
+        Porting code not covered in layout testing. No new tests added.
+
+        * platform/qt/GeolocationServiceQt.cpp:
+        (WebCore::GeolocationServiceQt::positionUpdated):
+
 2010-12-20  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.

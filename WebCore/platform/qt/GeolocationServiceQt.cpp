@@ -83,7 +83,13 @@ void GeolocationServiceQt::positionUpdated(const QGeoPositionInfo &geoPosition)
     RefPtr<Coordinates> coordinates = Coordinates::create(latitude, longitude, providesAltitude, altitude,
                                                           accuracy, providesAltitudeAccuracy, altitudeAccuracy,
                                                           providesHeading, heading, providesSpeed, speed);
-    m_lastPosition = Geoposition::create(coordinates.release(), geoPosition.timestamp().toTime_t());
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    m_lastPosition = Geoposition::create(coordinates.release(), geoPosition.timestamp().toMSecsSinceEpoch());
+#else
+    QDateTime timestamp = geoPosition.timestamp();
+    m_lastPosition = Geoposition::create(coordinates.release(), (timestamp.toTime_t() * 1000.00) + timestamp.time().msec());
+#endif
     positionChanged();
 }
 
