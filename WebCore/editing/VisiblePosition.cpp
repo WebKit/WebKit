@@ -183,7 +183,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 offset = box->caretRightmostOffset();
                 if (box->bidiLevel() > level) {
                     do {
-                        prevBox = box->prevLeafChild();
+                        prevBox = prevBox->prevLeafChild();
                     } while (prevBox && prevBox->bidiLevel() > level);
 
                     if (!prevBox || prevBox->bidiLevel() < level)
@@ -320,7 +320,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 offset = box->caretLeftmostOffset();
                 if (box->bidiLevel() > level) {
                     do {
-                        nextBox = box->nextLeafChild();
+                        nextBox = nextBox->nextLeafChild();
                     } while (nextBox && nextBox->bidiLevel() > level);
 
                     if (!nextBox || nextBox->bidiLevel() < level)
