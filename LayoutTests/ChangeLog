@@ -1,3 +1,15 @@
+2010-12-21  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49774
+        Need to scale translation values in matrix() by the zoom factor.
+
+        * fast/transforms/matrix-with-zoom-expected.checksum: Added.
+        * fast/transforms/matrix-with-zoom-expected.png: Added.
+        * fast/transforms/matrix-with-zoom-expected.txt: Added.
+        * fast/transforms/matrix-with-zoom.html: Added.
+
 2010-12-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
