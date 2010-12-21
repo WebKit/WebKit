@@ -1,5 +1,12 @@
 2010-12-21  Anders Carlsson  <andersca@apple.com>
 
+        Fix Snow Leopard build.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+
+2010-12-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix crash when a Carbon plug-in fails to initialize correctly
