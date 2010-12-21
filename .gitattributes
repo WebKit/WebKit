@@ -13,7 +13,7 @@ mac/*.h diff=objcppheader
 objc/*.h diff=objcppheader
 */objc/*.h diff=objcppheader
 */*/objc/*.h diff=objcppheader
-WebKitTools/WebKitLauncher/*.h diff=objcppheader
+Tools/WebKitLauncher/*.h diff=objcppheader
 
 *.vcproj eol=crlf
 *.vsprops eol=crlf
@@ -235,14 +235,10 @@ WebKitSite/blog/wp-includes/js/scriptaculous/MIT-LICENSE -crlf
 WebKitSite/blog/wp-includes/js/swfupload/plugins/swfupload.speed.js -crlf
 WebKitSite/blog/wp-includes/js/tinymce/license.txt -crlf
 WebKitSite/perf/slickspeed/frameworks/DomQuery.js -crlf
-WebKitTools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp -crlf
-WebKitTools/DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.def -crlf
-WebKitTools/DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc -crlf
-WebKitTools/FindSafari/Safari.exe.manifest -crlf
-WebKitTools/Scripts/webkitpy/mock.py -crlf
-WebKitTools/WinLauncher/WinLauncher.h -crlf
-WebKitTools/record-memory-win/main.cpp -crlf
-WebKitTools/TestResultServer/index.yaml -crlf
-WebKitTools/BuildSlaveSupport/win/kill-old-processes -crlf
-WebKitTools/MiniBrowser/win/MiniBrowser.rc -crlf
-
+Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp -crlf
+Tools/FindSafari/Safari.exe.manifest -crlf
+Tools/WinLauncher/WinLauncher.h -crlf
+Tools/record-memory-win/main.cpp -crlf
+Tools/TestResultServer/index.yaml -crlf
+Tools/BuildSlaveSupport/win/kill-old-processes -crlf
+Tools/MiniBrowser/win/MiniBrowser.rc -crlf

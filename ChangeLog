@@ -1,3 +1,12 @@
+2010-12-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update .gitattributes for WebKitTools -> Tools change
+        https://bugs.webkit.org/show_bug.cgi?id=51365
+
+        * .gitattributes: WebKitTools -> Tools rename. Removed no longer existing file references.
+
 2010-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
