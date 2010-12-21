@@ -711,6 +711,15 @@ BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
+// Shadow offset tests crash occasionally on mac debug.
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
+BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
+
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
