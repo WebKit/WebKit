@@ -31,7 +31,6 @@
 #include "GenericCallback.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
-#include "WebPageContextMenuClient.h"
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
@@ -41,8 +40,10 @@
 #include "WebHistoryClient.h"
 #include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
+#include "WebPageContextMenuClient.h"
 #include "WebPolicyClient.h"
 #include "WebPopupMenuProxy.h"
+#include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
 #include <WebCore/EditAction.h>
 #include <WebCore/Editor.h>
@@ -129,6 +130,7 @@ public:
     void initializeFormClient(const WKPageFormClient*);
     void initializeLoaderClient(const WKPageLoaderClient*);
     void initializePolicyClient(const WKPagePolicyClient*);
+    void initializeResourceLoadClient(const WKPageResourceLoadClient*);
     void initializeUIClient(const WKPageUIClient*);
     void relaunch();
 
@@ -338,6 +340,14 @@ private:
 
     void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const StringPairVector& textFieldValues, uint64_t listenerID, CoreIPC::ArgumentDecoder*);
 
+    // Resource load client
+    void didInitiateLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
+    void didSendRequestForResource(uint64_t frameID, uint64_t resourceIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    void didReceiveResponseForResource(uint64_t frameID, uint64_t resourceIdentifier, const WebCore::ResourceResponse&);
+    void didReceiveContentLengthForResource(uint64_t frameID, uint64_t resourceIdentifier, uint64_t contentLength);
+    void didFinishLoadForResource(uint64_t frameID, uint64_t resourceIdentifier);
+    void didFailLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, const WebCore::ResourceError&);
+
     // UI client
     void createNewPage(const WebCore::WindowFeatures&, uint32_t modifiers, int32_t mouseButton, uint64_t& newPageID, WebPageCreationParameters&);
     void showPage();
@@ -435,6 +445,7 @@ private:
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
     WebFormClient m_formClient;
+    WebResourceLoadClient m_resourceLoadClient;
     WebUIClient m_uiClient;
     WebFindClient m_findClient;
     WebPageContextMenuClient m_contextMenuClient;

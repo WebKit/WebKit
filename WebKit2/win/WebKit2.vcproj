@@ -2155,6 +2155,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebResourceLoadClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebResourceLoadClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebUIClient.cpp"
 				>
 			</File>

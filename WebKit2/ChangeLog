@@ -1,3 +1,44 @@
+2010-12-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Add resource load client API
+        https://bugs.webkit.org/show_bug.cgi?id=51370
+
+        This just pipes through the basic resource load client data.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageResourceLoadClient):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeResourceLoadClient):
+        (WebKit::WebPageProxy::didInitiateLoadForResource):
+        (WebKit::WebPageProxy::didSendRequestForResource):
+        (WebKit::WebPageProxy::didReceiveResponseForResource):
+        (WebKit::WebPageProxy::didReceiveContentLengthForResource):
+        (WebKit::WebPageProxy::didFinishLoadForResource):
+        (WebKit::WebPageProxy::didFailLoadForResource):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadClient.cpp: Added.
+        (WebKit::WebResourceLoadClient::didInitiateLoadForResource):
+        (WebKit::WebResourceLoadClient::didSendRequestForResource):
+        (WebKit::WebResourceLoadClient::didReceiveResponseForResource):
+        (WebKit::WebResourceLoadClient::didReceiveContentLengthForResource):
+        (WebKit::WebResourceLoadClient::didFinishLoadForResource):
+        (WebKit::WebResourceLoadClient::didFailLoadForResource):
+        * UIProcess/WebResourceLoadClient.h: Added.
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading):
+        * win/WebKit2.vcproj:
+
 2010-12-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

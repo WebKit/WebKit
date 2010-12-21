@@ -356,6 +356,7 @@ HEADERS += \
     UIProcess/WebPreferences.h \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
+    UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
@@ -552,6 +553,7 @@ SOURCES += \
     UIProcess/WebPreferences.cpp \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
+    UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \

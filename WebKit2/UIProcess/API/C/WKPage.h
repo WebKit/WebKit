@@ -130,6 +130,26 @@ struct WKPageFormClient {
 };
 typedef struct WKPageFormClient WKPageFormClient;
 
+// Resource Load Client.
+typedef void (*WKPageDidInitiateLoadForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, const void* clientInfo);
+typedef void (*WKPageDidSendRequestForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo);
+typedef void (*WKPageDidReceiveResponseForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, WKURLResponseRef response, const void* clientInfo);
+typedef void (*WKPageDidReceiveContentLengthForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, uint64_t contentLength, const void* clientInfo);
+typedef void (*WKPageDidFinishLoadForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, const void* clientInfo);
+typedef void (*WKPageDidFailLoadForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, WKErrorRef error, const void* clientInfo);
+
+struct WKPageResourceLoadClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKPageDidInitiateLoadForResourceCallback                            didInitiateLoadForResource;
+    WKPageDidSendRequestForResourceCallback                             didSendRequestForResource;
+    WKPageDidReceiveResponseForResourceCallback                         didReceiveResponseForResource;
+    WKPageDidReceiveContentLengthForResourceCallback                    didReceiveContentLengthForResource;
+    WKPageDidFinishLoadForResourceCallback                              didFinishLoadForResource;
+    WKPageDidFailLoadForResourceCallback                                didFailLoadForResource;
+};
+typedef struct WKPageResourceLoadClient WKPageResourceLoadClient;
+
 // UI Client
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void (*WKPageShowPageCallback)(WKPageRef page, const void *clientInfo);
@@ -290,6 +310,7 @@ WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* c
 WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
+WK_EXPORT void WKPageSetPageResourceLoadClient(WKPageRef page, const WKPageResourceLoadClient* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, WKErrorRef, void*);
