@@ -1970,7 +1970,7 @@ sub recordActualResultsAndDiff($$)
     system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$diffOutputPath\"";
 
     my $prettyDiffOutputPath = "$diffOuputBasePath-$prettyDiffTag.html";
-    my $prettyPatchPath = "BugsSite/PrettyPatch/";
+    my $prettyPatchPath = "Websites/bugs.webkit.org/PrettyPatch/";
     my $prettifyPath = "$prettyPatchPath/prettify.rb";
     system "ruby -I \"$prettyPatchPath\" \"$prettifyPath\" \"$diffOutputPath\" > \"$prettyDiffOutputPath\"";
 }

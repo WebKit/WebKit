@@ -53,7 +53,8 @@ class PrettyPatch(object):
             return ""
 
         pretty_patch_path = os.path.join(self._checkout_root,
-                                         "BugsSite", "PrettyPatch")
+                                         "Websites", "bugs.webkit.org",
+                                         "PrettyPatch")
         prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
         args = [
             "ruby",

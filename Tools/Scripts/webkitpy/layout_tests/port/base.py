@@ -115,8 +115,8 @@ class Port(object):
         # http://bugs.python.org/issue3210
         self._wdiff_available = True
 
-        self._pretty_patch_path = self.path_from_webkit_base("BugsSite",
-            "PrettyPatch", "prettify.rb")
+        self._pretty_patch_path = self.path_from_webkit_base("Websites",
+            "bugs.webkit.org", "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = True
         self.set_option_default('configuration', None)
         if self._options.configuration is None:

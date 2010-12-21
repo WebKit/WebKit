@@ -1,3 +1,21 @@
+2010-12-20  Adam Barth  <abarth@webkit.org>
+
+        Move web sites to Websites directory
+        https://bugs.webkit.org/show_bug.cgi?id=51323
+
+        Update references to BugsSite to point to the new location.
+
+        This patch was never officially reviewed (because it was too large to
+        upload to bugs.webkit.org), but it was discussed on webkit-dev and Mark
+        Rowe gave me the green light.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/common/config/build.py:
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        * Scripts/webkitpy/common/prettypatch.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/style/main.py:
+
 2010-12-20  Adrienne Walker  <enne@google.com>
 
         Unreviewed. Adding myself to the list of committers.

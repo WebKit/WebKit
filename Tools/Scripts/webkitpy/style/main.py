@@ -80,8 +80,8 @@ def change_directory(checkout_root, paths, mock_os=None):
         #        using path-based heuristics rather than using only the
         #        presence of a WebKit checkout.  For example, we could
         #        examine parent directories until a directory is found
-        #        containing JavaScriptCore, WebCore, WebKit, WebKitSite,
-        #        and WebKitTools.
+        #        containing JavaScriptCore, WebCore, WebKit, Websites,
+        #        and Tools.
         #             Then log an INFO message saying that a source root not
         #        in a WebKit checkout was found.  This will allow us to check
         #        the style of non-scm copies of the source tree (e.g.

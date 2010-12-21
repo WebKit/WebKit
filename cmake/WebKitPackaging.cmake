@@ -36,11 +36,9 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
     "/\\\\.gitattributes$"
 
     # SVN-only files should be ignored (site, examples...)
-    "/PlanetWebKit/"
     "/SunSpider/"
     "/Examples/"
-    "/WebKitSite/"
-    "/BugsSite/"
+    "/Websites/"
 
     # Other build systems:
     # - Makefiles (.mk/Makefile)

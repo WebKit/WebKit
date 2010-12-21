@@ -41,12 +41,10 @@ def _should_file_trigger_build(target_platform, file):
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
-        ("BugsSite", []),
         ("PageLoadTests", []),
-        ("PlanetWebKit", []),
         ("WebCore/manual-tests", []),
         ("Examples", []),
-        ("WebKitSite", []),
+        ("Websites", []),
         ("android", []),
         ("brew", []),
         ("efl", []),
