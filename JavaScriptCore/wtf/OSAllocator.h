@@ -46,7 +46,7 @@ public:
     static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
     static void releaseDecommitted(void*, size_t);
 
-    // These methods are symmetric; tehy commit or decommit a region of VM (uncommitted VM should
+    // These methods are symmetric; they commit or decommit a region of VM (uncommitted VM should
     // never be accessed, since the OS may not have attached physical memory for these regions).
     // Clients should only call commit on uncommitted regions and decommit on committed regions.
     static void commit(void*, size_t, bool writable, bool executable);
