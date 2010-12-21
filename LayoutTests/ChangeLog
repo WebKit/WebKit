@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Update Chromium test expectation for http/tests/inspector/console-websocket-error.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed.
+
         Update test expectations of http/tests/inspector/console-websocket-error.html
         on Mac, and add the test to GTK's Skipped list.
 
