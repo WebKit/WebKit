@@ -1033,8 +1033,12 @@ WebInspector.ElementsTreeElement.prototype = {
             if (!found) {
                 if (moveDirection === "backward" && attributes.length > 0)
                     moveToAttribute = attributes[attributes.length - 1].name;
-                else if (moveDirection === "forward" && !/^\s*$/.test(newText))
-                    moveToNewAttribute = true;
+                else if (moveDirection === "forward") {
+                    if (!/^\s*$/.test(newText))
+                        moveToNewAttribute = true;
+                    else
+                        moveToTagName = true;
+                }
             }
         }
 
@@ -1112,8 +1116,10 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function moveToNextAttributeIfNeeded()
         {
-            if (moveDirection !== "forward")
+            if (moveDirection !== "forward") {
+                this._addNewAttribute();
                 return;
+            }
 
             var attributes = this.representedObject.attributes;
             if (attributes.length > 0)
