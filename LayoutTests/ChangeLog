@@ -122,6 +122,15 @@
 
         Unreviewed build fix.
 
+        [chromium] Temporarily blacklist window security tests
+        https://bugs.webkit.org/show_bug.cgi?id=51445
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-21  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
         [chromium] Marking fast/canvas/shadow-offset-*.html flaky on mac debug
         https://bugs.webkit.org/show_bug.cgi?id=51409
 

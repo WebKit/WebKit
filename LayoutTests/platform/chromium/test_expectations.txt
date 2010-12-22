@@ -720,6 +720,9 @@ BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
 BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
 BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
 
+BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
+BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
+
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
