@@ -1,3 +1,19 @@
+2010-12-21  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Shift-End does not select to the end of the line
+        https://bugs.webkit.org/show_bug.cgi?id=50610
+
+        Add regression test that shift-end selects to the end of the line for both LTR and RTL text.
+        Rebaseline a test which assumed incorrect behaviour of shift-end not selecting to the end of
+        the line, but rather moving cursor to the start of the line above.
+
+        * editing/selection/extend-selection-home-end-expected.txt: New baseline.
+        * editing/selection/extend-to-line-boundary-expected.txt: Added.
+        * editing/selection/extend-to-line-boundary.html: Added.
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt: New baseline.
+
 2010-12-21  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Simon Fraser.
