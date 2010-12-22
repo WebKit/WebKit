@@ -1,3 +1,16 @@
+2010-12-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [chromium] DRT inspector layout tests are flaky in debug.
+
+        DevTools window should be closed explicitly because it has custom deinitialization code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50722
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::closeRemainingWindows):
+
 2010-12-22  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

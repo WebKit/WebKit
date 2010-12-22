@@ -598,6 +598,9 @@ void TestShell::closeWindow(WebViewHost* window)
 
 void TestShell::closeRemainingWindows()
 {
+    // Just close devTools window manually because we have custom deinitialization code for it.
+    closeDevTools();
+
     // Iterate through the window list and close everything except the main
     // window. We don't want to delete elements as we're iterating, so we copy
     // to a temp vector first.
