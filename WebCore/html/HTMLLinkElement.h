@@ -108,6 +108,10 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
+    
+    enum PendingSheetType { None, NonBlocking, Blocking };
+    void addPendingSheet(PendingSheetType);
+    void removePendingSheet();
 
 private:
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
@@ -131,6 +135,8 @@ private:
     RelAttribute m_relAttribute;
     bool m_loading;
     bool m_createdByParser;
+    
+    PendingSheetType m_pendingSheetType;
 };
 
 } //namespace

@@ -1,3 +1,25 @@
+2010-12-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51354
+        Don't block rendering and script execution on deferred stylesheets
+        
+        - Don't add low priority stylesheets to the document pending sheet count.
+        - Resolve media attribute fully for the link element stylesheet load.
+
+        Test: http/tests/local/stylesheet-and-script-load-order-media-print.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::sheetLoaded):
+        (WebCore::HTMLLinkElement::addPendingSheet):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+        * html/HTMLLinkElement.h:
+
 2010-12-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74473.

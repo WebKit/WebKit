@@ -14,12 +14,11 @@ media-all-2.css
 media-screen-2.css
 media-braille-screen-2.css
 media-screen-query-success.css
-media-screen-query-fail.css
 media-screen-query-success-2.css
-media-screen-query-fail-2.css
 script-2.js
 image.jpg
 media-print.css
+media-screen-query-fail.css
 media-aural.css
 media-braille.css
 median-handheld.css
@@ -27,3 +26,4 @@ media-projection.css
 media-tty.css
 media-tv.css
 media-print-2.css
+media-screen-query-fail-2.css

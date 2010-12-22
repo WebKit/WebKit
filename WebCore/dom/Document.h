@@ -1161,10 +1161,10 @@ private:
     RefPtr<DocumentType> m_docType;
     mutable RefPtr<DOMImplementation> m_implementation;
 
-    // Track the number of currently loading top-level stylesheets.  Sheets
-    // loaded using the @import directive are not included in this count.
+    // Track the number of currently loading top-level stylesheets needed for rendering.
+    // Sheets loaded using the @import directive are not included in this count.
     // We use this count of pending sheets to detect when we can begin attaching
-    // elements.
+    // elements and when it is safe to execute scripts.
     int m_pendingStylesheets;
 
     // But sometimes you need to ignore pending stylesheet count to

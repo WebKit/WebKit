@@ -27,11 +27,13 @@
 #include "Attribute.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "MediaList.h"
@@ -54,6 +56,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
+    , m_pendingSheetType(None)
 {
     ASSERT(hasTagName(linkTag));
 }
@@ -69,9 +72,8 @@ HTMLLinkElement::~HTMLLinkElement()
         m_sheet->clearOwnerNode();
 
     if (m_cachedSheet) {
-        m_cachedSheet->removeClient(this);
-        if (m_loading && !isDisabled() && !isAlternate())
-            document()->removePendingSheet();
+        m_cachedSheet->removeClient(this);    
+        removePendingSheet();
     }
     
 #if ENABLE(LINK_PREFETCH)
@@ -88,15 +90,13 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
         // If we change the disabled state while the sheet is still loading, then we have to
         // perform three checks:
         if (isLoading()) {
-            // Check #1: If the sheet becomes disabled while it was loading, and if it was either
-            // a main sheet or a sheet that was previously enabled via script, then we need
-            // to remove it from the list of pending sheets.
-            if (m_disabledState == Disabled && (!m_relAttribute.m_isAlternate || oldDisabledState == EnabledViaScript))
-                document()->removePendingSheet();
+            // Check #1: The sheet becomes disabled while loading.
+            if (m_disabledState == Disabled)
+                removePendingSheet();
 
             // Check #2: An alternate sheet becomes enabled while it is still loading.
             if (m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript)
-                document()->addPendingSheet();
+                addPendingSheet(Blocking);
 
             // Check #3: A main sheet becomes enabled while it was still loading and
             // after it was disabled via script.  It takes really terrible code to make this
@@ -104,7 +104,7 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
             // virtualplastic.net, which manages to do about 12 enable/disables on only 3
             // sheets. :)
             if (!m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript && oldDisabledState == Disabled)
-                document()->addPendingSheet();
+                addPendingSheet(Blocking);
 
             // If the sheet is already loading just bail.
             return;
@@ -223,13 +223,6 @@ void HTMLLinkElement::process()
 #endif
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
-
-    bool mediaIsScreen = true;
-    if (!m_media.isEmpty()) {
-        RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
-        MediaQueryEvaluator screenEvaluator("screen", true);
-        mediaIsScreen = screenEvaluator.eval(media.get());
-    }
     
     if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css"))) 
         && document()->frame() && m_url.isValid()) {
@@ -237,10 +230,9 @@ void HTMLLinkElement::process()
         String charset = getAttribute(charsetAttr);
         if (charset.isEmpty() && document()->frame())
             charset = document()->frame()->loader()->writer()->encoding();
-
+        
         if (m_cachedSheet) {
-            if (m_loading)
-                document()->removePendingSheet();
+            removePendingSheet();
             m_cachedSheet->removeClient(this);
             m_cachedSheet = 0;
         }
@@ -249,14 +241,22 @@ void HTMLLinkElement::process()
             return;
         
         m_loading = true;
-        
-        // Add ourselves as a pending sheet, but only if we aren't an alternate 
-        // stylesheet.  Alternate stylesheets don't hold up render tree construction.
-        if (!isAlternate())
-            document()->addPendingSheet();
 
-        // Load non-screen stylesheets with low priority so they don't affect normal page loading.
-        ResourceLoadPriority priority = mediaIsScreen ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
+        bool mediaQueryMatches = true;
+        if (!m_media.isEmpty()) {
+            RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(document());
+            RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
+            MediaQueryEvaluator evaluator(document()->frame()->view()->mediaType(), document()->frame(), documentStyle.get());
+            mediaQueryMatches = evaluator.eval(media.get());
+        }
+
+        // Don't hold up render tree construction and script execution on stylesheets
+        // that are not needed for the rendering at the moment.
+        bool blocking = mediaQueryMatches && !isAlternate();
+        addPendingSheet(blocking ? Blocking : NonBlocking);
+
+        // Load stylesheets that are not needed for the rendering immediately with low priority.
+        ResourceLoadPriority priority = blocking ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
         m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(m_url, charset, priority);
         
         if (m_cachedSheet)
@@ -264,8 +264,7 @@ void HTMLLinkElement::process()
         else {
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.
             m_loading = false;
-            if (!isAlternate())
-                document()->removePendingSheet();
+            removePendingSheet();
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
@@ -397,8 +396,8 @@ void HTMLLinkElement::notifyFinished(CachedResource* resource)
 
 bool HTMLLinkElement::sheetLoaded()
 {
-    if (!isLoading() && !isDisabled() && !isAlternate()) {
-        document()->removePendingSheet();
+    if (!isLoading()) {
+        removePendingSheet();
         return true;
     }
     return false;
@@ -446,6 +445,32 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     // Walk the URLs linked by the linked-to stylesheet.
     if (StyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet())
         styleSheet->addSubresourceStyleURLs(urls);
+}
+
+void HTMLLinkElement::addPendingSheet(PendingSheetType type)
+{
+    if (type <= m_pendingSheetType)
+        return;
+    m_pendingSheetType = type;
+
+    if (m_pendingSheetType == NonBlocking)
+        return;
+    document()->addPendingSheet();
+}
+
+void HTMLLinkElement::removePendingSheet()
+{
+    PendingSheetType type = m_pendingSheetType;
+    m_pendingSheetType = None;
+
+    if (type == None)
+        return;
+    if (type == NonBlocking) {
+        // Document::removePendingSheet() triggers the style selector recalc for blocking sheets.
+        document()->styleSelectorChanged(RecalcStyleImmediately);
+        return;
+    }
+    document()->removePendingSheet();
 }
 
 }
