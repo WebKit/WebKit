@@ -65,7 +65,6 @@ HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser* parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser->document()->page()))
     , m_parserChunkSize(parserChunkSize(m_parser->document()->page()))
     , m_continueNextChunkTimer(this, &HTMLParserScheduler::continueNextChunkTimerFired)
-    , m_isSuspendedWithActiveTimer(false)
 {
 }
 
@@ -91,24 +90,6 @@ void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>
         return;
     }
     m_parser->resumeParsingAfterYield();
-}
-
-void HTMLParserScheduler::suspend()
-{
-    ASSERT(!m_isSuspendedWithActiveTimer);
-    if (!m_continueNextChunkTimer.isActive())
-        return;
-    m_isSuspendedWithActiveTimer = true;
-    m_continueNextChunkTimer.stop();
-}
-
-void HTMLParserScheduler::resume()
-{
-    ASSERT(!m_continueNextChunkTimer.isActive());
-    if (!m_isSuspendedWithActiveTimer)
-        return;
-    m_isSuspendedWithActiveTimer = false;
-    m_continueNextChunkTimer.startOneShot(0);
 }
 
 }

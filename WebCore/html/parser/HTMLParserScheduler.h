@@ -71,10 +71,7 @@ public:
         return true;
     }
 
-    bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive(); }
-
-    void suspend();
-    void resume();
+    bool isScheduledForResume() const { return m_continueNextChunkTimer.isActive(); }
 
 private:
     HTMLParserScheduler(HTMLDocumentParser*);
@@ -86,7 +83,6 @@ private:
     double m_parserTimeLimit;
     int m_parserChunkSize;
     Timer<HTMLParserScheduler> m_continueNextChunkTimer;
-    bool m_isSuspendedWithActiveTimer;
 };
 
 }

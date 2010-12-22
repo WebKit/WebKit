@@ -93,8 +93,6 @@ private:
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
     virtual TextPosition0 textPosition() const;
-    virtual void suspendParsing();
-    virtual void resumeParsing();
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
