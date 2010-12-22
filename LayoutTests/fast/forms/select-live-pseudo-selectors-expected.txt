@@ -14,6 +14,9 @@ PASS backgroundOf(el) is invalidColor
 Inside/outside of a form:
 PASS backgroundOf(el) is invalidColor
 PASS backgroundOf(el) is invalidColor
+Change the values of select elements without explicit initializing values by clicking:
+PASS backgroundOf(selectMultiple) is validColor
+PASS backgroundOf(selectSize4) is validColor
 Change the value with a placeholder label option:
 PASS backgroundOf(el) is validColor
 PASS backgroundOf(el) is invalidColor

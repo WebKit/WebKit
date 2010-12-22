@@ -1,3 +1,13 @@
+2010-12-22  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Assertion failure with <select multiple required>
+        https://bugs.webkit.org/show_bug.cgi?id=51260
+
+        * fast/forms/resources/select-live-pseudo-selectors.js:
+        * fast/forms/select-live-pseudo-selectors-expected.txt:
+
 2010-12-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

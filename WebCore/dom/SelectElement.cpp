@@ -172,6 +172,7 @@ void SelectElement::updateListBoxSelection(SelectElementData& data, Element* ele
             optionElement->setSelectedState(cachedStateForActiveSelection[i]);
     }
 
+    toSelectElement(element)->updateValidity();
     scrollToSelection(data, element);
 }
 

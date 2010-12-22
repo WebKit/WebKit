@@ -1,3 +1,15 @@
+2010-12-22  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Assertion failure with <select multiple required>
+        https://bugs.webkit.org/show_bug.cgi?id=51260
+
+        Test: fast/css/pseudo-valid-select-click.html
+
+        * dom/SelectElement.cpp: updateValidity() after selecting some options of ListBox-typed <select> elements to update valid() cache.
+        (WebCore::SelectElement::updateListBoxSelection):
+
 2010-12-21  Darin Adler  <darin@apple.com>
 
         Unreviewed correction to unreviewed build fix for r74447.

@@ -6,6 +6,19 @@ document.body.appendChild(form);
 var nonForm = document.createElement('div');
 document.body.appendChild(nonForm);
 
+function simulateClick(element) {
+    var rect = element.getBoundingClientRect();
+    var x = rect.left + rect.width / 2;
+    var y = rect.top + rect.height / 2;
+
+    if (!window.eventSender) {
+        return;
+    }
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
 function makeInvalid() {
     var select = document.createElement('select');
     select.name = 'foo';
@@ -87,6 +100,25 @@ shouldBe(elBackground, 'invalidColor');
 // --------------------------------
 //     value change
 // --------------------------------
+
+debug('Change the values of select elements without explicit initializing values by clicking:');
+form.innerHTML = '<select id="select-multiple" multiple required>' +
+'  <option id="multiple-empty">empty</option>' +
+'  <option id="multiple-another">another</option>' +
+'</select>' +
+'<select id="select-size4" size="4" required>' +
+'  <option id="size4-empty">empty</option>' +
+'  <option id="size4-another">another</option>' +
+'</select>';
+var selectMultiple = document.getElementById("multiple-empty");
+selectMultiple.focus();
+simulateClick(selectMultiple);
+var selectSize4 = document.getElementById("size4-empty");
+selectSize4.focus();
+simulateClick(selectSize4);
+shouldBe('backgroundOf(selectMultiple)', 'validColor');
+shouldBe('backgroundOf(selectSize4)', 'validColor');
+
 debug('Change the value with a placeholder label option:');
 el = makeInvalid();
 o1 = appendOption('', el);
