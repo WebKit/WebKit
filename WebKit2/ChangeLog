@@ -1,3 +1,27 @@
+2010-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Can't stop QT music on santastreefarm.com
+        https://bugs.webkit.org/show_bug.cgi?id=51438
+        <rdar://problem/8741152>
+
+        Implement NPN_ConvertPoint.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_ConvertPoint):
+        Call NetscapePlugin::convertPoint.
+
+        (WebKit::initializeBrowserFuncs):
+        Only initialize NPN_ConvertPoint and NPN_PopUpContextMenu on Mac.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::convertPoint):
+        Implement conversion routines.
+
+        (WebKit::NetscapePlugin::windowAndViewFramesChanged):
+        Keep track of the window and view frames, they are needed to do coordinate conversion.
+
 2010-12-21  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Anders Carlsson.

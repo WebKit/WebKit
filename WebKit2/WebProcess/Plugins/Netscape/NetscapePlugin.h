@@ -53,6 +53,8 @@ public:
 #if PLATFORM(MAC)
     NPError setDrawingModel(NPDrawingModel);
     NPError setEventModel(NPEventModel);
+    NPBool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace);
+
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
     bool isWindowActive() const { return m_windowHasFocus; }
@@ -201,6 +203,9 @@ private:
 
     bool m_pluginHasFocus;
     bool m_windowHasFocus;
+
+    WebCore::IntRect m_windowFrameInScreenCoordinates;
+    WebCore::IntRect m_viewFrameInWindowCoordinates;
 
 #ifndef NP_NO_CARBON
     void nullEventTimerFired();

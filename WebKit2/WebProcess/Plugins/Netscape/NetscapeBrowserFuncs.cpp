@@ -763,17 +763,30 @@ static void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
     notImplemented();
 }
 
+#if PLATFORM(MAC)
 static NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
 {
     notImplemented();
     return NPERR_GENERIC_ERROR;
 }
 
-static NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double* destX, double* destY, NPCoordinateSpace destSpace)
+static NPBool NPN_ConvertPoint(NPP npp, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double* destX, double* destY, NPCoordinateSpace destSpace)
 {
-    notImplemented();
-    return false;
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    double destinationX;
+    double destinationY;
+
+    bool returnValue = plugin->convertPoint(sourceX, sourceY, sourceSpace, destinationX, destinationY, destSpace);
+
+    if (destX)
+        *destX = destinationX;
+    if (destY)
+        *destY = destinationY;
+
+    return returnValue;
 }
+#endif
 
 static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
 {
@@ -831,8 +844,13 @@ static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
     netscapeFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
     netscapeFuncs.scheduletimer = NPN_ScheduleTimer;
     netscapeFuncs.unscheduletimer = NPN_UnscheduleTimer;
+#if PLATFORM(MAC)
     netscapeFuncs.popupcontextmenu = NPN_PopUpContextMenu;
     netscapeFuncs.convertpoint = NPN_ConvertPoint;
+#else
+    netscapeFuncs.popupcontextmenu = 0;
+    netscapeFuncs.convertpoint = 0;
+#endif
 }
     
 NPNetscapeFuncs* netscapeBrowserFuncs()
