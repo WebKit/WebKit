@@ -27,18 +27,18 @@
 
 namespace WebCore {
 
-    class SVGDescElement : public SVGStyledElement,
-                           public SVGLangSpace {
-    public:
-        static PassRefPtr<SVGDescElement> create(const QualifiedName&, Document*);
+class SVGDescElement : public SVGStyledElement,
+                       public SVGLangSpace {
+public:
+    static PassRefPtr<SVGDescElement> create(const QualifiedName&, Document*);
 
-        String description() const;
+    String description() const;
 
-    private:
-        SVGDescElement(const QualifiedName&, Document*);
+private:
+    SVGDescElement(const QualifiedName&, Document*);
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-    };
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+};
 
 } // namespace WebCore
 

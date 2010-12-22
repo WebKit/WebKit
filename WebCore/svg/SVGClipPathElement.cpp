@@ -75,11 +75,11 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (!object)
         return;
 
-    if (attrName == SVGNames::clipPathUnitsAttr ||
-        SVGTests::isKnownAttribute(attrName) || 
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
+    if (attrName == SVGNames::clipPathUnitsAttr
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGStyledTransformableElement::isKnownAttribute(attrName))
         object->setNeedsLayout(true);
 }
 

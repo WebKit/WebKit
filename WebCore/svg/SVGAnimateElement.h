@@ -32,47 +32,47 @@
 
 namespace WebCore {
 
-    class SVGPathSegList;
+class SVGPathSegList;
 
-    class SVGAnimateElement : public SVGAnimationElement {
-    public:
-        static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document*);
+class SVGAnimateElement : public SVGAnimationElement {
+public:
+    static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document*);
 
-        virtual ~SVGAnimateElement();
+    virtual ~SVGAnimateElement();
 
-    protected:
-        SVGAnimateElement(const QualifiedName&, Document*);
-    
-        virtual void resetToBaseValue(const String&);
-        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-        virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
-        virtual void applyResultsToTarget();
-        virtual float calculateDistance(const String& fromString, const String& toString);
+protected:
+    SVGAnimateElement(const QualifiedName&, Document*);
 
-    private:
-        enum PropertyType { NumberProperty, ColorProperty, StringProperty, PathProperty, PointsProperty };
-        PropertyType determinePropertyType(const String& attribute) const;
-        PropertyType m_propertyType;
-        
-        double m_fromNumber;
-        double m_toNumber;
-        double m_animatedNumber;
-        String m_numberUnit;
-        Color m_fromColor;
-        Color m_toColor;
-        Color m_animatedColor;
-        String m_fromString;
-        String m_toString;
-        String m_animatedString;
-        OwnPtr<SVGPathByteStream> m_fromPath;
-        OwnPtr<SVGPathByteStream> m_toPath;
-        OwnPtr<SVGPathByteStream> m_animatedPath;
-        SVGPathByteStream* m_animatedPathPointer;
-        SVGPointList m_fromPoints;
-        SVGPointList m_toPoints;
-        SVGPointList m_animatedPoints;
-    };
+    virtual void resetToBaseValue(const String&);
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
+    virtual void applyResultsToTarget();
+    virtual float calculateDistance(const String& fromString, const String& toString);
+
+private:
+    enum PropertyType { NumberProperty, ColorProperty, StringProperty, PathProperty, PointsProperty };
+    PropertyType determinePropertyType(const String& attribute) const;
+    PropertyType m_propertyType;
+
+    double m_fromNumber;
+    double m_toNumber;
+    double m_animatedNumber;
+    String m_numberUnit;
+    Color m_fromColor;
+    Color m_toColor;
+    Color m_animatedColor;
+    String m_fromString;
+    String m_toString;
+    String m_animatedString;
+    OwnPtr<SVGPathByteStream> m_fromPath;
+    OwnPtr<SVGPathByteStream> m_toPath;
+    OwnPtr<SVGPathByteStream> m_animatedPath;
+    SVGPathByteStream* m_animatedPathPointer;
+    SVGPointList m_fromPoints;
+    SVGPointList m_toPoints;
+    SVGPointList m_animatedPoints;
+};
 
 } // namespace WebCore
 

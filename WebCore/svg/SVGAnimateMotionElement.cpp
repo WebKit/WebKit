@@ -31,10 +31,10 @@
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGPathParserFactory.h"
 #include "SVGPathElement.h"
+#include "SVGPathParserFactory.h"
 #include "SVGTransformList.h"
-#include <math.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

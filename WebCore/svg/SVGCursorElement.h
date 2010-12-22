@@ -26,9 +26,9 @@
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
+#include "SVGExternalResourcesRequired.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
-#include "SVGExternalResourcesRequired.h"
 
 namespace WebCore {
 

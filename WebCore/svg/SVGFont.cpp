@@ -27,15 +27,15 @@
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "RenderSVGResourceSolidColor.h"
-#include "SimpleFontData.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGFontData.h"
-#include "SVGGlyphElement.h"
-#include "SVGGlyphMap.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
+#include "SVGGlyphElement.h"
+#include "SVGGlyphMap.h"
 #include "SVGMissingGlyphElement.h"
 #include "SVGNames.h"
+#include "SimpleFontData.h"
 #include "XMLNames.h"
 
 using namespace WTF::Unicode;
@@ -44,7 +44,7 @@ namespace WebCore {
 
 static inline float convertEmUnitToPixel(float fontSize, float unitsPerEm, float value)
 {
-    if (unitsPerEm == 0.0f)
+    if (!unitsPerEm)
         return 0.0f;
 
     return value * fontSize / unitsPerEm;

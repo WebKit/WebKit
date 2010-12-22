@@ -20,6 +20,7 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "ColorDistance.h"
+
 #include "Color.h"
 #include <wtf/MathExtras.h>
 
@@ -78,7 +79,7 @@ Color ColorDistance::addToColorAndClamp(const Color& color) const
 
 bool ColorDistance::isZero() const
 {
-    return (m_redDiff == 0 && m_blueDiff == 0 && m_greenDiff == 0);
+    return !m_redDiff && !m_blueDiff && !m_greenDiff;
 }
 
 float ColorDistance::distance() const

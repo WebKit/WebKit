@@ -27,36 +27,36 @@
 
 namespace WebCore {
 
-    class DOMImplementation;
-    class SVGElement;
-    class SVGSVGElement;
+class DOMImplementation;
+class SVGElement;
+class SVGSVGElement;
 
-    class SVGDocument : public Document {
-    public:
-        static PassRefPtr<SVGDocument> create(Frame* frame, const KURL& url)
-        {
-            return adoptRef(new SVGDocument(frame, url));
-        }
+class SVGDocument : public Document {
+public:
+    static PassRefPtr<SVGDocument> create(Frame* frame, const KURL& url)
+    {
+        return adoptRef(new SVGDocument(frame, url));
+    }
 
-        SVGSVGElement* rootElement() const;
-        
-        void dispatchZoomEvent(float prevScale, float newScale);
-        void dispatchScrollEvent();
+    SVGSVGElement* rootElement() const;
 
-        bool zoomAndPanEnabled() const;
+    void dispatchZoomEvent(float prevScale, float newScale);
+    void dispatchScrollEvent();
 
-        void startPan(const FloatPoint& start);
-        void updatePan(const FloatPoint& pos) const;
+    bool zoomAndPanEnabled() const;
 
-    private:
-        SVGDocument(Frame*, const KURL&);
+    void startPan(const FloatPoint& start);
+    void updatePan(const FloatPoint& pos) const;
 
-        virtual bool isSVGDocument() const { return true; }
+private:
+    SVGDocument(Frame*, const KURL&);
 
-        virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool isSVGDocument() const { return true; }
 
-        FloatPoint m_translate;
-    };
+    virtual bool childShouldCreateRenderer(Node*) const;
+
+    FloatPoint m_translate;
+};
 
 } // namespace WebCore
 

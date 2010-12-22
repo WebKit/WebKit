@@ -583,7 +583,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
 #ifdef DUMP_SHADOW_TREE
     ExceptionCode ec = 0;
 
-    PassRefPtr<XMLSerializer> serializer = XMLSerializer::create();
+    RefPtr<XMLSerializer> serializer = XMLSerializer::create();
 
     String markup = serializer->serializeToString(shadowRoot, ec);
     ASSERT(!ec);
@@ -627,15 +627,15 @@ void SVGUseElement::detach()
     m_targetElementInstance = 0;
 }
 
-static bool isDirectReference(Node* n)
+static bool isDirectReference(Node* node)
 {
-    return n->hasTagName(SVGNames::pathTag) ||
-           n->hasTagName(SVGNames::rectTag) ||
-           n->hasTagName(SVGNames::circleTag) ||
-           n->hasTagName(SVGNames::ellipseTag) ||
-           n->hasTagName(SVGNames::polygonTag) ||
-           n->hasTagName(SVGNames::polylineTag) ||
-           n->hasTagName(SVGNames::textTag);
+    return node->hasTagName(SVGNames::pathTag)
+           || node->hasTagName(SVGNames::rectTag)
+           || node->hasTagName(SVGNames::circleTag)
+           || node->hasTagName(SVGNames::ellipseTag)
+           || node->hasTagName(SVGNames::polygonTag)
+           || node->hasTagName(SVGNames::polylineTag)
+           || node->hasTagName(SVGNames::textTag);
 }
 
 void SVGUseElement::toClipPath(Path& path) const

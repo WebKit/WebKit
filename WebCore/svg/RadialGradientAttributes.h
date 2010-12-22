@@ -24,54 +24,54 @@
 #include "GradientAttributes.h"
 
 namespace WebCore {
-    struct RadialGradientAttributes : GradientAttributes {
-        RadialGradientAttributes()
-            : m_cx(LengthModeWidth, "50%")
-            , m_cy(LengthModeWidth, "50%")
-            , m_r(LengthModeWidth, "50%")
-            , m_fx()
-            , m_fy()
-            , m_cxSet(false)
-            , m_cySet(false)
-            , m_rSet(false)
-            , m_fxSet(false)
-            , m_fySet(false) 
-        {
-        }
+struct RadialGradientAttributes : GradientAttributes {
+    RadialGradientAttributes()
+        : m_cx(LengthModeWidth, "50%")
+        , m_cy(LengthModeWidth, "50%")
+        , m_r(LengthModeWidth, "50%")
+        , m_fx()
+        , m_fy()
+        , m_cxSet(false)
+        , m_cySet(false)
+        , m_rSet(false)
+        , m_fxSet(false)
+        , m_fySet(false) 
+    {
+    }
 
-        SVGLength cx() const { return m_cx; }
-        SVGLength cy() const { return m_cy; }
-        SVGLength r() const { return m_r; }
-        SVGLength fx() const { return m_fx; }
-        SVGLength fy() const { return m_fy; }
+    SVGLength cx() const { return m_cx; }
+    SVGLength cy() const { return m_cy; }
+    SVGLength r() const { return m_r; }
+    SVGLength fx() const { return m_fx; }
+    SVGLength fy() const { return m_fy; }
 
-        void setCx(const SVGLength& value) { m_cx = value; m_cxSet = true; }
-        void setCy(const SVGLength& value) { m_cy = value; m_cySet = true; }
-        void setR(const SVGLength& value) { m_r = value; m_rSet = true; }
-        void setFx(const SVGLength& value) { m_fx = value; m_fxSet = true; }
-        void setFy(const SVGLength& value) { m_fy = value; m_fySet = true; }
+    void setCx(const SVGLength& value) { m_cx = value; m_cxSet = true; }
+    void setCy(const SVGLength& value) { m_cy = value; m_cySet = true; }
+    void setR(const SVGLength& value) { m_r = value; m_rSet = true; }
+    void setFx(const SVGLength& value) { m_fx = value; m_fxSet = true; }
+    void setFy(const SVGLength& value) { m_fy = value; m_fySet = true; }
 
-        bool hasCx() const { return m_cxSet; }
-        bool hasCy() const { return m_cySet; }
-        bool hasR() const { return m_rSet; }
-        bool hasFx() const { return m_fxSet; }
-        bool hasFy() const { return m_fySet; }
+    bool hasCx() const { return m_cxSet; }
+    bool hasCy() const { return m_cySet; }
+    bool hasR() const { return m_rSet; }
+    bool hasFx() const { return m_fxSet; }
+    bool hasFy() const { return m_fySet; }
 
-    private:
-        // Properties
-        SVGLength m_cx;
-        SVGLength m_cy;
-        SVGLength m_r;
-        SVGLength m_fx;
-        SVGLength m_fy;
+private:
+    // Properties
+    SVGLength m_cx;
+    SVGLength m_cy;
+    SVGLength m_r;
+    SVGLength m_fx;
+    SVGLength m_fy;
 
-        // Property states
-        bool m_cxSet : 1;
-        bool m_cySet : 1;
-        bool m_rSet : 1;
-        bool m_fxSet : 1;
-        bool m_fySet : 1;
-    };
+    // Property states
+    bool m_cxSet : 1;
+    bool m_cySet : 1;
+    bool m_rSet : 1;
+    bool m_fxSet : 1;
+    bool m_fySet : 1;
+};
 
 } // namespace WebCore
 

@@ -56,8 +56,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
             setTypeBaseValue(FECOLORMATRIX_TYPE_HUEROTATE);
         else if (value == "luminanceToAlpha")
             setTypeBaseValue(FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
-    }
-    else if (attr->name() == SVGNames::inAttr)
+    } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::valuesAttr) {
         SVGNumberList newList;
@@ -139,6 +138,6 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
     return effect.release();
 }
 
-} //namespace WebCore
+} // namespace WebCore
 
 #endif // ENABLE(SVG)

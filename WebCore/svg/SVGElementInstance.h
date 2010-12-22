@@ -27,138 +27,138 @@
 
 namespace WebCore {
 
-    namespace Private { 
-        template<class GenericNode, class GenericNodeContainer>
-        void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
-    };
+namespace Private {
+template<class GenericNode, class GenericNodeContainer>
+void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
+};
 
-    class SVGUseElement;
-    class SVGElementInstanceList;
+class SVGUseElement;
+class SVGElementInstanceList;
 
-    // SVGElementInstance mimics Node, but without providing all its functionality
-    class SVGElementInstance : public TreeShared<SVGElementInstance>,
-                               public EventTarget {
-    public:
-        static PassRefPtr<SVGElementInstance> create(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
-        {
-            return adoptRef(new SVGElementInstance(useElement, originalElement));
-        }
+// SVGElementInstance mimics Node, but without providing all its functionality
+class SVGElementInstance : public TreeShared<SVGElementInstance>,
+                           public EventTarget {
+public:
+    static PassRefPtr<SVGElementInstance> create(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
+    {
+        return adoptRef(new SVGElementInstance(useElement, originalElement));
+    }
 
-        virtual ~SVGElementInstance();
+    virtual ~SVGElementInstance();
 
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual void removeAllEventListeners();
-        using EventTarget::dispatchEvent;
-        virtual bool dispatchEvent(PassRefPtr<Event>);
+    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual void removeAllEventListeners();
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>);
 
-        SVGElement* correspondingElement() const { return m_element.get(); }
-        SVGUseElement* correspondingUseElement() const { return m_useElement; }
-        SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
+    SVGElement* correspondingElement() const { return m_element.get(); }
+    SVGUseElement* correspondingUseElement() const { return m_useElement; }
+    SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
 
-        SVGElementInstance* parentNode() const { return parent(); }
-        PassRefPtr<SVGElementInstanceList> childNodes();
+    SVGElementInstance* parentNode() const { return parent(); }
+    PassRefPtr<SVGElementInstanceList> childNodes();
 
-        SVGElementInstance* previousSibling() const { return m_previousSibling; }
-        SVGElementInstance* nextSibling() const { return m_nextSibling; }
+    SVGElementInstance* previousSibling() const { return m_previousSibling; }
+    SVGElementInstance* nextSibling() const { return m_nextSibling; }
 
-        SVGElementInstance* firstChild() const { return m_firstChild; }
-        SVGElementInstance* lastChild() const { return m_lastChild; }
+    SVGElementInstance* firstChild() const { return m_firstChild; }
+    SVGElementInstance* lastChild() const { return m_lastChild; }
 
-        Document* ownerDocument() const { return m_element ? m_element->ownerDocument() : 0; }
+    Document* ownerDocument() const { return m_element ? m_element->ownerDocument() : 0; }
 
-        static void invalidateAllInstancesOfElement(SVGElement*);
+    static void invalidateAllInstancesOfElement(SVGElement*);
 
-        using TreeShared<SVGElementInstance>::ref;
-        using TreeShared<SVGElementInstance>::deref;
+    using TreeShared<SVGElementInstance>::ref;
+    using TreeShared<SVGElementInstance>::deref;
 
-        // EventTarget API
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), abort);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), blur);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), change);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), click);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), contextmenu);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dblclick);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), error);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), focus);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), input);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keydown);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keypress);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keyup);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), load);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousedown);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousemove);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseout);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseover);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseup);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousewheel);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecut);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), cut);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecopy);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), copy);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforepaste);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), paste);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragenter);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragover);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragleave);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drop);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragstart);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drag);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragend);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), reset);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), resize);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), scroll);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), search);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), select);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), selectstart);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), submit);
-        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), unload);
+    // EventTarget API
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), abort);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), blur);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), change);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), click);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), contextmenu);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dblclick);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), error);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), focus);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), input);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keydown);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keypress);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keyup);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), load);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousedown);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousemove);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseout);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseover);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseup);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousewheel);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecut);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), cut);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecopy);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), copy);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforepaste);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), paste);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragenter);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragover);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragleave);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drop);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragstart);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drag);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragend);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), reset);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), resize);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), scroll);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), search);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), select);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), selectstart);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), submit);
+    DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), unload);
 
-    private:
-        friend class SVGUseElement;
+private:
+    friend class SVGUseElement;
 
-        SVGElementInstance(SVGUseElement*, PassRefPtr<SVGElement> originalElement);
+    SVGElementInstance(SVGUseElement*, PassRefPtr<SVGElement> originalElement);
 
-        virtual Node* toNode() { return shadowTreeElement(); }
-        virtual SVGElementInstance* toSVGElementInstance() { return this; }
+    virtual Node* toNode() { return shadowTreeElement(); }
+    virtual SVGElementInstance* toSVGElementInstance() { return this; }
 
-        void appendChild(PassRefPtr<SVGElementInstance> child);
-        void setShadowTreeElement(SVGElement*);
+    void appendChild(PassRefPtr<SVGElementInstance> child);
+    void setShadowTreeElement(SVGElement*);
 
-        template<class GenericNode, class GenericNodeContainer>
-        friend void appendChildToContainer(GenericNode* child, GenericNodeContainer* container);
+    template<class GenericNode, class GenericNodeContainer>
+    friend void appendChildToContainer(GenericNode* child, GenericNodeContainer* container);
 
-        template<class GenericNode, class GenericNodeContainer>
-        friend void removeAllChildrenInContainer(GenericNodeContainer* container);
+    template<class GenericNode, class GenericNodeContainer>
+    friend void removeAllChildrenInContainer(GenericNodeContainer* container);
 
-        template<class GenericNode, class GenericNodeContainer>
-        friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
+    template<class GenericNode, class GenericNodeContainer>
+    friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
 
-        bool hasChildNodes() const { return m_firstChild; }
+    bool hasChildNodes() const { return m_firstChild; }
 
-        void setFirstChild(SVGElementInstance* child) { m_firstChild = child; }
-        void setLastChild(SVGElementInstance* child) { m_lastChild = child; }
+    void setFirstChild(SVGElementInstance* child) { m_firstChild = child; }
+    void setLastChild(SVGElementInstance* child) { m_lastChild = child; }
 
-        void setNextSibling(SVGElementInstance* sibling) { m_nextSibling = sibling; }
-        void setPreviousSibling(SVGElementInstance* sibling) { m_previousSibling = sibling; }    
+    void setNextSibling(SVGElementInstance* sibling) { m_nextSibling = sibling; }
+    void setPreviousSibling(SVGElementInstance* sibling) { m_previousSibling = sibling; }    
 
-        virtual void refEventTarget() { ref(); }
-        virtual void derefEventTarget() { deref(); }
-        virtual EventTargetData* eventTargetData();
-        virtual EventTargetData* ensureEventTargetData();
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+    virtual EventTargetData* eventTargetData();
+    virtual EventTargetData* ensureEventTargetData();
 
-        SVGUseElement* m_useElement;
-        RefPtr<SVGElement> m_element;
-        RefPtr<SVGElement> m_shadowTreeElement;
+    SVGUseElement* m_useElement;
+    RefPtr<SVGElement> m_element;
+    RefPtr<SVGElement> m_shadowTreeElement;
 
-        SVGElementInstance* m_previousSibling;
-        SVGElementInstance* m_nextSibling;
+    SVGElementInstance* m_previousSibling;
+    SVGElementInstance* m_nextSibling;
 
-        SVGElementInstance* m_firstChild;
-        SVGElementInstance* m_lastChild;
-    };
+    SVGElementInstance* m_firstChild;
+    SVGElementInstance* m_lastChild;
+};
 
 } // namespace WebCore
 

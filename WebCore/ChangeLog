@@ -1,3 +1,133 @@
+2010-12-22  Dirk Schulze  <krit@wbekit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Cleanup SVG code according to the webkit style rules 1
+        https://bugs.webkit.org/show_bug.cgi?id=51411
+
+        First patch to fix indention and other style issues according to the WebKit style rules in the SVG code.
+
+        No change of functionality. 
+
+        * svg/ColorDistance.cpp:
+        (WebCore::ColorDistance::isZero):
+        * svg/ColorDistance.h:
+        * svg/ElementTimeControl.h:
+        (WebCore::ElementTimeControl::~ElementTimeControl):
+        * svg/LinearGradientAttributes.h:
+        (WebCore::LinearGradientAttributes::LinearGradientAttributes):
+        (WebCore::LinearGradientAttributes::x1):
+        (WebCore::LinearGradientAttributes::y1):
+        (WebCore::LinearGradientAttributes::x2):
+        (WebCore::LinearGradientAttributes::y2):
+        (WebCore::LinearGradientAttributes::setX1):
+        (WebCore::LinearGradientAttributes::setY1):
+        (WebCore::LinearGradientAttributes::setX2):
+        (WebCore::LinearGradientAttributes::setY2):
+        (WebCore::LinearGradientAttributes::hasX1):
+        (WebCore::LinearGradientAttributes::hasY1):
+        (WebCore::LinearGradientAttributes::hasX2):
+        (WebCore::LinearGradientAttributes::hasY2):
+        * svg/RadialGradientAttributes.h:
+        (WebCore::RadialGradientAttributes::RadialGradientAttributes):
+        (WebCore::RadialGradientAttributes::cx):
+        (WebCore::RadialGradientAttributes::cy):
+        (WebCore::RadialGradientAttributes::r):
+        (WebCore::RadialGradientAttributes::fx):
+        (WebCore::RadialGradientAttributes::fy):
+        (WebCore::RadialGradientAttributes::setCx):
+        (WebCore::RadialGradientAttributes::setCy):
+        (WebCore::RadialGradientAttributes::setR):
+        (WebCore::RadialGradientAttributes::setFx):
+        (WebCore::RadialGradientAttributes::setFy):
+        (WebCore::RadialGradientAttributes::hasCx):
+        (WebCore::RadialGradientAttributes::hasCy):
+        (WebCore::RadialGradientAttributes::hasR):
+        (WebCore::RadialGradientAttributes::hasFx):
+        (WebCore::RadialGradientAttributes::hasFy):
+        * svg/SVGAngle.cpp:
+        * svg/SVGAnimateColorElement.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeyTimes):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::updateAnimation):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        * svg/SVGColor.h:
+        (WebCore::SVGColor::create):
+        (WebCore::SVGColor::createCurrentColor):
+        (WebCore::SVGColor::colorType):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::color):
+        (WebCore::SVGColor::isSVGColor):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+        * svg/SVGCursorElement.h:
+        * svg/SVGDescElement.h:
+        (WebCore::SVGDescElement::rendererIsNeeded):
+        * svg/SVGDocument.cpp:
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument::create):
+        (WebCore::SVGDocument::isSVGDocument):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::isStyled):
+        (WebCore::SVGElement::isStyledTransformable):
+        (WebCore::SVGElement::isStyledLocatable):
+        (WebCore::SVGElement::isSVG):
+        (WebCore::SVGElement::isFilterEffect):
+        (WebCore::SVGElement::isGradientStop):
+        (WebCore::SVGElement::isTextContent):
+        (WebCore::SVGElement::isValid):
+        (WebCore::SVGElement::svgAttributeChanged):
+        (WebCore::SVGElement::synchronizeProperty):
+        (WebCore::SVGElement::supplementalTransform):
+        (WebCore::SVGElement::invalidateSVGAttributes):
+        (WebCore::SVGElement::rendererIsNeeded):
+        (WebCore::SVGElement::needsPendingResourceHandling):
+        (WebCore::SVGElement::buildPendingResource):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::create):
+        (WebCore::SVGElementInstance::correspondingElement):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::shadowTreeElement):
+        (WebCore::SVGElementInstance::parentNode):
+        (WebCore::SVGElementInstance::previousSibling):
+        (WebCore::SVGElementInstance::nextSibling):
+        (WebCore::SVGElementInstance::firstChild):
+        (WebCore::SVGElementInstance::lastChild):
+        (WebCore::SVGElementInstance::ownerDocument):
+        (WebCore::SVGElementInstance::toNode):
+        (WebCore::SVGElementInstance::toSVGElementInstance):
+        (WebCore::SVGElementInstance::hasChildNodes):
+        (WebCore::SVGElementInstance::setFirstChild):
+        (WebCore::SVGElementInstance::setLastChild):
+        (WebCore::SVGElementInstance::setNextSibling):
+        (WebCore::SVGElementInstance::setPreviousSibling):
+        (WebCore::SVGElementInstance::refEventTarget):
+        (WebCore::SVGElementInstance::derefEventTarget):
+        * svg/SVGElementInstanceList.h:
+        (WebCore::SVGElementInstanceList::create):
+        * svg/SVGException.h:
+        (WebCore::SVGException::create):
+        (WebCore::SVGException::SVGException):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::findLights):
+        * svg/SVGFont.cpp:
+        (WebCore::convertEmUnitToPixel):
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDirectReference):
+
 2010-12-22  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

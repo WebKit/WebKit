@@ -27,47 +27,47 @@
 
 namespace WebCore {
             
-    class SVGAnimateMotionElement : public SVGAnimationElement {
-    public:
-        static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document*);
+class SVGAnimateMotionElement : public SVGAnimationElement {
+public:
+    static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGAnimateMotionElement(const QualifiedName&, Document*);
+private:
+    SVGAnimateMotionElement(const QualifiedName&, Document*);
 
-        virtual bool hasValidTarget() const;
+    virtual bool hasValidTarget() const;
 
-        virtual void parseMappedAttribute(Attribute*);
-        
-        virtual void resetToBaseValue(const String&);
-        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-        virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
-        virtual void applyResultsToTarget();
-        virtual float calculateDistance(const String& fromString, const String& toString);
-        virtual Path animationPath() const;
-        
-        enum RotateMode {
-            RotateAngle,
-            RotateAuto,
-            RotateAutoReverse
-        };
-        RotateMode rotateMode() const;
+    virtual void parseMappedAttribute(Attribute*);
 
-        FloatSize m_animatedTranslation;
-        float m_animatedAngle;
+    virtual void resetToBaseValue(const String&);
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
+    virtual void applyResultsToTarget();
+    virtual float calculateDistance(const String& fromString, const String& toString);
+    virtual Path animationPath() const;
 
-        // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
-        FloatPoint m_fromPoint;
-        float m_fromAngle;
-        FloatPoint m_toPoint;
-        float m_toAngle;
-
-        unsigned m_baseIndexInTransformList;
-
-        Path m_path;
-        Vector<float> m_keyPoints;
-        float m_angle;
+    enum RotateMode {
+        RotateAngle,
+        RotateAuto,
+        RotateAutoReverse
     };
+    RotateMode rotateMode() const;
+
+    FloatSize m_animatedTranslation;
+    float m_animatedAngle;
+
+    // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
+    FloatPoint m_fromPoint;
+    float m_fromAngle;
+    FloatPoint m_toPoint;
+    float m_toAngle;
+
+    unsigned m_baseIndexInTransformList;
+
+    Path m_path;
+    Vector<float> m_keyPoints;
+    float m_angle;
+};
     
 } // namespace WebCore
 

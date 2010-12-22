@@ -22,24 +22,24 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/RefCounted.h>
 #include "SVGElementInstance.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class SVGElementInstanceList : public RefCounted<SVGElementInstanceList> {
-    public:
-        static PassRefPtr<SVGElementInstanceList> create(PassRefPtr<SVGElementInstance> root) { return adoptRef(new SVGElementInstanceList(root)); }
-        virtual ~SVGElementInstanceList();
+class SVGElementInstanceList : public RefCounted<SVGElementInstanceList> {
+public:
+    static PassRefPtr<SVGElementInstanceList> create(PassRefPtr<SVGElementInstance> root) { return adoptRef(new SVGElementInstanceList(root)); }
+    virtual ~SVGElementInstanceList();
 
-        unsigned length() const;
-        SVGElementInstance* item(unsigned index);
+    unsigned length() const;
+    SVGElementInstance* item(unsigned index);
 
-    private:
-        SVGElementInstanceList(PassRefPtr<SVGElementInstance>);
+private:
+    SVGElementInstanceList(PassRefPtr<SVGElementInstance>);
 
-        RefPtr<SVGElementInstance> m_rootInstance;
-    };
+    RefPtr<SVGElementInstance> m_rootInstance;
+};
 
 } // namespace WebCore
 

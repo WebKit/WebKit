@@ -27,14 +27,14 @@
 
 namespace WebCore {
 
-    // SVGAnimateElement implements superset of the functionality.
-    class SVGAnimateColorElement : public SVGAnimateElement {
-    public:
-        static PassRefPtr<SVGAnimateColorElement> create(const QualifiedName&, Document*);
+// SVGAnimateElement implements superset of the functionality.
+class SVGAnimateColorElement : public SVGAnimateElement {
+public:
+    static PassRefPtr<SVGAnimateColorElement> create(const QualifiedName&, Document*);
 
-    private:
-        SVGAnimateColorElement(const QualifiedName&, Document*);
-    };
+private:
+    SVGAnimateColorElement(const QualifiedName&, Document*);
+};
 
 } // namespace WebCore
 

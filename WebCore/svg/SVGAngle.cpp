@@ -25,8 +25,8 @@
 #include "SVGAngle.h"
 
 #include "SVGParserUtilities.h"
-#include <wtf/text/StringConcatenate.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 

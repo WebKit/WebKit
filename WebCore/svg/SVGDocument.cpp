@@ -30,8 +30,8 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGViewSpec.h"
-#include "SVGZoomEvent.h"
 #include "SVGZoomAndPan.h"
+#include "SVGZoomEvent.h"
 
 namespace WebCore {
 

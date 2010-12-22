@@ -21,8 +21,8 @@
 #define SVGAnimatedNumber_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedPropertyMacros.h"
+#include "SVGAnimatedStaticPropertyTearOff.h"
 
 namespace WebCore {
 

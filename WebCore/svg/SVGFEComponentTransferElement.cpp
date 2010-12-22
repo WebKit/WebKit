@@ -74,15 +74,15 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
     ComponentTransferFunction blue;
     ComponentTransferFunction alpha;
     
-    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        if (n->hasTagName(SVGNames::feFuncRTag))
-            red = static_cast<SVGFEFuncRElement*>(n)->transferFunction();
-        else if (n->hasTagName(SVGNames::feFuncGTag))
-            green = static_cast<SVGFEFuncGElement*>(n)->transferFunction();
-        else if (n->hasTagName(SVGNames::feFuncBTag))
-           blue = static_cast<SVGFEFuncBElement*>(n)->transferFunction();
-        else if (n->hasTagName(SVGNames::feFuncATag))
-            alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(SVGNames::feFuncRTag))
+            red = static_cast<SVGFEFuncRElement*>(node)->transferFunction();
+        else if (node->hasTagName(SVGNames::feFuncGTag))
+            green = static_cast<SVGFEFuncGElement*>(node)->transferFunction();
+        else if (node->hasTagName(SVGNames::feFuncBTag))
+           blue = static_cast<SVGFEFuncBElement*>(node)->transferFunction();
+        else if (node->hasTagName(SVGNames::feFuncATag))
+            alpha = static_cast<SVGFEFuncAElement*>(node)->transferFunction();
     }
     
     RefPtr<FilterEffect> effect = FEComponentTransfer::create(filter, red, green, blue, alpha);

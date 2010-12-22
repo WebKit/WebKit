@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-    class ElementTimeControl {
-    public:
-        virtual ~ElementTimeControl() {}
-        virtual void beginElement() = 0;
-        virtual void beginElementAt(float offset) = 0;
-        virtual void endElement() = 0;
-        virtual void endElementAt(float offset) = 0;
-    };
+class ElementTimeControl {
+public:
+    virtual ~ElementTimeControl() {}
+    virtual void beginElement() = 0;
+    virtual void beginElementAt(float offset) = 0;
+    virtual void endElement() = 0;
+    virtual void endElementAt(float offset) = 0;
+};
         
 }
 
