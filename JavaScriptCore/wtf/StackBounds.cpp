@@ -57,14 +57,23 @@
 
 namespace WTF {
 
+// Bug 26276 - Need a mechanism to determine stack extent
+//
+// These platforms should now be working correctly:
+//     DARWIN, QNX, UNIX
+// These platforms are not:
+//     WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
+//
+// FIXME: remove this! - this code unsafely guesses at stack sizes!
+#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU) || OS(WINCE)
 // Based on the current limit used by the JSC parser, guess the stack size.
 static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
-
 // This method assumes the stack is growing downwards.
 static void* estimateStackBound(void* origin)
 {
     return static_cast<char*>(origin) - estimatedStackSize;
 }
+#endif
 
 #if OS(DARWIN)
 
@@ -72,7 +81,7 @@ void StackBounds::initialize()
 {
     pthread_t thread = pthread_self();
     m_origin = pthread_get_stackaddr_np(thread);
-    m_bound = estimateStackBound(m_origin);
+    m_bound = static_cast<char*>(m_origin) - pthread_get_stacksize_np(thread);
 }
 
 #elif OS(WINDOWS)
@@ -102,6 +111,7 @@ void StackBounds::initialize()
 #else
 #error Need a way to get the stack bounds on this platform (Windows)
 #endif
+    // Looks like we should be able to get pTib->StackLimit
     m_bound = estimateStackBound(m_origin);
 }
 
@@ -127,8 +137,8 @@ void StackBounds::initialize()
     stackSize = threadInfo.stksize;
     ASSERT(stackBase);
 
+    m_bound = stackBase;
     m_origin = static_cast<char*>(stackBase) + stackSize;
-    m_bound = estimateStackBound(m_origin);
 }
 
 #elif OS(SOLARIS)
@@ -194,8 +204,8 @@ void StackBounds::initialize()
     (void)rc; // FIXME: Deal with error code somehow? Seems fatal.
     ASSERT(stackBase);
     pthread_attr_destroy(&sattr);
+    m_bound = stackBase;
     m_origin = static_cast<char*>(stackBase) + stackSize;
-    m_bound = estimateStackBound(m_origin);
 }
 
 #elif OS(WINCE)

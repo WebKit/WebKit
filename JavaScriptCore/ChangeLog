@@ -1,5 +1,19 @@
 2010-12-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 26276 - Need a mechanism to determine stack extent
+
+        This patch adds accurate stack size calculation for:
+            DARWIN, QNX, UNIX
+        We still need to fix:
+            WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
+2010-12-21  Gavin Barraclough  <barraclough@apple.com>
+
          Reviewed by Geoff Garen.
  
         <rdar://problem/8765333> CRASH running out of executable memory, loading io9.com
