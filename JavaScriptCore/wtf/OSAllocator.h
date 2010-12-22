@@ -26,6 +26,8 @@
 #ifndef OSAllocator_h
 #define OSAllocator_h
 
+#include <wtf/UnusedParam.h>
+#include <wtf/VMTags.h>
 #include <wtf/VMTags.h>
 
 namespace WTF {
@@ -79,6 +81,9 @@ inline void OSAllocator::decommitAndRelease(void* releaseBase, size_t releaseSiz
     // On most platforms we can actually skip this final decommit; releasing the VM will
     // implicitly decommit any physical memory in the region. This is not true on WINCE.
     decommit(decommitBase, decommitSize);
+#else
+    UNUSED_PARAM(decommitBase);
+    UNUSED_PARAM(decommitSize);
 #endif
     releaseDecommitted(releaseBase, releaseSize);
 }
