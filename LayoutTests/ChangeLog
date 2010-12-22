@@ -1,3 +1,12 @@
+2010-12-22  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by David Levin.
+
+        [Chromium] SLOW lines in chromium test_expectations.txt for svg tests which are no longer slow.
+        https://bugs.webkit.org/show_bug.cgi?id=51429
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.
